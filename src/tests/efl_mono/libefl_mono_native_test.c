@@ -3248,46 +3248,6 @@ Eina_Bool check_and_modify_struct_simple(Test_StructSimple *simple)
 }
 
 static
-Eina_Bool check_zeroed_struct_simple(Test_StructSimple *simple)
-{
-   Eina_Bool ret =
-     simple->fbyte == 0
-     && simple->fubyte == 0
-     && simple->fchar == '\0'
-     && simple->fshort == 0
-     && simple->fushort == 0
-     && simple->fint == 0
-     && simple->fuint == 0
-     && simple->flong == 0
-     && simple->fulong == 0
-     && simple->fllong == 0
-     && simple->fullong == 0
-     && simple->fint8 == 0
-     && simple->fuint8 == 0
-     && simple->fint16 == 0
-     && simple->fuint16 == 0
-     && simple->fint32 == 0
-     && simple->fuint32 == 0
-     && simple->fint64 == 0
-     && simple->fuint64 == 0
-     && simple->fssize == 0
-     && simple->fsize == 0
-     && simple->fintptr == 0x00
-     && simple->fptrdiff == 0
-     && simple->ffloat == 0
-     && simple->fdouble == 0
-     && simple->fbool == EINA_FALSE
-     && simple->fvoid_ptr == NULL
-     && simple->fenum == TEST_SAMPLEENUM_V0
-     && simple->fstring == NULL
-     && simple->fmstring == NULL
-     && simple->fstringshare == NULL
-   ;
-
-   return ret;
-}
-
-static
 void struct_complex_with_values(Test_StructComplex *complex)
 {
    complex->farray = eina_array_new(4);
@@ -3372,32 +3332,6 @@ Eina_Bool check_and_modify_struct_complex(Test_StructComplex *complex)
      return EINA_FALSE;
 
    return EINA_TRUE;
-}
-
-static
-Eina_Bool check_zeroed_struct_complex(Test_StructComplex *complex)
-{
-   Eina_Bool ret =
-      complex->farray == NULL
-      && complex->finarray == NULL
-      && complex->flist == NULL
-      && complex->finlist == NULL
-      && complex->fhash == NULL
-      && complex->fiterator == NULL
-
-      && complex->fany_value.type == NULL
-      && complex->fany_value.value._guarantee == 0
-
-      && complex->fany_value_ptr == NULL
-      && complex->fbinbuf == NULL
-
-      && complex->fslice.len == 0
-      && complex->fslice.mem == NULL
-
-      && complex->fobj == NULL
-   ;
-
-   return ret;
 }
 
 // with simple types
