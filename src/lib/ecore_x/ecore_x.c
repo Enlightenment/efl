@@ -780,14 +780,11 @@ ecore_x_init_from_display(Ecore_X_Display *display)
    return --_ecore_x_init_count;
 }
 
-static int
-_ecore_x_shutdown(int close_display)
+int
+_ecore_x_shutdown(void)
 {
-   if (--_ecore_x_init_count != 0)
-     return _ecore_x_init_count;
-
    if (!_ecore_x_disp)
-     return _ecore_x_init_count;
+     return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -854,19 +851,9 @@ _ecore_x_shutdown(int close_display)
                           ECORE_X_EVENT_PRESENT_COMPLETE,
                           ECORE_X_EVENT_PRESENT_IDLE);
    ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
-   if (close_display)
-     XCloseDisplay(_ecore_x_disp);
-   else
-     {
-        close(ConnectionNumber(_ecore_x_disp));
-        // FIXME: may have to clean up x display internal here
-// getting segv here? hmmm. odd. disable
-//        XFree(_ecore_x_disp);
-     }
 
    free(_ecore_x_event_handlers);
    _ecore_x_fd_handler_handle = NULL;
-   _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;
    _ecore_x_events_shutdown();
    _ecore_x_input_shutdown();
@@ -874,6 +861,12 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
 
+   return 0;
+}
+
+static void
+_ecore_x_shutdown2(void)
+{
    ecore_event_shutdown();
    ecore_shutdown();
 
@@ -881,8 +874,6 @@ _ecore_x_shutdown(int close_display)
    _ecore_xlib_log_dom = -1;
    eina_shutdown();
    _ecore_xlib_sync = EINA_FALSE;
-
-   return _ecore_x_init_count;
 }
 
 /**
@@ -898,7 +889,14 @@ _ecore_x_shutdown(int close_display)
 EAPI int
 ecore_x_shutdown(void)
 {
-   return _ecore_x_shutdown(1);
+   if (--_ecore_x_init_count != 0)
+     return _ecore_x_init_count;
+   if (_ecore_x_shutdown()) return _ecore_x_init_count;
+   if (_ecore_x_disp)
+     XCloseDisplay(_ecore_x_disp);
+   _ecore_x_disp = NULL;
+   _ecore_x_shutdown2();
+   return 0;
 }
 
 /**
@@ -911,7 +909,16 @@ ecore_x_shutdown(void)
 EAPI int
 ecore_x_disconnect(void)
 {
-   return _ecore_x_shutdown(0);
+   if (--_ecore_x_init_count != 0)
+     return _ecore_x_init_count;
+   if (_ecore_x_shutdown()) return _ecore_x_init_count;
+   close(ConnectionNumber(_ecore_x_disp));
+    // FIXME: may have to clean up x display internal here
+// getting segv here? hmmm. odd. disable
+//        XFree(_ecore_x_disp);
+   _ecore_x_disp = NULL;
+   _ecore_x_shutdown2();
+   return 0;
 }
 
 /**
