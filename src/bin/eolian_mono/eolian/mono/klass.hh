@@ -58,6 +58,11 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "return this.raw_handle.ToInt32();\n"
        << scope_tab << "}\n"
+       << scope_tab << "///<summary>How native pointer in string representation.</summary>\n"
+       << scope_tab << "public override String ToString()\n"
+       << scope_tab << "{\n"
+       << scope_tab << scope_tab << "return $\"{this.GetType().Name}@[{this.raw_handle.ToInt32():x}]\";\n"
+       << scope_tab << "}\n"
       ).generate(sink, nullptr, context);
 }
 
