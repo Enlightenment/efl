@@ -382,7 +382,8 @@ _widget_calculate_recursive(Eo *obj)
    if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return;
 
    pd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
-   if (!pd) return;
+   if (!pd || !pd->resize_obj)
+     return;
 
    if (!efl_canvas_group_need_recalculate_get(obj) &&
        !efl_canvas_group_need_recalculate_get(pd->resize_obj))
