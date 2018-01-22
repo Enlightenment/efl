@@ -40,12 +40,10 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Callback_Data
   Efl_Ui_List_LayoutItem* item;
 } Efl_Ui_List_Precise_Layouter_Callback_Data;
 
-
 #include "efl_ui_list_precise_layouter.eo.h"
 
-
 static void _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *);
-static void _initilize(Eo *, Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_Model*, Efl_Ui_List_SegArray*);
+static Eina_Bool _initilize(Eo *, Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_Model*, Efl_Ui_List_SegArray*);
 static void _finalize(Eo *, Efl_Ui_List_Precise_Layouter_Data*);
 static void _node_realize(Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_SegArray_Node*);
 static void _node_unrealize(Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_SegArray_Node*);
@@ -183,7 +181,6 @@ _count_then(void * data, Efl_Event const* event)
    Efl_Ui_List_Precise_Layouter_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
    pd->count_future = NULL;
-
    pd->count_total = *(int*)((Efl_Future_Event_Success*)event->info)->value;
 
    if (pd->modeler && (pd->count_total != efl_ui_list_segarray_count(pd->segarray)))
@@ -303,11 +300,14 @@ _child_removed_cb(void *data, const Efl_Event *event)
    evas_object_smart_changed(pd->modeler);
 }
 
-static void
+static Eina_Bool
 _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Model *modeler, Efl_Ui_List_SegArray *segarray)
 {
    if(pd->initialized)
-     return;
+     return EINA_TRUE;
+
+   if(!pd->model)
+     return EINA_FALSE;
 
    pd->recalc = EINA_TRUE;
    pd->initialized = EINA_TRUE;
@@ -316,13 +316,14 @@ _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_Li
    pd->segarray = segarray;
 
    evas_object_event_callback_add(modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
-//   efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, pd);
    efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
    efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, pd);
    efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
 
    pd->min.w = 0;
    pd->min.h = 0;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -334,7 +335,6 @@ _finalize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
    evas_object_event_callback_del_full(pd->modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
    efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
    efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, pd);
-//   efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, pd);
 
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
    EINA_ACCESSOR_FOREACH(nodes, i, node)
@@ -364,6 +364,7 @@ _node_realize(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_SegArray_Node *
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = node->layout_data;
    int i;
 
+   EINA_SAFETY_ON_NULL_RETURN(nodedata);
    if (nodedata->realized)
      return;
 
@@ -393,6 +394,7 @@ _node_unrealize(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_SegArray_Node
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = node->layout_data;
    int i;
 
+   EINA_SAFETY_ON_NULL_RETURN(nodedata);
    if (!nodedata->realized)
      return;
 
@@ -673,11 +675,12 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
    , Efl_Ui_List_Model *modeler, int first, Efl_Ui_List_SegArray *segarray)
 {
-   _initilize(obj, pd, modeler, segarray);
+   if (!_initilize(obj, pd, modeler, segarray))
+     return;
 
    pd->first = first;
 
-   if (pd->recalc)
+   if (pd->recalc && efl_ui_list_segarray_count(segarray) > 0)
      {
         // cache size of new items
         pd->calc_progress = 0;
