@@ -983,7 +983,7 @@ ecore_x_screen_size_get(const Ecore_X_Screen *screen,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (w) *w = 0;
    if (h) *h = 0;
-   if (!s) return;
+   EINA_SAFETY_ON_NULL_RETURN(screen);
    if (w) *w = s->width;
    if (h) *h = s->height;
 }
@@ -1016,6 +1016,7 @@ ecore_x_screen_count_get(void)
 EAPI int
 ecore_x_screen_index_get(const Ecore_X_Screen *screen)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(screen, -1);
    return XScreenNumberOfScreen((Screen *)screen);
 }
 
@@ -1870,6 +1871,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win,
                              int mod,
                              int any_mod)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_window_button_ungrab_internal(win, button, mod, any_mod);
    _ecore_x_sync_magic_send(1, win, button, mod, any_mod);
 //   _ecore_x_window_grab_remove(win, button, mod, any_mod);
@@ -1974,6 +1976,7 @@ ecore_x_window_key_grab(Ecore_X_Window win,
 {
    Keygrab *t;
 
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_window_key_grab_internal(win, key, mod, any_mod);
    _ecore_key_grabs_num++;
    t = realloc(_ecore_key_grabs,
@@ -2080,6 +2083,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
                           int mod,
                           int any_mod)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_window_key_ungrab_internal(win, key, mod, any_mod);
    _ecore_x_sync_magic_send(2, win, XStringToKeysym(key), mod, any_mod);
 //   _ecore_x_key_grab_remove(win, key, mod, any_mod);
