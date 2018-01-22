@@ -3786,8 +3786,8 @@ _job_pb_cb(void *data)
         if (get_type & ECORE_COCOA_CNP_TYPE_HTML)
           ddata.format |= EFL_SELECTION_FORMAT_HTML;
 
-        ddata.data.mem = pbdata;
-        ddata.data.len = pbdata_len;
+        ddata.content.mem = pbdata;
+        ddata.content.len = pbdata_len;
         ddata.action = EFL_SELECTION_ACTION_UNKNOWN;
         sel->data_func(sel->data_func_data, sel->request_obj, &ddata);
         free(pbdata);
