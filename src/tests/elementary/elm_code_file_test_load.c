@@ -19,7 +19,7 @@ START_TEST (elm_code_file_load)
    elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
-   realpath(path, real);
+   ck_assert_ptr_ne(realpath(path, real), NULL);
 
    ck_assert_str_eq(ecore_file_file_get(path), elm_code_file_filename_get(file));
    ck_assert_str_eq(real, elm_code_file_path_get(file));

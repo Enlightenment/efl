@@ -33,8 +33,8 @@ START_TEST (elm_code_open_test)
    code = elm_code_create();
    elm_code_file_open(code, path);
 
-   realpath(path, realpath1);
-   realpath(elm_code_file_path_get(code->file), realpath2);
+   ck_assert_ptr_ne(realpath(path, realpath1), NULL);
+   ck_assert_ptr_ne(realpath(elm_code_file_path_get(code->file), realpath2), NULL);
    ck_assert(!!code);
    ck_assert_str_eq(realpath1, realpath2);
    elm_code_free(code);

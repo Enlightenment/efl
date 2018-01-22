@@ -334,7 +334,7 @@ START_TEST(ecore_test_ecore_file_operations)
    fail_if(ecore_file_cp(not_exist_file, "test_file") != EINA_FALSE);
    fail_if(ecore_file_mv(not_exist_file, "test_file") != EINA_FALSE);
 
-   chdir(eina_environment_tmp_get());
+   ck_assert_int_eq(chdir(eina_environment_tmp_get()), 0);
    fail_if(ecore_file_mkpath(src_dir) != EINA_TRUE);
    fail_if(ecore_file_rmdir(src_dir) != EINA_TRUE);
    fail_if(ecore_file_mkpath(NULL) != EINA_FALSE);
