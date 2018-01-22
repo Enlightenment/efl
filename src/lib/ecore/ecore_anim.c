@@ -880,6 +880,7 @@ EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+   if (!animator) return ;
    if (animator->delete_me) return;
    if (animator->suspended)
      {
