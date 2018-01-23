@@ -193,6 +193,7 @@ typedef struct Comp_Seat
    struct
    {
       struct wl_array keys;
+      struct wl_array *keys_external;
       struct
       {
          xkb_mod_mask_t depressed;
@@ -211,6 +212,7 @@ typedef struct Comp_Seat
       int repeat_delay;
       Eina_Hash *resources;
       Comp_Surface *enter;
+      Eina_Bool external : 1;
    } kbd;
 
    struct
@@ -3651,12 +3653,63 @@ seat_update_caps(Comp_Seat *s, struct wl_resource *res)
 }
 
 static void
+seat_keymap_send(Comp_Seat *s)
+{
+   Eina_List *l;
+   Eina_Iterator *it;
+   it = eina_hash_iterator_data_new(s->kbd.resources);
+   EINA_ITERATOR_FOREACH(it, l)
+     {
+        Eina_List *ll;
+        struct wl_resource *res;
+        EINA_LIST_FOREACH(l, ll, res)
+          wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, s->kbd.keymap_fd, s->kbd.keymap_mem_size);
+     }
+   eina_iterator_free(it);
+}
+
+static Eina_Bool
+seat_kbd_mods_update(Comp_Seat *s)
+{
+   xkb_mod_mask_t mod;
+   xkb_layout_index_t grp;
+
+   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_DEPRESSED);
+   s->kbd.mods.changed |= mod != s->kbd.mods.depressed;
+   s->kbd.mods.depressed = mod;
+   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
+   s->kbd.mods.changed |= mod != s->kbd.mods.latched;
+   s->kbd.mods.latched = mod;
+   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
+   s->kbd.mods.changed |= mod != s->kbd.mods.locked;
+   s->kbd.mods.locked = mod;
+   grp = xkb_state_serialize_layout(s->kbd.state, XKB_STATE_LAYOUT_EFFECTIVE);
+   s->kbd.mods.changed |= grp != s->kbd.mods.group;
+   s->kbd.mods.group = grp;
+   return s->kbd.mods.changed;
+}
+
+static void
+seat_kbd_external_init(Comp_Seat *s)
+{
+   Eina_List *l, *ll;
+   uint32_t serial;
+   struct wl_resource *res;
+
+   seat_keymap_send(s);
+   if (!seat_kbd_mods_update(s)) return;
+   l = seat_kbd_active_resources_get(s);
+   if (!l) return;
+   serial = wl_display_next_serial(s->c->display);
+   EINA_LIST_FOREACH(l, ll, res)
+     comp_seat_send_modifiers(s, res, serial);
+}
+
+static void
 seat_keymap_update(Comp_Seat *s)
 {
    char *str;
    Eina_Tmpstr *file;
-   Eina_List *l;
-   Eina_Iterator *it;
    xkb_mod_mask_t latched = 0, locked = 0;
 
    if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
@@ -3710,15 +3763,7 @@ seat_keymap_update(Comp_Seat *s)
    s->kbd.keymap_mem[s->kbd.keymap_mem_size] = 0;
    free(str);
 
-   it = eina_hash_iterator_data_new(s->kbd.resources);
-   EINA_ITERATOR_FOREACH(it, l)
-     {
-        Eina_List *ll;
-        struct wl_resource *res;
-        EINA_LIST_FOREACH(l, ll, res)
-          wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, s->kbd.keymap_fd, s->kbd.keymap_mem_size);
-     }
-   eina_iterator_free(it);
+   seat_keymap_send(s);
 }
 
 static inline void
@@ -3754,27 +3799,6 @@ seat_keymap_create(Comp_Seat *s)
    names.layout = "us";
    s->kbd.context = xkb_context_new(0);
    s->kbd.keymap = xkb_map_new_from_names(s->kbd.context, &names, 0);
-}
-
-static Eina_Bool
-seat_mods_update(Comp_Seat *s)
-{
-   xkb_mod_mask_t mod;
-   xkb_layout_index_t grp;
-
-   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_DEPRESSED);
-   s->kbd.mods.changed |= mod != s->kbd.mods.depressed;
-   s->kbd.mods.depressed = mod;
-   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
-   s->kbd.mods.changed |= mod != s->kbd.mods.latched;
-   s->kbd.mods.latched = mod;
-   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
-   s->kbd.mods.changed |= mod != s->kbd.mods.locked;
-   s->kbd.mods.locked = mod;
-   grp = xkb_state_serialize_layout(s->kbd.state, XKB_STATE_LAYOUT_EFFECTIVE);
-   s->kbd.mods.changed |= grp != s->kbd.mods.group;
-   s->kbd.mods.group = grp;
-   return s->kbd.mods.changed;
 }
 
 static const struct wl_keyboard_interface seat_kbd_interface =
@@ -4018,6 +4042,18 @@ seat_resource_hash_free(Eina_Hash *h)
 }
 
 static void
+seat_kbd_destroy(Comp_Seat *s)
+{
+   if (s->kbd.external) return;
+   if (s->kbd.state) xkb_state_unref(s->kbd.state);
+   if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
+   if (s->kbd.context) xkb_context_unref(s->kbd.context);
+   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
+   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
+   wl_array_release(&s->kbd.keys);
+}
+
+static void
 seat_destroy(Comp_Seat *s)
 {
    Eina_Stringshare *type;
@@ -4027,12 +4063,7 @@ seat_destroy(Comp_Seat *s)
    while (s->resources)
      wl_resource_destroy(eina_list_data_get(s->resources));
    eina_stringshare_del(s->name);
-   if (s->kbd.state) xkb_state_unref(s->kbd.state);
-   if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
-   if (s->kbd.context) xkb_context_unref(s->kbd.context);
-   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
-   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
-   wl_array_release(&s->kbd.keys);
+   seat_kbd_destroy(s);
    efl_unref(s->dev);
    s->c->seats = eina_inlist_remove(s->c->seats, EINA_INLIST_GET(s));
    eina_hash_free(s->data_devices);
@@ -4345,18 +4376,23 @@ comp_device_caps_update(Comp_Seat *s)
      }
    if (s->keyboard != kbd)
      {
-        if (s->keyboard)
-          {
-             seat_keymap_create(s);
-             seat_kbd_repeat_rate_update(s);
-          }
+        if (s->kbd.external)
+          seat_kbd_external_init(s);
         else
           {
-             xkb_keymap_unref(s->kbd.keymap);
-             s->kbd.keymap = NULL;
+             if (s->keyboard)
+               {
+                  seat_keymap_create(s);
+                  seat_kbd_repeat_rate_update(s);
+               }
+             else
+               {
+                  xkb_keymap_unref(s->kbd.keymap);
+                  s->kbd.keymap = NULL;
+               }
+             seat_keymap_update(s);
+             s->keyboard = !!s->kbd.state;
           }
-        seat_keymap_update(s);
-        s->keyboard = !!s->kbd.state;
      }
    seat_update_caps(s, NULL);
 }
@@ -4403,22 +4439,28 @@ comp_seats_proxy(Comp *c)
              s->touch = !!(caps & ECORE_WL2_SEAT_CAPABILITIES_TOUCH);
              if (s->keyboard)
                {
-                  if (s->seat)
-                    {
-                       s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
-                       if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
-                    }
+                  if (s->kbd.external)
+                    seat_kbd_external_init(s);
                   else
-                    seat_keymap_create(s);
-                  seat_kbd_repeat_rate_update(s);
-                  seat_keymap_update(s);
-                  s->keyboard = !!s->kbd.state;
+                    {
+                       if (s->seat)
+                         {
+                            s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
+                            if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
+                         }
+                       else
+                         seat_keymap_create(s);
+                       seat_kbd_repeat_rate_update(s);
+                       seat_keymap_update(s);
+                       s->keyboard = !!s->kbd.state;
+                    }
                }
 
           }
         else if (!c->parent_disp)
           comp_device_caps_update(s);
         s->global = wl_global_create(c->display, &wl_seat_interface, 4, s, seat_bind);
+        evas_object_smart_callback_call(s->c->obj, "seat_added", dev);
         if (ecore_wl2_display_sync_is_done(c->client_disp))
           seat_proxy_update(s);
      }
@@ -4508,18 +4550,23 @@ comp_seat_caps_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event_S
             s->pointer = ev->pointer_enabled;
             if (s->keyboard != ev->keyboard_enabled)
               {
-                 if (ev->keyboard_enabled)
-                   {
-                      s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
-                      if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
-                      seat_kbd_repeat_rate_update(s);
-                   }
+                 if (s->kbd.external)
+                   seat_kbd_external_init(s);
                  else
                    {
-                      xkb_keymap_unref(s->kbd.keymap);
-                      s->kbd.keymap = NULL;
+                      if (ev->keyboard_enabled)
+                        {
+                           s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
+                           if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
+                           seat_kbd_repeat_rate_update(s);
+                        }
+                      else
+                        {
+                           xkb_keymap_unref(s->kbd.keymap);
+                           s->kbd.keymap = NULL;
+                        }
+                      seat_keymap_update(s);
                    }
-                 seat_keymap_update(s);
               }
             s->keyboard = !!ev->keyboard_enabled && !!s->kbd.state;
             s->touch = ev->touch_enabled;
@@ -4569,6 +4616,7 @@ comp_seat_keymap_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event
          {
             struct xkb_keymap *keymap;
 
+            if (s->kbd.external) continue;
             if (ecore_wl2_input_seat_id_get(s->seat) != ev->id) continue;
 
             if (s->kbd.keymap) xkb_map_unref(s->kbd.keymap);
@@ -4585,6 +4633,21 @@ comp_seat_keymap_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+seat_kbd_repeat_rate_send(Comp_Seat *s)
+{
+   Eina_List *ll, *lll;
+   struct wl_resource *res;
+   Eina_Iterator *it;
+
+   it = eina_hash_iterator_data_new(s->kbd.resources);
+   EINA_ITERATOR_FOREACH(it, ll)
+     EINA_LIST_FOREACH(ll, lll, res)
+       if (wl_resource_get_version(res) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
+         wl_keyboard_send_repeat_info(res, s->kbd.repeat_rate, s->kbd.repeat_delay);
+   eina_iterator_free(it);
+}
+
 static Eina_Bool
 comp_seat_keyboard_repeat_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event_Seat_Keyboard_Repeat_Changed *ev)
 {
@@ -4596,36 +4659,23 @@ comp_seat_keyboard_repeat_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_
      if (c->parent_disp == ev->display)
        EINA_INLIST_FOREACH(c->seats, s)
          {
-            Eina_List *ll, *lll;
-            struct wl_resource *res;
-            Eina_Iterator *it;
-
             if (ecore_wl2_input_seat_id_get(s->seat) != ev->id) continue;
+            if (s->kbd.external) continue;
 
             seat_kbd_repeat_rate_update(s);
-            it = eina_hash_iterator_data_new(s->kbd.resources);
-            EINA_ITERATOR_FOREACH(it, ll)
-              EINA_LIST_FOREACH(ll, lll, res)
-                if (wl_resource_get_version(res) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
-                  wl_keyboard_send_repeat_info(res, s->kbd.repeat_rate, s->kbd.repeat_delay);
-            eina_iterator_free(it);
+            seat_kbd_repeat_rate_send(s);
          }
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-comp_seat_key_update(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int timestamp)
+comp_seat_key_send(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int timestamp, Eina_Bool mods)
 {
    Eina_List *l, *ll;
    struct wl_resource *res;
    uint32_t serial = wl_display_next_serial(s->c->display);
-   uint32_t xkb[] = { XKB_KEY_DOWN, XKB_KEY_UP };
    uint32_t wl[] = { WL_KEYBOARD_KEY_STATE_PRESSED, WL_KEYBOARD_KEY_STATE_RELEASED };
-   Eina_Bool mods = EINA_FALSE;
 
-   if (xkb_state_update_key(s->kbd.state, key + 8, xkb[dir]))
-     mods = seat_mods_update(s);
-   if (!s->focused) return;
    l = seat_kbd_active_resources_get(s);
 
    EINA_LIST_FOREACH(l, ll, res)
@@ -4633,6 +4683,18 @@ comp_seat_key_update(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int time
         wl_keyboard_send_key(res, serial, timestamp, key, wl[dir]);
         if (mods) comp_seat_send_modifiers(s, res, serial);
      }
+}
+
+static void
+comp_seat_key_update(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int timestamp)
+{
+   uint32_t xkb[] = { XKB_KEY_DOWN, XKB_KEY_UP };
+   Eina_Bool mods = EINA_FALSE;
+
+   if (s->kbd.external || xkb_state_update_key(s->kbd.state, key + 8, xkb[dir]))
+     mods = seat_kbd_mods_update(s);
+   if (s->focused)
+     comp_seat_key_send(s, key, dir, timestamp, mods);
 }
 
 static Eina_Bool
@@ -4648,17 +4710,25 @@ comp_key_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
    EINA_LIST_FOREACH(comps, l, c)
      EINA_INLIST_FOREACH(c->seats, s)
        {
-          uint32_t *end, *k;
-
           if (c->parent_disp && (dev != s->dev)) continue;
-          end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
 
-          for (k = s->kbd.keys.data; k < end; k++)
-            if (*k == keycode) return ECORE_CALLBACK_RENEW;
+          if (s->kbd.external)
+            {
+               /* only doing passthrough in external mode */
+               if (!s->focused) return ECORE_CALLBACK_RENEW;
+            }
+          else
+            {
+               uint32_t *end, *k;
 
-          s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data;
-          k = wl_array_add(&s->kbd.keys, sizeof(uint32_t));
-          *k = keycode;
+               end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
+               for (k = s->kbd.keys.data; k < end; k++)
+                 if (*k == keycode) return ECORE_CALLBACK_RENEW;
+
+               s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data;
+               k = wl_array_add(&s->kbd.keys, sizeof(uint32_t));
+               *k = keycode;
+            }
           comp_seat_key_update(s, keycode, 0, ev->timestamp);
        }
    return ECORE_CALLBACK_RENEW;
@@ -4677,19 +4747,27 @@ comp_key_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
    EINA_LIST_FOREACH(comps, l, c)
      EINA_INLIST_FOREACH(c->seats, s)
        {
-          uint32_t *end, *k;
-
           if (c->parent_disp && (dev != s->dev)) continue;
-          end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
 
-          for (k = s->kbd.keys.data; k < end; k++)
-            if (*k == keycode)
-              {
-                 *k = end[-1];
-                 s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data - 1;
-                 break;
-              }
+          if (s->kbd.external)
+            {
+               /* only doing passthrough in external mode */
+               if (!s->focused) return ECORE_CALLBACK_RENEW;
+            }
+          else
+            {
+               uint32_t *end, *k;
 
+               end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
+
+               for (k = s->kbd.keys.data; k < end; k++)
+                 if (*k == keycode)
+                   {
+                      *k = end[-1];
+                      s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data - 1;
+                      break;
+                   }
+            }
           comp_seat_key_update(s, keycode, 1, ev->timestamp);
        }
    return ECORE_CALLBACK_RENEW;
@@ -4939,8 +5017,27 @@ comp_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
         s->focused = 1;
         if (s->selection_changed)
           comp_seat_selection_update(s);
-        if (!s->kbd.keymap) continue;
-        if (!seat_mods_update(s)) continue;
+        if ((!s->kbd.keymap) && (!s->kbd.state)) continue;
+        if (s->kbd.external)
+          {
+             Eina_Bool mods = seat_kbd_mods_update(s);
+             if (!s->focused) return;
+             l = seat_kbd_active_resources_get(s);
+
+             EINA_LIST_FOREACH(l, ll, res)
+               {
+                  uint32_t *end, *k;
+                  serial = wl_display_next_serial(s->c->display);
+
+                  end = (uint32_t*)s->kbd.keys_external->data + (s->kbd.keys_external->size / sizeof(uint32_t));
+                  if (mods) comp_seat_send_modifiers(s, res, serial);
+
+                  for (k = s->kbd.keys_external->data; k < end; k++)
+                    comp_seat_key_send(s, *k, 0, 0, mods);
+               }
+             return;
+          }
+        if (!seat_kbd_mods_update(s)) continue;
         l = seat_kbd_active_resources_get(s);
         if (!l) continue;
         serial = wl_display_next_serial(s->c->display);
@@ -5737,4 +5834,52 @@ efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface)
         return cs->parent->obj;
      }
    return NULL;
+}
+
+void
+efl_wl_seat_keymap_set(Evas_Object *obj, Eo *seat, void *state, int fd, size_t size, void *key_array)
+{
+   Comp *c;
+   Comp_Seat *s;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   EINA_INLIST_FOREACH(c->seats, s)
+     {
+        if (!seat) efl_wl_seat_keymap_set(obj, s->dev, state, fd, size, key_array);
+        else if (s->dev == seat) break;
+     }
+   if (!seat) return;
+   EINA_SAFETY_ON_NULL_RETURN(s);
+   seat_kbd_destroy(s);
+   s->kbd.external = 1;
+   s->kbd.keys_external = key_array;
+   s->kbd.state = state;
+   s->kbd.keymap_fd = fd;
+   s->kbd.keymap_mem_size = size;
+   s->kbd.context = NULL;
+   s->kbd.keymap = NULL;
+   s->kbd.keymap_mem = NULL;
+   if (s->keyboard)
+     seat_kbd_external_init(s);
+}
+
+void
+efl_wl_seat_key_repeat_set(Evas_Object *obj, Eo *seat, int repeat_rate, int repeat_delay)
+{
+   Comp *c;
+   Comp_Seat *s;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   EINA_INLIST_FOREACH(c->seats, s)
+     {
+        if (!seat) efl_wl_seat_key_repeat_set(obj, s->dev, repeat_rate, repeat_delay);
+        else if (s->dev == seat) break;
+     }
+   if (!seat) return;
+   EINA_SAFETY_ON_NULL_RETURN(s);
+   s->kbd.repeat_rate = repeat_rate;
+   s->kbd.repeat_delay = repeat_delay;
+   seat_kbd_repeat_rate_send(s);
 }

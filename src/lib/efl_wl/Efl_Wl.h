@@ -160,6 +160,33 @@ EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
  * @since 1.21
  */
 EAPI Evas_Object *efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface);
+
+/**
+ * Set external xkbcommon resources to be used read-only by the compositor object
+ *
+ * Use this function if you have available the necessary xkbcommon objects which are used
+ * to handle keyboard states in a compositor. The passed objects will not be modified or copied,
+ * so this function must be called again in the case that the compositor widget outlives the
+ * lifetime of any of the passed pointers.
+ *
+ * @param obj The compositor widget
+ * @param seat The seat to set the keymap for, NULL to set the keymap for all seats
+ * @param keymap The xkb_keymap object to use
+ * @param state The xkb_state object to use
+ * @param fd The fd created from a mmapped xkb_keymap
+ * @param size The size of the xkb_keymap memory
+ * @param wl_key_array A pointer to the wl_array in which keys are stored
+ * @since 1.21
+ */
+EAPI void efl_wl_seat_keymap_set(Evas_Object *obj, Eo *seat, void *state, int fd, size_t size, void *wl_key_array);
+
+/**
+ * Set the key repeat rate for a seat in the compositor
+ *
+ * @param obj The compositor widget
+ * @since 1.21
+ */
+EAPI void efl_wl_seat_key_repeat_set(Evas_Object *obj, Eo *seat, int repeat_rate, int repeat_delay);
 #endif
 
 #endif
