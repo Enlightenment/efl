@@ -275,17 +275,16 @@ endif
 efl_ui_slider_mono_SOURCES = \
 	efl_ui_slider_mono.cs
 
-efl_ui_slider_mono(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+efl_ui_slider_mono$(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f efl_ui_slider_mono$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 efl_ui_unit_converter_SOURCES = \
 	efl_ui_unit_converter.cs
 
-efl_ui_unit_converter: $(efl_ui_unit_converter_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f efl_ui_unit_converter
+efl_ui_unit_converter$(EXEEXT): $(efl_ui_unit_converter_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f efl_ui_unit_converter$(EXEEXT)
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
 
 endif
 
@@ -453,13 +452,6 @@ $(NULL)
 endif
 
 if HAVE_CSHARP
-
-efl_ui_slider_mono_SOURCES = \
-	efl_ui_slider_mono.cs
-
-efl_ui_slider_mono$(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 examples_PROGRAMS += \
 	efl_ui_slider_mono \
