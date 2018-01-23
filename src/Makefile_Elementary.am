@@ -1462,6 +1462,15 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_spinner.c \
 	tests/elementary/elm_test_plug.c \
 	tests/elementary/elm_test_config.c \
+	tests/elementary/elm_test_focus_common.c \
+	tests/elementary/elm_test_focus_common.h \
+	tests/elementary/elm_test_focus.c \
+	tests/elementary/elm_test_focus_sub.c
+
+# elm_code test is currently having issues with dllimport/EAPI on Windows
+if !HAVE_WINDOWS
+
+tests_elementary_elm_suite_SOURCES += \
 	tests/elementary/elm_code_file_test_load.c \
 	tests/elementary/elm_code_file_test_memory.c \
 	tests/elementary/elm_code_test_basic.c \
@@ -1473,11 +1482,8 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_widget.c \
 	tests/elementary/elm_code_test_widget_text.c \
 	tests/elementary/elm_code_test_widget_selection.c \
-	tests/elementary/elm_code_test_widget_undo.c \
-	tests/elementary/elm_test_focus_common.c \
-	tests/elementary/elm_test_focus_common.h \
-	tests/elementary/elm_test_focus.c \
-	tests/elementary/elm_test_focus_sub.c
+	tests/elementary/elm_code_test_widget_undo.c
+endif
 
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \

@@ -72,6 +72,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_slideshow", elm_test_slideshow},
   { "elm_spinner", elm_test_spinner},
   { "elm_plug", elm_test_plug},
+#ifndef ELM_WIN32 // dllimport/EAPI issues
   { "elm_code_file_load", elm_code_file_test_load },
   { "elm_code_file_memory", elm_code_file_test_memory },
   { "elm_code_parse", elm_code_test_parse },
@@ -83,6 +84,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_code_widget_text", elm_code_test_widget_text },
   { "elm_code_widget_selection", elm_code_test_widget_selection },
   { "elm_code_widget_undo", elm_code_test_widget_undo },
+#endif
   { "elm_focus", elm_test_focus},
   { "elm_focus_sub", elm_test_focus_sub},
   { NULL, NULL }
