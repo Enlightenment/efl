@@ -692,11 +692,16 @@ _object_del_cb(void *data, const Efl_Event *event)
    efl_ui_focus_manager_calc_unregister(data, event->object);
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
+EFL_CALLBACKS_ARRAY_DEFINE(regular_node,
     {EFL_GFX_EVENT_RESIZE, _node_new_geometry_cb},
     {EFL_GFX_EVENT_MOVE, _node_new_geometry_cb},
     {EFL_EVENT_DEL, _object_del_cb},
 );
+
+EFL_CALLBACKS_ARRAY_DEFINE(logical_node,
+    {EFL_EVENT_DEL, _object_del_cb},
+);
+
 
 //=============================
 
@@ -743,6 +748,9 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    node = _register(obj, pd, child, pnode);
    if (!node) return EINA_FALSE;
 
+   //listen to deletion
+   efl_event_callback_array_add(child, logical_node(), obj);
+
    node->type = NODE_TYPE_ONLY_LOGICAL;
    node->redirect_manager = redirect;
 
@@ -780,7 +788,7 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
    if (!node) return EINA_FALSE;
 
    //listen to changes
-   efl_event_callback_array_add(child, focusable_node(), obj);
+   efl_event_callback_array_add(child, regular_node(), obj);
 
    node->type = NODE_TYPE_NORMAL;
    node->redirect_manager = redirect;
@@ -1080,7 +1088,10 @@ _free_node(void *data)
    Node *node = data;
    FOCUS_DATA(node->manager);
 
-   efl_event_callback_array_del(node->focusable, focusable_node(), node->manager);
+   if (node->type == NODE_TYPE_ONLY_LOGICAL)
+     efl_event_callback_array_del(node->focusable, logical_node(), node->manager);
+   else
+     efl_event_callback_array_del(node->focusable, regular_node(), node->manager);
 
    if (pd->root != data)
      {
