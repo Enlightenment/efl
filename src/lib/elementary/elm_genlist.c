@@ -8772,6 +8772,15 @@ _elm_genlist_efl_ui_focus_composition_prepare(Eo *obj, Elm_Genlist_Data *pd)
      }
 
    efl_ui_focus_composition_elements_set(obj, order);
+
+   EINA_INLIST_FOREACH(pd->items, item)
+     {
+        if (item->base->disabled)
+          continue;
+        
+        efl_ui_focus_object_prepare_logical(item->base->eo_obj);
+     }
+
 }
 
 EOLIAN static void 
