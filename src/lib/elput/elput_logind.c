@@ -523,7 +523,7 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
         goto seat_err;
      }
 
-   if (!strcmp(seat, "seat0"))
+   if ((seat) && (!strcmp(seat, "seat0")))
      {
         if (!_logind_session_vt_get(em->sid, &em->vt_num))
           {
