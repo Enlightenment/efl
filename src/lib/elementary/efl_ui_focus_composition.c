@@ -30,16 +30,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    else
      manager = pd->registered;
 
-   if (!pd->registered && pd->registered_targets)
-     {
-        Efl_Ui_Focus_Object *o;
-        //remove all of them
-        EINA_LIST_FREE(pd->registered_targets, o)
-          {
-             efl_ui_focus_manager_calc_unregister(manager, o);
-          }
-     }
-   else if (pd->registered)
+   if (manager)
      {
         Eina_List *n;
         Eina_List *safed = NULL;
