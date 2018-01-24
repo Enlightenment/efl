@@ -1494,13 +1494,8 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
    if (state->set_opaque && (!eina_tiler_equal(cs->opaque, state->opaque)))
      {
         array_clear(&cs->opaque_rects);
-        if (eina_tiler_empty(state->opaque))
-          {
-             evas_object_image_border_set(cs->img, 0, 0, 0, 0);
-             EINA_LIST_FOREACH(cs->proxies, l, o)
-               evas_object_image_border_set(o, 0, 0, 0, 0);
-          }
-        else /* FIXME: proxied opaque regions */
+        if (!eina_tiler_empty(state->opaque))
+          /* FIXME: proxied opaque regions */
           {
              Eina_Iterator *it;
              Eina_Rectangle *rect;
@@ -4152,6 +4147,21 @@ comp_render_pre(Comp *c, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
         //if (cs->proxies) fprintf(stderr, "RENDER %d\n", wl_resource_get_id(buffer->res));
         cs->post_render_queue = 1;
 
+        if (cs->opaque_rects && (eina_array_count(cs->opaque_rects) == 1))
+          {
+             Evas_Object *r = eina_array_data_get(cs->opaque_rects, 0);
+             int x, y, w, h, ox, oy, ow, oh;
+
+             evas_object_geometry_get(cs->img, &x, &y, &w, &h);
+             evas_object_geometry_get(r, &ox, &oy, &ow, &oh);
+             evas_object_image_border_set(cs->img, ox - x, ox + ow, oy - y, oy + oh);
+             evas_object_image_border_center_fill_set(cs->img, EVAS_BORDER_FILL_SOLID);
+          }
+        else
+          {
+             evas_object_image_border_set(cs->img, 0, 0, 0, 0);
+             evas_object_image_border_center_fill_set(cs->img, EVAS_BORDER_FILL_DEFAULT);
+          }
         evas_object_image_alpha_set(cs->img, comp_surface_is_alpha(cs, buffer));
         evas_object_resize(cs->img, buffer->w, buffer->h);
         evas_object_image_size_set(cs->img, buffer->w, buffer->h);
