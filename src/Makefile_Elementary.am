@@ -285,6 +285,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code.h \
 	lib/elementary/elm_code_widget_legacy.h \
 	lib/elementary/elm_code_widget_selection.h \
+	lib/elementary/elm_code_widget_legacy.eo.h \
 	lib/elementary/elm_code_diff_widget.h \
 	lib/elementary/elm_code_common.h \
 	lib/elementary/elm_code_line.h \
