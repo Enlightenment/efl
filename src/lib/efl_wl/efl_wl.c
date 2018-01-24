@@ -1107,11 +1107,13 @@ comp_seats_redo_enter(Comp *c, Comp_Surface *cs)
      {
         Eina_List *l, *ll;
         struct wl_resource *res;
-        if (c->active_surface && (cs != c->active_surface))
+        Eina_Bool same = s->kbd.enter == cs;
+
+        if (c->active_surface && (!same))
           {
              l = seat_kbd_active_resources_get(s);
              EINA_LIST_FOREACH(l, ll, res)
-               wl_keyboard_send_leave(res, serial, c->active_surface->res);
+               wl_keyboard_send_leave(res, serial, s->kbd.enter->res);
           }
         s->active_client = client;
         if (cs)
@@ -1119,12 +1121,13 @@ comp_seats_redo_enter(Comp *c, Comp_Surface *cs)
              l = seat_kbd_active_resources_get(s);
              EINA_LIST_FOREACH(l, ll, res)
                {
-                  wl_keyboard_send_enter(res, serial, cs->res, &s->kbd.keys);
+                  if (!same)
+                    wl_keyboard_send_enter(res, serial, cs->res, &s->kbd.keys);
                   comp_seat_send_modifiers(s, res, serial);
                }
           }
         s->kbd.enter = cs;
-        if (s->kbd.enter && s->selection_source)
+        if (s->kbd.enter && s->selection_source && (!same))
           comp_seat_kbd_data_device_enter(s);
      }
    c->active_surface = cs;
