@@ -3710,26 +3710,32 @@ seat_keymap_update(Comp_Seat *s)
    Eina_Tmpstr *file;
    xkb_mod_mask_t latched = 0, locked = 0;
 
-   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
-   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
-
-   if (s->kbd.state)
+#ifdef HAVE_ECORE_X
+   if (!x11_kbd_keymap)
      {
-        latched = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
-        locked = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
-        xkb_state_unref(s->kbd.state);
-     }
-   if (!s->kbd.keymap)
-     {
-        s->kbd.state = NULL;
-        s->kbd.keymap_fd = -1;
-        s->kbd.keymap_mem = NULL;
-        return;
-     }
+#endif
+        if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
+        if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
 
-   s->kbd.state = xkb_state_new(s->kbd.keymap);
-   xkb_state_update_mask(s->kbd.state, 0, latched, locked, 0, 0, 0);
+        if (s->kbd.state)
+          {
+             latched = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
+             locked = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
+             xkb_state_unref(s->kbd.state);
+          }
+        if (!s->kbd.keymap)
+          {
+             s->kbd.state = NULL;
+             s->kbd.keymap_fd = -1;
+             s->kbd.keymap_mem = NULL;
+             return;
+          }
 
+        s->kbd.state = xkb_state_new(s->kbd.keymap);
+        xkb_state_update_mask(s->kbd.state, 0, latched, locked, 0, 0, 0);
+#ifdef HAVE_ECORE_X
+     }
+#endif
    str = xkb_map_get_as_string(s->kbd.keymap);
    s->kbd.keymap_mem_size = strlen(str) + 1;
    s->kbd.keymap_fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
@@ -4395,6 +4401,11 @@ comp_device_caps_update(Comp_Seat *s)
           {
              if (s->keyboard)
                {
+#ifdef HAVE_ECORE_X
+                  if ((!s->c->parent_disp) && ecore_x_display_get())
+                    x11_kbd_apply(s);
+                  else
+#endif
                   seat_keymap_create(s);
                   seat_kbd_repeat_rate_update(s);
                }
@@ -4462,9 +4473,16 @@ comp_seats_proxy(Comp *c)
                             if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
                          }
                        else
-                         seat_keymap_create(s);
-                       seat_kbd_repeat_rate_update(s);
+                         {
+#ifdef HAVE_ECORE_X
+                            if ((!s->c->parent_disp) && ecore_x_display_get())
+                              x11_kbd_apply(s);
+                            else
+#endif
+                            seat_keymap_create(s);
+                         }
                        seat_keymap_update(s);
+                       seat_kbd_repeat_rate_update(s);
                        s->keyboard = !!s->kbd.state;
                     }
                }
@@ -5339,6 +5357,7 @@ comp_smart_add(Evas_Object *obj)
 #ifdef HAVE_ECORE_X
         if (ecore_x_display_get())
           {
+             ecore_x_xkb_track_state();
              // if proxiedallowed
              ecore_x_dnd_aware_set(ecore_evas_window_get(ecore_evas_ecore_evas_get(c->evas)), EINA_TRUE);
              if (!comps) x11_init();

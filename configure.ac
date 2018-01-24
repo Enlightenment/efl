@@ -3807,6 +3807,7 @@ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EFL_WL], [${want_x11_any}], [ecore_x])
 
 EFL_DEPEND_PKG([EFL_WL], [WAYLAND],
                [wayland-server >= 1.11.0 xkbcommon >= 0.6.0])
+EFL_OPTIONAL_DEPEND_PKG([EFL_WL], [${want_x11_any}], [XKBCOMMONX11], [xkbcommon-x11])
 
 EFL_EVAL_PKGS([EFL_WL])
 

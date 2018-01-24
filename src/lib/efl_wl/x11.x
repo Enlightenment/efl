@@ -1,3 +1,5 @@
+#include "xkbcommon/xkbcommon-x11.h"
+
 #define WL_TEXT_STR "text/plain;charset=utf-8"
 #define INCR_CHUNK_SIZE 1 << 17
 
@@ -562,6 +564,99 @@ x11_dnd_move(void *data, Ecore_X_Xdnd_Position *pos)
    evas_object_move(data, pos->position.x, pos->position.y);
 }
 
+static int32_t x11_core_device = -1;
+static struct xkb_context *x11_kbd_context;
+static struct xkb_keymap *x11_kbd_keymap;
+static struct xkb_state *x11_kbd_state;
+
+static Eina_Bool seat_kbd_mods_update(Comp_Seat *s);
+static void comp_seat_send_modifiers(Comp_Seat *s, struct wl_resource *res, uint32_t serial);
+
+static Eina_Bool
+x11_xkb_state(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Xkb *ev)
+{
+   Comp *c;
+   Eina_List *l;
+   Comp_Seat *s;
+
+   if (!xkb_state_update_mask(x11_kbd_state,
+			      get_xkb_mod_mask(ev->base_mods),
+			      get_xkb_mod_mask(ev->latched_mods),
+			      get_xkb_mod_mask(ev->locked_mods),
+			      0,
+			      0,
+			      ev->group)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(comps, l, c)
+     EINA_INLIST_FOREACH(c->seats, s)
+       {
+          Eina_List *ll, *lll;
+          uint32_t serial;
+          struct wl_resource *res;
+
+          seat_kbd_mods_update(s);
+          ll = seat_kbd_active_resources_get(s);
+          if (!ll) continue;
+          serial = wl_display_next_serial(s->c->display);
+          EINA_LIST_FOREACH(ll, lll, res)
+            comp_seat_send_modifiers(s, res, serial);
+       }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+x11_kbd_destroy(void)
+{
+   if (x11_kbd_state) xkb_state_unref(x11_kbd_state);
+   x11_kbd_state = NULL;
+   if (x11_kbd_keymap) xkb_keymap_unref(x11_kbd_keymap);
+   x11_kbd_keymap = NULL;
+   if (x11_kbd_context) xkb_context_unref(x11_kbd_context);
+   x11_kbd_context = NULL;
+}
+
+static void
+x11_kbd_create(void)
+{
+   Ecore_X_Connection *conn = ecore_x_connection_get();
+
+   x11_kbd_destroy();
+
+   x11_kbd_context = xkb_context_new(0);
+   x11_core_device = xkb_x11_get_core_keyboard_device_id(conn);
+   x11_kbd_keymap = xkb_x11_keymap_new_from_device(x11_kbd_context, conn, x11_core_device, 0);
+   x11_kbd_state = xkb_x11_state_new_from_device(x11_kbd_keymap, conn, x11_core_device);
+   keymap_mods_init(x11_kbd_keymap);
+}
+
+static void
+x11_kbd_apply(Comp_Seat *s)
+{
+   if (!x11_kbd_state) x11_kbd_create();
+   s->kbd.context = x11_kbd_context;
+   s->kbd.keymap = x11_kbd_keymap;
+   s->kbd.state = x11_kbd_state;
+}
+
+static void seat_keymap_update(Comp_Seat *s);
+
+static Eina_Bool
+x11_xkb_refresh()
+{
+   Eina_List *l;
+   Comp *c;
+   Comp_Seat *s;
+
+   x11_kbd_create();
+   EINA_LIST_FOREACH(comps, l, c)
+     EINA_INLIST_FOREACH(c->seats, s)
+       {
+          if (!s->keyboard) continue;
+          x11_kbd_apply(s);
+          seat_keymap_update(s);
+       }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 x11_init(void)
 {
@@ -589,18 +684,29 @@ x11_init(void)
    handlers = eina_list_append(handlers, h);
    h = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, (Ecore_Event_Handler_Cb)x11_dnd_mouse_up, NULL);
    handlers = eina_list_append(handlers, h);
-   xconvertselection = dlsym(NULL, "XConvertSelection");
-   string_atom = ecore_x_atom_get("UTF8_STRING");
-   timestamp_atom = ecore_x_atom_get("TIMESTAMP");
-   int_atom = ecore_x_atom_get("INTEGER");
-   incr_atom = ecore_x_atom_get("TIMESTAMP");
-   comp_dnd_atom = ecore_x_atom_get("SIRCMPWIDG_ATOM");
+   h = ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, (Ecore_Event_Handler_Cb)x11_xkb_state, NULL);
+   handlers = eina_list_append(handlers, h);
+   h = ecore_event_handler_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, (Ecore_Event_Handler_Cb)x11_xkb_refresh, NULL);
+   handlers = eina_list_append(handlers, h);
+   if (!xconvertselection)
+     {
+        xconvertselection = dlsym(NULL, "XConvertSelection");
+        string_atom = ecore_x_atom_get("UTF8_STRING");
+        timestamp_atom = ecore_x_atom_get("TIMESTAMP");
+        int_atom = ecore_x_atom_get("INTEGER");
+        incr_atom = ecore_x_atom_get("TIMESTAMP");
+        comp_dnd_atom = ecore_x_atom_get("SIRCMPWIDG_ATOM");
+        ecore_x_xkb_track_state();
+     }
+
    pipes = eina_hash_int32_new((Eina_Free_Cb)_pipe_free);
 }
 
 static void
 x11_shutdown(void)
 {
+   x11_core_device = -1;
+   x11_kbd_destroy();
    eina_hash_free(pipes);
    pipes = NULL;
 }
