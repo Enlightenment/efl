@@ -19,7 +19,6 @@
 #define MY_CLASS_PFX efl_ui_panes
 
 #define MY_CLASS_NAME "Efl.Ui.Panes"
-#define MY_CLASS_NAME_LEGACY "elm_panes"
 /**
  * TODO
  * Update the minimun height of the bar in the theme.
@@ -465,7 +464,6 @@ EOLIAN static Eo *
 _efl_ui_panes_efl_object_constructor(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_SPLIT_PANE);
 
@@ -548,12 +546,6 @@ EOLIAN static Eina_Bool
 _efl_ui_panes_fixed_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
    return sd->fixed;
-}
-
-static void
-_efl_ui_panes_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 /* Efl.Part begin */
@@ -660,13 +652,30 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
-/* Legacy APIs */
+#include "efl_ui_panes.eo.c"
+
+#include "efl_ui_panes_legacy.eo.h"
+#define MY_CLASS_NAME_LEGACY "elm_panes"
+
+static void
+_efl_ui_panes_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_panes_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_PANES_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
 
 EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
+   return elm_legacy_add(EFL_UI_PANES_LEGACY_CLASS, parent);
 }
 
 EAPI void
@@ -826,6 +835,4 @@ elm_panes_content_right_unset(Evas_Object *obj)
    return elm_layout_content_unset(obj, "right");
 }
 
-/* Legacy APIs end  */
-
-#include "efl_ui_panes.eo.c"
+#include "efl_ui_panes_legacy.eo.c"

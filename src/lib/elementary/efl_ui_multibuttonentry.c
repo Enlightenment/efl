@@ -18,7 +18,6 @@
 #define MY_CLASS_PFX efl_ui_multibuttonentry
 
 #define MY_CLASS_NAME "Efl.Ui.Multibuttonentry"
-#define MY_CLASS_NAME_LEGACY "elm_multibuttonentry"
 
 #define MAX_STR     256
 #define MIN_W_ENTRY 10
@@ -1636,13 +1635,6 @@ _efl_ui_multibuttonentry_efl_ui_widget_on_access_update(Eo *obj, Efl_Ui_Multibut
    _access_obj_process(obj, _efl_ui_multibuttonentry_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
-elm_multibuttonentry_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 static void
 _legacy_focused(void *data, const Efl_Event *ev)
 {
@@ -1684,7 +1676,6 @@ EOLIAN static Eo *
 _efl_ui_multibuttonentry_efl_object_constructor(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
@@ -1977,10 +1968,8 @@ _efl_ui_multibuttonentry_efl_ui_format_format_cb_set(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 static void
-_efl_ui_multibuttonentry_class_constructor(Efl_Class *klass)
+_efl_ui_multibuttonentry_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      _efl_ui_multibuttonentry_smart_focus_next_enable = EINA_TRUE;
 }
@@ -2082,6 +2071,30 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl
 #include "elm_multibuttonentry_item.eo.c"
 #include "efl_ui_multibuttonentry.eo.c"
 
+#include "efl_ui_multibuttonentry_legacy.eo.h"
+#define MY_CLASS_NAME_LEGACY "elm_multibuttonentry"
+
+static void
+_efl_ui_multibuttonentry_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_multibuttonentry_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_MULTIBUTTONENTRY_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_multibuttonentry_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_MULTIBUTTONENTRY_LEGACY_CLASS, parent);
+}
+
 /* Legacy APIs */
 
 typedef struct
@@ -2128,3 +2141,5 @@ elm_multibuttonentry_format_function_set(Eo *obj, Efl_Ui_Multibuttonentry_Format
 
    efl_ui_format_cb_set(obj, mfwd, _format_legacy_to_format_eo_cb, _format_legacy_to_format_eo_free_cb);
 }
+
+#include "efl_ui_multibuttonentry_legacy.eo.c"

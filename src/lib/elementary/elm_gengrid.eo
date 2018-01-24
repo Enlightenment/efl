@@ -12,7 +12,7 @@ enum Elm.Gengrid.Reorder_Type
 
 class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Efl.Access.Widget.Action,
-                   Efl.Access.Selection)
+                   Efl.Access.Selection, Efl.Ui.Legacy)
 {
    [[Elementary gengrid class]]
    legacy_prefix: elm_gengrid;

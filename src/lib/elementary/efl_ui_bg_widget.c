@@ -13,20 +13,12 @@
 #define MY_CLASS_PFX efl_ui_bg_widget
 
 #define MY_CLASS_NAME "Efl.Ui.Bg_Widget"
-#define MY_CLASS_NAME_LEGACY "elm_bg"
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"overlay", "elm.swallow.content"},
    {NULL, NULL}
 };
-
-EAPI Evas_Object *
-elm_bg_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
 
 EOLIAN static Eo *
 _efl_ui_bg_widget_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Widget_Data *pd)
@@ -54,7 +46,6 @@ _efl_ui_bg_widget_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Widget_Data *pd)
                      efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
                      efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
 
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
@@ -191,12 +182,6 @@ _efl_ui_bg_widget_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Wi
    return efl_image_load_size_get(sd->img);
 }
 
-static void
-_efl_ui_bg_widget_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 EAPI Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
@@ -242,3 +227,32 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_bg_widget.eo.c"
+
+
+#include "efl_ui_bg_widget_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_bg"
+
+static void
+_efl_ui_bg_widget_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_bg_widget_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_BG_WIDGET_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_bg_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_BG_WIDGET_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_bg_widget_legacy.eo.c"

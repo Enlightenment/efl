@@ -13,7 +13,6 @@
 #define MY_CLASS EFL_UI_CLOCK_CLASS
 
 #define MY_CLASS_NAME "Efl.Ui.Clock"
-#define MY_CLASS_NAME_LEGACY "efl_ui_clock"
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
@@ -918,7 +917,6 @@ EOLIAN static Eo *
 _efl_ui_clock_efl_object_constructor(Eo *obj, Efl_Ui_Clock_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
 
@@ -1123,12 +1121,6 @@ _efl_ui_clock_time_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time maxtime)
 
    if (!_date_cmp(&old_time, &sd->curr_time))
      efl_event_callback_legacy_call(obj, EFL_UI_CLOCK_EVENT_CHANGED, NULL);
-}
-
-EOLIAN static void
-_efl_ui_clock_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 /* Internal EO APIs and hidden overrides */

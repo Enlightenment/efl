@@ -1,4 +1,5 @@
-class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Access.Widget.Action)
+class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Access.Widget.Action,
+                        Efl.Ui.Legacy)
 {
    [[Elementary context popup item class]]
    legacy_prefix: elm_ctxpopup_item;

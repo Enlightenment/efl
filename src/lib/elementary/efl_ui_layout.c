@@ -17,7 +17,6 @@
 #define MY_CLASS_PFX efl_ui_layout
 
 #define MY_CLASS_NAME "Efl.Ui.Layout"
-#define MY_CLASS_NAME_LEGACY "elm_layout"
 
 Eo *_efl_ui_layout_pack_proxy_get(Efl_Ui_Layout *obj, Edje_Part_Type type, const char *part);
 static void _efl_model_properties_changed_cb(void *, const Efl_Event *);
@@ -802,9 +801,8 @@ EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
    Eina_Bool changed = EINA_FALSE;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   if (!wd->legacy && efl_finalized_get(obj))
+   if (!elm_widget_is_legacy(obj) && efl_finalized_get(obj))
      {
         ERR("Efl.Ui.Layout.theme can only be set before finalize!");
         return EFL_UI_THEME_APPLY_FAILED;
@@ -1153,7 +1151,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
 
    if (!text) return EINA_TRUE;
 
-   if (wd->legacy)
+   if (elm_widget_is_legacy(obj))
      {
         if (!edje_object_part_text_escaped_set
          (wd->resize_obj, part, text))
@@ -2088,28 +2086,15 @@ _efl_ui_layout_efl_ui_model_factory_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_
    elm_layout_content_set(obj, name, new_ev);
 }
 
-EAPI Evas_Object *
-elm_layout_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_layout_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    sd->obj = obj;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
-}
-
-EOLIAN static void _efl_ui_layout_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 EOLIAN static Efl_Object*
@@ -2137,8 +2122,264 @@ _efl_ui_layout_efl_layout_signal_signal_process(Eo *obj, Efl_Ui_Layout_Data *pd 
    efl_layout_signal_process(wd->resize_obj, recurse);
 }
 
+/* Efl.Part implementation */
 
-/* Legacy APIs */
+EOLIAN static Eo *
+_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
+{
+   Efl_Canvas_Layout_Part_Type type = EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
+
+   // Check part type without using edje_object_part_object_get(), as this
+   // can cause recalc, which has side effects... and could be slow.
+
+   if (eina_streq(part, "background"))
+     {
+        if (efl_layout_group_part_exist_get(wd->resize_obj, part))
+          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
+        if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+          {
+             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
+                 type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+               {
+                  const char *file = NULL, *key = NULL;
+                  efl_file_get(wd->resize_obj, &file, &key);
+                  WRN("Layout has a background but it's not a swallow: '%s'",
+                      elm_widget_theme_element_get(obj));
+               }
+             return efl_part(efl_super(obj, MY_CLASS), part);
+          }
+
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
+     }
+   else if (eina_streq(part, "shadow"))
+     return efl_part(efl_super(obj, MY_CLASS), part);
+
+   if (!efl_layout_group_part_exist_get(wd->resize_obj, part))
+     {
+        // edje part will handle the error message
+        return efl_part(wd->resize_obj, part);
+     }
+
+   type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
+   if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
+     {
+        ERR("Invalid type found for part '%s' in group '%s'",
+            part, elm_widget_theme_element_get(obj));
+        return NULL;
+     }
+
+   switch (type)
+     {
+      case EFL_CANVAS_LAYOUT_PART_TYPE_BOX:
+      case EFL_CANVAS_LAYOUT_PART_TYPE_TABLE:
+        return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
+      case EFL_CANVAS_LAYOUT_PART_TYPE_TEXT:
+      case EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK:
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, part);
+      case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
+      default:
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);
+     }
+}
+
+static const char *
+_efl_ui_layout_default_content_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   const char *part = NULL;
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
+     return NULL;
+   return part;
+}
+
+static const char *
+_efl_ui_layout_default_text_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   const char *part = NULL;
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return NULL;
+   return part;
+}
+
+/* Efl.Ui.Layout.Part (common) */
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_efl_ui_cursor_cursor_set(Eo *obj, void *_pd EINA_UNUSED, const char *cursor)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_layout_part_cursor_set(sd, pd->part, cursor);
+}
+
+EOLIAN static const char *
+_efl_ui_layout_part_efl_ui_cursor_cursor_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_layout_part_cursor_get(sd, pd->part);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_efl_ui_cursor_cursor_style_set(Eo *obj, void *_pd EINA_UNUSED, const char *style)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_layout_part_cursor_style_set(sd, pd->part, style);
+}
+
+EOLIAN static const char *
+_efl_ui_layout_part_efl_ui_cursor_cursor_style_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_layout_part_cursor_style_get(sd, pd->part);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool allow)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_layout_part_cursor_engine_only_set(sd, pd->part, !allow);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return !_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part);
+}
+
+/* Efl.Ui.Layout.Part_Content */
+ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+
+/* Efl.Ui.Layout.Part_Text */
+ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+
+EOLIAN static const char *
+_efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
+}
+
+EOLIAN static void
+_efl_ui_layout_part_text_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
+}
+
+/* Efl.Ui.Layout.Part_Legacy */
+ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+
+EOLIAN static const char *
+_efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
+}
+
+EOLIAN static void
+_efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
+}
+
+/* Efl.Ui.Layout.Part_Bg (common) */
+
+EOLIAN static Efl_Object *
+_efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Layout_Data *sd;
+   Elm_Part_Data *pd;
+   Eo *bg;
+
+   obj = efl_finalize(efl_super(obj, EFL_UI_LAYOUT_PART_BG_CLASS));
+   if (!obj) return NULL;
+
+   pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   bg = _efl_ui_widget_bg_get(pd->obj);
+   if (!_efl_ui_layout_content_set(pd->obj, sd, "background", bg))
+     {
+        ERR("Failed to swallow new background object!");
+        // Shouldn't happen. What now? del bg? call super? return null?
+     }
+
+   return obj;
+}
+
+/* Efl.Ui.Layout.Part_Xxx includes */
+#include "efl_ui_layout_part.eo.c"
+#include "efl_ui_layout_part_content.eo.c"
+#include "efl_ui_layout_part_bg.eo.c"
+#include "efl_ui_layout_part_text.eo.c"
+#include "efl_ui_layout_part_legacy.eo.c"
+
+/* Efl.Part end */
+
+
+/* Internal EO APIs and hidden overrides */
+
+EAPI EFL_VOID_FUNC_BODY(elm_layout_sizing_eval)
+EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
+EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
+
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+
+#define EFL_UI_LAYOUT_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_layout), \
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_layout), \
+   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _elm_layout_sizing_eval), \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_efl_object_dbg_info_get)
+
+#include "efl_ui_layout.eo.c"
+
+#include "efl_ui_layout_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_layout"
+
+static void
+_efl_ui_layout_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_layout_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_LAYOUT_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_layout_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_LAYOUT_LEGACY_CLASS, parent);
+}
 
 EAPI Eina_Bool
 elm_layout_file_set(Eo *obj, const char *file, const char *group)
@@ -2425,239 +2666,4 @@ elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, con
    return (ta != EFL_UI_THEME_APPLY_FAILED);
 }
 
-/* End of legacy only */
-
-
-/* Efl.Part implementation */
-
-EOLIAN static Eo *
-_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
-{
-   Efl_Canvas_Layout_Part_Type type = EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-   ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
-
-   // Check part type without using edje_object_part_object_get(), as this
-   // can cause recalc, which has side effects... and could be slow.
-
-   if (eina_streq(part, "background"))
-     {
-        if (efl_layout_group_part_exist_get(wd->resize_obj, part))
-          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
-        if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
-          {
-             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
-                 type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
-               {
-                  const char *file = NULL, *key = NULL;
-                  efl_file_get(wd->resize_obj, &file, &key);
-                  WRN("Layout has a background but it's not a swallow: '%s'",
-                      elm_widget_theme_element_get(obj));
-               }
-             return efl_part(efl_super(obj, MY_CLASS), part);
-          }
-
-        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
-     }
-   else if (eina_streq(part, "shadow"))
-     return efl_part(efl_super(obj, MY_CLASS), part);
-
-   if (!efl_layout_group_part_exist_get(wd->resize_obj, part))
-     {
-        // edje part will handle the error message
-        return efl_part(wd->resize_obj, part);
-     }
-
-   type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
-   if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
-     {
-        ERR("Invalid type found for part '%s' in group '%s'",
-            part, elm_widget_theme_element_get(obj));
-        return NULL;
-     }
-
-   switch (type)
-     {
-      case EFL_CANVAS_LAYOUT_PART_TYPE_BOX:
-      case EFL_CANVAS_LAYOUT_PART_TYPE_TABLE:
-        return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
-      case EFL_CANVAS_LAYOUT_PART_TYPE_TEXT:
-      case EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK:
-        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, part);
-      case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
-        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
-      default:
-        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);
-     }
-}
-
-static const char *
-_efl_ui_layout_default_content_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
-{
-   const char *part = NULL;
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
-     return NULL;
-   return part;
-}
-
-static const char *
-_efl_ui_layout_default_text_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
-{
-   const char *part = NULL;
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
-     return NULL;
-   return part;
-}
-
-/* Efl.Ui.Layout.Part (common) */
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_efl_ui_cursor_cursor_set(Eo *obj, void *_pd EINA_UNUSED, const char *cursor)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   return _efl_ui_layout_part_cursor_set(sd, pd->part, cursor);
-}
-
-EOLIAN static const char *
-_efl_ui_layout_part_efl_ui_cursor_cursor_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   return _efl_ui_layout_part_cursor_get(sd, pd->part);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_efl_ui_cursor_cursor_style_set(Eo *obj, void *_pd EINA_UNUSED, const char *style)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   return _efl_ui_layout_part_cursor_style_set(sd, pd->part, style);
-}
-
-EOLIAN static const char *
-_efl_ui_layout_part_efl_ui_cursor_cursor_style_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   return _efl_ui_layout_part_cursor_style_get(sd, pd->part);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool allow)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   return _efl_ui_layout_part_cursor_engine_only_set(sd, pd->part, !allow);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   return !_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part);
-}
-
-/* Efl.Ui.Layout.Part_Content */
-ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-
-/* Efl.Ui.Layout.Part_Text */
-ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-
-EOLIAN static const char *
-_efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
-}
-
-EOLIAN static void
-_efl_ui_layout_part_text_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
-}
-
-/* Efl.Ui.Layout.Part_Legacy */
-ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-
-EOLIAN static const char *
-_efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
-}
-
-EOLIAN static void
-_efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
-}
-
-/* Efl.Ui.Layout.Part_Bg (common) */
-
-EOLIAN static Efl_Object *
-_efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
-{
-   Efl_Ui_Layout_Data *sd;
-   Elm_Part_Data *pd;
-   Eo *bg;
-
-   obj = efl_finalize(efl_super(obj, EFL_UI_LAYOUT_PART_BG_CLASS));
-   if (!obj) return NULL;
-
-   pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   bg = _efl_ui_widget_bg_get(pd->obj);
-   if (!_efl_ui_layout_content_set(pd->obj, sd, "background", bg))
-     {
-        ERR("Failed to swallow new background object!");
-        // Shouldn't happen. What now? del bg? call super? return null?
-     }
-
-   return obj;
-}
-
-/* Efl.Ui.Layout.Part_Xxx includes */
-#include "efl_ui_layout_part.eo.c"
-#include "efl_ui_layout_part_content.eo.c"
-#include "efl_ui_layout_part_bg.eo.c"
-#include "efl_ui_layout_part_text.eo.c"
-#include "efl_ui_layout_part_legacy.eo.c"
-
-/* Efl.Part end */
-
-
-/* Internal EO APIs and hidden overrides */
-
-EAPI EFL_VOID_FUNC_BODY(elm_layout_sizing_eval)
-EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
-EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
-
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-
-#define EFL_UI_LAYOUT_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_layout), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_layout), \
-   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
-   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _elm_layout_sizing_eval), \
-   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_efl_object_dbg_info_get)
-
-#include "efl_ui_layout.eo.c"
+#include "efl_ui_layout_legacy.eo.c"

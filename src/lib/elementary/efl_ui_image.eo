@@ -88,7 +88,6 @@ class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Efl.File.mmap { set; }

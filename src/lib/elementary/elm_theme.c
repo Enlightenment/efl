@@ -281,6 +281,7 @@ _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, con
    Elm_Theme *th = NULL;
 
    if (parent) th = elm_widget_theme_get(parent);
+
    return _elm_theme_set(th, o, clas, group, style, elm_widget_is_legacy(parent));
 }
 

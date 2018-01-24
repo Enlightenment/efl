@@ -42,7 +42,6 @@ class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Efl.Ui.Widget.widget_event;

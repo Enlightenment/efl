@@ -227,7 +227,6 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.theme_apply;

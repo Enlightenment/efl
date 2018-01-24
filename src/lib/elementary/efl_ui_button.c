@@ -17,7 +17,6 @@
 #define MY_CLASS_PFX efl_ui_button
 
 #define MY_CLASS_NAME "Efl.Ui.Button"
-#define MY_CLASS_NAME_LEGACY "elm_button"
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_REPEATED[] = "repeated";
@@ -303,18 +302,10 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
      CRI("Failed to set layout!");
 }
 
-EAPI Evas_Object *
-elm_button_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_button_efl_object_constructor(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
 
@@ -406,12 +397,6 @@ _efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl
    return &atspi_actions[0];
 }
 
-static void
-_efl_ui_button_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
@@ -481,3 +466,30 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"
+
+#include "efl_ui_button_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_button"
+
+static void
+_efl_ui_button_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_button_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_button_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_BUTTON_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_button_legacy.eo.c"

@@ -14,7 +14,7 @@ enum Elm.Web.Zoom_Mode
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Elm.Web (Efl.Ui.Widget)
+class Elm.Web (Efl.Ui.Widget, Efl.Ui.Legacy)
 {
    [[Elementary web view class]]
    legacy_prefix: elm_web;

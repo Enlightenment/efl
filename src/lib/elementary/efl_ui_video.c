@@ -18,7 +18,6 @@
 
 #define MY_CLASS EFL_UI_VIDEO_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Video"
-#define MY_CLASS_NAME_LEGACY "elm_video"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
@@ -258,18 +257,10 @@ _efl_ui_video_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Video_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
-elm_video_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_video_efl_object_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
 
@@ -373,12 +364,6 @@ _efl_ui_video_remember_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
    return sd->remember;
 }
 
-EOLIAN static void
-_efl_ui_video_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 EOLIAN const Efl_Access_Action_Data *
 _efl_ui_video_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
 {
@@ -389,6 +374,42 @@ _efl_ui_video_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_
           { NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
+}
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
+
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_VIDEO_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_video), \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
+
+#include "efl_ui_video.eo.c"
+
+#include "efl_ui_video_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_video"
+
+static void
+_efl_ui_video_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_video_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_VIDEO_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_video_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_VIDEO_LEGACY_CLASS, parent);
 }
 
 EAPI Eina_Bool
@@ -475,14 +496,4 @@ elm_video_pause(Evas_Object *obj)
    efl_player_play_set(obj, EINA_FALSE);
 }
 
-/* Internal EO APIs and hidden overrides */
-
-ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_VIDEO_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_video), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
-
-#include "efl_ui_video.eo.c"
+#include "efl_ui_video_legacy.eo.c"

@@ -106,6 +106,7 @@ elm_public_eolian_files = \
 
 # More public files -- FIXME
 elm_public_eolian_files += \
+	lib/elementary/efl_ui_legacy.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_multibuttonentry_item.eo \
 	lib/elementary/elm_interface_scrollable.eo \
@@ -137,6 +138,23 @@ elm_private_eolian_files = \
 
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
+	lib/elementary/efl_ui_button_legacy.eo \
+	lib/elementary/efl_ui_check_legacy.eo \
+	lib/elementary/efl_ui_radio_legacy.eo \
+	lib/elementary/efl_ui_bg_widget_legacy.eo \
+	lib/elementary/efl_ui_video_legacy.eo \
+	lib/elementary/efl_ui_frame_legacy.eo \
+	lib/elementary/efl_ui_slider_legacy.eo \
+	lib/elementary/efl_ui_panes_legacy.eo \
+	lib/elementary/efl_ui_image_zoomable_legacy.eo \
+	lib/elementary/efl_ui_multibuttonentry_legacy.eo \
+	lib/elementary/efl_ui_flip_legacy.eo \
+	lib/elementary/efl_ui_win_legacy.eo \
+	lib/elementary/efl_ui_image_legacy.eo \
+	lib/elementary/efl_ui_progressbar_legacy.eo \
+	lib/elementary/efl_ui_clock_legacy.eo \
+	lib/elementary/efl_ui_layout_legacy.eo \
+	lib/elementary/elm_code_widget_legacy.eo \
 	lib/elementary/elm_interface_fileselector.eo \
 	lib/elementary/elm_calendar.eo \
 	lib/elementary/elm_calendar_item.eo \
@@ -611,6 +629,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_actionslider.c \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
+	lib/elementary/efl_ui_legacy.c \
 	lib/elementary/efl_ui_bg.c \
 	lib/elementary/efl_ui_bg_widget.c \
 	lib/elementary/elm_box.c \

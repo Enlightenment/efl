@@ -38,7 +38,7 @@ enum Elm.List.Mode
 
 class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
                 Efl.Access.Widget.Action, Efl.Access.Selection,
-                Efl.Ui.Clickable, Efl.Ui.Selectable)
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary list class]]
    legacy_prefix: elm_list;

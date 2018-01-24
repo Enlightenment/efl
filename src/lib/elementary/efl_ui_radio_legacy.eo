@@ -1,0 +1,9 @@
+class Efl.Ui.Radio_Legacy (Efl.Ui.Radio, Efl.Ui.Legacy)
+{
+   [[Elementary radio class]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+   }
+}

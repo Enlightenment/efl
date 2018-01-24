@@ -9,7 +9,7 @@ enum Elm.Ctxpopup.Direction
 }
 
 class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action,
-                    Efl.Ui.Menu)
+                    Efl.Ui.Menu, Efl.Ui.Legacy)
 {
    [[Elementary context popup class]]
    legacy_prefix: elm_ctxpopup;

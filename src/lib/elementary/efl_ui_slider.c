@@ -18,7 +18,6 @@
 #define MY_CLASS_PFX efl_ui_slider
 
 #define MY_CLASS_NAME "Efl.Ui.Slider"
-#define MY_CLASS_NAME_LEGACY "elm_slider"
 #define SLIDER_DELAY_CHANGED_INTERVAL 0.2
 #define SLIDER_STEP 0.05
 
@@ -1222,7 +1221,6 @@ EOLIAN static Eo *
 _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_SLIDER);
 
@@ -1311,12 +1309,6 @@ _efl_ui_slider_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *
      _popup_hide(obj, NULL, NULL, NULL);
 
    return int_ret;
-}
-
-EOLIAN static void
-_efl_ui_slider_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 // A11Y Accessibility
@@ -1540,13 +1532,42 @@ _efl_ui_slider_part_indicator_visible_mode_get(Eo *obj, void *_pd EINA_UNUSED)
 
 /* Efl.Part end */
 
-/* Legacy APIs */
+/* Internal EO APIs and hidden overrides */
+
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_slider)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_slider)
+
+#define EFL_UI_SLIDER_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_slider), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_slider), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
+
+#include "efl_ui_slider.eo.c"
+
+#include "efl_ui_slider_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_slider"
+
+static void
+_efl_ui_slider_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_slider_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_SLIDER_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
 
 EAPI Evas_Object *
 elm_slider_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
+   return elm_legacy_add(EFL_UI_SLIDER_LEGACY_CLASS, parent);
 }
 
 EAPI void
@@ -1819,15 +1840,4 @@ elm_slider_indicator_visible_mode_get(const Evas_Object *obj)
    return efl_ui_slider_part_indicator_visible_mode_get(efl_part(obj, "indicator"));
 }
 
-/* Internal EO APIs and hidden overrides */
-
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_slider)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_slider)
-
-#define EFL_UI_SLIDER_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_slider), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_slider), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
-
-#include "efl_ui_slider.eo.c"
+#include "efl_ui_slider_legacy.eo.c"

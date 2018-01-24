@@ -1,4 +1,4 @@
-class Elm.Conformant (Efl.Ui.Layout)
+class Elm.Conformant (Efl.Ui.Layout, Efl.Ui.Legacy)
 {
    [[Elementary conformant class]]
    legacy_prefix: elm_conformant;

@@ -193,7 +193,7 @@ _elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coo
 static Evas_Object *
 _elm_pan_add(Evas *evas)
 {
-   return efl_add(MY_PAN_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_PAN_CLASS, evas);
 }
 
 EOLIAN static Eo *

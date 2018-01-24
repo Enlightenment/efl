@@ -14,7 +14,6 @@
 #define MY_CLASS EFL_UI_FRAME_CLASS
 #define MY_CLASS_PFX efl_ui_frame
 #define MY_CLASS_NAME "Efl.Ui.Frame"
-#define MY_CLASS_NAME_LEGACY "elm_frame"
 
 static const char SIG_CLICKED[] = "clicked";
 
@@ -140,18 +139,10 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
-elm_frame_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_frame_efl_object_constructor(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_FRAME);
 
@@ -210,12 +201,6 @@ _efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
    return sd->collapsed;
 }
 
-EOLIAN static void
-_efl_ui_frame_class_constructor(Efl_Class *klass)
-{
-      evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 /* Default text (title) and content */
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
@@ -235,3 +220,30 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_frame)
    ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_frame)
 
 #include "efl_ui_frame.eo.c"
+
+#include "efl_ui_frame_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_frame"
+
+static void
+_efl_ui_frame_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_frame_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_FRAME_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_frame_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_FRAME_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_frame_legacy.eo.c"

@@ -13,7 +13,7 @@ enum Elm.Colorselector.Mode
 }
 
 class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
-                         Efl.Access.Widget.Action, Efl.Ui.Clickable)
+                         Efl.Access.Widget.Action, Efl.Ui.Clickable, Efl.Ui.Legacy)
 {
    [[Elementary colorselector class]]
    legacy_prefix: elm_colorselector;

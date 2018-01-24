@@ -23,7 +23,7 @@ struct Elm.Toolbar.Item.State
    data: const(void_ptr); [[Item data]]
 }
 
-class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
+class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
 {
       [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;

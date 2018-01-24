@@ -19,7 +19,6 @@
 #define MY_CLASS_PFX efl_ui_progressbar
 
 #define MY_CLASS_NAME "Efl.Ui.Progressbar"
-#define MY_CLASS_NAME_LEGACY "elm_progressbar"
 
 static const char SIG_CHANGED[] = "changed";
 
@@ -421,7 +420,6 @@ EOLIAN static Eo *
 _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
 
@@ -585,12 +583,6 @@ _efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
    return (sd->pulse_state && sd->pulse);
 }
 
-EOLIAN static void
-_efl_ui_progressbar_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 /* Efl.Part begin */
 
 EOLIAN static Eo *
@@ -651,13 +643,29 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
 
-/* Legacy APIs */
+#include "efl_ui_progressbar_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_progressbar"
+
+static void
+_efl_ui_progressbar_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_progressbar_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
 
 EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Eo *obj = elm_legacy_add(MY_CLASS, parent);
+   Eo *obj = elm_legacy_add(EFL_UI_PROGRESSBAR_LEGACY_CLASS, parent);
    elm_progressbar_unit_format_set(obj, "%.0f %%");
 
    return obj;
@@ -825,3 +833,5 @@ elm_progressbar_value_get(const Evas_Object *obj)
 {
    return efl_ui_range_value_get(obj);
 }
+
+#include "efl_ui_progressbar_legacy.eo.c"

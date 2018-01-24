@@ -34,7 +34,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
           [[A floating indicator above the slider.]]
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;

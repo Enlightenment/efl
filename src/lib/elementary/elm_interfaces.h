@@ -16,6 +16,7 @@
 #include "efl_access_image.eo.h"
 #include "efl_access_selection.eo.h"
 #include "efl_access_value.eo.h"
+#include "efl_ui_legacy.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "efl_access_action.eo.legacy.h"
@@ -24,5 +25,6 @@
 #include "efl_access_image.eo.legacy.h"
 #include "efl_access_selection.eo.legacy.h"
 #include "efl_access_value.eo.legacy.h"
+#include "efl_ui_legacy.eo.legacy.h"
 #endif
 #endif

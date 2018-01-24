@@ -49,7 +49,6 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
       second: Efl.Ui.Panes.Part; [[The second half of the panes widget (right or bottom)]]
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }

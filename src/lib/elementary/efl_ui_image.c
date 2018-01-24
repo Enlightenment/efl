@@ -16,7 +16,6 @@
 
 #define MY_CLASS EFL_UI_IMAGE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Image"
-#define MY_CLASS_NAME_LEGACY "elm_image"
 
 #define NON_EXISTING (void *)-1
 static const char *icon_theme = NULL;
@@ -850,23 +849,10 @@ _on_size_hints_changed(void *data, const Efl_Event *ev)
    _efl_ui_image_internal_sizing_eval(ev->object, data);
 }
 
-EAPI Evas_Object *
-elm_image_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = elm_legacy_add(MY_CLASS, parent);
-   EFL_UI_IMAGE_DATA_GET(obj, priv);
-
-   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
-
-   return obj;
-}
-
 EOLIAN static Eo *
 _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
@@ -1516,12 +1502,6 @@ EOLIAN static Eina_Bool
 _efl_ui_image_efl_player_play_get(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    return _efl_ui_image_animated_play_get_internal(obj, sd);
-}
-
-static void
-_efl_ui_image_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 EOLIAN static void
@@ -2278,3 +2258,35 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image, Efl_Ui_Image_Data)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image)
 
 #include "efl_ui_image.eo.c"
+
+#include "efl_ui_image_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_image"
+
+static void
+_efl_ui_image_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_image_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_IMAGE_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_image_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = elm_legacy_add(EFL_UI_IMAGE_LEGACY_CLASS, parent);
+   EFL_UI_IMAGE_DATA_GET(obj, priv);
+
+   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
+
+   return obj;
+}
+
+#include "efl_ui_image_legacy.eo.c"

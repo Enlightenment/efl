@@ -5103,7 +5103,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
    /* FIXME: Major hack: calling the constructor in the middle of finalize. */
    efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    evas_object_focus_set(obj, EINA_TRUE);
@@ -6958,10 +6957,8 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_win_class_constructor(Efl_Class *klass)
+_efl_ui_win_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-
    if (_elm_config->atspi_mode)
      {
         Eo *bridge = _elm_atspi_bridge_get();
@@ -8326,62 +8323,6 @@ _fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee)
    _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(oee));
 }
 
-EAPI Evas_Object *
-elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
-{
-   const Efl_Class *klass = MY_CLASS;
-
-   switch ((int) type)
-     {
-      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_CLASS; break;
-      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_CLASS; break;
-      default: break;
-     }
-
-   return elm_legacy_add(klass, parent,
-                         efl_ui_win_name_set(efl_added, name),
-                         efl_ui_win_type_set(efl_added, type));
-}
-
-EAPI Evas_Object *
-elm_win_fake_add(Ecore_Evas *ee)
-{
-   return elm_legacy_add(MY_CLASS, NULL,
-                         _fake_canvas_set(efl_added, ee),
-                         efl_ui_win_name_set(efl_added, NULL),
-                         efl_ui_win_type_set(efl_added, ELM_WIN_FAKE));
-}
-
-EAPI Evas_Object *
-elm_win_util_standard_add(const char *name, const char *title)
-{
-   Evas_Object *win;
-
-   win = elm_legacy_add(EFL_UI_WIN_CLASS, NULL,
-                        efl_text_set(efl_added, title),
-                        efl_ui_win_name_set(efl_added, name),
-                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
-   if (!win) return NULL;
-
-   _elm_win_standard_init(win);
-   return win;
-}
-
-EAPI Evas_Object *
-elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title)
-{
-   Evas_Object *win;
-
-   win = elm_legacy_add(EFL_UI_WIN_CLASS, parent,
-                        efl_text_set(efl_added, title),
-                        efl_ui_win_name_set(efl_added, name),
-                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC));
-   if (!win) return NULL;
-
-   _elm_win_standard_init(win);
-   return win;
-}
-
 /**
   * @internal
   *
@@ -8676,3 +8617,78 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)
    EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_ui_win_efl_canvas_object_legacy_ctor)
 
 #include "efl_ui_win.eo.c"
+
+#include "efl_ui_win_legacy.eo.h"
+
+static void
+_efl_ui_win_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_win_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_WIN_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
+{
+   const Efl_Class *klass = EFL_UI_WIN_LEGACY_CLASS;
+
+   switch ((int) type)
+     {
+      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_CLASS; break;
+      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_CLASS; break;
+      default: break;
+     }
+
+   return elm_legacy_add(klass, parent, 
+                         efl_ui_win_name_set(efl_added, name),
+                         efl_ui_win_type_set(efl_added, type));
+}
+
+
+EAPI Evas_Object *
+elm_win_fake_add(Ecore_Evas *ee)
+{
+   return elm_legacy_add(EFL_UI_WIN_LEGACY_CLASS, NULL,
+                        _fake_canvas_set(efl_added, ee),
+                        efl_ui_win_name_set(efl_added, NULL),
+                        efl_ui_win_type_set(efl_added, ELM_WIN_FAKE));
+}
+
+EAPI Evas_Object *
+elm_win_util_standard_add(const char *name, const char *title)
+{
+   Evas_Object *win;
+
+   win = elm_legacy_add(EFL_UI_WIN_LEGACY_CLASS, NULL,
+                        efl_text_set(efl_added, title),
+                        efl_ui_win_name_set(efl_added, name),
+                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
+   if (!win) return NULL;
+
+   _elm_win_standard_init(win);
+   return win;
+}
+
+EAPI Evas_Object *
+elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title)
+{
+   Evas_Object *win;
+
+   win = elm_legacy_add(EFL_UI_WIN_LEGACY_CLASS, parent,
+                        efl_text_set(efl_added, title),
+                        efl_ui_win_name_set(efl_added, name),
+                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC));
+   if (!win) return NULL;
+
+   _elm_win_standard_init(win);
+   return win;
+}
+
+#include "efl_ui_win_legacy.eo.c"

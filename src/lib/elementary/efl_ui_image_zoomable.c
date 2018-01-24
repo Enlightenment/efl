@@ -21,7 +21,6 @@
 #define MY_CLASS EFL_UI_IMAGE_ZOOMABLE_CLASS
 
 #define MY_CLASS_NAME "Efl.Ui.Image_Zoomable"
-#define MY_CLASS_NAME_LEGACY "elm_photocam"
 
 /*
  * TODO (maybe - optional future stuff):
@@ -1789,7 +1788,6 @@ EOLIAN static Eo *
 _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
@@ -2954,10 +2952,8 @@ _efl_ui_image_zoomable_efl_player_play_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_class_constructor(Efl_Class *klass)
+_efl_ui_image_zoomable_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-
    PHOTO_FILE_LOAD_ERROR_GENERIC = eina_error_msg_static_register("Generic load error");
    PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST = eina_error_msg_static_register("File does not exist");
    PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED = eina_error_msg_static_register("Permission denied to an existing file");
@@ -2983,13 +2979,39 @@ _efl_ui_image_zoomable_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNU
    return &atspi_actions[0];
 }
 
-/* Legacy APIs */
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image_zoomable, Efl_Ui_Image_Zoomable_Data)
+
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_IMAGE_ZOOMABLE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image_zoomable)
+
+#include "efl_ui_image_zoomable.eo.c"
+
+#include "efl_ui_image_zoomable_legacy.eo.h"
+#define MY_CLASS_NAME_LEGACY "elm_photocam"
+
+static void
+_efl_ui_image_zoomable_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_image_zoomable_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_IMAGE_ZOOMABLE_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
 
 EAPI Evas_Object *
 elm_photocam_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
+   return elm_legacy_add(EFL_UI_IMAGE_ZOOMABLE_LEGACY_CLASS, parent);
 }
 
 static inline void
@@ -3223,13 +3245,4 @@ elm_photocam_image_region_get(const Efl_Ui_Image_Zoomable *obj, int *x, int *y, 
    if (h) *h = r.h;
 }
 
-/* Standard widget overrides */
-
-ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image_zoomable, Efl_Ui_Image_Zoomable_Data)
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_IMAGE_ZOOMABLE_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image_zoomable)
-
-#include "efl_ui_image_zoomable.eo.c"
+#include "efl_ui_image_zoomable_legacy.eo.c"

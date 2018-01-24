@@ -14,7 +14,6 @@
 
 #define MY_CLASS EFL_UI_FLIP_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Flip"
-#define MY_CLASS_NAME_LEGACY "elm_flip"
 
 static const char SIG_ANIMATE_BEGIN[] = "animate,begin";
 static const char SIG_ANIMATE_DONE[] = "animate,done";
@@ -1862,20 +1861,12 @@ _efl_ui_flip_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Flip_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
-elm_flip_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_flip_efl_object_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB_LIST);
 
@@ -2313,12 +2304,6 @@ _efl_ui_flip_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Dat
    return eina_list_data_idx(pd->content_list, (void *)subobj);
 }
 
-static void
-_efl_ui_flip_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 EAPI void
 elm_flip_interaction_direction_hitsize_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, double hitsize)
 {
@@ -2371,3 +2356,30 @@ ELM_PART_CONTENT_DEFAULT_GET(efl_ui_flip, "front")
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_flip)
 
 #include "efl_ui_flip.eo.c"
+
+#include "efl_ui_flip_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_flip"
+
+static void
+_efl_ui_flip_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_flip_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_FLIP_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_flip_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_FLIP_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_flip_legacy.eo.c"

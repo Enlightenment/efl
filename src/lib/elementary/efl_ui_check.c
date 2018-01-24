@@ -16,7 +16,6 @@
 #define MY_CLASS_PFX efl_ui_check
 
 #define MY_CLASS_NAME "Efl.Ui.Check"
-#define MY_CLASS_NAME_LEGACY "elm_check"
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
@@ -311,20 +310,12 @@ _efl_ui_check_efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED
    efl_ui_nstate_value_set(efl_super(obj, MY_CLASS), _state);
 }
 
-EAPI Evas_Object *
-elm_check_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "check");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -392,12 +383,6 @@ _efl_ui_check_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_
    return &atspi_action[0];
 }
 
-static void
-_efl_ui_check_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
@@ -410,3 +395,30 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_check.eo.c"
+
+#include "efl_ui_check_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_check"
+
+static void
+_efl_ui_check_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_check_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_CHECK_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_check_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_CHECK_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_check_legacy.eo.c"

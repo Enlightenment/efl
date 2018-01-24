@@ -1,6 +1,6 @@
 class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
                     Efl.Access.Widget.Action,
-                    Efl.Ui.Scrollable, Efl.Content)
+                    Efl.Ui.Scrollable, Efl.Content, Efl.Ui.Legacy)
 {
    [[Elementary scroller class]]
    legacy_prefix: elm_scroller;

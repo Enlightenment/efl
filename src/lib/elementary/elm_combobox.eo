@@ -1,6 +1,6 @@
 class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
                     Efl.Access.Widget.Action,
-                    Elm.Entry, Elm.Genlist, Elm.Hover)
+                    Elm.Entry, Elm.Genlist, Elm.Hover, Efl.Ui.Legacy)
 {
    [[Elementary combobox class]]
    legacy_prefix: elm_combobox;

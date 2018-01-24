@@ -3,7 +3,7 @@ import eina_types;
 type Elm_Prefs_Data: __undefined_type; [[Elementary preferences data type]]
 type Elm_Prefs_Reset_Mode: __undefined_type; [[Elementary preferences reset mode type]]
 
-class Elm.Prefs (Efl.Ui.Widget, Efl.File)
+class Elm.Prefs (Efl.Ui.Widget, Efl.File, Efl.Ui.Legacy)
 {
    [[Elementary preferences class]]
    legacy_prefix: elm_prefs;

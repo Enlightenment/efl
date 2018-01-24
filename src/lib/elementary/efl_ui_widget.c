@@ -55,9 +55,6 @@ typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Label_Data            Elm_Label_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
-/* FIXME: EAPI because of elm_code_widget test case */
-EAPI Eina_Bool _elm_legacy_add = EINA_FALSE;
-
 struct _Elm_Event_Cb_Data
 {
    Elm_Event_Cb func;
@@ -5162,11 +5159,6 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    Eo *parent = NULL;
 
    sd->on_create = EINA_TRUE;
-   if (_elm_legacy_add)
-     {
-        sd->legacy = _elm_legacy_add;
-        _elm_legacy_add = EINA_FALSE;
-     }
    efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -5217,13 +5209,6 @@ _efl_ui_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 }
 
 /* internal eo */
-static void
-_efl_ui_widget_legacy_ctor(Eo *obj, Elm_Widget_Smart_Data *sd)
-{
-   efl_canvas_object_legacy_ctor(efl_super(obj, MY_CLASS));
-   sd->legacy = EINA_TRUE;
-   _elm_legacy_add = EINA_FALSE;
-}
 
 EOLIAN static void
 _efl_ui_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Strbuf *sb)
@@ -6009,7 +5994,6 @@ ELM_PART_TEXT_DEFAULT_GET(efl_ui_widget, NULL)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_widget), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_widget), \
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_widget), \
-   EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_ui_widget_legacy_ctor), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"

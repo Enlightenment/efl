@@ -1,5 +1,6 @@
 class Elm.Multibuttonentry.Item(Elm.Widget.Item,
-                                Efl.Access.Widget.Action)
+                                Efl.Access.Widget.Action,
+                                Efl.Ui.Legacy)
 {
    [[Elementary multibuttonentry class]]
    legacy_prefix: elm_multibuttonentry_item;

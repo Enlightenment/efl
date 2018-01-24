@@ -464,7 +464,6 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
-   Eina_Bool                     legacy : 1; /**< Widget was created with a legacy API, not efl_add() */
    Eina_Bool                     has_shadow : 1;
 } Elm_Widget_Smart_Data;
 
@@ -822,10 +821,7 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
    return ret;
 }
 
-/* Internal hack to mark legacy objects as such before construction.
- * No need for TLS: Only UI objects created in the main loop matter. */
-EAPI extern Eina_Bool _elm_legacy_add;
-#define elm_legacy_add(k, p, ...) ({ _elm_legacy_add = 1;  \
+#define elm_legacy_add(k, p, ...) ({ \
    efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
 
 static inline Eo *
@@ -838,11 +834,7 @@ elm_widget_resize_object_get(const Eo *obj)
 static inline Eina_Bool
 elm_widget_is_legacy(const Eo *obj)
 {
-   Elm_Widget_Smart_Data *sd;
-
-   if (_elm_legacy_add) return EINA_TRUE;
-   sd = (Elm_Widget_Smart_Data *) efl_data_scope_safe_get(obj, EFL_UI_WIDGET_CLASS);
-   return sd ? sd->legacy : EINA_FALSE;
+   return efl_isa(obj, EFL_UI_LEGACY_INTERFACE);
 }
 
 /** Takes in any canvas object and returns the first smart parent that is a widget */

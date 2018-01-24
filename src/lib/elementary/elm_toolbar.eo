@@ -25,7 +25,7 @@ enum Elm.Toolbar.Shrink_Mode
 
 class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Efl.Access.Widget.Action, Efl.Access.Selection,
-                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu)
+                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu, Efl.Ui.Legacy)
 {
    [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;

@@ -17,11 +17,29 @@
 
 #include "elm_datetime.h"
 
+#include "efl_ui_clock_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_datetime"
+
+static void
+_efl_ui_clock_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_clock_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_CLOCK_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
 EAPI Evas_Object *
 elm_datetime_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(EFL_UI_CLOCK_CLASS, parent);
+   return elm_legacy_add(EFL_UI_CLOCK_LEGACY_CLASS, parent);
 }
 
 EAPI void
@@ -131,3 +149,5 @@ elm_datetime_value_max_get(const Evas_Object *obj, Efl_Time *maxtime)
    if (maxtime) *maxtime = efl_ui_clock_time_max_get(obj);
    return EINA_TRUE;
 }
+
+#include "efl_ui_clock_legacy.eo.c"

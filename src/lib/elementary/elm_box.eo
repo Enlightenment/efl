@@ -1,6 +1,6 @@
 import evas_box;
 
-class Elm.Box (Efl.Ui.Widget, Efl.Ui.Focus.Composition)
+class Elm.Box (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary box class]]
    legacy_prefix: elm_box;

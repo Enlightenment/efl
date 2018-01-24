@@ -59,7 +59,6 @@ class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Widget.theme_apply;

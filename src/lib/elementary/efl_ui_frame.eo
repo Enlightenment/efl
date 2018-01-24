@@ -55,7 +55,6 @@ class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text.Markup,
    }
    implements {
       Efl.Object.constructor;
-      class.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }

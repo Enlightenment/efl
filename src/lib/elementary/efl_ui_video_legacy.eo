@@ -1,0 +1,9 @@
+class Efl.Ui.Video_Legacy (Efl.Ui.Video, Efl.Ui.Legacy)
+{
+   [[Efl UI video class]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+   }
+}
