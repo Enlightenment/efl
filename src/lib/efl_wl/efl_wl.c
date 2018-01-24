@@ -3710,13 +3710,13 @@ seat_keymap_update(Comp_Seat *s)
    Eina_Tmpstr *file;
    xkb_mod_mask_t latched = 0, locked = 0;
 
+   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
+   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
+
 #ifdef HAVE_ECORE_X
    if (!x11_kbd_keymap)
      {
 #endif
-        if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
-        if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
-
         if (s->kbd.state)
           {
              latched = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
@@ -4049,9 +4049,16 @@ static void
 seat_kbd_destroy(Comp_Seat *s)
 {
    if (s->kbd.external) return;
-   if (s->kbd.state) xkb_state_unref(s->kbd.state);
-   if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
-   if (s->kbd.context) xkb_context_unref(s->kbd.context);
+#ifdef HAVE_ECORE_X
+   if (!x11_kbd_keymap)
+     {
+#endif
+        if (s->kbd.state) xkb_state_unref(s->kbd.state);
+        if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
+        if (s->kbd.context) xkb_context_unref(s->kbd.context);
+#ifdef HAVE_ECORE_X
+     }
+#endif
    if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
    if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
    wl_array_release(&s->kbd.keys);
