@@ -1,5 +1,4 @@
 import elm_general;
-import elm_entry;
 
 class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
