@@ -1033,7 +1033,7 @@ comp_seat_send_modifiers(Comp_Seat *s, struct wl_resource *res, uint32_t serial)
                               s->kbd.mods.latched,
                               s->kbd.mods.locked,
                               s->kbd.mods.group);
-   s->kbd.mods.changed = 1;
+   s->kbd.mods.changed = 0;
 }
 
 static Eina_Bool
