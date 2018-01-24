@@ -2494,8 +2494,16 @@ typedef struct _Ecore_X_Event_Damage Ecore_X_Event_Damage;
 struct _Ecore_X_Event_Xkb
 {
    int group;
+   int base_group; /** @since 1.21 */
+   int latched_group; /** @since 1.21 */
+   int locked_group; /** @since 1.21 */
+   unsigned int	mods; /** @since 1.21 */
+   unsigned int base_mods; /** @since 1.21 */
+   unsigned int	latched_mods; /** @since 1.21 */
+   unsigned int	locked_mods; /** @since 1.21 */
 };
 typedef struct _Ecore_X_Event_Xkb Ecore_X_Event_Xkb; /** @since 1.7 */
+typedef struct _Ecore_X_Event_Xkb Ecore_X_Xkb_State; /** @since 1.21 */
 
 EAPI Eina_Bool      ecore_x_damage_query(void);
 EAPI Ecore_X_Damage ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level);
