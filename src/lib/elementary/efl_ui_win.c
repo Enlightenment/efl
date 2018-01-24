@@ -2603,16 +2603,8 @@ _elm_win_focus_target_get(Evas_Object *obj)
           {
              if (!elm_widget_highlight_ignore_get(o))
                break;
-             o = elm_widget_parent_get(o);
-             if (!o)
-               o = evas_object_smart_parent_get(o);
           }
-        else
-          {
-             o = elm_widget_parent_widget_get(o);
-             if (!o)
-               o = evas_object_smart_parent_get(o);
-          }
+        o = elm_widget_parent_widget_get(o);
      }
    while (o);
 
