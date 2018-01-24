@@ -38,6 +38,17 @@
    rel2.offset: 20 27; \
    fill.smooth: 0
 
+#define WIN_SHADOW_ANGLE_SMALL(_img) \
+   image.normal: _img; \
+   image.border: 22 22 16 30; \
+   image.border_scale: 1; \
+   image.border_scale_by: 0.5; \
+   image.middle: 0; \
+   rel1.offset: -10 -7; \
+   rel2.offset: 9 13; \
+   fill.smooth: 0; \
+   offscale
+
 #define IMAGE_RING(x, sz) \
    set { name: x; \
       image { image: x"1.png" COMP; size:  (sz/2)   (sz/2)  99999   99999;   } \
