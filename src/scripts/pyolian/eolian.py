@@ -318,6 +318,13 @@ class EolianBaseObject(object):
                 return self.name == other
         return False
 
+    def __gt__(self, other):
+        if isinstance(other, EolianBaseObject):
+            if hasattr(self, 'full_name'):
+                return self.full_name > other.full_name
+            elif hasattr(self, 'name'):
+                return self.name > other.name
+
     def __hash__(self):
         return self._obj.value
 
@@ -479,7 +486,11 @@ class Namespace(object):
         return "<eolian.Namespace '{0._name}'>".format(self)
 
     def __eq__(self, other):
-        return self.name == other.name
+        if isinstance(other, Namespace):
+            return self.name == other.name
+        if isinstance(other, str):
+            return self.name == other
+        raise TypeError('Namespace can only compare with Namespace or str')
 
     def __lt__(self, other):
         return self.name < other.name
@@ -507,6 +518,12 @@ class Namespace(object):
     def regulars(self):
         return [ c for c in self._unit.all_classes
                 if c.type == Eolian_Class_Type.REGULAR and
+                   c.namespace == self._name]
+
+    @property
+    def abstracts(self):
+        return [ c for c in self._unit.all_classes
+                if c.type == Eolian_Class_Type.ABSTRACT and
                    c.namespace == self._name]
 
     @property
