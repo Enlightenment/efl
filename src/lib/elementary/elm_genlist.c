@@ -8777,19 +8777,17 @@ _elm_genlist_efl_ui_focus_composition_prepare(Eo *obj, Elm_Genlist_Data *pd)
      {
         if (item->base->disabled)
           continue;
-        
+
         efl_ui_focus_object_prepare_logical(item->base->eo_obj);
      }
 
 }
 
-EOLIAN static void 
+EOLIAN static void
 _elm_genlist_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
-
-   _item_realize(pd, pd->item->order_num_in, EINA_FALSE);
 
    EINA_LIST_FOREACH(pd->contents, n, wid)
      {

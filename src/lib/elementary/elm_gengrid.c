@@ -5753,8 +5753,6 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
    Eina_List *n;
    Efl_Ui_Widget *wid;
 
-   _item_realize(pd);
-
    EINA_LIST_FOREACH(pd->contents, n, wid)
      {
         if (efl_isa(wid, EFL_UI_WIDGET_CLASS))
