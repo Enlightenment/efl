@@ -120,6 +120,7 @@ AC_DEFUN([EFL_FIND_X],
             efl_x11_lib=
           fi
         done
+        efl_x11_modules="$efl_x11_modules x11-xcb"
 
         PKG_CHECK_EXISTS([$efl_x11_modules],
           [
