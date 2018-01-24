@@ -2519,6 +2519,13 @@ ecore_x_default_depth_get(Ecore_X_Display *disp,
    return depth;
 }
 
+EAPI Ecore_X_Connection *
+ecore_x_connection_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
+   return XGetXCBConnection(_ecore_x_disp);
+}
+
 EAPI void
 ecore_x_xkb_select_group(int group)
 {
