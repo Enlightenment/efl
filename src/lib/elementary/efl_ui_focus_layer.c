@@ -93,6 +93,8 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
      }
    else
      {
+        if (!pd->registered_manager) return;
+
         if (efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
           efl_ui_focus_manager_redirect_set(pd->registered_manager, NULL);
 
