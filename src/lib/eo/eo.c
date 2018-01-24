@@ -804,7 +804,9 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
              op_id++;
           }
 
+#ifdef EO_DEBUG
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
+#endif
 
         if (!_vtable_func_set(vtable, klass, override_class, op, op_desc->func, EINA_TRUE))
           return EINA_FALSE;
