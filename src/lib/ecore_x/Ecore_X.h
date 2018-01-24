@@ -2729,6 +2729,8 @@ EAPI Ecore_X_Illume_Window_State           ecore_x_e_illume_window_state_get(Eco
 EAPI void                                  ecore_x_e_illume_window_state_send(Ecore_X_Window win, Ecore_X_Illume_Window_State state); /**< @since 1.9 */
 
 EAPI void                                  ecore_x_xkb_select_group(int group); /* @since 1.7 */
+EAPI Eina_Bool                             ecore_x_xkb_track_state(void); /** @since 1.21 */
+EAPI Eina_Bool                             ecore_x_xkb_state_get(Ecore_X_Xkb_State *state); /** @since 1.21 */
 
 EAPI void                                  ecore_x_e_window_rotation_supported_set(Ecore_X_Window root, Eina_Bool enabled); /**< @since 1.9 */
 EAPI Eina_Bool                             ecore_x_e_window_rotation_supported_get(Ecore_X_Window root); /**< @since 1.9 */
