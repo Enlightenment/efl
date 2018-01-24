@@ -2679,6 +2679,11 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
              xkbmapping = (XkbMapNotifyEvent *)xkbev;
              XkbRefreshKeyboardMapping(xkbmapping);
           }
+        else
+          {
+             XkbNewKeyboardNotifyEvent *xkbnkn = (void*)xkbev;
+             if (!(xkbnkn->changed & XkbNKN_KeycodesMask)) return;
+          }
         ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, NULL, free_hash, NULL);
         eina_hash_add(emitted_events, &xkbev->new_kbd.serial, (void*) 1);
      }
