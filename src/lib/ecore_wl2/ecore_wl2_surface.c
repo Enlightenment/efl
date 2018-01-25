@@ -132,7 +132,7 @@ _evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
         return 0;
      }
    EINA_LIST_FOREACH(s->buffers, l, b)
-     b->age++;
+     ecore_wl2_buffer_age_inc(b);
 
    return ecore_wl2_buffer_age_get(s->current);
 }

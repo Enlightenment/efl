@@ -703,6 +703,14 @@ EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age)
    buffer->age = age;
 }
 
+EAPI void
+ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN(buffer);
+
+   buffer->age++;
+}
+
 static Ecore_Wl2_Buffer *
 _ecore_wl2_buffer_partial_create(int w, int h, Eina_Bool alpha)
 {
