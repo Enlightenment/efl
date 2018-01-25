@@ -183,7 +183,7 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.destroy(surface);
+   surface->funcs->destroy(surface);
    surface->wl2_win = NULL;
 
    free(surface);
@@ -194,7 +194,7 @@ ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.reconfigure(surface, w, h, flags, force);
+   surface->funcs->reconfigure(surface, w, h, flags, force);
 }
 
 EAPI void *
@@ -202,7 +202,7 @@ ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
 
-   return surface->funcs.data_get(surface, w, h);
+   return surface->funcs->data_get(surface, w, h);
 }
 
 EAPI int
@@ -210,7 +210,7 @@ ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
 
-   return surface->funcs.assign(surface);
+   return surface->funcs->assign(surface);
 }
 
 EAPI void
@@ -218,7 +218,7 @@ ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsign
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.post(surface, rects, count);
+   surface->funcs->post(surface, rects, count);
 }
 
 EAPI void
@@ -226,8 +226,19 @@ ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.flush(surface);
+   surface->funcs->flush(surface);
 }
+
+static Ecore_Wl2_Surface_Interface dmabuf_smanager =
+{
+   .check = _evas_dmabuf_surface_check,
+   .destroy = _evas_dmabuf_surface_destroy,
+   .reconfigure = _evas_dmabuf_surface_reconfigure,
+   .data_get = _evas_dmabuf_surface_data_get,
+   .assign = _evas_dmabuf_surface_assign,
+   .post = _evas_dmabuf_surface_post,
+   .flush = _surface_flush
+};
 
 EAPI Ecore_Wl2_Surface *
 ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
@@ -244,16 +255,9 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    out->alpha = alpha;
    out->w = 0;
    out->h = 0;
+   out->funcs = &dmabuf_smanager;
 
-   out->funcs.check = _evas_dmabuf_surface_check;
-   out->funcs.destroy = _evas_dmabuf_surface_destroy;
-   out->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
-   out->funcs.data_get = _evas_dmabuf_surface_data_get;
-   out->funcs.assign = _evas_dmabuf_surface_assign;
-   out->funcs.post = _evas_dmabuf_surface_post;
-   out->funcs.flush = _surface_flush;
-
-   if (out->funcs.check(win))
+   if (out->funcs->check(win))
      {
         win->wl2_surface = out;
         return out;
