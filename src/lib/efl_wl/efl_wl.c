@@ -95,6 +95,18 @@ typedef struct Input_Sequence
    Eina_Bool pass : 1;
 } Input_Sequence;
 
+typedef struct Keyboard_Info
+{
+   unsigned int refs;
+   struct xkb_context *context;
+   struct xkb_keymap *keymap;
+   char *keymap_mem;
+   int keymap_mem_size;
+   int keymap_fd;
+   int repeat_rate;
+   int repeat_delay;
+} Keyboard_Info;
+
 typedef struct Comp_Subsurface Comp_Subsurface;
 typedef struct Comp_Surface Comp_Surface;
 
@@ -202,14 +214,8 @@ typedef struct Comp_Seat
          xkb_layout_index_t group;
          Eina_Bool changed : 1;
       } mods;
-      struct xkb_context *context;
-      struct xkb_keymap *keymap;
+      Keyboard_Info *info;
       struct xkb_state *state;
-      char *keymap_mem;
-      int keymap_mem_size;
-      int keymap_fd;
-      int repeat_rate;
-      int repeat_delay;
       Eina_Hash *resources;
       Comp_Surface *enter;
       Eina_Bool external : 1;
@@ -400,6 +406,7 @@ typedef struct Comp_Data_Device_Transfer
 
 static Eina_List *comps;
 static Eina_List *handlers;
+static Eina_Hash *kbd_infos;
 
 static inline Eina_Tiler *
 tiler_new(void)
@@ -444,6 +451,61 @@ array_clear(Eina_Array **arr)
      evas_object_del(eina_array_pop(a));
    eina_array_free(a);
    *arr = NULL;
+}
+
+static void
+keyboard_info_free(Keyboard_Info *info)
+{
+   if (info->refs) return;
+   if (info->state) xkb_state_unref(info->state);
+   if (info->keymap) xkb_keymap_unref(info->keymap);
+   if (info->context) xkb_context_unref(info->context);
+   if (info->keymap_mem) munmap(info->keymap_mem, info->keymap_mem_size);
+   if (info->keymap_fd > -1) close(info->keymap_fd);
+   free(info);
+}
+
+static Keyboard_Info *
+keyboard_info_create(struct xkb_keymap *keymap)
+{
+   Eina_Tmpstr *file;
+   char *str;
+   Keyboard_Info *info;
+
+   info = eina_hash_find(kbd_infos, &keymap);
+   if (info)
+     {
+        info->refs++;
+        return info;
+     }
+   info = calloc(1, sizeof(Keyboard_Info));
+   info->refs = 1;
+   str = xkb_map_get_as_string(keymap);
+   info->keymap_mem_size = strlen(str) + 1;
+   info->keymap_fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
+   if (info->keymap_fd < 0)
+     {
+        EINA_LOG_ERR("mkstemp failed!\n");
+        free(info);
+        return NULL;
+     }
+   if (!eina_file_close_on_exec(info->keymap_fd, 1))
+     {
+        EINA_LOG_ERR("Failed to set CLOEXEC on fd %d\n", info->keymap_fd);
+        close(info->keymap_fd);
+        free(info);
+        return NULL;
+     }
+   ftruncate(info->keymap_fd, info->keymap_mem_size);
+   eina_file_unlink(file);
+   eina_tmpstr_del(file);
+   info->keymap_mem = mmap(NULL, info->keymap_mem_size + 1,
+       PROT_READ | PROT_WRITE, MAP_SHARED, info->keymap_fd, 0);
+
+   memcpy(info->keymap_mem, str, info->keymap_mem_size);
+   info->keymap_mem[info->keymap_mem_size] = 0;
+   free(str);
+   return info;
 }
 
 static inline Eina_Bool
@@ -3704,68 +3766,44 @@ seat_kbd_external_init(Comp_Seat *s)
 }
 
 static void
-seat_keymap_update(Comp_Seat *s)
+seat_keymap_update(Comp_Seat *s, struct xkb_keymap *keymap)
 {
-   char *str;
-   Eina_Tmpstr *file;
-   xkb_mod_mask_t latched = 0, locked = 0;
-
-   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
-   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
-
 #ifdef HAVE_ECORE_X
-   if (!x11_kbd_keymap)
+   if (!x11_kbd_state)
      {
 #endif
+        xkb_mod_mask_t latched = 0, locked = 0;
+        if (s->kbd.info)
+          {
+             s->kbd.info->refs--;
+             if (!s->kbd.info->refs)
+               eina_hash_del_by_key(kbd_infos, &s->kbd.info->keymap);
+             s->kbd.info = NULL;
+          }
         if (s->kbd.state)
           {
              latched = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
              locked = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
              xkb_state_unref(s->kbd.state);
           }
-        if (!s->kbd.keymap)
-          {
-             s->kbd.state = NULL;
-             s->kbd.keymap_fd = -1;
-             s->kbd.keymap_mem = NULL;
-             return;
-          }
-
-        s->kbd.state = xkb_state_new(s->kbd.keymap);
+        if (!s->kbd.info) return;
+        s->kbd.state = xkb_state_new(keymap);
         xkb_state_update_mask(s->kbd.state, 0, latched, locked, 0, 0, 0);
 #ifdef HAVE_ECORE_X
      }
 #endif
-   str = xkb_map_get_as_string(s->kbd.keymap);
-   s->kbd.keymap_mem_size = strlen(str) + 1;
-   s->kbd.keymap_fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
-   if (s->kbd.keymap_fd < 0)
+   s->kbd.info = keyboard_info_create(keymap);
+   if (!s->kbd.info)
      {
-        EINA_LOG_ERR("mkstemp failed!\n");
-        s->kbd.keymap_fd = -1;
-        xkb_state_unref(s->kbd.state);
-        s->kbd.state = NULL;
-        return;
+#ifdef HAVE_ECORE_X
+        if (!x11_kbd_state)
+          {
+             xkb_state_unref(s->kbd.state);
+             s->kbd.state = NULL;
+             return;
+          }
+#endif
      }
-   if (!eina_file_close_on_exec(s->kbd.keymap_fd, 1))
-     {
-        EINA_LOG_ERR("Failed to set CLOEXEC on fd %d\n", s->kbd.keymap_fd);
-        close(s->kbd.keymap_fd);
-        s->kbd.keymap_fd = -1;
-        xkb_state_unref(s->kbd.state);
-        s->kbd.state = NULL;
-        return;
-     }
-   ftruncate(s->kbd.keymap_fd, s->kbd.keymap_mem_size);
-   eina_file_unlink(file);
-   eina_tmpstr_del(file);
-   s->kbd.keymap_mem =
-     mmap(NULL, s->kbd.keymap_mem_size + 1,
-       PROT_READ | PROT_WRITE, MAP_SHARED, s->kbd.keymap_fd, 0);
-
-   memcpy(s->kbd.keymap_mem, str, s->kbd.keymap_mem_size);
-   s->kbd.keymap_mem[s->kbd.keymap_mem_size] = 0;
-   free(str);
 
    seat_keymap_send(s);
 }
@@ -4048,20 +4086,12 @@ seat_resource_hash_free(Eina_Hash *h)
 static void
 seat_kbd_destroy(Comp_Seat *s)
 {
-   if (s->kbd.external) return;
-#ifdef HAVE_ECORE_X
-   if (!x11_kbd_keymap)
-     {
-#endif
-        if (s->kbd.state) xkb_state_unref(s->kbd.state);
-        if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
-        if (s->kbd.context) xkb_context_unref(s->kbd.context);
-#ifdef HAVE_ECORE_X
-     }
-#endif
-   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
-   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
-   wl_array_release(&s->kbd.keys);
+   s->kbd.info->refs--;
+   if (!s->kbd.info->refs)
+     eina_hash_del_by_key(kbd_infos, &s->kbd.info->keymap);
+   s->kbd.info = NULL;
+   if (!s->kbd.external)
+     wl_array_release(&s->kbd.keys);
 }
 
 static void
@@ -5381,7 +5411,11 @@ comp_smart_add(Evas_Object *obj)
    evas_object_event_callback_add(c->obj, EVAS_CALLBACK_FOCUS_IN, comp_focus_in, c);
    evas_object_event_callback_add(c->obj, EVAS_CALLBACK_FOCUS_OUT, comp_focus_out, c);
 
-   if (!comps) comp_handlers_init();
+   if (!comps)
+     {
+        comp_handlers_init();
+        kbd_infos = eina_hash_pointer_new((Eina_Free_Cb)keyboard_info_free);
+     }
    comps = eina_list_append(comps, c);
    free(env);
 }

@@ -565,8 +565,7 @@ x11_dnd_move(void *data, Ecore_X_Xdnd_Position *pos)
 }
 
 static int32_t x11_core_device = -1;
-static struct xkb_context *x11_kbd_context;
-static struct xkb_keymap *x11_kbd_keymap;
+static Keyboard_Info *x11_kbd_info;
 static struct xkb_state *x11_kbd_state;
 
 static Eina_Bool seat_kbd_mods_update(Comp_Seat *s);
@@ -606,12 +605,8 @@ x11_xkb_state(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Xkb *ev)
 static void
 x11_kbd_destroy(void)
 {
-   if (x11_kbd_state) xkb_state_unref(x11_kbd_state);
-   x11_kbd_state = NULL;
-   if (x11_kbd_keymap) xkb_keymap_unref(x11_kbd_keymap);
-   x11_kbd_keymap = NULL;
-   if (x11_kbd_context) xkb_context_unref(x11_kbd_context);
-   x11_kbd_context = NULL;
+   x11_kbd_info->refs = 0;
+   eina_hash_del_by_key(kbd_infos, &x11_kbd_info->keymap);
 }
 
 static void
@@ -621,23 +616,24 @@ x11_kbd_create(void)
 
    x11_kbd_destroy();
 
-   x11_kbd_context = xkb_context_new(0);
    x11_core_device = xkb_x11_get_core_keyboard_device_id(conn);
-   x11_kbd_keymap = xkb_x11_keymap_new_from_device(x11_kbd_context, conn, x11_core_device, 0);
-   x11_kbd_state = xkb_x11_state_new_from_device(x11_kbd_keymap, conn, x11_core_device);
-   keymap_mods_init(x11_kbd_keymap);
+   x11_kbd_info.context = xkb_context_new(0);
+   x11_kbd_info.keymap = xkb_x11_keymap_new_from_device(x11_kbd_info.context, conn, x11_core_device, 0);
+   x11_kbd_state = xkb_x11_state_new_from_device(x11_kbd_info.keymap, conn, x11_core_device);
+   keymap_mods_init(x11_kbd_info.keymap);
+   eina_hash_add(kbd_infos, &x11_kbd_info.keymap, &x11_kbd_info);
 }
 
 static void
 x11_kbd_apply(Comp_Seat *s)
 {
    if (!x11_kbd_state) x11_kbd_create();
-   s->kbd.context = x11_kbd_context;
-   s->kbd.keymap = x11_kbd_keymap;
-   s->kbd.state = x11_kbd_state;
+   x11_kbd_info.refs++;
+   s->kbd.info = &x11_kbd_info;
+   s->kbd.state = x11_kbd_state);
 }
 
-static void seat_keymap_update(Comp_Seat *s);
+static void seat_keymap_update(Comp_Seat *s, struct xkb_keymap *keymap);
 
 static Eina_Bool
 x11_xkb_refresh()
