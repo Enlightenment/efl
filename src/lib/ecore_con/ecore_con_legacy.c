@@ -1674,7 +1674,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    /* The allowable port number is an unsigned 16-bit integer, so 1-65535, 0 is reserved */
    if ((port < 0) || (port > 65535))
      {
-        ERR("Port %i invalid (0 <= port <= 65535)");
+        ERR("Port %i invalid (0 <= port <= 65535)", port);
         return NULL;
      }
 
