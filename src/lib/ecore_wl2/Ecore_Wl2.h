@@ -2009,6 +2009,7 @@ EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
 EAPI Eina_Bool ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer);
 EAPI void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
+EAPI int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
 
 EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
 EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);

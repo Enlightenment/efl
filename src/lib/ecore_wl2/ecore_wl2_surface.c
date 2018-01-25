@@ -84,14 +84,16 @@ _evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
    Ecore_Wl2_Buffer *b, *best = NULL;
    Eina_List *l;
    int best_age = -1;
+   int age;
 
    EINA_LIST_FOREACH(s->buffers, l, b)
      {
         if (ecore_wl2_buffer_busy_get(b)) continue;
-        if (b->age > best_age)
+        age = ecore_wl2_buffer_age_get(b);
+        if (age > best_age)
           {
              best = b;
-             best_age = b->age;
+             best_age = age;
           }
      }
 
@@ -132,7 +134,7 @@ _evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
    EINA_LIST_FOREACH(s->buffers, l, b)
      b->age++;
 
-   return s->current->age;
+   return ecore_wl2_buffer_age_get(s->current);
 }
 
 static void
