@@ -1677,7 +1677,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    /* The allowable port number is an unsigned 16-bit integer for remote connection, so 1-65535, 0 is reserved */
    if (((type == ECORE_CON_REMOTE_TCP) || (type == ECORE_CON_REMOTE_NODELAY) || (type == ECORE_CON_REMOTE_CORK) ||
         (type == ECORE_CON_REMOTE_UDP) || (type == ECORE_CON_REMOTE_MCAST)) &&
-       (port < 0) || (port > 65535))
+       ((port < 0) || (port > 65535)))
      {
         ERR("Port %i invalid (0 <= port <= 65535)", port);
         return NULL;
