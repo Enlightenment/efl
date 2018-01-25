@@ -208,7 +208,7 @@ _ecore_thread_data_free(void *data)
    free(d);
 }
 
-static void
+void
 _ecore_thread_join(PH(thread))
 {
    DBG("joining thread=%" PRIu64, (uint64_t)thread);

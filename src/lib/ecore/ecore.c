@@ -68,6 +68,8 @@ static int _ecore_init_count_threshold = 0;
 int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
+extern void (*_ecore_thread_join)();
+
 typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
 struct _Ecore_Safe_Call
 {
@@ -577,7 +579,19 @@ ecore_fork_reset(void)
    ecore_pipe_del(_thread_call);
    _thread_call = ecore_pipe_add(_thread_callback, NULL);
    /* If there was something in the pipe, trigger a wakeup again */
-   if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+   if (_thread_cb)
+     {
+        Ecore_Safe_Call *call;
+
+        EINA_LIST_FOREACH_SAFE(_thread_cb, l, ln, call)
+          {
+             if (call->suspend || call->sync) continue;
+             if (call->cb.async != (Ecore_Cb)&_ecore_thread_join) continue;
+             _thread_cb = eina_list_remove_list(_thread_cb, l);
+             free(call);
+          }
+        if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+     }
 
    eina_lock_release(&_thread_safety);
 
