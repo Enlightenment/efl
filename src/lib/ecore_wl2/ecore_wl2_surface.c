@@ -87,7 +87,7 @@ _evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
 
    EINA_LIST_FOREACH(s->buffers, l, b)
      {
-        if (b->locked || b->busy) continue;
+        if (ecore_wl2_buffer_busy_get(b)) continue;
         if (b->age > best_age)
           {
              best = b;
