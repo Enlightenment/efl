@@ -14,7 +14,6 @@
 #include "evil_test_dlfcn.h"
 #include "evil_test_environment.h"
 #include "evil_test_gettimeofday.h"
-#include "evil_test_link.h"
 #include "evil_test_mkstemp.h"
 #include "evil_test_pipe.h"
 #include "evil_test_print.h"
@@ -182,7 +181,6 @@ main(void)
      { "dlfcn       ",  test_dlfcn },
      { "environment ",  test_environment },
      { "gettimeofday",  test_gettimeofday },
-     { "link        ",  test_link },
      { "mkstemp     ",  test_mkstemp },
      { "pipe        ",  test_pipe },
      { "print       ",  test_print },

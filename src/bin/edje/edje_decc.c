@@ -126,7 +126,7 @@ main_help(void)
      ("Usage:\n"
       "\t%s input_file.edj [-main-out file.edc] [-no-build-sh] [-current-dir | -output path_to_dir]\n"
       "\n"
-      " -main-out\tCreate a symbolic link to the main edc \n"
+      " -main-out\tCreate a symbolic link to the main edc (disabled on Windows) \n"
       " -no-build-sh\tDon't output build.sh \n"
       " -output, -o\tOutput to specified directory \n"
       " -current-dir\tOutput to current directory \n"
@@ -173,7 +173,9 @@ main(int argc, char **argv)
 	else if ((!strcmp(argv[i], "-main-out")) && (i < (argc - 1)))
 	  {
 	     i++;
+#ifndef _WIN32
 	     file_out = argv[i];
+#endif
 	  }
 	else if (!strcmp(argv[i], "-no-build-sh"))
 	  build_sh = 0;
