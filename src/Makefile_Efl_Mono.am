@@ -206,16 +206,10 @@ lib/efl_mono/libefl_mono.dll.config:
 	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
 	echo "</configuration>" >> $@
 
-if HAVE_WIN32
-efl_mono_dll_dest = $(DESTDIR)$(bindir)
-else
-efl_mono_dll_dest = $(DESTDIR)$(libdir)/efl-mono-@VMAJ@
-endif
-
 EFL_INSTALL_EXEC_HOOK += \
-$(MKDIR_P) $(efl_mono_dll_dest); \
-cp -f $(builddir)/lib/efl_mono/libefl_mono.dll $(efl_mono_dll_dest)/libefl_mono.dll; \
-cp -f $(builddir)/lib/efl_mono/libefl_mono.xml $(efl_mono_dll_dest)/libefl_mono.xml; \
+$(MKDIR_P) @eflmonodlldir@; \
+cp -f $(builddir)/lib/efl_mono/libefl_mono.dll @eflmonodlldir@/libefl_mono.dll; \
+cp -f $(builddir)/lib/efl_mono/libefl_mono.xml @eflmonodlldir@/libefl_mono.xml; \
 $(MKDIR_P) $(DESTDIR)$(datadir)/efl_mono; \
 cp -f $(builddir)/bindings/mono/efl_mono/efl_libs.csv $(DESTDIR)$(datadir)/efl_mono/efl_libs.csv;
 

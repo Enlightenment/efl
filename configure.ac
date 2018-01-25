@@ -1355,6 +1355,13 @@ AC_DEFINE_IF([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"],
   [1], [Compiling bindings for C Sharp])
 AC_SUBST([want_csharp])
 
+if test "x${have_windows}" = "xyes"; then
+  eflmonodlldir="$prefix/bin"
+else
+  eflmonodlldir="$libdir/efl-mono-${EFL_VERSION_MAJOR}"
+fi
+AC_SUBST([eflmonodlldir])
+
 # Efl Mono
 EFL_LIB_START_OPTIONAL([Efl_Mono], [test "x${want_csharp}" = "xyes"])
 
