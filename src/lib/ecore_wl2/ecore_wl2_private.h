@@ -564,6 +564,7 @@ typedef struct _Ecore_Wl2_Surface
    Eina_Bool alpha : 1;
    struct
      {
+        Eina_Bool (*check)(Ecore_Wl2_Window *win);
         void (*destroy)(Ecore_Wl2_Surface *surface);
         void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
         void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);

@@ -245,18 +245,20 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    out->w = 0;
    out->h = 0;
 
-   if (!_evas_dmabuf_surface_check(win)) goto err;
-
+   out->funcs.check = _evas_dmabuf_surface_check;
    out->funcs.destroy = _evas_dmabuf_surface_destroy;
    out->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
    out->funcs.data_get = _evas_dmabuf_surface_data_get;
    out->funcs.assign = _evas_dmabuf_surface_assign;
    out->funcs.post = _evas_dmabuf_surface_post;
    out->funcs.flush = _surface_flush;
-   win->wl2_surface = out;
-   return out;
 
-err:
+   if (out->funcs.check(win))
+     {
+        win->wl2_surface = out;
+        return out;
+     }
+
    free(out);
    return NULL;
 }
