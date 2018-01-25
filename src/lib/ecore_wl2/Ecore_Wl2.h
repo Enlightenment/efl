@@ -417,6 +417,17 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_ACTIVATE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_DEACTIVATE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE; /** @since 1.21 */
 
+typedef struct _Ecore_Wl2_Surface_Interface
+{
+   Eina_Bool (*check)(Ecore_Wl2_Window *win);
+   void (*destroy)(Ecore_Wl2_Surface *surface);
+   void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+   void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
+   int  (*assign)(Ecore_Wl2_Surface *surface);
+   void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
+   void (*flush)(Ecore_Wl2_Surface *surface);
+} Ecore_Wl2_Surface_Interface;
+
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland display protocol
