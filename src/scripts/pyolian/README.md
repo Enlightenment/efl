@@ -358,7 +358,7 @@ defined as follows:
  sometimes it is useful or necessary to set variables in the template. 
  Can also be used to capture the output of e.g. an evaluated macro.
 
-Moreover all the Eolian classes and enums (as defined in eolian.py) is available
+Moreover all the Eolian classes and enums (as defined in eolian.py) are available
 in the template, fe:
 
  * `Function` eolian.Function (class)

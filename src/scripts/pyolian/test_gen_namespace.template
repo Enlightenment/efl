@@ -6,15 +6,15 @@ Namespace:    ${namespace.name}$  ${namespace.namespaces}$
 Regular Classes:
 ================
 <!--(for cls in namespace.regulars)-->
- * ${cls.full_name}$ (${cls.type.name.lower()}$)
+ * ${cls.full_name}$
 <!--(else)-->
  no classes available
 <!--(end)-->
 
-Interfaces:
-===========
-<!--(for cls in namespace.interfaces)-->
- * ${cls.full_name}$ (${cls.type.name.lower()}$)
+Abstract Classes:
+================
+<!--(for cls in namespace.abstracts)-->
+ * ${cls.full_name}$
 <!--(else)-->
  no classes available
 <!--(end)-->
@@ -22,7 +22,15 @@ Interfaces:
 Mixins:
 =======
 <!--(for cls in namespace.mixins)-->
- * ${cls.full_name}$ (${cls.type.name.lower()}$)
+ * ${cls.full_name}$
+<!--(else)-->
+ no classes available
+<!--(end)-->
+
+Interfaces:
+===========
+<!--(for cls in namespace.interfaces)-->
+ * ${cls.full_name}$
 <!--(else)-->
  no classes available
 <!--(end)-->

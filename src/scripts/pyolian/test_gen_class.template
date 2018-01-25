@@ -32,7 +32,7 @@ Methods:
 Properties:
 ===========
 <!--(for func in cls.properties)-->
- * ${func.name}$ (<!--(for v in func.getter_values)-->${v.type.c_type}$ ${v.name}$, <!--(end)-->)
+ * ${func.name}$ (<!--(for v in func.getter_values)-->${v.type.c_type_default}$ ${v.name}$, <!--(end)-->)
 <!--(else)-->
  no properties available
 <!--(end)-->
