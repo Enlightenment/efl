@@ -1086,7 +1086,7 @@ efl_quicklaunch_prepare(int    argc,
 #endif
 }
 
-EAPI Eina_Bool
+EAPI int
 elm_quicklaunch_fork(int    argc,
                      char **argv,
                      char  *cwd,
@@ -1104,11 +1104,11 @@ elm_quicklaunch_fork(int    argc,
 
         WRN("No main function found.");
         child = fork();
-        if (child > 0) return EINA_TRUE;
+        if (child > 0) return child;
         else if (child < 0)
           {
              perror("could not fork");
-             return EINA_FALSE;
+             return 0;
           }
         setsid();
         if (chdir(cwd) != 0) perror("could not chdir");
@@ -1123,11 +1123,11 @@ elm_quicklaunch_fork(int    argc,
    INF("Main function found (legacy: %p, efl: %p)",
        qr_main, qre_main);
    child = fork();
-   if (child > 0) return EINA_TRUE;
+   if (child > 0) return child;
    else if (child < 0)
      {
         perror("could not fork");
-        return EINA_FALSE;
+        return 0;
      }
    if (postfork_func) postfork_func(postfork_data);
 
@@ -1217,9 +1217,9 @@ elm_quicklaunch_fork(int    argc,
         exit(ret);
      }
 
-   return EINA_TRUE;
+   return 1;
 #else
-   return EINA_FALSE;
+   return 0;
    (void)argc;
    (void)argv;
    (void)cwd;
