@@ -106,7 +106,7 @@ _evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
 
         best = ecore_wl2_buffer_create(ewd, s->w, s->h, s->alpha);
         /* Start at -1 so it's age is incremented to 0 for first draw */
-        best->age = -1;
+        ecore_wl2_buffer_age_set(best, -1);
         s->buffers = eina_list_append(s->buffers, best);
      }
    return best;
@@ -128,7 +128,7 @@ _evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
          */
         WRN("No free DMAbuf buffers, dropping a frame");
         EINA_LIST_FOREACH(s->buffers, l, b)
-          b->age = 0;
+          ecore_wl2_buffer_age_set(b, 0);
         return 0;
      }
    EINA_LIST_FOREACH(s->buffers, l, b)
@@ -149,7 +149,7 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, Eina_Rectangle *rects, unsigned 
 
    s->current = NULL;
    ecore_wl2_buffer_busy_set(b);
-   b->age = 0;
+   ecore_wl2_buffer_age_set(b, 0);
 
    ecore_wl2_window_buffer_attach(s->wl2_win, b->wl_buffer, 0, 0, EINA_FALSE);
    ecore_wl2_window_damage(s->wl2_win, rects, count);
