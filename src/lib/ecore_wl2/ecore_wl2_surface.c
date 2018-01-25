@@ -146,7 +146,7 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, Eina_Rectangle *rects, unsigned 
    ecore_wl2_buffer_unlock(b);
 
    s->current = NULL;
-   b->busy = EINA_TRUE;
+   ecore_wl2_buffer_busy_set(b);
    b->age = 0;
 
    ecore_wl2_window_buffer_attach(s->wl2_win, b->wl_buffer, 0, 0, EINA_FALSE);

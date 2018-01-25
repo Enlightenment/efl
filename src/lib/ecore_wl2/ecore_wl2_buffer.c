@@ -680,6 +680,14 @@ ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer)
    return (buffer->locked) || (buffer->busy);
 }
 
+EAPI void
+ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN(buffer);
+
+   buffer->busy = EINA_TRUE;
+}
+
 static Ecore_Wl2_Buffer *
 _ecore_wl2_buffer_partial_create(int w, int h, Eina_Bool alpha)
 {
