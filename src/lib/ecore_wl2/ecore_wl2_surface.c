@@ -38,14 +38,9 @@ _evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t fl
    if ((!w) || (!h)) return;
    EINA_LIST_FOREACH_SAFE(s->buffers, l, tmp, b)
      {
-        int stride = b->stride;
+        if (!force && ecore_wl2_buffer_fit(b, w, h))
+          continue;
 
-        /* If stride is a little bigger than width we still fit */
-        if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
-          {
-             b->w = w;
-             continue;
-          }
         ecore_wl2_buffer_destroy(b);
         s->buffers = eina_list_remove_list(s->buffers, l);
      }

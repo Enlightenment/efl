@@ -711,6 +711,23 @@ ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer)
    buffer->age++;
 }
 
+EAPI Eina_Bool
+ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h)
+{
+   int stride;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(b, EINA_FALSE);
+
+   stride = b->stride;
+   if ((w >= b->w) && (w <= stride / 4) && (h == b->h))
+     {
+        b->w = w;
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static Ecore_Wl2_Buffer *
 _ecore_wl2_buffer_partial_create(int w, int h, Eina_Bool alpha)
 {
