@@ -8627,9 +8627,9 @@ _efl_ui_win_legacy_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eo *
-_efl_ui_win_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+_efl_ui_win_legacy_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
-   obj = efl_constructor(efl_super(obj, EFL_UI_WIN_LEGACY_CLASS));
+   obj = efl_finalize(efl_super(obj, EFL_UI_WIN_LEGACY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    return obj;
 }
