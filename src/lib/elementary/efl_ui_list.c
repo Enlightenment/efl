@@ -721,7 +721,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
-   efl_ui_list_segarray_setup(&pd->segarray, 32);
+   pd->segarray = efl_add(EFL_UI_LIST_SEGARRAY_CLASS, obj, efl_ui_list_segarray_setup(efl_added, 32));
 
    manager = efl_ui_widget_focus_manager_create(obj, obj);
    efl_composite_attach(obj, manager);
@@ -735,7 +735,6 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
    pd->factory = NULL;
-   pd->orient = EFL_ORIENT_DOWN;
    pd->align.h = 0;
    pd->align.v = 0;
    pd->min.w = 0;
@@ -757,8 +756,6 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
 
    ELM_SAFE_FREE(pd->pan_obj, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
-
-   efl_ui_list_segarray_flush(&pd->segarray);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -789,7 +786,7 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Ef
      {
         if (pd->relayout)
           efl_ui_list_relayout_model_set(pd->relayout, NULL);
-        efl_ui_list_segarray_flush(&pd->segarray);
+        efl_ui_list_segarray_flush(pd->segarray);
         efl_unref(pd->model);
         pd->model = NULL;
      }
@@ -930,7 +927,7 @@ _layout(Efl_Ui_List_Data *pd)
    if (!pd->model)
      return;
 
-   efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, &pd->segarray);
+   efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, pd->segarray);
 }
 
 static void
@@ -939,7 +936,7 @@ _children_slice_then(void * data, Efl_Event const* event)
    Efl_Ui_List_Data *pd = data;
    Eina_Accessor *acc = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
 
-   efl_ui_list_segarray_insert_accessor(&pd->segarray, pd->outstanding_slice.slice_start, acc);
+   efl_ui_list_segarray_insert_accessor(pd->segarray, pd->outstanding_slice.slice_start, acc);
 
    pd->segarray_first = pd->outstanding_slice.slice_start;
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
@@ -1007,7 +1004,7 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 
    evt.child = item->children;
    evt.layout = item->layout;
-   evt.index = efl_ui_list_item_index_get((Efl_Ui_List_Item *)item);
+   evt.index = efl_ui_list_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
    efl_ui_focus_composition_dirty(obj);
 
@@ -1033,7 +1030,7 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
 
    evt.child = item->children;
    evt.layout = item->layout;
-   evt.index = efl_ui_list_item_index_get((Efl_Ui_List_Item *)item);
+   evt.index = efl_ui_list_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
 
    evas_object_smart_member_del(item->layout);

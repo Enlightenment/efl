@@ -20,12 +20,9 @@ struct _Efl_Ui_List_Item
    Efl_Ui_List_LayoutItem item;
    Efl_Future           *future;
    Efl_Ui_List          *list;
-   // Evas_Coord           x, y, minw, minh, w, h;
-   // // double               h, v, wx, wy;
-   // double               wx, wy;
 };
 
-int efl_ui_list_item_index_get(Efl_Ui_List_Item const* item);
+int efl_ui_list_item_index_get(Efl_Ui_List_LayoutItem *item);
 
 typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
 
@@ -37,8 +34,6 @@ struct _Efl_Ui_List_Data
    Eo                           *scrl_mgr;
    Efl_Ui_List_Pan              *pan_obj;
    Efl_Model                    *model;
-
-   Efl_Orient                   orient;
 
    struct {
       double                    h, v;
@@ -53,20 +48,11 @@ struct _Efl_Ui_List_Data
       double                    x, y;
    } weight;
 
-   // struct {
-   //    Evas_Coord                w, h;
-   //    int                       start;
-   //    int                       slice;
-   // } realized;
-
    int segarray_first;
-   Efl_Ui_List_SegArray segarray;
+   Efl_Ui_List_SegArray         *segarray;
 
    Efl_Ui_Layout_Factory        *factory;
    Eina_List                    *selected_items;
-   // struct {
-   //   Eina_Inarray               array;
-   // } items;
    Eina_Stringshare             *style;
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
@@ -74,7 +60,7 @@ struct _Efl_Ui_List_Data
    Efl_Ui_Focus_Manager         *manager;
    Eina_Rect                    gmt;
    Eina_Size2D                  min;
-   int                          /*average_item_size, avsom, */item_count;
+   int                          item_count;
    Efl_Future                   *slice_future;
    Efl_Future                   *count_future;
    Efl_Ui_List_Relayout         *relayout;
@@ -107,8 +93,6 @@ struct _Efl_Ui_List_Slice
    Efl_Ui_List_Data       *pd;
    int                    newstart, slicestart, newslice;
 };
-
-
 
 #define EFL_UI_LIST_DATA_GET(o, ptr) \
   Efl_Ui_List_Data * ptr = efl_data_scope_get(o, EFL_UI_LIST_CLASS)

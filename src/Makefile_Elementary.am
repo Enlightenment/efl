@@ -73,6 +73,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list.eo \
 	lib/elementary/efl_ui_list_model.eo \
 	lib/elementary/efl_ui_list_pan.eo \
+	lib/elementary/efl_ui_list_segarray.eo \
 	lib/elementary/efl_ui_list_relayout.eo \
 	lib/elementary/efl_ui_multibuttonentry_part.eo \
 	lib/elementary/efl_ui_panes_part.eo \

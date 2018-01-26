@@ -1,7 +1,5 @@
 import efl_ui_list_types;
 
-struct @extern Efl_Ui_List_SegArray;
-
 interface Efl.Ui.List.Relayout (Efl.Interface)
 {
    methods {
@@ -9,7 +7,7 @@ interface Efl.Ui.List.Relayout (Efl.Interface)
          params {
             modeler: Efl.Ui.List.Model;
             first: int;
-            children: ptr(Efl_Ui_List_SegArray);
+            children: Efl.Ui.List.SegArray;
          }
       }
       @property model {
