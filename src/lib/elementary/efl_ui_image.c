@@ -604,18 +604,12 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
    ELM_SAFE_FREE(sd->remote.key, eina_stringshare_del);
 
-   if (sd->pfuture)
+   if (sd->property.model)
      {
-        efl_future_cancel(sd->pfuture);
-        sd->pfuture = NULL;
-     }
-
-   if (sd->model)
-     {
-         efl_event_callback_del(sd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                         _efl_ui_image_model_properties_changed_cb, obj);
-         efl_unref(sd->model);
-         sd->model = NULL;
+         efl_event_callback_del(sd->property.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                                _efl_ui_image_model_properties_changed_cb, obj);
+         efl_unref(sd->property.model);
+         sd->property.model = NULL;
      }
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
@@ -1776,153 +1770,97 @@ _efl_ui_image_icon_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
    return sd->stdicon;
 }
 
-static void
-_prop_future_error_cb(void* data, Efl_Event const* event EINA_UNUSED)
-{
-   Eo *obj = data;
-   EFL_UI_IMAGE_DATA_GET(obj, pd);
-   pd->pfuture = NULL;
-}
-
-static void
-_prop_key_future_then_cb(void* data, Efl_Event const * event)
-{
-   Eo *obj = data;
-   Eina_Accessor *acc = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
-   Eina_Value *value;
-   char *filename, *key;
-
-   EFL_UI_IMAGE_DATA_GET(obj, pd);
-   pd->pfuture = NULL;
-
-   if (eina_accessor_data_get(acc, 0, (void **)&value) && value)
-     {
-        filename = eina_value_to_string(value);
-     }
-   else return;
-
-   if (eina_accessor_data_get(acc, 1, (void **)&value) && value)
-     {
-        key = eina_value_to_string(value);
-     }
-   else
-     {
-        free(filename);
-        return;
-     }
-
-   elm_image_file_set(obj, filename, key);
-   free(filename);
-   free(key);
-}
-
-static void
-_prop_future_then_cb(void* data, Efl_Event const * event)
-{
-   Eo *obj = data;
-   Eina_Value *value = (Eina_Value*)((Efl_Future_Event_Success*)event->info)->value;
-   char *text;
-   EFL_UI_IMAGE_DATA_GET(obj, pd);
-   pd->pfuture = NULL;
-
-   const Eina_Value_Type *vtype = eina_value_type_get(value);
-
-   if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
-     {
-         eina_value_get(value, &text);
-         if (pd->con_icon) efl_ui_image_icon_set(obj, text);
-         else elm_image_file_set(obj, text, NULL);
-     }
-   else
-     {
-         text = eina_value_to_string(value);
-         if (pd->con_icon) efl_ui_image_icon_set(obj, text);
-         else elm_image_file_set(obj, text, NULL);
-         free(text);
-     }
-}
-
 void
 _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
 {
-   if (pd->model && pd->prop_con)
+   Eina_Value *vfile = NULL;
+   Eina_Value *vkey = NULL;
+   Eina_File *f = NULL;
+   char *file = NULL;
+   char *key = NULL;
+
+   if (!pd->property.model) return ;
+
+   vfile = efl_model_property_get(pd->property.model, pd->property.file);
+   vkey = efl_model_property_get(pd->property.model, pd->property.key);
+
+   if (pd->property.icon)
      {
-         if (pd->pfuture) efl_future_cancel(pd->pfuture);
+        file = eina_value_to_string(vfile);
 
-         pd->pfuture = efl_model_property_get(pd->model, pd->prop_con);
-
-         if (pd->prop_key)
-           {
-               const Eina_Array *properties;
-               Eina_Array_Iterator it;
-               char *property;
-               unsigned int i = 0;
-
-               properties = efl_model_properties_get(pd->model);
-               EINA_ARRAY_ITER_NEXT(properties, i, property, it)
-                 {
-                     if (strcmp(property, pd->prop_key) == 0)
-                       {
-                           Efl_Future *futures[2] = {NULL,};
-                           futures[0] = pd->pfuture;
-                           futures[1] = efl_model_property_get(pd->model, pd->prop_key);
-                           pd->pfuture = efl_future_all(futures[0], futures[1]);
-                           efl_future_then(pd->pfuture, &_prop_key_future_then_cb,
-                                                                &_prop_future_error_cb, NULL, obj);
-                           return;
-                       }
-                 }
-           }
-
-         efl_future_then(pd->pfuture, &_prop_future_then_cb,
-                           &_prop_future_error_cb, NULL, obj);
+        efl_ui_image_icon_set(obj, file);
      }
+   else
+     {
+        key = eina_value_to_string(vkey);
+        if (eina_value_type_get(vfile) == EINA_VALUE_TYPE_FILE)
+          {
+             eina_value_get(vfile, &f);
+
+             efl_file_mmap_set(obj, f, key);
+          }
+        else
+          {
+             file = eina_value_to_string(vfile);
+
+             efl_file_set(obj, file, key);
+          }
+     }
+
+   eina_value_free(vfile);
+   eina_value_free(vkey);
+   free(file);
+   free(key);
 }
 
 static void
 _efl_ui_image_model_properties_changed_cb(void *data, const Efl_Event *event)
 {
    Efl_Model_Property_Event *evt = event->info;
+   Eina_Array_Iterator it;
    Eo *obj = data;
+   const char *prop;
+   unsigned int i;
+   Eina_Bool refresh = EINA_FALSE;
    EFL_UI_IMAGE_DATA_GET(obj, pd);
 
    if (!evt->changed_properties)
      return;
 
-   if (pd->model && pd->prop_con)
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
-         Eina_Array_Iterator it;
-         const char *prop;
-         unsigned int i;
-
-         EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
-           {
-               if (!strcmp(pd->prop_con, prop) || (pd->prop_key && !strcmp(pd->prop_key, prop)))
-                 {
-                     _update_viewmodel(obj, pd);
-                     return;
-                 }
-           }
+        if (pd->property.file &&
+            (pd->property.file == prop || !strcmp(pd->property.file, prop)))
+          {
+             refresh = EINA_TRUE;
+             break ;
+          }
+        if (pd->property.key &&
+            (pd->property.key == prop || !strcmp(pd->property.key, prop)))
+          {
+             refresh = EINA_TRUE;
+             break ;
+          }
      }
+
+   if (refresh) _update_viewmodel(obj, pd);
 }
 
 EOLIAN static void
 _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *model)
 {
-   if (pd->model)
+   if (pd->property.model)
      {
-         efl_event_callback_del(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                         _efl_ui_image_model_properties_changed_cb, obj);
-         efl_unref(pd->model);
-         pd->model = NULL;
+        efl_event_callback_del(pd->property.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_image_model_properties_changed_cb, obj);
      }
+
+   efl_replace(&pd->property.model, model);
 
    if (model)
      {
-         pd->model = model;
-         efl_ref(pd->model);
-         efl_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                         _efl_ui_image_model_properties_changed_cb, obj);
+        efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_image_model_properties_changed_cb, obj);
      }
 
    _update_viewmodel(obj, pd);
@@ -1931,7 +1869,7 @@ _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *m
 EOLIAN static Efl_Model *
 _efl_ui_image_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 {
-   return pd->model;
+   return pd->property.model;
 }
 
 EOLIAN static void
@@ -1939,18 +1877,18 @@ _efl_ui_image_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Image_Data *pd, const
 {
    if (strcmp(name, "filename") == 0)
      {
-        pd->con_icon = EINA_FALSE;
-        eina_stringshare_replace(&pd->prop_con, property);
+        pd->property.icon = EINA_FALSE;
+        eina_stringshare_replace(&pd->property.file, property);
      }
    else if (strcmp(name, "icon") == 0)
      {
-        pd->con_icon = EINA_TRUE;
-        eina_stringshare_replace(&pd->prop_con, property);
-        eina_stringshare_replace(&pd->prop_key, NULL);
+        pd->property.icon = EINA_TRUE;
+        eina_stringshare_replace(&pd->property.file, property);
+        eina_stringshare_replace(&pd->property.key, NULL);
      }
    else if (strcmp(name, "key") == 0)
      {
-        eina_stringshare_replace(&pd->prop_key, property);
+        eina_stringshare_replace(&pd->property.key, property);
      }
    else return;
 
