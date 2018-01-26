@@ -177,7 +177,7 @@ _evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data)
 }
 
 static void
-_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_data)
+_evas_dmabuf_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_data)
 {
    Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
@@ -250,7 +250,7 @@ static Ecore_Wl2_Surface_Interface dmabuf_smanager =
    .data_get = _evas_dmabuf_surface_data_get,
    .assign = _evas_dmabuf_surface_assign,
    .post = _evas_dmabuf_surface_post,
-   .flush = _surface_flush
+   .flush = _evas_dmabuf_surface_flush
 };
 
 EAPI Ecore_Wl2_Surface *
