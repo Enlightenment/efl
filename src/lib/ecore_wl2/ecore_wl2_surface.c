@@ -53,24 +53,20 @@ _evas_dmabuf_surface_data_get(Ecore_Wl2_Surface *s, int *w, int *h)
 {
    Ecore_Wl2_Buffer *b;
    void *ptr;
+   int stride;
 
    b = s->current;
    if (!b) return NULL;
 
+   ptr = ecore_wl2_buffer_map(b, NULL, h, &stride);
+   if (!ptr) return NULL;
+
    /* We return stride/bpp because it may not match the allocated
     * width.  evas will figure out the clipping
     */
-   if (w) *w = b->stride / 4;
-   if (h) *h = b->h;
-   if (b->locked) return b->mapping;
+   if (w) *w = stride / 4;
 
-   ptr = ecore_wl2_buffer_map(b);
-   if (!ptr)
-     return NULL;
-
-   b->mapping = ptr;
-   b->locked = EINA_TRUE;
-   return b->mapping;
+   return ptr;
 }
 
 static Ecore_Wl2_Buffer *

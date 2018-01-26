@@ -622,13 +622,31 @@ ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *buf)
 }
 
 EAPI void *
-ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf)
+ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride)
 {
    void *out;
 
-   _buffer_manager_ref();
-   out = buffer_manager->map(buf);
-   if (!out) _buffer_manager_deref();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
+
+   if (buf->locked)
+     {
+        out = buf->mapping;
+     }
+   else
+     {
+        _buffer_manager_ref();
+        out = buffer_manager->map(buf);
+        if (!out)
+          {
+             _buffer_manager_deref();
+             return NULL;
+          }
+        buf->locked = EINA_TRUE;
+        buf->mapping = out;
+     }
+   if (w) *w = buf->w;
+   if (h) *h = buf->h;
+   if (stride) *stride = (int)buf->stride;
    return out;
 }
 
