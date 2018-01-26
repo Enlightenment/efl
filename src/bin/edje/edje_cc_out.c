@@ -209,7 +209,6 @@ typedef struct _Image_Unused_Ids Image_Unused_Ids;
 
 static int pending_threads = 0;
 static int pending_image_threads = 0;
-static Eina_List *running_threads;
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
 
@@ -763,11 +762,10 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_head_end(void *data, Ecore_Thread *thread)
+data_thread_head_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Head_Write *hw = data;
 
-   running_threads = eina_list_remove(running_threads, thread);
    if (hw->errstr)
      {
         error_and_abort(hw->ef, hw->errstr);
@@ -786,7 +784,7 @@ data_write_header(Eet_File *ef)
    hw->ef = ef;
    pending_threads++;
    if (threads)
-     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_head, data_thread_head_end, NULL, hw));
+     ecore_thread_run(data_thread_head, data_thread_head_end, NULL, hw);
    else
      {
         data_thread_head(hw, NULL);
@@ -864,11 +862,9 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_fonts_end(void *data, Ecore_Thread *thread)
+data_thread_fonts_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Fonts_Write *fc = data;
-
-   running_threads = eina_list_remove(running_threads, thread);
    if (fc->errstr)
      {
         error_and_abort(fc->ef, fc->errstr);
@@ -897,7 +893,7 @@ data_write_fonts(Eet_File *ef, int *font_num)
         fc->fn = fn;
         pending_threads++;
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_fonts, data_thread_fonts_end, NULL, fc));
+          ecore_thread_run(data_thread_fonts, data_thread_fonts_end, NULL, fc);
         else
           {
              data_thread_fonts(fc, NULL);
@@ -1131,11 +1127,10 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_image_end(void *data, Ecore_Thread *thread)
+data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Image_Write *iw = data;
 
-   running_threads = eina_list_remove(running_threads, thread);
    if (iw->errstr)
      {
         error_and_abort(iw->ef, iw->errstr);
@@ -1156,7 +1151,7 @@ data_image_preload_done(void *data, Evas *e EINA_UNUSED, Evas_Object *o, void *e
    iw->alpha = evas_object_image_alpha_get(o);
    iw->data = evas_object_image_data_get(o, 0);
    if (threads)
-     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw));
+     ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
    else
      {
         data_thread_image(iw, NULL);
@@ -1178,11 +1173,10 @@ tgv_file_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-tgv_file_thread_end(void *data, Ecore_Thread *thread)
+tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Image_Write *iw = data;
 
-   running_threads = eina_list_remove(running_threads, thread);
    if (iw->errstr)
      {
         error_and_abort(iw->ef, iw->errstr);
@@ -1268,7 +1262,7 @@ tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img)
 
    pending_image_threads++;
    if (threads)
-     running_threads = eina_list_append(running_threads, ecore_thread_run(tgv_file_thread, tgv_file_thread_end, NULL, iw));
+     ecore_thread_run(tgv_file_thread, tgv_file_thread_end, NULL, iw);
    else
      {
         tgv_file_thread(iw, NULL);
@@ -1595,10 +1589,9 @@ data_thread_sounds(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_sounds_end(void *data, Ecore_Thread *thread)
+data_thread_sounds_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Sound_Write *sw = data;
-   running_threads = eina_list_remove(running_threads, thread);
    free(sw);
    thread_end(0);
 }
@@ -1622,7 +1615,7 @@ data_write_sounds(Eet_File *ef, int *sound_num)
              *sound_num += 1;
              pending_threads++;
              if (threads)
-               running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_sounds, data_thread_sounds_end, NULL, sw));
+               ecore_thread_run(data_thread_sounds, data_thread_sounds_end, NULL, sw);
              else
                {
                   data_thread_sounds(sw, NULL);
@@ -1695,10 +1688,9 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_mo_end(void *data, Ecore_Thread *thread)
+data_thread_mo_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Mo_Write *mw = data;
-   running_threads = eina_list_remove(running_threads, thread);
    if (mw->errstr)
      {
        error_and_abort(mw->ef, mw->errstr);
@@ -1725,7 +1717,7 @@ _exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *evinfo)
    if (ecore_file_exists(mw->mo_path))
      {
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw));
+          ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
         else
           {
              data_thread_mo(mw, NULL);
@@ -1793,7 +1785,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
              else
                {
                   if (threads)
-                    running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw));
+                    ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
                   else
                     {
                        data_thread_mo(mw, NULL);
@@ -1859,10 +1851,9 @@ data_thread_vibrations(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_vibrations_end(void *data, Ecore_Thread *thread)
+data_thread_vibrations_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Vibration_Write *sw = data;
-   running_threads = eina_list_remove(running_threads, thread);
    free(sw);
    thread_end(0);
 }
@@ -1886,7 +1877,7 @@ data_write_vibrations(Eet_File *ef, int *num)
              *num += 1;
              pending_threads++;
              if (threads)
-               running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_vibrations, data_thread_vibrations_end, NULL, vw));
+               ecore_thread_run(data_thread_vibrations, data_thread_vibrations_end, NULL, vw);
              else
                {
                   data_thread_vibrations(vw, NULL);
@@ -1934,10 +1925,9 @@ data_thread_group(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_group_end(void *data, Ecore_Thread *thread)
+data_thread_group_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Group_Write *gw = data;
-   running_threads = eina_list_remove(running_threads, thread);
    if (gw->errstr)
      {
         error_and_abort(gw->ef, gw->errstr);
@@ -1967,7 +1957,7 @@ data_write_groups(Eet_File *ef, int *collection_num)
         gw->pc = pc;
         pending_threads++;
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_group, data_thread_group_end, NULL, gw));
+          ecore_thread_run(data_thread_group, data_thread_group_end, NULL, gw);
         else
           {
              data_thread_group(gw, NULL);
@@ -2156,10 +2146,9 @@ static Eina_List *pending_script_writes = NULL;
 static void data_write_script_queue(Script_Write *sc, const char *exeline);
 
 static void
-data_thread_script_end(void *data, Ecore_Thread *thread)
+data_thread_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Script_Write *sc = data;
-   running_threads = eina_list_remove(running_threads, thread);
    if (sc->errstr)
      {
         error_and_abort(sc->ef, sc->errstr);
@@ -2198,7 +2187,7 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
      }
    if (threads)
      {
-        running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc));
+        ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc);
      }
    else
      {
@@ -2467,10 +2456,9 @@ data_thread_lua_script(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_lua_script_end(void *data, Ecore_Thread *thread)
+data_thread_lua_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Script_Write *sc = data;
-   running_threads = eina_list_remove(running_threads, thread);
    if (sc->errstr)
      {
         error_and_abort(sc->ef, sc->errstr);
@@ -2503,7 +2491,7 @@ data_write_lua_scripts(Eet_File *ef)
         sc->i = i;
         pending_threads++;
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end, NULL, sc));
+          ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end, NULL, sc);
         else
           {
              data_thread_lua_script(sc, NULL);
@@ -2520,9 +2508,8 @@ data_thread_source(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread)
+data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   running_threads = eina_list_remove(running_threads, thread);
    thread_end(0);
 }
 
@@ -2576,10 +2563,9 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_license_end(void *data, Ecore_Thread *thread)
+data_thread_license_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    free(data);
-   running_threads = eina_list_remove(running_threads, thread);
    thread_end(0);
 }
 
@@ -2601,7 +2587,7 @@ data_write_license(Eet_File *ef)
 
    pending_threads++;
    if (threads)
-     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw));
+     ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw);
    else
      {
         data_thread_license(lw, NULL);
@@ -2619,7 +2605,7 @@ data_write_license(Eet_File *ef)
 
         pending_threads++;
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw));
+          ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw);
         else
           {
              data_thread_license(lw, NULL);
@@ -2664,9 +2650,8 @@ data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_authors_end(void *data EINA_UNUSED, Ecore_Thread *thread)
+data_thread_authors_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   running_threads = eina_list_remove(running_threads, thread);
    thread_end(0);
 }
 
@@ -2678,9 +2663,8 @@ data_thread_fontmap(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_fontmap_end(void *data EINA_UNUSED, Ecore_Thread *thread)
+data_thread_fontmap_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   running_threads = eina_list_remove(running_threads, thread);
    thread_end(0);
 }
 
@@ -2743,7 +2727,7 @@ data_write(void)
      {
         pending_threads++;
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef));
+          ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
         else
           {
              data_thread_source(ef, NULL);
@@ -2753,7 +2737,7 @@ data_write(void)
    INF("source: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads++;
    if (threads)
-     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef));
+     ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef);
    else
      {
         data_thread_fontmap(ef, NULL);
@@ -2778,7 +2762,7 @@ data_write(void)
      {
         pending_threads++;
         if (threads)
-          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_authors, data_thread_authors_end, NULL, ef));
+          ecore_thread_run(data_thread_authors, data_thread_authors_end, NULL, ef);
         else
           {
              data_thread_authors(ef, NULL);
@@ -2789,16 +2773,16 @@ data_write(void)
    data_image_sets_init();
    INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads--;
-   if (pending_threads > 0) ecore_main_loop_begin();
+   if (pending_threads + pending_image_threads > 0) ecore_main_loop_begin();
    INF("THREADS: %3.5f", ecore_time_get() - t);
    data_write_header(ef);
-   if (pending_threads > 0) ecore_main_loop_begin();
+   if (pending_threads + pending_image_threads > 0) ecore_main_loop_begin();
    INF("THREADS: %3.5f", ecore_time_get() - t);
 
    if (threads)
      {
         /* probably caught signal, exit immediately to avoid crash */
-        if (running_threads) exit(-1);
+        if (pending_threads + pending_image_threads > 0) exit(-1);
      }
 
    err = eet_close(ef);
