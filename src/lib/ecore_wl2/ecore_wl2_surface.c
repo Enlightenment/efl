@@ -152,6 +152,7 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, void *priv_data, Eina_Rectangle 
 {
    Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
+   Ecore_Wl2_Window *win;
 
    p = priv_data;
 
@@ -164,10 +165,12 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, void *priv_data, Eina_Rectangle 
    ecore_wl2_buffer_busy_set(b);
    ecore_wl2_buffer_age_set(b, 0);
 
-   ecore_wl2_window_buffer_attach(s->wl2_win, b->wl_buffer, 0, 0, EINA_FALSE);
-   ecore_wl2_window_damage(s->wl2_win, rects, count);
+   win = ecore_wl2_surface_window_get(s);
 
-   ecore_wl2_window_commit(s->wl2_win, EINA_TRUE);
+   ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
+   ecore_wl2_window_damage(win, rects, count);
+
+   ecore_wl2_window_commit(win, EINA_TRUE);
 }
 
 static void
@@ -323,6 +326,14 @@ EAPI void
 ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf)
 {
    _smanagers = eina_list_remove(_smanagers, intf);
+}
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   return surface->wl2_win;
 }
 
 /* TEMPORARY HACK FOR TESTING */
