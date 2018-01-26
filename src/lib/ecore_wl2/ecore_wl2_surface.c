@@ -44,8 +44,6 @@ _evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t fl
         ecore_wl2_buffer_destroy(b);
         s->buffers = eina_list_remove_list(s->buffers, l);
      }
-   s->w = w;
-   s->h = h;
 }
 
 static void *
@@ -183,6 +181,8 @@ ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    surface->funcs->reconfigure(surface, w, h, flags);
+   surface->w = w;
+   surface->h = h;
 }
 
 EAPI void *
