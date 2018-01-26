@@ -57,6 +57,12 @@ EAPI int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE = 0;
 EAPI int _ecore_wl2_event_window_www = -1;
 EAPI int _ecore_wl2_event_window_www_drag = -1;
 
+static Eina_Bool
+_ecore_wl2_surface_modules_init(void)
+{
+   return ecore_wl2_surface_manager_dmabuf_add();
+}
+
 /* public API functions */
 EAPI int
 ecore_wl2_init(void)
@@ -87,6 +93,12 @@ ecore_wl2_init(void)
      {
         ERR("Could not initialize Ecore_Event");
         goto ecore_event_err;
+     }
+
+   if (!_ecore_wl2_surface_modules_init())
+     {
+        ERR("Could not load surface modules");
+        goto module_load_err;
      }
 
    /* handle creating new Ecore_Wl2 event types */
@@ -138,6 +150,9 @@ ecore_wl2_init(void)
      no_session_recovery = !!getenv("EFL_NO_WAYLAND_SESSION_RECOVERY");
 
    return _ecore_wl2_init_count;
+
+module_load_err:
+   ecore_event_shutdown();
 
 ecore_event_err:
    ecore_shutdown();

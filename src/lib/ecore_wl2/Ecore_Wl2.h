@@ -30,6 +30,8 @@
 
 # ifdef EFL_BETA_API_SUPPORT
 
+#define ECORE_WL2_SURFACE_INTERFACE_VERSION 1
+
 typedef struct _Ecore_Wl2_Subsurface Ecore_Wl2_Subsurface;
 
 #  ifndef _ECORE_WL2_WINDOW_PREDEF
@@ -419,6 +421,9 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE; /** @since 1.21 */
 
 typedef struct _Ecore_Wl2_Surface_Interface
 {
+   int id;
+   int version;
+
    void *(*setup)(Ecore_Wl2_Window *win);
    void (*destroy)(Ecore_Wl2_Surface *surface, void *priv_data);
    void (*reconfigure)(Ecore_Wl2_Surface *surface, void *priv_data, int w, int h, uint32_t flags);
@@ -2023,6 +2028,7 @@ EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rec
 EAPI void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface);
 EAPI void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window);
 EAPI Ecore_Wl2_Buffer *ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface);
+EAPI int ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf);
 
 # endif
 

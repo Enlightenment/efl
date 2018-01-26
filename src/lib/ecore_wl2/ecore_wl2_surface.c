@@ -10,6 +10,12 @@
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 #define MAX_BUFFERS 4
+
+static Eina_List *_smanagers = NULL;
+static int _smanager_count = 0;
+
+int ECORE_WL2_SURFACE_DMABUF = 0;
+
 typedef struct _Ecore_Wl2_Dmabuf_Private
 {
    Ecore_Wl2_Buffer *current;
@@ -244,6 +250,7 @@ ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface)
 
 static Ecore_Wl2_Surface_Interface dmabuf_smanager =
 {
+   .version = 1,
    .setup = _evas_dmabuf_surface_setup,
    .destroy = _evas_dmabuf_surface_destroy,
    .reconfigure = _evas_dmabuf_surface_reconfigure,
@@ -257,8 +264,11 @@ EAPI Ecore_Wl2_Surface *
 ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
    Ecore_Wl2_Surface *out;
+   Eina_List *l;
+   Ecore_Wl2_Surface_Interface *intf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_smanagers, NULL);
 
    if (win->wl2_surface) return win->wl2_surface;
 
@@ -269,13 +279,16 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    out->alpha = alpha;
    out->w = 0;
    out->h = 0;
-   out->funcs = &dmabuf_smanager;
 
-   out->private_data = out->funcs->setup(win);
-   if (out->private_data)
+   EINA_LIST_FOREACH(_smanagers, l, intf)
      {
-        win->wl2_surface = out;
-        return out;
+        out->private_data = intf->setup(win);
+        if (out->private_data)
+          {
+             out->funcs = intf;
+             win->wl2_surface = out;
+             return out;
+          }
      }
 
    free(out);
@@ -293,4 +306,27 @@ ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
 
    return ecore_wl2_buffer_create(ewd, surface->w, surface->h, surface->alpha);
+}
+
+EAPI int
+ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf)
+{
+   if (intf->version < ECORE_WL2_SURFACE_INTERFACE_VERSION)
+     return 0;
+
+   _smanagers = eina_list_prepend(_smanagers, intf);
+   intf->id = ++_smanager_count;
+   return intf->id;
+}
+
+/* TEMPORARY HACK FOR TESTING */
+Eina_Bool
+ecore_wl2_surface_manager_dmabuf_add(void)
+{
+   ECORE_WL2_SURFACE_DMABUF = ecore_wl2_surface_manager_add(&dmabuf_smanager);
+
+   if (ECORE_WL2_SURFACE_DMABUF < 1)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }

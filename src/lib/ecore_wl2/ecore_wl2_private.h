@@ -606,4 +606,6 @@ EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
 
+Eina_Bool ecore_wl2_surface_manager_dmabuf_add(void);
+
 #endif
