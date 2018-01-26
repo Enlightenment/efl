@@ -16,11 +16,15 @@ typedef struct _Ecore_Wl2_Dmabuf_Private
    Eina_List *buffers;
 } Ecore_Wl2_Dmabuf_Private;
 
-static Eina_Bool
-_evas_dmabuf_surface_check(Ecore_Wl2_Window *win)
+static void *
+_evas_dmabuf_surface_setup(Ecore_Wl2_Window *win)
 {
+   Ecore_Wl2_Dmabuf_Private *priv;
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
+
+   priv = calloc(1, sizeof(*priv));
+   if (!priv) return NULL;
 
    ewd = ecore_wl2_window_display_get(win);
    if (ecore_wl2_display_shm_get(ewd))
@@ -29,9 +33,12 @@ _evas_dmabuf_surface_check(Ecore_Wl2_Window *win)
      types |= ECORE_WL2_BUFFER_DMABUF;
 
    if (!ecore_wl2_buffer_init(ewd, types))
-     return EINA_FALSE;
+     {
+        free(priv);
+        return NULL;
+     }
 
-   return EINA_TRUE;
+   return priv;
 }
 
 static void
@@ -237,7 +244,7 @@ ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface)
 
 static Ecore_Wl2_Surface_Interface dmabuf_smanager =
 {
-   .check = _evas_dmabuf_surface_check,
+   .setup = _evas_dmabuf_surface_setup,
    .destroy = _evas_dmabuf_surface_destroy,
    .reconfigure = _evas_dmabuf_surface_reconfigure,
    .data_get = _evas_dmabuf_surface_data_get,
@@ -257,15 +264,15 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
-   out->private_data = calloc(1, sizeof(Ecore_Wl2_Dmabuf_Private));
-   if (!out->private_data) return NULL;
+
    out->wl2_win = win;
    out->alpha = alpha;
    out->w = 0;
    out->h = 0;
    out->funcs = &dmabuf_smanager;
 
-   if (out->funcs->check(win))
+   out->private_data = out->funcs->setup(win);
+   if (out->private_data)
      {
         win->wl2_surface = out;
         return out;
