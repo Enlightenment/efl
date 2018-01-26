@@ -138,7 +138,7 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
    if (ob->ewd != ewd)
      {
         if (ewd)
-          ob->dirty = EINA_TRUE;
+          ecore_wl2_surface_flush(ob->surface);
         re->generic.ob->ewd = ewd;
      }
 
