@@ -153,6 +153,7 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, void *priv_data, Eina_Rectangle 
    Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
    Ecore_Wl2_Window *win;
+   struct wl_buffer *wlb;
 
    p = priv_data;
 
@@ -167,7 +168,8 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, void *priv_data, Eina_Rectangle 
 
    win = ecore_wl2_surface_window_get(s);
 
-   ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
+   wlb = ecore_wl2_buffer_wl_buffer_get(b);
+   ecore_wl2_window_buffer_attach(win, wlb, 0, 0, EINA_FALSE);
    ecore_wl2_window_damage(win, rects, count);
 
    ecore_wl2_window_commit(win, EINA_TRUE);
