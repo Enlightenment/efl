@@ -105,6 +105,7 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
+   efl_unref(model);
 
    return 0;
 }

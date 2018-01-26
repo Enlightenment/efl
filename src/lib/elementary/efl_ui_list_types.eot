@@ -7,3 +7,7 @@ struct Efl.Ui.List.LayoutItem {
    size: Eina.Size2D;
    pos: Eina.Position2D;
 }
+
+struct @extern Efl.Ui.List.SegArray.Node; [[ ]]
+struct @extern Efl_Ui_List_Item; [[ ]]
+
