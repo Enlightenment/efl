@@ -319,6 +319,12 @@ ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf)
    return intf->id;
 }
 
+EAPI void
+ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf)
+{
+   _smanagers = eina_list_remove(_smanagers, intf);
+}
+
 /* TEMPORARY HACK FOR TESTING */
 Eina_Bool
 ecore_wl2_surface_manager_dmabuf_add(void)
