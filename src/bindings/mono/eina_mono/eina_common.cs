@@ -159,4 +159,12 @@ public struct Unicode {
 }
 
 
+/// <summary>Enum to handle resource ownership between managed and unmanaged code.</summary>
+public enum Ownership {
+    /// <summary> The resource is owned by the managed code. It should free the handle on disposal.</summary>
+    Managed,
+    /// <summary> The resource is owned by the unmanaged code. It won't be freed on disposal.</summary>
+    Unmanaged
+}
+
 }

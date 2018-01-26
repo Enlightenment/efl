@@ -137,6 +137,10 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " System.String");
               }}
+           , {"strbuf", nullptr, [&]
+              {
+                return regular_type_def{" eina.Strbuf", regular.base_qualifier, {}};
+              }}
            , {"any_value", true, [&]
               { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
               }}

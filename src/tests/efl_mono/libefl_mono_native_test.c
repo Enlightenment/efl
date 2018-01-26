@@ -3741,6 +3741,16 @@ Efl_Object *_test_testing_efl_part_part(const Eo *obj, Test_Testing_Data *pd, co
       return NULL;
 }
 
+void _test_testing_append_to_strbuf(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Strbuf *buf, const char *str)
+{
+    eina_strbuf_append(buf, str);
+}
+
+void _test_testing_call_append_to_strbuf(Eo * obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Strbuf *buf, const char *str)
+{
+    test_testing_append_to_strbuf(obj, buf, str);
+}
+
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
 

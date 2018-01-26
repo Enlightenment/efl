@@ -384,6 +384,69 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler {
     static private StringshareKeepOwnershipMarshaler marshaler;
 }
 
+public class StrbufPassOwnershipMarshaler : ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        return new eina.Strbuf(pNativeData, eina.Ownership.Managed);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        eina.Strbuf buf = managedObj as eina.Strbuf;
+        buf.ReleaseOwnership();
+        return buf.Handle;
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to cleanup. C will take care of it.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StrbufPassOwnershipMarshaler();
+        }
+        return marshaler;
+    }
+    static private StrbufPassOwnershipMarshaler marshaler;
+}
+
+public class StrbufKeepOwnershipMarshaler: ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        return new eina.Strbuf(pNativeData, eina.Ownership.Unmanaged);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        eina.Strbuf buf = managedObj as eina.Strbuf;
+        return buf.Handle;
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to free. The Native side will keep the ownership.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StrbufKeepOwnershipMarshaler();
+        }
+        return marshaler;
+    }
+    static private StrbufKeepOwnershipMarshaler marshaler;
+}
+
+
+
 } // namespace eo
 
 public class EflException : Exception

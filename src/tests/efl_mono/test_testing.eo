@@ -1548,6 +1548,21 @@ class Test.Testing (Efl.Object, Efl.Part) {
             @in data: Test.Testing;
          }
       }
+
+      append_to_strbuf {
+         params {
+            @in buf: strbuf;
+            @in str: string;
+         }
+      }
+
+      call_append_to_strbuf {
+         params {
+            @in buf: strbuf;
+            @in str: string;
+         }
+      }
+
    }
    implements {
       class.constructor;

@@ -342,7 +342,7 @@ struct to_external_field_convert_generator
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ", eina.ValueOwnership.Unmanaged);\n"
+                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ", eina.Ownership.Unmanaged);\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }

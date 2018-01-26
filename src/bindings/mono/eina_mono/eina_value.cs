@@ -429,13 +429,6 @@ public class InvalidValueTypeException: Exception
     protected InvalidValueTypeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 }
 
-/// <summary>Internal enum to handle value ownership between managed and unmanaged code.</summary>
-public enum ValueOwnership {
-    /// <summary> The value is owned by the managed code. It'll free the handle on disposal.</summary>
-    Managed,
-    /// <summary> The value is owned by the unmanaged code. It won't be freed on disposal.</summary>
-    Unmanaged
-}
 
 /// <summary>Managed-side Enum to represent Eina_Value_Type constants</summary>
 public enum ValueType {
@@ -651,7 +644,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
 
     public IntPtr Handle { get; protected set;}
-    public ValueOwnership Ownership { get; protected set;}
+    public Ownership Ownership { get; protected set;}
     private bool Disposed;
     public bool Flushed { get; protected set;}
     public bool Optional {
@@ -680,10 +673,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     // Constructor to be used by the "FromContainerDesc" methods.
     private Value() {
         this.Handle = MemoryNative.Alloc(eina_value_sizeof());
-        this.Ownership = ValueOwnership.Managed;
+        this.Ownership = Ownership.Managed;
     }
 
-    public Value(IntPtr handle, ValueOwnership ownership=ValueOwnership.Managed) {
+    public Value(IntPtr handle, Ownership ownership=Ownership.Managed) {
         this.Handle = handle;
         this.Ownership = ownership;
     }
@@ -694,7 +687,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (type.IsContainer())
             throw new ArgumentException("To use container types you must provide a subtype");
         this.Handle = MemoryNative.Alloc(eina_value_sizeof());
-        this.Ownership = ValueOwnership.Managed;
+        this.Ownership = Ownership.Managed;
         Setup(type);
     }
 
@@ -705,7 +698,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw new ArgumentException("First type must be a container type.");
 
         this.Handle = MemoryNative.Alloc(eina_value_sizeof());
-        this.Ownership = ValueOwnership.Managed;
+        this.Ownership = Ownership.Managed;
 
         Setup(containerType, subtype, step);
     }
@@ -720,7 +713,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             MemoryNative.Free(this.Handle);
             throw;
         }
-        this.Ownership = ValueOwnership.Managed;
+        this.Ownership = Ownership.Managed;
     }
 
     /// <summary>Implicit conversion from managed value to native struct representation.</summary>
@@ -758,13 +751,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Releases the ownership of the underlying value to C.</summary>
     public void ReleaseOwnership()
     {
-        this.Ownership = ValueOwnership.Unmanaged;
+        this.Ownership = Ownership.Unmanaged;
     }
 
     /// <summary>Takes the ownership of the underlying value to the Managed runtime.</summary>
     public void TakeOwnership()
     {
-        this.Ownership = ValueOwnership.Managed;
+        this.Ownership = Ownership.Managed;
     }
 
     /// <summary>Public method to explicitly free the wrapped eina value.</summary>
@@ -777,7 +770,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Actually free the wrapped eina value. Can be called from Dispose() or through the GC.</summary>
     protected virtual void Dispose(bool disposing)
     {
-        if (this.Ownership == ValueOwnership.Unmanaged) {
+        if (this.Ownership == Ownership.Unmanaged) {
             Disposed = true;
             return;
         }
@@ -1516,7 +1509,7 @@ public class ValueMarshaler : ICustomMarshaler {
 
     /// <summary>Creates a managed value from a C pointer, whitout taking ownership of it.</summary>
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        return new Value(pNativeData, ValueOwnership.Unmanaged);
+        return new Value(pNativeData, Ownership.Unmanaged);
     }
 
     /// <summary>Retrieves the C pointer from a given managed value,
@@ -1554,7 +1547,7 @@ public class ValueMarshaler : ICustomMarshaler {
 public class ValueMarshalerOwn : ICustomMarshaler {
     /// <summary>Creates a managed value from a C pointer, taking the ownership.</summary>
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        return new Value(pNativeData, ValueOwnership.Managed);
+        return new Value(pNativeData, Ownership.Managed);
     }
 
     /// <summary>Retrieves the C pointer from a given managed value,

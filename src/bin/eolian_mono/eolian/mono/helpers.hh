@@ -41,6 +41,7 @@ inline bool is_struct_blacklisted(std::string const& full_name)
 {
    return full_name == "Efl.Event.Description"
        || full_name == "Eina.Binbuf"
+       || full_name == "Eina.Strbuf"
        || full_name == "Eina.Slice"
        || full_name == "Eina.Rw_Slice";
 }
