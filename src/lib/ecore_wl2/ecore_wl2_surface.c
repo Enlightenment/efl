@@ -30,7 +30,7 @@ _evas_dmabuf_surface_check(Ecore_Wl2_Window *win)
 }
 
 static void
-_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
+_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t flags EINA_UNUSED)
 {
    Ecore_Wl2_Buffer *b;
    Eina_List *l, *tmp;
@@ -38,7 +38,7 @@ _evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t fl
    if ((!w) || (!h)) return;
    EINA_LIST_FOREACH_SAFE(s->buffers, l, tmp, b)
      {
-        if (!force && ecore_wl2_buffer_fit(b, w, h))
+        if (ecore_wl2_buffer_fit(b, w, h))
           continue;
 
         ecore_wl2_buffer_destroy(b);
@@ -183,11 +183,11 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 }
 
 EAPI void
-ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force)
+ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs->reconfigure(surface, w, h, flags, force);
+   surface->funcs->reconfigure(surface, w, h, flags);
 }
 
 EAPI void *

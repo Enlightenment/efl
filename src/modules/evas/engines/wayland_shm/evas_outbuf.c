@@ -285,11 +285,11 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        ecore_wl2_surface_reconfigure(ob->surface, w, h, resize, EINA_FALSE);
+        ecore_wl2_surface_reconfigure(ob->surface, w, h, resize);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        ecore_wl2_surface_reconfigure(ob->surface, h, w, resize, EINA_FALSE);
+        ecore_wl2_surface_reconfigure(ob->surface, h, w, resize);
      }
 
    _evas_outbuf_idle_flush(ob);

@@ -421,7 +421,7 @@ typedef struct _Ecore_Wl2_Surface_Interface
 {
    Eina_Bool (*check)(Ecore_Wl2_Window *win);
    void (*destroy)(Ecore_Wl2_Surface *surface);
-   void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+   void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags);
    void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
    int  (*assign)(Ecore_Wl2_Surface *surface);
    void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
@@ -2016,7 +2016,7 @@ EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
 
 EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
 EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags);
 EAPI void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
 EAPI int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
 EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
