@@ -556,9 +556,8 @@ typedef struct _Ecore_Wl2_Buffer
 
 typedef struct _Ecore_Wl2_Surface
 {
+   void *private_data;
    Ecore_Wl2_Window *wl2_win;
-   Ecore_Wl2_Buffer *current;
-   Eina_List *buffers;
 
    int w, h;
    Eina_Bool alpha : 1;

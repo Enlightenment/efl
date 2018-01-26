@@ -10,6 +10,11 @@
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 #define MAX_BUFFERS 4
+typedef struct _Ecore_Wl2_Dmabuf_Private
+{
+   Ecore_Wl2_Buffer *current;
+   Eina_List *buffers;
+} Ecore_Wl2_Dmabuf_Private;
 
 static Eina_Bool
 _evas_dmabuf_surface_check(Ecore_Wl2_Window *win)
@@ -30,30 +35,36 @@ _evas_dmabuf_surface_check(Ecore_Wl2_Window *win)
 }
 
 static void
-_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t flags EINA_UNUSED)
+_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data, int w, int h, uint32_t flags EINA_UNUSED)
 {
+   Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
    Eina_List *l, *tmp;
 
+   p = priv_data;
+
    if ((!w) || (!h)) return;
-   EINA_LIST_FOREACH_SAFE(s->buffers, l, tmp, b)
+   EINA_LIST_FOREACH_SAFE(p->buffers, l, tmp, b)
      {
         if (ecore_wl2_buffer_fit(b, w, h))
           continue;
 
         ecore_wl2_buffer_destroy(b);
-        s->buffers = eina_list_remove_list(s->buffers, l);
+        p->buffers = eina_list_remove_list(p->buffers, l);
      }
 }
 
 static void *
-_evas_dmabuf_surface_data_get(Ecore_Wl2_Surface *s, int *w, int *h)
+_evas_dmabuf_surface_data_get(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data, int *w, int *h)
 {
+   Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
    void *ptr;
    int stride;
 
-   b = s->current;
+   p = priv_data;
+
+   b = p->current;
    if (!b) return NULL;
 
    ptr = ecore_wl2_buffer_map(b, NULL, h, &stride);
@@ -68,14 +79,14 @@ _evas_dmabuf_surface_data_get(Ecore_Wl2_Surface *s, int *w, int *h)
 }
 
 static Ecore_Wl2_Buffer *
-_evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
+_evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s, Ecore_Wl2_Dmabuf_Private *p)
 {
    Ecore_Wl2_Buffer *b, *best = NULL;
    Eina_List *l;
    int best_age = -1;
    int age;
 
-   EINA_LIST_FOREACH(s->buffers, l, b)
+   EINA_LIST_FOREACH(p->buffers, l, b)
      {
         if (ecore_wl2_buffer_busy_get(b)) continue;
         age = ecore_wl2_buffer_age_get(b);
@@ -86,24 +97,26 @@ _evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
           }
      }
 
-   if (!best && (eina_list_count(s->buffers) < MAX_BUFFERS))
+   if (!best && (eina_list_count(p->buffers) < MAX_BUFFERS))
      {
         best = ecore_wl2_surface_buffer_create(s);
         /* Start at -1 so it's age is incremented to 0 for first draw */
         ecore_wl2_buffer_age_set(best, -1);
-        s->buffers = eina_list_append(s->buffers, best);
+        p->buffers = eina_list_append(p->buffers, best);
      }
    return best;
 }
 
 static int
-_evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
+_evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s, void *priv_data)
 {
+   Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
    Eina_List *l;
 
-   s->current = _evas_dmabuf_surface_wait(s);
-   if (!s->current)
+   p = priv_data;
+   p->current = _evas_dmabuf_surface_wait(s, p);
+   if (!p->current)
      {
         /* Should be unreachable and will result in graphical
          * anomalies - we should probably blow away all the
@@ -111,27 +124,30 @@ _evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
          * see this happen...
          */
         WRN("No free DMAbuf buffers, dropping a frame");
-        EINA_LIST_FOREACH(s->buffers, l, b)
+        EINA_LIST_FOREACH(p->buffers, l, b)
           ecore_wl2_buffer_age_set(b, 0);
         return 0;
      }
-   EINA_LIST_FOREACH(s->buffers, l, b)
+   EINA_LIST_FOREACH(p->buffers, l, b)
      ecore_wl2_buffer_age_inc(b);
 
-   return ecore_wl2_buffer_age_get(s->current);
+   return ecore_wl2_buffer_age_get(p->current);
 }
 
 static void
-_evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, Eina_Rectangle *rects, unsigned int count)
+_evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, void *priv_data, Eina_Rectangle *rects, unsigned int count)
 {
+   Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
 
-   b = s->current;
+   p = priv_data;
+
+   b = p->current;
    if (!b) return;
 
    ecore_wl2_buffer_unlock(b);
 
-   s->current = NULL;
+   p->current = NULL;
    ecore_wl2_buffer_busy_set(b);
    ecore_wl2_buffer_age_set(b, 0);
 
@@ -142,24 +158,26 @@ _evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, Eina_Rectangle *rects, unsigned 
 }
 
 static void
-_evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s)
+_evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data)
 {
+   Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
 
-   if (!s) return;
+   p = priv_data;
 
-   EINA_LIST_FREE(s->buffers, b)
+   EINA_LIST_FREE(p->buffers, b)
      ecore_wl2_buffer_destroy(b);
 }
 
 static void
-_surface_flush(Ecore_Wl2_Surface *surface)
+_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_data)
 {
+   Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
 
-   EINA_SAFETY_ON_NULL_RETURN(surface);
+   p = priv_data;
 
-   EINA_LIST_FREE(surface->buffers, b)
+   EINA_LIST_FREE(p->buffers, b)
      ecore_wl2_buffer_destroy(b);
 }
 
@@ -169,7 +187,7 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs->destroy(surface);
+   surface->funcs->destroy(surface, surface->private_data);
    surface->wl2_win = NULL;
 
    free(surface);
@@ -180,7 +198,7 @@ ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs->reconfigure(surface, w, h, flags);
+   surface->funcs->reconfigure(surface, surface->private_data, w, h, flags);
    surface->w = w;
    surface->h = h;
 }
@@ -190,7 +208,7 @@ ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
 
-   return surface->funcs->data_get(surface, w, h);
+   return surface->funcs->data_get(surface, surface->private_data, w, h);
 }
 
 EAPI int
@@ -198,7 +216,7 @@ ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
 
-   return surface->funcs->assign(surface);
+   return surface->funcs->assign(surface, surface->private_data);
 }
 
 EAPI void
@@ -206,7 +224,7 @@ ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsign
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs->post(surface, rects, count);
+   surface->funcs->post(surface, surface->private_data, rects, count);
 }
 
 EAPI void
@@ -214,7 +232,7 @@ ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs->flush(surface);
+   surface->funcs->flush(surface, surface->private_data);
 }
 
 static Ecore_Wl2_Surface_Interface dmabuf_smanager =
@@ -239,6 +257,8 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
+   out->private_data = calloc(1, sizeof(Ecore_Wl2_Dmabuf_Private));
+   if (!out->private_data) return NULL;
    out->wl2_win = win;
    out->alpha = alpha;
    out->w = 0;
