@@ -616,9 +616,9 @@ _buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int
 }
 
 EAPI struct wl_buffer *
-ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *buf)
+ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf)
 {
-   return buffer_manager->to_buffer(ewd, buf);
+   return buf->wl_buffer;
 }
 
 EAPI void *
@@ -777,7 +777,7 @@ ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
    out = _ecore_wl2_buffer_partial_create(w, h, alpha);
    if (!out) return NULL;
 
-   out->wl_buffer = ecore_wl2_buffer_wl_buffer_get(ewd, out);
+   out->wl_buffer = buffer_manager->to_buffer(ewd, out);
 
    return out;
 }
