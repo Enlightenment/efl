@@ -57,10 +57,38 @@ EAPI int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE = 0;
 EAPI int _ecore_wl2_event_window_www = -1;
 EAPI int _ecore_wl2_event_window_www_drag = -1;
 
+static Eina_Array *supplied_modules = NULL;
+static Eina_Array *local_modules = NULL;
+
 static Eina_Bool
 _ecore_wl2_surface_modules_init(void)
 {
-   return ecore_wl2_surface_manager_dmabuf_add();
+   const char *mod_dir;
+
+   supplied_modules = eina_module_arch_list_get(NULL,
+                                                PACKAGE_LIB_DIR"/ecore_wl2/engines",
+                                                MODULE_ARCH);
+   eina_module_list_load(supplied_modules);
+
+   mod_dir = getenv("ECORE_WL2_SURFACE_MODULE_DIR");
+   if (mod_dir)
+     {
+        local_modules = eina_module_list_get(NULL, mod_dir,
+                                             EINA_TRUE, NULL, NULL);
+        eina_module_list_load(local_modules);
+     }
+
+   if (!supplied_modules && !local_modules)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static void
+_ecore_wl2_surface_modules_unload(void)
+{
+   eina_module_list_unload(supplied_modules);
+   eina_module_list_unload(local_modules);
 }
 
 /* public API functions */
@@ -229,6 +257,8 @@ ecore_wl2_shutdown(void)
    /* unregister logging domain */
    eina_log_domain_unregister(_ecore_wl2_log_dom);
    _ecore_wl2_log_dom = -1;
+
+   _ecore_wl2_surface_modules_unload();
 
    /* shutdown eina */
    eina_shutdown();
