@@ -90,12 +90,7 @@ _evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
 
    if (!best && (eina_list_count(s->buffers) < MAX_BUFFERS))
      {
-        Ecore_Wl2_Display *ewd;
-
-        ewd = ecore_wl2_window_display_get(s->wl2_win);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
-
-        best = ecore_wl2_buffer_create(ewd, s->w, s->h, s->alpha);
+        best = ecore_wl2_surface_buffer_create(s);
         /* Start at -1 so it's age is incremented to 0 for first draw */
         ecore_wl2_buffer_age_set(best, -1);
         s->buffers = eina_list_append(s->buffers, best);
@@ -258,4 +253,17 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 
    free(out);
    return NULL;
+}
+
+EAPI Ecore_Wl2_Buffer *
+ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface)
+{
+   Ecore_Wl2_Display *ewd;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   ewd = ecore_wl2_window_display_get(surface->wl2_win);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
+
+   return ecore_wl2_buffer_create(ewd, surface->w, surface->h, surface->alpha);
 }
