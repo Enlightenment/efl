@@ -6,6 +6,8 @@
 #include <locale.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "edje_cc.h"
 int _edje_cc_log_dom = -1;
@@ -43,6 +45,8 @@ int        annotate = 0;
 int        no_etc1 = 0;
 int        no_etc2 = 0;
 int        beta = 0;
+
+unsigned int max_open_files;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -408,6 +412,14 @@ main(int argc, char **argv)
    edje_file->efl_version.major = 1;
    edje_file->efl_version.minor = 18;
    edje_file->base_scale = FROM_INT(1);
+
+   {
+      struct rlimit lim;
+      if (getrlimit(RLIMIT_NOFILE, &lim))
+        fprintf(stderr, "error getting max open file limit: %s\n", strerror(errno));
+      max_open_files = lim.rlim_cur;
+   }
+   ecore_evas_init();
 
    source_edd();
    source_fetch();

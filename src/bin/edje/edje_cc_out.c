@@ -208,6 +208,8 @@ struct _Image_Unused_Ids
 typedef struct _Image_Unused_Ids Image_Unused_Ids;
 
 static int pending_threads = 0;
+static int pending_image_threads = 0;
+static Eina_List *running_threads;
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
 
@@ -235,6 +237,13 @@ static Eina_List *model_lookups = NULL;
 static Eina_Hash *part_dest_lookup = NULL;
 static Eina_Hash *part_pc_dest_lookup = NULL;
 
+static Eet_File *cur_ef;
+static int image_num;
+static Ecore_Evas *buffer_ee;
+static int cur_image_entry;
+
+static void data_write_images(void);
+
 void
 error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
 {
@@ -247,6 +256,21 @@ error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
    unlink(file_out);
    if (watchfile) unlink(watchfile);
    exit(-1);
+}
+
+static void
+thread_end(Eina_Bool img)
+{
+   if (img)
+     pending_image_threads--;
+   else
+     pending_threads--;
+   if (threads)
+     {
+        if ((pending_image_threads + pending_threads) < (int)max_open_files - 2)
+          data_write_images();
+     }
+   if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
 }
 
 static unsigned int
@@ -739,18 +763,18 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_head_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_head_end(void *data, Ecore_Thread *thread)
 {
    Head_Write *hw = data;
 
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (hw->errstr)
      {
         error_and_abort(hw->ef, hw->errstr);
         free(hw->errstr);
      }
    free(hw);
+   thread_end(0);
 }
 
 static void
@@ -762,7 +786,7 @@ data_write_header(Eet_File *ef)
    hw->ef = ef;
    pending_threads++;
    if (threads)
-     ecore_thread_run(data_thread_head, data_thread_head_end, NULL, hw);
+     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_head, data_thread_head_end, NULL, hw));
    else
      {
         data_thread_head(hw, NULL);
@@ -840,17 +864,18 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_fonts_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_fonts_end(void *data, Ecore_Thread *thread)
 {
    Fonts_Write *fc = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+
+   running_threads = eina_list_remove(running_threads, thread);
    if (fc->errstr)
      {
         error_and_abort(fc->ef, fc->errstr);
         free(fc->errstr);
      }
    free(fc);
+   thread_end(0);
 }
 
 static void
@@ -872,7 +897,7 @@ data_write_fonts(Eet_File *ef, int *font_num)
         fc->fn = fn;
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_fonts, data_thread_fonts_end, NULL, fc);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_fonts, data_thread_fonts_end, NULL, fc));
         else
           {
              data_thread_fonts(fc, NULL);
@@ -1106,12 +1131,11 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_image_end(void *data, Ecore_Thread *thread)
 {
    Image_Write *iw = data;
 
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (iw->errstr)
      {
         error_and_abort(iw->ef, iw->errstr);
@@ -1120,6 +1144,7 @@ data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    free(iw->path);
    evas_object_del(iw->im);
    free(iw);
+   thread_end(1);
 }
 
 static void
@@ -1131,7 +1156,7 @@ data_image_preload_done(void *data, Evas *e EINA_UNUSED, Evas_Object *o, void *e
    iw->alpha = evas_object_image_alpha_get(o);
    iw->data = evas_object_image_data_get(o, 0);
    if (threads)
-     ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
+     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw));
    else
      {
         data_thread_image(iw, NULL);
@@ -1153,12 +1178,11 @@ tgv_file_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+tgv_file_thread_end(void *data, Ecore_Thread *thread)
 {
    Image_Write *iw = data;
 
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (iw->errstr)
      {
         error_and_abort(iw->ef, iw->errstr);
@@ -1169,10 +1193,11 @@ tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    eina_file_map_free(iw->f, iw->data);
    eina_file_close(iw->f);
    free(iw);
+   thread_end(1);
 }
 
 static Eina_Bool
-tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img, int *image_num)
+tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img)
 {
    Emile_Image_Load_Error err;
    Emile_Image *emi = NULL;
@@ -1238,12 +1263,12 @@ tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img, int *image
           goto on_error;
      }
 
-   *image_num += 1;
+   image_num += 1;
    iw->path = strdup(img->entry);
 
-   pending_threads++;
+   pending_image_threads++;
    if (threads)
-     ecore_thread_run(tgv_file_thread, tgv_file_thread_end, NULL, iw);
+     running_threads = eina_list_append(running_threads, ecore_thread_run(tgv_file_thread, tgv_file_thread_end, NULL, iw));
    else
      {
         tgv_file_thread(iw, NULL);
@@ -1270,17 +1295,16 @@ data_write_vectors(Eet_File *ef, int *vector_num)
    Edje_Vector_Directory_Entry *vector;
    Eina_Strbuf *buf;
    Eina_Bool found = EINA_FALSE;
-   Ecore_Evas *ee;
    Evas *evas;
    Evas_Object *vg;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
-   ecore_evas_init();
-   ee = ecore_evas_buffer_new(1, 1);
-   if (!ee)
+   if (!buffer_ee)
+     buffer_ee = ecore_evas_buffer_new(1, 1);
+   if (!buffer_ee)
      error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
-   evas = ecore_evas_get(ee);
+   evas = ecore_evas_get(buffer_ee);
    vg = evas_object_vg_add(evas);
    buf = eina_strbuf_new();
    for (i = 0; i < edje_file->image_dir->vectors_count; i++)
@@ -1317,22 +1341,43 @@ data_write_vectors(Eet_File *ef, int *vector_num)
 }
 
 static void
-data_write_images(Eet_File *ef, int *image_num)
+data_image_sets_init(void)
 {
    int i;
-   Ecore_Evas *ee;
+
+   if (!((edje_file) && (edje_file->image_dir))) return;
+   for (i = 0; i < (int)edje_file->image_dir->sets_count; i++)
+     {
+        Edje_Image_Directory_Set *set;
+        Edje_Image_Directory_Set_Entry *set_entry;
+        Edje_Image_Directory_Entry *img;
+        Eina_List *ll = NULL;
+
+        set = edje_file->image_dir->sets + i;
+        if (!set->entries) continue;
+        EINA_LIST_FOREACH(set->entries, ll, set_entry)
+          {
+             img = &edje_file->image_dir->entries[set_entry->id];
+             set_entry->name = img->entry;
+          }
+     }
+}
+
+static void
+data_write_images(void)
+{
    Evas *evas;
    const char *ext = NULL;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
-   ecore_evas_init();
-   ee = ecore_evas_buffer_new(1, 1);
-   if (!ee)
-     error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
-   evas = ecore_evas_get(ee);
+   if (!buffer_ee)
+     buffer_ee = ecore_evas_buffer_new(1, 1);
+   if (!buffer_ee)
+     error_and_abort(cur_ef, "Cannot create buffer engine canvas for image load.");
+   evas = ecore_evas_get(buffer_ee);
 
-   for (i = 0; i < (int)edje_file->image_dir->entries_count; i++)
+   for (; cur_image_entry < (int)edje_file->image_dir->entries_count; cur_image_entry++)
      {
         Edje_Image_Directory_Entry *img;
         Evas_Object *im;
@@ -1341,7 +1386,7 @@ data_write_images(Eet_File *ef, int *image_num)
         int load_err = EVAS_LOAD_ERROR_NONE;
         Image_Write *iw;
 
-        img = &edje_file->image_dir->entries[i];
+        img = &edje_file->image_dir->entries[cur_image_entry];
         if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) || !img->entry)
           continue;
 
@@ -1351,7 +1396,7 @@ data_write_images(Eet_File *ef, int *image_num)
              ext = strrchr(img->entry, '.');
              if (ext && !strcasecmp(ext, ".tgv"))
                {
-                  if (tgv_file_check_and_add(ef, img, image_num))
+                  if (tgv_file_check_and_add(cur_ef, img))
                     {
                        DBG("Directly copying data from TGV file into EDJ");
                        continue;
@@ -1362,7 +1407,7 @@ data_write_images(Eet_File *ef, int *image_num)
           }
 
         iw = calloc(1, sizeof(Image_Write));
-        iw->ef = ef;
+        iw->ef = cur_ef;
         iw->img = img;
         iw->im = im = evas_object_image_add(evas);
         if (threads)
@@ -1379,9 +1424,9 @@ data_write_images(Eet_File *ef, int *image_num)
              load_err = evas_object_image_load_error_get(im);
              if (load_err == EVAS_LOAD_ERROR_NONE)
                {
-                  *image_num += 1;
+                  image_num += 1;
                   iw->path = strdup(buf);
-                  pending_threads++;
+                  pending_image_threads++;
                   if (threads)
                     evas_object_image_preload(im, 0);
                   using_file(buf, 'I');
@@ -1396,9 +1441,9 @@ data_write_images(Eet_File *ef, int *image_num)
              load_err = evas_object_image_load_error_get(im);
              if (load_err == EVAS_LOAD_ERROR_NONE)
                {
-                  *image_num += 1;
+                  image_num += 1;
                   iw->path = strdup(img->entry);
-                  pending_threads++;
+                  pending_image_threads++;
                   if (threads)
                     evas_object_image_preload(im, 0);
                   using_file(img->entry, 'I');
@@ -1408,10 +1453,11 @@ data_write_images(Eet_File *ef, int *image_num)
              else
                {
                   free(iw);
-                  error_and_abort_image_load_error(ef, img->entry, load_err);
+                  error_and_abort_image_load_error(cur_ef, img->entry, load_err);
                   exit(1); // ensure static analysis tools know we exit
                }
           }
+
         if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
           {
              ext = strrchr(img->entry, '.');
@@ -1425,21 +1471,9 @@ data_write_images(Eet_File *ef, int *image_num)
                   img->entry = tmp;
                }
           }
-     }
-
-   for (i = 0; i < (int)edje_file->image_dir->sets_count; i++)
-     {
-        Edje_Image_Directory_Set *set;
-        Edje_Image_Directory_Set_Entry *set_entry;
-        Edje_Image_Directory_Entry *img;
-        Eina_List *ll = NULL;
-
-        set = edje_file->image_dir->sets + i;
-        if (!set->entries) continue;
-        EINA_LIST_FOREACH(set->entries, ll, set_entry)
+        if (threads)
           {
-             img = &edje_file->image_dir->entries[set_entry->id];
-             set_entry->name = img->entry;
+             if (pending_threads + pending_image_threads > (int)max_open_files - 2) break;
           }
      }
 }
@@ -1561,12 +1595,12 @@ data_thread_sounds(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_sounds_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_sounds_end(void *data, Ecore_Thread *thread)
 {
    Sound_Write *sw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    free(sw);
+   thread_end(0);
 }
 
 static void
@@ -1588,7 +1622,7 @@ data_write_sounds(Eet_File *ef, int *sound_num)
              *sound_num += 1;
              pending_threads++;
              if (threads)
-               ecore_thread_run(data_thread_sounds, data_thread_sounds_end, NULL, sw);
+               running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_sounds, data_thread_sounds_end, NULL, sw));
              else
                {
                   data_thread_sounds(sw, NULL);
@@ -1661,11 +1695,10 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_mo_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_mo_end(void *data, Ecore_Thread *thread)
 {
    Mo_Write *mw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (mw->errstr)
      {
        error_and_abort(mw->ef, mw->errstr);
@@ -1674,6 +1707,7 @@ data_thread_mo_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    if (mw->mo_path)
      free(mw->mo_path);
    free(mw);
+   thread_end(0);
 }
 
 Eina_Bool
@@ -1691,7 +1725,7 @@ _exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *evinfo)
    if (ecore_file_exists(mw->mo_path))
      {
         if (threads)
-          ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw));
         else
           {
              data_thread_mo(mw, NULL);
@@ -1700,7 +1734,7 @@ _exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *evinfo)
      }
    else
      return ECORE_CALLBACK_RENEW;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1759,7 +1793,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
              else
                {
                   if (threads)
-                    ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
+                    running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw));
                   else
                     {
                        data_thread_mo(mw, NULL);
@@ -1825,12 +1859,12 @@ data_thread_vibrations(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_vibrations_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_vibrations_end(void *data, Ecore_Thread *thread)
 {
    Vibration_Write *sw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    free(sw);
+   thread_end(0);
 }
 
 static void
@@ -1852,7 +1886,7 @@ data_write_vibrations(Eet_File *ef, int *num)
              *num += 1;
              pending_threads++;
              if (threads)
-               ecore_thread_run(data_thread_vibrations, data_thread_vibrations_end, NULL, vw);
+               running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_vibrations, data_thread_vibrations_end, NULL, vw));
              else
                {
                   data_thread_vibrations(vw, NULL);
@@ -1900,17 +1934,17 @@ data_thread_group(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_group_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_group_end(void *data, Ecore_Thread *thread)
 {
    Group_Write *gw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (gw->errstr)
      {
         error_and_abort(gw->ef, gw->errstr);
         free(gw->errstr);
      }
    free(gw);
+   thread_end(0);
 }
 
 static void
@@ -1933,7 +1967,7 @@ data_write_groups(Eet_File *ef, int *collection_num)
         gw->pc = pc;
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_group, data_thread_group_end, NULL, gw);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_group, data_thread_group_end, NULL, gw));
         else
           {
              data_thread_group(gw, NULL);
@@ -2122,17 +2156,17 @@ static Eina_List *pending_script_writes = NULL;
 static void data_write_script_queue(Script_Write *sc, const char *exeline);
 
 static void
-data_thread_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_script_end(void *data, Ecore_Thread *thread)
 {
    Script_Write *sc = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (sc->errstr)
      {
         error_and_abort(sc->ef, sc->errstr);
         free(sc->errstr);
      }
    free(sc);
+   thread_end(0);
 }
 
 static Eina_Bool
@@ -2164,14 +2198,14 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
      }
    if (threads)
      {
-        ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc);
+        running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc));
      }
    else
      {
         data_thread_script(sc, NULL);
         data_thread_script_end(sc, NULL);
      }
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -2433,17 +2467,17 @@ data_thread_lua_script(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_lua_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_lua_script_end(void *data, Ecore_Thread *thread)
 {
    Script_Write *sc = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
    if (sc->errstr)
      {
         error_and_abort(sc->ef, sc->errstr);
         free(sc->errstr);
      }
    free(sc);
+   thread_end(0);
 }
 
 static void
@@ -2469,7 +2503,7 @@ data_write_lua_scripts(Eet_File *ef)
         sc->i = i;
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end, NULL, sc);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end, NULL, sc));
         else
           {
              data_thread_lua_script(sc, NULL);
@@ -2486,10 +2520,10 @@ data_thread_source(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
+   thread_end(0);
 }
 
 static void
@@ -2542,11 +2576,11 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_license_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+data_thread_license_end(void *data, Ecore_Thread *thread)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    free(data);
+   running_threads = eina_list_remove(running_threads, thread);
+   thread_end(0);
 }
 
 static void
@@ -2567,7 +2601,7 @@ data_write_license(Eet_File *ef)
 
    pending_threads++;
    if (threads)
-     ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw);
+     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw));
    else
      {
         data_thread_license(lw, NULL);
@@ -2585,7 +2619,7 @@ data_write_license(Eet_File *ef)
 
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw));
         else
           {
              data_thread_license(lw, NULL);
@@ -2630,10 +2664,10 @@ data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_authors_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+data_thread_authors_end(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
+   thread_end(0);
 }
 
 static void
@@ -2644,10 +2678,10 @@ data_thread_fontmap(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_fontmap_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+data_thread_fontmap_end(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   running_threads = eina_list_remove(running_threads, thread);
+   thread_end(0);
 }
 
 void
@@ -2655,7 +2689,6 @@ data_write(void)
 {
    Eet_File *ef;
    Eet_Error err;
-   int image_num = 0;
    int model_num = 0;
    int sound_num = 0;
    int mo_num = 0;
@@ -2671,7 +2704,7 @@ data_write(void)
 	exit(-1);
      }
 
-   ef = eet_open(file_out, EET_FILE_MODE_WRITE);
+   cur_ef = ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
      {
 	ERR("Unable to open \"%s\" for writing output", file_out);
@@ -2710,7 +2743,7 @@ data_write(void)
      {
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef));
         else
           {
              data_thread_source(ef, NULL);
@@ -2720,15 +2753,13 @@ data_write(void)
    INF("source: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads++;
    if (threads)
-     ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef);
+     running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef));
    else
      {
         data_thread_fontmap(ef, NULL);
         data_thread_fontmap_end(ef, NULL);
      }
    INF("fontmap: %3.5f", ecore_time_get() - t); t = ecore_time_get();
-   data_write_images(ef, &image_num);
-   INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_vectors(ef, &vector_num);
    INF("vectors: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_check_models(ef, &model_num);
@@ -2747,17 +2778,28 @@ data_write(void)
      {
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_authors, data_thread_authors_end, NULL, ef);
+          running_threads = eina_list_append(running_threads, ecore_thread_run(data_thread_authors, data_thread_authors_end, NULL, ef));
         else
           {
              data_thread_authors(ef, NULL);
              data_thread_authors_end(ef, NULL);
           }
      }
+   data_write_images();
+   data_image_sets_init();
+   INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads--;
    if (pending_threads > 0) ecore_main_loop_begin();
    INF("THREADS: %3.5f", ecore_time_get() - t);
    data_write_header(ef);
+   if (pending_threads > 0) ecore_main_loop_begin();
+   INF("THREADS: %3.5f", ecore_time_get() - t);
+
+   if (threads)
+     {
+        /* probably caught signal, exit immediately to avoid crash */
+        if (running_threads) exit(-1);
+     }
 
    err = eet_close(ef);
    if (err)
@@ -3413,20 +3455,19 @@ static void
 _data_image_sets_size_set()
 {
    Evas *evas;
-   Ecore_Evas *ee;
    Edje_Image_Directory_Set *set;
    Edje_Image_Directory_Set_Entry *simg, *preimg;
    Eina_List *l, *entries;
    unsigned int i;
 
-   ecore_evas_init();
-   ee = ecore_evas_buffer_new(1, 1);
-   if (!ee)
+   if (!buffer_ee)
+     buffer_ee = ecore_evas_buffer_new(1, 1);
+   if (!buffer_ee)
      {
         ERR("Cannot create buffer engine canvas for image load.");
         exit(-1);
      }
-   evas = ecore_evas_get(ee);
+   evas = ecore_evas_get(buffer_ee);
 
    for (i = 0; i < edje_file->image_dir->sets_count; i++)
      {

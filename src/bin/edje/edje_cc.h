@@ -354,4 +354,6 @@ extern int                    beta;
 
 extern int had_quote;
 
+extern unsigned int max_open_files;
+
 #endif
