@@ -33,6 +33,11 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;
    window->surface_id = -1;
+
+   if (window->callback) wl_callback_destroy(window->callback);
+   window->callback = NULL;
+
+   window->commit_pending = EINA_FALSE;
 }
 
 static void
@@ -1569,7 +1574,9 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 
    if (window->commit_pending)
      {
-        wl_callback_destroy(window->callback);
+        if (window->callback)
+          wl_callback_destroy(window->callback);
+        window->callback = NULL;
         ERR("Commit before previous commit processed");
      }
    if (!window->pending.configure)
