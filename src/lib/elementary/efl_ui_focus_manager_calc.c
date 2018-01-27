@@ -73,6 +73,7 @@ typedef struct {
     Eina_List *focus_stack;
     Eina_Hash *node_hash;
     Efl_Ui_Focus_Manager *redirect;
+    Efl_Ui_Focus_Manager *redirect_entry;
     Eina_List *dirty;
 
     Node *root;
@@ -996,6 +997,10 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    //delete again from the list, for the case it was not at the top
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
 
+   //if this is the entry for redirect, NULL them out!
+   if (pd->redirect_entry == node->focusable)
+     pd->redirect_entry = NULL;
+
    if (refocus)
      {
         Node *n = eina_list_last_data_get(pd->focus_stack);
@@ -1041,16 +1046,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
      efl_wref_add(pd->redirect, &pd->redirect);
 
    efl_ui_focus_manager_reset_history(old_manager);
-
-   //we might have saved a logical element at the top, remove that if there is one
-   {
-      Node *n = NULL;
-
-      n = eina_list_last_data_get(pd->focus_stack);
-
-      if (n && n->type == NODE_TYPE_ONLY_LOGICAL && n->redirect_manager == old_manager)
-        pd->focus_stack = eina_list_remove(pd->focus_stack, n);
-   }
 
    //adjust focus property of the most upper element
    {
@@ -1569,8 +1564,20 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
      last_focusable = last->focusable;
 
    //remove the object from the list and add it again
-   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
-   pd->focus_stack = eina_list_append(pd->focus_stack, node);
+   if (node_type == NODE_TYPE_NORMAL)
+     {
+        pd->focus_stack = eina_list_remove(pd->focus_stack, node);
+        pd->focus_stack = eina_list_append(pd->focus_stack, node);
+     }
+
+   //capture how we came to the redirect manager
+   if (redirect_manager)
+     {
+        pd->redirect_entry = new_focusable;
+     }
+
+   //set to NULL here, from the event earlier this pointer could be dead.
+   node = NULL;
 
    //unset redirect manager for the case that its a different one to the one we want
    if (pd->redirect && pd->redirect != redirect_manager)
@@ -1587,8 +1594,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           }
      }
 
-   //set to NULL here, from the event earlier this pointer could be dead.
-   node = NULL;
+
 
    /*
      Only emit those signals if we are already at the top of the focus stack.
@@ -1772,6 +1778,8 @@ EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Node *upper = NULL;
+
+   if (pd->redirect && pd->redirect_entry) return pd->redirect_entry;
 
    upper = eina_list_last_data_get(pd->focus_stack);
 
