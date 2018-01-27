@@ -123,7 +123,7 @@ typedef enum {
   EINA_FILE_DIR,     /**< Directory type */
   EINA_FILE_BLK,     /**< Block device type (unused on Windows) */
   EINA_FILE_REG,     /**< Regular file type */
-  EINA_FILE_LNK,     /**< Symbolic link type */
+  EINA_FILE_LNK,     /**< Symbolic link type (unused on Windows) */
   EINA_FILE_SOCK,    /**< UNIX domain socket type (unused on Windows) */
   EINA_FILE_WHT      /**< Whiteout file type (unused on Windows) */
 } Eina_File_Type;
