@@ -7,7 +7,10 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/resource.h>
+
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
 
 #include "edje_cc.h"
 int _edje_cc_log_dom = -1;
@@ -413,12 +416,16 @@ main(int argc, char **argv)
    edje_file->efl_version.minor = 18;
    edje_file->base_scale = FROM_INT(1);
 
+#ifdef HAVE_SYS_RESOURCE_H
    {
       struct rlimit lim;
       if (getrlimit(RLIMIT_NOFILE, &lim))
         fprintf(stderr, "error getting max open file limit: %s\n", strerror(errno));
       max_open_files = lim.rlim_cur;
    }
+#else
+   max_open_files = 1024;
+#endif
    ecore_evas_init();
 
    source_edd();
