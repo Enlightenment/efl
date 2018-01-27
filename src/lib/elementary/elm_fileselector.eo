@@ -39,8 +39,7 @@ class Elm.Fileselector (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.focus_state_apply;
       Elm.Interface.Fileselector.selected_models { get; }
-      Elm.Interface.Fileselector.selected_model_get;
-      Elm.Interface.Fileselector.selected_model_set;
+      Elm.Interface.Fileselector.selected_model { get; set; }
       Elm.Interface.Fileselector.custom_filter_append;
       Elm.Interface.Fileselector.expandable { get; set; }
       Elm.Interface.Fileselector.thumbnail_size { get; set; }

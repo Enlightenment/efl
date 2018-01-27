@@ -57,6 +57,8 @@ struct _Elm_Fileselector_Data
    Ecore_Idler             *populate_idler;
    Ecore_Idler             *path_entry_idler;
 
+   Efl_Model               *target;
+
    const char              *path_separator;
    const char              *search_string;
 
@@ -104,6 +106,7 @@ struct _Listing_Request
    Eina_Stringshare            *selected_path;
    int                          item_total;
    int                          item_processed_count;
+
    Eina_Bool                    first : 1;
    Eina_Bool                    valid : 1;
 };
@@ -114,11 +117,13 @@ struct _Elm_Fileselector_Item_Data
    Efl_Model                   *model;
    Eina_Stringshare            *path;
    Eina_Stringshare            *filename;
-   int64_t                      size;
-   double                       mtime;
    Eina_Stringshare            *mime_type;
    Efl_Model                   *parent_model;
    const char                  *parent_path;
+
+   int64_t                      size;
+   double                       mtime;
+
    Eina_Bool                    is_dir : 1;
 };
 
