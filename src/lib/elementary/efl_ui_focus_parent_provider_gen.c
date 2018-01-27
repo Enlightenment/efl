@@ -63,7 +63,7 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
 
    item = eina_hash_find(pd->map, &above_gengrid);
 
-   efl_ui_focus_composition_elements_flush(pd->container);
+   efl_ui_focus_object_prepare_logical(pd->container);
 
    // We dont have a map entry
    if (!item)
