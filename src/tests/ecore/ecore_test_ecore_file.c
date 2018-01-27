@@ -215,12 +215,15 @@ START_TEST(ecore_test_ecore_file_operations)
    res = ecore_file_remove(dest_file);
    fail_if(res != EINA_TRUE);
 
+   /* On Windows, symlink/readlink are not supported */
+#ifndef _WIN32
    res = ecore_file_symlink(src_file, dest_file);
    fail_if(res != EINA_TRUE);
    ck_assert_str_eq(ecore_file_readlink(dest_file), src_file);
    ck_assert_str_eq(ecore_file_realpath(dest_file), src_file);
    res = ecore_file_unlink(dest_file);
    fail_if(res != EINA_TRUE);
+#endif
 
    dest_file = get_tmp_file();
    fail_if(!dest_file);
