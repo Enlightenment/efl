@@ -744,7 +744,6 @@ _efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Object_Data *sd
 {
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
    Efl_Ui_Layout_Sub_Object_Cursor *pc;
-   Efl_Ui_Layout_Sub_Connect *sc;
    Edje_Signal_Data *esd;
    Evas_Object *child;
    Eina_List *l;
@@ -772,24 +771,20 @@ _efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Object_Data *sd
         free(esd);
      }
 
-   if(sd->model)
+   if(sd->connect.model)
      {
-         efl_event_callback_del(sd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, sd);
-         efl_unref(sd->model);
-         sd->model = NULL;
+         efl_event_callback_del(sd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                                _efl_model_properties_changed_cb, sd);
+         efl_unref(sd->connect.model);
+         sd->connect.model = NULL;
      }
 
-   EINA_LIST_FREE(sd->prop_connect, sc)
-     {
-        if (sc->future) efl_future_cancel(sc->future);
-        sc->future = NULL;
-        eina_stringshare_del(sc->name);
-        eina_stringshare_del(sc->property);
-        free(sc);
-     }
-   sd->prop_connect = NULL;
-   eina_hash_free(sd->factories);
-   sd->factories = NULL;
+   eina_hash_free(sd->connect.properties);
+   sd->connect.properties = NULL;
+   eina_hash_free(sd->connect.signals);
+   sd->connect.signals = NULL;
+   eina_hash_free(sd->connect.factories);
+   sd->connect.factories = NULL;
 
    /* let's make our Edje object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
@@ -1230,9 +1225,8 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Object_Data *sd, const ch
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   Eina_List *l;
    Efl_Ui_Layout_Sub_Object_Data *sub_d = NULL;
-   Efl_Ui_Layout_Sub_Connect *sc;
+   Eina_List *l;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1289,19 +1283,18 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Object_Data *sd, const ch
      sub_d->obj = _elm_access_edje_object_part_object_register
          (obj, elm_layout_edje_get(obj), part);
 
-   if (sd->model)
+   if (sd->connect.model && !sd->connect.updating)
      {
-        EINA_LIST_FOREACH(sd->prop_connect, l, sc)
+        char *property = eina_hash_find(sd->connect.properties, sub_d->part);
+
+        if (property)
           {
-             if (sc->name == sub_d->part && !sd->view_updated)
-               {
-                   Eina_Value v;
-                   eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
-                   eina_value_set(&v, text);
-                   efl_model_property_set(sd->model, sc->property, &v);
-                   eina_value_flush(&v);
-                   break;
-               }
+             Eina_Value v = EINA_VALUE_EMPTY;
+
+             eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
+             eina_value_set(&v, text);
+
+             efl_model_property_set(sd->connect.model, property, &v);
           }
      }
 
@@ -1933,237 +1926,224 @@ _efl_ui_layout_efl_object_dbg_info_get(Eo *eo_obj, Efl_Ui_Layout_Object_Data *_p
 }
 
 static void
-_prop_future_error_cb(void* data, Efl_Event const*event EINA_UNUSED)
+_efl_ui_layout_view_model_property_update(Efl_Ui_Layout_Object_Data *pd, const char *part, const char *fetch)
 {
-   Efl_Ui_Layout_Sub_Connect *sc = data;
-   sc->future = NULL;
+   Eina_Value *v = NULL;
+   char *value;
+
+   v = efl_model_property_get(pd->connect.model, fetch);
+   value = eina_value_to_string(v);
+
+   pd->connect.updating = EINA_TRUE; // Prevent recursive call to property_set while updating text
+   efl_text_set(efl_part(pd->obj, part), value);
+   pd->connect.updating = EINA_FALSE;
+
+   eina_value_free(v);
+   free(value);
 }
 
 static void
-_view_update(Efl_Ui_Layout_Sub_Connect *sc, const char *property)
+_efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Object_Data *pd, const char *signal, const char *fetch)
 {
+   Eina_Value *v = NULL;
    Eina_Strbuf *buf;
+   char *value;
 
-   if (sc->is_signal == EINA_FALSE)
+   v = efl_model_property_get(pd->connect.model, fetch);
+
+   // FIXME: previous implementation would just do that for signal/part == "selected"
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
      {
-         EFL_UI_LAYOUT_DATA_GET(sc->obj, pd);
-         pd->view_updated = EINA_TRUE;
-         elm_layout_text_set(sc->obj, sc->name, property);
-         pd->view_updated = EINA_FALSE;
-         return;
+        Eina_Bool bl;
+
+        eina_value_bool_get(v, &bl);
+        if (bl) value = strdup("selected");
+        else value = strdup("unselected");
+     }
+   else
+     {
+        value = eina_value_to_string(v);
      }
 
    buf = eina_strbuf_new();
-   eina_strbuf_append(buf, sc->name);
-   eina_strbuf_replace_all(buf, "%v", property);
+   // FIXME: is it really the form of signal we want to send ?
+   eina_strbuf_append_printf(buf, "%s%s", signal, value);
+   elm_layout_signal_emit(pd->obj, eina_strbuf_string_get(buf),
+                          elm_widget_is_legacy(pd->obj) ? "elm" : "efl");
 
-   if (elm_widget_is_legacy(sc->obj))
-     elm_layout_signal_emit(sc->obj, eina_strbuf_string_get(buf), "elm");
-   else
-     elm_layout_signal_emit(sc->obj, eina_strbuf_string_get(buf), "efl");
    eina_strbuf_free(buf);
+   eina_value_free(v);
+   free(value);
 }
 
 static void
-_prop_future_then_cb(void* data, Efl_Event const*event)
+_efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Object_Data *pd, Efl_Ui_Factory *factory, const char *name)
 {
-   Efl_Ui_Layout_Sub_Connect *sc = data;
-   const Eina_Value_Type *vtype;
-   Eina_Value *value = (Eina_Value *)((Efl_Future_Event_Success*)event->info)->value;
-   Eina_Stringshare *selected;
-   char *text;
+   Efl_Gfx_Entity *content;
 
-   sc->future = NULL;
-   vtype= eina_value_type_get(value);
-
-   if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
-     {
-         eina_value_get(value, &text);
-         _view_update(sc, text);
-         return;
-     }
-
-   selected = eina_stringshare_add("selected");
-   if (vtype == EINA_VALUE_TYPE_UCHAR && sc->property == selected)
-     {
-         Eina_Bool sb = EINA_FALSE;
-         eina_value_get(value, &sb);
-         if (sb)
-           _view_update(sc, "selected");
-         else
-           _view_update(sc, "unselected");
-     }
-   else
-     {
-         text = eina_value_to_string(value);
-         _view_update(sc, text);
-         free(text);
-     }
-
-     eina_stringshare_del(selected);
+   content = efl_ui_factory_create(factory, pd->connect.model, pd->obj);
+   elm_layout_content_set(pd->obj, name, content);
 }
 
 static void
 _efl_ui_layout_view_model_update(Efl_Ui_Layout_Object_Data *pd)
 {
-   Efl_Ui_Layout_Sub_Connect *sc;
-   Eina_List *l;
+   Eina_Hash_Tuple *tuple;
+   Eina_Iterator *it;
 
-   if (!pd->prop_connect || !pd->model) return;
+   if (!pd->connect.model) return ;
 
-   EINA_LIST_FOREACH(pd->prop_connect, l, sc)
-     {
-         if (sc->future) efl_future_cancel(sc->future);
-         sc->future = efl_model_property_get(pd->model, sc->property);
-         efl_future_then(sc->future, &_prop_future_then_cb, &_prop_future_error_cb, NULL, sc);
-     }
+   it = eina_hash_iterator_tuple_new(pd->connect.properties);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     _efl_ui_layout_view_model_property_update(pd, tuple->data, tuple->key);
+   eina_iterator_free(it);
+
+   it = eina_hash_iterator_tuple_new(pd->connect.signals);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     _efl_ui_layout_view_model_signal_update(pd, tuple->data, tuple->key);
+   eina_iterator_free(it);
+
+   it = eina_hash_iterator_tuple_new(pd->connect.factories);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     _efl_ui_layout_view_model_content_update(pd, tuple->data, tuple->key);
+   eina_iterator_free(it);
 }
 
 static void
 _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 {
-   Efl_Ui_Layout_Object_Data *pd = data;
    Efl_Model_Property_Event *evt = event->info;
-   Eina_Stringshare *ss_prop;
-   Efl_Ui_Layout_Sub_Connect *sc;
+   Efl_Ui_Layout_Object_Data *pd = data;
    const char *prop;
    Eina_Array_Iterator it;
    unsigned int i;
-   Eina_List *l;
 
-   if (!evt->changed_properties || !pd->prop_connect) return;
+   if (!evt->changed_properties) return ;
 
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
-         ss_prop = eina_stringshare_add(prop);
-         EINA_LIST_FOREACH(pd->prop_connect, l, sc)
-           {
-              if (sc->property == ss_prop)
-                {
-                    if (sc->future) efl_future_cancel(sc->future);
-                    sc->future = efl_model_property_get(pd->model, sc->property);
-                    efl_future_then(sc->future, &_prop_future_then_cb, &_prop_future_error_cb, NULL, sc);
-                }
-           }
-         eina_stringshare_del(ss_prop);
+        Eina_Stringshare *sprop = eina_stringshare_add(prop);
+        const char *part;
+        const char *signal;
+        Efl_Ui_Factory *factory;
+
+        part = eina_hash_find(pd->connect.properties, sprop);
+        if (part) _efl_ui_layout_view_model_property_update(pd, part, sprop);
+
+        signal = eina_hash_find(pd->connect.signals, sprop);
+        if (signal) _efl_ui_layout_view_model_signal_update(pd, signal, sprop);
+
+        factory = eina_hash_find(pd->connect.factories, sprop);
+        if (factory) _efl_ui_layout_view_model_content_update(pd, factory, sprop);
+
+        eina_stringshare_del(sprop);
      }
 }
 
-EOLIAN static void
-_efl_ui_layout_object_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Object_Data *pd, Efl_Model *model)
+static void
+_efl_ui_layout_connect_hash(Efl_Ui_Layout_Object_Data *pd)
 {
-   Efl_Ui_Layout_Sub_Connect *sc;
-   Eina_List *l;
+   if (pd->connect.properties) return ;
 
-   if (pd->model)
-     {
-         efl_event_callback_del(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
-         EINA_LIST_FOREACH(pd->prop_connect, l, sc)
-           if (sc->future) efl_future_cancel(sc->future);
+   // FIXME: fix destruction function definition
+   pd->connect.properties = eina_hash_stringshared_new(NULL); // Hash of property targeting a part
+   pd->connect.signals = eina_hash_stringshared_new(NULL); // Hash of property triggering a signal
+   pd->connect.factories = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref)); // Hash of property triggering a content creation
+}
 
-         efl_unref(pd->model);
-         pd->model = NULL;
-     }
+EOLIAN static void
+_efl_ui_layout_object_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Object_Data *pd, Efl_Model *model)
+{
+   Eina_Stringshare *name;
+   Eina_Hash_Tuple *tuple;
+   Eina_Iterator *it;
+
+   efl_replace(&pd->connect.model, model);
 
    if (model)
      {
-         pd->model = model;
-         efl_ref(pd->model);
-         efl_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
+        efl_event_callback_add(pd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_model_properties_changed_cb, pd);
      }
-   else
+
+   _efl_ui_layout_connect_hash(pd);
+
+   // Reset to empty state
+   it = eina_hash_iterator_key_new(pd->connect.properties);
+   EINA_ITERATOR_FOREACH(it, name)
      {
-        EINA_LIST_FOREACH(pd->prop_connect, l, sc)
-          {
-             if (!sc->is_signal)
-               elm_layout_text_set(obj, sc->name, NULL);
-          }
-
-        return;
+        efl_text_set(efl_part(obj, name), NULL);
      }
+   eina_iterator_free(it);
 
-   if (pd->prop_connect)
-     _efl_ui_layout_view_model_update(pd);
-
-   if (pd->factories)
+   it = eina_hash_iterator_tuple_new(pd->connect.factories);
+   EINA_ITERATOR_FOREACH(it, tuple)
      {
-         Eina_Hash_Tuple *tuple;
-         Eina_Stringshare *name;
-         Efl_Ui_Factory *factory;
-         Efl_Gfx_Entity *content;
+        Efl_Ui_Factory *factory;
+        Efl_Gfx_Entity *content;
 
-         Eina_Iterator *it_p = eina_hash_iterator_tuple_new(pd->factories);
-         while (eina_iterator_next(it_p, (void **)&tuple))
-           {
-               name = tuple->key;
-               factory = tuple->data;
-               content = elm_layout_content_get(pd->obj, name);
+        name = tuple->key;
+        factory = tuple->data;
+        content = elm_layout_content_get(obj, name);
 
-               if (content && efl_isa(content, EFL_UI_VIEW_INTERFACE))
-                 {
-                     efl_ui_view_model_set(content, pd->model);
-                 }
-               else
-                 {
-                     efl_ui_factory_release(factory, content);
-                     content = efl_ui_factory_create(factory, pd->model, pd->obj);
-                     elm_layout_content_set(pd->obj, name, content);
-                 }
-           }
-         eina_iterator_free(it_p);
+        elm_layout_content_set(obj, name, NULL);
+        efl_ui_factory_release(factory, content);
      }
+   eina_iterator_free(it);
+
+   // Refresh content if necessary
+   _efl_ui_layout_view_model_update(pd);
 }
 
 EOLIAN static Efl_Model *
 _efl_ui_layout_object_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Object_Data *pd)
 {
-   return pd->model;
+   return pd->connect.model;
 }
 
 EOLIAN static void
 _efl_ui_layout_object_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Object_Data *pd, const char *name, const char *property)
 {
    EINA_SAFETY_ON_NULL_RETURN(name);
-   EINA_SAFETY_ON_NULL_RETURN(property);
-   Efl_Ui_Layout_Sub_Connect *sc, *fsc;
-   Eina_List *l;
+   Eina_Stringshare *sprop;
+   Eina_Hash *hash = NULL;
+   char *data = NULL;
 
    if (!_elm_layout_part_aliasing_eval(obj, &name, EINA_TRUE))
      return;
 
-   sc = calloc(1, sizeof(*sc));
-   sc->obj = obj;
-   sc->property = eina_stringshare_add(property);
+   _efl_ui_layout_connect_hash(pd);
 
-   if (strncmp(SIGNAL_PREFIX, name, sizeof(SIGNAL_PREFIX) -1) == 0)
+   sprop = eina_stringshare_add(property);
+
+   // FIXME: prevent double connect of name to multiple property ?
+   if (strncmp(SIGNAL_PREFIX, name, sizeof(SIGNAL_PREFIX) - 1) == 0)
      {
-        sc->name = eina_stringshare_add(name+sizeof(SIGNAL_PREFIX) -1);
-        sc->is_signal = EINA_TRUE;
+        hash = pd->connect.signals;
+        data = strdup(name + sizeof(SIGNAL_PREFIX) - 1);
      }
    else
      {
-        sc->name = eina_stringshare_add(name);
-        sc->is_signal = EINA_FALSE;
+        hash = pd->connect.properties;
+        data = strdup(name);
      }
 
-   EINA_LIST_FOREACH(pd->prop_connect, l, fsc)
+   if (!sprop)
      {
-        if (fsc->name == sc->name && fsc->property == sc->property)
-          {
-              eina_stringshare_del(sc->name);
-              eina_stringshare_del(sc->property);
-              free(sc);
-              return;
-          }
+        // FIXME: remove the entry from the hash ?
      }
-
-   pd->prop_connect = eina_list_append(pd->prop_connect, sc);
-
-   if (pd->model)
+   else
      {
-         sc->future = efl_model_property_get(pd->model, sc->property);
-         efl_future_then(sc->future, &_prop_future_then_cb, &_prop_future_error_cb, NULL, sc);
+        eina_hash_add(hash, sprop, data);
      }
+
+   // Update display right away if possible
+   if (!pd->connect.model) return ;
+
+   if (hash == pd->connect.signals)
+     _efl_ui_layout_view_model_signal_update(pd, data, sprop);
+   else
+     _efl_ui_layout_view_model_property_update(pd, data, sprop);
 }
 
 EOLIAN static void
@@ -2180,13 +2160,13 @@ _efl_ui_layout_object_efl_ui_factory_model_connect(Eo *obj EINA_UNUSED, Efl_Ui_L
 
    ss_name = eina_stringshare_add(name);
 
-   if (!pd->factories)
-     pd->factories = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref));
+   if (!pd->connect.factories)
+     pd->connect.factories = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref));
 
-   new_ev = efl_ui_factory_create(factory, pd->model, obj);
+   new_ev = efl_ui_factory_create(factory, pd->connect.model, obj);
    EINA_SAFETY_ON_NULL_RETURN(new_ev);
 
-   old_factory = eina_hash_set(pd->factories, ss_name, efl_ref(factory));
+   old_factory = eina_hash_set(pd->connect.factories, ss_name, efl_ref(factory));
    if (old_factory)
      {
          old_ev = elm_layout_content_get(obj, name);
