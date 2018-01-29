@@ -48,6 +48,7 @@ test_bg.c \
 test_box.c \
 test_bubble.c \
 test_button.c \
+test_ui_button.c \
 test_calendar.c \
 test_check.c \
 test_clock.c \

@@ -861,6 +861,7 @@ bin/elementary/test_bg.c \
 bin/elementary/test_box.c \
 bin/elementary/test_bubble.c \
 bin/elementary/test_button.c \
+bin/elementary/test_ui_button.c \
 bin/elementary/test_calendar.c \
 bin/elementary/test_check.c \
 bin/elementary/test_clock.c \

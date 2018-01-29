@@ -31,6 +31,7 @@ void test_box_align(void *data, Evas_Object *obj, void *event_info);
 void test_box_stack(void *data, Evas_Object *obj, void *event_info);
 void test_ui_box(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
+void test_ui_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
 void test_events(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
@@ -848,6 +849,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Buttons", "Button", test_button);
+   ADD_TEST_EO(NULL, "Buttons", "Efl.Ui.Button", test_ui_button);
 
    //------------------------------//
    ADD_TEST(NULL, "Prefs", "Prefs", test_prefs);
