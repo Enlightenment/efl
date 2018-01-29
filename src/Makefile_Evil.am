@@ -35,7 +35,6 @@ lib/evil/evil_fnmatch.c \
 lib/evil/evil_fnmatch_list_of_states.c \
 lib/evil/evil_langinfo.c \
 lib/evil/evil_locale.c \
-lib/evil/evil_link_xp.cpp \
 lib/evil/evil_main.c \
 lib/evil/evil_mman.c \
 lib/evil/evil_pwd.c \
@@ -50,7 +49,6 @@ lib/evil/evil_fnmatch_private.h
 
 lib_evil_libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@ -D__USE_MINGW_ANSI_STDIO
-lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@ @EVIL_CFLAGS@
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
