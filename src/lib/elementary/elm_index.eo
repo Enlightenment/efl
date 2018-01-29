@@ -98,7 +98,7 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.
 
-           Note: If $relative is $NULL this function will behave as
+           Note: If $after is $NULL this function will behave as
            elm_index_item_append().]]
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
@@ -127,7 +127,7 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.
 
-           Note: If $relative is $NULL this function will behave as
+           Note: If $before is $NULL this function will behave as
            elm_index_item_prepend().]]
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
