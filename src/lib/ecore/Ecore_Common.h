@@ -698,6 +698,19 @@ struct _Ecore_Event_Signal_Realtime
 EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data);
 
 /**
+ * @brief Adds an event handler to the beginning of the handler list.
+ * @param type The type of the event this handler will get called for
+ * @param func The function to call when the event is found in the queue
+ * @param data A data pointer to pass to the called function @p func
+ * @return A new Event handler, or @c NULL on failure.
+ *
+ * This function is identical to ecore_event_handler_add() except that it
+ * creates the handler at the start of the list. Do not use this function.
+ * @since 1.21
+ */
+EAPI Ecore_Event_Handler *ecore_event_handler_prepend(int type, Ecore_Event_Handler_Cb func, const void *data);
+
+/**
  * @brief Deletes an event handler.
  * @param event_handler Event handler handle to delete
  * @return Data passed to handler
@@ -1597,9 +1610,9 @@ EAPI double ecore_loop_time_get(void);
 
 /**
  * Sets the loop time.
- * 
+ *
  * @param t The new loop time
- * 
+ *
  * You should never need/call this, unless you are implementing a custom
  * tick source for an ecore animator. Only then inside your function that
  * calls ecore_animator_custom_tick(), just before it, if you are able to
@@ -1611,7 +1624,7 @@ EAPI double ecore_loop_time_get(void);
  * you get from ecore_time_get() and ecore_loop_time_get() (same 0 point).
  * What this point is is undefined, sou unless your source uses the same
  * 0 time, then you may have to adjust and do some guessing.
- * 
+ *
  * @see ecore_animator_custom_tick()
  * @see ecore_loop_time_get()
  * @since 1.11
@@ -2402,14 +2415,14 @@ EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
 
 /**
  * Creates a pipe with more parameters.
- * 
+ *
  * @param handler Same as ecore_pipe_add()
  * @param data Same as ecore_pipe_add()
  * @param fd_read An fd to use for reading or @c -1 otherwise
  * @param fd_write An fd to use for writing or @c -1 otherwise
  * @param read_survive_fork Should read fd survive a fork
  * @param write_survive_fork Should write fd survive a fork
- * 
+ *
  * This is the same as ecore_pipe_add() but with some added parameters.
  *
  * @return A pointer to the new Ecore_Pipe object on success, else NULL.

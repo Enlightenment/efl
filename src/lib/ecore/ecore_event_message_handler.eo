@@ -28,6 +28,15 @@ class Ecore.Event.Message.Handler (Efl.Loop.Message.Handler)
          }
          return: void_ptr; [[ Lazy return handle ]]
       }
+      handler_prepend {
+         [[ Legacy list of callback handlers so they can return false ]]
+         params {
+            type: int;
+            func: void_ptr;
+            data: void_ptr;
+         }
+         return: void_ptr; [[ Lazy return handle ]]
+      }
       handler_del {
          params {
             handler: void_ptr; [[ handler returned from handler_add() ]]

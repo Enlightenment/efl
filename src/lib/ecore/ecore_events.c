@@ -36,6 +36,15 @@ ecore_event_handler_add(int                    type,
                                           type, func, (void *)data);
 }
 
+EAPI Ecore_Event_Handler *
+ecore_event_handler_prepend(int                    type,
+                        Ecore_Event_Handler_Cb func,
+                        const void            *data)
+{
+   return ecore_event_message_handler_prepend(_event_msg_handler,
+                                          type, func, (void *)data);
+}
+
 EAPI void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
