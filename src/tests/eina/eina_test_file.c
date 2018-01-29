@@ -27,6 +27,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#ifdef _WIN32
+# include <windows.h>
+#endif
+
 #include <Eina.h>
 #include "eina_safety_checks.h"
 #include "eina_file_common.h"
@@ -779,7 +783,18 @@ START_TEST(eina_test_file_mktemp)
    if (readlink(fmt, buf, sizeof(buf)))
      unlink(buf);
 #else
-   // TODO: need to implement windows support with GetFinalPathNameByHandle
+   {
+      char buf[4096];
+      HANDLE h;
+      DWORD l;
+
+      h = (HANDLE)_get_osfhandle(fd);
+      fail_if(h == INVALID_HANDLE_VALUE);
+      l = GetFinalPathNameByHandle(h, buf, sizeof(buf), 0);
+      fail_if(l == 0);
+      /* GetFinalPathNameByHandle() preprends path with \\?\ */
+      unlink(buf + 4)
+   }
 #endif
    close(fd);
 
