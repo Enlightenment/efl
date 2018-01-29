@@ -244,6 +244,8 @@ _efl_ui_bg_widget_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, EFL_UI_BG_WIDGET_LEGACY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   EFL_UI_BG_WIDGET_DATA_GET_OR_RETURN_VAL(obj, pd, obj);
+   elm_image_no_scale_set(pd->img, EINA_TRUE);
 
    return obj;
 }
