@@ -562,8 +562,9 @@ typedef struct _Ecore_Wl2_Surface
    Ecore_Wl2_Window *wl2_win;
 
    int w, h;
-   Eina_Bool alpha : 1;
    Ecore_Wl2_Surface_Interface *funcs;
+   Ecore_Event_Handler *offscreen_handler;
+   Eina_Bool alpha : 1;
 } Ecore_Wl2_Surface;
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);

@@ -63,6 +63,18 @@ ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface)
    surface->funcs->flush(surface, surface->private_data);
 }
 
+static Eina_Bool
+_ecore_wl2_surface_cb_offscreen(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Window_Offscreen *ev = event;
+   Ecore_Wl2_Surface *surf = data;
+
+   if (surf->wl2_win->id == (int)ev->win)
+      ecore_wl2_surface_flush(surf);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 EAPI Ecore_Wl2_Surface *
 ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
@@ -90,6 +102,10 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
           {
              out->funcs = intf;
              win->wl2_surface = out;
+             out->offscreen_handler =
+               ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN,
+                                       _ecore_wl2_surface_cb_offscreen,
+                                       out);
              return out;
           }
      }
