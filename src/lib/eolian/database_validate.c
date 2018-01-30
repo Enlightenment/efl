@@ -433,6 +433,217 @@ _validate_event(const Eolian_Unit *src, Eolian_Event *event)
    return _validate(&event->base);
 }
 
+const Eolian_Class *
+_get_impl_class(const Eolian_Class *cl, const char *cln)
+{
+   if (!cl || !strcmp(cl->full_name, cln))
+     return cl;
+   Eina_List *l;
+   Eolian_Class *icl;
+   EINA_LIST_FOREACH(cl->inherits, l, icl)
+     {
+        /* we can do a depth first search, it's easier and doesn't matter
+         * which part of the inheritance tree we find the class in
+         */
+        const Eolian_Class *fcl = _get_impl_class(icl, cln);
+        if (fcl)
+          return fcl;
+     }
+   return NULL;
+}
+
+#define _eo_parser_log(_base, ...) \
+   _eolian_log_line((_base)->file, (_base)->line, (_base)->column, __VA_ARGS__)
+
+static Eina_Bool
+_db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
+{
+   Eolian_Function_Type ftype = EOLIAN_METHOD;
+
+   if (impl->is_prop_get && impl->is_prop_set)
+     ftype = EOLIAN_PROPERTY;
+   else if (impl->is_prop_get)
+     ftype = EOLIAN_PROP_GET;
+   else if (impl->is_prop_set)
+     ftype = EOLIAN_PROP_SET;
+
+   size_t imlen = strlen(impl->full_name);
+   char *clbuf = alloca(imlen + 1);
+   memcpy(clbuf, impl->full_name, imlen + 1);
+
+   char *ldot = strrchr(clbuf, '.');
+   if (!ldot)
+     return EINA_FALSE; /* unreachable in practice, for static analysis */
+
+   *ldot = '\0'; /* split between class name and func name */
+   const char *clname = clbuf;
+   const char *fnname = ldot + 1;
+
+   const Eolian_Class *tcl = _get_impl_class(cl, clname);
+   if (!tcl)
+     {
+        _eo_parser_log(&impl->base, "class '%s' not found within the inheritance tree of '%s'",
+                       clname, cl->full_name);
+        return EINA_FALSE;
+     }
+
+   impl->klass = tcl;
+
+   const Eolian_Function *fid = eolian_class_function_get_by_name(tcl, fnname, EOLIAN_UNRESOLVED);
+   if (!fid)
+     {
+        _eo_parser_log(&impl->base, "function '%s' not known in class '%s'", fnname, clname);
+        return EINA_FALSE;
+     }
+
+   Eolian_Function_Type aftype = eolian_function_type_get(fid);
+
+   Eina_Bool auto_empty = (impl->get_auto || impl->get_empty);
+
+   /* match implement type against function type */
+   if (ftype == EOLIAN_PROPERTY)
+     {
+        /* property */
+        if (aftype != EOLIAN_PROPERTY)
+          {
+             _eo_parser_log(&impl->base, "function '%s' is not a complete property", fnname);
+             return EINA_FALSE;
+          }
+        auto_empty = auto_empty && (impl->set_auto || impl->set_empty);
+     }
+   else if (ftype == EOLIAN_PROP_SET)
+     {
+        /* setter */
+        if ((aftype != EOLIAN_PROP_SET) && (aftype != EOLIAN_PROPERTY))
+          {
+             _eo_parser_log(&impl->base, "function '%s' doesn't have a setter", fnname);
+             return EINA_FALSE;
+          }
+        auto_empty = (impl->set_auto || impl->set_empty);
+     }
+   else if (ftype == EOLIAN_PROP_GET)
+     {
+        /* getter */
+        if ((aftype != EOLIAN_PROP_GET) && (aftype != EOLIAN_PROPERTY))
+          {
+             _eo_parser_log(&impl->base, "function '%s' doesn't have a getter", fnname);
+             return EINA_FALSE;
+          }
+     }
+   else if (aftype != EOLIAN_METHOD)
+     {
+        _eo_parser_log(&impl->base, "function '%s' is not a method", fnname);
+        return EINA_FALSE;
+     }
+
+   if ((fid->klass == cl) && !auto_empty)
+     {
+        /* only allow explicit implements from other classes, besides auto and
+         * empty... also prevents pure virtuals from being implemented
+         */
+        _eo_parser_log(&impl->base, "invalid implement '%s'", impl->full_name);
+        return EINA_FALSE;
+     }
+
+   impl->foo_id = fid;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_db_fill_implements(Eolian_Class *cl)
+{
+   Eolian_Implement *impl;
+   Eina_List *l;
+
+   Eina_Bool ret = EINA_TRUE;
+
+   Eina_Hash *th = eina_hash_string_small_new(NULL),
+             *pth = eina_hash_string_small_new(NULL);
+   EINA_LIST_FOREACH(cl->implements, l, impl)
+     {
+        Eina_Bool prop = (impl->is_prop_get || impl->is_prop_set);
+        if (eina_hash_find(prop ? pth : th, impl->full_name))
+          {
+             _eo_parser_log(&impl->base, "duplicate implement '%s'", impl->full_name);
+             ret = EINA_FALSE;
+             goto end;
+          }
+        if (impl->klass != cl)
+          {
+             if (!_db_fill_implement(cl, impl))
+               {
+                  ret = EINA_FALSE;
+                  goto end;
+               }
+             if (eolian_function_is_constructor(impl->foo_id, impl->klass))
+               database_function_constructor_add((Eolian_Function *)impl->foo_id, cl);
+          }
+        if ((impl->klass != cl) && !_db_fill_implement(cl, impl))
+          {
+             ret = EINA_FALSE;
+             goto end;
+          }
+        eina_hash_add(prop ? pth : th, impl->full_name, impl->full_name);
+     }
+
+end:
+   eina_hash_free(th);
+   eina_hash_free(pth);
+   return ret;
+}
+
+static Eina_Bool
+_db_fill_ctors(Eolian_Class *cl)
+{
+   Eolian_Constructor *ctor;
+   Eina_List *l;
+
+   Eina_Bool ret = EINA_TRUE;
+
+   Eina_Hash *th = eina_hash_string_small_new(NULL);
+   EINA_LIST_FOREACH(cl->constructors, l, ctor)
+     {
+        if (eina_hash_find(th, ctor->full_name))
+          {
+             _eo_parser_log(&ctor->base, "duplicate ctor '%s'", ctor->full_name);
+             ret = EINA_FALSE;
+             goto end;
+          }
+        const char *ldot = strrchr(ctor->full_name, '.');
+        if (!ldot)
+          {
+             ret = EINA_FALSE;
+             goto end;
+          }
+        char *cnbuf = alloca(ldot - ctor->full_name + 1);
+        memcpy(cnbuf, ctor->full_name, ldot - ctor->full_name);
+        cnbuf[ldot - ctor->full_name] = '\0';
+        const Eolian_Class *tcl = _get_impl_class(cl, cnbuf);
+        if (!tcl)
+          {
+             _eo_parser_log(&ctor->base, "class '%s' not found within the inheritance tree of '%s'",
+                            cnbuf, cl->full_name);
+             ret = EINA_FALSE;
+             goto end;
+          }
+        ctor->klass = tcl;
+        const Eolian_Function *cfunc = eolian_constructor_function_get(ctor);
+        if (!cfunc)
+          {
+             _eo_parser_log(&ctor->base, "unable to find function '%s'", ctor->full_name);
+             ret = EINA_FALSE;
+             goto end;
+          }
+        database_function_constructor_add((Eolian_Function *)cfunc, tcl);
+        eina_hash_add(th, ctor->full_name, ctor->full_name);
+     }
+
+end:
+   eina_hash_free(th);
+   return ret;
+}
+
 static Eina_Bool
 _validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
 {
@@ -463,6 +674,13 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
      return EINA_FALSE; /* if this happens something is very wrong though */
 
    Eina_Bool valid = cl->base.validated;
+
+   /* make sure impls/ctors are filled first, but do it only once */
+   if (!valid && !_db_fill_implements(cl))
+     return EINA_FALSE;
+
+   if (!valid && !_db_fill_ctors(cl))
+     return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
