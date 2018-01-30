@@ -645,6 +645,54 @@ end:
 }
 
 static Eina_Bool
+_db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
+{
+   if (eina_hash_find(fhash, cl->full_name))
+     return EINA_TRUE;
+
+   Eina_List *il = cl->inherits;
+   Eina_Stringshare *inn = NULL;
+   cl->inherits = NULL;
+   Eina_Bool succ = EINA_TRUE;
+
+   EINA_LIST_FREE(il, inn)
+     {
+        if (!succ)
+          {
+             eina_stringshare_del(inn);
+             continue;
+          }
+        Eolian_Class *icl = eina_hash_find(src->state->unit.classes, inn);
+        if (!icl)
+          {
+             succ = EINA_FALSE;
+             char buf[PATH_MAX];
+             snprintf(buf, sizeof(buf), "unknown inherit '%s' (incorrect case?)", inn);
+             _obj_error(&cl->base, buf);
+          }
+        else
+          {
+             cl->inherits = eina_list_append(cl->inherits, icl);
+             /* recursively fill so the tree is valid */
+             if (!icl->base.validated && !_db_fill_inherits(src, icl, fhash))
+               succ = EINA_FALSE;
+          }
+        eina_stringshare_del(inn);
+     }
+
+   eina_hash_add(fhash, cl->full_name, cl);
+
+   /* make sure impls/ctors are filled first, but do it only once */
+   if (!_db_fill_implements(cl))
+     return EINA_FALSE;
+
+   if (!_db_fill_ctors(cl))
+     return EINA_FALSE;
+
+   return succ;
+}
+
+static Eina_Bool
 _validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
 {
    if (impl->base.validated)
@@ -661,7 +709,8 @@ _validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
 }
 
 static Eina_Bool
-_validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
+_validate_class(const Eolian_Unit *src, Eolian_Class *cl,
+                Eina_Hash *nhash, Eina_Bool ipass)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -675,12 +724,17 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
 
    Eina_Bool valid = cl->base.validated;
 
-   /* make sure impls/ctors are filled first, but do it only once */
-   if (!valid && !_db_fill_implements(cl))
-     return EINA_FALSE;
-
-   if (!valid && !_db_fill_ctors(cl))
-     return EINA_FALSE;
+   /* refill inherits in the current inheritance tree first */
+   if (!valid && !ipass)
+     {
+        Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
+        if (!_db_fill_inherits(src, cl, fhash))
+          {
+             eina_hash_free(fhash);
+             return EINA_FALSE;
+          }
+        eina_hash_free(fhash);
+     }
 
    EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
@@ -710,7 +764,7 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
            default:
              break;
           }
-        if (!_validate_class(src, icl, nhash))
+        if (!_validate_class(src, icl, nhash, EINA_TRUE))
           return EINA_FALSE;
      }
 
@@ -786,7 +840,7 @@ database_validate(Eolian *state, const Eolian_Unit *src)
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
-        if (!_validate_class(src, cl, nhash))
+        if (!_validate_class(src, cl, nhash, EINA_FALSE))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);

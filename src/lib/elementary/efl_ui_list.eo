@@ -99,7 +99,7 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
 //      Elm.Interface.Atspi_Accessible.children { get; }
-//      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+//      Elm.Interface.Atspi_Widget.Action.elm_actions { get; }
 //      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }

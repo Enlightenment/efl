@@ -2038,24 +2038,35 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
         return; /* unreachable (longjmp above), make static analysis shut up */
      }
    fname = eina_hash_find(ls->state->filenames_eo, fnm);
-   free(fnm);
    if (!fname)
      {
         char ebuf[PATH_MAX];
+        free(fnm);
         eo_lexer_context_restore(ls);
         snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'", iname);
         eo_lexer_syntax_error(ls, ebuf);
-     }
-   Eolian_Class *dep = _parse_dep(ls, fname, iname);
-   if (!dep)
-     {
-        char ebuf[PATH_MAX];
-        eo_lexer_context_restore(ls);
-        snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'. Incorrect case?", iname);
-        eo_lexer_syntax_error(ls, ebuf);
         return;
      }
-   ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits, dep);
+
+   Eina_Stringshare *inames = eina_stringshare_add(iname), *oiname = NULL;
+   Eina_List *l;
+   /* never allow duplicate inherits */
+   EINA_LIST_FOREACH(ls->tmp.kls->inherits, l, oiname)
+     {
+        if (inames == oiname)
+          {
+             char ebuf[PATH_MAX];
+             free(fnm);
+             eina_stringshare_del(inames);
+             eo_lexer_context_restore(ls);
+             snprintf(ebuf, sizeof(ebuf), "duplicate inherit '%s'", iname);
+             eo_lexer_syntax_error(ls, ebuf);
+             return;
+          }
+     }
+   eina_hash_set(ls->state->defer, fnm, fname);
+   ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits, inames);
+   free(fnm);
    eo_lexer_context_pop(ls);
 }
 
