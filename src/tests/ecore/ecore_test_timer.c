@@ -286,6 +286,16 @@ START_TEST(ecore_test_timer_lifecycle)
 }
 END_TEST
 
+
+START_TEST(ecore_test_timer_valid_callbackfunc)
+{
+   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   Ecore_Timer *t = NULL;
+   fail_if((t = ecore_timer_add(0.5, NULL, NULL)), "ERROR: Invalid callback func!\n");
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
@@ -293,4 +303,5 @@ void ecore_test_timer(TCase *tc)
   tcase_add_test(tc, ecore_test_timer_lifecycle);
  */
   tcase_add_test(tc, ecore_test_timer_inside_call);
+  tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
 }
