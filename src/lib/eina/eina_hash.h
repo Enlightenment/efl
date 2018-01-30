@@ -158,19 +158,19 @@
 /**
  * @addtogroup Eina_Hash_Group Hash Table
  *
- * @brief Hash table management. Useful for mapping keys to values.
+ * @brief Hash table management. Maps keys to values.
  *
- * The hash table is useful for when one wants to implement a table that maps
- * keys (usually strings) to data, and have relatively fast access time. The
- * performance is proportional to the load factor of the table (number of
- * elements / number of buckets). See @ref hashtable_algo for implementation
- * details.
+ * The hash table associates keys (e.g. strings) to data, with
+ * relatively fast access time. The performance is proportional to the
+ * load factor of the table (number of elements / number of
+ * buckets). See @ref hashtable_algo for implementation details.
  *
- * Different implementations exists depending on what kind of key will be used
- * to access the data: strings, integers, pointers, stringshared or your own.
+ * There are optimized implementations for some common key types, such
+ * as strings, integers, pointers, and stringshared; custom optimizations
+ * are also permitted.
  *
- * Eina hash tables can copy the keys when using eina_hash_add() or not when
- * using eina_hash_direct_add().
+ * The hash table keys can be either copied or non-copied, using
+ * eina_hash_add() or eina_hash_direct_add(), respectively.
  *
  * @section hashtable_algo Algorithm
  *
@@ -178,7 +178,7 @@
  * bucket is a pointer to a structure that is the head of a <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>. The
  * array can then be indexed by the [hash_of_element mod N]. The
- * hash_of_element is calculated using the hashing function, passed as
+ * hash_of_element is calculated using the hashing function, passed as a
  * parameter to the @ref eina_hash_new function. N is the number of buckets
  * (array positions), and is calculated based on the buckets_power_size
  * (argument of @ref eina_hash_new too). The following picture illustrates the
@@ -189,29 +189,28 @@
  * @endhtmlonly
  * @image latex 01_hash-table.eps
  *
- * Adding an element to the hash table is made of:
- * @li calculating the hash for that key (using the specified hash function);
+ * Adding an element to the hash table involves the following steps:
+ * @li calculate the hash for that key (using the specified hash function);
  * @li calculate the array position [hash mod N];
  * @li add the element to the rbtree on that position.
  *
- * The two first steps have constant time, proportional to the hash function
- * being used. Adding the key to the rbtree will be proportional on the number
- * of keys on that bucket.
+ * The first two steps have constant time, proportional to the hash function
+ * being used. Adding the key to the rbtree will be proportional to the number
+ * of keys in that bucket.
  *
- * The average cost of lookup depends on the number of keys per
- * bucket (load factor) of the table, if the distribution of keys is
+ * The average lookup cost depends on the number of keys per bucket
+ * (load factor) of the table, assuming the distribution of keys is
  * sufficiently uniform.
  *
  * @section hashtable_perf Performance
  *
- * As said before, the performance depends on the load factor. So trying to keep
- * the load factor as small as possible will improve the hash table performance. But
+ * Keeping the load factor small will improve the hash table performance. But
  * increasing the buckets_power_size will also increase the memory consumption.
- * The default hash table creation functions already have a good number of
- * buckets, enough for most cases. Particularly for strings, if just a few keys
+ * The default hash table creation functions provides enough
+ * buckets for most cases. If just a few string keys
  * (less than 30) will be added to the hash table, @ref
- * eina_hash_string_small_new should be used, since it will reduce the memory
- * consumption for the buckets, and you still won't have many collisions.
+ * eina_hash_string_small_new should be used, since it reduces the memory
+ * consumption for the buckets without causing too many collisions.
  * However, @ref eina_hash_string_small_new still uses the same hash calculation
  * function that @ref eina_hash_string_superfast_new, which is more complex than
  * @ref eina_hash_string_djb2_new. The latter has a faster hash computation
@@ -240,8 +239,8 @@
  *
  * When adding a new key to a hash table, use @ref eina_hash_add or @ref
  * eina_hash_direct_add (the latter if this key is already stored elsewhere). If
- * the key may be already inside the hash table, instead of checking with
- * @ref eina_hash_find and then doing @ref eina_hash_add, one can use just @ref
+ * the key may be already inside the hash table, rather than checking with
+ * @ref eina_hash_find followed by @ref eina_hash_add, one can use just @ref
  * eina_hash_set (this will change the data pointed by this key if it was
  * already present in the table).
  *
@@ -352,7 +351,7 @@ typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key
  * @param key_cmp_cb The function called when comparing the keys.
  * @param key_hash_cb The function called when getting the values.
  * @param data_free_cb The function called on each value when the hash table is
- * freed, or when an item is deleted from it. @c NULL can be passed as
+ * freed, or when an item is deleted from it. @c NULL can be passed as a
  * callback.
  * @param buckets_power_size The size of the buckets.
  * @return The new hash table, or @c NULL on failure.
@@ -365,7 +364,7 @@ typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key
  * @c NULL is returned.
  *
  * The number of buckets created will be 2 ^ @p buckets_power_size. This means
- * that if @p buckets_power_size is 5, there will be created 32 buckets. for a
+ * that if @p buckets_power_size is 5, there will be created 32 buckets, whereas for a
  * @p buckets_power_size of 8, there will be 256 buckets.
  *
  * Pre-defined functions are available to create a hash table. See
@@ -381,14 +380,14 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
                               int             buckets_power_size) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2, 3);
 
 /**
- * @brief Redefines the callback that cleans the data of a hash.
+ * @brief Sets the data cleanup callback for a hash.
  *
- * @param hash The given hash table
+ * @param hash The given hash table.
  * @param data_free_cb The function called on each value when the hash
  * table is freed, or when an item is deleted from it. @c NULL can be passed as
  * callback to remove an existing callback.
  *
- * The argument received by @p data_free_cb will be that data of the item being
+ * The argument received by @p data_free_cb will be the data of the item being
  * removed.
  *
  * @since 1.1
@@ -424,7 +423,7 @@ EAPI Eina_Hash *eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
  * then be looked up with pointers other than the original key pointer
  * that was used to add values.
  *
- * NOTE: don't use this kind of hash when their is a possibility to remotely
+ * @note Don't use this kind of hash when there is a possibility to remotely
  * request and push data in it. This hash is subject to denial of service.
  */
 EAPI Eina_Hash *eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
@@ -493,7 +492,7 @@ EAPI Eina_Hash *eina_hash_int64_new(Eina_Free_Cb data_free_cb);
  * table management and dereferenced pointers to compare the
  * keys. Values can then be looked up with pointers other than the
  * original key pointer that was used to add values. This method may
- * appear to be able to match string keys, actually it only matches
+ * appear to be able to match string keys, but actually it only matches
  * the first character.
  *
  * @code
@@ -570,12 +569,12 @@ EAPI Eina_Bool  eina_hash_add(Eina_Hash  *hash,
  * depending on the type of @p hash: a stringshared @ref Eina_Hash
  * need have unique pointers (which implies unique strings).
  * All other string hash types require the strings
- * themselves to be unique. Pointer, int32 and int64 hashes need to have these
- * values as unique. Failure to use sufficient uniqueness will
+ * themselves to be unique. Pointer, int32 and int64 hashes need to have unique
+ * values. Failure to use sufficient uniqueness will
  * result in unexpected results when inserting data pointers accessed
  * with eina_hash_find(), and removed with eina_hash_del(). This
  * function does not make a copy of @p key, so it must be a string
- * constant or stored elsewhere ( in the object being added). Key
+ * constant or stored elsewhere (in the object being added). Key
  * strings are case sensitive.
  */
 EAPI Eina_Bool eina_hash_direct_add(Eina_Hash  *hash,
@@ -613,22 +612,21 @@ EAPI Eina_Bool eina_hash_del(Eina_Hash  *hash,
  *
  * @param hash The given hash table.
  * @param key The key of the entry to find.
- * @return The data pointer for the stored entry on success, @c NULL
+ * @return The data pointer for the stored entry on success, or @c NULL
  * otherwise.
  *
- * This function retrieves the entry associated to @p key in
- * @p hash. If @p hash is @c NULL, this function returns immediately
- * @c NULL.
+ * This function retrieves the entry associated with @p key in
+ * @p hash. If @p hash is @c NULL, this function returns @c NULL.
  */
 EAPI void *eina_hash_find(const Eina_Hash *hash,
                           const void      *key) EINA_ARG_NONNULL(2);
 
 /**
- * @brief Modifies the entry pointer at the specified key and return the old
+ * @brief Modifies the entry pointer at the specified key and returns the old
  * entry.
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
- * @param data The data to replace the old entry.
+ * @param data The new data.
  * @return The data pointer for the old stored entry on success, or
  * @c NULL otherwise.
  *
@@ -640,8 +638,8 @@ EAPI void *eina_hash_modify(Eina_Hash  *hash,
                             const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * @brief Modifies the entry pointer at the specified key and return the
- * old entry or add the entry if not found.
+ * @brief Modifies the entry pointer at the specified key and returns the
+ * old entry or adds the entry if not found.
  *
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
@@ -649,7 +647,7 @@ EAPI void *eina_hash_modify(Eina_Hash  *hash,
  * @return The data pointer for the old stored entry, or @c NULL
  * otherwise.
  *
- * This function modifies the data of @p key with @p data in @p
+ * This function modifies the value of @p key to @p data in @p
  * hash. If no entry is found, @p data is added to @p hash with the
  * key @p key.
  */
@@ -658,15 +656,15 @@ EAPI void *eina_hash_set(Eina_Hash  *hash,
                          const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Changes the key associated with a data without triggering the
+ * @brief Changes the key of an entry in a hash without triggering the
  * free callback.
  *
  * @param hash    The given hash table.
- * @param old_key The current key associated with the data
- * @param new_key The new key to associate data with
+ * @param old_key The current key associated with the data.
+ * @param new_key The new key to associate data with.
  * @return #EINA_FALSE in any case but success, #EINA_TRUE on success.
  *
- * This function allows for the move of data from one key to another,
+ * This function moves data from one key to another,
  * but does not call the Eina_Free_Cb associated with the hash table
  * when destroying the old key.
  */
@@ -675,11 +673,11 @@ EAPI Eina_Bool eina_hash_move(Eina_Hash  *hash,
                               const void *new_key) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * @brief Frees the given hash table resources.
+ * @brief Frees the given hash table's resources.
  *
  * @param hash The hash table to be freed.
  *
- * This function frees up all the memory allocated to storing @p hash,
+ * This function frees up all the memory allocated for storing @p hash,
  * and calls the free callback if it has been passed to the hash table
  * at creation time. If no free callback has been passed, any entries
  * in the table that the program has no more pointers for elsewhere
@@ -733,8 +731,8 @@ EAPI int       eina_hash_population(const Eina_Hash *hash) EINA_ARG_NONNULL(1);
  * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function adds @p key to @p hash. @p hash, @p key and @p data
- * cannot be @c NULL, in that case #EINA_FALSE is returned. @p key is
- * expected to be a unique within the hash table. Otherwise,
+ * cannot be @c NULL, or else #EINA_FALSE is returned. @p key is
+ * expected to be unique within the hash table, since if it isn't then
  * one cannot be sure which inserted data pointer will be accessed
  * with @ref eina_hash_find, and removed with @ref eina_hash_del. Do
  * not forget to count '\\0' for string when setting the value of
@@ -751,7 +749,7 @@ EAPI Eina_Bool eina_hash_add_by_hash(Eina_Hash  *hash,
                                      const void *data) EINA_ARG_NONNULL(1, 2, 5);
 
 /**
- * @brief Adds an entry to the given hash table and do not duplicate the string
+ * @brief Adds an entry to the given hash table without duplicating the string
  * key.
  *
  * @param hash The given hash table. Cannot be @c NULL.
@@ -764,7 +762,7 @@ EAPI Eina_Bool eina_hash_add_by_hash(Eina_Hash  *hash,
  * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function adds @p key to @p hash. @p hash, @p key and @p data
- * can be @c NULL, in that case #EINA_FALSE is returned. @p key is
+ * can be @c NULL, or else #EINA_FALSE is returned. @p key is
  * expected to be unique within the hash table. Otherwise,
  * one cannot be sure which inserted data pointer will be accessed
  * with @ref eina_hash_find, and removed with @ref eina_hash_del. This
@@ -798,7 +796,7 @@ EAPI Eina_Bool eina_hash_direct_add_by_hash(Eina_Hash  *hash,
  * callback on creation, it will be called for the data being
  * deleted. Do not forget to count '\\0' for string when setting the
  * value of @p key_length. If @p hash or @p key are @c NULL, the
- * function returns immediately #EINA_FALSE.
+ * function returns #EINA_FALSE immediately.
  *
  * @note If you don't have the key_hash, use eina_hash_del_by_key() instead.
  * @note If you don't have the key, use eina_hash_del_by_data() instead.
@@ -812,18 +810,18 @@ EAPI Eina_Bool eina_hash_del_by_key_hash(Eina_Hash  *hash,
  * @brief Removes the entry identified by a key from the given hash table.
  *
  * This version will calculate key length and hash by using functions
- * provided to hash creation function.
+ * provided to the hash creation function.
  *
  * @param hash The given hash table. Cannot be @c NULL.
  * @param key  The key. Cannot be @c NULL.
  * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function removes the entry identified by @p key from @p
- * hash. The key length and hash will be calculated automatically by
- * using function provided to hash creation function. If a free
+ * hash. The key length and hash will be calculated automatically via
+ * a function provided to the hash creation function. If a free
  * function was given to the callback on creation, it will be called
  * for the data being deleted. If @p hash or @p key are @c NULL, the
- * function returns immediately #EINA_FALSE.
+ * function returns #EINA_FALSE immediately.
  *
  * @note If you already have the key_hash, use eina_hash_del_by_key_hash()
  * instead.
@@ -833,9 +831,7 @@ EAPI Eina_Bool eina_hash_del_by_key(Eina_Hash  *hash,
                                     const void *key) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Removes the entry identified by a data from the given hash table.
- *
- * This version is slow since there is no quick access to nodes based on data.
+ * @brief Removes an entry from a hash table identified by its data value.
  *
  * @param hash The given hash table. Cannot be @c NULL.
  * @param data The data value to search and remove. Cannot be @c NULL.
@@ -847,6 +843,9 @@ EAPI Eina_Bool eina_hash_del_by_key(Eina_Hash  *hash,
  * hash. If a free function was given to the callback on creation, it
  * will be called for the data being deleted.
  *
+ * @note This version is slow since there is no quick access to nodes
+ * based on data.
+ *
  * @note If you already have the key, use eina_hash_del_by_key() or
  * eina_hash_del_by_key_hash() instead.
  */
@@ -854,8 +853,8 @@ EAPI Eina_Bool eina_hash_del_by_data(Eina_Hash  *hash,
                                      const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Removes the entry identified by a key and a key hash or a
- * data from the given hash table.
+ * @brief Removes the entry identified by a key and a key hash, or a
+ * data value from the given hash table.
  *
  * If @p key is @c NULL, then @p data is used to find a match to
  * remove.
@@ -867,18 +866,18 @@ EAPI Eina_Bool eina_hash_del_by_data(Eina_Hash  *hash,
  * @param data The data pointer to remove if the key is @c NULL.
  * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
- * This function removes the entry identified by @p key and
- * @p key_hash, or @p data, from @p hash. If a free function was given to
- * the  callback on creation, it will be called for the data being
- * deleted. If @p hash is @c NULL, the function returns immediately #EINA_FALSE.
- * If @p key is @c NULL, then @p key_length and @p key_hash
- * are ignored and @p data is used to find a match to remove,
- * otherwise @p key and @p key_hash are used and @p data is not
- * required and can be @c NULL. Do not forget to count '\\0' for
- * string when setting the value of @p key_length.
+ * This function removes the entry identified by @p key and @p key_hash,
+ * or @p data, from @p hash. If a free function was given to the
+ * callback on creation, it will be called for the data being
+ * deleted. If @p hash is @c NULL, the function returns #EINA_FALSE
+ * immediately.  If @p key is @c NULL, then @p key_length and @p
+ * key_hash are ignored and @p data is used to find a match to remove,
+ * otherwise @p key and @p key_hash are used and @p data is not required
+ * and can be @c NULL. Do not forget to count '\\0' for string when
+ * setting the value of @p key_length.
  *
- * @note If you know you already have the key, use eina_hash_del_by_key_hash(),
- *       If you know you don't have the key, use eina_hash_del_by_data()
+ * @note If you already have the key, use eina_hash_del_by_key_hash(),
+ *       If you don't have the key, use eina_hash_del_by_data()
  *       directly.
  */
 EAPI Eina_Bool eina_hash_del_by_hash(Eina_Hash  *hash,
@@ -888,17 +887,17 @@ EAPI Eina_Bool eina_hash_del_by_hash(Eina_Hash  *hash,
                                      const void *data) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieves a specific entry in the given hash table.
+ * @brief Retrieves a specific entry from the given hash table.
  *
  * @param hash The given hash table. Cannot be @c NULL.
  * @param key The key of the entry to find.
  * @param key_length The length of the key.
- * @param key_hash The hash that always match the key
+ * @param key_hash The hash that always matches the key
  * @return The data pointer for the stored entry on success, or @c NULL
  * if @p hash is @c NULL or if the data pointer could not be retrieved.
  *
- * This function retrieves the entry associated to @p key of length
- * @p key_length in @p hash. @p key_hash is the hash that always match
+ * This function retrieves the entry associated with @p key of length
+ * @p key_length in @p hash. @p key_hash is the hash that always matches
  * @p key. It is ignored if @p key is @c NULL. Do not forget to count
  * '\\0' for string when setting the value of @p key_length.
  */
@@ -915,12 +914,12 @@ EAPI void *eina_hash_find_by_hash(const Eina_Hash *hash,
  * @param key The key of the entry to modify.
  * @param key_length Should be the length of @p key (don't forget to count
  * '\\0' for string).
- * @param key_hash The hash that always match the key. Ignored if @p key is
- *                 @c NULL.
+ * @param key_hash The hash that always matches the key. Ignored if @p
+ * key is @c NULL.
  * @param data The data to replace the old entry, if it exists.
  * @return The data pointer for the old stored entry, or @c NULL if not
- *          found. If an existing entry is not found, nothing is added to the
- *          hash.
+ * found. If an existing entry is not found, nothing is added to the
+ * hash.
  */
 EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
                                     const void *key,
@@ -929,12 +928,12 @@ EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
                                     const void *data) EINA_ARG_NONNULL(1, 2, 5);
 
 /**
- * @brief Returns a new iterator associated to hash keys.
+ * @brief Returns a new iterator associated with hash keys.
  *
  * @param hash The hash.
  * @return A new iterator, or @c NULL if memory could not be allocated.
  *
- * This function returns a newly allocated iterator associated to @p
+ * This function returns a newly allocated iterator associated with @p
  * hash. If @p hash is not populated, this function still returns a
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
@@ -946,12 +945,12 @@ EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
 EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returns a new iterator associated to hash data.
+ * @brief Returns a new iterator associated with a hash.
  *
  * @param hash The hash.
  * @return A new iterator, or @c NULL if memory could not be allocated.
  *
- * This function returns a newly allocated iterator associated to
+ * This function returns a newly allocated iterator associated with
  * @p hash. If @p hash is not populated, this function still returns a
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
@@ -963,12 +962,12 @@ EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLO
 EAPI Eina_Iterator *eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returned a new iterator associated to hash keys and data.
+ * @brief Returned a new iterator associated with hash keys and data.
  *
  * @param hash The hash.
  * @return A new iterator, or @c NULL if memory could not be allocated.
  *
- * This function returns a newly allocated iterator associated to @p
+ * This function returns a newly allocated iterator associated with @p
  * hash. If @p hash is not populated, this function still returns a
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
@@ -985,9 +984,9 @@ EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MAL
 /**
  * @brief Calls a function on every member stored in the hash table.
  *
- * @param hash The hash table whose members will be walked
- * @param func The function to call on each parameter
- * @param fdata The data pointer to pass to the function being called
+ * @param hash The hash table whose members will be walked.
+ * @param func The function to call on each parameter.
+ * @param fdata The data pointer to pass to the function being called.
  *
  * This function goes through every entry in the hash table @p hash and calls
  * the function @p func on each member. The function should @b not modify the
@@ -1028,9 +1027,9 @@ EAPI void           eina_hash_foreach(const Eina_Hash  *hash,
  * This function is identical to the sequence of calling
  * eina_hash_find(), eina_list_append(), eina_hash_set(),
  * but with one fewer required hash lookup.
- * @param hash The hash table
- * @param key The key associated with the data
- * @param data The data to append to the list
+ * @param hash The hash table.
+ * @param key The key associated with the data.
+ * @param data The data to append to the list.
  * @since 1.10
  */
 EAPI void eina_hash_list_append(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
@@ -1040,9 +1039,9 @@ EAPI void eina_hash_list_append(Eina_Hash *hash, const void *key, const void *da
  * This function is identical to the sequence of calling
  * eina_hash_find(), eina_list_prepend(), eina_hash_set(),
  * but with one fewer required hash lookup.
- * @param hash The hash table
- * @param key The key associated with the data
- * @param data The data to prepend to the list
+ * @param hash The hash table.
+ * @param key The key associated with the data.
+ * @param data The data to prepend to the list.
  * @since 1.10
  */
 EAPI void eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
@@ -1052,9 +1051,9 @@ EAPI void eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *d
  * This function is identical to the sequence of calling
  * eina_hash_find(), eina_list_remove(), eina_hash_set(),
  * but with one fewer required hash lookup.
- * @param hash The hash table
- * @param key The key associated with the data
- * @param data The data to remove from the list
+ * @param hash The hash table.
+ * @param key The key associated with the data.
+ * @param data The data to remove from the list.
  * @since 1.10
  */
 EAPI void eina_hash_list_remove(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
@@ -1063,9 +1062,9 @@ EAPI void eina_hash_list_remove(Eina_Hash *hash, const void *key, const void *da
  * @brief
  * Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html) hash function used by WebCore (http://webkit.org/blog/8/hashtables-part-2/)
  *
- * @param key The key to hash
- * @param len The length of the key
- * @return The hash value
+ * @param key The key to hash.
+ * @param len The length of the key.
+ * @return The hash value.
  */
 EAPI int eina_hash_superfast(const char *key,
                              int         len) EINA_ARG_NONNULL(1);
@@ -1074,9 +1073,9 @@ EAPI int eina_hash_superfast(const char *key,
  * @brief
  * Hash function first reported by Dan Bernstein many years ago in comp.lang.c
  *
- * @param key The key to hash
- * @param len The length of the key
- * @return The hash value
+ * @param key The key to hash.
+ * @param len The length of the key.
+ * @return The hash value.
  */
 static inline int eina_hash_djb2(const char *key,
                                  int         len) EINA_ARG_NONNULL(1);
@@ -1085,9 +1084,9 @@ static inline int eina_hash_djb2(const char *key,
  * @brief
  * Hash function first reported by Dan Bernstein many years ago in comp.lang.c
  *
- * @param key The key to hash
- * @param plen The length of the key
- * @return The hash value
+ * @param key The key to hash.
+ * @param plen The length of the key.
+ * @return The hash value.
  */
 static inline int eina_hash_djb2_len(const char *key,
                                      int        *plen) EINA_ARG_NONNULL(1, 2);
@@ -1096,9 +1095,9 @@ static inline int eina_hash_djb2_len(const char *key,
  * @brief
  * Hash function from http://web.archive.org/web/20071223173210/http://www.concentric.net/~Ttwang/tech/inthash.htm
  *
- * @param pkey The key to hash
- * @param len The length of the key
- * @return The hash value
+ * @param pkey The key to hash.
+ * @param len The length of the key.
+ * @return The hash value.
  */
 static inline int eina_hash_int32(const unsigned int *pkey,
                                   int                 len) EINA_ARG_NONNULL(1);
@@ -1107,9 +1106,9 @@ static inline int eina_hash_int32(const unsigned int *pkey,
  * @brief
  * Hash function from http://web.archive.org/web/20071223173210/http://www.concentric.net/~Ttwang/tech/inthash.htm
  *
- * @param pkey The key to hash
- * @param len The length of the key
- * @return The hash value
+ * @param pkey The key to hash.
+ * @param len The length of the key.
+ * @return The hash value.
  */
 static inline int eina_hash_int64(const unsigned long long int *pkey,
                                   int                      len) EINA_ARG_NONNULL(1);
@@ -1118,9 +1117,9 @@ static inline int eina_hash_int64(const unsigned long long int *pkey,
  * @brief
  * Hash function from http://sites.google.com/site/murmurhash/
  *
- * @param key The key to hash
- * @param len The length of the key
- * @return The hash value
+ * @param key The key to hash.
+ * @param len The length of the key.
+ * @return The hash value.
  */
 static inline int eina_hash_murmur3(const char *key,
                            int         len) EINA_ARG_NONNULL(1);
@@ -1129,9 +1128,9 @@ static inline int eina_hash_murmur3(const char *key,
  * @brief
  * Hash function using crc-32 algorithm and and 0xEDB88320 polynomial
  *
- * @param key The key to hash
- * @param len The length of the key
- * @return The hash value
+ * @param key The key to hash.
+ * @param len The length of the key.
+ * @return The hash value.
  */
 static inline int eina_hash_crc(const char *key,
                            int         len) EINA_ARG_NONNULL(1);
