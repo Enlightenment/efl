@@ -900,7 +900,7 @@ _efl_canvas_layout_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, Edje
 }
 
 EAPI const char *
-edje_objcet_color_class_description_get(const Evas_Object *obj, const char *color_class)
+edje_object_color_class_description_get(const Evas_Object *obj, const char *color_class)
 {
    return efl_gfx_color_class_description_get(obj, color_class);
 }
