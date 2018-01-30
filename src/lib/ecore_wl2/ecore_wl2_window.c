@@ -422,6 +422,39 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
      }
 }
 
+static void
+_surface_enter(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output *op)
+{
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
+
+   win = data;
+
+   output = _ecore_wl2_output_find(win->display, op);
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   win->outputs = eina_list_append(win->outputs, output);
+}
+
+static void
+_surface_leave(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output *op)
+{
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
+
+   win = data;
+   output = _ecore_wl2_output_find(win->display, op);
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   win->outputs = eina_list_remove(win->outputs, output);
+}
+
+static const struct wl_surface_listener _surface_listener =
+{
+   _surface_enter,
+   _surface_leave,
+};
+
 void
 _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 {
@@ -440,6 +473,8 @@ _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
+
+        wl_surface_add_listener(window->surface, &_surface_listener, window);
         if (window->display->wl.efl_aux_hints)
           {
              efl_aux_hints_get_supported_aux_hints(window->display->wl.efl_aux_hints, window->surface);

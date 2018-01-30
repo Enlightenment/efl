@@ -224,6 +224,8 @@ struct _Ecore_Wl2_Window
    Eina_List *supported_aux_hints;
    Eina_List *frame_callbacks;
 
+   Eina_List *outputs;
+
    Ecore_Wl2_Window_Configure_State set_config;
    Ecore_Wl2_Window_Configure_State req_config;
    Ecore_Wl2_Window_Configure_State def_config;
