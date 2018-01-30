@@ -447,6 +447,16 @@ _surface_leave(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output
    EINA_SAFETY_ON_NULL_RETURN(output);
 
    win->outputs = eina_list_remove(win->outputs, output);
+   if (!win->outputs)
+     {
+        Ecore_Wl2_Event_Window_Offscreen *ev;
+        ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Offscreen));
+        if (ev)
+          {
+             ev->win = win->id;
+             ecore_event_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN, ev, NULL, NULL);
+          }
+     }
 }
 
 static const struct wl_surface_listener _surface_listener =

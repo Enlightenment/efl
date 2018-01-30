@@ -53,6 +53,7 @@ EAPI int ECORE_WL2_EVENT_WINDOW_HIDE = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_ACTIVATE = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_DEACTIVATE = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE = 0;
+EAPI int ECORE_WL2_EVENT_WINDOW_OFFSCREEN = 0;
 
 EAPI int _ecore_wl2_event_window_www = -1;
 EAPI int _ecore_wl2_event_window_www_drag = -1;
@@ -173,6 +174,7 @@ ecore_wl2_init(void)
    ECORE_WL2_EVENT_WINDOW_ACTIVATE = ecore_event_type_new();
    ECORE_WL2_EVENT_WINDOW_DEACTIVATE = ecore_event_type_new();
    ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE = ecore_event_type_new();
+   ECORE_WL2_EVENT_WINDOW_OFFSCREEN = ecore_event_type_new();
 
    if (!no_session_recovery)
      no_session_recovery = !!getenv("EFL_NO_WAYLAND_SESSION_RECOVERY");
@@ -246,7 +248,8 @@ ecore_wl2_shutdown(void)
                           ECORE_WL2_EVENT_WINDOW_HIDE,
                           ECORE_WL2_EVENT_WINDOW_ACTIVATE,
                           ECORE_WL2_EVENT_WINDOW_DEACTIVATE,
-                          ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE);
+                          ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
+                          ECORE_WL2_EVENT_WINDOW_OFFSCREEN);
 
    /* shutdown Ecore_Event */
    ecore_event_shutdown();
