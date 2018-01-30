@@ -193,7 +193,14 @@ _evas_dmabuf_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_da
    p = priv_data;
 
    EINA_LIST_FREE(p->buffers, b)
-     ecore_wl2_buffer_destroy(b);
+     {
+        if (!ecore_wl2_buffer_busy_get(b))
+          {
+             if (p->current == b)
+               p->current = NULL;
+             ecore_wl2_buffer_destroy(b);
+          }
+     }
 }
 
 static Ecore_Wl2_Surface_Interface dmabuf_smanager =
