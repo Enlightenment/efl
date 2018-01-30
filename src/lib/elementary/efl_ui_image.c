@@ -2108,6 +2108,7 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
    Efl_Orient dir;
    Efl_Flip flip;
 
+   EFL_UI_IMAGE_CHECK(obj);
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    sd->image_orient = orient;
 
