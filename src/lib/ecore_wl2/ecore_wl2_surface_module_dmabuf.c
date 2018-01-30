@@ -10,6 +10,7 @@
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 #define MAX_BUFFERS 4
+#define QUEUE_TRIM_DURATION 100
 
 int ECORE_WL2_SURFACE_DMABUF = 0;
 
@@ -17,6 +18,7 @@ typedef struct _Ecore_Wl2_Dmabuf_Private
 {
    Ecore_Wl2_Buffer *current;
    Eina_List *buffers;
+   int unused_duration;
 } Ecore_Wl2_Dmabuf_Private;
 
 static void *
@@ -95,16 +97,39 @@ _evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s, Ecore_Wl2_Dmabuf_Private *p)
    Eina_List *l;
    int best_age = -1;
    int age;
+   int num_required = 1, num_allocated = 0;
 
    EINA_LIST_FOREACH(p->buffers, l, b)
      {
-        if (ecore_wl2_buffer_busy_get(b)) continue;
+        num_allocated++;
+        if (ecore_wl2_buffer_busy_get(b))
+          {
+             num_required++;
+             continue;
+          }
         age = ecore_wl2_buffer_age_get(b);
         if (age > best_age)
           {
              best = b;
              best_age = age;
           }
+     }
+
+   if (num_required < num_allocated)
+      p->unused_duration++;
+   else
+      p->unused_duration = 0;
+
+   /* If we've had unused buffers for longer than QUEUE_TRIM_DURATION, then
+    * destroy the oldest buffer (currently in best) and recursively call
+    * ourself to get the next oldest.
+    */
+   if (best && (p->unused_duration > QUEUE_TRIM_DURATION))
+     {
+        p->unused_duration = 0;
+        p->buffers = eina_list_remove(p->buffers, best);
+        ecore_wl2_buffer_destroy(best);
+        best = _evas_dmabuf_surface_wait(s, p);
      }
 
    if (!best && (eina_list_count(p->buffers) < MAX_BUFFERS))
