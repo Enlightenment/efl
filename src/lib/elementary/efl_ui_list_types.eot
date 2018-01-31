@@ -9,5 +9,3 @@ struct Efl.Ui.List.LayoutItem {
 }
 
 struct @extern Efl.Ui.List.SegArray.Node; [[ ]]
-struct @extern Efl_Ui_List_Item; [[ ]]
-

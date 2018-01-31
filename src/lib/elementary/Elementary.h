@@ -280,8 +280,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 
 #ifdef EFL_EO_API_SUPPORT
 # include <efl_selection_types.eot.h>
-# include <efl_ui_list_segarray.h>
-# include <efl_ui_list_segarray.eo.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget.eo.h>
 # include <efl_ui_widget_part.eo.h>
@@ -324,6 +322,8 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_layout_factory.eo.h>
 # include <efl_ui_list_types.eot.h>
+# include <efl_ui_list_segarray.h>
+# include <efl_ui_list_segarray.eo.h>
 # include <efl_ui_list_model.eo.h>
 # include <efl_ui_list_relayout.eo.h>
 # include <efl_ui_list.eo.h>

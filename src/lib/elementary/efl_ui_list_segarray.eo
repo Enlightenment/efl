@@ -9,7 +9,7 @@ class Efl.Ui.List.SegArray (Efl.Object)
             [[ Get a SegArray List items accessor ]]
          }
          values {
-             acc: accessor<ptr(Efl_Ui_List_Item)>;
+             acc: accessor<ptr(Efl.Ui.List.LayoutItem)>;
          }
       }
       @property node_accessor {
@@ -52,7 +52,7 @@ class Efl.Ui.List.SegArray (Efl.Object)
           params {
               @in index: int;
           }
-          return: ptr(Efl_Ui_List_Item);
+          return: ptr(Efl.Ui.List.LayoutItem) @owned;
       }
    }
    implements {

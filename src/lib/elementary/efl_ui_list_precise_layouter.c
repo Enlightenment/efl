@@ -244,13 +244,11 @@ _child_removed_cb(void *data, const Efl_Event *event)
    Efl_Ui_List_LayoutItem *layout_item, *litem;
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata;
    Efl_Ui_List_SegArray_Node *itemnode;
-   Efl_Ui_List_Item* item;
    int i;
 
-   item = efl_ui_list_segarray_remove(pd->segarray, evt->index);
-   if (!item) return;
+   litem = efl_ui_list_segarray_remove(pd->segarray, evt->index);
+   if (!litem) return;
 
-   litem = (Efl_Ui_List_LayoutItem *)item;
    itemnode = litem->tree_node;
    nodedata = itemnode->layout_data;
 
@@ -295,7 +293,7 @@ _child_removed_cb(void *data, const Efl_Event *event)
 
    efl_ui_list_model_unrealize(pd->modeler, litem);
 
-   free(item);
+   free(litem);
    pd->recalc = EINA_TRUE;
    evas_object_smart_changed(pd->modeler);
 }

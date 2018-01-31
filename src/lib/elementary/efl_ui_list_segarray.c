@@ -75,7 +75,7 @@ static Efl_Ui_List_SegArray_Node*
 _alloc_node(Efl_Ui_List_SegArray_Data* pd, int first)
 {
    Efl_Ui_List_SegArray_Node* node;
-   node = calloc(1, sizeof(Efl_Ui_List_SegArray_Node) + pd->step_size*sizeof(Efl_Ui_List_Item*));
+   node = calloc(1, sizeof(Efl_Ui_List_SegArray_Node) + pd->step_size*sizeof(Efl_Ui_List_LayoutItem*));
    node->first = first;
    node->max = pd->step_size;
    pd->root = (void*)eina_rbtree_inline_insert(EINA_RBTREE_GET(pd->root), EINA_RBTREE_GET(node),
@@ -95,26 +95,26 @@ _efl_ui_list_segarray_flush(Eo* obj EINA_UNUSED, Efl_Ui_List_SegArray_Data *pd)
    pd->count = 0;
 }
 
-static Efl_Ui_List_Item* _create_item_partial(Efl_Model* model)
+static Efl_Ui_List_LayoutItem* _create_item_partial(Efl_Model* model)
 {
-   Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
-   item->item.children = model;
+   Efl_Ui_List_LayoutItem* item = calloc(1, sizeof(Efl_Ui_List_LayoutItem));
+   item->children = model;
    return item;
 }
 
-static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int index)
+static Efl_Ui_List_LayoutItem* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int index)
 {
-   Efl_Ui_List_Item* item =  _create_item_partial(model);
-   item->item.index_offset = index - node->first;
-   item->item.tree_node = node;
+   Efl_Ui_List_LayoutItem* item =  _create_item_partial(model);
+   item->index_offset = index - node->first;
+   item->tree_node = node;
    return item;
 }
 
-EOLIAN static Efl_Ui_List_Item*
+EOLIAN static Efl_Ui_List_LayoutItem*
 _efl_ui_list_segarray_remove(Eo* obj EINA_UNUSED, Efl_Ui_List_SegArray_Data *pd, int index)
 {
    Efl_Ui_List_SegArray_Node *node;
-   Efl_Ui_List_Item *item, *rt;
+   Efl_Ui_List_LayoutItem *item, *rt;
    Eina_Iterator* iterator;
    int offset;
 
@@ -133,7 +133,7 @@ _efl_ui_list_segarray_remove(Eo* obj EINA_UNUSED, Efl_Ui_List_SegArray_Data *pd,
      {
        node->pointers[offset] = node->pointers[offset+1];
        item = node->pointers[offset];
-       --item->item.index_offset;
+       --item->index_offset;
        ++offset;
      }
 
@@ -146,7 +146,7 @@ _efl_ui_list_segarray_remove(Eo* obj EINA_UNUSED, Efl_Ui_List_SegArray_Data *pd,
 }
 
 static void
-_efl_ui_list_segarray_insert_at_node(Efl_Ui_List_SegArray_Data* pd, int index, Efl_Ui_List_Item* item, Efl_Ui_List_SegArray_Node* node)
+_efl_ui_list_segarray_insert_at_node(Efl_Ui_List_SegArray_Data* pd, int index, Efl_Ui_List_LayoutItem* item, Efl_Ui_List_SegArray_Node* node)
 {
    Eina_Iterator* iterator;
    int pos;
@@ -154,8 +154,8 @@ _efl_ui_list_segarray_insert_at_node(Efl_Ui_List_SegArray_Data* pd, int index, E
    if(node && node->length != node->max && (index - node->first) <= node->length)
     {
        pos = index - node->first;
-       item->item.tree_node = node;
-       item->item.index_offset = pos;
+       item->tree_node = node;
+       item->index_offset = pos;
        if(pos < node->length)
          {
             assert(node->length != node->max);
@@ -178,8 +178,8 @@ _efl_ui_list_segarray_insert_at_node(Efl_Ui_List_SegArray_Data* pd, int index, E
        node = _alloc_node(pd, index);
        node->pointers[0] = item;
        node->length++;
-       item->item.index_offset = 0;
-       item->item.tree_node = node;
+       item->index_offset = 0;
+       item->tree_node = node;
     }
 
    node = (void*)EINA_RBTREE_GET(node)->son[EINA_RBTREE_LEFT];
@@ -197,7 +197,7 @@ EOLIAN static void
 _efl_ui_list_segarray_insert(Eo *obj EINA_UNUSED, Efl_Ui_List_SegArray_Data* pd, int index, Efl_Model* model)
 {
   Efl_Ui_List_SegArray_Node* node, *next;
-  Efl_Ui_List_Item* item;
+  Efl_Ui_List_LayoutItem* item;
 
   item = _create_item_partial(model);
 
@@ -262,7 +262,7 @@ _efl_ui_list_segarray_accessor_get_at(Efl_Ui_List_Segarray_Eina_Accessor* acc,
    if (node && (node->first <= idx && node->first + node->length > idx))
      {
          int i = idx - node->first;
-         Efl_Ui_List_Item* item = node->pointers[i];
+         Efl_Ui_List_LayoutItem* item = node->pointers[i];
          *data = item;
          return EINA_TRUE;
      }
@@ -270,13 +270,13 @@ _efl_ui_list_segarray_accessor_get_at(Efl_Ui_List_Segarray_Eina_Accessor* acc,
 }
 
 EOLIAN static void
-_efl_ui_list_segarray_setup(Eo *obj, Efl_Ui_List_SegArray_Data *pd, int size)
+_efl_ui_list_segarray_setup(Eo *obj EINA_UNUSED, Efl_Ui_List_SegArray_Data *pd, int size)
 {
    pd->step_size = size;
 }
 
 EOLIAN static Eo *
-_efl_ui_list_segarray_efl_object_constructor(Eo *obj, Efl_Ui_List_SegArray_Data *pd)
+_efl_ui_list_segarray_efl_object_constructor(Eo *obj, Efl_Ui_List_SegArray_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
