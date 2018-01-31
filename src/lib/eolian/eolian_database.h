@@ -168,7 +168,12 @@ struct _Eolian_Part
 {
    Eolian_Object base;
    Eina_Stringshare *name;
-   Eolian_Class *klass;
+   /* when not validated, class name is stored */
+   union
+   {
+      Eina_Stringshare *klass_name;
+      Eolian_Class *klass;
+   };
    Eolian_Documentation *doc;
 };
 

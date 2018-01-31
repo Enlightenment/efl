@@ -677,22 +677,6 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
      }
 }
 
-static Eolian_Class *
-_parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
-{
-   if (eina_hash_find(ls->state->parsing, fname))
-     return NULL;
-   Eolian_Class *cl = NULL;
-   if (!eo_parser_database_fill(ls->unit, fname, EINA_FALSE, &cl) || !cl)
-     {
-        char buf[PATH_MAX];
-        eo_lexer_context_restore(ls);
-        snprintf(buf, sizeof(buf), "error parsing dependency '%s'", name);
-        eo_lexer_syntax_error(ls, buf);
-     }
-   return cl;
-}
-
 static Eolian_Type *
 parse_type_void(Eo_Lexer *ls)
 {
@@ -1525,28 +1509,20 @@ parse_part(Eo_Lexer *ls)
    eo_lexer_context_push(ls);
    parse_name(ls, buf);
    const char *nm = eina_strbuf_string_get(buf);
-   const char *bnm = eina_stringshare_ref(ls->filename);
    char *fnm = database_class_to_filename(nm);
-   if (!compare_class_file(bnm, fnm))
+   const char *fname = eina_hash_find(ls->state->filenames_eo, fnm);
+   if (!fname)
      {
-        Eolian_Class *dep = NULL;
-        const char *fname = eina_hash_find(ls->state->filenames_eo, fnm);
-        eina_stringshare_del(bnm);
         free(fnm);
-        if (fname)
-          dep = _parse_dep(ls, fname, nm);
-        if (!dep)
-          {
-             char ebuf[PATH_MAX];
-             eo_lexer_context_restore(ls);
-             snprintf(ebuf, sizeof(ebuf), "unknown class '%s'", nm);
-             eo_lexer_syntax_error(ls, ebuf);
-             return;
-          }
-        part->klass = dep;
+        char ebuf[PATH_MAX];
+        eo_lexer_context_restore(ls);
+        snprintf(ebuf, sizeof(ebuf), "unknown class '%s'", nm);
+        eo_lexer_syntax_error(ls, ebuf);
+        return;
      }
-   else
-     part->klass = ls->tmp.kls;
+   eina_hash_set(ls->state->defer, fnm, fname);
+   free(fnm);
+   part->klass_name = eina_stringshare_add(nm);
    pop_strbuf(ls);
    check_next(ls, ';');
    FILL_DOC(ls, part, doc);

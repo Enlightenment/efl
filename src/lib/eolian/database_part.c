@@ -9,7 +9,9 @@ void
 database_part_del(Eolian_Part *part)
 {
    if (!part) return;
-   if (part->name) eina_stringshare_del(part->name);
+   eina_stringshare_del(part->name);
+   if (!part->base.validated)
+     eina_stringshare_del(part->klass_name);
    database_doc_del(part->doc);
    free(part);
 }

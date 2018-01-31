@@ -415,6 +415,19 @@ _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
    if (!_validate_doc(src, part->doc))
      return EINA_FALSE;
 
+   /* switch the class name for class */
+   Eolian_Class *pcl = eina_hash_find(src->state->unit.classes, part->klass_name);
+   if (!pcl)
+     {
+        char buf[PATH_MAX];
+        snprintf(buf, sizeof(buf), "unknown part class '%s' (incorrect case?)",
+                 part->klass_name);
+        _obj_error(&part->base, buf);
+        return EINA_FALSE;
+     }
+   eina_stringshare_del(part->klass_name);
+   part->klass = pcl;
+
    return _validate(&part->base);
 }
 
