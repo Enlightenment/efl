@@ -13,7 +13,7 @@ typedef struct _Efl_Ui_List_SegArray_Node
 
    void* layout_data;
 
-   Efl_Ui_List_Item* pointers[0];
+   Efl_Ui_List_LayoutItem* pointers[0];
 } Efl_Ui_List_SegArray_Node;
 
 typedef struct _Efl_Ui_List_SegArray_Data

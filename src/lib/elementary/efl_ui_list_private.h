@@ -12,15 +12,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-typedef struct _Efl_Ui_List_Item Efl_Ui_List_Item;
 typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
-
-struct _Efl_Ui_List_Item
-{
-   Efl_Ui_List_LayoutItem item;
-   Efl_Future           *future;
-   Efl_Ui_List          *list;
-};
 
 int efl_ui_list_item_index_get(Efl_Ui_List_LayoutItem *item);
 

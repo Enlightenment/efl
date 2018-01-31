@@ -821,8 +821,8 @@ _efl_ui_list_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui
 {
    if(child_index <  (int) eina_list_count(pd->selected_items))
      {
-        Efl_Ui_List_Item* items = eina_list_nth(pd->selected_items, child_index);
-        return items[child_index].item.layout;
+        Efl_Ui_List_LayoutItem* items = eina_list_nth(pd->selected_items, child_index);
+        return items[child_index].layout;
      }
    else
      return NULL;
