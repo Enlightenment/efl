@@ -550,9 +550,8 @@ eolian_new(void)
    state->filenames_eo  = eina_hash_string_small_new(free);
    state->filenames_eot = eina_hash_string_small_new(free);
 
-   state->parsed  = eina_hash_string_small_new(NULL);
-   state->parsing = eina_hash_string_small_new(NULL);
-   state->defer   = eina_hash_string_small_new(NULL);
+   state->parsed = eina_hash_string_small_new(NULL);
+   state->defer  = eina_hash_string_small_new(NULL);
 
    state->units = eina_hash_stringshared_new(EINA_FREE_CB(database_unit_del));
 
@@ -579,7 +578,6 @@ eolian_free(Eolian *state)
    eina_hash_free(state->filenames_eot);
 
    eina_hash_free(state->parsed);
-   eina_hash_free(state->parsing);
    eina_hash_free(state->defer);
 
    eina_hash_free(state->units);

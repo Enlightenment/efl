@@ -2264,8 +2264,6 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
         return NULL;
      }
 
-   eina_hash_set(parent->state->parsing, filename, (void *)EINA_TRUE);
-
    Eo_Lexer *ls = eo_lexer_new(parent->state, filename);
    if (!ls)
      {
@@ -2298,14 +2296,12 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
 done:
    ret = ls->unit;
    eina_hash_set(ls->state->parsed, filename, eot ? (void *)EINA_TRUE : cl);
-   eina_hash_set(ls->state->parsing, filename, (void *)EINA_FALSE);
    eina_hash_add(parent->children, filename, ret);
 
    eo_lexer_free(ls);
    return ret;
 
 error:
-   eina_hash_set(ls->state->parsing, filename, (void *)EINA_FALSE);
    eo_lexer_free(ls);
    return NULL;
 }

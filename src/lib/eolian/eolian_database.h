@@ -51,7 +51,6 @@ struct _Eolian
    Eina_Hash *filenames_eo; /* filename to full path mapping */
    Eina_Hash *filenames_eot;
 
-   Eina_Hash *parsing;
    Eina_Hash *parsed;
    Eina_Hash *defer;
 
