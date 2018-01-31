@@ -73,10 +73,14 @@ ecore_event_add(int          type,
                 void        *data)
 {
    Ecore_Event_Message *msg;
+   if (type <= ECORE_EVENT_NONE) return NULL;
 
    msg = ecore_event_message_handler_message_type_add(_event_msg_handler);
-   ecore_event_message_data_set(msg, type, ev, func_free, data);
-   efl_loop_message_handler_message_send(_event_msg_handler, msg);
+   if (msg)
+     {
+        ecore_event_message_data_set(msg, type, ev, func_free, data);
+        efl_loop_message_handler_message_send(_event_msg_handler, msg);
+     }
    return (Ecore_Event *)msg;
 }
 

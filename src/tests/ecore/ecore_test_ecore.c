@@ -531,6 +531,7 @@ START_TEST(ecore_test_ecore_main_loop_event)
    Ecore_Event_Handler *handler, *handler2, *handler3;
    Ecore_Event_Filter *filter_handler;
    Ecore_Event *event;
+   Ecore_Event *event2;
    int res_counter;
    int type, type2;
    int *ev = NULL;
@@ -573,6 +574,10 @@ START_TEST(ecore_test_ecore_main_loop_event)
 
    event = ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, NULL, NULL, NULL);
    fail_if(event == NULL);
+
+   /* Add one more events: to check a type */
+   event2 = ecore_event_add(ECORE_EVENT_NONE, NULL, NULL, NULL);
+   fail_if(event2 != NULL);
 
    ecore_main_loop_begin();
 
