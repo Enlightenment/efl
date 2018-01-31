@@ -2243,13 +2243,11 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 }
 
 Eolian_Unit *
-eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot, Eolian_Class **fcl)
+eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot)
 {
    Eolian_Unit *ret = NULL;
-   Eolian_Class *cl = eina_hash_find(parent->state->parsed, filename);
-   if (cl)
+   if (eina_hash_find(parent->state->parsed, filename))
      {
-        if (!eot && fcl) *fcl = cl;
         const char *fsl = strrchr(filename, '/');
         const char *bsl = strrchr(filename, '\\');
         const char *fname = NULL;
@@ -2280,6 +2278,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    parse_chunk(ls, eot);
    if (eot) goto done;
 
+   Eolian_Class *cl;
    if (!(cl = ls->tmp.kls))
      {
         _eolian_log("eolian: no class for file '%s'", filename);
@@ -2291,11 +2290,9 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    eina_hash_set(ls->state->classes_f, cl->base.file, cl);
    eolian_object_ref(&cl->base);
 
-   if (fcl) *fcl = cl;
-
 done:
    ret = ls->unit;
-   eina_hash_set(ls->state->parsed, filename, eot ? (void *)EINA_TRUE : cl);
+   eina_hash_set(ls->state->parsed, filename, (void *)EINA_TRUE);
    eina_hash_add(parent->children, filename, ret);
 
    eo_lexer_free(ls);
