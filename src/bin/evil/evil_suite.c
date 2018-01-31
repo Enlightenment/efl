@@ -11,13 +11,7 @@
 
 #include "Evil.h"
 #include "evil_suite.h"
-#include "evil_test_dlfcn.h"
-#include "evil_test_environment.h"
-#include "evil_test_gettimeofday.h"
-#include "evil_test_mkstemp.h"
 #include "evil_test_pipe.h"
-#include "evil_test_print.h"
-#include "evil_test_realpath.h"
 #include "evil_test_util.h"
 
 
@@ -178,16 +172,9 @@ int
 main(void)
 {
    test tests[] = {
-     { "dlfcn       ",  test_dlfcn },
-     { "environment ",  test_environment },
-     { "gettimeofday",  test_gettimeofday },
-     { "mkstemp     ",  test_mkstemp },
-     { "pipe        ",  test_pipe },
-     { "print       ",  test_print },
-     { "realpath    ",  test_realpath },
-     { "util        ",  test_util },
-/*      { "memcpy      ",  test_memcpy }, */
-     { NULL,            NULL },
+     { "pipe ", test_pipe },
+     { "util ", test_util },
+     { NULL,    NULL },
    };
    suite *s;
    int    i;
