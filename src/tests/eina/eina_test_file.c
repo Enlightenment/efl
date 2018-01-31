@@ -793,7 +793,7 @@ START_TEST(eina_test_file_mktemp)
       l = GetFinalPathNameByHandle(h, buf, sizeof(buf), 0);
       fail_if(l == 0);
       /* GetFinalPathNameByHandle() preprends path with \\?\ */
-      unlink(buf + 4)
+      unlink(buf + 4);
    }
 #endif
    close(fd);
