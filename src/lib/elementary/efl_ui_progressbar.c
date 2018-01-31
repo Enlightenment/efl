@@ -114,8 +114,6 @@ _units_set(Evas_Object *obj)
         // Keeping this bug since the legacy code was like that.
         if (sd->is_legacy_format_string && !sd->is_legacy_format_cb)
           eina_value_set(&val, 100 * sd->val);
-        else
-          eina_value_set(&val, sd->val);
 
         eina_strbuf_reset(sd->format_strbuf);
         sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
