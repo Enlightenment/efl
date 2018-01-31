@@ -2245,22 +2245,19 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 Eolian_Unit *
 eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot)
 {
-   Eolian_Unit *ret = NULL;
-   if (eina_hash_find(parent->state->parsed, filename))
-     {
-        const char *fsl = strrchr(filename, '/');
-        const char *bsl = strrchr(filename, '\\');
-        const char *fname = NULL;
-        if (fsl || bsl)
-          fname = eina_stringshare_add((fsl > bsl) ? (fsl + 1) : (bsl + 1));
-        if (fname)
-          {
-             ret = eina_hash_find(parent->state->units, fname);
-             eina_stringshare_del(fname);
-             return ret;
-          }
-        return NULL;
-     }
+   const char *fsl = strrchr(filename, '/');
+   const char *bsl = strrchr(filename, '\\');
+   const char *fname = NULL;
+   if (fsl || bsl)
+     fname = eina_stringshare_add((fsl > bsl) ? (fsl + 1) : (bsl + 1));
+   else
+     fname = eina_stringshare_add(filename);
+
+   Eolian_Unit *ret = eina_hash_find(parent->state->units, fname);
+   eina_stringshare_del(fname);
+
+   if (ret)
+     return ret;
 
    Eo_Lexer *ls = eo_lexer_new(parent->state, filename);
    if (!ls)
@@ -2292,7 +2289,6 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
 
 done:
    ret = ls->unit;
-   eina_hash_set(ls->state->parsed, filename, (void *)EINA_TRUE);
    eina_hash_add(parent->children, filename, ret);
 
    eo_lexer_free(ls);
