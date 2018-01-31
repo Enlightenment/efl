@@ -269,6 +269,32 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
+{
+   Ecore_Fd_Handler *fd_handler;
+   int comm[2];
+   int ret;
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+
+   ret = pipe(comm);
+   fail_if(ret != 0);
+
+   fd_handler = ecore_main_fd_handler_add
+     (comm[0], 0, _fd_handler_cb, NULL, NULL, NULL);
+   fail_if(fd_handler != NULL);
+
+   if (fd_handler)
+	   ecore_main_fd_handler_del(fd_handler);
+
+   close(comm[0]);
+   close(comm[1]);
+
+   ecore_shutdown();
+}
+END_TEST
+
 static void
 _eo_read_cb(void *data, const Efl_Event *info EINA_UNUSED)
 {
@@ -897,6 +923,7 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_exiter);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_valid_flags);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_activate_modify);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
 #if 0

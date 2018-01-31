@@ -1280,7 +1280,7 @@ _ecore_main_fd_handler_add(Eo                    *obj,
    DBG("_ecore_main_fd_handler_add");
    Ecore_Fd_Handler *fdh = NULL;
 
-   if ((fd < 0) || (!func)) return NULL;
+   if ((fd < 0) || (flags == 0) || (!func)) return NULL;
 
    fdh = ecore_fd_handler_calloc(1);
    if (!fdh) return NULL;
