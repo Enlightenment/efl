@@ -50,30 +50,25 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
 {
    //first check if this item is in the map
    Elm_Widget_Item *item, *above_gengrid = widget;
+   Efl_Ui_Widget *parent = elm_widget_parent_widget_get(widget);
 
-   if (elm_widget_parent_widget_get(widget) != pd->container)
+   //move forward so we get the last widget above the gengrid level,
+   //this may be the widget out of the map
+   while (parent && parent != pd->container)
      {
-        Efl_Ui_Widget *parent = elm_widget_parent_widget_get(widget);
-        //move forward so we get the last widget above the gengrid level, this may be the widget out of the map
-        do {
-          above_gengrid = parent;
-          parent = elm_widget_parent_widget_get(above_gengrid);
-        } while(parent && parent != pd->container);
+        above_gengrid = parent;
+        parent = elm_widget_parent_widget_get(above_gengrid);
      }
 
    item = eina_hash_find(pd->map, &above_gengrid);
 
    efl_ui_focus_object_prepare_logical(pd->container);
 
+   if (item)
+     return item;
+
    // We dont have a map entry
-   if (!item)
-     {
-        return efl_ui_focus_parent_provider_find_logical_parent(pd->provider, widget);
-     }
-   else
-     {
-        return item;
-     }
+   return efl_ui_focus_parent_provider_find_logical_parent(pd->provider, widget);
 }
 
 
