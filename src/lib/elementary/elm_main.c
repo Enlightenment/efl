@@ -1098,6 +1098,7 @@ elm_quicklaunch_fork(int    argc,
    pid_t child;
    int ret;
 
+   efl_loop_message_process(efl_loop_main_get(EFL_LOOP_CLASS));
    if (!qr_main && !qre_main)
      {
         int i;
