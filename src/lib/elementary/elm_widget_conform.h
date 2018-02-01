@@ -76,7 +76,7 @@ enum _Conformant_Part_Type
   ELM_CONFORMANT_DATA_GET(o, ptr);                   \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -85,7 +85,7 @@ enum _Conformant_Part_Type
   ELM_CONFORMANT_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                                 \
     {                                                      \
-       CRI("No widget data for object %p (%s)",            \
+       ERR("No widget data for object %p (%s)",            \
            o, evas_object_type_get(o));                    \
        return val;                                         \
     }

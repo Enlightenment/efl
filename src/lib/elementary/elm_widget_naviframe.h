@@ -104,7 +104,7 @@ struct _Elm_Naviframe_Text_Item_Pair
   ELM_NAVIFRAME_DATA_GET(o, ptr);                    \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -113,7 +113,7 @@ struct _Elm_Naviframe_Text_Item_Pair
   ELM_NAVIFRAME_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                                \
     {                                                     \
-       CRI("No widget data for object %p (%s)",           \
+       ERR("No widget data for object %p (%s)",           \
            o, evas_object_type_get(o));                   \
        return val;                                        \
     }

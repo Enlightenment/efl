@@ -41,7 +41,7 @@ Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
   EFL_UI_BG_WIDGET_DATA_GET(o, ptr);                           \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -50,7 +50,7 @@ Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
   EFL_UI_BG_WIDGET_DATA_GET(o, ptr);                           \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return val;                                   \
     }

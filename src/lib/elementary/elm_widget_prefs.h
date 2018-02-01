@@ -110,7 +110,7 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
   ELM_PREFS_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -119,7 +119,7 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
   ELM_PREFS_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",       \
+       ERR("No widget data for object %p (%s)",       \
            o, evas_object_type_get(o));               \
        return val;                                    \
     }

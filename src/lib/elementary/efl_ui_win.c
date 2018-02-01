@@ -61,7 +61,7 @@ static int _paused_windows = 0;
   ELM_WIN_DATA_GET(o, ptr);                          \
   if (!ptr)                                          \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
             o, efl_class_name_get(o));                \
        return __VA_ARGS__;                           \
     }

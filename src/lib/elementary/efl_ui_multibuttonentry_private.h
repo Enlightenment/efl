@@ -122,7 +122,7 @@ struct _Efl_Ui_Multibuttonentry_Data
   EFL_UI_MULTIBUTTONENTRY_DATA_GET(o, ptr);                \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
-       CRI("No widget data for object %p (%s)",         \
+       ERR("No widget data for object %p (%s)",         \
            o, evas_object_type_get(o));                 \
        return;                                          \
     }
@@ -131,7 +131,7 @@ struct _Efl_Ui_Multibuttonentry_Data
   Efl_Ui_Multibuttonentry_Data * ptr = efl_data_scope_get(o, EFL_UI_MULTIBUTTONENTRY_CLASS); \
   if (EINA_UNLIKELY(!ptr))                                       \
     {                                                            \
-       CRI("No widget data for object %p (%s)",                  \
+       ERR("No widget data for object %p (%s)",                  \
            o, evas_object_type_get(o));                          \
        return val;                                               \
     }

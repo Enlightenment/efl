@@ -16,7 +16,7 @@
   EFL_UI_PAN_DATA_GET(o, ptr);                                     \
   if (EINA_UNLIKELY(!ptr))                                         \
     {                                                              \
-      CRI("No widget data for object %p (%s)",                     \
+      ERR("No widget data for object %p (%s)",                     \
           o, evas_object_type_get(o));                             \
       return __VA_ARGS__;                                                      \
     }

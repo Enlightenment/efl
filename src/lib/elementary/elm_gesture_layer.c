@@ -63,7 +63,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                \
   if (!ptr)                                          \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
+       ERR("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -72,7 +72,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                         \
   if (!ptr)                                                   \
     {                                                         \
-       CRI("No widget data for object %p (%s)",          \
+       ERR("No widget data for object %p (%s)",          \
                 o, evas_object_type_get(o));                  \
        return val;                                            \
     }

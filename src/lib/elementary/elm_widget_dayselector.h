@@ -55,7 +55,7 @@ struct _Elm_Dayselector_Item_Data
   ELM_DAYSELECTOR_DATA_GET(o, ptr);                  \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -64,7 +64,7 @@ struct _Elm_Dayselector_Item_Data
   ELM_DAYSELECTOR_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                                  \
     {                                                       \
-       CRI("No widget data for object %p (%s)",             \
+       ERR("No widget data for object %p (%s)",             \
            o, evas_object_type_get(o));                     \
        return val;                                          \
     }
