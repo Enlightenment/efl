@@ -24,7 +24,6 @@ class Elm.View.Form (Efl.Object)
     }
     implements {
         Efl.Object.destructor;
-        Efl.Object.constructor;
     }
     constructors {
         .model_set;
