@@ -765,7 +765,7 @@ Efl_Canvas_Object *   _efl_ui_widget_bg_get(Efl_Ui_Widget *obj);
   ptr = efl_data_scope_get(o, EFL_UI_WIDGET_CLASS);  \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("no widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return __VA_ARGS__;                           \
     }
