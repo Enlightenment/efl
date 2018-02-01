@@ -513,6 +513,21 @@ EAPI int ecore_wl2_shutdown(void);
 EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
 
 /**
+ * Create a new Wayland display
+ *
+ * @brief This function is the same as ecore_wl2_display_create() except
+ * that it calls wl_display_add_socket_fd.
+ *
+ * @param name The display target name to create. If @c NULL, a default
+ *             display name will be assigned.
+ * @return The newly created Ecore_Wl2_Display
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.21
+ */
+EAPI Ecore_Wl2_Display *ecore_wl2_display_manual_create(const char *name);
+
+/**
  * Destroy an existing Wayland display
  *
  * @brief This function is typically used by servers to terminate an

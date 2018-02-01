@@ -1132,11 +1132,6 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
    if (obj == ML_OBJ)
      {
-        if (pd->in_loop > 0)
-          {
-             ERR("Beginning main loop() inside an existing main loop");
-             return;
-          }
 #ifdef HAVE_SYSTEMD
         sd_notify(0, "READY=1");
 #endif

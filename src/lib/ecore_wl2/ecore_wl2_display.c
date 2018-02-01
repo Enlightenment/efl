@@ -3,7 +3,8 @@
 #endif
 
 #include "ecore_wl2_private.h"
-
+#include <sys/socket.h>
+#include <sys/un.h>
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 #include "efl-hints-client-protocol.h"
 
@@ -873,6 +874,103 @@ socket_err:
    wl_display_destroy(ewd->wl.display);
 
 create_err:
+   free(ewd);
+   return NULL;
+
+found:
+   ewd->refs++;
+   return ewd;
+}
+
+EAPI Ecore_Wl2_Display *
+ecore_wl2_display_manual_create(const char *name)
+{
+   Ecore_Wl2_Display *ewd;
+   struct wl_event_loop *loop;
+   int fd = -1;
+   struct sockaddr_un addr = { .sun_family = AF_LOCAL };
+   socklen_t addrlen;
+   char *rundir;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+
+   if (!_server_displays)
+     _server_displays = eina_hash_string_superfast_new(NULL);
+
+   /* someone wants to create a server with a specific display */
+
+   /* check hash of cached server displays for this name */
+   ewd = eina_hash_find(_server_displays, name);
+   if (ewd) goto found;
+   
+   rundir = getenv("XDG_RUNTIME_DIR");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(rundir, NULL);
+   fd = socket(PF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(fd < 0, NULL);
+   addrlen = snprintf(addr.sun_path, sizeof(addr.sun_path), "%s/%s", rundir, name) + 1;
+   if (bind(fd, (struct sockaddr*)&addr, addrlen))
+     {
+        close(fd);
+        ERR("bind failed");
+        return NULL;
+     }
+   if (listen(fd, 128))
+     {
+        close(fd);
+        ERR("listen failed");
+        return NULL;
+     }
+
+   /* allocate space for display structure */
+   ewd = calloc(1, sizeof(Ecore_Wl2_Display));
+   if (!ewd)
+     {
+        close(fd);
+        return NULL;
+     }
+
+   ewd->refs++;
+   ewd->pid = getpid();
+
+   /* try to create new wayland display */
+   ewd->wl.display = wl_display_create();
+   if (!ewd->wl.display)
+     {
+        ERR("Could not create wayland display");
+        goto create_err;
+     }
+
+   if (wl_display_add_socket_fd(ewd->wl.display, fd))
+     {
+        ERR("Failed to add display socket");
+        goto socket_err;
+     }
+
+   ewd->name = strdup(name);
+
+   setenv("WAYLAND_DISPLAY", ewd->name, 1);
+   DBG("WAYLAND_DISPLAY: %s", ewd->name);
+
+   loop = wl_display_get_event_loop(ewd->wl.display);
+
+   ewd->fd_hdl =
+     ecore_main_fd_handler_add(wl_event_loop_get_fd(loop),
+                               ECORE_FD_READ | ECORE_FD_ERROR,
+                               _cb_create_data, ewd, NULL, NULL);
+
+   ecore_main_fd_handler_prepare_callback_set(ewd->fd_hdl,
+                                              _cb_create_prepare, ewd);
+
+   /* add this new server display to hash */
+   eina_hash_add(_server_displays, ewd->name, ewd);
+
+   return ewd;
+
+socket_err:
+   wl_display_destroy(ewd->wl.display);
+
+create_err:
+   close(fd);
    free(ewd);
    return NULL;
 
