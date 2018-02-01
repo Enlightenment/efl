@@ -720,6 +720,7 @@ _cont_drag_icon_create(void *data, Efl_Object *win, Efl_Object *drag_obj EINA_UN
 
    di = data;
    if (!di) return NULL;
+   if (!di->user_info.createicon) return NULL;
    it = di->user_info.createicon(di->user_info.createdata, win, &pos_ret->x, &pos_ret->y);
    di->it = it;
    return it;
