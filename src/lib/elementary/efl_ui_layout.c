@@ -1214,6 +1214,10 @@ _efl_ui_layout_text_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char 
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
+   if (elm_widget_is_legacy(obj))
+     {
+        return edje_object_part_text_get(wd->resize_obj, part);
+     }
    return efl_text_get(efl_part(wd->resize_obj, part));
 }
 
@@ -2480,7 +2484,7 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
    else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return EINA_FALSE;
 
-   efl_text_markup_set(efl_part(obj, part), text);
+   efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
 
