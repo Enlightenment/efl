@@ -72,22 +72,6 @@ lib_evil_libevil_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/evil/regex \
 -DPOSIX_MISTAKE
 
-### Binary
-
-bin_PROGRAMS += bin/evil/evil_suite
-
-bin_evil_evil_suite_SOURCES = \
-bin/evil/evil_suite.c \
-bin/evil/evil_test_pipe.c \
-bin/evil/evil_test_util.c \
-bin/evil/evil_suite.h \
-bin/evil/evil_test_pipe.h \
-bin/evil/evil_test_util.h
-
-bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
-bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ -lm
-bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
-
 ### Unit tests
 
 if EFL_ENABLE_TESTS
@@ -102,7 +86,8 @@ tests/evil/evil_test_dlfcn.c \
 tests/evil/evil_test_libgen.c \
 tests/evil/evil_test_main.c \
 tests/evil/evil_test_stdio.c \
-tests/evil/evil_test_stdlib.c
+tests/evil/evil_test_stdlib.c \
+tests/evil/evil_test_unistd.c
 
 tests_evil_evil_suite_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \

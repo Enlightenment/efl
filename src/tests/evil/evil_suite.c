@@ -27,13 +27,10 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-   /* { "Dirent", evil_test_dirent }, */
    { "Dlfcn", evil_test_dlfcn },
    /* { "Fcntl", evil_test_fcntl }, */
    /* { "Fnmatch", evil_test_fnmatch }, */
-   /* { "Inet", evil_test_inet }, */
    /* { "Langinfo", evil_test_langinfo }, */
-   /* { "Link", evil_test_link }, */
    { "Libgen", evil_test_libgen },
    { "Main", evil_test_main },
    /* { "Mman", evil_test_mman }, */
@@ -42,7 +39,7 @@ static const Efl_Test_Case etc[] = {
    { "Stdlib", evil_test_stdlib },
    /* { "String", evil_test_string }, */
    /* { "Time", evil_test_time }, */
-   /* { "Unistd", evil_test_unistd }, */
+   { "Unistd", evil_test_unistd },
    /* { "Util", evil_test_util }, */
    { NULL, NULL }
 };

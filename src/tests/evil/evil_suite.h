@@ -21,13 +21,10 @@
 
 #include <check.h>
 
-/* void evil_test_dirent(TCase *tc); */
 void evil_test_dlfcn(TCase *tc);
 /* void evil_test_fcntl(TCase *tc); */
 /* void evil_test_fnmatch(TCase *tc); */
-/* void evil_test_inet(TCase *tc); */
 /* void evil_test_langinfo(TCase *tc); */
-/* void evil_test_link(TCase *tc); */
 void evil_test_libgen(TCase *tc);
 void evil_test_main(TCase *tc);
 /* void evil_test_mman(TCase *tc); */
@@ -36,7 +33,7 @@ void evil_test_stdio(TCase *tc);
 void evil_test_stdlib(TCase *tc);
 /* void evil_test_string(TCase *tc); */
 /* void evil_test_time(TCase *tc); */
-/* void evil_test_unistd(TCase *tc); */
+void evil_test_unistd(TCase *tc);
 /* void evil_test_util(TCase *tc); */
 
 #endif /* EVIL_SUITE_H_ */
