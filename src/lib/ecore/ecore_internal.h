@@ -29,6 +29,7 @@
 #endif
 
 EAPI void ecore_loop_arguments_send(int argc, const char **argv);
+EAPI Eina_Bool efl_loop_message_process(Eo *obj);
 
 #undef EAPI
 #define EAPI

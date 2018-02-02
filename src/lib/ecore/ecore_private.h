@@ -542,8 +542,6 @@ void ecore_loop_promise_fulfill(Efl_Promise *p);
 
 #define EFL_LOOP_DATA efl_data_scope_get(efl_main_loop_get(), EFL_LOOP_CLASS)
 
-EOAPI Eina_Bool efl_loop_message_process(Eo *obj);
-
 #undef EAPI
 #define EAPI
 
