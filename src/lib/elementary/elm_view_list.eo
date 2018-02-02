@@ -34,28 +34,21 @@ class Elm.View.List (Efl.Object)
                  @in part: string; [[Edje's theme part]]
              }
         }
-        model_set {
-             [[Set model
+        @property model {
+	     set {
+                [[Set model
 
-               @since 1.11
-             ]]
-             params {
-                 @in model: Efl.Model; [[New Emodel to set]]
+                  @since 1.11
+                ]]
              }
-        }
-        model_unset {
-             [[Unset model
-
-               @since 1.11
-             ]]
-        }
-        model_get {
+             get {
              [[Get model
 
                @since 1.11
              ]]
-             params {
-                 @out model: Efl.Model; [[Returned Emodel]]
+             }
+             values {
+                 model: Efl.Model; [[Efl.Model to set]]
              }
         }
     }
