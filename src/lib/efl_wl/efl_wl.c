@@ -5557,8 +5557,6 @@ exe_event_del(void *data, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
    Comp *c = data;
    int32_t pid = ev->pid;
 
-   if (!eina_streq(ecore_exe_tag_get(ev->exe), "__efl_wl")) return ECORE_CALLBACK_RENEW;
-
    eina_hash_del_by_key(c->exes, &pid);
    return ECORE_CALLBACK_RENEW;
 }
