@@ -625,6 +625,7 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
      {
         iter_entry = eldbus_message_iter_container_new(iter_dict, 'e', NULL);
         if (!iter_entry) goto error;
+fprintf(stderr, "key: %s, value: %s\n", attr->key, attr->value);
         eldbus_message_iter_arguments_append(iter_entry, "ss", attr->key, attr->value);
         eldbus_message_iter_container_close(iter_dict, iter_entry);
      }

@@ -5365,26 +5365,36 @@ _efl_ui_widget_efl_access_state_set_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_
 EOLIAN static Eina_List*
 _efl_ui_widget_efl_access_attributes_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
+   const char *type = NULL;
+   const char *style = NULL;
    Eina_List *attr_list = NULL;
+   Efl_Access_Attribute *attr = NULL;
 
    attr_list = efl_access_attributes_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
 
    //Add type and style information in addition.
-   Efl_Access_Attribute *attr = NULL;
-   attr = calloc(1, sizeof(Efl_Access_Attribute));
-   if (attr)
+   type = elm_widget_type_get(obj);
+   if (type)
      {
-        attr->key = eina_stringshare_add("type");
-        attr->value = eina_stringshare_add(elm_widget_type_get(obj));
-        attr_list = eina_list_append(attr_list, attr);
+        attr = calloc(1, sizeof(Efl_Access_Attribute));
+        if (attr)
+          {
+             attr->key = eina_stringshare_add("type");
+             attr->value = eina_stringshare_add(type);
+             attr_list = eina_list_append(attr_list, attr);
+           }
      }
 
-   attr = calloc(1, sizeof(Efl_Access_Attribute));
-   if (attr)
+   style = elm_widget_style_get(obj);
+   if (style)
      {
-        attr->key = eina_stringshare_add("style");
-        attr->value = eina_stringshare_add(elm_widget_style_get(obj));
-        attr_list = eina_list_append(attr_list, attr);
+        attr = calloc(1, sizeof(Efl_Access_Attribute));
+        if (attr)
+          {
+             attr->key = eina_stringshare_add("style");
+             attr->value = eina_stringshare_add(style);
+             attr_list = eina_list_append(attr_list, attr);
+          }
      }
 
    return attr_list;
@@ -5393,15 +5403,22 @@ _efl_ui_widget_efl_access_attributes_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA
 EOLIAN static Eina_List *
 _elm_widget_item_efl_access_attributes_get(Eo *eo_item, Elm_Widget_Item_Data *pd  EINA_UNUSED)
 {
+   const char *style = NULL;
    Eina_List *attr_list = NULL;
-   attr_list = efl_access_attributes_get(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
    Efl_Access_Attribute *attr = NULL;
-   attr = calloc(1, sizeof(Efl_Access_Attribute));
-   if (attr)
+
+   attr_list = efl_access_attributes_get(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
+
+   style = elm_object_item_style_get(eo_item);
+   if (style)
      {
-        attr->key = eina_stringshare_add("style");
-        attr->value = eina_stringshare_add(elm_object_item_style_get(eo_item));
-        attr_list = eina_list_append(attr_list, attr);
+        attr = calloc(1, sizeof(Efl_Access_Attribute));
+        if (attr)
+          {
+             attr->key = eina_stringshare_add("style");
+             attr->value = eina_stringshare_add(style);
+             attr_list = eina_list_append(attr_list, attr);
+          }
      }
    return attr_list;
 }
