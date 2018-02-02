@@ -47,7 +47,26 @@ static int                 _ecore_file_monitor_inotify_monitor(Ecore_File_Monito
 static void                _ecore_file_monitor_inotify_print(char *file, int mask);
 #endif
 
+static Eina_Bool reseting;
 static Eina_Hash *monitor_hash;
+
+static void
+_ecore_file_monitor_inotify_reset()
+{
+   Eina_Iterator *it;
+   Ecore_File_Monitor *em;
+   Eina_Hash *h = monitor_hash;
+   monitor_hash = NULL;
+   reseting = 1;
+   ecore_file_monitor_backend_shutdown();
+   ecore_file_monitor_backend_init();
+   it = eina_hash_iterator_data_new(h);
+   EINA_ITERATOR_FOREACH(it, em)
+     _ecore_file_monitor_inotify_monitor(em, em->path);
+   eina_iterator_free(it);
+   eina_hash_free(h);
+   reseting = 0;
+}
 
 int
 ecore_file_monitor_backend_init(void)
@@ -68,6 +87,8 @@ ecore_file_monitor_backend_init(void)
         return 0;
      }
 
+   if (!reseting)
+     ecore_fork_reset_callback_add(_ecore_file_monitor_inotify_reset, NULL);
    _inotify_fd_pid = getpid();
    monitor_hash = eina_hash_int32_new(NULL);
    return 1;
@@ -91,6 +112,8 @@ ecore_file_monitor_backend_shutdown(void)
    eina_hash_free(monitor_hash);
    monitor_hash = NULL;
    _inotify_fd_pid = -1;
+   if (!reseting)
+     ecore_fork_reset_callback_del(_ecore_file_monitor_inotify_reset, NULL);
    return 1;
 }
 
@@ -108,10 +131,7 @@ ecore_file_monitor_backend_add(const char *path,
    if (_inotify_fd_pid == -1) return NULL;
 
    if (_inotify_fd_pid != getpid())
-     {
-        ecore_file_monitor_backend_shutdown();
-        ecore_file_monitor_backend_init();
-     }
+     _ecore_file_monitor_inotify_reset();
 
    em = (Ecore_File_Monitor *)calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
