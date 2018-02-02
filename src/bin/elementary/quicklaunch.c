@@ -182,6 +182,7 @@ main(int argc, char **argv)
    char buf[PATH_MAX];
    struct sigaction action;
    const char *domain;
+   char *rundir;
    int ret = 0;
 
    if (!eina_init())
@@ -203,7 +204,9 @@ main(int argc, char **argv)
         if (!domain) domain = getenv("DISPLAY");
         if (!domain) domain = "unknown";
      }
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
+   rundir = getenv("XDG_RUNTIME_DIR");
+   if (!rundir) rundir = "/tmp";
+   snprintf(buf, sizeof(buf), "%s/elm-ql-%i", rundir, getuid());
    if (stat(buf, &st) < 0)
      {
         ret = mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -213,7 +216,7 @@ main(int argc, char **argv)
              exit(-1);
           }
      }
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), domain);
+   snprintf(buf, sizeof(buf), "%s/elm-ql-%i/%s", rundir, getuid(), domain);
    unlink(buf);
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
