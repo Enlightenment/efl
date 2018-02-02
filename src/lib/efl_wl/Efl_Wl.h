@@ -66,6 +66,24 @@ EAPI Evas_Object *efl_wl_add(Evas *e);
 EAPI Ecore_Exe *efl_wl_run(Evas_Object *obj, const char *cmd);
 
 /**
+ * Add a process to the list of allowed clients for the compositor widget
+ *
+ * @param obj The compositor widget
+ * @param pid The process to allow
+ * @since 1.21
+ */
+EAPI void efl_wl_pid_add(Evas_Object *obj, int32_t pid);
+
+/**
+ * Remove a process from the list of allowed clients for the compositor widget
+ *
+ * @param obj The compositor widget
+ * @param pid The process to deny
+ * @since 1.21
+ */
+EAPI void efl_wl_pid_del(Evas_Object *obj, int32_t pid);
+
+/**
  * Put the bottom-most toplevel window on top and apply focus to it
  *
  * @param obj The compositor widget

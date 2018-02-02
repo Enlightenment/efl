@@ -5667,10 +5667,32 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
    if (exe)
      {
         int32_t pid = ecore_exe_pid_get(exe);
-        ecore_exe_tag_set(exe, "__efl_wl");
-        eina_hash_add(c->exes, &pid, exe);
+        eina_hash_add(c->exes, &pid, (void*)1);
      }
    return exe;
+}
+
+void
+efl_wl_pid_add(Evas_Object *obj, int32_t pid)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   if (!c->exes)
+     c->exes = eina_hash_int32_new(NULL);
+   eina_hash_add(c->exes, &pid, (void*)1);
+}
+
+void
+efl_wl_pid_del(Evas_Object *obj, int32_t pid)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   if (!c->exes) return;
+   eina_hash_del_by_key(c->exes, &pid);
 }
 
 Eina_Bool
