@@ -66,6 +66,19 @@ EAPI Evas_Object *efl_wl_add(Evas *e);
 EAPI Ecore_Exe *efl_wl_run(Evas_Object *obj, const char *cmd);
 
 /**
+ * Run a command in the compositor widget with specified flags.
+ *
+ * @note If GL is available, the ELM_ACCEL environment variable will be
+ * set to "gl" while executing the command.
+ *
+ * @param obj The compositor widget
+ * @param cmd The command to run
+ * @param flags The flags to use
+ * @return The Ecore_Exe from the executed process, @c NULL on failure
+ */
+Ecore_Exe *efl_wl_flags_run(Evas_Object *obj, const char *cmd, Ecore_Exe_Flags flags);
+
+/**
  * Add a process to the list of allowed clients for the compositor widget
  *
  * @param obj The compositor widget

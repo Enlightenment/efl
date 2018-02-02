@@ -5625,7 +5625,7 @@ efl_wl_add(Evas *e)
 }
 
 Ecore_Exe *
-efl_wl_run(Evas_Object *obj, const char *cmd)
+comp_run(Evas_Object *obj, const char *cmd, Ecore_Exe_Flags flags)
 {
    char *env, *disp, *gl = NULL;
    Comp *c;
@@ -5650,7 +5650,7 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
         if (gl) gl = strdup(gl);
         setenv("ELM_ACCEL", "gl", 1);
      }
-   exe = ecore_exe_pipe_run(cmd, ECORE_EXE_TERM_WITH_PARENT, c);
+   exe = ecore_exe_pipe_run(cmd, flags, c);
    if (disp) setenv("DISPLAY", disp, 1);
    if (env) setenv("WAYLAND_DISPLAY", env, 1);
    else unsetenv("WAYLAND_DISPLAY");
@@ -5668,6 +5668,18 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
         eina_hash_add(c->exes, &pid, (void*)1);
      }
    return exe;
+}
+
+Ecore_Exe *
+efl_wl_run(Evas_Object *obj, const char *cmd)
+{
+   return comp_run(obj, cmd, ECORE_EXE_TERM_WITH_PARENT);
+}
+
+Ecore_Exe *
+efl_wl_flags_run(Evas_Object *obj, const char *cmd, Ecore_Exe_Flags flags)
+{
+   return comp_run(obj, cmd, flags);
 }
 
 void
