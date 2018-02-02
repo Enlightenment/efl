@@ -78,10 +78,7 @@ eldbus_signal_handler_match_extra_vset(Eldbus_Signal_Handler *sh, va_list ap)
 
    dbus_error_init(&err);
    dbus_bus_remove_match(sh->conn->dbus_conn,
-                         eina_strbuf_string_get(sh->match), &err);
-   if (dbus_error_is_set(&err))
-     ERR("handler(%p): %s - %s", sh, err.name, err.message);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(dbus_error_is_set(&err), EINA_FALSE);
+                         eina_strbuf_string_get(sh->match), NULL);
 
    for (read = va_arg(ap, char *); read; read = va_arg(ap, char *))
      {
@@ -113,23 +110,16 @@ eldbus_signal_handler_match_extra_vset(Eldbus_Signal_Handler *sh, va_list ap)
         key = NULL;
      }
 
-   dbus_error_init(&err);
    dbus_bus_add_match(sh->conn->dbus_conn,
-                      eina_strbuf_string_get(sh->match), &err);
-   if (dbus_error_is_set(&err))
-     ERR("handler(%p): %s - %s", sh, err.name, err.message);
-   if (!dbus_error_is_set(&err))
-     return EINA_TRUE;
+                      eina_strbuf_string_get(sh->match), NULL);
+   return EINA_TRUE;
 
    ERR("Error setting new match.");
    return EINA_FALSE;
 
 error:
-   dbus_error_init(&err);
    dbus_bus_add_match(sh->conn->dbus_conn,
-                      eina_strbuf_string_get(sh->match), &err);
-   if (dbus_error_is_set(&err))
-     ERR("handler(%p): %s - %s", sh, err.name, err.message);
+                      eina_strbuf_string_get(sh->match), NULL);
    return EINA_FALSE;
 }
 
@@ -178,7 +168,6 @@ _eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const ch
 {
    Eldbus_Signal_Handler *sh;
    Eina_Strbuf *match;
-   DBusError err;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
@@ -196,11 +185,7 @@ _eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const ch
    _match_append(match, "interface", interface);
    _match_append(match, "member", member);
 
-   dbus_error_init(&err);
-   dbus_bus_add_match(conn->dbus_conn, eina_strbuf_string_get(match), &err);
-   if (dbus_error_is_set(&err))
-     ERR("handler(%p): %s - %s", sh, err.name, err.message);
-   if (dbus_error_is_set(&err)) goto cleanup;
+   dbus_bus_add_match(conn->dbus_conn, eina_strbuf_string_get(match), NULL);
 
    if (sender)
      {
@@ -242,9 +227,7 @@ _eldbus_signal_handler_clean(Eldbus_Signal_Handler *handler)
    DBG("clean handler=%p path=%p cb=%p", handler, handler->path, handler->cb);
    dbus_error_init(&err);
    dbus_bus_remove_match(handler->conn->dbus_conn,
-                         eina_strbuf_string_get(handler->match), &err);
-   if (dbus_error_is_set(&err))
-     ERR("error removing handler(%p): %s - %s", handler, err.name, err.message);
+                         eina_strbuf_string_get(handler->match), NULL);
    handler->dangling = EINA_TRUE;
 }
 
@@ -366,4 +349,3 @@ eldbus_signal_handler_connection_get(const Eldbus_Signal_Handler *handler)
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
    return handler->conn;
 }
-
