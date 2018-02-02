@@ -182,6 +182,22 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static void
+_efreet_cache_reset()
+{
+   const char *s;
+   int len = 0;
+
+   if (ipc) ecore_ipc_server_del(ipc);
+   ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+   if (!ipc) return;
+
+   s = efreet_language_get();
+   if (s) len = strlen(s);
+   ecore_ipc_server_send(ipc, 1, 0, 0, 0, 0, s, len);
+   efreet_icon_extensions_refresh();
+}
+
+static void
 _icon_desktop_cache_update_event_add(int event_type)
 {
    Efreet_Event_Cache_Update *ev;
@@ -333,6 +349,7 @@ efreet_cache_init(void)
               }
          }
     }
+    ecore_fork_reset_callback_add(_efreet_cache_reset, NULL);
 
     return 1;
 error:
@@ -357,7 +374,7 @@ efreet_cache_shutdown(void)
     ecore_event_type_flush(EFREET_EVENT_ICON_CACHE_UPDATE,
                            EFREET_EVENT_DESKTOP_CACHE_UPDATE,
                            EFREET_EVENT_DESKTOP_CACHE_BUILD);
-
+    ecore_fork_reset_callback_del(_efreet_cache_reset, NULL);
     IF_RELEASE(theme_name);
 
     icon_cache = efreet_cache_close(icon_cache);
