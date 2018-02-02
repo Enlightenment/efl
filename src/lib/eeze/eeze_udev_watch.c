@@ -11,22 +11,14 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
+static Eina_Inlist *watches;
+
 /* opaque */
 struct Eeze_Udev_Watch
 {
-   _udev_monitor    *mon;
+   EINA_INLIST;
    Ecore_Fd_Handler *handler;
-   Eeze_Udev_Type    type;
-   void             *data;
-};
-
-/* private */
-struct _store_data
-{
-   void             (*func)(const char *,
-                            Eeze_Udev_Event,
-                            void *,
-                            Eeze_Udev_Watch *);
+   Eeze_Udev_Watch_Cb func;
    void            *data;
    Eeze_Udev_Event  event;
    _udev_monitor   *mon;
@@ -42,18 +34,17 @@ static Eina_Bool
 _get_syspath_from_watch(void             *data,
                         Ecore_Fd_Handler *fd_handler)
 {
-   struct _store_data *store = data;
+   Eeze_Udev_Watch *watch = data;
    _udev_device *device = NULL, *parent, *tmpdev;
    const char *ret, *test;
-   Eeze_Udev_Watch_Cb func = store->func;
-   void *sdata = store->data;
-   Eeze_Udev_Watch *watch = store->watch;
+   Eeze_Udev_Watch_Cb func = watch->func;
+   void *sdata = watch->data;
    int event = 0;
 
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      return EINA_TRUE;
 
-   device = udev_monitor_receive_device(store->mon);
+   device = udev_monitor_receive_device(watch->mon);
 
    if (!device)
      return EINA_TRUE;
@@ -62,44 +53,44 @@ _get_syspath_from_watch(void             *data,
        || (!(ret = udev_device_get_syspath(device))))
      goto error;
 
-   if (store->event)
+   if (watch->event)
      {
         if (!strcmp(test, "add"))
           {
-             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
-                 ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD))
+             if ((watch->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((watch->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD))
                goto error;
 
              event |= EEZE_UDEV_EVENT_ADD;
           }
         else if (!strcmp(test, "remove"))
           {
-             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
-                 ((store->event & EEZE_UDEV_EVENT_REMOVE) != EEZE_UDEV_EVENT_REMOVE))
+             if ((watch->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((watch->event & EEZE_UDEV_EVENT_REMOVE) != EEZE_UDEV_EVENT_REMOVE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_REMOVE;
           }
         else if (!strcmp(test, "change"))
           {
-             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
-                 ((store->event & EEZE_UDEV_EVENT_CHANGE) != EEZE_UDEV_EVENT_CHANGE))
+             if ((watch->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((watch->event & EEZE_UDEV_EVENT_CHANGE) != EEZE_UDEV_EVENT_CHANGE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_CHANGE;
           }
         else if (!strcmp(test, "online"))
           {
-             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
-                 ((store->event & EEZE_UDEV_EVENT_ONLINE) != EEZE_UDEV_EVENT_ONLINE))
+             if ((watch->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((watch->event & EEZE_UDEV_EVENT_ONLINE) != EEZE_UDEV_EVENT_ONLINE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_ONLINE;
           }
         else
           {
-             if ((store->event != EEZE_UDEV_EVENT_NONE) &&
-                 ((store->event & EEZE_UDEV_EVENT_OFFLINE) != EEZE_UDEV_EVENT_OFFLINE))
+             if ((watch->event != EEZE_UDEV_EVENT_NONE) &&
+                 ((watch->event & EEZE_UDEV_EVENT_OFFLINE) != EEZE_UDEV_EVENT_OFFLINE))
                goto error;
 
              event |= EEZE_UDEV_EVENT_OFFLINE;
@@ -108,7 +99,7 @@ _get_syspath_from_watch(void             *data,
 
    if ((event & EEZE_UDEV_EVENT_OFFLINE) || (event & EEZE_UDEV_EVENT_REMOVE))
      goto out;
-   switch (store->type)
+   switch (watch->type)
      {
       case EEZE_UDEV_TYPE_KEYBOARD:
         if ((!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD")) &&
@@ -279,28 +270,16 @@ error:
    return EINA_TRUE;
 }
 
-EAPI Eeze_Udev_Watch *
-eeze_udev_watch_add(Eeze_Udev_Type     type,
-                    int                event,
-                    Eeze_Udev_Watch_Cb cb,
-                    void              *user_data)
+static Eina_Bool
+_watch_init(Eeze_Udev_Watch *watch)
 {
    _udev_monitor *mon = NULL;
    int fd;
    Ecore_Fd_Handler *handler;
-   Eeze_Udev_Watch *watch = NULL;
-   struct _store_data *store = NULL;
-
-   if (!(store = calloc(1, sizeof(struct _store_data))))
-     return NULL;
-
-   if (!(watch = malloc(sizeof(Eeze_Udev_Watch))))
-     goto error;
-
    if (!(mon = udev_monitor_new_from_netlink(udev, "udev")))
      goto error;
 
-   switch (type)
+   switch (watch->type)
      {
       case EEZE_UDEV_TYPE_JOYSTICK:
       case EEZE_UDEV_TYPE_KEYBOARD:
@@ -367,49 +346,77 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
      goto error;
 
    fd = udev_monitor_get_fd(mon);
-   store->func = cb;
-   store->data = user_data;
-   store->mon = mon;
-   store->type = type;
-   store->watch = watch;
-   store->event = event;
+   watch->mon = mon;
 
    if (!(handler = ecore_main_fd_handler_add(fd, ECORE_FD_READ,
-                                             _get_syspath_from_watch, store, NULL, NULL)))
+                                             _get_syspath_from_watch, watch, NULL, NULL)))
      goto error;
 
-   watch->mon = mon;
    watch->handler = handler;
-   return watch;
+   return EINA_TRUE;
 error:
-   if (store)
-     free(store);
-   if (watch)
-     free(watch);
    if (mon)
      udev_monitor_unref(mon);
    ERR("Could not create watch!");
+   return EINA_FALSE;
+}
+
+static void
+_eeze_udev_watch_reset()
+{
+   Eeze_Udev_Watch *watch;
+
+   EINA_INLIST_FOREACH(watches, watch)
+     {
+        ecore_main_fd_handler_del(watch->handler);
+        udev_monitor_unref(watch->mon);
+        watch->handler = NULL;
+        watch->mon = NULL;
+        _watch_init(watch);
+     }
+}
+
+EAPI Eeze_Udev_Watch *
+eeze_udev_watch_add(Eeze_Udev_Type     type,
+                    int                event,
+                    Eeze_Udev_Watch_Cb cb,
+                    void              *user_data)
+{
+   Eeze_Udev_Watch *watch = NULL;
+
+   watch = calloc(1, sizeof(Eeze_Udev_Watch));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(watch, NULL);
+
+   watch->func = cb;
+   watch->data = user_data;
+   watch->type = type;
+   watch->watch = watch;
+   watch->event = event;
+   if (!_watch_init(watch)) goto error;
+   if (!watches)
+     ecore_fork_reset_callback_add(_eeze_udev_watch_reset, NULL);
+   watches = eina_inlist_append(watches, EINA_INLIST_GET(watch));
+   return watch;
+error:
+   free(watch);
    return NULL;
 }
 
 EAPI void *
 eeze_udev_watch_del(Eeze_Udev_Watch *watch)
 {
-   struct _store_data *sdata;
    void *ret = NULL;
 
-   if ((!watch) || (!watch->mon) || (!watch->handler))
+   if (!watch)
      return NULL;
 
-   sdata = ecore_main_fd_handler_del(watch->handler);
+   ecore_main_fd_handler_del(watch->handler);
    udev_monitor_unref(watch->mon);
 
-   if (sdata)
-     {
-        ret = sdata->data;
-        free(sdata);
-     }
-
+   ret = watch->data;
+   watches = eina_inlist_remove(watches, EINA_INLIST_GET(watch));
+   if (!watches)
+     ecore_fork_reset_callback_del(_eeze_udev_watch_reset, NULL);
    free(watch);
    return ret;
 }
