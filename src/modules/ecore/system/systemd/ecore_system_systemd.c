@@ -249,11 +249,23 @@ _property_change_monitor(const char *name,
 }
 
 static void _ecore_system_systemd_shutdown(void);
+static Eina_Bool _ecore_system_systemd_init(void);
+static unsigned int reseting = 0;
 
+static void
+_ecore_system_systemd_reset()
+{
+   reseting = 1;
+   _ecore_system_systemd_shutdown();
+   _ecore_system_systemd_init();
+   reseting = 0;
+}
 static Eina_Bool
 _ecore_system_systemd_init(void)
 {
    eldbus_init();
+   if (!reseting)
+     ecore_fork_reset_callback_add(_ecore_system_systemd_reset, NULL);
 
    _log_dom = eina_log_domain_register("ecore_system_systemd", NULL);
    if (_log_dom < 0)
@@ -296,6 +308,8 @@ _ecore_system_systemd_shutdown(void)
    Eldbus_Pending *pend;
 
    DBG("ecore system 'systemd' unloaded");
+   if (!reseting)
+     ecore_fork_reset_callback_del(_ecore_system_systemd_reset, NULL);
 
    while (_proxies)
      {
