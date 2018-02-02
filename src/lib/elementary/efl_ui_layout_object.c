@@ -74,7 +74,6 @@ static const char *_efl_ui_layout_swallow_parts[] = {
 typedef struct _Efl_Ui_Layout_Sub_Object_Data   Efl_Ui_Layout_Sub_Object_Data;
 typedef struct _Efl_Ui_Layout_Sub_Object_Cursor Efl_Ui_Layout_Sub_Object_Cursor;
 typedef struct _Efl_Ui_Layout_Sub_Iterator      Efl_Ui_Layout_Sub_Iterator;
-typedef struct _Efl_Ui_Layout_Sub_Connect       Efl_Ui_Layout_Sub_Connect;
 
 struct _Efl_Ui_Layout_Sub_Iterator
 {
@@ -118,15 +117,6 @@ struct _Efl_Ui_Layout_Sub_Object_Cursor
    const char  *style;
 
    Eina_Bool    engine_only : 1;
-};
-
-struct _Efl_Ui_Layout_Sub_Connect
-{
-   Eina_Stringshare *name;
-   Eina_Stringshare *property;
-   Eina_Bool        is_signal;
-   Eo               *obj;
-   Efl_Future       *future;
 };
 
 static void
