@@ -747,6 +747,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
 
    eet_init();
    ecore_init();
+   ecore_event_init();
    edje_init();
    eio_init();
 
