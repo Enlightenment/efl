@@ -16,6 +16,7 @@
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
+#include <assert.h>
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -2640,26 +2641,82 @@ _collection_match_roles_lookup(Eo *obj, struct collection_match_rule *rule)
 }
 
 static Eina_Bool
-_collection_match_attributes_helper(Eina_List *obj_attribs, Eina_List *attribs, Eina_Bool compare, Eina_Bool ret_if_compare, Eina_Bool ret_default)
+_collection_match_attributes_helper(Eina_List *obj_attribs, Eina_List *attribs, AtspiCollectionMatchType mode)
 {
    Eina_List *l, *l2;
    Efl_Access_Attribute *attr, *attr2;
+   Eina_Bool obj_empty = eina_list_count(obj_attribs) == 0;
+   Eina_Bool empty = eina_list_count(attribs) == 0;
 
+   switch (mode)
+     {
+        case ATSPI_Collection_MATCH_ANY:
+           if (empty || obj_empty) return EINA_FALSE;
+           break;
+        case ATSPI_Collection_MATCH_ALL:
+           if (empty) return EINA_TRUE;
+           if (obj_empty) return EINA_FALSE;
+           break;
+        case ATSPI_Collection_MATCH_NONE:
+           if (empty || obj_empty) return EINA_TRUE;
+           break;
+        case ATSPI_Collection_MATCH_EMPTY:
+           if (empty && obj_empty) return EINA_TRUE;
+           if (empty || obj_empty) return EINA_FALSE;
+           break;
+        case ATSPI_Collection_MATCH_INVALID:
+        case ATSPI_Collection_MATCH_LAST_DEFINED:
+           assert(0);
+           break;
+     }
    EINA_LIST_FOREACH(attribs, l, attr)
      {
-        EINA_LIST_FOREACH(obj_attribs, l2, attr2)
-          {
-             if ((attr->key && attr2->key &&
-                  attr->value && attr2->value &&
-                  !strcmp(attr->key, attr2->key) &&
-                  !strcmp(attr->value, attr2->value)) == compare)
-               {
-                  return ret_if_compare;
-               }
-          }
+       Eina_Bool found = EINA_FALSE;
+       EINA_LIST_FOREACH(obj_attribs, l2, attr2)
+         {
+            Eina_Bool compare = (attr->key && attr2->key &&
+                 attr->value && attr2->value &&
+                 !strcmp(attr->key, attr2->key) &&
+                 !strcmp(attr->value, attr2->value));
+            if (compare)
+              {
+                 found = EINA_TRUE;
+                 break;
+              }
+         }
+       switch (mode)
+         {
+            case ATSPI_Collection_MATCH_EMPTY:
+            case ATSPI_Collection_MATCH_ALL:
+               if (!found) return EINA_FALSE;
+               break;
+            case ATSPI_Collection_MATCH_ANY:
+               if (found) return EINA_TRUE;
+               break;
+            case ATSPI_Collection_MATCH_NONE:
+               if (found) return EINA_FALSE;
+               break;
+            case ATSPI_Collection_MATCH_INVALID:
+            case ATSPI_Collection_MATCH_LAST_DEFINED:
+               assert(0);
+               break;
+         }
      }
 
-   return ret_default;
+   switch (mode)
+     {
+        case ATSPI_Collection_MATCH_EMPTY:
+        case ATSPI_Collection_MATCH_ALL:
+        case ATSPI_Collection_MATCH_NONE:
+           return EINA_TRUE;
+        case ATSPI_Collection_MATCH_ANY:
+           return EINA_FALSE;
+        case ATSPI_Collection_MATCH_INVALID:
+        case ATSPI_Collection_MATCH_LAST_DEFINED:
+           assert(0);
+           break;
+     }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -2676,18 +2733,13 @@ _collection_match_attributes_lookup(Eo *obj, struct collection_match_rule *rule)
            ret = EINA_TRUE;
            break;
         case ATSPI_Collection_MATCH_ALL:
-           ret = _collection_match_attributes_helper(
-              obj_attribs, rule->attributes, EINA_FALSE, EINA_FALSE, EINA_TRUE);
-           break;
         case ATSPI_Collection_MATCH_ANY:
-           ret = _collection_match_attributes_helper(
-              obj_attribs, rule->attributes, EINA_TRUE, EINA_TRUE, EINA_FALSE);
-           break;
         case ATSPI_Collection_MATCH_NONE:
-           ret = _collection_match_attributes_helper(
-              obj_attribs, rule->attributes, EINA_TRUE, EINA_FALSE, EINA_TRUE);
+        case ATSPI_Collection_MATCH_EMPTY:
+           ret = _collection_match_attributes_helper(obj_attribs, rule->attributes, rule->attributematchtype);
            break;
         default:
+           DBG("invalid match type");
            break;
      }
 
