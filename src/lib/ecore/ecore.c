@@ -276,7 +276,7 @@ ecore_init(void)
    _ecore_main_loop_init();
    if (!_ecore_event_init()) goto shutdown_event;
 
-   vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
+   vpath = efl_add(EFL_VPATH_CORE_CLASS, efl_main_loop_get());
    if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
 
    _ecore_signal_init();

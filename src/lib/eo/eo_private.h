@@ -121,7 +121,8 @@ struct _Eo_Object
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;
-     unsigned char auto_unref : 1; // unref after 1 call - hack for parts
+     Eina_Bool auto_unref:1; // unref after 1 call - hack for parts
+     Eina_Bool was_auto_unref:1; // object has been marked as auto-unref
 };
 
 /* How we search and store the implementations in classes. */
@@ -264,8 +265,9 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
 
    if (!obj->condtor_done)
      {
-        ERR("in %s:%d: func '%s' Object of class '%s' - Not all of the object destructors have been executed.",
-            file, line, func_name, klass->desc->name);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object of class '%s' - Not all of the object "
+                       "destructors have been executed.", klass->desc->name);
      }
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
@@ -308,8 +310,8 @@ _efl_invalidate_internal(_Eo_Object *obj, const char *func_name, const char *fil
 
    if (EINA_UNLIKELY(obj->invalidated))
      {
-        ERR("in %s:%d: func '%s' Object %p already invalidated.",
-            file, line, func_name, obj_id);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object %p already invalidated.", obj_id);
         _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
                            __FUNCTION__, __FILE__, __LINE__);
         return;
@@ -317,9 +319,9 @@ _efl_invalidate_internal(_Eo_Object *obj, const char *func_name, const char *fil
 
    if (EINA_UNLIKELY(obj->invalidate_triggered))
      {
-        ERR("in %s:%d: func '%s' Object %p invalidate already triggered. "
-            "You wrongly call efl_invalidate() within an invalidator.",
-            file, line, func_name, obj_id);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object %p invalidate already triggered. You wrongly "
+                       "called efl_invalidate() within an invalidator.", obj_id);
         _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
                            __FUNCTION__, __FILE__, __LINE__);
         return;
@@ -334,9 +336,10 @@ _efl_invalidate_internal(_Eo_Object *obj, const char *func_name, const char *fil
 
    if (EINA_UNLIKELY(!obj->condtor_done))
      {
-        ERR("in %s:%d: func '%s' Object %p of class '%s' - Not all of the "
-            "object invalidators have been executed.",
-            file, line, func_name, obj_id, obj->klass->desc->name);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object %p of class '%s' - Not all of the "
+                       "object invalidators have been executed.",
+                       obj_id, obj->klass->desc->name);
         obj->condtor_done = EINA_FALSE;
      }
 
@@ -357,8 +360,9 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
    obj_id = _eo_obj_id_get(obj);
    if (obj->refcount < 0)
      {
-        ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.",
-            file, line, func_name, obj, obj->refcount);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object %p reached refcount (%d) < 0. Too many unrefs.",
+                       obj, obj->refcount);
         _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
                            __FUNCTION__, __FILE__, __LINE__);
         return;
@@ -366,13 +370,21 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
 
    if (!obj->invalidated)
      {
+        if (!obj->was_auto_unref)
+          {
+             eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                            "Object %s@%p unref'ed but not yet invalidated.",
+                            obj->klass->desc->name, obj_id);
+             _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
+                                __FUNCTION__, __FILE__, __LINE__);
+          }
         _efl_invalidate_internal(obj, func_name, file, line);
      }
 
    if (obj->destructed)
      {
-        ERR("in %s:%d: func '%s' Object %p already destructed.",
-            file, line, func_name, obj_id);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object %p already destructed.", obj_id);
         _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
                            __FUNCTION__, __FILE__, __LINE__);
         return;
@@ -380,9 +392,10 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
 
    if (obj->del_triggered)
      {
-        ERR("in %s:%d: func '%s' Object %p deletion already triggered. "
-            "You wrongly call efl_unref() within a destructor.",
-            file, line, func_name, obj_id);
+        eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                       "Object %p deletion already triggered. "
+                       "You wrongly call efl_unref() within a destructor.",
+                       obj_id);
         _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
                            __FUNCTION__, __FILE__, __LINE__);
         return;
@@ -416,13 +429,15 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
              if (obj_id == xref->ref_obj)
                {
-                  WRN("in %s:%d: func '%s' Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
-                      file, line, func_name, obj_id, xref->data_klass, xref->file, xref->line);
+                  eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_WARN, file, func_name, line,
+                                 "Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
+                                 obj_id, xref->data_klass, xref->file, xref->line);
                }
              else
                {
-                  ERR("in %s:%d: func '%s' Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
-                      file, line, func_name, obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
+                  eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR, file, func_name, line,
+                                 "Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
+                                 obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
                }
 
              eina_freeq_ptr_main_add(xref, free, sizeof(*xref));

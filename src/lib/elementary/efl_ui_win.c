@@ -5509,10 +5509,6 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
    pd->profile.available = eina_array_new(4);
 
-   // For bindings: if no parent, allow simple unref
-   if (!efl_parent_get(obj))
-     efl_allow_parent_unref_set(obj, EINA_TRUE);
-
    efl_composite_attach(obj, pd->manager);
    _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
 
@@ -8251,7 +8247,8 @@ elm_win_window_id_get(const Evas_Object *obj)
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        return ecore_evas_window_get(ee);
+        if (ee) return ecore_evas_window_get(ee);
+        else return 0;
      }
 
    sd = efl_data_scope_safe_get(obj, MY_CLASS);
@@ -8646,7 +8643,7 @@ elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
       default: break;
      }
 
-   return elm_legacy_add(klass, parent, 
+   return elm_legacy_add(klass, parent ? parent : efl_main_loop_get(),
                          efl_ui_win_name_set(efl_added, name),
                          efl_ui_win_type_set(efl_added, type));
 }

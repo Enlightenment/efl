@@ -59,7 +59,6 @@ typedef struct
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
-   Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
    Eina_Bool                  has_destruct_event_cb : 1; // No proper count: minor optimization triggered at destruction only
 } Efl_Object_Data;
 
@@ -603,7 +602,8 @@ _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
      }
    else
      {
-        efl_unref(obj);
+        ERR("efl_del called on an object without a parent!");
+        //efl_unref(obj);
      }
 }
 
@@ -2066,7 +2066,7 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
         while (pd->children)
           {
              child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
-             efl_parent_set(child, NULL);
+             efl_del(child);
           }
      }
 
@@ -2089,8 +2089,9 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 
    if (EINA_UNLIKELY(pd->parent != NULL))
      {
-        if (EINA_LIKELY(!pd->allow_parent_unref))
-          ERR("Object '%p' still has a parent at the time of destruction.", obj);
+        EO_OBJ_POINTER(obj, obj_data);
+        ERR("Object '%s@%p' still has a parent at the time of destruction.",
+            obj_data->klass->desc->name, obj);
         efl_parent_set(obj, NULL);
      }
 
@@ -2120,26 +2121,6 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
      }
 
    _eo_condtor_done(obj);
-}
-
-EOLIAN static void
-_efl_object_allow_parent_unref_set(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd, Eina_Bool allow)
-{
-   pd->allow_parent_unref = !!allow;
-}
-
-EOLIAN static Eina_Bool
-_efl_object_allow_parent_unref_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
-{
-   return pd->allow_parent_unref;
-}
-
-EAPI void
-___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable)
-{
-   // Write-only property
-   EO_OBJ_POINTER(obj_id, obj);
-   obj->auto_unref = enable ? 1 : 0;
 }
 
 EOLIAN static Eo *

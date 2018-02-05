@@ -301,25 +301,6 @@ abstract Efl.Object ()
            ]]
            return: bool; [[$true if it is. $false otherwise.]]
       }
-      @property allow_parent_unref {
-         [[Allow an object to be deleted by unref even if it has a parent.
-
-           This simply hides the error message warning that an object being
-           destroyed still has a parent. This property is false by default.
-
-           In a normal object use case, when ownership of an object is given
-           to a caller, said ownership should be released with efl_unref().
-           If the object has a parent, this will print error messages, as
-           $efl_unref() is stealing the ref from the parent.
-
-           Warning: Use this function very carefully, unless you're absolutely
-           sure of what you are doing.
-         ]]
-         values {
-            allow: bool(false); [[Whether to allow $efl_unref() to zero
-               even if @.parent is not $null.]]
-         }
-      }
    }
    implements {
         class.constructor;

@@ -52,7 +52,7 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
    do { if (PROXY_STATIC_VAR(type)) \
      { \
         efl_del_intercept_set(PROXY_STATIC_VAR(type), NULL); \
-        efl_del(PROXY_STATIC_VAR(type)); \
+        efl_unref(PROXY_STATIC_VAR(type)); \
         PROXY_STATIC_VAR(type) = NULL; \
      } } while (0)
 
@@ -97,7 +97,6 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
      } \
    __VA_ARGS__; \
    if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
-   efl_allow_parent_unref_set(proxy, 1); \
    ___efl_auto_unref_set(proxy, 1); \
    return proxy; \
 }

@@ -1797,7 +1797,6 @@ START_TEST(efl_object_auto_unref_test)
    parent = efl_add(SIMPLE_CLASS, NULL);
    obj = efl_add(SIMPLE_CLASS, parent);
    fail_if(efl_ref_count(obj) != 1);
-   efl_allow_parent_unref_set(obj, 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
    ___efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);

@@ -18,7 +18,7 @@ struct appData
 
       add(m_win);
       m_win.text_set("Calendar Layout Formatting Example");
-      m_win.delete_request_event_cb_add([&](){ destroy(); });
+      m_win.delete_request_event_cb_add([&](){ m_win._delete(); });
 
       efl::ui::Calendar cal(add, m_win);
       m_win.content_set(cal);
@@ -37,12 +37,6 @@ struct appData
            std::cout << "Month: " << std::string(sb) << std::endl;
         }, _1, _2);
       cal.format_cb_set(cb_a);
-   }
-
-   void destroy() {
-      // FIXME: need del() function and no error on unref().
-      ::efl_allow_parent_unref_set(m_win, true);
-      m_win = nullptr;
    }
 
 private:

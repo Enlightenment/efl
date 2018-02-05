@@ -57,7 +57,6 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
    Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd && obj && part, NULL);
-   efl_allow_parent_unref_set(proxy, 1);
    ___efl_auto_unref_set(proxy, 1);
    pd->part = eina_tmpstr_add(part);
    pd->obj = obj;
@@ -68,7 +67,7 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
 static inline Eo *
 ELM_PART_IMPLEMENT(const Efl_Class *part_klass, const Eo *obj, const char *part)
 {
-   return efl_add(part_klass, NULL,
+   return efl_add(part_klass, (Eo *) obj,
                   _elm_part_initialize(efl_added, (Eo *) obj, part));
 }
 

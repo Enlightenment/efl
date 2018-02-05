@@ -198,7 +198,7 @@ evas_shutdown(void)
 EAPI Evas *
 evas_new(void)
 {
-   Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, NULL);
+   Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, efl_loop_main_get(EFL_LOOP_CLASS));
    return eo_obj;
 }
 
@@ -211,6 +211,7 @@ _evas_key_mask_free(void *data)
 EOLIAN static Eo *
 _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(efl_parent_get(eo_obj), NULL);
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
    e->evas = eo_obj;
@@ -274,7 +275,7 @@ evas_free(Evas *eo_e)
    return;
    MAGIC_CHECK_END();
    evas_sync(eo_e);
-   efl_unref(eo_e);
+   efl_del(eo_e);
 }
 
 EOLIAN static void

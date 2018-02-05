@@ -868,9 +868,13 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
 
    EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, err_klass);
 
-   if (parent_id)
+   if (EINA_LIKELY(parent_id != NULL))
      {
         EO_OBJ_POINTER_GOTO_PROXY(parent_id, parent, err_parent);
+     }
+   else
+     {
+        ERR("Object of class %s created without a parent!", klass->desc->name);
      }
 
    // not likely so use goto to alleviate l1 instruction cache of rare code
@@ -1916,6 +1920,16 @@ err:
    ERR("Obj:%s@%p. Object is already invalid, can not be destructed further.",
        obj->klass->desc->name, obj_id);
    EO_OBJ_DONE(obj_id);
+}
+
+EAPI void
+___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable)
+{
+   // Write-only property
+   EO_OBJ_POINTER(obj_id, obj);
+   obj->auto_unref = enable ? 1 : 0;
+   if (enable)
+     obj->was_auto_unref = EINA_TRUE;
 }
 
 EAPI int
