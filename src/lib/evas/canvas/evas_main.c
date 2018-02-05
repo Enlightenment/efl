@@ -411,10 +411,12 @@ next_zombie:
      }
 
    /* Ector surface may require an existing output to finish its job */
-   e->engine.func->ector_destroy(_evas_engine_context(e), e->ector);
+   if (e->engine.func)
+     e->engine.func->ector_destroy(_evas_engine_context(e), e->ector);
    /* cleanup engine backend */
    EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
-   e->engine.func->engine_free(e->backend);
+   if (e->engine.func)
+     e->engine.func->engine_free(e->backend);
 
    for (i = 0; i < e->modifiers.mod.count; i++)
      free(e->modifiers.mod.list[i]);
