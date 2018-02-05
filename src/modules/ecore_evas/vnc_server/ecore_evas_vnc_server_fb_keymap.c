@@ -6,7 +6,7 @@
 
 static const char *_ecore_fb_li_kbd_syms[144 * 7] =
 {
-#include <ecore_fb_keytable.h>
+#include "ecore_fb_keytable.h"
 };
 
 #include "ecore_evas_vnc_server_fb_keymap.h"

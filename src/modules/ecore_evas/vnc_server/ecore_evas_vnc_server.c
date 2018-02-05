@@ -12,16 +12,6 @@
 #include <Evas.h>
 #include <Ecore_Evas.h>
 
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-# include <Evas_Engine_Software_X11.h>
-# include <Ecore_X.h>
-#endif
-
-#ifdef BUILD_ENGINE_FB
-# include <Evas_Engine_FB.h>
-# include "ecore_evas_vnc_server_fb_keymap.h"
-#endif
-
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +19,7 @@
 
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
+#include "ecore_evas_vnc_server_fb_keymap.h"
 
 static int _ecore_evas_vnc_server_log_dom;
 static unsigned int _available_seat = 1;
