@@ -39,6 +39,17 @@ typedef enum _Ecore_Drm2_Fb_Status
    ECORE_DRM2_FB_STATUS_PLANE_RELEASE = 32,
 } Ecore_Drm2_Fb_Status;
 
+typedef enum _Ecore_Drm2_Relative_Mode
+{
+   ECORE_DRM2_RELATIVE_MODE_UNKNOWN,
+   ECORE_DRM2_RELATIVE_MODE_NONE,
+   ECORE_DRM2_RELATIVE_MODE_CLONE,
+   ECORE_DRM2_RELATIVE_MODE_TO_LEFT,
+   ECORE_DRM2_RELATIVE_MODE_TO_RIGHT,
+   ECORE_DRM2_RELATIVE_MODE_TO_ABOVE,
+   ECORE_DRM2_RELATIVE_MODE_TO_BELOW
+} Ecore_Drm2_Relative_Mode;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 
@@ -789,6 +800,29 @@ EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
  * @since 1.20
  */
 EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output);
+
+/**
+ * Set the relative mode for an output
+ *
+ * @param output The output to set relative mode
+ * @param relative The relative mode to set
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI void ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative_Mode mode);
+
+/**
+ * Get the relative mode of an output
+ *
+ * @param output The output to retrieve relative mode for
+ *
+ * @return The relative mode of a given output
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI Ecore_Drm2_Relative_Mode ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output);
 
 /**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
