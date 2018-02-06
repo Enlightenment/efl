@@ -468,6 +468,8 @@ next_zombie:
 EAPI Evas_Engine_Info *
 evas_engine_info_get(const Evas *obj)
 {
+   if (!obj) return NULL;
+
    Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
    Efl_Canvas_Output *output;
 
@@ -485,6 +487,8 @@ evas_engine_info_get(const Evas *obj)
 EAPI Eina_Bool
 evas_engine_info_set(Evas *obj, Evas_Engine_Info *info)
 {
+   if (!obj) return EINA_FALSE;
+
    Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
    Efl_Canvas_Output *output;
 

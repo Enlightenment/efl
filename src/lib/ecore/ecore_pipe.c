@@ -140,6 +140,7 @@ EAPI int
 ecore_pipe_read_fd(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
+   if (!p) return PIPE_FD_INVALID;
    return p->fd_read;
 }
 
@@ -201,6 +202,7 @@ EAPI int
 ecore_pipe_write_fd(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
+   if (!p) return PIPE_FD_INVALID;
    return p->fd_write;
 }
 
