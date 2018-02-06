@@ -23,7 +23,7 @@ struct _Evas_Engine_Info_GL_Drm
         unsigned int rotation, depth;
         unsigned int format, flags;
 
-        void *output;
+        Ecore_Drm2_Output *output;
 
         Eina_Bool destination_alpha : 1;
         Eina_Bool vsync : 1;
