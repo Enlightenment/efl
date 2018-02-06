@@ -38,15 +38,11 @@ public struct Error : IComparable<Error>
         return "eina.Error(" + code + ")";
     }
 
-    public static void Init()
+    internal static void Init()
     {
-        if (eina_init() == 0)
-            throw (new efl.EflException("Failed to init Eina"));
-
         EFL_ERROR = eina_error_msg_register("Managed Code Error");
     }
 
-    [DllImport(efl.Libs.Eina)] private static extern int eina_init();
     [DllImport(efl.Libs.Eina)] static extern Error eina_error_msg_register(string msg);
     [DllImport(efl.Libs.Eina)] static extern Error eina_error_get();
     [DllImport(efl.Libs.Eina)] static extern void eina_error_set(Error error);

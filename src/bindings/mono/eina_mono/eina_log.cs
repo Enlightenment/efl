@@ -9,8 +9,6 @@ namespace eina { // Manual wrappers around eina functions
 
 public class Log
 {
-    [DllImport(efl.Libs.Eina)] private static extern int eina_init();
-
     [DllImport(efl.Libs.Eina)] private static extern void eina_log_print(
             int domain,
             Level level,
@@ -55,16 +53,11 @@ public class Log
 
     private static int domain = -1;
 
-    public static void Init(String name="mono", String color="\033[32;1m")
+    internal static void Init(String name="mono", String color="\033[32;1m")
     {
         if (domain == -1)
           {
               // Maybe move this check outside when other eina stuff get support?
-              if (eina_init() == 0)
-                {
-                   Console.WriteLine("Error: Can't initialize Eina for logging.");
-                   return;
-                }
               domain = eina_log_domain_register(name, color);
               if (domain < 0)
                 Console.WriteLine("Error: Couldn't register Eina log domain for name {0}.", name);
