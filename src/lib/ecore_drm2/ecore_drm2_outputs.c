@@ -87,8 +87,6 @@ _output_event_send(Ecore_Drm2_Output *output)
 {
    Ecore_Drm2_Event_Output_Changed *ev;
 
-   if ((!output->enabled) && (!output->connected)) return;
-
    ev = calloc(1, sizeof(Ecore_Drm2_Event_Output_Changed));
    if (!ev) return;
 
