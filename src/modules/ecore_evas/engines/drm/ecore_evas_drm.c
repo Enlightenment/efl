@@ -715,10 +715,14 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 
    if (edata->ticking)
      {
+        int x, y, w, h;
         double t = (double)sec + ((double)usec / 1000000);
 
+        ecore_drm2_output_info_get(edata->output, &x, &y, &w, &h, NULL);
+
         if (!edata->once) t = ecore_time_get();
-        ecore_evas_animator_tick(ee, NULL, t - edata->offset);
+        ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
+                                 t - edata->offset);
      }
    else if (ret)
      ecore_drm2_fb_flip(NULL, edata->output);
@@ -741,11 +745,16 @@ _tick_job(void *data)
 {
    Ecore_Evas_Engine_Drm_Data *edata;
    Ecore_Evas *ee;
+   int x, y, w, h;
 
    ee = data;
    edata = ee->engine.data;
    edata->tick_job = NULL;
-   ecore_evas_animator_tick(ee, NULL, edata->tick_job_timestamp);
+
+   ecore_drm2_output_info_get(edata->output, &x, &y, &w, &h, NULL);
+
+   ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
+                            edata->tick_job_timestamp);
 }
 
 static void
