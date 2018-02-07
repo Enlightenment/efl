@@ -1,89 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_engine.h"
 
-
-static Eina_List *gdipool = NULL;
-static int gdisize = 0;
-static int gdimemlimit = 10 * 1024 * 1024;
-static int gdicountlimit = 32;
-
-static Gdi_Output_Buffer *
-_find_gdiob(HDC dc, BITMAPINFO_GDI *bitmap_info, int depth, int w, int h, void *data)
-{
-   Eina_List         *l = NULL;
-   Eina_List         *gdil = NULL;
-   Gdi_Output_Buffer *gdiob = NULL;
-   Gdi_Output_Buffer *gdiob2;
-   int                sz;
-   int                lbytes;
-   int                bpp;
-
-   bpp = depth >> 3;
-   if (bpp == 3) bpp = 4;
-   lbytes = (((w * bpp) + 3) / 4) * 4;
-   sz = lbytes * h;
-   EINA_LIST_FOREACH(gdipool, l, gdiob2)
-     {
-        if ((gdiob2->dc != dc) ||
-            (gdiob2->bitmap_info != bitmap_info) ||
-            (gdiob2->depth != depth))
-	  continue;
-	if (gdiob2->psize == sz)
-	  {
-	     gdiob = gdiob2;
-	     gdil = l;
-	     goto have_gdiob;
-	  }
-     }
-   if (!gdiob)
-     return evas_software_gdi_output_buffer_new(dc, bitmap_info, depth, w, h, data);
-
-   have_gdiob:
-   gdipool = eina_list_remove_list(gdipool, gdil);
-   gdiob->width = w;
-   gdiob->height = h;
-   gdiob->pitch = lbytes;
-   gdisize -= gdiob->psize * (gdiob->depth >> 3);
-
-   return gdiob;
-}
-
-static void
-_unfind_gdiob(Gdi_Output_Buffer *gdiob)
-{
-   gdipool = eina_list_prepend(gdipool, gdiob);
-   gdisize += gdiob->psize * (gdiob->depth >> 3);
-   while ((gdisize > (gdimemlimit)) ||
-          ((int)eina_list_count(gdipool) > gdicountlimit))
-     {
-        Eina_List *xl;
-
-        xl = eina_list_last(gdipool);
-        if (!xl)
-          {
-             gdisize = 0;
-             break;
-          }
-        gdiob = xl->data;
-        gdipool = eina_list_remove_list(gdipool, xl);
-        evas_software_gdi_output_buffer_free(gdiob);
-     }
-}
-
-static void
-_clear_gdiob()
-{
-   while (gdipool)
-     {
-	Gdi_Output_Buffer *gdiob;
-
-	gdiob = gdipool->data;
-	gdipool = eina_list_remove_list(gdipool, gdipool);
-	evas_software_gdi_output_buffer_free(gdiob);
-     }
-   gdisize = 0;
-}
-
 void
 evas_software_gdi_outbuf_init(void)
 {
@@ -104,7 +21,8 @@ evas_software_gdi_outbuf_free(Outbuf *buf)
 	buf->priv.pending_writes = eina_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	obr = im->extended_info;
 	evas_cache_image_drop(&im->cache_entry);
-	if (obr->gdiob) _unfind_gdiob(obr->gdiob);
+	if (obr->gdiob)
+          evas_software_gdi_output_buffer_free(obr->gdiob);
 /* 	if (obr->mxob) _unfind_xob(obr->mxob, 0); */
 	free(obr);
      }
@@ -119,9 +37,7 @@ Outbuf *
 evas_software_gdi_outbuf_setup(int          width,
                                int          height,
                                int          rotation,
-                               Outbuf_Depth depth,
                                HWND         window,
-                               int          w_depth,
                                unsigned int borderless,
                                unsigned int fullscreen,
                                unsigned int region,
@@ -136,13 +52,12 @@ evas_software_gdi_outbuf_setup(int          width,
 
    buf->width = width;
    buf->height = height;
-   buf->depth = depth;
    buf->rot = rotation;
 
    buf->priv.mask_dither = mask_dither;
    buf->priv.destination_alpha = destination_alpha;
 
-   if (!evas_software_gdi_init(window, w_depth, borderless, fullscreen, region, buf))
+   if (!evas_software_gdi_init(window, borderless, fullscreen, region, buf))
      {
         free(buf);
         return NULL;
@@ -152,7 +67,7 @@ evas_software_gdi_outbuf_setup(int          width,
       Gfx_Func_Convert  conv_func;
       Gdi_Output_Buffer *gdiob;
 
-      gdiob = evas_software_gdi_output_buffer_new(buf->priv.gdi.dc, buf->priv.gdi.bitmap_info, w_depth, 1, 1, NULL);
+      gdiob = evas_software_gdi_output_buffer_new(buf->priv.gdi.dc, buf->priv.gdi.bitmap_info, 1, 1, NULL);
 
       conv_func = NULL;
       if (gdiob)
@@ -161,7 +76,7 @@ evas_software_gdi_outbuf_setup(int          width,
              conv_func = evas_common_convert_func_get(0,
                                                       width,
                                                       height,
-                                                      evas_software_gdi_output_buffer_depth (gdiob),
+                                                      32,
                                                       buf->priv.gdi.bitmap_info->masks[0],
                                                       buf->priv.gdi.bitmap_info->masks[1],
                                                       buf->priv.gdi.bitmap_info->masks[2],
@@ -171,7 +86,7 @@ evas_software_gdi_outbuf_setup(int          width,
              conv_func = evas_common_convert_func_get(0,
                                                       height,
                                                       width,
-                                                      evas_software_gdi_output_buffer_depth (gdiob),
+                                                      32,
                                                       buf->priv.gdi.bitmap_info->masks[0],
                                                       buf->priv.gdi.bitmap_info->masks[1],
                                                       buf->priv.gdi.bitmap_info->masks[2],
@@ -184,11 +99,10 @@ evas_software_gdi_outbuf_setup(int          width,
              {
                 ERR(".[ soft_gdi engine Error ]."
                       " {"
-                      "  At depth         %i:"
+                      "  At depth         32:"
                       "  RGB format mask: %08lx, %08lx, %08lx"
                       "  Not supported by and compiled in converters!"
                       " }",
-                        buf->priv.gdi.depth,
                         buf->priv.gdi.bitmap_info->masks[0],
                         buf->priv.gdi.bitmap_info->masks[1],
                         buf->priv.gdi.bitmap_info->masks[2]);
@@ -204,10 +118,10 @@ evas_software_gdi_outbuf_reconfigure(Outbuf      *buf,
                                      int          width,
                                      int          height,
                                      int          rotation,
-                                     Outbuf_Depth depth)
+                                     Outbuf_Depth depth EINA_UNUSED)
 {
    if ((width == buf->width) && (height == buf->height) &&
-       (rotation == buf->rot) && (depth == buf->depth))
+       (rotation == buf->rot))
      return;
    buf->width = width;
    buf->height = height;
@@ -249,15 +163,9 @@ evas_software_gdi_outbuf_new_region_for_update(Outbuf *buf,
        (buf->priv.gdi.bitmap_info->masks[1] == 0x00ff00) &&
        (buf->priv.gdi.bitmap_info->masks[2] == 0x0000ff))
      {
-        obr->gdiob = _find_gdiob(buf->priv.gdi.dc,
-                                 buf->priv.gdi.bitmap_info,
-                                 buf->priv.gdi.depth,
-                                 w, h, NULL);
-/*      obr->gdiob = evas_software_gdi_output_buffer_new(buf->priv.gdi.dc, */
-/*                                                         buf->priv.gdi.bitmap_info, */
-/*                                                         buf->priv.gdi.depth, */
-/*                                                         w, h, */
-/*                                                         NULL); */
+        obr->gdiob = evas_software_gdi_output_buffer_new(buf->priv.gdi.dc,
+                                                         buf->priv.gdi.bitmap_info,
+                                                         w, h, NULL);
         im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
                                                  w, h,
                                                  (DATA32 *)evas_software_gdi_output_buffer_data(obr->gdiob, &bpl),
@@ -276,31 +184,13 @@ evas_software_gdi_outbuf_new_region_for_update(Outbuf *buf,
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
         im->extended_info = obr;
         if ((buf->rot == 0) || (buf->rot == 180))
-          obr->gdiob = _find_gdiob(buf->priv.gdi.dc,
-                                   buf->priv.gdi.bitmap_info,
-                                   buf->priv.gdi.depth,
-                                   w, h, NULL);
-/*
-          obr->gdiob = evas_software_x11_x_output_buffer_new(buf->priv.dd.disp,
-                                                           buf->priv.dd.vis,
-                                                           buf->priv.dd.depth,
-                                                           w, h,
-                                                           use_shm,
-                                                           NULL);
- */
+          obr->gdiob = evas_software_gdi_output_buffer_new(buf->priv.gdi.dc,
+                                                           buf->priv.gdi.bitmap_info,
+                                                           w, h, NULL);
         else if ((buf->rot == 90) || (buf->rot == 270))
-          obr->gdiob = _find_gdiob(buf->priv.gdi.dc,
-                                   buf->priv.gdi.bitmap_info,
-                                   buf->priv.gdi.depth,
-                                   h, w, NULL);
-/*
-          obr->gdiob = evas_software_x11_x_output_buffer_new(buf->priv.dd.disp,
-                                                           buf->priv.dd.vis,
-                                                           buf->priv.dd.depth,
-                                                           h, w,
-                                                           use_shm,
-                                                           NULL);
- */
+          obr->gdiob = evas_software_gdi_output_buffer_new(buf->priv.gdi.dc,
+                                                           buf->priv.gdi.bitmap_info,
+                                                           h, w, NULL);
 /* 	if (buf->priv.gdi.mask) */
 /* 	  obr->mgdiob = _find_gdiob(buf->priv.gdi.dc, */
 /*                                     buf->priv.gdi.bitmap_info, */
@@ -336,16 +226,14 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
    obr = update->extended_info;
 
    if ((buf->rot == 0) || (buf->rot == 180))
-     conv_func = evas_common_convert_func_get(0, w, h,
-                                              evas_software_gdi_output_buffer_depth(obr->gdiob),
+     conv_func = evas_common_convert_func_get(0, w, h, 32,
                                               buf->priv.gdi.bitmap_info->masks[0],
                                               buf->priv.gdi.bitmap_info->masks[1],
                                               buf->priv.gdi.bitmap_info->masks[2],
                                               PAL_MODE_NONE,
                                               buf->rot);
    else if ((buf->rot == 90) || (buf->rot == 270))
-     conv_func = evas_common_convert_func_get(0, h, w,
-                                              evas_software_gdi_output_buffer_depth(obr->gdiob),
+     conv_func = evas_common_convert_func_get(0, h, w, 32,
                                               buf->priv.gdi.bitmap_info->masks[0],
                                               buf->priv.gdi.bitmap_info->masks[1],
                                               buf->priv.gdi.bitmap_info->masks[2],
@@ -389,7 +277,7 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
    if (data != src_data)
      conv_func(src_data, data,
                0,
-               bpl / (evas_software_gdi_output_buffer_depth(obr->gdiob) >> 3) - obr->width,
+               bpl / 4 - obr->width,
                obr->width,
                obr->height,
                x,
@@ -580,9 +468,9 @@ evas_software_gdi_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_UN
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
         evas_cache_image_drop(&im->cache_entry);
-        if (obr->gdiob) _unfind_gdiob(obr->gdiob);
+        if (obr->gdiob)
+          evas_software_gdi_output_buffer_free(obr->gdiob);
 /*         if (obr->mgdiob) _unfind_gdiob(obr->mgdiob); */
-/*         if (obr->gdiob) evas_software_x11_x_output_buffer_free(obr->gdiob); */
         free(obr);
      }
    buf->priv.prev_pending_writes = buf->priv.pending_writes;
@@ -605,11 +493,11 @@ evas_software_gdi_outbuf_idle_flush(Outbuf *buf)
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
         evas_cache_image_drop((Image_Entry *)im);
-        if (obr->gdiob) _unfind_gdiob(obr->gdiob);
+        if (obr->gdiob)
+          evas_software_gdi_output_buffer_free(obr->gdiob);
 /*         if (obr->mxob) _unfind_xob(obr->mxob, 0); */
         free(obr);
      }
-   _clear_gdiob();
 }
 
 int
@@ -622,12 +510,6 @@ int
 evas_software_gdi_outbuf_height_get(Outbuf *buf)
 {
    return buf->height;
-}
-
-Outbuf_Depth
-evas_software_gdi_outbuf_depth_get(Outbuf *buf)
-{
-   return buf->depth;
 }
 
 int

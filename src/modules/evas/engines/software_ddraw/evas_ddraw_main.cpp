@@ -3,7 +3,6 @@
 
 int
 evas_software_ddraw_init (HWND    window,
-                          int     depth,
                           int     fullscreen,
                           Outbuf *buf)
 {
@@ -38,12 +37,10 @@ evas_software_ddraw_init (HWND    window,
         pixel_format.dwSize = sizeof(pixel_format);
         buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
 
-        if (pixel_format.dwRGBBitCount != (DWORD)depth)
+        if (pixel_format.dwRGBBitCount != 32)
           goto release_object;
 
-        buf->priv.dd.depth = depth;
-
-        res = buf->priv.dd.object->SetDisplayMode(width, height, depth);
+        res = buf->priv.dd.object->SetDisplayMode(width, height, 32);
         if (FAILED(res))
           goto release_object;
 
@@ -54,7 +51,8 @@ evas_software_ddraw_init (HWND    window,
         surface_desc.dwBackBufferCount = 1;
 
         res = buf->priv.dd.object->CreateSurface(&surface_desc,
-                                                 &buf->priv.dd.surface_primary, NULL);
+                                                 &buf->priv.dd.surface_primary,
+                                                 NULL);
         if (FAILED(res))
           goto release_object;
 
@@ -116,10 +114,8 @@ evas_software_ddraw_init (HWND    window,
         pixel_format.dwSize = sizeof(pixel_format);
         buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
 
-        if (pixel_format.dwRGBBitCount != (DWORD)depth)
+        if (pixel_format.dwRGBBitCount != 32)
           goto release_surface_back;
-
-        buf->priv.dd.depth = depth;
      }
 
    return 1;
@@ -177,8 +173,7 @@ void *
 evas_software_ddraw_lock(Outbuf *buf,
                          int    *ddraw_width,
                          int    *ddraw_height,
-                         int    *ddraw_pitch,
-                         int    *ddraw_depth)
+                         int    *ddraw_pitch)
 {
    DDSURFACEDESC surface_desc;
 
@@ -194,7 +189,6 @@ evas_software_ddraw_lock(Outbuf *buf,
    *ddraw_width = surface_desc.dwWidth;
    *ddraw_height = surface_desc.dwHeight;
    *ddraw_pitch = surface_desc.lPitch;
-   *ddraw_depth = surface_desc.ddpfPixelFormat.dwRGBBitCount >> 3;
 
    return surface_desc.lpSurface;
 }

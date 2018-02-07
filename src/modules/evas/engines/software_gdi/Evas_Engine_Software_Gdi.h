@@ -17,7 +17,6 @@ struct _Evas_Engine_Info_Software_Gdi
 
    struct {
       HWND         window;
-      int          depth;
       int          rotation;
       unsigned int borderless : 1;
       unsigned int fullscreen : 1;

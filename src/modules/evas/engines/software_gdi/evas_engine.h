@@ -47,7 +47,6 @@ struct BITMAPINFO_GDI
 
 struct _Outbuf
 {
-   Outbuf_Depth          depth;
    int                   width;
    int                   height;
    int                   rot;
@@ -60,7 +59,6 @@ struct _Outbuf
          HWND            window;
          HDC             dc;
          HRGN            regions;
-         int             depth;
          unsigned char   borderless : 1;
          unsigned char   fullscreen : 1;
          unsigned char   region     : 1;
@@ -101,7 +99,6 @@ struct _Gdi_Output_Buffer
    int             width;
    int             height;
    void           *data;
-   int             depth;
    int             pitch;
    int             psize;
 };
@@ -109,7 +106,6 @@ struct _Gdi_Output_Buffer
 /* evas_gdi_main.c */
 
 int evas_software_gdi_init (HWND         window,
-                            int          depth,
                             unsigned int borderless,
                             unsigned int fullscreen,
                             unsigned int region,
@@ -123,7 +119,6 @@ void evas_software_gdi_bitmap_resize(Outbuf *buf);
 
 Gdi_Output_Buffer *evas_software_gdi_output_buffer_new(HDC             dc,
                                                        BITMAPINFO_GDI *bitmap_info,
-                                                       int             depth,
                                                        int             width,
                                                        int             height,
                                                        void           *data);
@@ -137,8 +132,6 @@ void evas_software_gdi_output_buffer_paste(Gdi_Output_Buffer *gdiob,
 DATA8 *evas_software_gdi_output_buffer_data(Gdi_Output_Buffer *gdiob,
                                             int               *pitch);
 
-int evas_software_gdi_output_buffer_depth(Gdi_Output_Buffer *gdiob);
-
 /* evas_outbuf.c */
 
 void evas_software_gdi_outbuf_init(void);
@@ -148,9 +141,7 @@ void evas_software_gdi_outbuf_free(Outbuf *buf);
 Outbuf *evas_software_gdi_outbuf_setup(int          width,
                                        int          height,
                                        int          rotation,
-                                       Outbuf_Depth depth,
                                        HWND         window,
-                                       int          w_depth,
                                        unsigned int borderless,
                                        unsigned int fullscreen,
                                        unsigned int region,
@@ -187,8 +178,6 @@ void evas_software_gdi_outbuf_idle_flush(Outbuf *buf);
 int evas_software_gdi_outbuf_width_get(Outbuf *buf);
 
 int evas_software_gdi_outbuf_height_get(Outbuf *buf);
-
-Outbuf_Depth evas_software_gdi_outbuf_depth_get(Outbuf *buf);
 
 int evas_software_gdi_outbuf_rot_get(Outbuf *buf);
 

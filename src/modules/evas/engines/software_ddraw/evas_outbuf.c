@@ -1,88 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_engine.h"
 
-
-static Eina_List *ddpool = NULL;
-static int ddsize = 0;
-
-#define ddmemlimit 10 * 1024 * 1024
-#define ddcountlimit 32
-
-static DD_Output_Buffer *
-_find_ddob(int depth, int w, int h, void *data)
-{
-   Eina_List        *l;
-   Eina_List        *ddl;
-   DD_Output_Buffer *ddob = NULL;
-   DD_Output_Buffer *ddob2;
-   int               sz;
-   int               lbytes;
-   int               bpp;
-
-   bpp = depth / 8;
-   if (bpp == 3) bpp = 4;
-   lbytes = (((w * bpp) + 3) / 4) * 4;
-   sz = lbytes * h;
-   EINA_LIST_FOREACH(ddpool, l, ddob2)
-     {
-	if (ddob2->depth != depth)
-	  continue;
-	if (ddob2->psize == sz)
-	  {
-	     ddob = ddob2;
-	     ddl = l;
-	     goto have_ddob;
-	  }
-     }
-   if (!ddob)
-     return evas_software_ddraw_output_buffer_new(depth, w, h, data);
-
-   have_ddob:
-   ddpool = eina_list_remove_list(ddpool, ddl);
-   ddob->width = w;
-   ddob->height = h;
-   ddob->pitch = lbytes;
-   ddsize -= ddob->psize * (ddob->depth / 8);
-
-   return ddob;
-}
-
-static void
-_unfind_ddob(DD_Output_Buffer *ddob)
-{
-   ddpool = eina_list_prepend(ddpool, ddob);
-   ddsize += ddob->psize * ddob->depth / 8;
-   while ((ddsize > (ddmemlimit)) ||
-          (eina_list_count(ddpool) > ddcountlimit))
-     {
-        Eina_List *xl;
-
-        xl = eina_list_last(ddpool);
-        if (!xl)
-          {
-             ddsize = 0;
-             break;
-          }
-        ddob = xl->data;
-        ddpool = eina_list_remove_list(ddpool, xl);
-        evas_software_ddraw_output_buffer_free(ddob);
-     }
-}
-
-static void
-_clear_ddob(int sync EINA_UNUSED)
-{
-   while (ddpool)
-     {
-	DD_Output_Buffer *ddob;
-
-	ddob = ddpool->data;
-	ddpool = eina_list_remove_list(ddpool, ddpool);
-	evas_software_ddraw_output_buffer_free(ddob);
-     }
-   ddsize = 0;
-}
-
 void
 evas_software_ddraw_outbuf_init(void)
 {
@@ -102,9 +20,7 @@ Outbuf *
 evas_software_ddraw_outbuf_setup(int          width,
                                  int          height,
                                  int          rotation,
-                                 Outbuf_Depth depth,
                                  HWND         window,
-                                 int          w_depth,
                                  int          fullscreen)
 {
    Outbuf *buf;
@@ -115,10 +31,9 @@ evas_software_ddraw_outbuf_setup(int          width,
 
    buf->width = width;
    buf->height = height;
-   buf->depth = depth;
    buf->rot = rotation;
 
-   if (!evas_software_ddraw_init(window, w_depth, fullscreen, buf))
+   if (!evas_software_ddraw_init(window, fullscreen, buf))
      {
         free(buf);
         return NULL;
@@ -128,7 +43,7 @@ evas_software_ddraw_outbuf_setup(int          width,
       Gfx_Func_Convert  conv_func;
       DD_Output_Buffer *ddob;
 
-      ddob = evas_software_ddraw_output_buffer_new(w_depth, 1, 1, NULL);
+      ddob = evas_software_ddraw_output_buffer_new(1, 1, NULL);
 
       conv_func = NULL;
       if (ddob)
@@ -139,7 +54,7 @@ evas_software_ddraw_outbuf_setup(int          width,
                   conv_func = evas_common_convert_func_get(0,
                                                            width,
                                                            height,
-                                                           evas_software_ddraw_output_buffer_depth (ddob),
+                                                           32,
                                                            buf->priv.mask.r,
                                                            buf->priv.mask.g,
                                                            buf->priv.mask.b,
@@ -149,7 +64,7 @@ evas_software_ddraw_outbuf_setup(int          width,
                   conv_func = evas_common_convert_func_get(0,
                                                            height,
                                                            width,
-                                                           evas_software_ddraw_output_buffer_depth (ddob),
+                                                           32,
                                                            buf->priv.mask.r,
                                                            buf->priv.mask.g,
                                                            buf->priv.mask.b,
@@ -163,11 +78,10 @@ evas_software_ddraw_outbuf_setup(int          width,
              {
                 ERR("DDraw engine Error"
                     " {"
-                    "  At depth         %i:"
+                    "  At depth         32:"
                     "  RGB format mask: %08x, %08x, %08x"
                     "  Not supported by and compiled in converters!"
                     " }",
-                    buf->priv.dd.depth,
                     buf->priv.mask.r,
                     buf->priv.mask.g,
                     buf->priv.mask.b);
@@ -183,10 +97,10 @@ evas_software_ddraw_outbuf_reconfigure(Outbuf      *buf,
                                        int          width,
                                        int          height,
                                        int          rotation,
-                                       Outbuf_Depth depth)
+                                       Outbuf_Depth depth EINA_UNUSED)
 {
    if ((width == buf->width) && (height == buf->height) &&
-       (rotation == buf->rot) && (depth == buf->depth))
+       (rotation == buf->rot))
      return;
    buf->width = width;
    buf->height = height;
@@ -225,13 +139,7 @@ evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
        (buf->priv.mask.g == 0x00ff00) &&
        (buf->priv.mask.b == 0x0000ff))
      {
-        obr->ddob = _find_ddob(buf->priv.dd.depth, w, h, NULL);
-/*      obr->ddob = evas_software_x11_x_output_buffer_new(buf->priv.dd.disp, */
-/*                                                         buf->priv.dd.vis, */
-/*                                                         buf->priv.dd.depth, */
-/*                                                         w, h, */
-/*                                                         use_shm, */
-/*                                                         NULL); */
+        obr->ddob = evas_software_ddraw_output_buffer_new(w, h, NULL);
         im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
                                                  w, h,
                                                  (DATA32 *) evas_software_ddraw_output_buffer_data(obr->ddob, &bpl),
@@ -245,25 +153,9 @@ evas_software_ddraw_outbuf_new_region_for_update(Outbuf *buf,
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
         im->extended_info = obr;
         if ((buf->rot == 0) || (buf->rot == 180))
-          obr->ddob = _find_ddob(buf->priv.dd.depth, w, h, NULL);
-/*
-          obr->ddob = evas_software_x11_x_output_buffer_new(buf->priv.dd.disp,
-                                                           buf->priv.dd.vis,
-                                                           buf->priv.dd.depth,
-                                                           w, h,
-                                                           use_shm,
-                                                           NULL);
- */
+          obr->ddob = evas_software_ddraw_output_buffer_new(w, h, NULL);
         else if ((buf->rot == 90) || (buf->rot == 270))
-          obr->ddob = _find_ddob(buf->priv.dd.depth, h, w, NULL);
-/*
-          obr->ddob = evas_software_x11_x_output_buffer_new(buf->priv.dd.disp,
-                                                           buf->priv.dd.vis,
-                                                           buf->priv.dd.depth,
-                                                           h, w,
-                                                           use_shm,
-                                                           NULL);
- */
+          obr->ddob = evas_software_ddraw_output_buffer_new(h, w, NULL);
      }
 
    buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
@@ -289,7 +181,7 @@ evas_software_ddraw_outbuf_push_updated_region(Outbuf     *buf,
 
    if ((buf->rot == 0) || (buf->rot == 180))
      conv_func = evas_common_convert_func_get(0, w, h,
-                                              evas_software_ddraw_output_buffer_depth(obr->ddob),
+                                              32,
                                               buf->priv.mask.r,
                                               buf->priv.mask.g,
                                               buf->priv.mask.b,
@@ -297,7 +189,7 @@ evas_software_ddraw_outbuf_push_updated_region(Outbuf     *buf,
                                               buf->rot);
    else if ((buf->rot == 90) || (buf->rot == 270))
      conv_func = evas_common_convert_func_get(0, h, w,
-                                              evas_software_ddraw_output_buffer_depth(obr->ddob),
+                                              32,
                                               buf->priv.mask.r,
                                               buf->priv.mask.g,
                                               buf->priv.mask.b,
@@ -340,7 +232,7 @@ evas_software_ddraw_outbuf_push_updated_region(Outbuf     *buf,
    if (data != src_data)
      conv_func(src_data, data,
                0,
-               bpl / ((evas_software_ddraw_output_buffer_depth(obr->ddob) / 8)) - obr->width,
+               bpl / 4 - obr->width,
                obr->width,
                obr->height,
                x,
@@ -358,7 +250,6 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_
    int        ddraw_width;
    int        ddraw_height;
    int        ddraw_pitch;
-   int        ddraw_depth;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
@@ -366,8 +257,7 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_
    if (!(ddraw_data = evas_software_ddraw_lock(buf,
                                                &ddraw_width,
                                                &ddraw_height,
-                                               &ddraw_pitch,
-                                               &ddraw_depth)))
+                                               &ddraw_pitch)))
      goto free_images;
 
    /* copy safely the images that need to be drawn onto the back surface */
@@ -382,7 +272,6 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_
                                                 ddraw_width,
                                                 ddraw_height,
                                                 ddraw_pitch,
-                                                ddraw_depth,
 						obr->x,
 						obr->y);
      }
@@ -399,10 +288,8 @@ evas_software_ddraw_outbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
         evas_cache_image_drop(&im->cache_entry);
-        if (obr->ddob) _unfind_ddob(obr->ddob);
-/*
-	     if (obr->ddob) evas_software_x11_x_output_buffer_free(obr->ddob);
- */
+        if (obr->ddob)
+          evas_software_ddraw_output_buffer_free(obr->ddob);
         free(obr);
      }
    buf->priv.prev_pending_writes = buf->priv.pending_writes;
@@ -425,10 +312,10 @@ evas_software_ddraw_outbuf_idle_flush(Outbuf *buf)
                                 buf->priv.prev_pending_writes);
         obr = im->extended_info;
         evas_cache_image_drop((Image_Entry *)im);
-        if (obr->ddob) _unfind_ddob(obr->ddob);
+        if (obr->ddob)
+          evas_software_ddraw_output_buffer_free(obr->ddob);
         free(obr);
      }
-   _clear_ddob(0);
 }
 
 int
@@ -441,12 +328,6 @@ int
 evas_software_ddraw_outbuf_height_get(Outbuf *buf)
 {
    return buf->height;
-}
-
-Outbuf_Depth
-evas_software_ddraw_outbuf_depth_get(Outbuf *buf)
-{
-   return buf->depth;
 }
 
 int

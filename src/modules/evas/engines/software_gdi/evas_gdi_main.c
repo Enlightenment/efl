@@ -4,7 +4,6 @@
 
 int
 evas_software_gdi_init (HWND         window,
-                        int          depth,
                         unsigned int borderless,
                         unsigned int fullscreen EINA_UNUSED,
                         unsigned int region,
@@ -26,14 +25,12 @@ evas_software_gdi_init (HWND         window,
         return 0;
      }
 
-   /* FIXME: check depth */
-   if (depth != GetDeviceCaps(buf->priv.gdi.dc, BITSPIXEL))
+   if (GetDeviceCaps(buf->priv.gdi.dc, BITSPIXEL) != 32)
      {
         ERR("[Engine] [GDI] no compatible depth");
         ReleaseDC(window, buf->priv.gdi.dc);
         return 0;
      }
-   buf->priv.gdi.depth = depth;
 
    /* FIXME: support fullscreen */
 
@@ -49,32 +46,16 @@ evas_software_gdi_init (HWND         window,
    buf->priv.gdi.bitmap_info->bih.biWidth = buf->width;
    buf->priv.gdi.bitmap_info->bih.biHeight = -buf->height;
    buf->priv.gdi.bitmap_info->bih.biPlanes = 1;
-   buf->priv.gdi.bitmap_info->bih.biSizeImage = (buf->priv.gdi.depth >> 3) * buf->width * buf->height;
+   buf->priv.gdi.bitmap_info->bih.biSizeImage = 4 * buf->width * buf->height;
    buf->priv.gdi.bitmap_info->bih.biXPelsPerMeter = 0;
    buf->priv.gdi.bitmap_info->bih.biYPelsPerMeter = 0;
    buf->priv.gdi.bitmap_info->bih.biClrUsed = 0;
    buf->priv.gdi.bitmap_info->bih.biClrImportant = 0;
-   buf->priv.gdi.bitmap_info->bih.biBitCount = buf->priv.gdi.depth;
+   buf->priv.gdi.bitmap_info->bih.biBitCount = 32;
    buf->priv.gdi.bitmap_info->bih.biCompression = BI_BITFIELDS;
-
-   switch (depth)
-     {
-      case 16:
-         buf->priv.gdi.bitmap_info->masks[0] = 0x0000f800;
-         buf->priv.gdi.bitmap_info->masks[1] = 0x000007e0;
-         buf->priv.gdi.bitmap_info->masks[2] = 0x0000001f;
-         break;
-      case 32:
-         buf->priv.gdi.bitmap_info->masks[0] = 0x00ff0000;
-         buf->priv.gdi.bitmap_info->masks[1] = 0x0000ff00;
-         buf->priv.gdi.bitmap_info->masks[2] = 0x000000ff;
-         break;
-      default:
-        ERR("[Engine] [GDI] wrong depth");
-        free(buf->priv.gdi.bitmap_info);
-        ReleaseDC(window, buf->priv.gdi.dc);
-        return 0;
-     }
+   buf->priv.gdi.bitmap_info->masks[0] = 0x00ff0000;
+   buf->priv.gdi.bitmap_info->masks[1] = 0x0000ff00;
+   buf->priv.gdi.bitmap_info->masks[2] = 0x000000ff;
 
    return 1;
 }
@@ -96,5 +77,5 @@ evas_software_gdi_bitmap_resize(Outbuf *buf)
 {
    buf->priv.gdi.bitmap_info->bih.biWidth = buf->width;
    buf->priv.gdi.bitmap_info->bih.biHeight = -buf->height;
-   buf->priv.gdi.bitmap_info->bih.biSizeImage = (buf->priv.gdi.depth >> 3) * buf->width * buf->height;
+   buf->priv.gdi.bitmap_info->bih.biSizeImage = 4 * buf->width * buf->height;
 }

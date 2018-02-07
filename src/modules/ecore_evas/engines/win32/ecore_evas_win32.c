@@ -1334,7 +1334,6 @@ _ecore_evas_engine_software_gdi_init(Ecore_Evas *ee)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((Ecore_Win32_Window *)ee->prop.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();
         einfo->info.rotation = 0;
         einfo->info.borderless = 0;
         einfo->info.fullscreen = 0;
@@ -1377,7 +1376,6 @@ _ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((Ecore_Win32_Window *)ee->prop.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();
         einfo->info.rotation = 0;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
