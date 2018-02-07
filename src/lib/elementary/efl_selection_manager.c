@@ -28,6 +28,8 @@ void efl_selection_manager_drop_target_del(Eo *obj, Efl_Object *target_obj, Efl_
 void efl_selection_manager_selection_clear(Eo *obj, Efl_Object *owner, Efl_Selection_Type type, unsigned int seat);
 void efl_selection_manager_drag_start(Eo *obj, Efl_Object *drag_obj, Efl_Selection_Format format, Eina_Slice data, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, unsigned int seat);
 
+static unsigned int managers;
+
 #ifdef HAVE_ELEMENTARY_X
 static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
 static Ecore_X_Atom _x11_dnd_action_rev_map(Efl_Selection_Action action);
@@ -4968,6 +4970,80 @@ _efl_selection_manager_container_drag_item_del(Eo *obj EINA_UNUSED, Efl_Selectio
 static Eo *
 _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2)
+   const char *ev = getenv("ELM_DISPLAY");
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   Eina_Bool init_x = EINA_FALSE;
+   Eina_Bool have_display = !!getenv("DISPLAY");
+
+   if (ev) /* If ELM_DISPLAY is specified */
+     {
+        if (!strcmp(ev, "x11")) /* and it is X11 */
+          {
+             if (!have_display) /* if there is no $DISPLAY */
+               {
+                  ERR("$ELM_DISPLAY is set to x11 but $DISPLAY is not set");
+                  init_x = EINA_FALSE;
+               }
+             else /* if there is */
+               init_x = EINA_TRUE;
+          }
+        else /* not X11 */
+          init_x = EINA_FALSE;
+     }
+   else /* ELM_DISPLAY not specified */
+     {
+        if (have_display) /* If there is a $DISPLAY */
+          init_x = EINA_TRUE;
+        else /* No $DISPLAY */
+          init_x = EINA_FALSE;
+     }
+   if (init_x)
+     {
+        ecore_x_init(NULL);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   Eina_Bool init_wl = EINA_FALSE;
+   Eina_Bool have_wl_display = !!getenv("WAYLAND_DISPLAY");
+
+   if (ev) /* If ELM_DISPLAY is specified */
+     {
+        if (!strcmp(ev, "wl")) /* and it is WL */
+          {
+             /* always try to connect to wl when it is enforced */
+             init_wl = EINA_TRUE;
+          }
+        else /* not wl */
+          init_wl = EINA_FALSE;
+     }
+   else /* ELM_DISPLAY not specified */
+     {
+        /* If there is a $WAYLAND_DISPLAY */
+        if ((have_wl_display) && (!getenv("DISPLAY")))
+          init_wl = EINA_TRUE;
+        else /* No $WAYLAND_DISPLAY */
+          init_wl = EINA_FALSE;
+     }
+   if (init_wl)
+     {
+        if (!ecore_wl2_init())
+          {
+             ERR("Could not initialize Ecore_Wl2");
+             return NULL;
+          }
+        _elm_wl_display = ecore_wl2_display_connect(NULL);
+        if (!_elm_wl_display)
+          {
+             ERR("Could not connect to Wayland Display");
+             ecore_wl2_shutdown();
+             return NULL;
+          }
+     }
+#endif
+
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->sel_man = obj;
@@ -5214,6 +5290,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
    pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
                                              _wl_dnd_end, pd);
 #endif
+   managers++;
    return obj;
 }
 
@@ -5264,6 +5341,70 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
    eina_stringshare_del(pd->text_uri);
 
    efl_destructor(efl_super(obj, MY_CLASS));
+   managers--;
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2) || defined(HAVE_ELEMENTARY_WIN32)
+   const char *ev = getenv("ELM_DISPLAY");
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   Eina_Bool init_x = EINA_FALSE;
+   Eina_Bool have_display = !!getenv("DISPLAY");
+
+   if (ev) /* If ELM_DISPLAY is specified */
+     {
+        if (!strcmp(ev, "x11")) /* and it is X11 */
+          {
+             if (!have_display) /* if there is no $DISPLAY */
+               {
+                  ERR("$ELM_DISPLAY is set to x11 but $DISPLAY is not set");
+                  init_x = EINA_FALSE;
+               }
+             else /* if there is */
+               init_x = EINA_TRUE;
+          }
+        else /* not X11 */
+          init_x = EINA_FALSE;
+     }
+   else /* ELM_DISPLAY not specified */
+     {
+        if (have_display) /* If there is a $DISPLAY */
+          init_x = EINA_TRUE;
+        else /* No $DISPLAY */
+          init_x = EINA_FALSE;
+     }
+   if (init_x)
+     {
+        ecore_x_shutdown();
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   Eina_Bool init_wl = EINA_FALSE;
+   Eina_Bool have_wl_display = !!getenv("WAYLAND_DISPLAY");
+
+   if (ev) /* If ELM_DISPLAY is specified */
+     {
+        if (!strcmp(ev, "wl")) /* and it is WL */
+          {
+             /* always try to connect to wl when it is enforced */
+             init_wl = EINA_TRUE;
+          }
+        else /* not wl */
+          init_wl = EINA_FALSE;
+     }
+   else /* ELM_DISPLAY not specified */
+     {
+        /* If there is a $WAYLAND_DISPLAY */
+        if ((have_wl_display) && (!getenv("DISPLAY")))
+          init_wl = EINA_TRUE;
+        else /* No $WAYLAND_DISPLAY */
+          init_wl = EINA_FALSE;
+     }
+   if (init_wl)
+     {
+        if (!managers) ecore_wl2_display_disconnect(_elm_wl_display);
+        ecore_wl2_shutdown();
+     }
+#endif
 }
 
 #ifdef HAVE_ELEMENTARY_X
