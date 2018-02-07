@@ -400,6 +400,7 @@ _efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
+ELM_PART_TEXT_DEFAULT_GET(efl_ui_button, _text_aliases[0].real_part)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_button, _content_aliases[0].real_part)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)

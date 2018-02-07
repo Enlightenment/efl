@@ -203,6 +203,7 @@ _efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 
 /* Default text (title) and content */
 
+ELM_PART_TEXT_DEFAULT_GET(efl_ui_frame, "elm.text")
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_frame, "elm.swallow.content")

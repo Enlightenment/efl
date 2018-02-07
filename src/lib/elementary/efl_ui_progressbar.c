@@ -724,6 +724,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_min_max_get(Eo *obj, void *_pd EINA_
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
+ELM_PART_TEXT_DEFAULT_GET(efl_ui_progressbar, _text_aliases[0].real_part)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_progressbar, _content_aliases[0].real_part)

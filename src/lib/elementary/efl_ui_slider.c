@@ -1395,6 +1395,7 @@ _efl_ui_slider_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl
 
 /* Standard widget overrides */
 
+ELM_PART_TEXT_DEFAULT_GET(efl_ui_slider, _text_aliases[0].real_part)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_slider, _content_aliases[0].real_part)
