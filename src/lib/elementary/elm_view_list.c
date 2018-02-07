@@ -428,7 +428,7 @@ _elm_view_list_model_set(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv, Efl_Mode
 }
 
 static Efl_Model *
-_elm_view_list_model_get(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv)
+_elm_view_list_model_get(const Eo *obj EINA_UNUSED, Elm_View_List_Data *priv)
 {
    return priv->connect.model;
 }

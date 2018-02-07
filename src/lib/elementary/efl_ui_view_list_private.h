@@ -27,39 +27,31 @@ struct _Efl_Ui_View_List_Data
    Efl_Ui_View_List_Pan              *pan_obj;
    Efl_Model                    *model;
 
-   struct {
-      double                    h, v;
-      Eina_Bool                 scalable: 1;
-   } pad;
+   Eina_Stringshare             *style;
 
    struct {
-      double                    h, v;
-   } align;
+      Eina_Future *future;
 
-   struct {
-      double                    x, y;
-   } weight;
+      int start;
+      int count;
+   } slice;
+
+   Efl_Ui_Layout_Factory        *factory;
+   Eina_List                    *selected_items;
+
+   Efl_Ui_Focus_Manager         *manager;
+   Efl_Ui_View_List_Relayout    *relayout;
+
+   Efl_Orient                   orient;
 
    int segarray_first;
    Efl_Ui_View_List_SegArray         *segarray;
 
-   Efl_Ui_Layout_Factory        *factory;
-   Eina_List                    *selected_items;
-   Eina_Stringshare             *style;
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
 
-   Efl_Ui_Focus_Manager         *manager;
    Eina_Rect                    gmt;
    Eina_Size2D                  min;
-   int                          item_count;
-   Efl_Future                   *slice_future;
-   Efl_Future                   *count_future;
-   Efl_Ui_View_List_Relayout         *relayout;
-   struct {
-     int slice_start;
-     int slice_count;
-   } outstanding_slice;
 
    Eina_Bool                    homogeneous : 1;
    Eina_Bool                    recalc : 1;

@@ -195,32 +195,6 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
    _efl_ui_view_list_item_select_set(item, EINA_TRUE);
 }
 
-static void
-_count_then(void * data, Efl_Event const* event EINA_UNUSED)
-{
-   Efl_Ui_View_List_Data *pd = data;
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-
-   pd->count_future = NULL;
-   _layout(pd);
-}
-
-static void
-_count_error(void * data, Efl_Event const* event EINA_UNUSED)
-{
-   Efl_Ui_View_List_Data *pd = data;
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-   pd->count_future = NULL;
-}
-
-static void
-_children_slice_error(void * data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
-{
-   Efl_Ui_View_List_Data *pd = data;
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-   pd->slice_future = NULL;
-}
-
 EOLIAN static void
 _efl_ui_view_list_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, Elm_Object_Select_Mode mode)
 {
@@ -735,8 +709,7 @@ _efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
    pd->factory = NULL;
-   pd->align.h = 0;
-   pd->align.v = 0;
+   pd->orient = EFL_ORIENT_DOWN;
    pd->min.w = 0;
    pd->min.h = 0;
 
@@ -776,29 +749,20 @@ _efl_ui_view_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Da
    if (pd->model == model)
      return;
 
-   if (pd->count_future)
-     {
-        efl_future_cancel(pd->count_future);
-        pd->count_future = NULL;
-     }
 
    if (pd->model)
      {
         if (pd->relayout)
           efl_ui_view_list_relayout_model_set(pd->relayout, NULL);
         efl_ui_view_list_segarray_flush(pd->segarray);
-        efl_unref(pd->model);
-        pd->model = NULL;
      }
+
+   efl_replace(&pd->model, model);
 
    if (model)
      {
-        pd->model = model;
-        efl_ref(pd->model);
         if (pd->relayout)
           efl_ui_view_list_relayout_model_set(pd->relayout, model);
-        pd->count_future = efl_model_children_count_get(pd->model);
-        efl_future_then(pd->count_future, &_count_then, &_count_error, NULL, pd);
      }
 
    evas_object_smart_changed(pd->obj);
@@ -908,11 +872,7 @@ _efl_ui_view_list_item_select_set(Efl_Ui_View_List_LayoutItem *item, Eina_Bool s
 static void
 _efl_ui_view_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_View_List_Relayout *object)
 {
-   if(pd->relayout)
-     efl_unref(pd->relayout);
-
-   pd->relayout = object;
-   efl_ref(pd->relayout);
+   efl_replace(&pd->relayout, object);
 }
 
 static Efl_Ui_View_List_Relayout *
@@ -930,17 +890,22 @@ _layout(Efl_Ui_View_List_Data *pd)
    efl_ui_view_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, pd->segarray);
 }
 
-static void
-_children_slice_then(void * data, Efl_Event const* event)
+static Eina_Value
+_children_slice_then(void * data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
    Efl_Ui_View_List_Data *pd = data;
-   Eina_Accessor *acc = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
 
-   efl_ui_view_list_segarray_insert_accessor(pd->segarray, pd->outstanding_slice.slice_start, acc);
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     goto on_error;
 
-   pd->segarray_first = pd->outstanding_slice.slice_start;
-   pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
-   pd->slice_future = NULL;
+   efl_ui_view_list_segarray_insert_value(pd->segarray, pd->slice.start, v);
+
+   pd->segarray_first = pd->slice.start;
+   pd->slice.start = pd->slice.count = 0;
+   pd->slice.future = NULL;
+
+ on_error:
+   return v;
 }
 
 /* EFL UI LIST MODEL INTERFACE */
@@ -1039,21 +1004,24 @@ _efl_ui_view_list_efl_ui_view_list_model_unrealize(Eo *obj, Efl_Ui_View_List_Dat
 }
 
 EOLIAN static void
-_efl_ui_view_list_efl_ui_view_list_model_load_range_set(Eo* obj EINA_UNUSED, Efl_Ui_View_List_Data* pd, int first, int count)
+_efl_ui_view_list_efl_ui_view_list_model_load_range_set(Eo* obj, Efl_Ui_View_List_Data* pd, int first, int count)
 {
-   if(!pd->slice_future)
-     {
-        pd->slice_future = efl_model_children_slice_get(pd->model, first, count);
-        pd->outstanding_slice.slice_start = first;
-        pd->outstanding_slice.slice_count = count;
-        efl_future_then(pd->slice_future, &_children_slice_then, &_children_slice_error, NULL, pd);
-     }
+   Eina_Future *f;
+
+   if (pd->slice.future) return ;
+
+   pd->slice.start = first;
+   pd->slice.count = count;
+
+   f = efl_model_children_slice_get(pd->model, first, count);
+   f = eina_future_then(f, _children_slice_then, pd);
+   pd->slice.future = efl_future_Eina_FutureXXX_then(obj, f);
 }
 
 EOLIAN static int
 _efl_ui_view_list_efl_ui_view_list_model_model_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
-    return pd->item_count;
+   return efl_model_children_count_get(pd->model);
 }
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_view_list, Efl_Ui_View_List_Data)

@@ -20,11 +20,11 @@ class Efl.Ui.View_List_SegArray (Efl.Object)
              acc: accessor<ptr(Efl.Ui.View.List.SegArray.Node)>;
          }
       }
-      insert_accessor {
+      insert_value {
          [[ Insert a accessor in segarray tree ]]
           params {
               @in first: int;
-              @in acc: accessor<Efl.Model>;
+              @in v: any_value;
           }
       }
       count {

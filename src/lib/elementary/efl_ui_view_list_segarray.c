@@ -215,28 +215,49 @@ _efl_ui_view_list_segarray_insert(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray
     _efl_ui_view_list_segarray_insert_at_node(pd, index, item, NULL);
 }
 
-EOLIAN static void
-_efl_ui_view_list_segarray_insert_accessor(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd, int first, Eina_Accessor* accessor)
+static void
+efl_ui_view_list_segarray_insert_object(Efl_Ui_View_List_SegArray_Data *segarray, unsigned int index, Efl_Model *children)
 {
-   int i;
-   Efl_Model* children;
+   Efl_Ui_View_List_SegArray_Node *node;
 
-   EINA_ACCESSOR_FOREACH(accessor, i, children)
+   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
+                                           &index, sizeof(index), &_insert_lookup_cb, NULL);
+   if (!node)
      {
-        Efl_Ui_View_List_SegArray_Node *node;
-        int idx = first + i;
+        node = _alloc_node(segarray, index);
+     }
 
-        node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(pd->root),
-                                                &idx, sizeof(idx), &_insert_lookup_cb, NULL);
-        if (!node)
+   assert(node->length < node->max);
+   node->pointers[node->length] = _create_item(children, node, index);
+   node->length++;
+   segarray->count++;
+}
+
+EOLIAN static void
+_efl_ui_view_list_segarray_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data *segarray, int first, Eina_Value v)
+{
+   Efl_Model *children;
+   unsigned int i, len;
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_OBJECT)
+     {
+        children = eina_value_object_get(&v);
+        efl_ui_view_list_segarray_insert_object(segarray, first, children);
+     }
+   else if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ARRAY)
+     {
+        Eina_Value vo = EINA_VALUE_EMPTY;
+
+        EINA_VALUE_ARRAY_FOREACH(&v, len, i, children)
           {
-             node = _alloc_node(pd, idx);
-          }
+             unsigned int idx = first + i;
 
-        assert(node->length < node->max);
-        node->pointers[node->length] = _create_item(children, node, idx);
-        node->length++;
-        pd->count++;
+             efl_ui_view_list_segarray_insert_object(segarray, idx, children);
+          }
+     }
+   else
+     {
+        printf("Unknow type !\n");
      }
 }
 
