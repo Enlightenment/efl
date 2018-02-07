@@ -1146,39 +1146,6 @@ elm_quicklaunch_fork(int    argc,
         evas_init();
         _elm_module_init();
         _elm_config_sub_init();
-# ifdef HAVE_ELEMENTARY_X
-          {
-             Eina_Bool init_x;
-             const char *ev = getenv("ELM_DISPLAY");
-             Eina_Bool have_display = !!getenv("DISPLAY");
-
-             if (ev) /* If ELM_DISPLAY is specified */
-               {
-                  if (!strcmp(ev, "x11")) /* and it is X11 */
-                    {
-                       if (!have_display) /* if there is no $DISPLAY */
-                         {
-                            ERR("$ELM_DISPLAY is set to x11 but $DISPLAY"
-                                " is not set");
-                            init_x = EINA_FALSE;
-                         }
-                       else /* if there is */
-                         init_x = EINA_TRUE;
-                    }
-                  else /* not X11 */
-                    init_x = EINA_FALSE;
-               }
-             else /* ELM_DISPLAY not specified */
-               {
-                  if (have_display) /* If there is a $DISPLAY */
-                    init_x = EINA_TRUE;
-                  else /* No $DISPLAY */
-                    init_x = EINA_FALSE;
-               }
-             if (init_x)
-               ecore_x_init(NULL);
-          }
-# endif
         ecore_evas_init(); // FIXME: check errors
         ecore_imf_init();
 #endif
