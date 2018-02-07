@@ -89,7 +89,7 @@ ecore_event_del(Ecore_Event *event)
 {
    void *data = NULL;
    if (!event) return data;
-   ecore_event_message_data_get((Eo *)event, NULL, &data, NULL, NULL);
+   ecore_event_message_data_get((Eo *)event, NULL, NULL, NULL, &data);
    _efl_loop_message_unsend((Eo *)event);
    return data;
 }
