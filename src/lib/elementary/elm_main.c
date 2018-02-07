@@ -1183,7 +1183,7 @@ elm_quicklaunch_fork(int    argc,
 #endif
      }
 
-   setsid();
+   if (setsid() < 0) perror("could not setsid");
    if (chdir(cwd) != 0) perror("could not chdir");
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
