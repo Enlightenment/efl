@@ -413,18 +413,10 @@ _flush_cb(void *data, void *handler EINA_UNUSED, void *message)
 {
    int *type = data;
    int evtype = -1;
-   void *evdata = NULL, *free_func = NULL, *free_data = NULL;
-   Ecore_End_Cb fn_free = NULL;
 
    if (!efl_isa(message, ECORE_EVENT_MESSAGE_CLASS)) return EINA_TRUE;
-   ecore_event_message_data_steal(message, &evtype, &evdata, &free_func, &free_data);
-   if (*type != evtype) return EINA_TRUE;
-   if (free_func)
-     {
-        fn_free = free_func;
-        fn_free(free_data, evdata);
-     }
-   return EINA_FALSE;
+   ecore_event_message_data_get(message, &evtype, NULL, NULL, NULL);
+   return *type != evtype;
 }
 
 EOLIAN static void
