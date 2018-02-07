@@ -75,6 +75,8 @@ _activate(Evas_Object *obj)
              _elm_access_say(E_("State: Off"));
      }
 
+   efl_event_callback_legacy_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
+
    if (_elm_config->atspi_mode)
        efl_access_state_changed_signal_emit(obj,
                                                                 EFL_ACCESS_STATE_CHECKED,
