@@ -178,34 +178,34 @@ _ ## full ## _efl_text_markup_markup_set(Eo *obj, void *_pd EINA_UNUSED, const c
 EOLIAN static void \
 _ ## type ## _efl_text_text_set(Eo *obj, typedata *sd EINA_UNUSED, const char *text) \
 { \
-   efl_text_set(efl_part(efl_super(obj, MY_CLASS), efl_ui_widget_default_text_part_get(obj)), text); \
+   efl_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), text); \
 } \
 EOLIAN static const char * \
 _ ## type ## _efl_text_text_get(Eo *obj, typedata *sd EINA_UNUSED) \
 { \
-  return efl_text_get(efl_part(efl_super(obj, MY_CLASS), efl_ui_widget_default_text_part_get(obj))); \
+  return efl_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj))); \
 } \
 EOLIAN static void \
 _ ## type ## _efl_ui_translatable_translatable_text_set(Eo *obj, typedata *sd EINA_UNUSED, const char *label, const char *domain) \
 { \
-   efl_ui_translatable_text_set(efl_part(efl_super(obj, MY_CLASS), efl_ui_widget_default_text_part_get(obj)), label, domain); \
+   efl_ui_translatable_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), label, domain); \
 } \
 EOLIAN static const char * \
 _ ## type ## _efl_ui_translatable_translatable_text_get(Eo *obj, typedata *sd EINA_UNUSED, const char **domain) \
 { \
-  return efl_ui_translatable_text_get(efl_part(efl_super(obj, MY_CLASS), efl_ui_widget_default_text_part_get(obj)), domain); \
+  return efl_ui_translatable_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), domain); \
 }
 
 #define ELM_PART_MARKUP_DEFAULT_IMPLEMENT(type, typedata) \
 EOLIAN static const char * \
 _ ## type ## _efl_text_markup_markup_get(Eo *obj, typedata *sd EINA_UNUSED) \
 { \
-  return efl_text_markup_get(efl_part(efl_super(obj, MY_CLASS), efl_ui_widget_default_text_part_get(obj))); \
+  return efl_text_markup_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj))); \
 } \
 EOLIAN static void \
 _ ## type ## _efl_text_markup_markup_set(Eo *obj, typedata *sd EINA_UNUSED, const char *markup) \
 { \
-  efl_text_markup_set(efl_part(efl_super(obj, MY_CLASS), efl_ui_widget_default_text_part_get(obj)), markup); \
+  efl_text_markup_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), markup); \
 }
 
 #endif
