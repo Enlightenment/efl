@@ -40,7 +40,6 @@ struct _Ecore_Evas_Engine_Wl_Data
    Ecore_Wl2_Window *parent, *win;
    Ecore_Event_Handler *sync_handler;
    int fx, fy, fw, fh;
-   Eina_Rectangle content;
    Ecore_Wl2_Frame_Cb_Handle *frame;
    int x_rel;
    int y_rel;
