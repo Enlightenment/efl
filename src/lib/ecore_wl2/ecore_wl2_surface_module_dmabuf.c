@@ -47,7 +47,7 @@ _evas_dmabuf_surface_setup(Ecore_Wl2_Window *win)
 }
 
 static void
-_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data, int w, int h, uint32_t flags EINA_UNUSED)
+_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool alpha EINA_UNUSED)
 {
    Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;

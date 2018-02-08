@@ -27,13 +27,14 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 }
 
 EAPI void
-ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags)
+ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs->reconfigure(surface, surface->private_data, w, h, flags);
+   surface->funcs->reconfigure(surface, surface->private_data, w, h, flags, alpha);
    surface->w = w;
    surface->h = h;
+   surface->alpha = alpha;
 }
 
 EAPI void *
