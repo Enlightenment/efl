@@ -1449,7 +1449,6 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
 #ifdef HAVE_ELEMENTARY_WL2
    int ox, oy, ow, oh;
    Eina_Bool alpha;
-   Ecore_Evas_Engine_Wl_Data *wdata;
    const char *engine_name;
 
    if (!sd->wl.win) return;
@@ -1461,7 +1460,6 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
    engine_name = ecore_evas_engine_name_get(sd->ee);
    if (strncmp(engine_name, "wayland", sizeof("wayland") - 1)) return;
 
-   wdata = sd->ee->engine.data;
    alpha = ecore_evas_alpha_get(sd->ee) || force_alpha;
    if (sd->fullscreen || !sd->frame_obj)
      {
@@ -1470,9 +1468,6 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
           ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
         else
           ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
-        wdata->content.x = wdata->content.y = 0;
-        wdata->content.w = ow;
-        wdata->content.h = oh;
         ecore_wl2_window_geometry_set(sd->wl.win, 0, 0, ow, oh);
         ecore_wl2_window_input_region_set(sd->wl.win, 0, 0, ow, oh);
         return;
@@ -1480,9 +1475,6 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
 
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                  &ox, &oy, &ow, &oh);
-   edje_object_part_geometry_get(sd->frame_obj, "elm.swallow.client",
-                                 &wdata->content.x, &wdata->content.y,
-                                 &wdata->content.w, &wdata->content.h);
    if (!alpha)
      ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
    else
