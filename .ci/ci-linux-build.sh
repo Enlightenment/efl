@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 PARALLEL_JOBS=10
 
 CI_BUILD_TYPE=$1

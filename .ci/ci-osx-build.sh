@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 COPTS="--with-crypto=none --disable-pulseaudio --disable-cxx-bindings"
 PARALLEL_JOBS=10
 
