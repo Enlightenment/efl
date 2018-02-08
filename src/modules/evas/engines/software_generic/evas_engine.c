@@ -4574,7 +4574,7 @@ _draw_thread_ector_surface_set(void *data)
         memset(pixels, 0, (w * h * 4));
      }
 
-   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
    ector_surface_reference_point_set(ector_surface->ector, x, y);
 
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
@@ -4612,7 +4612,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         // clear the surface before giving to ector
         memset(pixels, 0, (w * h * 4));
 
-        ector_buffer_pixels_set(ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
 }
@@ -4636,7 +4636,7 @@ eng_ector_end(void *engine EINA_UNUSED, void *surface EINA_UNUSED,
      }
    else
      {
-        ector_buffer_pixels_set(ector, NULL, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         evas_common_cpu_end_opt();
      }
 }

@@ -32,7 +32,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj,
    evas_cache_image_ref(&im->cache_entry);
    pd->image = im;
 
-   ector_buffer_pixels_set(obj, im->image.data, im->cache_entry.w, im->cache_entry.h, im->cache_entry.space, EINA_TRUE);
+   ector_buffer_pixels_set(obj, im->image.data, im->cache_entry.w, im->cache_entry.h, 0, im->cache_entry.space, EINA_TRUE);
 }
 
 EOLIAN static void *
