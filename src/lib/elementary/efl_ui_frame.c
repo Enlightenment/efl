@@ -217,6 +217,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_frame)
 #define EFL_UI_FRAME_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_frame), \
+   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_frame), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_frame), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_frame)
 

@@ -1542,7 +1542,9 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_slider)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_slider), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_slider), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider), \
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_slider), \
+   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_slider)
 
 #include "efl_ui_slider.eo.c"
 

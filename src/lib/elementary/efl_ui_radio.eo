@@ -66,8 +66,6 @@ class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
       Efl.Ui.Widget.widget_event;
       Efl.Access.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
       Efl.Ui.Nstate.value { set; get; }
    }
 }
