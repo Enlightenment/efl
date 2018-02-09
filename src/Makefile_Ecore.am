@@ -43,6 +43,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_model_composite.eo
 
 ecore_eolian_files = \
+	$(ecore_eolian_files_legacy) \
 	$(ecore_eolian_files_public) \
         lib/ecore/efl_loop_message_future_handler.eo \
         lib/ecore/efl_loop_message_future.eo \
@@ -54,7 +55,7 @@ ecore_eolian_files = \
 	lib/ecore/efl_model_composite_boolean_children.eo \
 	lib/ecore/efl_model_composite_selection.eo \
 	lib/ecore/efl_model_composite_selection_children.eo \
-	$(ecore_eolian_files_legacy)
+	lib/ecore/efl_model_composite.eo
 
 ecore_eolian_c = $(ecore_eolian_files:%.eo=%.eo.c)
 ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h) \
