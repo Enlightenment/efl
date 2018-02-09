@@ -4143,17 +4143,6 @@ _elm_config_sub_shutdown(void)
 {
    ecore_event_type_flush(ELM_EVENT_CONFIG_ALL_CHANGED);
 
-#ifdef HAVE_ELEMENTARY_X
-   if (ecore_x_display_get()) ecore_x_shutdown();
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (_elm_wl_display)
-     {
-        ecore_wl2_display_disconnect(_elm_wl_display);
-        _elm_wl_display = NULL;
-        ecore_wl2_shutdown();
-     }
-#endif
 #ifdef HAVE_ELEMENTARY_WIN32
    ecore_win32_shutdown();
 #endif
