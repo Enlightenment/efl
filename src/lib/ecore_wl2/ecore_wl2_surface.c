@@ -15,6 +15,7 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
+   ecore_event_handler_del(surface->offscreen_handler);
    surface->funcs->destroy(surface, surface->private_data);
    surface->wl2_win = NULL;
 
