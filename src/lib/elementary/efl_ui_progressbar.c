@@ -378,7 +378,7 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    free(group);
 
-   efl_ui_format_string_set(obj, "%.0f %%");
+   efl_ui_format_string_set(obj, "%.0f%%");
 
    priv->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
@@ -766,7 +766,7 @@ elm_progressbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Eo *obj = elm_legacy_add(EFL_UI_PROGRESSBAR_LEGACY_CLASS, parent);
-   elm_progressbar_unit_format_set(obj, "%.0f %%");
+   elm_progressbar_unit_format_set(obj, "%.0f%%");
 
    return obj;
 }
