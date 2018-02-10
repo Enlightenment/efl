@@ -428,7 +428,7 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
-
+   efl_ui_range_min_max_set(obj, 0.0, 1.0);
    return obj;
 }
 
@@ -532,7 +532,7 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    Efl_Ui_Progress_Status *ps;
    Eina_Bool  existing_ps = EINA_FALSE;
    Eina_List *l;
-   double min, max;
+   double min = 0.0, max = 0.0;
 
    efl_ui_range_min_max_get(efl_part(obj, part_name), &min, &max);
 
@@ -556,6 +556,7 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
          ps = _progress_status_new(part_name, val);
          ps->val_min = 0.0;
          ps->val_max = 1.0;
+         ps->val = val;
          sd->progress_status = eina_list_append(sd->progress_status, ps);
       }
    else

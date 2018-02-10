@@ -172,7 +172,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(hbx, pb);
    elm_progressbar_unit_format_set(pb, form);
-   elm_progressbar_value_set(pb, 0.5);
+   elm_progressbar_value_set(pb, .50);
    elm_object_text_set(pb, "percent");
    evas_object_show(pb);
    pd->pb4 = pb;
