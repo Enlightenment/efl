@@ -10,6 +10,7 @@ typedef enum _Format_Type
    FORMAT_TYPE_DOUBLE,
    FORMAT_TYPE_INT,
    FORMAT_TYPE_STRING,
+   FORMAT_TYPE_STATIC
 } Format_Type;
 
 typedef struct
@@ -27,26 +28,23 @@ _is_valid_digit(char x)
 static Format_Type
 _format_string_check(const char *fmt)
 {
-   const char *itr = NULL;
-   const char *start = NULL;
+   const char *itr;
    Eina_Bool found = EINA_FALSE;
-   Format_Type ret_type = FORMAT_TYPE_INVALID;
+   Format_Type ret_type = FORMAT_TYPE_STATIC;
 
-   start = strchr(fmt, '%');
-   if (!start) return 0;
-
-   while (start)
+   for (itr = fmt; *itr; itr++)
      {
-        if (found && start[1] != '%')
+        if (itr[0] != '%') continue;
+        if (itr[1] == '%')
           {
-             ret_type = FORMAT_TYPE_INVALID;
-             break;
+             itr++;
+             continue;
           }
 
-        if (start[1] != '%' && !found)
+        if (!found)
           {
              found = EINA_TRUE;
-             for (itr = start + 1; *itr != '\0'; itr++)
+             for (itr++; *itr; itr++)
                {
                   // FIXME: This does not properly support int64 or unsigned.
                   if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
@@ -75,10 +73,19 @@ _format_string_check(const char *fmt)
                        break;
                     }
                }
+             if (!(*itr)) break;
           }
-        start = strchr(start + 2, '%');
+        else
+          {
+             ret_type = FORMAT_TYPE_INVALID;
+             break;
+          }
      }
 
+   if (ret_type == FORMAT_TYPE_INVALID)
+     {
+        ERR("Format string '%s' is invalid. It must have one and only one format element of type 's', 'f', 'F', 'd', 'u', 'i', 'o', 'x' or 'X'", fmt);
+     }
    return ret_type;
 }
 
@@ -120,6 +127,10 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
         char *v = eina_value_to_string(&value);
         eina_strbuf_append_printf(str, sd->template, v);
         free(v);
+     }
+   else if (sd->format_type == FORMAT_TYPE_STATIC)
+     {
+        eina_strbuf_append_printf(str, sd->template);
      }
    else
      {
