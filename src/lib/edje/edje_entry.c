@@ -1036,7 +1036,7 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
 
    EINA_INLIST_FOREACH(en->item_objs, io)
      {
-        if (!io->an && io->name && !strcmp(an->name, io->name))
+        if (!io->an && io->name && !strcmp(an->name ? an->name : "", io->name))
           {
              io->an = an;
              return io->obj;
@@ -1060,7 +1060,7 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
    evas_object_pass_events_set(obj, EINA_TRUE);
 
    io->an = an;
-   io->name = strdup(an->name);
+   io->name = strdup(an->name ? an->name : "");
    io->obj = obj;
    en->item_objs = (Item_Obj *)eina_inlist_append(EINA_INLIST_GET(en->item_objs),
                                                   EINA_INLIST_GET(io));
@@ -1493,7 +1493,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                }
              else if (!evas_textblock_cursor_compare(an->start, an->end))
                {
-                  if (an->name) free(an->name);
+                  free(an->name);
                   evas_textblock_cursor_free(an->start);
                   evas_textblock_cursor_free(an->end);
                   en->anchors = eina_list_remove(en->anchors, an);
