@@ -1237,7 +1237,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
       return EINA_FALSE;
 
    if (_rect_same(&tmp, &t->last.add))
-      return EINA_FALSE;
+      return EINA_TRUE;
 
    t->last.add = tmp;
    t->last.del.w = t->last.del.h = -1;
