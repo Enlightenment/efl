@@ -1258,6 +1258,17 @@ _elm_win_focus_in(Ecore_Evas *ee)
    /* else if (sd->img_obj) */
    /*   { */
    /*   } */
+   if (!efl_ui_focus_manager_focus_get(sd->obj) && !efl_ui_focus_manager_redirect_get(sd->obj))
+     {
+        Efl_Ui_Focus_Object *child;
+
+        child = efl_ui_focus_manager_request_subchild(sd->obj, sd->obj);
+
+        if (child)
+          efl_ui_focus_manager_focus_set(sd->obj, sd->obj);
+        else
+          evas_object_focus_set(sd->obj, EINA_TRUE);
+     }
 }
 
 static void
@@ -5104,8 +5115,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    /* FIXME: Major hack: calling the constructor in the middle of finalize. */
    efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-
-   evas_object_focus_set(obj, EINA_TRUE);
 
    if (getenv("ELM_FIRST_FRAME"))
      evas_event_callback_add(ecore_evas_get(tmp_sd.ee), EVAS_CALLBACK_RENDER_POST,
