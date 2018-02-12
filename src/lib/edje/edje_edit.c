@@ -18,6 +18,8 @@
 
 #include <Eo.h>
 
+#include "../../static_libs/buildsystem/buildsystem.h"
+
 #ifdef MY_CLASS
 # undef MY_CLASS
 #endif
@@ -12470,23 +12472,11 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 #else
 # define BIN_EXT
 #endif
-#ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-   {
-      if (getenv("EFL_RUN_IN_TREE"))
-        {
-           snprintf(embryo_cc_path, sizeof(embryo_cc_path),
-                    "%s/src/bin/embryo/embryo_cc" BIN_EXT,
-                    PACKAGE_BUILD_DIR);
-           snprintf(inc_path, sizeof(inc_path),
-                    "%s/data/edje/include", PACKAGE_BUILD_DIR);
-           if (!ecore_file_exists(embryo_cc_path))
-             embryo_cc_path[0] = '\0';
-        }
-   }
-#endif
+
+   bs_binary_get(embryo_cc_path, sizeof(embryo_cc_path), "embryo", "embryo_cc");
+
+   bs_data_path_get(inc_path, sizeof(inc_path), "edje", "include");
+
 
    if (embryo_cc_path[0] == '\0')
      {
