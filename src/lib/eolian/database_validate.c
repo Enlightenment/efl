@@ -341,6 +341,8 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
                  ofunc->base.line, ofunc->base.column);
         if ((!func->is_beta && !ofunc->is_beta) || (_duplicates_warn > 1))
           _obj_error(&func->base, buf);
+        if (_duplicates_warn > 1)
+          return EINA_FALSE;
      }
 
    /* if already validated, no need to perform the other checks...
