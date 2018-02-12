@@ -812,23 +812,6 @@ ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
 }
 
 EAPI void
-ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent)
-{
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (window->transparent == transparent) return;
-
-   window->transparent = transparent;
-
-   if (!window->transparent)
-     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
-                                        window->opaque.y, window->opaque.w,
-                                        window->opaque.h);
-   else
-     ecore_wl2_window_opaque_region_set(window, 0, 0, 0, 0);
-}
-
-EAPI void
 ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
 {
    int nx = 0, ny = 0, nw = 0, nh = 0;

@@ -232,7 +232,6 @@ struct _Ecore_Wl2_Window
    Eina_Bool moving : 1;
    Eina_Bool resizing : 1;
    Eina_Bool alpha : 1;
-   Eina_Bool transparent : 1;
 
    Eina_Bool input_set : 1;
    Eina_Bool opaque_set : 1;

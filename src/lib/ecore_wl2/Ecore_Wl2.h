@@ -873,18 +873,6 @@ EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 
 /**
- * Set a given window's transparent property
- *
- * @param window The window on which to set the transparent property
- * @param transparent EINA_TRUE to set window as transparent,
- *                    EINA_FALSE otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent);
-
-/**
  * Set the opaque region of the Ecore_Wl2_Window
  *
  * @param win The window
