@@ -109,6 +109,7 @@ enum Evas.Canvas3D.Node_Type
    [[Types of a node
 
      @since 1.10]]
+   unknown = -1, [[Unknown node type @since 1.21]]
    node = 0, [[Node with no items]]
    camera,   [[Node which can contain camera object]]
    light,    [[Node which can contain light object]]
