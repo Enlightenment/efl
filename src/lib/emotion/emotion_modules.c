@@ -3,6 +3,7 @@
 #endif
 
 #include "emotion_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 #include <unistd.h>
 
 #ifdef EMOTION_STATIC_BUILD_XINE
@@ -92,9 +93,7 @@ _emotion_modules_load(void)
                   const char **itr;
                   for (itr = built_modules; *itr != NULL; itr++)
                     {
-                       snprintf(buf, sizeof(buf),
-                                "%s/src/modules/emotion/%s/.libs",
-                                PACKAGE_BUILD_DIR, *itr);
+                       bs_mod_get(buf, sizeof(buf), "emotion", *itr);
                        _emotion_modules = eina_module_list_get(_emotion_modules, buf,
                                                                EINA_FALSE, NULL, NULL);
                     }
