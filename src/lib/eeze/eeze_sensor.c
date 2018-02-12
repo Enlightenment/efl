@@ -9,6 +9,7 @@
 #include <Ecore.h>
 #include <Eeze_Sensor.h>
 #include "eeze_sensor_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 EAPI int EEZE_SENSOR_EVENT_ACCELEROMETER;
 EAPI int EEZE_SENSOR_EVENT_GRAVITY;
@@ -115,9 +116,7 @@ eeze_sensor_modules_load(void)
 
         for (itr = _module_priority; *itr != NULL; itr++)
           {
-             snprintf(buf, sizeof(buf),
-                      PACKAGE_BUILD_DIR "/src/modules/eeze/sensor/%s/.libs",
-                      *itr);
+             bs_mod_dir_get(buf, sizeof(buf), "eeze/sensor", *itr);
              g_handle->modules_array = eina_module_list_get(
                 g_handle->modules_array, buf, EINA_FALSE, NULL, NULL);
           }
