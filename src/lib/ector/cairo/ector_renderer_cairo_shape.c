@@ -179,14 +179,14 @@ _ector_renderer_cairo_shape_ector_renderer_draw(Eo *obj, Ector_Renderer_Cairo_Sh
     cairo_set_fill_rule(pd->parent->cairo, CAIRO_FILL_RULE_WINDING);
 
    if (pd->shape->fill)
-     ector_renderer_cairo_fill(pd->shape->fill, mul_col);
+     ector_renderer_cairo_op_fill(pd->shape->fill, mul_col);
 
    if (pd->shape->stroke.fill || pd->public_shape->stroke.color.a > 0)
      {
         cairo_fill_preserve(pd->parent->cairo);
 
         if (pd->shape->stroke.fill)
-          ector_renderer_cairo_fill(pd->shape->stroke.fill, mul_col);
+          ector_renderer_cairo_op_fill(pd->shape->stroke.fill, mul_col);
        else
          {
             r = (((pd->public_shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
@@ -226,7 +226,7 @@ _ector_renderer_cairo_shape_ector_renderer_draw(Eo *obj, Ector_Renderer_Cairo_Sh
 }
 
 static Eina_Bool
-_ector_renderer_cairo_shape_ector_renderer_cairo_fill(Eo *obj EINA_UNUSED,
+_ector_renderer_cairo_shape_ector_renderer_cairo_op_fill(Eo *obj EINA_UNUSED,
                                                            Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
                                                            unsigned int mul_col EINA_UNUSED)
 {

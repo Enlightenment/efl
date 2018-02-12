@@ -2,7 +2,7 @@ abstract Ector.Renderer.Cairo (Ector.Renderer)
 {
    [[Ector cairo renderer abstract class]]
    methods {
-      fill @pure_virtual {
+      op_fill @pure_virtual {
           [[Fill operation]]
          return: bool; [[$true on success, $false otherwise]]
          params {

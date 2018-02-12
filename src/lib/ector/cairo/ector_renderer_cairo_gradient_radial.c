@@ -114,7 +114,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_draw(Eo *obj, Ector_Rendere
 
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
-_ector_renderer_cairo_gradient_radial_ector_renderer_cairo_fill(Eo *obj,
+_ector_renderer_cairo_gradient_radial_ector_renderer_cairo_op_fill(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Radial_Data *pd,
                                                                      unsigned int mul_col)
 {

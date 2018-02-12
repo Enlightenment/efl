@@ -7,7 +7,7 @@ class Ector.Renderer.GL.Gradient.Linear (Ector.Renderer.GL, Ector.Renderer.Gradi
       Ector.Renderer.draw;
       Ector.Renderer.bounds_get;
       Ector.Renderer.crc { get; }
-      Ector.Renderer.GL.fill;
+      Ector.Renderer.GL.op_fill;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.Gradient.stop { set; }

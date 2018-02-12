@@ -91,7 +91,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_draw(Eo *obj,
 }
 
 static Eina_Bool
-_ector_renderer_cairo_gradient_linear_ector_renderer_cairo_fill(Eo *obj,
+_ector_renderer_cairo_gradient_linear_ector_renderer_cairo_op_fill(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Linear_Data *pd,
                                                                      unsigned int mul_col)
 {

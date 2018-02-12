@@ -85,7 +85,7 @@ _ector_renderer_gl_shape_ector_renderer_draw(Eo *obj, Ector_Renderer_GL_Shape_Da
 
    if (pd->shape->fill)
      {
-        ector_renderer_gl_fill(pd->shape->fill, flags, pd->vertex, 6, mul_col);
+        ector_renderer_gl_op_fill(pd->shape->fill, flags, pd->vertex, 6, mul_col);
      }
    else
      {
@@ -96,7 +96,7 @@ _ector_renderer_gl_shape_ector_renderer_draw(Eo *obj, Ector_Renderer_GL_Shape_Da
 }
 
 static Eina_Bool
-_ector_renderer_gl_shape_ector_renderer_gl_fill(Eo *obj EINA_UNUSED,
+_ector_renderer_gl_shape_ector_renderer_gl_op_fill(Eo *obj EINA_UNUSED,
                                                      Ector_Renderer_GL_Shape_Data *pd EINA_UNUSED,
                                                      uint64_t flags EINA_UNUSED,
                                                      GLshort *vertex EINA_UNUSED,

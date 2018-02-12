@@ -5,7 +5,7 @@ class Ector.Renderer.Software.Shape (Ector.Renderer.Software, Ector.Renderer.Sha
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.Software.fill;
+      Ector.Renderer.Software.op_fill;
       Ector.Renderer.crc { get; }
       Efl.Gfx.Path.path { set; }
       Efl.Object.constructor;
