@@ -5,18 +5,19 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
    [[Evas 3D canvas node class]]
    data: Evas_Canvas3D_Node_Data;
    methods {
-      constructor {
-         [[Constructor.]]
-         legacy: null;
-         params {
-            @in type: Evas.Canvas3D.Node_Type; [[Node type]]
-         }
-      }
-      type_get @const {
+      @property node_type {
          [[Get the type of the given node.
 
            See also @Evas.Canvas3D.Node.member_add.]]
-         return: Evas.Canvas3D.Node_Type ; [[The type of the given node.]]
+         set {
+            [[Type can only be set before finalize.]]
+         }
+         get {
+            [[If the object is not node object, returns $unknown.]]
+         }
+         values {
+            type: Evas.Canvas3D.Node_Type(Evas.Canvas3D.Node_Type.unknown); [[Node type]]
+         }
       }
       member_add {
          [[Add a member node to the given node.
@@ -383,13 +384,12 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
       }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.finalize;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
       Evas.Canvas3D.Object.callback_register;
       Evas.Canvas3D.Object.callback_unregister;
-   }
-   constructors {
-      .constructor;
    }
 }

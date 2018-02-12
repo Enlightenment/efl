@@ -1025,11 +1025,27 @@ evas_canvas3d_node_add(Evas *e, Evas_Canvas3D_Node_Type type)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, e, evas_canvas3d_node_constructor(efl_added, type));
+   return efl_add(MY_CLASS, e, evas_canvas3d_node_type_set(efl_added, type));
 }
 
-EOLIAN static void
-_evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Node_Type type)
+EOLIAN static Efl_Object *
+_evas_canvas3d_node_efl_object_finalize(Eo *obj, Evas_Canvas3D_Node_Data *pd)
+{
+   if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH)
+     {
+        pd->data.mesh.node_meshes = eina_hash_pointer_new(_node_mesh_free_func);
+        if (pd->data.mesh.node_meshes == NULL)
+          {
+             ERR("Failed to create node mesh table.");
+             _node_free(obj);
+             return NULL;
+          }
+     }
+   return obj;
+}
+
+EOLIAN static Efl_Object *
+_evas_canvas3d_node_efl_object_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd)
 {
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_NODE);
 
@@ -1049,18 +1065,7 @@ _evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canva
    pd->lod = EINA_FALSE;
 
    evas_box3_set(&pd->aabb, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-
-   pd->type = type;
-
-   if (type == EVAS_CANVAS3D_NODE_TYPE_MESH)
-     {
-        pd->data.mesh.node_meshes = eina_hash_pointer_new(_node_mesh_free_func);
-        if (pd->data.mesh.node_meshes == NULL)
-          {
-             ERR("Failed to create node mesh table.");
-             _node_free(obj);
-          }
-     }
+   return obj;
 }
 
 EOLIAN static void
@@ -1072,9 +1077,15 @@ _evas_canvas3d_node_efl_object_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd E
 }
 
 EOLIAN static Evas_Canvas3D_Node_Type
-_evas_canvas3d_node_type_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_node_type_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->type;
+}
+
+EOLIAN static void
+_evas_canvas3d_node_node_type_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Node_Type type)
+{
+   pd->type = type;
 }
 
 EOLIAN static void

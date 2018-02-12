@@ -1086,7 +1086,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           Evas_Canvas3D_Material *material = NULL;
                           Edje_Part_Description_Mesh_Node *pd_mesh_node;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
                           mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, ed->base.evas);
                           evas_canvas3d_node_mesh_add(rp->node, mesh);
@@ -1119,7 +1119,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Light *light = NULL;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
                           light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base.evas);
                           evas_canvas3d_node_light_set(rp->node, light);
 
@@ -1131,7 +1131,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Camera *camera = NULL;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
                           camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base.evas);
                           evas_canvas3d_node_camera_set(rp->node, camera);
 
@@ -2670,7 +2670,7 @@ edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
 
    if (*root_node == NULL)
      *root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas,
-                                 evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
+                                 evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    if (scene == NULL)
      scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, ed->base.evas);
