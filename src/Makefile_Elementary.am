@@ -791,6 +791,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_selection_manager_private.h \
 	lib/elementary/efl_selection.c \
 	lib/elementary/efl_ui_dnd.c \
+  static_libs/buildsystem/buildsystem.h \
+  static_libs/buildsystem/buildsystem_autotools.c \
 	$(NULL)
 
 
@@ -814,6 +816,8 @@ lib_elementary_libelementary_la_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/elementary\" \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 -DLOCALE_DIR=\"$(localedir)\" \
 -DICON_DIR=\"$(datadir)/icons\" \
 -DELM_TOP_BUILD_DIR=\"$(top_builddir)\" \
