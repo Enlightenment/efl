@@ -102,7 +102,6 @@ struct _Efl_Ui_Win_Data
    {
       Ecore_Wl2_Window *win;
       Ecore_Event_Handler *configure_handler;
-      Eina_Bool opaque_dirty : 1;
    } wl;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -1433,16 +1432,6 @@ _elm_win_profile_update(Efl_Ui_Win_Data *sd)
    efl_event_callback_legacy_call(sd->obj, EFL_UI_WIN_EVENT_PROFILE_CHANGED, NULL);
 }
 
-static inline void
-_elm_win_opaque_dirty(Efl_Ui_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_WL2
-   sd->wl.opaque_dirty = 1;
-#else
-   (void)sd;
-#endif
-}
-
 static void
 _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
 {
@@ -1528,7 +1517,6 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
    int w, h;
 
    if (!sd->frame_obj) return;
-   _elm_win_opaque_dirty(sd);
    _elm_win_frame_geometry_adjust(sd);
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
@@ -1638,7 +1626,6 @@ _elm_win_state_change(Ecore_Evas *ee)
         _elm_win_frame_style_update(sd, 0, 1);
         if (sd->fullscreen)
           {
-             _elm_win_opaque_dirty(sd);
              efl_event_callback_legacy_call
                (obj, EFL_UI_WIN_EVENT_FULLSCREEN, NULL);
           }
@@ -4271,15 +4258,6 @@ _elm_win_wl_configure(void *data, int t EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
-static void
-_elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
-{
-   Efl_Ui_Win_Data *sd = data;
-
-   if (sd->wl.opaque_dirty)
-     _elm_win_opaque_update(sd, EINA_FALSE);
-   sd->wl.opaque_dirty = 0;
-}
 #endif
 
 static inline void
@@ -5331,10 +5309,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (eina_streq(engine, ELM_WAYLAND_SHM) || eina_streq(engine, ELM_WAYLAND_EGL))
-     evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
    if (type != ELM_WIN_FAKE)
