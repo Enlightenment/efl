@@ -797,11 +797,16 @@ ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
 {
+   Ecore_Wl2_Surface *surf;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (window->alpha == alpha) return;
 
    window->alpha = alpha;
+   surf = window->wl2_surface;
+   if (surf)
+     ecore_wl2_surface_reconfigure(surf, surf->w, surf->h, 0, alpha);
 
    if (!window->alpha)
      ecore_wl2_window_opaque_region_set(window, window->opaque.x,
