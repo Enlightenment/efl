@@ -67,6 +67,7 @@
 #include "ethumb_private.h"
 #include "Ethumb_Plugin.h"
 #include "md5.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 static Ethumb_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ethumb_Version *ethumb_version = &_version;
@@ -172,9 +173,7 @@ _ethumb_plugins_load(void)
                   const char **itr;
                   for (itr = built_modules; *itr != NULL; itr++)
                     {
-                       snprintf(buf, sizeof(buf),
-                                "%s/src/modules/ethumb/%s/.libs",
-                                PACKAGE_BUILD_DIR, *itr);
+                       bs_mod_get(buf, sizeof(buf), "ethumb", *itr);
                        _plugins = eina_module_list_get(_plugins, buf,
                                                        EINA_FALSE, NULL, NULL);
                     }
