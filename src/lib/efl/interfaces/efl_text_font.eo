@@ -57,20 +57,55 @@ interface Efl.Text.Font {
    eo_prefix: efl_text;
    methods {
       @property font {
-         [[The font name and size that is used for the displayed text]]
+         set {
+            [[Set the font family, filename and size for a given text object.
+
+              This function allows the font name and size of a text object to
+              be set. The font string has to follow fontconfig's convention for
+              naming fonts, as it's the underlying library used to query system
+              fonts by Evas (see the fc-list command's output, on your system,
+              to get an idea). Alternatively, youe can use the full path to a font
+              file.
+
+              See also @.font.get, @.font_source.get.
+            ]]
+         }
+         get {
+            [[Retrieve the font family and size in use on a given text object.
+
+              This function allows the font name and size of a text object to
+              be queried. Remember that the font name string is still owned by
+              Evas and should not have free() called on it by the caller of the
+              function.
+
+              See also @.font.set.
+            ]]
+         }
          values {
-            font: string; [[Font name]]
-            size: int; [[Font size]]
+            font: string; [[The font family name or filename.]]
+            size: Efl.Font.Size; [[The font size, in points.]]
          }
       }
       @property font_source {
-         [[The source that will be used to lookup the font of the text
+         set {
+            [[Set the font (source) file to be used on a given text object.
 
-           The source can be either a path to a font file e.g.
-           "/path/to/font.ttf", or an eet file e.g. "/path/to/font.eet".
-         ]]
+              This function allows the font file to be explicitly set for a
+              given text object, overriding system lookup, which will first
+              occur in the given file's contents.
+
+              See also @.font.set.
+            ]]
+         }
+         get {
+            [[Get the font file's path which is being used on a given text
+              object.
+
+              See @.font.get for more details.
+            ]]
+         }
          values {
-            font_source: string; [[Path to font source]]
+            font_source: string; [[The font file's path.]]
          }
       }
 
