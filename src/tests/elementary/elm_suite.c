@@ -98,7 +98,7 @@ main(int argc, char **argv)
 
 #ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
-   putenv("ELM_RUN_IN_TREE=1");
+   putenv("EFL_RUN_IN_TREE=1");
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,

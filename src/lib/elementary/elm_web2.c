@@ -198,7 +198,7 @@ _elm_web_init(const char *engine)
    char buf[PATH_MAX];
 
 #ifdef NEED_RUN_IN_TREE
-   if (getenv("ELM_RUN_IN_TREE"))
+   if (getenv("EFL_RUN_IN_TREE"))
      snprintf(buf, sizeof(buf),
               ELM_TOP_BUILD_DIR"/src/modules/web/%s/.libs/module"EFL_SHARED_EXTENSION,
               engine);

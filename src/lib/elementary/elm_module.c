@@ -133,7 +133,7 @@ _elm_module_load(Elm_Module *m)
    if (strchr(m->name, '/')) return EINA_FALSE;
 
 #ifdef NEED_RUN_IN_TREE
-   if (getenv("ELM_RUN_IN_TREE"))
+   if (getenv("EFL_RUN_IN_TREE"))
      {
         snprintf(buf, sizeof(buf),
              ELM_TOP_BUILD_DIR "/src/modules/elementary/%s/.libs/module"EFL_SHARED_EXTENSION, m->name);
