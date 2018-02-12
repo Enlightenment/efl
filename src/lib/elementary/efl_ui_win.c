@@ -5408,6 +5408,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                sd->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 0, 0, 0);
              else if (!strcmp(engine, ELM_WAYLAND_EGL))
                sd->pointer.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 0, 0, 0);
+             ecore_evas_alpha_set(sd->pointer.ee, EINA_TRUE);
 
              pevas = ecore_evas_get(sd->pointer.ee);
 
