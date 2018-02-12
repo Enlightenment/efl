@@ -325,7 +325,9 @@ lib_evas_file_SOURCES = \
 lib/evas/file/evas_module.c \
 lib/evas/file/evas_module.h \
 lib/evas/file/evas_path.c \
-lib/evas/file/evas_path.h
+lib/evas/file/evas_path.h \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
@@ -498,6 +500,7 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
 @NEON_CFLAGS@ \
@@ -1546,6 +1549,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 -DEVAS_MODULE_NO_ENGINES=1 \
 -DEVAS_MODULE_NO_IMAGE_SAVERS=1 \
 -DEVAS_MODULE_NO_VG_LOADERS=1 \

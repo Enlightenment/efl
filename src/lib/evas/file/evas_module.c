@@ -6,6 +6,7 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 
 #ifndef EVAS_MODULE_NO_ENGINES
@@ -436,8 +437,7 @@ evas_module_engine_list(void)
                     {
                        if (run_in_tree)
                          {
-                            snprintf(buf, sizeof(buf), "%s/engines/%s/.libs",
-                                     s, fname);
+                            bs_mod_dir_get(buf, sizeof(buf), "evas/engines", fname);
                             if (!evas_file_path_exists(buf))
                             buf[0] = '\0';
                          }
@@ -566,8 +566,10 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
           {
              if (run_in_tree)
                {
-                  snprintf(buffer, sizeof(buffer), "%s/%s/%s/.libs/%s",
-                           path, type_str, name, EVAS_MODULE_NAME);
+                  char subsystem[PATH_MAX];
+
+                  snprintf(subsystem, sizeof(subsystem), "evas/%s", type_str);
+                  bs_mod_get(buffer, sizeof(buffer), subsystem, name);
                   if (!evas_file_path_exists(buffer))
                   buffer[0] = '\0';
                }
@@ -643,7 +645,7 @@ evas_module_unload(Evas_Module *em)
    if (!em->definition)
      return;
 
-// for now lets not unload modules - they may still be in use.   
+// for now lets not unload modules - they may still be in use.
 //   em->definition->func.close(em);
 //   em->loaded = 0;
 
