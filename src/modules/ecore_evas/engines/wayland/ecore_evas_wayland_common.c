@@ -1849,36 +1849,6 @@ _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha)
 }
 
 static void
-_ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent)
-{
-   Evas_Engine_Info_Wayland *einfo;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   int fw, fh;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   if (ee->transparent == transparent) return;
-   ee->transparent = transparent;
-
-   wdata = ee->engine.data;
-   if (!wdata->sync_done) return;
-
-   if (wdata->win)
-     ecore_wl2_window_transparent_set(wdata->win, ee->transparent);
-
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
-     {
-        einfo->info.destination_alpha = EINA_TRUE;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-     }
-}
-
-static void
 _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
@@ -1887,11 +1857,6 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
      {
         _ecore_evas_wayland_alpha_do(ee, ee->delayed.alpha);
         ee->delayed.alpha_changed = EINA_FALSE;
-     }
-   if (ee->delayed.transparent_changed)
-     {
-        _ecore_evas_wayland_transparent_do(ee, ee->delayed.transparent);
-        ee->delayed.transparent_changed = EINA_FALSE;
      }
    if (ee->delayed.rotation_changed)
      {
@@ -2211,19 +2176,6 @@ _ecore_evas_wl_common_alpha_set(Ecore_Evas *ee, int alpha)
 }
 
 static void
-_ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent)
-{
-   if (ee->in_async_render)
-     {
-        ee->delayed.transparent = transparent;
-        ee->delayed.transparent_changed = EINA_TRUE;
-        return;
-     }
-
-   _ecore_evas_wayland_transparent_do(ee, transparent);
-}
-
-static void
 _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -2402,7 +2354,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func sticky set
    _ecore_evas_wl_common_ignore_events_set,
    _ecore_evas_wl_common_alpha_set,
-   _ecore_evas_wl_common_transparent_set,
+   _ecore_evas_wl_common_alpha_set, // transparent set
    NULL, // func profiles set
    NULL, // func profile set
    NULL, // window group set
