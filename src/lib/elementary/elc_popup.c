@@ -1454,7 +1454,7 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
    priv->content_text_wrap_type = ELM_WRAP_MIXED;
    efl_event_callback_array_add(priv->notify, _notify_cb(), obj);
 
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_can_focus_set(priv->main_layout, EINA_TRUE);
 
    _populate_theme_scroll(priv);
@@ -1853,7 +1853,7 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_popup, "default")
 #define ELM_POPUP_EXTRA_OPS \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup), \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_popup)   
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_popup)
 
 #include "elm_popup.eo.c"
 #include "elm_popup_item.eo.c"
