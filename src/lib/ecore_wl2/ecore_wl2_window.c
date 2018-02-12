@@ -807,13 +807,6 @@ ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
    surf = window->wl2_surface;
    if (surf)
      ecore_wl2_surface_reconfigure(surf, surf->w, surf->h, 0, alpha);
-
-   if (!window->alpha)
-     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
-                                        window->opaque.y, window->opaque.w,
-                                        window->opaque.h);
-   else
-     ecore_wl2_window_opaque_region_set(window, 0, 0, 0, 0);
 }
 
 EAPI void
