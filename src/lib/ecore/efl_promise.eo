@@ -9,20 +9,20 @@ class Efl.Promise (Efl.Loop.Consumer)
 
            The progress is not stored and when the function returns it will not be accessed
            anymore. The pointer is owned by the caller and will remain so after the return
-	   of the function call.
-	 ]]
+      of the function call.
+    ]]
          params {
             @in p: const(void_ptr); [[Progress to be set]]
-	 }
+    }
       }
       @property future {
          [[Requests a new future linked to this promise.
 
-	   Efl_Future are optional and will be automatically deleted if no callbacks have
-	   been set before the next iteration of the main loop.
-	 ]]
+      Efl_Future are optional and will be automatically deleted if no callbacks have
+      been set before the next iteration of the main loop.
+    ]]
          get {
-	    [[The returned new future.]]
+       [[The returned new future.]]
          }
          values {
             f: future<void_ptr, void_ptr>; [[Returns a future where the value will be set by calling value_set whilst the progress is 
@@ -30,28 +30,28 @@ class Efl.Promise (Efl.Loop.Consumer)
          }
       }
       @property value {
-      	 [[The value expected by all connected future.]]
+          [[The value expected by all connected future.]]
          set {
-	    [[
+       [[
               This function can be called only once. You cannot call #failed.set after doing so.
               The value will be owned by the promise until it's destroyed. It will be cleaned
               when the promise and all futures depending on it are destroyed.
             ]]
-	 }
-	 values {
-	    v: void_ptr; [[The pointer to the value.]]
-	    free_cb: __builtin_free_cb; [[The function to call to free the value.]]
-	 }
+    }
+    values {
+       v: void_ptr; [[The pointer to the value.]]
+       free_cb: __builtin_free_cb; [[The function to call to free the value.]]
+    }
       }
       @property failed {
          [[Defines the failure state of this promise.]]
-	 set {
-	    [[
+    set {
+       [[
               This function can be called only once and you cannot call #value.set after doing so.
-	    ]]
-	 }
+       ]]
+    }
          values {
-	    err: Eina.Error; [[The reason for failure of this promise.]]
+       err: Eina.Error; [[The reason for failure of this promise.]]
          }
       }
       connect {
@@ -59,11 +59,11 @@ class Efl.Promise (Efl.Loop.Consumer)
 
            This helper will automatically trigger #value.set or #failed.set when the future
            succeeds or fails respectively, with the value provided by the future.
-	 ]]
-	 params {
-	    @in f: future<void_ptr, void_ptr>; [[The future to connect to this promise.]]
-	 }
-	 return: bool; [[Returns $false if unable to set up the connection.]]
+    ]]
+    params {
+       @in f: future<void_ptr, void_ptr>; [[The future to connect to this promise.]]
+    }
+    return: bool; [[Returns $false if unable to set up the connection.]]
       }
    }
    events {

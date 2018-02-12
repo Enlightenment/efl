@@ -76,7 +76,7 @@ interface Efl.Text.Style {
       }
 
       @property backing_type {
-      	 [[Enable or disable backing type]]
+          [[Enable or disable backing type]]
          values
          {
             type: Efl.Text.Style.Backing_Type; [[Backing type]]
@@ -84,7 +84,7 @@ interface Efl.Text.Style {
       }
 
       @property backing_color {
-      	 [[Backing color]]
+          [[Backing color]]
          values
          {
             r: ubyte; [[Red component]]

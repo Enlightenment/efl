@@ -12,25 +12,25 @@ class Efl.Loop.Fd (Efl.Loop.Consumer)
    methods {
       @property fd {
          [[Defines which file descriptor to watch. If it is a file, use file_fd variant.]]
-	 set {
-	    [[Defines the fd to watch.]]
-	 }
-	 get {
-	 }
-	 values {
-	    fd: int; [[The file descriptor.]]
-	 }
+    set {
+       [[Defines the fd to watch.]]
+    }
+    get {
+    }
+    values {
+       fd: int; [[The file descriptor.]]
+    }
       }
       @property fd_file {
          [[Defines which file descriptor to watch when watching a file.]]
-	 set {
-	    [[Defines the fd to watch on.]]
-	 }
-	 get {
-	 }
-	 values {
-	    fd: int; [[The file descriptor.]]
-	 }
+    set {
+       [[Defines the fd to watch on.]]
+    }
+    get {
+    }
+    values {
+       fd: int; [[The file descriptor.]]
+    }
       }
    }
    events {

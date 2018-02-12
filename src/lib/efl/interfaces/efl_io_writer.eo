@@ -41,7 +41,7 @@ interface Efl.Io.Writer {
             set @protected { }
             values {
                 can_write: bool; [[$true if it can be written without blocking or failure, $false
-                		   otherwise]]
+                         otherwise]]
             }
         }
     }

@@ -386,7 +386,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          }
       }
       event_emit @class @protected @beta {
-      	 [[Emit event]]
+          [[Emit event]]
          params {
             @in accessible: Efl.Access; [[Accessibility object.]]
             @cref event: Efl.Event.Description; [[Accessibility event type.]]

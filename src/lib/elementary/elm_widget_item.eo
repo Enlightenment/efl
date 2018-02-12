@@ -492,11 +492,11 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
                   @since 1.8]]
            }
            disable @protected {
-           	[[Disable widget item]]
+              [[Disable widget item]]
                 legacy: null;
            }
            del_pre @protected {
-           	[[Delete pre widget item]]
+              [[Delete pre widget item]]
                 legacy: null;
                 return: bool; [[$true on success, $false otherwise]]
            }

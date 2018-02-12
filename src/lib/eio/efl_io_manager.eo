@@ -32,7 +32,7 @@ class Efl.Io.Manager (Efl.Loop.Consumer)
       ]]
       params {
         @in path: string; [[Path we want to list entries for]]
-	paths: EflIoPath; [[Callback called for each packet of files found]]
+   paths: EflIoPath; [[Callback called for each packet of files found]]
       }
       return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
     }
@@ -60,7 +60,7 @@ class Efl.Io.Manager (Efl.Loop.Consumer)
       [[Lists all extended attributes asynchronously.]]
       params {
          @in path: string; [[Path we want to list entries for]]
-	 paths: EflIoPath; [[Callback called for each packet of extended attributes found.]]
+    paths: EflIoPath; [[Callback called for each packet of extended attributes found.]]
       }
       return: ptr(Eina.Future) @owned; [[Amount of extended attributes found]]
     }

@@ -29,7 +29,7 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
          }
          values {
             expanded: bool; [[The value of expanded state. Set this to $true for expanded state. Set
-            		     this to $false for single line state.]]
+                       this to $false for single line state.]]
          }
       }
       @property items {

@@ -42,7 +42,7 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
       loop_reset {
          [[This effectively resets a timer but based on the time when this iteration of the main loop started.
            @since 1.18
-	 ]]
+    ]]
       }
       delay {
          [[Adds a delay to the next occurrence of a timer.

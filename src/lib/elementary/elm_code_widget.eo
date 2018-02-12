@@ -194,7 +194,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
          }
       }
       line_refresh {
-      	 [[Refresh code line in widget]]
+          [[Refresh code line in widget]]
          params {
             line: ptr(Elm_Code_Line); [[The line to refresh.]]
          }
@@ -207,7 +207,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
          return: bool; [[$true if the line specified is currently visible within the scroll region.]]
       }
       lines_visible_get {
-      	 [[Get the number of code lines currently visible in the widget]]
+          [[Get the number of code lines currently visible in the widget]]
          return: uint; [[the number of lines currently visible in the widget.]]
       }
       position_at_coordinates_get {
@@ -234,11 +234,11 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       }
 
       text_left_gutter_width_get {
-      	 [[Get the column width of the gutter]]
+          [[Get the column width of the gutter]]
          return: int; [[The current column width of the gutter for the widget.]]
       }
       text_between_positions_get {
-      	 [[Get text between given positions]]
+          [[Get text between given positions]]
          params {
             start_line: uint; [[The line of the first character to get]]
             start_col: uint; [[The widget column of the first character to get]]
@@ -256,7 +256,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       }
 
       line_text_column_width_to_position {
-      	 [[Get text column width at given position]]
+          [[Get text column width at given position]]
          params {
             line: ptr(Elm_Code_Line); [[Code line]]
             position: uint; [[Code position]]
@@ -264,14 +264,14 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
          return: uint; [[Text column width]]
       }
       line_text_column_width_get {
-      	 [[Get text column width for code line]]
+          [[Get text column width for code line]]
          params {
             line: ptr(Elm_Code_Line); [[Code line]]
          }
          return: uint; [[Text column width]]
       }
       line_text_position_for_column_get {
-      	 [[Get position from column]]
+          [[Get position from column]]
          params {
             line: ptr(Elm_Code_Line); [[Code line]]
             column: uint; [[Column]]
@@ -279,7 +279,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
          return: uint; [[Position]]
       }
       text_tabwidth_at_column_get {
-      	 [[Get tabwidth for column]]
+          [[Get tabwidth for column]]
          params {
             column: uint; [[Column]]
          }

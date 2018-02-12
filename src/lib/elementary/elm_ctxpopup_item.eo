@@ -6,7 +6,7 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Access.Widget.Action,
    eo_prefix: elm_obj_ctxpopup_item;
    methods {
       init {
-      	 [[Init context popup item]]
+          [[Init context popup item]]
          params {
             func: Evas_Smart_Cb @nullable; [[Smart callback function]]
             data: const(void_ptr) @optional; [[Data pointer]]

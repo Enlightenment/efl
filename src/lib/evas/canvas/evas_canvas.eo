@@ -670,7 +670,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          ]]
       }
       objects_in_rectangle_get @const {
-      	 [[Get all objects in the given rectangle]]
+          [[Get all objects in the given rectangle]]
          return: list<Efl.Canvas.Object> @warn_unused; [[List of objects]]
          params {
             @in x: int; [[X coordinate]]

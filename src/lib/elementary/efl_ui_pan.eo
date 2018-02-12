@@ -4,7 +4,7 @@ class Efl.Ui.Pan (Efl.Canvas.Group,
    [[Elementary pan class]]
    methods {
       @property pan_position {
-	 [[Position]]
+    [[Position]]
          set {
          }
          get {
@@ -14,27 +14,27 @@ class Efl.Ui.Pan (Efl.Canvas.Group,
          }
       }
       @property content_size {
-	 [[Content size]]
+    [[Content size]]
          get {
          }
          values {
-	    size: Eina.Size2D;
+       size: Eina.Size2D;
          }
       }
       @property pan_position_min {
-	 [[The minimal position to scroll]]
+    [[The minimal position to scroll]]
          get {
          }
          values {
-	    pos: Eina.Position2D;
+       pos: Eina.Position2D;
          }
       }
       @property pan_position_max {
-	 [[The maximal position to scroll]]
+    [[The maximal position to scroll]]
          get {
          }
          values {
-	    pos: Eina.Position2D;
+       pos: Eina.Position2D;
          }
       }
    }

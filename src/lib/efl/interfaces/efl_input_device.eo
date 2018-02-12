@@ -27,13 +27,13 @@ class Efl.Input.Device (Efl.Object)
    ]]
    methods {
       @property device_type {
-      	 [[Device type property]]
+          [[Device type property]]
          values {
             klass: Efl.Input.Device.Type; [[Input device class]]
          }
       }
       @property source {
-      	 [[Device source property]]
+          [[Device source property]]
          values {
             src: Efl.Input.Device; [[Input device]]
          }

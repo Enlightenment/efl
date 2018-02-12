@@ -9,7 +9,7 @@ class Efl.Ui.Layout.Part.Table (Efl.Object, Efl.Pack.Table)
    methods {
       /* FIXME: Remove this. */
       @property real_part @protected {
-      	 [[Real part property]]
+          [[Real part property]]
          set {}
          values {
             layout: Efl.Object; [[Real part object]]

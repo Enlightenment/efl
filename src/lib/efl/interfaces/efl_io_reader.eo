@@ -40,7 +40,7 @@ interface Efl.Io.Reader {
             set @protected { }
             values {
                 can_read: bool; [[$true if it can be read without blocking or failing, $false
-                		  otherwise]]
+                        otherwise]]
             }
         }
 

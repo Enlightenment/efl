@@ -4,14 +4,14 @@ class Efl.VG.Container (Efl.VG)
    legacy_prefix: evas_vg_container;
    methods {
       child_get {
-      	 [[Get child of container]]
+          [[Get child of container]]
          params {
             @in name: string; [[Child node name]]
          }
          return: Efl.VG; [[Child object]]
       }
       children_get {
-      	 [[Get all children of container]]
+          [[Get all children of container]]
          return: iterator<Efl.VG> @owned @warn_unused; [[Iterator to children]]
       }
    }

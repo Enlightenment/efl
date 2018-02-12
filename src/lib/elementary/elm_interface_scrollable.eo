@@ -105,7 +105,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property momentum_animator_disabled {
-      	 [[Momentum animator]]
+          [[Momentum animator]]
          set {
          }
          get {
@@ -186,7 +186,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property bounce_animator_disabled {
-      	 [[Bounce animator]]
+          [[Bounce animator]]
          set {
          }
          get {
@@ -196,7 +196,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property page_scroll_limit {
-      	 [[Page scroll limit]]
+          [[Page scroll limit]]
          set {
          }
          get {
@@ -230,7 +230,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property paging {
-      	 [[Pagin property]]
+          [[Pagin property]]
          set {
          }
          get {
@@ -264,7 +264,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property step_size {
-      	 [[Step size]]
+          [[Step size]]
          set {
          }
          get {
@@ -312,7 +312,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property freeze {
-      	 [[Freeze property]]
+          [[Freeze property]]
          set {
          }
          values {
@@ -368,7 +368,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property extern_pan {
-      	 [[Extern pan]]
+          [[Extern pan]]
          set {
          }
          values {
@@ -384,7 +384,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property hold {
-      	 [[Hold property]]
+          [[Hold property]]
          set {
          }
          values {
@@ -433,7 +433,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property mirrored {
-      	 [[Mirroed property]]
+          [[Mirroed property]]
          set {
          }
          values {
@@ -441,7 +441,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property content_min_limit_cb {
-      	 [[set the callback to run on minimal limit content]]
+          [[set the callback to run on minimal limit content]]
          set {
          }
          values {
@@ -457,7 +457,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property scrollable_content {
-      	 [[Content property]]
+          [[Content property]]
          set {
          }
          values {
@@ -513,7 +513,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property objects {
-      	 [[Object property]]
+          [[Object property]]
          set {
          }
          values {
@@ -552,7 +552,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       @property content_viewport_geometry {
-      	 [[Content viewport geometry]]
+          [[Content viewport geometry]]
          get {
          }
          values {
@@ -575,7 +575,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       content_pos_set {
-      	 [[Set the content position]]
+          [[Set the content position]]
          params {
             @in x: int; [[X coordinate]]
             @in y: int; [[Y coordinate]]
@@ -584,7 +584,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
          }
       }
       content_pos_get {
-      	 [[Get content position]]
+          [[Get content position]]
          params {
             @out x: int; [[X coordinate]]
             @out y: int; [[Y coordinate]]

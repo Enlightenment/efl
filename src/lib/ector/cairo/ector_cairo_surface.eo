@@ -11,15 +11,15 @@ class Ector.Cairo.Surface (Efl.Object, Ector.Surface)
       @property context {
          [[Cairo context]]
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    ctx: ptr(cairo_t); [[Cairo context]]
-	 }
+    }
+    get {
+    }
+    values {
+       ctx: ptr(cairo_t); [[Cairo context]]
+    }
       }
       symbol_get {
-	[[Lookup symbal name in cairo lib]]
+   [[Lookup symbal name in cairo lib]]
          return: void_ptr @warn_unused; [[Pointer to cairo lib with this symbol]]
          params {
             @in name: string; [[Symbol name]]

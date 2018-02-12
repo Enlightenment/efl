@@ -3,7 +3,7 @@ interface Efl.Access.Value ()
    [[Elementary Access value interface]]
    methods {
       @property value_and_text @protected @beta {
-      	 [[Value and text property]]
+          [[Value and text property]]
          get {
             [[Gets value displayed by a accessible widget.]]
          }
