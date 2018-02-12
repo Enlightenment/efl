@@ -48,7 +48,6 @@ set(PUBLIC_EO_FILES
   interfaces/efl_player.eo
   interfaces/efl_screen.eo
   interfaces/efl_text.eo
-  interfaces/efl_text_properties.eo
   interfaces/efl_text_types.eot
   interfaces/efl_types.eot
   interfaces/efl_ui_item.eo

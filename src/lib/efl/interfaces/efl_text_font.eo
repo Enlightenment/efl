@@ -1,5 +1,5 @@
 // src/lib/efl/interfaces/efl_text_font.eo
-
+import efl_gfx_types;
 enum Efl.Text.Font.Weight {
    [[Type of font weight]]
    normal, [[Normal font weight]]
