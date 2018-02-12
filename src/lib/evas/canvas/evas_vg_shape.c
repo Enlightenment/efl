@@ -143,7 +143,7 @@ _efl_vg_shape_efl_object_destructor(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED)
 }
 
 static Eina_Bool
-_efl_vg_shape_efl_vg_interpolate(Eo *obj,
+_efl_vg_shape_efl_gfx_path_interpolate(Eo *obj,
                                       Efl_VG_Shape_Data *pd,
                                       const Efl_VG *from, const Efl_VG *to,
                                       double pos_map)
@@ -154,21 +154,21 @@ _efl_vg_shape_efl_vg_interpolate(Eo *obj,
    fromd = efl_data_scope_get(from, EFL_VG_SHAPE_CLASS);
    tod = efl_data_scope_get(to, EFL_VG_SHAPE_CLASS);
 
-   r = efl_vg_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
+   r = efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 
    r &= efl_gfx_path_interpolate(obj, from, to, pos_map);
 
    if (fromd->fill && tod->fill && pd->fill)
      {
-        r &= efl_vg_interpolate(pd->fill, fromd->fill, tod->fill, pos_map);
+        r &= efl_gfx_path_interpolate(pd->fill, fromd->fill, tod->fill, pos_map);
      }
    if (fromd->stroke.fill && tod->stroke.fill && pd->stroke.fill)
      {
-        r &= efl_vg_interpolate(pd->stroke.fill, fromd->stroke.fill, tod->stroke.fill, pos_map);
+        r &= efl_gfx_path_interpolate(pd->stroke.fill, fromd->stroke.fill, tod->stroke.fill, pos_map);
      }
    if (fromd->stroke.marker && tod->stroke.marker && pd->stroke.marker)
      {
-        r &= efl_vg_interpolate(pd->stroke.marker, fromd->stroke.marker, tod->stroke.marker, pos_map);
+        r &= efl_gfx_path_interpolate(pd->stroke.marker, fromd->stroke.marker, tod->stroke.marker, pos_map);
      }
 
    return r;

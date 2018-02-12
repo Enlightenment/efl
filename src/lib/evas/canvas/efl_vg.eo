@@ -60,16 +60,6 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicat
             Evas_VG_Quality q;
          }
       } */
-      interpolate {
-        [[Interpolate a given vector graphics object]]
-
-        return: bool; [[$true on success, $false otherwise]]
-        params {
-          @in from: const(Efl.VG); [[Source object]]
-          @in to: const(Efl.VG); [[Destination object]]
-          @in pos_map: double; [[Interpolate mapping]]
-        }
-      }
    }
    implements {
       Efl.Object.name { set; }
@@ -87,6 +77,7 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicat
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;
       Efl.Gfx.Stack.lower;
+      Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
    }
 }

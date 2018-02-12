@@ -110,7 +110,7 @@ _efl_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd)
 }
 
 static Eina_Bool
-_efl_vg_container_efl_vg_interpolate(Eo *obj,
+_efl_vg_container_efl_gfx_path_interpolate(Eo *obj,
                                           Efl_VG_Container_Data *pd,
                                           const Efl_VG *from, const Efl_VG *to,
                                           double pos_map)
@@ -125,7 +125,7 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
          efl_isa(to, EFL_VG_CONTAINER_CLASS)))
      return EINA_FALSE;
 
-   r = efl_vg_interpolate(efl_super(obj, EFL_VG_CONTAINER_CLASS), from, to, pos_map);
+   r = efl_gfx_path_interpolate(efl_super(obj, EFL_VG_CONTAINER_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
@@ -141,7 +141,7 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
              r = EINA_FALSE;
              break;
           }
-        r &= efl_vg_interpolate(child, from_child, to_child, pos_map);
+        r &= efl_gfx_path_interpolate(child, from_child, to_child, pos_map);
         if (!r)
           break;
      }

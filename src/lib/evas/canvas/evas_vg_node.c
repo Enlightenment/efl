@@ -633,7 +633,7 @@ _efl_vg_interpolate_point(Eina_Point_3D *d,
 }
 
 static Eina_Bool
-_efl_vg_interpolate(Eo *obj,
+_efl_vg_efl_gfx_path_interpolate(Eo *obj,
                          Efl_VG_Data *pd, const Efl_VG *from, const Efl_VG *to,
                          double pos_map)
 {
@@ -702,7 +702,7 @@ _efl_vg_interpolate(Eo *obj,
 
    if (fromd->mask && tod->mask && pd->mask)
      {
-        r &= efl_vg_interpolate(pd->mask, fromd->mask, tod->mask, pos_map);
+        r &= efl_gfx_path_interpolate(pd->mask, fromd->mask, tod->mask, pos_map);
      }
 
    _efl_vg_changed(obj);

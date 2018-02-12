@@ -141,7 +141,7 @@ _efl_vg_gradient_radial_efl_gfx_path_bounds_get(Eo *obj, Efl_VG_Gradient_Radial_
 }
 
 static Eina_Bool
-_efl_vg_gradient_radial_efl_vg_interpolate(Eo *obj,
+_efl_vg_gradient_radial_efl_gfx_path_interpolate(Eo *obj,
                                                 Efl_VG_Gradient_Radial_Data *pd,
                                                 const Efl_VG *from, const Efl_VG *to,
                                                 double pos_map)
@@ -150,7 +150,7 @@ _efl_vg_gradient_radial_efl_vg_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r;
 
-   r = efl_vg_interpolate(efl_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from, to, pos_map);
+   r = efl_gfx_path_interpolate(efl_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 

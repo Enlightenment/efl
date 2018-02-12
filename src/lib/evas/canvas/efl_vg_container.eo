@@ -19,7 +19,7 @@ class Efl.VG.Container (Efl.VG)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.Path.bounds_get;
-      Efl.VG.interpolate;
+      Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
    }
 }

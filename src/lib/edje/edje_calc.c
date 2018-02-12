@@ -3154,7 +3154,7 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
 
         root = efl_duplicate(src_root);
 
-        if (!evas_vg_node_interpolate(root, src_root, dest_root, pos))
+        if (!efl_gfx_path_interpolate(root, src_root, dest_root, pos))
           {
              ERR("Can't interpolate check the svg file");
           }

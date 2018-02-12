@@ -5,7 +5,7 @@ abstract Efl.VG.Gradient (Efl.VG, Efl.Gfx.Gradient)
    implements {
       Efl.Gfx.Gradient.stop { get; set; }
       Efl.Gfx.Gradient.spread { get; set; }
-      Efl.VG.interpolate;
+      Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
    }
 }

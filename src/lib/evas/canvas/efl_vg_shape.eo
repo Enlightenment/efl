@@ -35,7 +35,7 @@ class Efl.VG.Shape (Efl.VG, Efl.Gfx.Shape)
       }
    }
    implements {
-      Efl.VG.interpolate;
+      Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
       Efl.Object.constructor;
       Efl.Object.destructor;
