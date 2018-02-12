@@ -5,7 +5,7 @@ class Ector.Renderer.GL.Gradient.Linear (Ector.Renderer.GL, Ector.Renderer.Gradi
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
+      Ector.Renderer.boundary_get;
       Ector.Renderer.crc { get; }
       Ector.Renderer.GL.op_fill;
       Efl.Object.constructor;

@@ -44,7 +44,7 @@ _ector_renderer_gl_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_GL_Shape
 
    r = ector_renderer_prepare(efl_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
 
-   ector_renderer_bounds_get(obj, &bounding_box);
+   ector_renderer_boundary_get(obj, &bounding_box);
 
    pd->vertex = malloc(sizeof (GLshort) * 6 * 3);
 
@@ -110,7 +110,7 @@ _ector_renderer_gl_shape_ector_renderer_gl_op_fill(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_gl_shape_ector_renderer_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rect *r)
+_ector_renderer_gl_shape_ector_renderer_boundary_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rect *r)
 {
    efl_gfx_path_bounds_get(obj, r);
 

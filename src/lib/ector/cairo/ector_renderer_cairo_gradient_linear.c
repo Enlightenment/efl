@@ -113,7 +113,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_cairo_op_fill(Eo *obj,
 }
 
 static void
-_ector_renderer_cairo_gradient_linear_ector_renderer_bounds_get(Eo *obj,
+_ector_renderer_cairo_gradient_linear_ector_renderer_boundary_get(Eo *obj,
                                                                 Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED,
                                                                 Eina_Rect *r)
 {

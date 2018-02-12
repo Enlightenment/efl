@@ -107,7 +107,7 @@ abstract Ector.Renderer (Efl.Object)
             return: uint; [[CRC value]]
     }
       }
-      bounds_get @pure_virtual {
+      boundary_get @pure_virtual {
          [[Retrieves the bounds of the renderer]]
     params {
        @out r: Eina.Rect; [[Bounds as @Eina.Rect]]
