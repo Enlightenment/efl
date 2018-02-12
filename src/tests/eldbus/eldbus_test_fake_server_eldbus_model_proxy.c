@@ -31,7 +31,10 @@ _setup(void)
    };
    fake_server = fake_server_start(&fake_server_data);
 
-   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(), eldbus_model_object_custom_constructor(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
+   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(),
+                                eldbus_model_connect(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE),
+                                eldbus_model_object_bus_set(efl_added, FAKE_SERVER_BUS),
+                                eldbus_model_object_path_set(efl_added, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    fake_server_proxy = eldbus_model_proxy_from_object_get(fake_server_object, FAKE_SERVER_INTERFACE);
@@ -50,7 +53,8 @@ EFL_START_TEST(properties_get)
    const Eina_Array *properties = efl_model_properties_get(fake_server_proxy);
    ck_assert_ptr_ne(NULL, properties);
 
-   const unsigned int expected_properties_count = 3; // FAKE_SERVER_READONLY_PROPERTY, FAKE_SERVER_WRITEONLY_PROPERTY and FAKE_SERVER_READWRITE_PROPERTY properties
+   // FAKE_SERVER_READONLY_PROPERTY, FAKE_SERVER_WRITEONLY_PROPERTY and FAKE_SERVER_READWRITE_PROPERTY properties
+   const unsigned int expected_properties_count = 3;
    const unsigned int actual_properties_count = eina_array_count(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 
@@ -58,15 +62,43 @@ EFL_START_TEST(properties_get)
 }
 EFL_END_TEST
 
+static Eina_Future *f = NULL;
+
+static Eina_Value
+_leave(void *data EINA_UNUSED, const Eina_Value v,
+       const Eina_Future *dead EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+   f = NULL;
+   return v;
+}
+
+static void
+_property_ready(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   if (f) return ;
+   f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
+   eina_future_then(f, _leave, NULL);
+}
+
 EFL_START_TEST(property_get)
 {
+   Eina_Value *value;
+
+   efl_event_callback_add(fake_server_proxy, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _property_ready, NULL);
+   value = efl_model_property_get(fake_server_proxy, FAKE_SERVER_READONLY_PROPERTY);
+   eina_value_free(value);
+   value = efl_model_property_get(fake_server_proxy, FAKE_SERVER_READWRITE_PROPERTY);
+   eina_value_free(value);
+
+   ecore_main_loop_begin();
+
    check_efl_model_property_int_eq(fake_server_proxy, FAKE_SERVER_READONLY_PROPERTY, FAKE_SERVER_READONLY_PROPERTY_VALUE);
    check_efl_model_property_int_eq(fake_server_proxy, FAKE_SERVER_READWRITE_PROPERTY, FAKE_SERVER_READWRITE_PROPERTY_VALUE);
 
    // Write-only property returns error
-   Efl_Future *future;
-   future = efl_model_property_get(fake_server_proxy, FAKE_SERVER_WRITEONLY_PROPERTY);
-   (void)future;
+   value = efl_model_property_get(fake_server_proxy, FAKE_SERVER_WRITEONLY_PROPERTY);
+   eina_value_free(value);
    //ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    _teardown();
@@ -89,12 +121,13 @@ _check_property_set(const char *property_name, int expected_property_value, int 
 
 EFL_START_TEST(property_set)
 {
+   Eina_Future *future;
+   Eina_Value dummy = EINA_VALUE_EMPTY;
+
    _check_property_set(FAKE_SERVER_WRITEONLY_PROPERTY, 0x12345678, &fake_server_data.writeonly_property);
    _check_property_set(FAKE_SERVER_READWRITE_PROPERTY, 0x76543210, &fake_server_data.readwrite_property);
 
    // Read-only property returns error
-   Efl_Future *future;
-   Eina_Value dummy = {0};
    future = efl_model_property_set(fake_server_proxy, FAKE_SERVER_READONLY_PROPERTY, &dummy);
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_READ_ONLY);
 
@@ -155,20 +188,18 @@ EFL_END_TEST
 EFL_START_TEST(child_del)
 {
    // Tests that it is not possible to delete children
-   Efl_Future *future;
+   Eo *child;
    unsigned int expected_children_count = 0;
-   future = efl_model_children_count_get(fake_server_proxy);
-   expected_children_count = efl_model_future_then_u(future);
+   unsigned int actual_children_count = 0;
+
+   expected_children_count = efl_model_children_count_get(fake_server_proxy);
    ck_assert_msg(expected_children_count, "There must be at least 1 child to test");
 
    // efl_model_child_del always returns ERROR
-   Eo *child = efl_model_first_child_get(fake_server_proxy);
+   child = efl_model_first_child_get(fake_server_proxy);
    efl_model_child_del(fake_server_proxy, child);
 
-   unsigned int actual_children_count = 0;
-   future = efl_model_children_count_get(fake_server_proxy);
-   actual_children_count = efl_model_future_then_u(future);
-
+   actual_children_count = efl_model_children_count_get(fake_server_proxy);
    ck_assert_int_le(expected_children_count, actual_children_count);
 
    _teardown();

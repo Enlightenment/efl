@@ -25,7 +25,10 @@ _setup(void)
 {
    fake_server = fake_server_start(&fake_server_data);
 
-   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(), eldbus_model_object_custom_constructor(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
+   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(),
+                                eldbus_model_connect(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE),
+                                eldbus_model_object_bus_set(efl_added, FAKE_SERVER_BUS),
+                                eldbus_model_object_path_set(efl_added, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    fake_server_proxy = eldbus_model_proxy_from_object_get(fake_server_object, FAKE_SERVER_INTERFACE);
@@ -58,22 +61,29 @@ EFL_END_TEST
 
 EFL_START_TEST(property_get)
 {
+   Eina_Value *value;
+   Eina_Error err;
+
    // Signal properties always have output direction
-   Efl_Future *future;
-   future = efl_model_property_get(pong_signal, ARGUMENT_A);
-   efl_model_future_then(future);
+   value = efl_model_property_get(pong_signal, ARGUMENT_A);
+   fail_if(value == NULL);
 
    // Nonexistent property must return ERROR
-   future = efl_model_property_get(pong_signal, "nonexistent");
-   check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
+   value = efl_model_property_get(pong_signal, "nonexistent");
+   fail_if(value == NULL);
+   fail_if(eina_value_type_get(value) != EINA_VALUE_TYPE_ERROR);
+
+   eina_value_error_get(value, &err);
+   fail_if(err != EFL_MODEL_ERROR_NOT_FOUND);
 }
 EFL_END_TEST
 
 EFL_START_TEST(property_set)
 {
    // Signals have output arguments only. All returns error
-   Efl_Future *future;
-   Eina_Value dummy = {0};
+   Eina_Value dummy = EINA_VALUE_EMPTY;
+   Eina_Future *future;
+
    future = efl_model_property_set(pong_signal, ARGUMENT_A, &dummy);
    check_efl_model_future_error(future, NULL);
 }
@@ -93,7 +103,8 @@ EFL_END_TEST
 
 EFL_START_TEST(children_slice_get)
 {
-   Efl_Future *future;
+   Eina_Future *future;
+
    future = efl_model_children_slice_get(pong_signal, 1, 1);
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }

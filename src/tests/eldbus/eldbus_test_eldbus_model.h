@@ -19,11 +19,10 @@ void check_efl_model_children_count_ge(Efl_Model *obj, unsigned int minimum_chil
 void check_efl_model_children_slice_get(Efl_Model *efl_model);
 void check_efl_model_property_int_eq(Efl_Model *obj, const char *property, int expected_value);
 void check_efl_model_property_int_set(Efl_Model *obj, const char *property, int value);
-void check_efl_model_future_error(Efl_Future *future, Eina_Error *err);
+void check_efl_model_future_error(Eina_Future *future, Eina_Error *err);
 
-
-void *efl_model_future_then(Efl_Future *future);
-int efl_model_future_then_u(Efl_Future *future);
+Eina_Value *efl_model_future_then(Eina_Future *future);
+int efl_model_future_then_u(Eina_Future *future);
 
 Eldbus_Model_Proxy *eldbus_model_proxy_from_object_get(Eldbus_Model_Object *object, const char *interface_name);
 Eldbus_Model_Method *eldbus_model_method_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *method_name);
