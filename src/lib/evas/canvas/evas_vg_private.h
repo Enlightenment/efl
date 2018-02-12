@@ -56,8 +56,6 @@ struct _Efl_Canvas_Vg_Data
 
 struct _Efl_VG_Data
 {
-   const char *name;
-
    Eina_Matrix3 *m;
    Efl_VG_Interpolation *intp;
 

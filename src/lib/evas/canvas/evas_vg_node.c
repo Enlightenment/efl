@@ -283,46 +283,41 @@ _efl_vg_efl_object_destructor(Eo *obj, Efl_VG_Data *pd)
 }
 
 static void
-_efl_vg_name_insert(Eo *obj, Efl_VG_Data *pd, Efl_VG_Container_Data *cd)
+_efl_vg_name_insert(Eo *obj, Efl_VG_Container_Data *cd)
 {
    Eo *set;
+   const char *name = efl_name_get(efl_super(obj, MY_CLASS));
 
-   if (!pd->name) return ;
+   if (!name) return ;
 
-   set = eina_hash_find(cd->names, pd->name);
+   set = eina_hash_find(cd->names, name);
    if (set == obj) return ;
 
    if (set)
      {
-        eina_stringshare_del(pd->name);
-        pd->name = NULL;
+        efl_name_set(efl_super(obj, MY_CLASS), NULL);
      }
    else
      {
-        eina_hash_direct_add(cd->names, pd->name, obj);
+        eina_hash_direct_add(cd->names, name, obj);
      }
 }
 
 static void
-_efl_vg_name_set(Eo *obj, Efl_VG_Data *pd, const char *name)
+_efl_vg_efl_object_name_set(Eo *obj, Efl_VG_Data *pd EINA_UNUSED, const char *name)
 {
    Efl_VG_Container_Data *cd = NULL;
    Eo *parent = NULL;
+   const char *pname = efl_name_get(obj);
 
    if (_efl_vg_parent_checked_get(obj, &parent, &cd))
      {
-        if (pd->name) eina_hash_del(cd->names, pd->name, obj);
+        if (pname) eina_hash_del(cd->names, pname, obj);
      }
 
-   eina_stringshare_replace(&pd->name, name);
+   efl_name_set(efl_super(obj, MY_CLASS), name);
 
-   if (cd) _efl_vg_name_insert(obj, pd, cd);
-}
-
-static const char *
-_efl_vg_name_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
-{
-   return pd->name;
+   if (cd) _efl_vg_name_insert(obj, cd);
 }
 
 static void
@@ -360,7 +355,7 @@ _efl_vg_efl_object_parent_set(Eo *obj,
      {
         old_cd->children = eina_list_remove(old_cd->children, obj);
 
-        if (pd->name) eina_hash_del(old_cd->names, pd->name, obj);
+        eina_hash_del(old_cd->names, efl_name_get(efl_super(obj, MY_CLASS)), obj);
      }
 
    efl_parent_set(efl_super(obj, MY_CLASS), parent);
@@ -368,7 +363,7 @@ _efl_vg_efl_object_parent_set(Eo *obj,
      {
         cd->children = eina_list_append(cd->children, obj);
 
-        _efl_vg_name_insert(obj, pd, cd);
+        _efl_vg_name_insert(obj, cd);
      }
 
    _efl_vg_changed(old_parent);
@@ -724,8 +719,7 @@ _efl_vg_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Data *pd)
    cn = efl_add(efl_class_get(obj), NULL);
    cd = efl_data_scope_get(cn, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cd, NULL);
-   if (pd->name)
-     cd->name = eina_stringshare_ref(pd->name);
+   efl_name_set(efl_super(cn, MY_CLASS), efl_name_get(efl_super(obj, MY_CLASS)));
    if (pd->m)
      {
         cd->m = malloc(sizeof (Eina_Matrix3)) ;

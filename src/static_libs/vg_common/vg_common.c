@@ -669,7 +669,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Vg_File_Data *vg_data)
 
    // update the vg name
    if (node->id)
-     evas_vg_node_name_set(vg, node->id);
+     efl_name_set(vg, node->id);
 
    // apply the transformation
    if (node->transform)
@@ -927,7 +927,7 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
         eina_matrix3_copy(node->transform, matrix);
      }
 
-   if ((id = evas_vg_node_name_get(vg)))
+   if ((id = efl_name_get(vg)))
      {
         node->id = eina_stringshare_add(id);
      }
