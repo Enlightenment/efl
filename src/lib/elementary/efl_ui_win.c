@@ -373,7 +373,6 @@ static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const c
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize);
-static void _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha);
 static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd);
 
 #ifdef HAVE_ELEMENTARY_X
@@ -449,7 +448,6 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
    if (!sd->ee) return;
 
    enabled = sd->theme_alpha | sd->application_alpha;
-   _elm_win_opaque_update(sd, EINA_TRUE);
    if (sd->img_obj)
      {
         evas_object_image_alpha_set(sd->img_obj, enabled);
@@ -966,8 +964,6 @@ _elm_win_resize_job(void *data)
         evas_object_move(sd->frame_obj, -fx, -fy);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
-   else
-     _elm_win_opaque_update(sd, 0);
 
    if (sd->main_menu)
      {
@@ -1430,52 +1426,6 @@ _elm_win_profile_update(Efl_Ui_Win_Data *sd)
      ecore_evas_window_profile_set(ee2, sd->profile.name);
 
    efl_event_callback_legacy_call(sd->obj, EFL_UI_WIN_EVENT_PROFILE_CHANGED, NULL);
-}
-
-static void
-_elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
-{
-#ifdef HAVE_ELEMENTARY_WL2
-   int ox, oy, ow, oh;
-   Eina_Bool alpha;
-   const char *engine_name;
-
-   if (!sd->wl.win) return;
-   if (!sd->shown) return;
-
-   /* If this isn't a wayland window, BAIL now to avoid destroying
-    * non-wayland engine data structures...
-    */
-   engine_name = ecore_evas_engine_name_get(sd->ee);
-   if (strncmp(engine_name, "wayland", sizeof("wayland") - 1)) return;
-
-   alpha = ecore_evas_alpha_get(sd->ee) || force_alpha;
-   if (sd->fullscreen || !sd->frame_obj)
-     {
-        ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
-        if (!alpha)
-          ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
-        else
-          ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
-        ecore_wl2_window_geometry_set(sd->wl.win, 0, 0, ow, oh);
-        ecore_wl2_window_input_region_set(sd->wl.win, 0, 0, ow, oh);
-        return;
-     }
-
-   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
-                                 &ox, &oy, &ow, &oh);
-   if (!alpha)
-     ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
-   else
-     ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
-
-   /* FIXME: Replace with call to ecore_evas_shadow_geometry_set(). */
-   ecore_wl2_window_geometry_set(sd->wl.win, ox, oy, ow, oh);
-   ecore_wl2_window_input_region_set(sd->wl.win, ox, oy, ow, oh);
-#else
-   (void)sd;
-   (void)force_alpha;
-#endif
 }
 
 static inline void
@@ -4459,10 +4409,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
      {
         if (!efl_finalized_get(sd->obj)) return;
         if (EINA_LIKELY(sd->type == ELM_WIN_FAKE))
-          {
-             _elm_win_opaque_update(sd, 0);
-             return;
-          }
+          return;
         CRI("Window has no frame object!");
         return;
      }
@@ -4539,7 +4486,6 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         if (calc)
           evas_object_smart_calculate(sd->frame_obj);
         _elm_win_frame_obj_update(sd);
-        _elm_win_opaque_update(sd, EINA_FALSE);
      }
 }
 
