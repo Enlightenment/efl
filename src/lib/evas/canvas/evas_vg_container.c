@@ -65,7 +65,7 @@ _efl_vg_container_efl_object_destructor(Eo *obj,
 }
 
 static void
-_efl_vg_container_efl_vg_bounds_get(Eo *obj EINA_UNUSED,
+_efl_vg_container_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
                                     Efl_VG_Container_Data *pd,
                                     Eina_Rect *r)
 {
@@ -80,12 +80,12 @@ _efl_vg_container_efl_vg_bounds_get(Eo *obj EINA_UNUSED,
      {
         if (first)
           {
-             efl_vg_bounds_get(child, r);
+             efl_gfx_path_bounds_get(child, r);
              first = EINA_FALSE;
           }
         else
           {
-             efl_vg_bounds_get(child, &s);
+             efl_gfx_path_bounds_get(child, &s);
              eina_rectangle_union(&r->rect, &s.rect);
           }
      }

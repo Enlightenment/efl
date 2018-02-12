@@ -18,7 +18,7 @@ class Efl.VG.Container (Efl.VG)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.VG.bounds_get;
+      Efl.Gfx.Path.bounds_get;
       Efl.VG.interpolate;
       Efl.Duplicate.duplicate;
    }

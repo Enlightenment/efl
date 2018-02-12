@@ -129,7 +129,7 @@ _efl_vg_gradient_radial_efl_object_destructor(Eo *obj,
 }
 
 static void
-_efl_vg_gradient_radial_efl_vg_bounds_get(Eo *obj, Efl_VG_Gradient_Radial_Data *pd, Eina_Rect *r)
+_efl_vg_gradient_radial_efl_gfx_path_bounds_get(Eo *obj, Efl_VG_Gradient_Radial_Data *pd, Eina_Rect *r)
 {
    Efl_VG_Data *nd;
 

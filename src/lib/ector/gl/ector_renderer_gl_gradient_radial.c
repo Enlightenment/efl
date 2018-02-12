@@ -54,7 +54,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_gl_op_fill(Eo *obj, Ector_Rend
 }
 
 static void
-_ector_renderer_gl_gradient_radial_ector_renderer_boundary_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gl_gradient_radial_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_GL_Gradient_Radial_Data *pd,
                                                              Eina_Rect *r)
 {

@@ -40,7 +40,7 @@ _ector_renderer_gl_gradient_linear_ector_renderer_draw(Eo *obj, Ector_Renderer_G
 }
 
 static void
-_ector_renderer_gl_gradient_linear_ector_renderer_boundary_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gl_gradient_linear_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_GL_Gradient_Linear_Data *pd,
                                                              Eina_Rect *r)
 {

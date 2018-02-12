@@ -561,7 +561,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
    //TODO: apply actual sizes (imporve bounds_get function?)...
    //for example with figures and paths
    if (!g->user_space)
-     evas_vg_node_bounds_get(vg, &r);
+     efl_gfx_path_bounds_get(vg, &r);
    else
      {
         r.w = vg_data->view_box.w;
@@ -610,7 +610,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
                   scale_reversed_X = ((double) r.w) / r.h;
                }
 
-             evas_vg_node_bounds_get(grad_obj, &grad_geom);
+             efl_gfx_path_bounds_get(grad_obj, &grad_geom);
 
              double cy = grad_geom.h / 2 + grad_geom.y;
              double cy_scaled = (grad_geom.h / 2) * scale_reversed_Y;

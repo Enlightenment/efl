@@ -189,7 +189,7 @@ _efl_vg_efl_gfx_size_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
 
-   efl_vg_bounds_get(obj, &r);
+   efl_gfx_path_bounds_get(obj, &r);
    return r.size;
 }
 
@@ -508,7 +508,7 @@ _efl_vg_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 {
    Eina_Rect bounds;
 
-   efl_vg_bounds_get(root, &bounds);
+   efl_gfx_path_bounds_get(root, &bounds);
    if (!eina_rectangles_intersect(&bounds.rect, r)) return ;
 
    eina_array_push(a, root);
@@ -546,7 +546,7 @@ _efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    Eina_Array_Iterator iterator;
    unsigned int i;
 
-   efl_vg_bounds_get(obj, &r);
+   efl_gfx_path_bounds_get(obj, &r);
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 
@@ -576,7 +576,7 @@ _efl_vg_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    Eina_Array_Iterator iterator;
    unsigned int i;
 
-   efl_vg_bounds_get(obj, &r);
+   efl_gfx_path_bounds_get(obj, &r);
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 

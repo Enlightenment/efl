@@ -16,14 +16,7 @@ struct _Efl_VG_Shape_Data
    } stroke;
 };
 
-static void
-_efl_vg_shape_efl_vg_bounds_get(Eo *obj,
-                                Efl_VG_Shape_Data *pd EINA_UNUSED,
-                                Eina_Rect *r)
-{
-   // FIXME: Use the renderer bounding box when it has been created instead of an estimation
-   efl_gfx_path_bounds_get(obj, r);
-}
+// FIXME: Use the renderer bounding box when it has been created instead of an estimation
 
 static void
 _efl_vg_shape_fill_set(Eo *obj EINA_UNUSED,

@@ -107,12 +107,6 @@ abstract Ector.Renderer (Efl.Object)
             return: uint; [[CRC value]]
     }
       }
-      boundary_get @pure_virtual {
-         [[Retrieves the bounds of the renderer]]
-    params {
-       @out r: Eina.Rect; [[Bounds as @Eina.Rect]]
-    }
-      }
       draw @pure_virtual {
           [[Actual draw operation]]
          return: bool; [[$true on success, $false otherwise]]
