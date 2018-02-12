@@ -5,6 +5,8 @@
 #include "ecore_wl2_private.h"
 #include "efl-hints-client-protocol.h"
 
+static void _ecore_wl2_window_hide_send(Ecore_Wl2_Window *window);
+
 void
 _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
 {
@@ -285,6 +287,8 @@ _xdg_popup_cb_done(void *data, struct xdg_popup *xdg_popup EINA_UNUSED)
    if (!win) return;
 
    if (win->grab) _ecore_wl2_input_ungrab(win->grab);
+
+   _ecore_wl2_window_hide_send(win);
 }
 
 static const struct xdg_popup_listener _xdg_popup_listener =
