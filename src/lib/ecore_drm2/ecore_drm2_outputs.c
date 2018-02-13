@@ -1381,7 +1381,8 @@ EAPI Eina_Bool
 ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
-   return output->cloned;
+   return (output->cloned ||
+           output->relative.mode == ECORE_DRM2_RELATIVE_CLONE);
 }
 
 EAPI unsigned int
