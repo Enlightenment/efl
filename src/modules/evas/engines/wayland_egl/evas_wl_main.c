@@ -46,16 +46,14 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    config_attrs[n++] = EGL_WINDOW_BIT;
    config_attrs[n++] = EGL_RENDERABLE_TYPE;
    config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-# if 0
-   /* FIXME: n900 - omap3 sgx libs break here */
+
    config_attrs[n++] = EGL_RED_SIZE;
    config_attrs[n++] = 1;
    config_attrs[n++] = EGL_GREEN_SIZE;
    config_attrs[n++] = 1;
    config_attrs[n++] = EGL_BLUE_SIZE;
    config_attrs[n++] = 1;
-   /* FIXME: end n900 breakage */
-# endif
+
    config_attrs[n++] = EGL_ALPHA_SIZE;
    config_attrs[n++] = gw->alpha;
    config_attrs[n++] = EGL_DEPTH_SIZE;
