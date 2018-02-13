@@ -21,9 +21,10 @@ struct _Efl_Ui_Dnd_Container_Data
 
 extern int _wl_default_seat_id_get(Evas_Object *obj);
 
-static inline Eo*
+static inline Eo *
 _selection_manager_get(Eo *obj)
 {
+   if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return NULL;
    Eo *top = elm_widget_top_get(obj);
    if (!top)
      {

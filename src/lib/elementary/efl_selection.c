@@ -115,15 +115,18 @@ _wl_default_seat_id_get(Evas_Object *obj)
 
    if (obj)
      {
-        Eo *top = elm_widget_top_get(obj);
-        if (efl_isa(top, EFL_UI_WIN_INLINED_CLASS))
+        if (efl_isa(obj, EFL_UI_WIDGET_CLASS))
           {
-             parent2 = efl_ui_win_inlined_parent_get(top);
-             if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+             Eo *top = elm_widget_top_get(obj);
+             if (efl_isa(top, EFL_UI_WIN_INLINED_CLASS))
+               {
+                  parent2 = efl_ui_win_inlined_parent_get(top);
+                  if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+               }
+             /* fake win means canvas seat id will not match protocol seat id */
+             ewin = elm_win_get(obj);
+             if (elm_win_type_get(ewin) == ELM_WIN_FAKE) obj = NULL;
           }
-        /* fake win means canvas seat id will not match protocol seat id */
-        ewin = elm_win_get(obj);
-        if (elm_win_type_get(ewin) == ELM_WIN_FAKE) obj = NULL;
      }
 
    if (!obj)
