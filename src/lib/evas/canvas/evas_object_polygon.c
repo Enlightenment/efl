@@ -84,6 +84,9 @@ static const Evas_Object_Func object_func =
 EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
    return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
