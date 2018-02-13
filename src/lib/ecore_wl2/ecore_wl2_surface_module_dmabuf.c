@@ -207,6 +207,8 @@ _evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data)
 
    EINA_LIST_FREE(p->buffers, b)
      ecore_wl2_buffer_destroy(b);
+
+   free(p);
 }
 
 static void
