@@ -4750,7 +4750,7 @@ static Eina_Value
 _win_finalize_job_cb(void *data, const Eina_Value value)
 {
    Evas *eo_e = evas_object_evas_get(data);
-   evas_render_pending_objects_flush(eo_e);
+   if (eo_e) evas_render_pending_objects_flush(eo_e);
    return value;
 }
 
