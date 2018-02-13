@@ -39,6 +39,8 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
    if (window->callback) wl_callback_destroy(window->callback);
    window->callback = NULL;
 
+   window->outputs = eina_list_free(window->outputs);
+
    window->commit_pending = EINA_FALSE;
 }
 
