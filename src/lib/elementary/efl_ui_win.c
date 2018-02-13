@@ -1258,7 +1258,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
    /* else if (sd->img_obj) */
    /*   { */
    /*   } */
-   if (!efl_ui_focus_manager_focus_get(sd->obj) && !efl_ui_focus_manager_redirect_get(sd->obj))
+   if ((!efl_ui_focus_manager_focus_get(sd->obj)) &&
+       (!efl_ui_focus_manager_redirect_get(sd->obj)))
      {
         Efl_Ui_Focus_Object *child;
 
@@ -1266,6 +1267,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
 
         if (child)
           efl_ui_focus_manager_focus_set(sd->obj, sd->obj);
+        else  if (!evas_focus_get(evas_object_evas_get(sd->obj)))
+          evas_object_focus_set(obj, EINA_TRUE);
      }
 }
 
