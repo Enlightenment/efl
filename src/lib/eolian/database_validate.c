@@ -859,7 +859,7 @@ database_validate(Eolian *state, const Eolian_Unit *src)
 {
    Eolian_Class *cl;
 
-   Validate_State vals;
+   Validate_State vals = { EINA_FALSE };
 
    Eina_Iterator *iter = eolian_all_classes_get(src);
    Eina_Hash *nhash = eina_hash_string_small_new(NULL);
