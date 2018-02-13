@@ -89,6 +89,7 @@ _efl_gesture_manager_config_set(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *p
 EOLIAN static void
 _efl_gesture_manager_efl_object_destructor(Eo *obj, Efl_Gesture_Manager_Data *pd EINA_UNUSED)
 {
+   eina_hash_free(pd->m_config);
    eina_hash_free(pd->m_recognizers);
    eina_hash_free(pd->m_gesture_contex);
    eina_hash_free(pd->m_object_events);
