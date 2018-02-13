@@ -7,16 +7,11 @@
 #include "elm_priv.h"
 #include "efl_ui_nstate.eo.h"
 #include "efl_ui_button_private.h"
+#include "efl_ui_nstate_private.h"
 
 #define MY_CLASS EFL_UI_NSTATE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Nstate"
 
-
-typedef struct
-{
-   int nstate;
-   int state;
-} Efl_Ui_Nstate_Data;
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static void _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd);
@@ -65,7 +60,7 @@ _next_state_set(Efl_Ui_Nstate_Data *sd)
 }
 
 static void
-_state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
+_state_signal_emit(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
 {
    char buf[64];
 
@@ -73,6 +68,12 @@ _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_layout_sizing_eval(obj);
+}
+
+static void
+_state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
+{
+   _state_signal_emit(obj, sd);
    efl_event_callback_legacy_call(obj, EFL_UI_NSTATE_EVENT_CHANGED, NULL);
 }
 
@@ -123,7 +124,7 @@ _efl_ui_nstate_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Nstate_Data *pd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
-   _state_active(obj, pd);
+   _state_signal_emit(obj, pd);
 
    return int_ret;
 }

@@ -11,6 +11,7 @@
 #include "elm_priv.h"
 #include "efl_ui_nstate.eo.h"
 #include "efl_ui_check_private.h"
+#include "efl_ui_nstate_private.h"
 
 #define MY_CLASS EFL_UI_CHECK_CLASS
 #define MY_CLASS_PFX efl_ui_check
@@ -49,10 +50,10 @@ _activate(Evas_Object *obj)
 {
    EFL_UI_CHECK_DATA_GET(obj, sd);
 
-   efl_ui_nstate_activate(obj);
-   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
+   if (sd->statep) *sd->statep = !efl_ui_nstate_value_get(obj);
 
-   if (efl_ui_nstate_value_get(obj) == 1)
+   // state will be changed to 1 by efl_ui_nstate_activate(obj)
+   if (efl_ui_nstate_value_get(obj) == 0)
      {
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
@@ -63,7 +64,7 @@ _activate(Evas_Object *obj)
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
              _elm_access_say(E_("State: On"));
      }
-   else if (efl_ui_nstate_value_get(obj) == 0)
+   else
      {
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
@@ -75,10 +76,12 @@ _activate(Evas_Object *obj)
              _elm_access_say(E_("State: Off"));
      }
 
+   efl_ui_nstate_activate(obj);
+
    if (_elm_config->atspi_mode)
-       efl_access_state_changed_signal_emit(obj,
-                                                                EFL_ACCESS_STATE_CHECKED,
-                                                                efl_ui_nstate_value_get(obj));
+     efl_access_state_changed_signal_emit(obj,
+                                          EFL_ACCESS_STATE_CHECKED,
+                                          efl_ui_nstate_value_get(obj));
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
@@ -160,7 +163,7 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
 
    if (efl_ui_nstate_value_get(obj) == 0)
      elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   else if (efl_ui_nstate_value_get(obj) == 1)
+   else
      elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
 
    edje_object_message_signal_process(wd->resize_obj);
@@ -230,16 +233,14 @@ _on_check_off(void *data,
 
    EFL_UI_CHECK_DATA_GET(obj, sd);
 
-   efl_ui_nstate_value_set(obj, 0);
-   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
-
+   if (sd->statep) *sd->statep = 0;
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   efl_event_callback_legacy_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
+   efl_ui_nstate_value_set(obj, 0);
 
    if (_elm_config->atspi_mode)
-       efl_access_state_changed_signal_emit(data,
-                                                                EFL_ACCESS_STATE_CHECKED,
-                                                                efl_ui_nstate_value_get(obj));
+     efl_access_state_changed_signal_emit(data,
+                                          EFL_ACCESS_STATE_CHECKED,
+                                          efl_ui_nstate_value_get(obj));
 }
 
 static void
@@ -252,15 +253,14 @@ _on_check_on(void *data,
 
    EFL_UI_CHECK_DATA_GET(obj, sd);
 
-   efl_ui_nstate_value_set(obj, 1);
-   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
+   if (sd->statep) *sd->statep = 1;
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   efl_event_callback_legacy_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
+   efl_ui_nstate_value_set(obj, 1);
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(data,
-                                                              EFL_ACCESS_STATE_CHECKED,
-                                                              efl_ui_nstate_value_get(obj));
+                                          EFL_ACCESS_STATE_CHECKED,
+                                          efl_ui_nstate_value_get(obj));
 }
 
 static void
@@ -283,14 +283,16 @@ _efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *sd, Eina_Bool value)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_ui_nstate_value_set(obj, value);
-   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
-   if (efl_ui_nstate_value_get(obj) == 1)
+   if (sd->statep) *sd->statep = value;
+
+   if (value == 1)
      elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   else if (efl_ui_nstate_value_get(obj) == 0)
+   else
      elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
 
    edje_object_message_signal_process(wd->resize_obj);
+
+   efl_ui_nstate_value_set(obj, value);
 }
 
 EOLIAN static void
@@ -341,7 +343,21 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 EAPI void
 elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
-   efl_ui_check_selected_set(obj, state);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   EFL_UI_NSTATE_DATA_GET_OR_RETURN(obj, nd);
+   EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
+
+   if (state != nd->state)
+     {
+        nd->state = state;
+        if (sd->statep) *sd->statep = state;
+
+        if (state == 1)
+          elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+        edje_object_message_signal_process(wd->resize_obj);
+     }
 }
 
 EAPI Eina_Bool
@@ -354,6 +370,8 @@ EAPI void
 elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 {
    EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
+   EFL_UI_NSTATE_DATA_GET_OR_RETURN(obj, nd);
+
    if (!statep)
      {
         sd->statep = NULL;
@@ -361,12 +379,12 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
      }
 
    sd->statep = statep;
-   if (*sd->statep != efl_ui_nstate_value_get(obj))
+   if (*sd->statep != nd->state)
      {
-        efl_ui_nstate_value_set(obj, *sd->statep);
-        if (efl_ui_nstate_value_get(obj) == 1)
+        nd->state = *sd->statep;
+        if (nd->state == 1)
           elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-        else if (efl_ui_nstate_value_get(obj) == 0)
+        else
           elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
      }
 }
