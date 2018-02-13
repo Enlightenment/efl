@@ -5261,18 +5261,21 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
 
    int i;
 #ifdef HAVE_ELEMENTARY_X
-   for (i = 0; i < SELECTION_N_ATOMS; i++)
-      {
-         pd->atom_list[i].x_atom = ecore_x_atom_get(pd->atom_list[i].name);
-         ecore_x_selection_converter_atom_add
-            (pd->atom_list[i].x_atom, pd->atom_list[i].x_converter);
-      }
-   pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
-                                                _efl_sel_manager_x11_selection_notify, pd);
-   pd->clear_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
-                                               _x11_selection_clear, pd);
-   pd->fix_handler = ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
-                                             _x11_fixes_selection_notify, pd);
+   if (ecore_x_display_get())
+     {
+        for (i = 0; i < SELECTION_N_ATOMS; i++)
+           {
+              pd->atom_list[i].x_atom = ecore_x_atom_get(pd->atom_list[i].name);
+              ecore_x_selection_converter_atom_add
+                 (pd->atom_list[i].x_atom, pd->atom_list[i].x_converter);
+           }
+        pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
+                                                     _efl_sel_manager_x11_selection_notify, pd);
+        pd->clear_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
+                                                    _x11_selection_clear, pd);
+        pd->fix_handler = ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY,
+                                                  _x11_fixes_selection_notify, pd);
+     }
 #endif
 
    pd->type_hash = eina_hash_string_small_new(NULL);
@@ -5374,7 +5377,8 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
      }
    if (init_x)
      {
-        ecore_x_shutdown();
+        if (ecore_x_display_get())
+          ecore_x_shutdown();
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
