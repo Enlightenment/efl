@@ -423,8 +423,9 @@ EAPI Eina_Hash *eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
  * then be looked up with pointers other than the original key pointer
  * that was used to add values.
  *
- * @note Don't use this kind of hash when there is a possibility to remotely
- * request and push data in it. This hash is subject to denial of service.
+ * @warning Don't use this kind of hash when there is a possibility to
+ * remotely request and push data in it. This hash is subject to denial
+ * of service.
  */
 EAPI Eina_Hash *eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
 
@@ -598,10 +599,9 @@ EAPI Eina_Bool eina_hash_direct_add(Eina_Hash  *hash,
  * match to remove, otherwise @p key is used and @p data is not
  * required and can be @c NULL.
  *
- * @note if you know you already have the key, use
- *       eina_hash_del_by_key() or eina_hash_del_by_key_hash(). If you
- *       know you don't have the key, use eina_hash_del_by_data()
- *       directly.
+ * @note If you already have the key, use eina_hash_del_by_key() or
+ * eina_hash_del_by_key_hash(). If you don't have the key, use
+ * eina_hash_del_by_data() directly.
  */
 EAPI Eina_Bool eina_hash_del(Eina_Hash  *hash,
                              const void *key,
@@ -798,8 +798,8 @@ EAPI Eina_Bool eina_hash_direct_add_by_hash(Eina_Hash  *hash,
  * value of @p key_length. If @p hash or @p key are @c NULL, the
  * function returns #EINA_FALSE immediately.
  *
- * @note If you don't have the key_hash, use eina_hash_del_by_key() instead.
- * @note If you don't have the key, use eina_hash_del_by_data() instead.
+ * @note If you don't have the key_hash, use eina_hash_del_by_key()
+ * instead.  If you don't have the key, use eina_hash_del_by_data().
  */
 EAPI Eina_Bool eina_hash_del_by_key_hash(Eina_Hash  *hash,
                                          const void *key,
@@ -823,9 +823,8 @@ EAPI Eina_Bool eina_hash_del_by_key_hash(Eina_Hash  *hash,
  * for the data being deleted. If @p hash or @p key are @c NULL, the
  * function returns #EINA_FALSE immediately.
  *
- * @note If you already have the key_hash, use eina_hash_del_by_key_hash()
- * instead.
- * @note If you don't have the key, use eina_hash_del_by_data() instead.
+ * @note If you already have the key_hash, use eina_hash_del_by_key_hash().
+ * If you don't have the key, use eina_hash_del_by_data() instead.
  */
 EAPI Eina_Bool eina_hash_del_by_key(Eina_Hash  *hash,
                                     const void *key) EINA_ARG_NONNULL(1, 2);
@@ -846,8 +845,8 @@ EAPI Eina_Bool eina_hash_del_by_key(Eina_Hash  *hash,
  * @note This version is slow since there is no quick access to nodes
  * based on data.
  *
- * @note If you already have the key, use eina_hash_del_by_key() or
- * eina_hash_del_by_key_hash() instead.
+ * @note If you already have the key, use eina_hash_del_by_key()
+ * or eina_hash_del_by_key_hash() instead.
  */
 EAPI Eina_Bool eina_hash_del_by_data(Eina_Hash  *hash,
                                      const void *data) EINA_ARG_NONNULL(1, 2);
@@ -876,9 +875,8 @@ EAPI Eina_Bool eina_hash_del_by_data(Eina_Hash  *hash,
  * and can be @c NULL. Do not forget to count '\\0' for string when
  * setting the value of @p key_length.
  *
- * @note If you already have the key, use eina_hash_del_by_key_hash(),
- *       If you don't have the key, use eina_hash_del_by_data()
- *       directly.
+ * @note If you already have the key, use eina_hash_del_by_key_hash().
+ * If you don't have the key, use eina_hash_del_by_data() directly.
  */
 EAPI Eina_Bool eina_hash_del_by_hash(Eina_Hash  *hash,
                                      const void *key,
@@ -938,9 +936,9 @@ EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * @warning if the hash structure changes then the iterator becomes
- *    invalid! That is, if you add or remove items this iterator
- *    behavior is undefined and your program may crash!
+ * @warning If the hash structure changes then the iterator becomes
+ * invalid. That is, if you add or remove items this iterator behavior
+ * is undefined and your program may crash.
  */
 EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -955,7 +953,7 @@ EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLO
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * @warning if the hash structure changes then the iterator becomes
+ * @warning If the hash structure changes then the iterator becomes
  * invalid. That is, if you add or remove items this iterator behavior
  * is undefined and your program may crash.
  */
@@ -972,12 +970,12 @@ EAPI Eina_Iterator *eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALL
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * @note Iterator data will provide values as Eina_Hash_Tuple that should not
- *   be modified!
+ * @note Iterator data will provide values as Eina_Hash_Tuple that
+ * should not be modified!
  *
- * @warning if the hash structure changes then the iterator becomes
- *    invalid! That is, if you add or remove items this iterator
- *    behavior is undefined and your program may crash!
+ * @warning If the hash structure changes then the iterator becomes
+ * invalid. That is, if you add or remove items this iterator behavior
+ * is undefined and your program may crash.
  */
 EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
