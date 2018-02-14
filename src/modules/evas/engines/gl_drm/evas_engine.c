@@ -1219,7 +1219,7 @@ eng_image_native_set(void *engine, void *image, void *native)
 
    evas_outbuf_use(ob);
 
-   if (img->native.data)
+   if (img && img->native.data)
      {
         if (img->native.func.free)
           img->native.func.free(img);
