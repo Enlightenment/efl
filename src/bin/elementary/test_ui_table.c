@@ -151,8 +151,8 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
           {
              Eina_Rect m;
 
-             m.x = g.x + c * g.w / cols + (cs * g.w / cols - m.w) / 2;
-             m.y = g.y + r * g.h / rows + (rs * g.h / rows - m.h) / 2;
+             m.x = g.x + c * g.w / cols + (cs * g.w / cols - g.x) / 2;
+             m.y = g.y + r * g.h / rows + (rs * g.h / rows - g.y) / 2;
              m.size = efl_gfx_size_hint_combined_min_get(item);
              efl_gfx_geometry_set(item, m);
 
