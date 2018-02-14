@@ -1,6 +1,49 @@
 ==========
-EFL 1.20.6
+EFL 1.20.7
 ==========
+
+Changes since 1.20.6:
+---------------------
+
+Fixes:
+
+   * ecore ipc/con: fix nasty ... they dont mutually exclude
+   * evas: Fix potential crash with draw context
+   * disable async mode (use sync mode) for ibus when keymap changes
+   * eio: make inotify monitors fork-safe
+   * ecore-file: make monitoring truly fork-safe
+   * efl-wl: unset kbd mods changed flag after sending modifiers
+   * efl-wl: fix no-op of setting keyboard enter on already-entered surface
+   * ecore-x: re-add implementation of ecore_x_connection_get()
+   * ecore-x: filter XkbNewKeyboardNotifyEvent before emitting ecore-x event
+   * elementary config: Fix to use ELEMENTARY_BASE_DIR for configure path
+   * ecore-x: add more null checks for functions
+   * ecore-x: perform internal shutdown on io error if callback is set
+   * ecore-wl2: correctly translate spacebar keyname into key events (T6620)
+   * efl-wl: immediately unset a destroyed surface's cursor
+   * efl-wl: remove some broken logic for activating toplevel parents
+   * efl-wl: set event ON_HOLD flag when they are sent to a surface
+   * efl-wl: propagate surface activation back to parent if child is hidden
+   * efl-wl: send more mouse buttons to clients
+   * efl theme - fix bug in e init splash that would do hide anim 2x (T6619)
+   * ecore-drm2: return supported rotations if not using hardware
+   * ecore-drm2: Fix enabling outputs
+   * ecore evas init - init ecore then evas not the other way...
+   * emotion: unset DISPLAY when loading an engine under wayland (T6418)
+   * elm: fix memleak in combobox
+   * ecore_con: bug workaround SO_REUSEADDR and EADDRINUSE from bind (fix)
+   * eina: fix random segfaults when displaying BT
+   * eldbus test - del not unref obj as it has a parent ...
+   * eeze: Remove unused device variables
+   * eeze: Don't leak udev enumeration
+   * eina: Fix typo in doxygen
+   * ecore-evas-drm: Check for XDG_SEAT existence (T6455)
+   * eina_file: make sure we use a stringshare when virtualized. (T6449)
+   * elm ifrace scrollable - fix uninitialized values on scroll asjust
+   * eo - by default on 64bit only use 47 bits because of luajit
+   * elm_code_widget: make sure the widget is cleared properly. (T6185)
+   * elm_code_widget: keep track of visibility.
+   * edje - entry - fix empty item handling (T6668)
 
 Changes since 1.20.5:
 ---------------------
