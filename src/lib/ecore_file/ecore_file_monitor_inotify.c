@@ -164,7 +164,7 @@ ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
      eina_hash_list_remove(monitor_hash, &ECORE_FILE_MONITOR_INOTIFY(em)->wd, em);
 
    fd = ecore_main_fd_handler_fd_get(_fdh);
-   if (ECORE_FILE_MONITOR_INOTIFY(em)->wd)
+   if (ECORE_FILE_MONITOR_INOTIFY(em)->wd >= 0)
      inotify_rm_watch(fd, ECORE_FILE_MONITOR_INOTIFY(em)->wd);
    eina_stringshare_del(em->path);
    free(em);
