@@ -6,6 +6,28 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+START_TEST (elm_datetime_legacy_type_check)
+{
+   Evas_Object *win, *datetime;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "datetime", ELM_WIN_BASIC);
+
+   datetime = elm_datetime_add(win);
+
+   type = elm_object_widget_type_get(datetime);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Datetime"));
+
+   type = evas_object_type_get(datetime);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_datetime"));
+
+   elm_shutdown();
+}
+END_TEST
+
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *datetime;
@@ -25,5 +47,6 @@ END_TEST
 
 void elm_test_datetime(TCase *tc)
 {
- tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_datetime_legacy_type_check);
+   tcase_add_test(tc, elm_atspi_role_get);
 }

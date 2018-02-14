@@ -17,6 +17,28 @@ struct _Test_Data
    int success;
 };
 
+START_TEST (elm_image_legacy_type_check)
+{
+   Evas_Object *win, *image;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = elm_image_add(win);
+
+   type = elm_object_widget_type_get(image);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Image"));
+
+   type = evas_object_type_get(image);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_image"));
+
+   elm_shutdown();
+}
+END_TEST
+
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *image;
@@ -205,8 +227,9 @@ END_TEST
 
 void elm_test_image(TCase *tc)
 {
-    tcase_add_test(tc, elm_atspi_role_get);
-    tcase_add_test(tc, elm_image_async_path);
-    tcase_add_test(tc, elm_image_async_mmap);
-    tcase_add_test(tc, efl_ui_image_icon);
+   tcase_add_test(tc, elm_image_legacy_type_check);
+   tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_image_async_path);
+   tcase_add_test(tc, elm_image_async_mmap);
+   tcase_add_test(tc, efl_ui_image_icon);
 }

@@ -14,6 +14,27 @@ static int counter;
 static Efl_Access_Event_Children_Changed_Data ev_data;
 Evas_Object *content;
 
+START_TEST (elm_genlist_legacy_type_check)
+{
+   Evas_Object *win, *genlist;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+
+   genlist = elm_genlist_add(win);
+
+   type = elm_object_widget_type_get(genlist);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Genlist"));
+
+   type = evas_object_type_get(genlist);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_genlist"));
+
+   elm_shutdown();
+}
+END_TEST
 
 void test_init(void)
 {
@@ -180,6 +201,7 @@ END_TEST
 
 void elm_test_genlist(TCase *tc)
 {
+   tcase_add_test(tc, elm_genlist_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_atspi_children_get1);
    tcase_add_test(tc, elm_atspi_children_get2);

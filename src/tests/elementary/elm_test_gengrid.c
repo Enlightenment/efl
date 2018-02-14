@@ -7,6 +7,27 @@
 #include "elm_suite.h"
 #include "elm_test_helper.h"
 
+START_TEST (elm_gengrid_legacy_type_check)
+{
+   Evas_Object *win, *gengrid;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+
+   gengrid = elm_gengrid_add(win);
+
+   type = elm_object_widget_type_get(gengrid);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Gengrid"));
+
+   type = evas_object_type_get(gengrid);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_gengrid"));
+
+   elm_shutdown();
+}
+END_TEST
 
 START_TEST (elm_atspi_role_get)
 {
@@ -33,7 +54,7 @@ static Evas_Object *content;
 static Evas_Object *
 gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_UNUSED)
 {
-   content = elm_button_add(obj);
+   content = elm_gengrid_add(obj);
    evas_object_show(content);
    return content;
 }
@@ -76,6 +97,7 @@ END_TEST
 
 void elm_test_gengrid(TCase *tc)
 {
+   tcase_add_test(tc, elm_gengrid_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
 #if 0
    tcase_add_test(tc, elm_atspi_children_parent);

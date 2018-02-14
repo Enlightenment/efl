@@ -8,6 +8,28 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+START_TEST (elm_entry_legacy_type_check)
+{
+   Evas_Object *win, *entry;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+
+   entry = elm_entry_add(win);
+
+   type = elm_object_widget_type_get(entry);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Entry"));
+
+   type = evas_object_type_get(entry);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_entry"));
+
+   elm_shutdown();
+}
+END_TEST
+
 START_TEST (elm_entry_del)
 {
    Evas_Object *win, *entry;
@@ -397,6 +419,7 @@ END_TEST
 
 void elm_test_entry(TCase *tc)
 {
+   tcase_add_test(tc, elm_entry_legacy_type_check);
    tcase_add_test(tc, elm_entry_del);
    tcase_add_test(tc, elm_entry_signal_callback);
    tcase_add_test(tc, elm_entry_atspi_text_char_get);

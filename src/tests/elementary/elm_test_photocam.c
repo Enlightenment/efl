@@ -6,6 +6,27 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+START_TEST (elm_photocam_legacy_type_check)
+{
+   Evas_Object *win, *photocam;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
+
+   photocam = elm_photocam_add(win);
+
+   type = elm_object_widget_type_get(photocam);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Photocam"));
+
+   type = evas_object_type_get(photocam);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_photocam"));
+
+   elm_shutdown();
+}
+END_TEST
 
 START_TEST (elm_atspi_role_get)
 {
@@ -52,6 +73,7 @@ END_TEST
 
 void elm_test_photocam(TCase *tc)
 {
+   tcase_add_test(tc, elm_photocam_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, efl_ui_image_zoomable_icon);
 }

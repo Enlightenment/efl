@@ -8,6 +8,28 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+START_TEST (elm_list_legacy_type_check)
+{
+   Evas_Object *win, *list;
+   const char *type;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+   list = elm_list_add(win);
+
+   type = elm_object_widget_type_get(list);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_List"));
+
+   type = evas_object_type_get(list);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_list"));
+
+   elm_shutdown();
+}
+END_TEST
+
 #if 0
 // Skip following tests until Elm_Widget_Item will migrate to Eo infrastructure
 // and following features can be implemented
@@ -233,15 +255,16 @@ END_TEST
 
 void elm_test_list(TCase *tc)
 {
- tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_list_legacy_type_check);
+   tcase_add_test(tc, elm_atspi_role_get);
 #if 0
- tcase_add_test(tc, elm_list_atspi_selection_selected_children_count_get);
- tcase_add_test(tc, elm_list_atspi_selection_child_select);
- tcase_add_test(tc, elm_list_atspi_selection_selected_child_deselect);
- tcase_add_test(tc, elm_list_atspi_selection_is_child_selected);
- tcase_add_test(tc, elm_list_atspi_selection_all_children_select);
- tcase_add_test(tc, elm_list_atspi_selection_clear);
- tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
+   tcase_add_test(tc, elm_list_atspi_selection_selected_children_count_get);
+   tcase_add_test(tc, elm_list_atspi_selection_child_select);
+   tcase_add_test(tc, elm_list_atspi_selection_selected_child_deselect);
+   tcase_add_test(tc, elm_list_atspi_selection_is_child_selected);
+   tcase_add_test(tc, elm_list_atspi_selection_all_children_select);
+   tcase_add_test(tc, elm_list_atspi_selection_clear);
+   tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
 #endif
- tcase_add_test(tc, elm_atspi_children_parent);
+   tcase_add_test(tc, elm_atspi_children_parent);
 }

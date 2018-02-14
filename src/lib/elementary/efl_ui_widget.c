@@ -76,6 +76,77 @@ struct _Elm_Translate_String_Data
    Eina_Bool   preset : 1;
 };
 
+/* For keeping backward compatibility (EFL 1.18 or older versions).
+ * Since EFL 1.19 which starts to use eolian_gen2, it does not convert
+ * "." to "_" among the class name. */
+static const char *legacy_type_table[][2] =
+{
+     { "Efl.Ui.Bg_Widget_Legacy", "Elm_Bg" },
+     { "Efl.Ui.Button_Legacy", "Elm_Button" },
+     { "Efl.Ui.Check_Legacy", "Elm_Check" },
+     { "Efl.Ui.Clock_Legacy", "Elm_Datetime" },
+     { "Efl.Ui.Flip_Legacy", "Elm_Flip" },
+     { "Efl.Ui.Frame_Legacy", "Elm_Frame" },
+     { "Efl.Ui.Image_Legacy", "Elm_Image" },
+     { "Efl.Ui.Image_Zoomable_Legacy", "Elm_Photocam" },
+     { "Efl.Ui.Layout_Legacy", "Elm_Layout" },
+     { "Efl.Ui.Multibuttonentry_Legacy", "Elm_Multibuttonentry" },
+     { "Efl.Ui.Panes_Legacy", "Elm_Panes" },
+     { "Efl.Ui.Progressbar_Legacy", "Elm_Progressbar" },
+     { "Efl.Ui.Radio_Legacy", "Elm_Radio" },
+     { "Efl.Ui.Slider_Legacy", "Elm_Slider" },
+     { "Efl.Ui.Video_Legacy", "Elm_Video" },
+     { "Efl.Ui.Win_Legacy", "Elm_Win" },
+     { "Elm.Code_Widget_Legacy", "Elm_Code_Widget" },
+     { "Elm.Ctxpopup", "Elm_Ctxpopup" },
+     { "Elm.Entry", "Elm_Entry" },
+     { "Elm.Colorselector", "Elm_Colorselector" },
+     { "Elm.List", "Elm_List" },
+     { "Elm.Photo", "Elm_Photo" },
+     { "Elm.Actionslider", "Elm_Actionslider" },
+     { "Elm.Box", "Elm_Box" },
+     { "Elm.Table", "Elm_Table" },
+     { "Elm.Thumb", "Elm_Thumb" },
+     { "Elm.Menu", "Elm_Menu" },
+     { "Elm.Icon", "Elm_Icon" },
+     { "Elm.Prefs", "Elm_Prefs" },
+     { "Elm.Map", "Elm_Map" },
+     { "Elm.Glview", "Elm_Glview" },
+     { "Elm.Web", "Elm_Web" },
+     { "Elm.Toolbar", "Elm_Toolbar" },
+     { "Elm.Grid", "Elm_Grid" },
+     { "Elm.Diskselector", "Elm_Diskselector" },
+     { "Elm.Notify", "Elm_Notify" },
+     { "Elm.Mapbuf", "Elm_Mapbuf" },
+     { "Elm.Separator", "Elm_Separator" },
+     { "Elm.Calendar", "Elm_Calendar" },
+     { "Elm.Inwin", "Elm_Inwin" },
+     { "Elm.Gengrid", "Elm_Gengrid" },
+     { "Elm.Scroller", "Elm_Scroller" },
+     { "Elm.Player", "Elm_Player" },
+     { "Elm.Segment_Control", "Elm_Segment_Control" },
+     { "Elm.Fileselector", "Elm_Fileselector" },
+     { "Elm.Fileselector_Button", "Elm_Fileselector_Button" },
+     { "Elm.Fileselector_Entry", "Elm_Fileselector_Entry" },
+     { "Elm.Flipselector", "Elm_Flipselector" },
+     { "Elm.Hoversel", "Elm_Hoversel" },
+     { "Elm.Naviframe", "Elm_Naviframe" },
+     { "Elm.Popup", "Elm_Popup" },
+     { "Elm.Bubble", "Elm_Bubble" },
+     { "Elm.Clock", "Elm_Clock" },
+     { "Elm.Conformant", "Elm_Conformant" },
+     { "Elm.Dayselector", "Elm_Dayselector" },
+     { "Elm.Genlist", "Elm_Genlist" },
+     { "Elm.Hover", "Elm_Hover" },
+     { "Elm.Index", "Elm_Index" },
+     { "Elm.Label", "Elm_Label" },
+     { "Elm.Panel", "Elm_Panel" },
+     { "Elm.Slideshow", "Elm_Slideshow" },
+     { "Elm.Spinner", "Elm_Spinner" },
+     { "Elm.Plug", "Elm_Plug" },
+     { NULL, NULL }
+};
+
 /* local subsystem globals */
 static inline Eina_Bool
 _elm_widget_is(const Evas_Object *obj)
@@ -3137,12 +3208,30 @@ elm_widget_is_check(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
+/* If you changed a legacy widget's class name,
+ * please update the "legacy_type_table". */
 EAPI const char *
 elm_widget_type_get(const Evas_Object *obj)
 {
+   const char *ret;
+   int i;
+
    API_ENTRY return NULL;
 
-   return efl_class_name_get(efl_class_get(obj));
+   ret = efl_class_name_get(efl_class_get(obj));
+
+   /* If the given widget is created for legacy,
+    * convert type name to legacy. */
+   if (elm_widget_is_legacy(obj))
+     {
+        for (i = 0; legacy_type_table[i][0] ; i++)
+          {
+             if (eina_streq(ret, legacy_type_table[i][0]))
+               return legacy_type_table[i][1];
+          }
+     }
+
+   return ret;
 }
 
 EAPI Eina_Bool
