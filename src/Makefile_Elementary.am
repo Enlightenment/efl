@@ -61,7 +61,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_focus_layer.eo \
 	lib/elementary/efl_ui_focus_composition.eo \
 	lib/elementary/efl_ui_focus_util.eo \
-	lib/elementary/efl_ui_button_part.eo \
 	lib/elementary/efl_ui_flip_part.eo \
 	lib/elementary/efl_ui_layout_factory.eo \
 	lib/elementary/efl_ui_layout_part.eo \
@@ -107,6 +106,7 @@ elm_public_eolian_files = \
 # More public files -- FIXME
 elm_public_eolian_files += \
 	lib/elementary/efl_ui_legacy.eo \
+	lib/elementary/efl_ui_button_legacy_part.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_multibuttonentry_item.eo \
 	lib/elementary/elm_interface_scrollable.eo \

@@ -158,11 +158,30 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
 
 /* common content cases for layout objects: icon and text */
 static inline void
+_signals_emit(Eo *obj,
+              const char *type,
+              Eina_Bool set)
+{
+   char buf[1024];
+
+   if (elm_widget_is_legacy(obj))
+     {
+        snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
+                 set ? "visible" : "hidden");
+     }
+   else
+     {
+        snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
+                 set ? "set" : "unset");
+     }
+   efl_layout_signal_emit(obj, buf, "elm");
+}
+
+static inline void
 _icon_signal_emit(Efl_Ui_Layout_Data *sd,
                   Efl_Ui_Layout_Sub_Object_Data *sub_d,
                   Eina_Bool visible)
 {
-   char buf[1024];
    const char *type;
    Eo *edje;
    int i;
@@ -173,10 +192,13 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
    //FIXME: Don't limit to the icon and end here.
    // send signals for all contents after elm 2.0
    if (sub_d->type != SWALLOW) return;
-   for (i = 0;; i++)
+   if (elm_widget_is_legacy(sd->obj))
      {
-        if (!_efl_ui_layout_swallow_parts[i]) return;
-        if (!strcmp(sub_d->part, _efl_ui_layout_swallow_parts[i])) break;
+        for (i = 0;; i++)
+          {
+              if (!_efl_ui_layout_swallow_parts[i]) return;
+              if (!strcmp(sub_d->part, _efl_ui_layout_swallow_parts[i])) break;
+          }
      }
 
    if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
@@ -184,13 +206,10 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
    else
      type = sub_d->part;
 
-   snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
-            visible ? "visible" : "hidden");
-
-   edje_object_signal_emit(edje, buf, "elm");
+   _signals_emit(sd->obj, type, visible);
 
    /* themes might need immediate action here */
-   edje_object_message_signal_process(edje);
+   efl_layout_signal_process(sd->obj, EINA_FALSE);
 }
 
 static inline void
@@ -215,18 +234,19 @@ _text_signal_emit(Efl_Ui_Layout_Data *sd,
    else
      type = sub_d->part;
 
-   snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
-            visible ? "visible" : "hidden");
-   edje_object_signal_emit(wd->resize_obj, buf, "elm");
+   _signals_emit(sd->obj, type, visible);
 
    /* TODO: is this right? It was like that, but IMO it should be removed: */
-   snprintf(buf, sizeof(buf),
-            visible ? "elm,state,text,visible" : "elm,state,text,hidden");
 
-   edje_object_signal_emit(wd->resize_obj, buf, "elm");
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        snprintf(buf, sizeof(buf),
+                 visible ? "elm,state,text,visible" : "elm,state,text,hidden");
+        efl_layout_signal_emit(sd->obj, buf, "elm");
+     }
 
    /* themes might need immediate action here */
-   edje_object_message_signal_process(wd->resize_obj);
+   efl_layout_signal_process(sd->obj, EINA_FALSE);
 }
 
 static void
