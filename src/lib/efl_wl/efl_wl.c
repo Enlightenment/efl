@@ -1371,6 +1371,8 @@ comp_surface_commit_image_state(Comp_Surface *cs, Comp_Buffer *buffer, Evas_Obje
 
              ns.data.wl_dmabuf.attr = &buffer->dmabuf_buffer->attributes;
              ns.data.wl_dmabuf.resource = buffer->res;
+             ns.data.wl_dmabuf.scanout.handler = NULL;
+             ns.data.wl_dmabuf.scanout.data = NULL;
           }
         else
           {
