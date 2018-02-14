@@ -1109,7 +1109,7 @@ comp_seats_redo_enter(Comp *c, Comp_Surface *cs)
         struct wl_resource *res;
         Eina_Bool same = s->kbd.enter == cs;
 
-        if (c->active_surface && (!same))
+        if (c->active_surface && s->kbd.enter && (!same))
           {
              l = seat_kbd_active_resources_get(s);
              EINA_LIST_FOREACH(l, ll, res)
