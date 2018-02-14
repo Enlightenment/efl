@@ -139,6 +139,7 @@ _efl_vg_shape_efl_object_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 static void
 _efl_vg_shape_efl_object_destructor(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED)
 {
+   efl_gfx_path_reset(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
