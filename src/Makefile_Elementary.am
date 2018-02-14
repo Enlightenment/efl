@@ -378,7 +378,6 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code.h \
 	lib/elementary/elm_code_widget_legacy.h \
 	lib/elementary/elm_code_widget_selection.h \
-	lib/elementary/elm_code_widget_legacy.eo.h \
 	lib/elementary/elm_code_diff_widget.h \
 	lib/elementary/elm_code_common.h \
 	lib/elementary/elm_code_line.h \
@@ -789,6 +788,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_scroll_manager.c \
 	lib/elementary/efl_ui_pan.c \
 	lib/elementary/efl_selection_manager.c \
+	lib/elementary/efl_selection_manager_private.h \
 	lib/elementary/efl_selection.c \
 	lib/elementary/efl_ui_dnd.c \
 	$(NULL)

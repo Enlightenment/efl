@@ -29,6 +29,7 @@ lib/eolian_cxx/grammar/generator.hpp \
 lib/eolian_cxx/grammar/header_guards.hpp \
 lib/eolian_cxx/grammar/header.hpp \
 lib/eolian_cxx/grammar/header_include_directive.hpp \
+lib/eolian_cxx/grammar/html_escaped_string.hpp \
 lib/eolian_cxx/grammar/implementation_include_directive.hpp \
 lib/eolian_cxx/grammar/impl_header.hpp \
 lib/eolian_cxx/grammar/indentation.hpp \
@@ -187,6 +188,7 @@ endif
 EXTRA_DIST2 += \
 tests/eolian_cxx/simple.eo \
 tests/eolian_cxx/generic.eo \
+tests/eolian_cxx/docs.eo \
 tests/eolian_cxx/a.eo \
 tests/eolian_cxx/b.eo \
 tests/eolian_cxx/c.eo \

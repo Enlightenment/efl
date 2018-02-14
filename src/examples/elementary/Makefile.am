@@ -177,10 +177,6 @@ efl_thread_3.c \
 efl_thread_4.c \
 efl_thread_5.c \
 efl_thread_6.c \
-efl_thread_win32_1.c \
-efl_thread_win32_2.c \
-efl_thread_win32_3.c \
-efl_thread_win32_4.c \
 efl_ui_list_example_1.c \
 efl_ui_list_example_2.c \
 efl_ui_list_example_3.c
