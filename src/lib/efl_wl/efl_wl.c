@@ -5584,6 +5584,8 @@ comp_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
         ns.version = EVAS_NATIVE_SURFACE_VERSION;
         ns.data.wl_dmabuf.attr = &dmabuf->attributes;
         ns.data.wl_dmabuf.resource = NULL;
+        ns.data.wl_dmabuf.scanout.handler = NULL;
+        ns.data.wl_dmabuf.scanout.data = NULL;
         test = evas_object_image_add(c->evas);
         evas_object_image_native_surface_set(test, &ns);
         ret = evas_object_image_load_error_get(test) == EVAS_LOAD_ERROR_NONE;
