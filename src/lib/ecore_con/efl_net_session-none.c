@@ -33,7 +33,7 @@ _efl_net_session_efl_object_finalize(Eo *obj, Efl_Net_Session_Data *pd EINA_UNUS
 }
 
 EOLIAN static const char *
-_efl_net_session_name_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
+_efl_net_session_network_name_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
 {
    return NULL;
 }

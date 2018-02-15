@@ -45,7 +45,7 @@ _efl_net_control_technology_connected_get(Eo *obj EINA_UNUSED, Efl_Net_Control_T
 }
 
 EOLIAN static const char *
-_efl_net_control_technology_name_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Technology_Data *pd EINA_UNUSED)
+_efl_net_control_technology_efl_object_name_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Technology_Data *pd EINA_UNUSED)
 {
    return NULL;
 }

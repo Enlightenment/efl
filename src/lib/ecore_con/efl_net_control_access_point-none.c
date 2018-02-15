@@ -30,7 +30,7 @@ _efl_net_control_access_point_error_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Acc
 }
 
 EOLIAN static const char *
-_efl_net_control_access_point_name_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_ssid_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }

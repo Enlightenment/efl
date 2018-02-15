@@ -618,7 +618,7 @@ _efl_net_session_efl_object_destructor(Eo *o, Efl_Net_Session_Data *pd)
 }
 
 EOLIAN static const char *
-_efl_net_session_name_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
+_efl_net_session_network_name_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
 {
    return pd->name;
 }

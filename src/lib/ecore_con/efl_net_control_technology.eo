@@ -65,14 +65,6 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
             }
         }
 
-        @property name {
-            [[The user-friendly technology name]]
-            get { }
-            values {
-                name: string; [[Technology name]]
-            }
-        }
-
         @property type {
             [[The technology type, such as "ethernet" or "wifi"]]
             get { }
@@ -102,5 +94,6 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
 
     implements {
         Efl.Object.destructor;
+        Efl.Object.name { get; }
     }
 }

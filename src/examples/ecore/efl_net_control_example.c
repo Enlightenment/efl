@@ -105,11 +105,11 @@ _access_point_print(Eo *ap)
           "INFO:  - remembered=%hhu\n"
           "INFO:  - immutable=%hhu\n"
           "INFO:  - security=%#x %s\n",
-          efl_net_control_access_point_name_get(ap),
+          efl_net_control_access_point_ssid_get(ap),
           _access_point_state_to_str(efl_net_control_access_point_state_get(ap)),
           _access_point_error_to_str(efl_net_control_access_point_error_get(ap)),
           efl_net_control_access_point_priority_get(ap),
-          efl_net_control_technology_name_get(efl_net_control_access_point_technology_get(ap)),
+          efl_name_get(efl_net_control_access_point_technology_get(ap)),
           efl_net_control_access_point_strength_get(ap),
           efl_net_control_access_point_roaming_get(ap),
           efl_net_control_access_point_auto_connect_get(ap),
@@ -295,8 +295,8 @@ _ctl_access_point_del(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *ap = event->info;
    if (!monitoring) return;
    printf("INFO: Access Point Removed: %s [%s]\n",
-          efl_net_control_access_point_name_get(ap),
-          efl_net_control_technology_name_get(efl_net_control_access_point_technology_get(ap)));
+          efl_net_control_access_point_ssid_get(ap),
+          efl_name_get(efl_net_control_access_point_technology_get(ap)));
 }
 
 static void
@@ -316,12 +316,12 @@ _access_points_list(Eina_Iterator *it)
 
         printf("INFO: %4u | %-18.18s | %c%c%c   | %-13.13s | %s\n",
                efl_net_control_access_point_priority_get(ap),
-               efl_net_control_access_point_name_get(ap),
+               efl_net_control_access_point_ssid_get(ap),
                efl_net_control_access_point_remembered_get(ap) ? 'R' : '.',
                efl_net_control_access_point_immutable_get(ap) ? 'I' : '.',
                efl_net_control_access_point_auto_connect_get(ap) ? 'A' : '.',
                _access_point_state_to_str(efl_net_control_access_point_state_get(ap)),
-               efl_net_control_technology_name_get(efl_net_control_access_point_technology_get(ap)));
+               efl_name_get(efl_net_control_access_point_technology_get(ap)));
      }
 
    if (!first)
@@ -373,7 +373,7 @@ _technology_print(Eo *tech)
           "INFO:  - connected=%hhu\n"
           "INFO:  - tethering=%hhu (id='%s', passphrase='%s')\n"
           "INFO:  - type=%s\n",
-          efl_net_control_technology_name_get(tech),
+          efl_name_get(tech),
           efl_net_control_technology_powered_get(tech),
           efl_net_control_technology_connected_get(tech),
           tethering, teth_id, teth_pass,
@@ -405,7 +405,7 @@ _ctl_technology_del(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *tech = event->info;
    if (!monitoring) return;
    printf("INFO: Technology Removed: %s [%s]\n",
-          efl_net_control_technology_name_get(tech),
+          efl_name_get(tech),
           _technology_type_str(efl_net_control_technology_type_get(tech)));
 }
 
@@ -444,7 +444,7 @@ _ctl_agent_error(void *data EINA_UNUSED, const Efl_Event *event)
    printf("INFO: Agent Error:\n"
           "INFO:  - Access Point: %s\n"
           "INFO:  - Message: %s\n",
-          efl_net_control_access_point_name_get(e->access_point),
+          efl_net_control_access_point_ssid_get(e->access_point),
           e->message);
 }
 
@@ -455,7 +455,7 @@ _ctl_agent_browser_url(void *data EINA_UNUSED, const Efl_Event *event)
    printf("INFO: Agent requested to open browser:\n"
           "INFO:  - Access Point: %s\n"
           "INFO:  - URL: %s\n",
-          efl_net_control_access_point_name_get(e->access_point),
+          efl_net_control_access_point_ssid_get(e->access_point),
           e->url);
 }
 
@@ -614,7 +614,7 @@ _cmd_technologies_list(Eo *ctl, size_t argc EINA_UNUSED, char **argv EINA_UNUSED
           }
 
         printf("INFO:  %-18.18s | %c  | %c    | %s\n",
-               efl_net_control_technology_name_get(tech),
+               efl_name_get(tech),
                efl_net_control_technology_powered_get(tech) ? 'X' : ' ',
                efl_net_control_technology_connected_get(tech) ? 'X' : ' ',
                _technology_type_str(efl_net_control_technology_type_get(tech)));
@@ -673,7 +673,7 @@ _technology_find(Eo *ctl, const char *name)
    it = efl_net_control_technologies_get(ctl);
    EINA_ITERATOR_FOREACH(it, child)
      {
-        const char *tn = efl_net_control_technology_name_get(child);
+        const char *tn = efl_name_get(child);
         if (strcasecmp(name, tn) == 0)
           {
              eina_iterator_free(it);
@@ -706,13 +706,13 @@ _technology_scan_done(void *data, const Eina_Value v,
 
         eina_value_error_get(&v, &err);
         printf("INFO: technology '%s' could not scan: %s\n",
-               efl_net_control_technology_name_get(tech),
+               efl_name_get(tech),
                eina_error_msg_get(err));
      }
    else
      {
         printf("INFO: technology '%s' finished scan.\n",
-               efl_net_control_technology_name_get(tech));
+               efl_name_get(tech));
      }
 
    return v;
@@ -737,7 +737,7 @@ _cmd_technology_powered(Eo *ctl, size_t argc, char **argv)
 
    if (!tech) return;
 
-   name = efl_net_control_technology_name_get(tech);
+   name = efl_name_get(tech);
    if (argc <= 2)
      {
         printf("INFO: technology '%s' powered %s\n",
@@ -764,7 +764,7 @@ _cmd_technology_tethering(Eo *ctl, size_t argc, char **argv)
 
    if (!tech) return;
 
-   name = efl_net_control_technology_name_get(tech);
+   name = efl_name_get(tech);
    if (argc <= 2)
      {
         efl_net_control_technology_tethering_get(tech, &enabled, &id, &pass);
@@ -813,7 +813,7 @@ _access_point_find(Eo *ctl, const char *name)
      {
         if (prio == UINT32_MAX)
           {
-             const char *n = efl_net_control_access_point_name_get(child);
+             const char *n = efl_net_control_access_point_ssid_get(child);
              if (strcasecmp(name, n) == 0)
                {
                   eina_iterator_free(it);
@@ -860,13 +860,13 @@ _access_point_connect(void *data, const Eina_Value v,
 
         eina_value_error_get(&v, &err);
         printf("INFO: access point '%s' could not connect: %s\n",
-               efl_net_control_access_point_name_get(ap),
+               efl_net_control_access_point_ssid_get(ap),
                eina_error_msg_get(err));
      }
    else
      {
         printf("INFO: access point '%s' finished connect.\n",
-               efl_net_control_access_point_name_get(ap));
+               efl_net_control_access_point_ssid_get(ap));
      }
 
    return v;
@@ -933,7 +933,7 @@ _cmd_access_point_auto_connect(Eo *ctl, size_t argc EINA_UNUSED, char **argv)
 
    if (!ap) return;
 
-   name = efl_net_control_access_point_name_get(ap);
+   name = efl_net_control_access_point_ssid_get(ap);
    if (argc <= 2)
      {
         printf("INFO: access_point '%s' auto connect %s\n",
@@ -1037,7 +1037,7 @@ _cmd_access_point_configure_ipv4(Eo *ctl, size_t argc, char **argv)
         return;
      }
 
-   name = efl_net_control_access_point_name_get(ap);
+   name = efl_net_control_access_point_ssid_get(ap);
 
    if (strcmp(argv[2], "off") == 0)
      ipv4_method = EFL_NET_CONTROL_ACCESS_POINT_IPV4_METHOD_OFF;
@@ -1079,7 +1079,7 @@ _cmd_access_point_configure_ipv6(Eo *ctl, size_t argc, char **argv)
         return;
      }
 
-   name = efl_net_control_access_point_name_get(ap);
+   name = efl_net_control_access_point_ssid_get(ap);
 
    if (strcmp(argv[2], "off") == 0)
      ipv6_method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_OFF;
@@ -1134,7 +1134,7 @@ _cmd_access_point_configure_proxy(Eo *ctl, size_t argc, char **argv)
         return;
      }
 
-   name = efl_net_control_access_point_name_get(ap);
+   name = efl_net_control_access_point_ssid_get(ap);
 
    if (strcmp(argv[2], "off") == 0)
      proxy_method = EFL_NET_CONTROL_ACCESS_POINT_PROXY_METHOD_OFF;

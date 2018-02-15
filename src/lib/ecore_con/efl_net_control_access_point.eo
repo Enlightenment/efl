@@ -153,7 +153,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
             }
         }
 
-        @property name {
+        @property ssid {
             [[The user-friendly access point name.
 
               For hidden WiFi networks, this is empty.

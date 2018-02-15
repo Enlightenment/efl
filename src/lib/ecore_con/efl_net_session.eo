@@ -38,7 +38,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
       Some platforms may not implement the backend for this class. In
       this cases the system will report always @.state "online"
       (@Efl.Net.Session.State.online) and other properties will be
-      NULL, such as @.name, @.interface, @.ipv4 and @.ipv6; as well as
+      NULL, such as @.network_name, @.interface, @.ipv4 and @.ipv6; as well as
       @.technology is set to @Efl.Net.Session.Technology.unknown. As such
       if you need to detect for an actual backend, check if the
       state is online but those properties are NULL or technology is
@@ -84,7 +84,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
             ]]
         }
 
-        @property name {
+        @property network_name {
             [[The user-friendly access point name.]]
             get { }
             values {
@@ -97,7 +97,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
 
               \@note if there is no backend for this class, then state
               will be always online, however @.technology will be
-              unknown, @.interface, @.name, @.ipv4 and @.ipv6 will be
+              unknown, @.interface, @.network_name, @.ipv4 and @.ipv6 will be
               NULL.
             ]]
             get { }
