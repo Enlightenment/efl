@@ -6,13 +6,14 @@ class Elm.Menu (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
    eo_prefix: elm_obj_menu;
    event_prefix: elm_menu;
    methods {
-      move {
+      relative_move {
          [[Move the menu to a new position
 
            Sets the top-left position of the menu to ($x, $y).
 
            Note: $x and $y coordinates are relative to parent.
          ]]
+         legacy: elm_menu_move;
          params {
             @in x: int; [[The new X coordinate]]
             @in y: int; [[The new Y coordinate]]

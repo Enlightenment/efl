@@ -981,7 +981,7 @@ _elm_menu_efl_ui_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd
 }
 
 EOLIAN static void
-_elm_menu_move(Eo *obj, Elm_Menu_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_menu_relative_move(Eo *obj, Elm_Menu_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    sd->xloc = x;
    sd->yloc = y;
