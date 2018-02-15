@@ -777,7 +777,7 @@ _zoomable_mouse_wheel_cb(void *data, const Efl_Event *e)
    Efl_Input_Pointer *ev = e->info;
    int zoom, _zoom, delta, val;
 
-   zoom = efl_ui_zoom_get(zoomable);
+   zoom = efl_ui_zoom_level_get(zoomable);
    delta = efl_input_pointer_wheel_delta_get(ev);
    if ((delta > 0) && (zoom == 1)) return;
 
@@ -795,7 +795,7 @@ _zoomable_mouse_wheel_cb(void *data, const Efl_Event *e)
      }
 
    efl_ui_zoom_mode_set(zoomable, EFL_UI_ZOOM_MODE_MANUAL);
-   if (zoom >= 1) efl_ui_zoom_set(zoomable, zoom);
+   if (zoom >= 1) efl_ui_zoom_level_set(zoomable, zoom);
 }
 
 void

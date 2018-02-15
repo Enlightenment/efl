@@ -2226,7 +2226,7 @@ _efl_ui_image_zoomable_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zooma
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, double zoom)
+_efl_ui_image_zoomable_efl_ui_zoom_zoom_level_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, double zoom)
 {
    double z;
    Eina_List *l;
@@ -2454,7 +2454,7 @@ done:
 }
 
 EOLIAN static double
-_efl_ui_image_zoomable_efl_ui_zoom_zoom_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_ui_zoom_zoom_level_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->zoom;
 }
@@ -3145,13 +3145,13 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
 EAPI void
 elm_photocam_zoom_set(Evas_Object *obj, double zoom)
 {
-   efl_ui_zoom_set(obj, zoom);
+   efl_ui_zoom_level_set(obj, zoom);
 }
 
 EAPI double
 elm_photocam_zoom_get(const Evas_Object *obj)
 {
-   return efl_ui_zoom_get(obj);
+   return efl_ui_zoom_level_get(obj);
 }
 
 EAPI void

@@ -55,7 +55,7 @@ class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
-      Efl.Ui.Zoom.zoom { set; get; }
+      Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
