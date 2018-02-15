@@ -1214,6 +1214,21 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+evas_image_max_size_get(Eo *eo_e, int *w, int *h)
+{
+   Eina_Size2D size;
+   Eina_Bool ret;
+
+   ret = efl_canvas_image_max_size_get(eo_e, &size);
+   if (ret)
+     {
+        if (w) *w = size.w;
+        if (h) *h = size.h;
+     }
+   return ret;
+}
+
 /* deprecated */
 EAPI void
 evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool ismask EINA_UNUSED)

@@ -85,6 +85,23 @@ EAPI Eina_Bool evas_engine_info_set(Evas *obj, Evas_Engine_Info *info);
  */
 EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
 
+/**
+ * @brief Get the maximum image size evas can possibly handle.
+ *
+ * This function returns the largest image or surface size that evas can handle
+ * in pixels, and if there is one, returns @c true. It returns @c false if no
+ * extra constraint on maximum image size exists. You still should check the
+ * return values of @c maxw and @c maxh as there may still be a limit, just a
+ * much higher one.
+ *
+ * @param[in] obj The object.
+ * @param[out] max The maximum image size (in pixels).
+ *
+ * @return @c true on success, @c false otherwise
+ */
+EAPI Eina_Bool evas_image_max_size_get(Eo *eo_e, int *w, int *h);
+
+
 #include "canvas/evas_canvas.eo.legacy.h"
 
 /**

@@ -269,26 +269,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             y: int; [[The pointer to an integer to be filled in.]]
          }
       }
-      @property image_max_size {
-         get {
-            [[Get the maximum image size evas can possibly handle.
-
-              This function returns the largest image or surface size that
-              evas can handle in pixels, and if there is one, returns $true.
-              It returns $false if no extra constraint on maximum image
-              size exists. You still should check the return values of
-              $maxw and $maxh as there may still be a limit, just a
-              much higher one.
-
-              @since 1.1
-            ]]
-            return: bool; [[$true if it can handle the maximum image size, $false otherwise]]
-         }
-         values {
-            maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
-            maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
-         }
-      }
       @property object_bottom {
          get {
             [[Get the lowest (stacked) Evas object on the canvas $e.
@@ -1132,5 +1112,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.device { get; }
       Efl.Canvas.seat { get; }
+      Efl.Canvas.image_max_size { get; }
    }
 }

@@ -1049,7 +1049,7 @@ _evas_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
+_evas_canvas_efl_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
 {
    int w = 0, h = 0;
 
