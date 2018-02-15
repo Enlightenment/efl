@@ -4368,7 +4368,7 @@ _elm_entry_select_region_get(Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_cursor_geometry_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_entry_textblock_cursor_geometry_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
@@ -4458,7 +4458,7 @@ _elm_entry_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static char*
-_elm_entry_cursor_content_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_textblock_cursor_content_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_content_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);

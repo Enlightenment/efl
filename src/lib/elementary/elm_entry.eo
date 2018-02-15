@@ -470,7 +470,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             return: Efl.Canvas.Object; [[Textblock object]]
          }
       }
-      @property cursor_geometry {
+      @property textblock_cursor_geometry {
          get {
             [[This function returns the geometry of the cursor.
 
@@ -478,6 +478,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               or for example in the case of scrolled entry where you want to show the
               cursor.
             ]]
+            legacy: elm_entry_cursor_geometry_get;
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
@@ -512,7 +513,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             return: bool; [[$true if format node exists, $false otherwise]]
          }
       }
-      @property cursor_content {
+      @property textblock_cursor_content {
          get {
             [[Get the character pointed by the cursor at its current position.
 
@@ -521,6 +522,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               Only the text is returned, any format that may exist will not be part
               of the return value. You must free the string when done with \@ref free.
             ]]
+            legacy: elm_entry_cursor_content_get;
             return: mstring @owned @warn_unused; [[Character]]
          }
       }
