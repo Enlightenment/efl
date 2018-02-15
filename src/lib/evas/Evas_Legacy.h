@@ -6912,6 +6912,35 @@ EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *
  */
 EAPI Evas_Object                       *evas_object_table_add(Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+/**
+ * @brief Control the mirrored mode of the table. In mirrored mode, the table
+ * items go from right to left instead of left to right. That is, 1,1 is top
+ * right, not top left.
+ *
+ * @param[in] obj The object.
+ * @param[in] mirrored @c true if mirrored, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Table
+ */
+EAPI void evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored);
+
+/**
+ * @brief Control the mirrored mode of the table. In mirrored mode, the table
+ * items go from right to left instead of left to right. That is, 1,1 is top
+ * right, not top left.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if mirrored, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Table
+ */
+EAPI Eina_Bool evas_object_table_mirrored_get(const Eo *obj);
+
 #include "canvas/evas_table.eo.legacy.h"
 
 /**

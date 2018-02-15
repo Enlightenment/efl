@@ -1418,19 +1418,31 @@ _evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short c
 }
 
 EOLIAN static Eina_Bool
-_evas_table_mirrored_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_efl_ui_base_mirrored_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    return priv->is_mirrored;
 }
 
+EAPI Eina_Bool
+evas_object_table_mirrored_get(const Eo *obj)
+{
+   return efl_ui_mirrored_get(obj);
+}
+
 EOLIAN static void
-_evas_table_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
+_evas_table_efl_ui_base_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
 {
    if (priv->is_mirrored != mirrored)
      {
         priv->is_mirrored = mirrored;
         efl_canvas_group_calculate(o);
      }
+}
+
+EAPI void
+evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored)
+{
+   efl_ui_mirrored_set(obj, mirrored);
 }
 
 EOLIAN static void
