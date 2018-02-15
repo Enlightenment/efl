@@ -4568,7 +4568,7 @@ _elm_interface_scrollable_movement_block_get(Eo *obj EINA_UNUSED, Elm_Scrollable
 }
 
 EOLIAN static void
-_elm_interface_scrollable_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool loop_h, Eina_Bool loop_v)
+_elm_interface_scrollable_content_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool loop_h, Eina_Bool loop_v)
 {
    if (sid->loop_h == loop_h && sid->loop_v == loop_v) return;
 
@@ -4587,7 +4587,7 @@ _elm_interface_scrollable_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Int
 }
 
 EOLIAN static void
-_elm_interface_scrollable_loop_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool *loop_h, Eina_Bool *loop_v)
+_elm_interface_scrollable_content_loop_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool *loop_h, Eina_Bool *loop_v)
 {
    *loop_h = sid->loop_h;
    *loop_v = sid->loop_v;

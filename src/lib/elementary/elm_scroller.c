@@ -1259,7 +1259,7 @@ elm_scroller_loop_set(Evas_Object *obj,
    sd->loop_h = loop_h;
    sd->loop_v = loop_v;
 
-   elm_interface_scrollable_loop_set(obj, loop_h, loop_v);
+   elm_interface_scrollable_content_loop_set(obj, loop_h, loop_v);
 
    if (sd->content)
      {
@@ -1297,7 +1297,7 @@ elm_scroller_loop_get(const Evas_Object *obj,
 {
    ELM_SCROLLABLE_CHECK(obj);
 
-   elm_interface_scrollable_loop_get(obj, loop_h, loop_v);
+   elm_interface_scrollable_content_loop_get(obj, loop_h, loop_v);
 }
 
 EAPI void

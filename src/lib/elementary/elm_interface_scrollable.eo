@@ -274,7 +274,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
             y: int; [[Y coordinate]]
          }
       }
-      @property loop {
+      @property content_loop {
          [[Controls an infinite loop for a scroller.
 
            @since 1.14]]
