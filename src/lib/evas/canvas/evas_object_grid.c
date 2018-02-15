@@ -480,13 +480,13 @@ _evas_grid_children_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 }
 
 EOLIAN static Eina_Bool
-_evas_grid_mirrored_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
+_evas_grid_efl_ui_base_mirrored_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
    return priv->is_mirrored;
 }
 
 EOLIAN static void
-_evas_grid_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
+_evas_grid_efl_ui_base_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
 {
    mirrored = !!mirrored;
    if (priv->is_mirrored != mirrored)
@@ -494,6 +494,18 @@ _evas_grid_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirro
         priv->is_mirrored = mirrored;
         _evas_object_grid_smart_calculate(o);
      }
+}
+
+EAPI void
+evas_object_grid_mirrored_set(Evas_Grid *obj, Eina_Bool mirrored)
+{
+   efl_ui_mirrored_set(obj, mirrored);
+}
+
+EAPI Eina_Bool
+evas_object_grid_mirrored_get(const Evas_Grid *obj)
+{
+   return efl_ui_mirrored_get(obj);
 }
 
 #include "canvas/evas_grid.eo.c"

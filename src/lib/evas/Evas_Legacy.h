@@ -6932,6 +6932,36 @@ EAPI Evas_Object                       *evas_object_table_add(Evas *evas) EINA_W
  */
 EAPI Evas_Object   *evas_object_grid_add(Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+
+/**
+ * @brief Sets the mirrored mode of the grid. In mirrored mode the grid items
+ * go from right to left instead of left to right. That is, 0,0 is top right,
+ * not to left.
+ *
+ * @param[in] obj The object.
+ * @param[in] mirrored @c true if mirrored mode is set, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Grid
+ */
+EAPI void evas_object_grid_mirrored_set(Eo *obj, Eina_Bool mirrored);
+
+/**
+ * @brief Gets the mirrored mode of the grid.
+ *
+ * See also @ref evas_object_grid_mirrored_set
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if mirrored mode is set, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Grid
+ */
+EAPI Eina_Bool evas_object_grid_mirrored_get(const Eo *obj);
+
 #include "canvas/evas_grid.eo.legacy.h"
 
 /**
