@@ -448,7 +448,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
       relationships_clear @beta {
          [[Removes all relationships in accessible object.]]
       }
-      @property root @class @beta {
+      @property access_root @class @beta {
          get {
             [[Get root object of accessible object hierarchy]]
             values {

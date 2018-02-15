@@ -644,7 +644,7 @@ _efl_access_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Data *sd)
 }
 
 EOLIAN Eo*
-_efl_access_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_access_access_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (!root)
       root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
