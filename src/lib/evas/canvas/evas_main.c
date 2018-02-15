@@ -1500,15 +1500,15 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy, ww, hh;
 
-   xx = x;
-   yy = y;
-   ww = w;
-   hh = h;
+   xx = rect.x;
+   yy = rect.y;
+   ww = rect.w;
+   hh = rect.h;
 ////   xx = evas_coord_world_x_to_screen(eo_e, x);
 ////   yy = evas_coord_world_y_to_screen(eo_e, y);
 ////   ww = evas_coord_world_x_to_screen(eo_e, w);
@@ -1537,6 +1537,12 @@ _evas_canvas_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public
           }
      }
    return NULL;
+}
+
+EAPI Evas_Object *
+evas_object_top_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   return efl_canvas_object_top_in_rectangle_get(obj, EINA_RECT(x, y, w, h), include_pass_events_objects, include_hidden_objects);
 }
 
 static Eina_List *
