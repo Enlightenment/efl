@@ -1187,11 +1187,19 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
 static void
 _elm_code_widget_scroller_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-                                     void *event_info EINA_UNUSED)
+                                     void *event_info)
 {
    Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+   Evas_Event_Mouse_Down *event;
 
    widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   event = (Evas_Event_Mouse_Down *)event_info;
+
+   if (_elm_code_widget_position_at_coordinates_get(widget, pd,
+         event->canvas.x, event->canvas.y, NULL, NULL))
+     return;
 
    elm_code_widget_selection_clear(widget);
 }
