@@ -1,5 +1,5 @@
 class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
-                     Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
+                     Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Factory,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group)
 {
@@ -70,7 +70,7 @@ class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Part.part;
       Efl.Ui.View.model { get; set; }
       Efl.Ui.Model.Connect.connect;
-      Efl.Ui.Model.Factory.Connect.connect;
+      Efl.Ui.Factory.model_connect;
    }
    events {
       theme,changed; [[Called when theme changed]]

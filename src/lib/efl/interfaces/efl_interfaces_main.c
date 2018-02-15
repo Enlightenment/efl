@@ -71,7 +71,6 @@
 #include "interfaces/efl_ui_view.eo.c"
 #include "interfaces/efl_ui_model_connect.eo.c"
 #include "interfaces/efl_ui_factory.eo.c"
-#include "interfaces/efl_ui_model_factory_connect.eo.c"
 
 #include "interfaces/efl_ui_draggable.eo.c"
 #include "interfaces/efl_ui_clickable.eo.c"

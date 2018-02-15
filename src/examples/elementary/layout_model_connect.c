@@ -152,7 +152,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    /* Image widget */
    img_factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
    efl_ui_model_connect(img_factory, "", "path"); //connect to "path" property
-   efl_ui_model_factory_connect(priv->bt, "icon", img_factory);
+   efl_ui_factory_model_connect(priv->bt, "icon", img_factory);
 
    priv->img = efl_ui_factory_create(img_factory, NULL, win);
    elm_box_pack_end(bxr, priv->img);

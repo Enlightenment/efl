@@ -2079,7 +2079,7 @@ _efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_D
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_ui_model_factory_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
+_efl_ui_layout_efl_ui_factory_model_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
                 const char *name, Efl_Ui_Factory *factory)
 {
    EINA_SAFETY_ON_NULL_RETURN(name);

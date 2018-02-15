@@ -16,5 +16,12 @@ interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
             ui_view: Efl.Gfx; [[Efl canvas]]
          }
       }
+      model_connect {
+         [[Connect factory to a model]]
+         params {
+            name: string; [[Model name]]
+            factory: Efl.Ui.Factory; [[Efl factory]]
+         }
+      }
    }
 }
