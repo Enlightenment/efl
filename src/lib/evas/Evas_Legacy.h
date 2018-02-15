@@ -2293,6 +2293,31 @@ EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, 
 EAPI Evas *evas_object_evas_get(const Eo *obj);
 
 /**
+ * @brief Retrieve a list of objects lying over a given position in a canvas.
+ *
+ * This function will traverse all the layers of the given canvas, from top to
+ * bottom, querying for objects with areas covering the given position. The
+ * user can remove from query objects which are hidden and/or which are set to
+ * pass events.
+ *
+ * @warning This function will skip objects parented by smart objects, acting
+ * only on the ones at the "top level", with regard to object parenting.
+ *
+ * @param[in] obj The object.
+ * @param[in] x The pixel position.
+ * @param[in] y The pixel position.
+ * @param[in] include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation.
+ * @param[in] include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation.
+ *
+ * @return The list of objects that are over the given position in @c e.
+ *
+ * @ingroup Efl_Canvas
+ */
+ EAPI Eina_List *evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects);
+
+/**
  * @}
  */
 

@@ -1532,8 +1532,8 @@ _evas_canvas_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public
    return NULL;
 }
 
-EOLIAN Eina_List*
-_evas_canvas_objects_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+static Eina_List *
+_efl_canvas_evas_canvas_objects_at_xy_get_helper(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *in = NULL;
    Evas_Layer *lay;
@@ -1574,6 +1574,14 @@ _evas_canvas_objects_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, 
           }
      }
    return in;
+}
+
+EOLIAN static Eina_Iterator *
+_evas_canvas_efl_canvas_objects_at_xy_get(Eo *eo_e, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_List *l = _efl_canvas_evas_canvas_objects_at_xy_get_helper(eo_e, e, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
+   if (l) return efl_canvas_iterator_create(eo_e, eina_list_iterator_new(l), l);
+   return NULL;
 }
 
 /**
@@ -1783,6 +1791,11 @@ evas_pointer_inside_by_device_get(const Evas *obj, Eo *dev)
    return efl_canvas_pointer_inside_get(obj, dev);
 }
 
+EAPI Eina_List*
+evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   return _efl_canvas_evas_canvas_objects_at_xy_get_helper(eo_e, efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS), x, y, include_pass_events_objects, include_hidden_objects);
+}
 /* Internal EO APIs */
 
 EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =

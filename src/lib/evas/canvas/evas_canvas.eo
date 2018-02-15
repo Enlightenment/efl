@@ -440,35 +440,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             @in keyname: string @nonull; [[The name of the modifier to disable.]]
          }
       }
-      objects_at_xy_get @const {
-         [[Retrieve a list of Evas objects lying over a given position in
-           a canvas.
-
-           This function will traverse all the layers of the given canvas,
-           from top to bottom, querying for objects with areas covering the
-           given position. The user can remove from query objects which are
-           hidden and/or which are set to pass events.
-
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
-         ]]
-         return: list<Efl.Canvas.Object> @warn_unused; [[
-            The list of Evas objects that are over the given position in $e.
-         ]]
-         params {
-            @in x: int; [[The horizontal coordinate of the position.]]
-            @in y: int; [[The vertical coordinate of the position.]]
-            @in include_pass_events_objects: bool; [[
-               Boolean flag to include or not objects which pass events
-               in this calculation.
-            ]]
-            @in include_hidden_objects: bool; [[
-               Boolean flag to include or not hidden objects in this
-               calculation.
-            ]]
-         }
-      }
       render_async {
          [[Render the given Evas canvas asynchronously.
 
@@ -1113,5 +1084,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       Efl.Canvas.device { get; }
       Efl.Canvas.seat { get; }
       Efl.Canvas.image_max_size { get; }
+      Efl.Canvas.objects_at_xy_get;
    }
 }
