@@ -38,7 +38,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
             styles: Evas.Textgrid.Font_Style; [[EVAS_TEXTGRID_FONT_STYLE_NORMAL]]
          }
       }
-      @property size {
+      @property grid_size {
          set {
             [[Set the size of the textgrid object.
 
@@ -48,6 +48,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
               function does nothing.
 
               @since 1.7]]
+            legacy: evas_object_textgrid_size_set;
          }
          get {
             [[Get the size of the textgrid object.
@@ -58,6 +59,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
               $null. On error, they are set to 0.
 
               @since 1.7]]
+            legacy: evas_object_textgrid_size_get;
          }
          values {
             w: int; [[The number of columns (width in cells) of the grid.]]
@@ -90,7 +92,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
            This function declares to evas that a region of cells was updated by
            code and needs refreshing.
 
-           See also @.cellrow_set,  @.cellrow_get and @.size.set.
+           See also @.cellrow_set,  @.cellrow_get and @.grid_size.set.
 
          @since 1.7]]
          /* FIXME-doc
@@ -121,7 +123,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
            same row pointer returned by evas_object_textgrid_cellrow_get for the
            same row $y.
 
-           See also @.cellrow_get, @.size.set and @.update_add.
+           See also @.cellrow_get, @.grid_size.set and @.update_add.
 
            @since 1.7]]
 
@@ -137,7 +139,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
            of the textgrid object $obj. If $y is not between 0 and the
            number of lines of the grid - 1, or on error, this function return $null.
 
-           See also @.cellrow_set, @.size.set and @.update_add.
+           See also @.cellrow_set, @.grid_size.set and @.update_add.
 
            @since 1.7]]
          return: ptr(Evas.Textgrid.Cell); [[A pointer to the first cell of the given row.]]

@@ -916,7 +916,7 @@ _evas_textgrid_efl_object_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data
 }
 
 EOLIAN static void
-_evas_textgrid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
+_evas_textgrid_grid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
 {
    int i;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -959,7 +959,7 @@ _evas_textgrid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
 }
 
 EOLIAN static void
-_evas_textgrid_size_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int *w, int *h)
+_evas_textgrid_grid_size_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int *w, int *h)
 {
    if (w) *w = o->cur.w;
    if (h) *h = o->cur.h;
@@ -1480,7 +1480,7 @@ _evas_textgrid_efl_object_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UN
 
      {
         int w, h;
-        evas_obj_textgrid_size_get(eo_obj, &w, &h);
+        evas_obj_textgrid_grid_size_get(eo_obj, &w, &h);
         node = EFL_DBG_INFO_LIST_APPEND(group, "Grid size");
         EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
         EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
