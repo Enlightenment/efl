@@ -142,7 +142,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
             [[Get the current geographic coordinates of the map.
 
               This gets the current center coordinates of the map object.
-              It can be set by @.region_bring_in and @.region_show.
+              It can be set by @.map_region_bring_in and @.region_show.
             ]]
          }
          values {
@@ -363,7 +363,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
            containing the given $lat and $lon, that will be moved to the
            center of the map.
 
-           See @.region_bring_in for a function to move with animation.
+           See @.map_region_bring_in for a function to move with animation.
          ]]
          params {
             @in lon: double; [[Longitude to center at.]]
@@ -406,7 +406,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
             @in data: void_ptr @optional; [[The user callback data.]]
          }
       }
-      region_bring_in {
+      map_region_bring_in {
          [[Animatedly bring in given coordinates to the center of the map.
 
            This causes map to jump to the given $lat and $lon coordinates
@@ -416,6 +416,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
 
            See @.region_show for a function to avoid animation.
          ]]
+         legacy: elm_map_region_bring_in;
          params {
             @in lon: double; [[Longitude to center at.]]
             @in lat: double; [[Latitude to center at.]]
@@ -429,7 +430,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
            to the given $lat and $lon coordinates and show it (by scrolling)
            in the center of the viewport concurrently.
 
-           See also @.region_bring_in.
+           See also @.map_region_bring_in.
 
            @since 1.11
          ]]

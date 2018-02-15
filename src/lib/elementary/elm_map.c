@@ -4381,7 +4381,7 @@ _elm_map_zoom_min_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 }
 
 EOLIAN static void
-_elm_map_region_bring_in(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double lat)
+_elm_map_map_region_bring_in(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double lat)
 {
    sd->calc_job.bring_in = EINA_TRUE;
    sd->calc_job.lon = lon;
