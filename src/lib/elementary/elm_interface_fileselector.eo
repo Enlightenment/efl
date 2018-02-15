@@ -25,7 +25,7 @@ enum Elm.Fileselector.Sort
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-interface Elm.Interface.Fileselector ()
+interface Elm.Interface.Fileselector (Efl.Ui.View)
 {
    [[Elementary fileselector interface]]
    eo_prefix: elm_interface_fileselector;
@@ -95,17 +95,6 @@ interface Elm.Interface.Fileselector ()
          }
          values {
             expand: bool; [[$true if tree view is expanded, $false otherwise]]
-         }
-      }
-      @property model {
-         set {
-            [[Set, programmatically, the directory that a given file selector widget will display contents from]]
-         }
-         get {
-            [[Get the directory's model that a given file selector selector widget display contents from]]
-         }
-         values {
-            model: Efl.Model; [[Directory model]]
          }
       }
       @property mode {

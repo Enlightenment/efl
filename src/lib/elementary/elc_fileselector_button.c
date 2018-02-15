@@ -345,7 +345,7 @@ elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
 }
 
 EOLIAN static void
-_elm_fileselector_button_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Efl_Model *model)
+_elm_fileselector_button_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Efl_Model *model)
 {
    if (sd->fsd.model)
      efl_unref(sd->fsd.model);
@@ -380,7 +380,7 @@ elm_fileselector_button_path_get(const Evas_Object *obj)
 }
 
 EOLIAN static Efl_Model *
-_elm_fileselector_button_elm_interface_fileselector_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
+_elm_fileselector_button_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
 {
    return sd->fsd.model;
 }

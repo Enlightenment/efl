@@ -14,7 +14,7 @@ class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.selected_model_set;
       Elm.Interface.Fileselector.hidden_visible { get; set; }
       Elm.Interface.Fileselector.is_save { get; set; }
-      Elm.Interface.Fileselector.model { get; set; }
+      Efl.Ui.View.model { get; set; }
       Elm.Interface.Fileselector.sort_method { get; set; }
       Elm.Interface.Fileselector.multi_select { get; set; }
       Elm.Interface.Fileselector.folder_only { get; set; }

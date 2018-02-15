@@ -126,7 +126,7 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
 
    file = elm_object_text_get(sd->entry);
 
-   bmodel = elm_interface_fileselector_model_get(sd->button);
+   bmodel = efl_ui_view_model_get(sd->button);
    if (bmodel)
      {
          model = efl_add(efl_class_get(bmodel), NULL);
@@ -134,7 +134,7 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
          eina_value_set(&path, file);
          efl_model_property_set(model, "path", &path);
          eina_value_flush(&path);
-         elm_interface_fileselector_model_set(sd->button, model);
+         efl_ui_view_model_set(sd->button, model);
      }
 
    efl_event_callback_legacy_call
@@ -365,7 +365,7 @@ _elm_fileselector_entry_elm_interface_fileselector_selected_model_set(Eo *obj EI
 {
    Efl_Promise* promise = efl_add(EFL_PROMISE_CLASS, obj);
    Efl_Future* future = efl_promise_future_get(promise);
-   elm_interface_fileselector_model_set(sd->button, model);
+   efl_ui_view_model_set(sd->button, model);
    efl_promise_value_set(promise, efl_ref(model), _model_free_eo_cb);
    return future;
 }
@@ -387,7 +387,7 @@ _elm_fileselector_entry_selected_get_internal(const Evas_Object *obj)
 EOLIAN static Efl_Model *
 _elm_fileselector_entry_elm_interface_fileselector_selected_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
 {
-   return elm_interface_fileselector_model_get(sd->button);
+   return efl_ui_view_model_get(sd->button);
 }
 
 EAPI void
@@ -469,10 +469,10 @@ _fs_entry_model_path_get_then(void *data, Efl_Event const *event)
 }
 
 EOLIAN static void
-_elm_fileselector_entry_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd, Efl_Model *model)
+_elm_fileselector_entry_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd, Efl_Model *model)
 {
    Efl_Future *p = NULL;
-   elm_interface_fileselector_model_set(sd->button, model);
+   efl_ui_view_model_set(sd->button, model);
 
    p = efl_model_property_get(model, "path");
    efl_future_then(p, _fs_entry_model_path_get_then, NULL, NULL, sd);
@@ -495,11 +495,11 @@ _elm_fileselector_entry_path_get_internal(const Evas_Object *obj)
 }
 
 EOLIAN static Efl_Model *
-_elm_fileselector_entry_elm_interface_fileselector_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
 {
    Efl_Model *bmodel, *ret;
    Eina_Value path;
-   bmodel = elm_interface_fileselector_model_get(sd->button);
+   bmodel = efl_ui_view_model_get(sd->button);
    if (!bmodel)
      {
         WRN("no base Efl.Model");

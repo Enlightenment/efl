@@ -2318,12 +2318,12 @@ _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
         ERR("Efl.Model allocation error");
         return;
      }
-   elm_interface_fileselector_model_set(obj, model);
+   efl_ui_view_model_set(obj, model);
    efl_unref(model);
 }
 
 EOLIAN static void
-_elm_fileselector_elm_interface_fileselector_model_set(Eo *obj, Elm_Fileselector_Data *sd, Efl_Model *model)
+_elm_fileselector_efl_ui_view_model_set(Eo *obj, Elm_Fileselector_Data *sd, Efl_Model *model)
 {
    _schedule_populate(obj, sd, model, NULL);
 }
@@ -2354,7 +2354,7 @@ _elm_fileselector_path_get_internal(const Evas_Object *obj)
 }
 
 EOLIAN static Efl_Model *
-_elm_fileselector_elm_interface_fileselector_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
+_elm_fileselector_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
 {
    return sd->model;
 }
