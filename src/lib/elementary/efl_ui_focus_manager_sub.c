@@ -198,7 +198,6 @@ _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_S
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_callback_array_add(obj, self_manager(), obj);
-   _flush_manager(obj, pd);
    return obj;
 }
 
