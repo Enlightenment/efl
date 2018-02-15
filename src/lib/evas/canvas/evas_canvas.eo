@@ -621,20 +621,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       font_path_clear {
          [[Removes all font paths loaded into memory for the given evas.]]
       }
-      smart_objects_calculate {
-         [[Call user-provided $calculate smart functions and unset the
-           flag signalling that the object needs to get recalculated to
-           all smart objects in the canvas.
-         ]]
-      }
-      @property smart_objects_calculating {
-         get {
-            [[Get if the canvas is currently calculating smart objects.]]
-         }
-         values {
-            calculating: bool; [[$true if currently calculating smart objects.]]
-         }
-      }
       /* FIXME: The below function is only for efl.ui.win */
       touch_point_list_nth_xy_get {
          [[This function returns the nth touch point's coordinates.
@@ -1010,5 +996,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       Efl.Canvas.object_top_at_xy_get;
       Efl.Canvas.objects_in_rectangle_get;
       Efl.Canvas.object_top_in_rectangle_get;
+      Efl.Canvas.smart_objects_calculate;
    }
 }
