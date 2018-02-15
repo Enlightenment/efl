@@ -653,20 +653,14 @@ _elm_hover_efl_gfx_size_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Size2
 }
 
 EOLIAN static void
-_elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
+_elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   if (vis)
-     {
-        _hov_show_do(obj);
-        //we just set ourself as redirect in the next upper manager
-        pd->redirected = efl_ui_focus_object_focus_manager_get(pd->target);
-        efl_ui_focus_manager_redirect_set(pd->redirected, obj);
-     }
+   if (vis) _hov_show_do(obj);
    else
      {
         // for backward compatibility
@@ -674,9 +668,6 @@ _elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
 
         if (!eina_streq(dismissstr, "on"))
           _hide_signals_emit(obj);
-
-        efl_ui_focus_manager_redirect_set(pd->redirected, NULL);
-        pd->redirected = NULL;
      }
 }
 
@@ -699,16 +690,12 @@ elm_hover_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
+_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
-
-   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-
-   efl_composite_attach(obj, pd->manager);
 
    return obj;
 }
