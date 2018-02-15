@@ -6,7 +6,6 @@
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
-#define EFL_ACCESS_IMAGE_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
@@ -1217,14 +1216,12 @@ _image_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *
    AtspiCoordType type;
    Eldbus_Message *ret;
    const char *obj_path = eldbus_message_path_get(msg);
-   int x, y, w, h;
    Eina_Bool screen_coords;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
+   Eina_Rect r;
 
-   x = y = w = h = -1;
-
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_IMAGE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "u", &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -1233,8 +1230,8 @@ _image_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   efl_access_image_extents_get(obj, screen_coords, &x, &y, &w, &h);
-   eldbus_message_arguments_append(ret, "iiii", x, y, w, h);
+   r = efl_access_component_extents_get(obj, screen_coords);
+   eldbus_message_arguments_append(ret, "iiii", r.x, r.y, r.w, r.h);
 
    return ret;
 }
@@ -1250,7 +1247,7 @@ _image_position_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    int x = -1, y = -1;
    Eina_Bool screen_coords;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_IMAGE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "u", &type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -1259,7 +1256,10 @@ _image_position_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   efl_access_image_extents_get(obj, screen_coords, &x, &y, NULL, NULL);
+   if (screen_coords)
+     efl_access_component_screen_position_get(obj, &x, &y);
+   else
+     evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    eldbus_message_arguments_append(ret, "i", x);
    eldbus_message_arguments_append(ret, "i", y);
 
@@ -1275,12 +1275,12 @@ _image_size_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int w = -1, h = -1;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_IMAGE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   efl_access_image_extents_get(obj, EINA_FALSE, NULL, NULL, &w, &h);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    eldbus_message_arguments_append(ret, "i", w);
    eldbus_message_arguments_append(ret, "i", h);
 
@@ -2234,18 +2234,18 @@ _image_properties_get(const Eldbus_Service_Interface *interface, const char *pro
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_IMAGE_MIXIN, request_msg, error);
+   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, request_msg, error);
 
    if (!strcmp(property, "ImageDescription"))
      {
-        value = efl_access_image_description_get(obj);
+        value = efl_access_description_get(obj);
         value = value ? value : "";
         eldbus_message_iter_basic_append(iter, 's', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "ImageLocale"))
      {
-        value = efl_access_image_locale_get(obj);
+        value = efl_access_translation_domain_get(obj);
         value = value ? value : "";
         eldbus_message_iter_basic_append(iter, 's', value);
         return EINA_TRUE;
@@ -3182,7 +3182,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
   if (efl_isa(obj, EFL_ACCESS_EDITABLE_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
-  if (efl_isa(obj, EFL_ACCESS_IMAGE_MIXIN))
+  if (efl_isa(obj, EFL_ACCESS_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
   if (efl_isa(obj, EFL_ACCESS_SELECTION_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);

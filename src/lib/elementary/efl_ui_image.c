@@ -4,6 +4,7 @@
 
 #define EFL_ACCESS_IMAGE_PROTECTED
 #define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
 
@@ -1568,23 +1569,27 @@ _efl_ui_image_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *alig
 
 // A11Y
 
-EOLIAN static void
-_efl_ui_image_efl_access_image_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rect
+_efl_ui_image_efl_access_component_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
 {
    int ee_x, ee_y;
+   Eina_Rect r;
    Evas_Object *image = elm_image_object_get(obj);
-   if (!image) return;
 
-   evas_object_geometry_get(image, x, y, NULL, NULL);
+   r.x = r.y = r.w = r.h = -1;
+   if (!image) return r;
+
+   evas_object_geometry_get(image, &r.x, &r.y, NULL, NULL);
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(image));
-        if (!ee) return;
+        if (!ee) return r;
         ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-        if (x) *x += ee_x;
-        if (y) *y += ee_y;
+        r.x += ee_x;
+        r.y += ee_y;
      }
-   elm_image_object_size_get(obj, w, h);
+   elm_image_object_size_get(obj, &r.w, &r.h);
+   return r;
 }
 
 EOLIAN const Efl_Access_Action_Data *
