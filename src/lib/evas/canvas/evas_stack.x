@@ -1,6 +1,3 @@
-#include "evas_common_private.h"
-#include "evas_private.h"
-
 static Evas_Object_Protected_Data *
 evas_object_above_get_internal(const Evas_Object_Protected_Data *obj)
 {
@@ -420,4 +417,3 @@ _evas_canvas_object_top_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 
    return NULL;
 }
-
