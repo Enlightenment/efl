@@ -6122,7 +6122,7 @@ _elm_genlist_item_elm_widget_item_style_get(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool focused)
+_elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool focused)
 {
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);
@@ -6160,7 +6160,7 @@ _elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Gen_Item *it)
+_elm_genlist_item_elm_widget_item_item_focus_get(Eo *eo_it, Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);

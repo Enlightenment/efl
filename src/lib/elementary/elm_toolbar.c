@@ -785,7 +785,7 @@ _elm_toolbar_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd)
 }
 
 EOLIAN static void
-_elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it, Eina_Bool focused)
+_elm_toolbar_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it, Eina_Bool focused)
 {
    ELM_TOOLBAR_ITEM_CHECK(it);
    Evas_Object *obj = WIDGET(it);
@@ -824,7 +824,7 @@ _elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Toolbar_Item_Data *it)
+_elm_toolbar_item_elm_widget_item_item_focus_get(Eo *eo_it, Elm_Toolbar_Item_Data *it)
 {
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Evas_Object *obj = WIDGET(it);

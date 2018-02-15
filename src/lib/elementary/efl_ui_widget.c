@@ -4253,13 +4253,13 @@ _elm_widget_item_disable(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item EIN
 }
 
 EOLIAN static void
-_elm_widget_item_focus_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, Eina_Bool focused EINA_UNUSED)
+_elm_widget_item_item_focus_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, Eina_Bool focused EINA_UNUSED)
 {
    ERR_NOT_SUPPORTED(item, "elm_object_item_focus_set");
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_item_focus_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+_elm_widget_item_item_focus_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
    ERR_NOT_SUPPORTED(item, "elm_object_item_focus_get");
    return EINA_FALSE;

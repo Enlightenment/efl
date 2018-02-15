@@ -572,7 +572,7 @@ _elm_hoversel_item_elm_widget_item_style_get(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_hoversel_item_elm_widget_item_focus_set(Eo *eo_it EINA_UNUSED,
+_elm_hoversel_item_elm_widget_item_item_focus_set(Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it,
                                              Eina_Bool focused)
 {
@@ -580,7 +580,7 @@ _elm_hoversel_item_elm_widget_item_focus_set(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_item_elm_widget_item_focus_get(Eo *eo_it EINA_UNUSED,
+_elm_hoversel_item_elm_widget_item_item_focus_get(Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it)
 {
    return efl_ui_focus_object_focus_get(VIEW(it));

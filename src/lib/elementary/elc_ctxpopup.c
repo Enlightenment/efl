@@ -884,7 +884,7 @@ _elm_ctxpopup_item_elm_widget_item_signal_emit(Eo *eo_ctxpopup_it EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_ctxpopup_item_elm_widget_item_focus_set(Eo *eo_ctxpopup_it EINA_UNUSED,
+_elm_ctxpopup_item_elm_widget_item_item_focus_set(Eo *eo_ctxpopup_it EINA_UNUSED,
                                              Elm_Ctxpopup_Item_Data *ctxpopup_it,
                                              Eina_Bool focused)
 {
@@ -892,7 +892,7 @@ _elm_ctxpopup_item_elm_widget_item_focus_set(Eo *eo_ctxpopup_it EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_item_elm_widget_item_focus_get(Eo *eo_ctxpopup_it EINA_UNUSED,
+_elm_ctxpopup_item_elm_widget_item_item_focus_get(Eo *eo_ctxpopup_it EINA_UNUSED,
                                              Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
    return elm_object_item_focus_get(ctxpopup_it->list_item);

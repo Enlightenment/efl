@@ -3801,7 +3801,7 @@ _elm_gengrid_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Gen_Ite
 }
 
 EOLIAN static void
-_elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool focused)
+_elm_gengrid_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool focused)
 {
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
    Evas_Object *obj = WIDGET(it);
@@ -3833,7 +3833,7 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_elm_gengrid_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Gen_Item *it)
+_elm_gengrid_item_elm_widget_item_item_focus_get(Eo *eo_it, Elm_Gen_Item *it)
 {
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Evas_Object *obj = WIDGET(it);

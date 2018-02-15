@@ -2057,7 +2057,7 @@ EOLIAN static void _elm_list_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNU
 }
 
 EOLIAN static void
-_elm_list_item_elm_widget_item_focus_set(Eo *eo_it, Elm_List_Item_Data *it, Eina_Bool focused)
+_elm_list_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_List_Item_Data *it, Eina_Bool focused)
 {
    Evas_Object *obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
@@ -2089,7 +2089,7 @@ _elm_list_item_elm_widget_item_focus_set(Eo *eo_it, Elm_List_Item_Data *it, Eina
 }
 
 EOLIAN static Eina_Bool
-_elm_list_item_elm_widget_item_focus_get(Eo *eo_it, Elm_List_Item_Data *it)
+_elm_list_item_elm_widget_item_item_focus_get(Eo *eo_it, Elm_List_Item_Data *it)
 {
    ELM_LIST_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Evas_Object *obj = WIDGET(it);

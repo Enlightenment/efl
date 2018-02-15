@@ -267,7 +267,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object, Efl.Ui
            Efl.Object.destructor;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.disabled { set; }
-           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }

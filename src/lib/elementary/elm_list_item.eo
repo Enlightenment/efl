@@ -111,7 +111,7 @@ class Elm.List.Item(Elm.Widget.Item, Efl.Ui.Legacy)
            Elm.Widget.Item.disable;
            Elm.Widget.Item.del_pre;
            Elm.Widget.Item.signal_emit;
-           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }
            Elm.Widget.Item.part_content_unset;

@@ -147,13 +147,15 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
                      label: string; [[Label name]]
                 }
            }
-           @property focus {
+           @property item_focus {
                 [[Control the object item focused
 
                   @since 1.10]]
                 get {
+                   legacy: elm_object_item_focus_get;
                 }
                 set {
+                   legacy: elm_object_item_focus_set;
                 }
                 values {
                      focused: bool; [[The focused state]]
