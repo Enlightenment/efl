@@ -82,26 +82,6 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
                             to unpause it.]]
          }
       }
-      @property wheel_disabled {
-         set {
-            [[Enable or disable mouse wheel to be used to zoom in / out the
-              map.
-
-              Wheel is enabled by default.
-            ]]
-         }
-         get {
-            [[Get a value whether mouse wheel is enabled or not.
-
-              Mouse wheel can be used for the user to zoom in or zoom out
-              the map.
-            ]]
-         }
-         values {
-            disabled: bool; [[Use $true to disable mouse wheel or $false
-                              to enable it.]]
-         }
-      }
       @property zoom_min {
          set {
             [[Set the minimum zoom of the source.]]
@@ -550,6 +530,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Zoom.zoom_level { set; }
       Efl.Ui.Zoom.zoom_mode { set; }
+      Elm.Interface_Scrollable.wheel_disabled { set; }
    }
    events {
       press; [[Called when map was pressed]]

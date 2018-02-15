@@ -4470,7 +4470,7 @@ _elm_map_rotate_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *degree, Evas_
 }
 
 EOLIAN static void
-_elm_map_wheel_disabled_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool disabled)
+_elm_map_elm_interface_scrollable_wheel_disabled_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool disabled)
 {
    if ((!sd->wheel_disabled) && (disabled))
      evas_object_event_callback_del_full
@@ -4479,12 +4479,7 @@ _elm_map_wheel_disabled_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool disabled)
      evas_object_event_callback_add
        (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
    sd->wheel_disabled = !!disabled;
-}
-
-EOLIAN static Eina_Bool
-_elm_map_wheel_disabled_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
-{
-   return sd->wheel_disabled;
+   elm_interface_scrollable_wheel_disabled_set(efl_super(obj, ELM_MAP_CLASS), disabled);
 }
 
 EOLIAN static void
@@ -5442,6 +5437,18 @@ elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble)
    elm_box_clear(bb->bx);
 
    evas_object_smart_changed(bubble->wsd->pan_obj);
+}
+
+EAPI void
+elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   elm_interface_scrollable_wheel_disabled_set(obj, disabled);
+}
+
+EAPI Eina_Bool
+elm_map_wheel_disabled_get(const Evas_Object *obj)
+{
+   return elm_interface_scrollable_wheel_disabled_get(obj);
 }
 
 EOLIAN static Elm_Map_Overlay*

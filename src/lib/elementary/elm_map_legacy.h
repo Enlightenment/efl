@@ -115,4 +115,30 @@ EAPI void elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
  */
 EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
 
+/**
+ * @brief Enable or disable mouse wheel to be used to zoom in / out the map.
+ *
+ * Wheel is enabled by default.
+ *
+ * @param[in] obj The object.
+ * @param[in] disabled Use @c true to disable mouse wheel or @c false to enable
+ * it.
+ *
+ * @ingroup Elm_Map
+ */
+EAPI void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * @brief Get a value whether mouse wheel is enabled or not.
+ *
+ * Mouse wheel can be used for the user to zoom in or zoom out the map.
+ *
+ * @param[in] obj The object.
+ *
+ * @return Use @c true to disable mouse wheel or @c false to enable it.
+ *
+ * @ingroup Elm_Map
+ */
+EAPI Eina_Bool elm_map_wheel_disabled_get(const Evas_Object *obj);
+
 #include "elm_map.eo.legacy.h"
