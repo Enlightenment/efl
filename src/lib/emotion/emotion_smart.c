@@ -676,11 +676,11 @@ _efl_canvas_video_efl_player_play_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data
 EAPI void
 emotion_object_position_set(Evas_Object *obj, double sec)
 {
-   efl_player_position_set(obj, sec);
+   efl_player_pos_set(obj, sec);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_player_position_set(Eo *obj, Efl_Canvas_Video_Data *sd, double sec)
+_efl_canvas_video_efl_player_pos_set(Eo *obj, Efl_Canvas_Video_Data *sd, double sec)
 {
    DBG("sec=%f", sec);
    if (!sd->engine_instance) return;
@@ -701,11 +701,11 @@ _efl_canvas_video_efl_player_position_set(Eo *obj, Efl_Canvas_Video_Data *sd, do
 EAPI double
 emotion_object_position_get(const Evas_Object *obj)
 {
-   return efl_player_position_get(obj);
+   return efl_player_pos_get(obj);
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_position_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_pos_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    sd->pos = emotion_engine_instance_pos_get(sd->engine_instance);

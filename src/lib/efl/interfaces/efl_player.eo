@@ -32,7 +32,7 @@ interface Efl.Player
                   play: bool; [[$true if playing, $false otherwise.]]
              }
         }
-        @property position {
+        @property pos {
              set {
                   [[Set the position in the media file.
 

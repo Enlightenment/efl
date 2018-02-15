@@ -57,7 +57,7 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
         Efl.Gfx.size { set; }
         Efl.File.file { get; set; }
         Efl.Player.play { get; set; }
-        Efl.Player.position { get; set; }
+        Efl.Player.pos { get; set; }
         Efl.Player.progress { get; }
         Efl.Player.volume { get; set; }
         Efl.Player.mute { get; set; }

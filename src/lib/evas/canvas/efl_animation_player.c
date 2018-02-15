@@ -275,7 +275,7 @@ _efl_animation_player_efl_player_playable_get(Eo *eo_obj,
 }
 
 EOLIAN static double
-_efl_animation_player_efl_player_position_get(Eo *eo_obj,
+_efl_animation_player_efl_player_pos_get(Eo *eo_obj,
                                               Efl_Animation_Player_Data *pd EINA_UNUSED)
 {
    //TODO: this is not correct
@@ -286,7 +286,7 @@ _efl_animation_player_efl_player_position_get(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_player_efl_player_position_set(Eo *eo_obj,
+_efl_animation_player_efl_player_pos_set(Eo *eo_obj,
                                               Efl_Animation_Player_Data *pd EINA_UNUSED,
                                               double sec)
 {

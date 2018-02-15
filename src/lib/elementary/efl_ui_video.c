@@ -298,7 +298,7 @@ _efl_ui_video_emotion_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 EOLIAN static void
 _efl_ui_video_efl_player_start(Eo *obj, Efl_Ui_Video_Data *sd EINA_UNUSED)
 {
-   efl_player_position_set(obj, 0.0);
+   efl_player_pos_set(obj, 0.0);
    efl_player_play_set(obj, EINA_TRUE);
 }
 
@@ -463,13 +463,13 @@ elm_video_is_seekable_get(const Evas_Object *obj)
 EAPI void
 elm_video_play_position_set(Evas_Object *obj, double position)
 {
-   efl_player_position_set(obj, position);
+   efl_player_pos_set(obj, position);
 }
 
 EAPI double
 elm_video_play_position_get(const Evas_Object *obj)
 {
-   return efl_player_position_get(obj);
+   return efl_player_pos_get(obj);
 }
 
 EAPI Eina_Bool
