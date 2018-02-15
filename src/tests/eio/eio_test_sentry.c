@@ -151,7 +151,7 @@ START_TEST(eio_test_sentry_add_and_remove)
 
    usleep(500000);
 
-   eio_sentry_del(sentry, filename);
+   eio_sentry_remove(sentry, filename);
 
    efl_unref(sentry);
 
@@ -174,12 +174,12 @@ START_TEST(eio_test_sentry_add_remove_add)
    //monitor directory
    sentry = efl_add(EIO_SENTRY_CLASS, NULL);
    fail_if(!eio_sentry_add(sentry, filename));
-   eio_sentry_del(sentry, filename);
+   eio_sentry_remove(sentry, filename);
 
    usleep(500000);
 
    fail_if(!eio_sentry_add(sentry, filename));
-   eio_sentry_del(sentry, filename);
+   eio_sentry_remove(sentry, filename);
 
    efl_unref(sentry);
 
@@ -208,8 +208,8 @@ START_TEST(eio_test_sentry_add_add_remove_remove)
    fail_if(!eio_sentry_add(sentry, filename1));
    fail_if(!eio_sentry_add(sentry, filename2));
    usleep(500000);
-   eio_sentry_del(sentry, filename1);
-   eio_sentry_del(sentry, filename2);
+   eio_sentry_remove(sentry, filename1);
+   eio_sentry_remove(sentry, filename2);
 
    efl_unref(sentry);
 
@@ -595,7 +595,7 @@ START_TEST(eio_test_sentry_two_monitors_one_removed_one_event)
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname2));
    fail_if(!eio_sentry_add(sentry, dirname));
-   eio_sentry_del(sentry, dirname2);
+   eio_sentry_remove(sentry, dirname2);
    efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)_target_notified_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_file, filename);
@@ -632,7 +632,7 @@ START_TEST(eio_test_sentry_two_monitors_one_removed_no_event)
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
    fail_if(!eio_sentry_add(sentry, dirname2));
-   eio_sentry_del(sentry, dirname);
+   eio_sentry_remove(sentry, dirname);
    efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)_unexpected_event_cb, filename);
 
    ecore_timer_add(TEST_OPERATION_DELAY, _create_file, filename);
@@ -699,7 +699,7 @@ START_TEST(eio_test_sentry_two_files_in_same_directory_one_removed)
    //monitor file
    fail_if(!eio_sentry_add(sentry,filename));
    fail_if(!eio_sentry_add(sentry,filename2));
-   eio_sentry_del(sentry, filename);
+   eio_sentry_remove(sentry, filename);
 
    efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_MODIFIED, (Efl_Event_Cb)_unexpected_event_cb, filename);
 

@@ -137,7 +137,7 @@ _eio_sentry_add(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
 }
 
 void
-_eio_sentry_del(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
+_eio_sentry_remove(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN(path);
    EINA_SAFETY_ON_NULL_RETURN(pd);

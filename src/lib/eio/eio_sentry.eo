@@ -19,7 +19,7 @@ class Eio.Sentry (Efl.Object)
       }
       return : bool; [[$true on success, $false otherwise]]
     }
-    del {
+    remove {
       [[Removes the given path from the monitored list.]]
       params {
         @in path: string; [[Path to remove from monitoring]]
