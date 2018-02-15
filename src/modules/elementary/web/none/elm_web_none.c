@@ -266,25 +266,25 @@ _elm_web_none_elm_web_history_enabled_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data
 }
 
 EOLIAN static void
-_elm_web_none_elm_web_zoom_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, double zoom EINA_UNUSED)
+_elm_web_none_efl_ui_zoom_zoom_level_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, double zoom EINA_UNUSED)
 {
 }
 
 EOLIAN static double
-_elm_web_none_elm_web_zoom_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+_elm_web_none_efl_ui_zoom_zoom_level_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
 {
    return -1;
 }
 
 EOLIAN static void
-_elm_web_none_elm_web_zoom_mode_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Elm_Web_Zoom_Mode mode EINA_UNUSED)
+_elm_web_none_efl_ui_zoom_zoom_mode_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Efl_Ui_Zoom_Mode mode EINA_UNUSED)
 {
 }
 
-EOLIAN static Elm_Web_Zoom_Mode
-_elm_web_none_elm_web_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+EOLIAN static Efl_Ui_Zoom_Mode
+_elm_web_none_efl_ui_zoom_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
 {
-   return ELM_WEB_ZOOM_MODE_LAST;
+   return EFL_UI_ZOOM_MODE_LAST;
 }
 
 EOLIAN static void

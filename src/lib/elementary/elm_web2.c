@@ -156,6 +156,30 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
    ewm.window_features_region_get(wf, x, y, w, h);
 }
 
+EAPI void
+elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
+{
+   efl_ui_zoom_mode_set(obj, mode);
+}
+
+EAPI Elm_Web_Zoom_Mode
+elm_web_zoom_mode_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_mode_get(obj);
+}
+
+EAPI void
+elm_web_zoom_set(Evas_Object *obj, double zoom)
+{
+   efl_ui_zoom_level_set(obj, zoom);
+}
+
+EAPI double
+elm_web_zoom_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_level_get(obj);
+}
+
 static void
 _elm_web_class_constructor(Efl_Class *klass)
 {
