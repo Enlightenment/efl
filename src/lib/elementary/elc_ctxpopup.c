@@ -867,7 +867,7 @@ _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it EINA_UNUSED,
    if (ctxpopup_it->list_item)
      {
         efl_unref(ctxpopup_it->list_item);
-        elm_wdg_item_del(ctxpopup_it->list_item);
+        efl_del(ctxpopup_it->list_item);
         ctxpopup_it->list_item = NULL;
      }
 

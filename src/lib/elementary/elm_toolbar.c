@@ -2828,10 +2828,10 @@ _elm_toolbar_efl_canvas_group_group_del(Eo *obj, Elm_Toolbar_Data *sd)
    while (it)
      {
         next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        elm_wdg_item_del(EO_OBJ(it));
+        efl_del(EO_OBJ(it));
         it = next;
      }
-   if (sd->more_item) elm_wdg_item_del(EO_OBJ(sd->more_item));
+   if (sd->more_item) efl_del(EO_OBJ(sd->more_item));
    ecore_timer_del(sd->long_timer);
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
@@ -3356,7 +3356,7 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
 
    if (sd->more_item)
      {
-        elm_wdg_item_del(EO_OBJ(sd->more_item));
+        efl_del(EO_OBJ(sd->more_item));
         sd->more_item = NULL;
      }
 

@@ -515,7 +515,7 @@ _on_item_deleted(void *data,
         ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_temp_it, temp_it);
         if (VIEW(temp_it) == obj)
           {
-             elm_wdg_item_del(eo_temp_it);
+             efl_del(eo_temp_it);
              break;
           }
      }
@@ -1097,7 +1097,7 @@ _layout_key_down_cb(void *data,
              Elm_Multibuttonentry_Item_Data *item = sd->selected_it;
              if (item && sd->editable)
                {
-                  elm_wdg_item_del(EO_OBJ(item));
+                  efl_del(EO_OBJ(item));
                   elm_object_focus_set(sd->entry, EINA_TRUE);
                }
           }
@@ -1808,7 +1808,7 @@ EOLIAN static void
 _efl_ui_multibuttonentry_clear(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    while (sd->items)
-     elm_wdg_item_del(eina_list_data_get(sd->items));
+     efl_del(eina_list_data_get(sd->items));
 
    sd->selected_it = NULL;
    _view_update(sd);

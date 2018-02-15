@@ -2050,3 +2050,9 @@ elm_object_focus_region_show_mode_get(const Evas_Object *obj)
 {
    return elm_widget_focus_region_show_mode_get(obj);
 }
+
+EAPI void
+elm_object_item_del(Eo *obj)
+{
+   efl_del(obj);
+}

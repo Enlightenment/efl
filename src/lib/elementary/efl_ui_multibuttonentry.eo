@@ -70,7 +70,7 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
       item_prepend {
          [[Prepend a new item to the multibuttonentry
 
-           See @Elm.Widget.Item.del to delete the item.]]
+           See @Efl.Object.del to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
@@ -97,7 +97,7 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
       item_insert_before {
          [[Add a new item to the multibuttonentry before the indicated object reference.
 
-           See @Elm.Widget.Item.del to delete the item.]]
+           See @Efl.Object.del to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
@@ -110,7 +110,7 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
       item_append {
          [[Append a new item to the multibuttonentry
 
-           See @Elm.Widget.Item.del to delete the item.]]
+           See @Efl.Object.del to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
@@ -148,7 +148,7 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
       item_insert_after {
          [[Add a new item to the multibuttonentry after the indicated object
 
-           See @Elm.Widget.Item.del to delete the item.]]
+           See @Efl.Object.del to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {

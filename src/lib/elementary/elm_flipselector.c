@@ -642,7 +642,7 @@ _elm_flipselector_efl_canvas_group_group_del(Eo *obj, Elm_Flipselector_Data *sd)
    if (sd->walking) ERR("flipselector deleted while walking.\n");
 
    while (sd->items)
-     elm_wdg_item_del(DATA_GET(sd->items));
+     efl_del(DATA_GET(sd->items));
 
    ecore_timer_del(sd->spin);
    ecore_job_del(sd->view_update);

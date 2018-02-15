@@ -1132,7 +1132,7 @@ _item_sub_items_clear(Elm_Gen_Item *it)
    EINA_LIST_FOREACH(it->item->items, l, eo_it2)
      tl = eina_list_append(tl, eo_it2);
    EINA_LIST_FREE(tl, eo_it2)
-     elm_wdg_item_del(eo_it2);
+     efl_del(eo_it2);
 }
 
 static void
@@ -5870,7 +5870,7 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    while (sd->items)
      {
         it = EINA_INLIST_CONTAINER_GET(sd->items->last, Elm_Gen_Item);
-        elm_wdg_item_del(EO_OBJ(it));
+        efl_del(EO_OBJ(it));
      }
 
    sd->pan_changed = EINA_TRUE;

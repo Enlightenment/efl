@@ -216,7 +216,7 @@ _items_remove(Elm_Popup_Data *sd)
    if (!sd->items) return;
 
    EINA_LIST_FREE(sd->items, it)
-     elm_wdg_item_del(EO_OBJ(it));
+     efl_del(EO_OBJ(it));
 
    sd->items = NULL;
 }

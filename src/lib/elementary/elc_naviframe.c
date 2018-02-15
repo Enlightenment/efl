@@ -1182,7 +1182,7 @@ _on_item_pop_finished(void *data,
      elm_widget_tree_unfocusable_set(VIEW(it), EINA_FALSE);
    sd->popping = eina_list_remove(sd->popping, it);
 
-   elm_wdg_item_del(EO_OBJ(it));
+   efl_del(EO_OBJ(it));
 }
 
 /* "elm,state,new,pushed",
@@ -1441,14 +1441,14 @@ _elm_naviframe_efl_canvas_group_group_del(Eo *obj, Elm_Naviframe_Data *sd)
      {
         it = EINA_INLIST_CONTAINER_GET(l, Elm_Naviframe_Item_Data);
         l = l->prev;
-        elm_wdg_item_del(EO_OBJ(it));
+        efl_del(EO_OBJ(it));
      }
 
    // No need to cleanup animator as it is an event on myself
    EINA_LIST_FREE(sd->ops, nfo)
      free(nfo);
    EINA_LIST_FREE(sd->popping, it)
-     elm_wdg_item_del(EO_OBJ(it));
+     efl_del(EO_OBJ(it));
 
    evas_object_del(sd->dummy_edje);
 
@@ -1719,7 +1719,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
           {
              efl_unref(eo_item);
              if (it->delete_me)
-               elm_wdg_item_del(eo_item);
+               efl_del(eo_item);
              else
                {
                   /* To avoid multiple item pops, the auto pushed button deletes
@@ -1783,7 +1783,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         _schedule_deferred(nfo, sd);
      }
    else
-     elm_wdg_item_del(eo_item);
+     efl_del(eo_item);
 
  on_error:
    return content;
@@ -1811,7 +1811,7 @@ _elm_naviframe_item_pop_to(Eo *eo_it, Elm_Naviframe_Item_Data *it)
 
         l = l->prev;
 
-        elm_wdg_item_del(EO_OBJ(iit));
+        efl_del(EO_OBJ(iit));
      }
 
    sd->on_deletion = EINA_FALSE;

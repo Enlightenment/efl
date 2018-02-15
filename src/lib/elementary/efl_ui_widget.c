@@ -3996,7 +3996,7 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
  * @ingroup Widget
  */
 EOLIAN static void
-_elm_widget_item_del(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+_elm_widget_item_efl_object_del(const Eo *eo_item, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
@@ -4006,7 +4006,7 @@ _elm_widget_item_del(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
    Eina_Bool del_ok;
    del_ok = elm_wdg_item_del_pre(item->eo_obj);
    if (del_ok)
-      efl_del(item->eo_obj);
+      efl_parent_set((Eo*)eo_item, NULL);
    return;
 }
 

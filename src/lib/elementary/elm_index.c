@@ -1122,7 +1122,7 @@ _elm_index_efl_canvas_group_group_del(Eo *obj, Elm_Index_Data *sd)
    Elm_Index_Omit *o;
 
    while (sd->items)
-     elm_wdg_item_del(sd->items->data);
+     efl_del(sd->items->data);
 
    EINA_LIST_FREE(sd->omit, o)
      free(o);
@@ -1471,7 +1471,7 @@ _elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, E
              const void *item_data = WIDGET_ITEM_DATA_GET(eo_item);
              if (cmp_data_func(WIDGET_ITEM_DATA_GET(eo_p_it), item_data) >= 0)
                WIDGET_ITEM_DATA_SET(eo_p_it, item_data);
-             elm_wdg_item_del(eo_item);
+             efl_del(eo_item);
              return NULL;
           }
      }
@@ -1508,7 +1508,7 @@ _elm_index_item_clear(Eo *obj, Elm_Index_Data *sd)
         clear = eina_list_append(clear, eo_item);
      }
    EINA_LIST_FREE(clear, eo_item)
-     elm_wdg_item_del(eo_item);
+     efl_del(eo_item);
 }
 
 EOLIAN static void

@@ -853,7 +853,7 @@ _elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *sd)
    Eina_List *itr, *itr2;
    Elm_Object_Item *eo_item;
    EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
-     elm_wdg_item_del(eo_item);
+     efl_del(eo_item);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -1262,7 +1262,7 @@ _elm_menu_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *it)
 
    EINA_LIST_FOREACH_SAFE(it->submenu.items,
                           l, l_next, sub_it)
-     elm_wdg_item_del(sub_it);
+     efl_del(sub_it);
 }
 
 EOLIAN static Eina_Iterator*

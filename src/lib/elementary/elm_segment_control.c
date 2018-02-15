@@ -730,7 +730,7 @@ _elm_segment_control_item_del_at(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNU
    it = _item_find(obj, idx);
    if (!it) return;
 
-   elm_wdg_item_del(EO_OBJ(it));
+   efl_del(EO_OBJ(it));
 }
 
 EOLIAN static const char*

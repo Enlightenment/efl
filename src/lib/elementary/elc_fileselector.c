@@ -1820,7 +1820,7 @@ _resource_deleted(void *data, const Efl_Event *event)
           }
      }
 
-   if (it) elm_wdg_item_del(it);
+   if (it) efl_del(it);
 
    if (selected)
      {
