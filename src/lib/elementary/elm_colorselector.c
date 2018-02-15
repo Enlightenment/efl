@@ -2282,13 +2282,13 @@ _elm_colorselector_efl_object_constructor(Eo *obj, Elm_Colorselector_Data *_pd E
 }
 
 EOLIAN static void
-_elm_colorselector_color_set(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
+_elm_colorselector_picked_color_set(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
    _colors_set(obj, r, g, b, a, EINA_FALSE);
 }
 
 EOLIAN static void
-_elm_colorselector_color_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd, int *r, int *g, int *b, int *a)
+_elm_colorselector_picked_color_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd, int *r, int *g, int *b, int *a)
 {
    if (r) *r = sd->r;
    if (g) *g = sd->g;
@@ -2730,4 +2730,3 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_colorselector, Elm_Colorselector_Data)
 
 #include "elm_colorselector.eo.c"
 #include "elm_color_item.eo.c"
-

@@ -20,13 +20,15 @@ class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
    eo_prefix: elm_obj_colorselector;
    event_prefix: elm_colorselector;
    methods {
-      @property color {
+      @property picked_color {
          set {
             [[Set color to colorselector.]]
+            legacy: elm_colorselector_color_set;
 
          }
          get {
             [[Get current color from colorselector.]]
+            legacy: elm_colorselector_color_get;
          }
          values {
             r: int; [[Red value of color]]
