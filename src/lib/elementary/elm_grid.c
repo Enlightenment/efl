@@ -104,7 +104,7 @@ _elm_grid_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_elm_grid_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -112,7 +112,7 @@ _elm_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 }
 
 EOLIAN static void
-_elm_grid_size_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *w, Evas_Coord *h)
+_elm_grid_grid_size_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *w, Evas_Coord *h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
