@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 
 
    in = efl_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
-   ecore_audio_obj_name_set(in, basename(argv[1]));
+   efl_name_set(in, basename(argv[1]));
    ret = ecore_audio_obj_source_set(in, argv[1]);
    if (!ret) {
      printf("Could not set %s as input\n", argv[1]);

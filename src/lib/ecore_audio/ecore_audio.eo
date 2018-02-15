@@ -19,19 +19,6 @@ class Ecore.Audio (Efl.Object)
    eo_prefix: ecore_audio_obj;
    data: Ecore_Audio_Object;
    methods {
-      @property name {
-         [[Name of the object
-
-           @since 1.8
-         ]]
-         set {
-         }
-         get {
-         }
-         values {
-            name: string; [[Name]]
-         }
-      }
       @property paused {
          [[Pauses state of the object
 

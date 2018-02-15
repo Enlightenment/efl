@@ -60,7 +60,7 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    in = efl_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
 
-   ecore_audio_obj_name_set(in, "sample.wav");
+   efl_name_set(in, "sample.wav");
    ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sample.wav");
    fail_if(!ret);
 
@@ -142,7 +142,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    in = efl_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
    fail_if(!in);
 
-   ecore_audio_obj_name_set(in, "tone");
+   efl_name_set(in, "tone");
 
    channel = ecore_audio_obj_in_channels_get(in);
    fail_if(channel != 1);
@@ -200,7 +200,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    out = efl_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
 
-   ecore_audio_obj_name_set(out, "tmp.wav");
+   efl_name_set(out, "tmp.wav");
    ret = ecore_audio_obj_format_set(out, ECORE_AUDIO_FORMAT_WAV);
    fail_if(!ret);
    ret = ecore_audio_obj_source_set(out, TESTS_BUILD_DIR"/tmp.wav");
@@ -246,7 +246,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    ret = ecore_audio_obj_format_set(in, ECORE_AUDIO_FORMAT_AUTO);
    fail_if(!ret);
 
-   ecore_audio_obj_name_set(in, "sample.ogg");
+   efl_name_set(in, "sample.ogg");
    ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sample.ogg");
    fail_if(!ret);
 
@@ -280,7 +280,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    out = efl_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
 
-   ecore_audio_obj_name_set(out, "tmp.wav");
+   efl_name_set(out, "tmp.wav");
    ret = ecore_audio_obj_format_set(out, ECORE_AUDIO_FORMAT_WAV);
    fail_if(!ret);
 
@@ -552,16 +552,16 @@ START_TEST(ecore_test_ecore_audio_obj)
 
     fail_if(!obj);
 
-    name = ecore_audio_obj_name_get(obj);
+    name = efl_name_get(obj);
 
     fail_if(name);
 
-    ecore_audio_obj_name_set(obj, "In1");
-    name = ecore_audio_obj_name_get(obj);
+    efl_name_set(obj, "In1");
+    name = efl_name_get(obj);
 
     ck_assert_str_eq(name, "In1");
 
-    ecore_audio_obj_name_get(obj);
+    efl_name_get(obj);
 
     paused = ecore_audio_obj_paused_get(obj);
     fail_if(paused);

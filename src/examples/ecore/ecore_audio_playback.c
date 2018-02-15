@@ -272,7 +272,7 @@ main(int argc, const char *argv[])
                  }
               }
             free(tmp);
-            ecore_audio_obj_name_set(in, argv[i]);
+            efl_name_set(in, argv[i]);
          }
        else
          {
@@ -283,7 +283,7 @@ main(int argc, const char *argv[])
                  goto end;
               }
             tmp = strdup(argv[i]);
-            ecore_audio_obj_name_set(in, basename(tmp));
+            efl_name_set(in, basename(tmp));
             free(tmp);
             ret = ecore_audio_obj_source_set(in, argv[i]);
             if (!ret) {
