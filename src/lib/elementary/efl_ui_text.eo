@@ -339,10 +339,10 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface_Scrollable.bounce_allow { set; }
       Efl.Access.state_set { get; }
       Efl.Access.i18n_name { get; }
-      Efl.Access.Text.text { get; }
+      Efl.Access.Text.access_text { get; }
       Efl.Access.Text.string { get; }
       Efl.Access.Text.attribute { get; }
-      Efl.Access.Text.attributes { get; }
+      Efl.Access.Text.text_attributes { get; }
       Efl.Access.Text.default_attributes { get; }
       Efl.Access.Text.caret_offset { get; set; }
       Efl.Access.Text.character { get; }
@@ -351,7 +351,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Text.offset_at_point { get; }
       Efl.Access.Text.bounded_ranges { get; }
       Efl.Access.Text.range_extents { get; }
-      Efl.Access.Text.selection { get; set; }
+      Efl.Access.Text.access_selection { get; set; }
       Efl.Access.Text.selections_count { get; }
       Efl.Access.Text.selection_add;
       Efl.Access.Text.selection_remove;

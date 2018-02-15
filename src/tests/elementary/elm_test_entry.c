@@ -374,14 +374,14 @@ START_TEST (elm_entry_atspi_text_selections)
    elm_entry_select_region_set(entry, 2, 4);
    val = efl_access_text_selections_count_get(entry);
    ck_assert(val == 1);
-   efl_access_text_selection_get(entry, 0, &start, &end);
+   efl_access_text_access_selection_get(entry, 0, &start, &end);
    ck_assert(start == 2);
    ck_assert(end == 4);
 
    elm_entry_select_region_set(entry, 6, 10);
    val = efl_access_text_selections_count_get(entry);
    ck_assert(val == 1);
-   efl_access_text_selection_get(entry, 0, &start, &end);
+   efl_access_text_access_selection_get(entry, 0, &start, &end);
    ck_assert(start == 6);
    ck_assert(end == 10);
 

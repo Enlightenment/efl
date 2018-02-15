@@ -1604,7 +1604,7 @@ _text_selection_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   efl_access_text_selection_get(obj, sel_num, &start, &end);
+   efl_access_text_access_selection_get(obj, sel_num, &start, &end);
 
    eldbus_message_arguments_append(ret, "ii", start, end);
 
@@ -1679,7 +1679,7 @@ _text_selection_set(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = efl_access_text_selection_set(obj, sel_num, start, end);
+   res = efl_access_text_access_selection_set(obj, sel_num, start, end);
 
    eldbus_message_arguments_append(ret, "b", res);
 

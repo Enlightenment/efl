@@ -5602,7 +5602,7 @@ fail:
 }
 
 EOLIAN static char*
-_elm_entry_efl_access_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_efl_access_text_access_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5661,7 +5661,7 @@ _elm_entry_efl_access_text_selections_count_get(Eo *obj, Elm_Entry_Data *_pd EIN
 }
 
 EOLIAN static void
-_elm_entry_efl_access_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_access_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
    if (selection_number != 0) return;
 
@@ -5669,7 +5669,7 @@ _elm_entry_efl_access_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
+_elm_entry_efl_access_text_access_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
 {
    if (selection_number != 0) return EINA_FALSE;
 
@@ -5893,7 +5893,7 @@ _elm_entry_efl_access_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;

@@ -72,7 +72,7 @@ interface Efl.Access.Text ()
             string: mstring @owned; [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
          }
       }
-      @property text @protected @beta {
+      @property access_text @protected @beta {
          get {
             [[Gets text of accessible widget.]]
          }
@@ -110,7 +110,7 @@ interface Efl.Access.Text ()
             value: mstring @owned; [[Value of text attribute. Should be free()]]
          }
       }
-      @property attributes @protected @beta {
+      @property text_attributes @protected @beta {
          get {
             [[Gets list of all text attributes.]]
          }
@@ -200,7 +200,7 @@ interface Efl.Access.Text ()
             count: int; [[Selection counter]]
          }
       }
-      @property selection @protected @beta {
+      @property access_selection @protected @beta {
          [[Selection property]]
          get {
          }
