@@ -385,7 +385,7 @@ _eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *me
           continue;
 
         const char *name;
-        name = eldbus_model_arguments_name_get(child);
+        name = eldbus_model_arguments_arg_name_get(child);
         ck_assert_ptr_ne(NULL, name);
         if (strcmp(name, method_name) == 0)
           goto end;

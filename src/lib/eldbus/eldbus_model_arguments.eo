@@ -14,7 +14,7 @@ class Eldbus.Model.Arguments (Efl.Object, Efl.Model) {
                 @in arguments: const(list<ptr(Eldbus.Introspection.Argument)>); [[The introspected arguments]]
             }
         }
-    @property name {
+    @property arg_name {
             [[Name of the argument]]
             get {}
             values {

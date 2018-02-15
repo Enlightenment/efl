@@ -13,7 +13,7 @@ class Eldbus.Model.Proxy (Efl.Object, Efl.Model) {
                 @cref interface: Eldbus.Introspection.Interface; [[The introspected interface]]
             }
         }
-    @property name {
+    @property proxy_name {
             [[Proxy name]]
             get {}
             values {

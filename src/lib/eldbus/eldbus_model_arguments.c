@@ -208,7 +208,7 @@ _eldbus_model_arguments_efl_model_children_count_get(Eo *obj EINA_UNUSED,
 }
 
 static const char *
-_eldbus_model_arguments_name_get(Eo *obj EINA_UNUSED, Eldbus_Model_Arguments_Data *pd)
+_eldbus_model_arguments_arg_name_get(Eo *obj EINA_UNUSED, Eldbus_Model_Arguments_Data *pd)
 {
    return pd->name;
 }

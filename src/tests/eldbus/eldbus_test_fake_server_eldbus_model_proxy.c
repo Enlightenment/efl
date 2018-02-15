@@ -127,9 +127,9 @@ START_TEST(children_slice_get)
    Eldbus_Model_Arguments *method2 = efl_model_nth_child_get(fake_server_proxy, 1);
    Eldbus_Model_Arguments *signal1 = efl_model_nth_child_get(fake_server_proxy, 2);
 
-   const char *actual_method1_name = eldbus_model_arguments_name_get(method1);
-   const char *actual_method2_name = eldbus_model_arguments_name_get(method2);
-   const char *actual_signal1_name = eldbus_model_arguments_name_get(signal1);
+   const char *actual_method1_name = eldbus_model_arguments_arg_name_get(method1);
+   const char *actual_method2_name = eldbus_model_arguments_arg_name_get(method2);
+   const char *actual_signal1_name = eldbus_model_arguments_arg_name_get(signal1);
 
    ck_assert_ptr_ne(NULL, actual_method1_name);
    ck_assert_ptr_ne(NULL, actual_method2_name);
