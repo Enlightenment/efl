@@ -5960,7 +5960,7 @@ _elm_entry_efl_access_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_editable_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
+_elm_entry_efl_access_editable_text_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
 {
    elm_entry_entry_set(obj, content);
    return EINA_TRUE;

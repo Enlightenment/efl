@@ -4383,7 +4383,7 @@ _efl_ui_text_efl_access_text_default_attributes_get(Eo *obj, Efl_Ui_Text_Data *_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_content_set(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, const char *content)
+_efl_ui_text_efl_access_editable_text_text_content_set(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, const char *content)
 {
    efl_text_set(obj, content);
    return EINA_TRUE;

@@ -355,7 +355,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Text.selections_count { get; }
       Efl.Access.Text.selection_add;
       Efl.Access.Text.selection_remove;
-      Efl.Access.Editable.Text.content { set; }
+      Efl.Access.Editable.Text.text_content { set; }
       Efl.Access.Editable.Text.insert;
       Efl.Access.Editable.Text.copy;
       Efl.Access.Editable.Text.cut;
