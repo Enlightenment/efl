@@ -67,17 +67,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
             fill: bool; [[$true if the grid is filled, $false otherwise]]
          }
       }
-      @property page_relative {
-         [[Control  a given gengrid widget's scrolling page size, relative
-           to its viewport size.
-         ]]
-         set {}
-         get {}
-         values {
-            h_pagerel: double; [[Page relation horizontal]]
-            v_pagerel: double; [[Page relation vertical]]
-         }
-      }
       @property multi_select {
          set {
             [[Enable or disable multi-selection in a given gengrid widget.
@@ -269,15 +258,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
             $false to expand vertically.]]
          }
       }
-      @property page_size {
-         set {
-            [[Set a given gengrid widget's scrolling page size.]]
-         }
-         values {
-            h_pagesize: int; [[Page size horizontal]]
-            v_pagesize: int; [[Page size vertical]]
-         }
-      }
       @property selected_item {
          get {
             [[Get the selected item in a given gengrid widget.
@@ -346,28 +326,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
             return: Elm.Widget.Item; [[The last item's handle or $null
                                          if there are no  items in $obj
                                          (and on errors).]]
-         }
-      }
-      @property wheel_disabled {
-         set {
-            [[Enable or disable mouse wheel to be used to scroll the gengrid.
-
-              Mouse wheel can be used for the user to scroll up and down
-              the gengrid.
-
-              Wheel is enabled by default.
-            ]]
-         }
-         get {
-            [[Get a value whether mouse wheel is enabled or not.
-
-              Mouse wheel can be used for the user to scroll up and down
-              the gengrid.
-            ]]
-         }
-         values {
-            disabled: bool; [[Use $true to disable mouse wheel or $false
-                              to enable it.]]
          }
       }
       item_insert_before {

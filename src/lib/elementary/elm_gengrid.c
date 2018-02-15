@@ -4980,8 +4980,8 @@ elm_gengrid_bounce_get(const Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_get(obj, h_bounce, v_bounce);
 }
 
-EOLIAN static void
-_elm_gengrid_page_relative_set(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, double h_pagerel, double v_pagerel)
+EAPI void
+elm_gengrid_page_relative_set(Eo *obj, double h_pagerel, double v_pagerel)
 {
    Evas_Coord pagesize_h;
    Evas_Coord pagesize_v;
@@ -4991,14 +4991,14 @@ _elm_gengrid_page_relative_set(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, doubl
      (obj, h_pagerel, v_pagerel, pagesize_h, pagesize_v);
 }
 
-EOLIAN static void
-_elm_gengrid_page_relative_get(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, double *h_pagerel, double *v_pagerel)
+EAPI void
+elm_gengrid_page_relative_get(const Eo *obj, double *h_pagerel, double *v_pagerel)
 {
    elm_interface_scrollable_paging_get(obj, h_pagerel, v_pagerel, NULL, NULL);
 }
 
-EOLIAN static void
-_elm_gengrid_page_size_set(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, Evas_Coord h_pagesize, Evas_Coord v_pagesize)
+EAPI void
+elm_gengrid_page_size_set(Eo *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize)
 {
    double pagerel_h;
    double pagerel_v;
@@ -5535,20 +5535,16 @@ _elm_gengrid_elm_interface_scrollable_item_loop_enabled_get(Eo *obj EINA_UNUSED,
    return sd->item_loop_enable;
 }
 
-EOLIAN static void
-_elm_gengrid_wheel_disabled_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Bool disabled)
+EAPI void
+elm_gengrid_wheel_disabled_set(Eo *obj, Eina_Bool disabled)
 {
-   disabled = !!disabled;
-   if (sd->wheel_disabled != disabled)
-     elm_interface_scrollable_wheel_disabled_set(obj, disabled);
-
-   sd->wheel_disabled = disabled;
+   elm_interface_scrollable_wheel_disabled_set(obj, disabled);
 }
 
-EOLIAN static Eina_Bool
-_elm_gengrid_wheel_disabled_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
+EAPI Eina_Bool
+elm_gengrid_wheel_disabled_get(const Eo *obj)
 {
-   return sd->wheel_disabled;
+   return elm_interface_scrollable_wheel_disabled_get(obj);
 }
 
 EOLIAN static void
