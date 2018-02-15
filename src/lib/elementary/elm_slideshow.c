@@ -587,7 +587,7 @@ _elm_slideshow_timeout_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 }
 
 EOLIAN static void
-_elm_slideshow_loop_set(Eo *obj, Elm_Slideshow_Data *sd, Eina_Bool loop)
+_elm_slideshow_items_loop_set(Eo *obj, Elm_Slideshow_Data *sd, Eina_Bool loop)
 {
    ELM_SLIDESHOW_CHECK(obj);
    sd->loop = loop;
@@ -614,7 +614,7 @@ _elm_slideshow_layout_set(Eo *obj, Elm_Slideshow_Data *sd, const char *layout)
 }
 
 EOLIAN static Eina_Bool
-_elm_slideshow_loop_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_items_loop_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->loop;
 }
