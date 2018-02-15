@@ -3945,6 +3945,7 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    evas_object_del(item->view);
 
+   eina_stringshare_del(item->style);
    eina_stringshare_del(item->access_info);
    eina_stringshare_del(item->accessible_name);
 
@@ -4235,16 +4236,15 @@ _elm_widget_item_disabled_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *ite
 }
 
 EOLIAN static void
-_elm_widget_item_style_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, const char *style EINA_UNUSED)
+_elm_widget_item_style_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, const char *style)
 {
-   ERR_NOT_SUPPORTED(item, "elm_object_style_set()");
+   eina_stringshare_replace(&item->style, style);
 }
 
 EOLIAN static const char *
 _elm_widget_item_style_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
-   ERR_NOT_SUPPORTED(item, "elm_object_style_get()");
-   return NULL;
+   return item->style;
 }
 
 EOLIAN static void
