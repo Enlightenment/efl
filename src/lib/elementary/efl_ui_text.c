@@ -3298,7 +3298,7 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
+_efl_ui_text_password_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
 {
    password = !!password;
 
@@ -3334,7 +3334,7 @@ _efl_ui_text_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_password_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_password_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->password;
 }

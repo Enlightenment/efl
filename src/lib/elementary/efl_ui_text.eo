@@ -135,7 +135,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
          }
       }
-      @property password {
+      @property password_mode {
          set {
             [[Sets the entry to password mode.
 
