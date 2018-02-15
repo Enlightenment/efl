@@ -3878,7 +3878,6 @@ _internal_elm_gengrid_clear(Evas_Object *obj,
              if (itn) itn->walking++;  /* prevent early death of subitem */
              if (VIEW(it))
                _item_mouse_callbacks_del(it, VIEW(it));
-             it->del_cb(it);
              efl_del(EO_OBJ(it));
              if (itn) itn->walking--;
           }
@@ -3949,7 +3948,6 @@ _item_select(Elm_Gen_Item *it)
      {
         if ((!it->walking) && (it->generation < sd->generation))
           {
-             it->del_cb(it);
              efl_del(eo_it);
              sd->last_selected_item = NULL;
           }
@@ -3989,7 +3987,6 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
    it->func.func = func;
    it->func.data = func_data;
 
-   it->del_cb = (Ecore_Cb)_item_del;
    it->highlight_cb = (Ecore_Cb)_item_highlight;
    it->unhighlight_cb = (Ecore_Cb)_item_unhighlight;
    it->sel_cb = (Ecore_Cb)_item_select;

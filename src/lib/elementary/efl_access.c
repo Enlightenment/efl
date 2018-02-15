@@ -146,7 +146,7 @@ _efl_access_index_in_parent_get(Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
    Eo *chld, *parent = NULL;
    int ret = 0;
 
-   parent = efl_access_parent_get(obj);
+   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
    if (!parent) return -1;
 
    children = efl_access_children_get(parent);
@@ -167,29 +167,20 @@ _efl_access_index_in_parent_get(Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
    return ret;
 }
 
-EOLIAN static Efl_Access *
-_efl_access_parent_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+
+EOLIAN static Efl_Object *
+_efl_access_efl_object_provider_find(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED, const Efl_Object *klass)
 {
-   Efl_Access_Type type;
-   Eo *parent = obj;
-
-   do {
-      parent = efl_parent_get(obj);
-      if (efl_isa(parent, EFL_ACCESS_MIXIN))
-        {
-           type = efl_access_type_get(parent);
-           if (type != EFL_ACCESS_TYPE_SKIPPED) break;
-        }
-   } while (parent);
-
-   return efl_isa(parent, EFL_ACCESS_MIXIN) ? parent : NULL;
-}
-
-EOLIAN static void
-_efl_access_parent_set(Eo *obj, Efl_Access_Data *pd EINA_UNUSED, Efl_Access *new_parent EINA_UNUSED)
-{
-   WRN("The %s object does not implement the \"accessible_parent_set\" function.",
-       efl_class_name_get(efl_class_get(obj)));
+   if (efl_isa(obj, klass))
+     {
+        if (klass == EFL_ACCESS_MIXIN)
+          {
+             Efl_Access_Type type = efl_access_type_get(obj);
+             if (type != EFL_ACCESS_TYPE_SKIPPED) return (Eo*)obj;
+          }
+        else return (Eo*)obj;
+     }
+   return efl_provider_find(efl_super(obj, EFL_ACCESS_MIXIN), klass);
 }
 
 EOLIAN Eina_List*
@@ -674,7 +665,7 @@ _efl_access_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Type val)
    if (val == pd->type)
      return;
 
-   parent = efl_access_parent_get(obj);
+   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
 
    switch (val)
      {

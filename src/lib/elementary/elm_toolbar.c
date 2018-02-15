@@ -2401,9 +2401,7 @@ _item_new(Evas_Object *obj,
    efl_access_type_set(VIEW(it), EFL_ACCESS_TYPE_DISABLED);
 
    icon_obj = elm_icon_add(VIEW(it));
-
-   if (_elm_config->atspi_mode)
-       if (icon_obj) efl_access_parent_set(icon_obj, eo_it);
+   efl_parent_set(icon_obj, eo_it);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);

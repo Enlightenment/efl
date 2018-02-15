@@ -2094,7 +2094,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
      }
    else if (!strcmp(property, "Parent"))
      {
-       ret_obj = efl_access_parent_get(obj);
+       ret_obj = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
        Efl_Access_Role role = EFL_ACCESS_ROLE_INVALID;
        role = efl_access_role_get(obj);
        if ((!ret_obj) && (EFL_ACCESS_ROLE_APPLICATION == role))
@@ -2821,7 +2821,7 @@ _collection_sort_order_reverse_canonical(struct collection_match_rule *rule, Ein
 
   /* Get the current nodes index in it's parent and the parent object. */
   indexinparent = efl_access_index_in_parent_get(obj);
-  parent = efl_access_parent_get(obj);
+  parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
 
   if ((indexinparent > 0) && ((max == 0) || (count < max)))
     {
@@ -2877,7 +2877,7 @@ _collection_inorder(Eo *collection, struct collection_match_rule *rule, Eina_Lis
   while ((max == 0 || count < max) && obj && obj != collection)
     {
        Eo *parent;
-       parent = efl_access_parent_get(obj);
+       parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
        idx = efl_access_index_in_parent_get(obj);
        count = _collection_sort_order_canonical(rule, list, count, max, parent,
                                      idx + 1, EINA_TRUE, NULL, EINA_TRUE, traverse);
@@ -2955,7 +2955,7 @@ _collection_get_matches_from_handle(Eo *collection, Eo *current, struct collecti
          break;
       case ATSPI_Collection_TREE_RESTRICT_CHILDREN:
          idx = efl_access_index_in_parent_get(current);
-         parent = efl_access_parent_get(current);
+         parent = efl_provider_find(efl_parent_get(current), EFL_ACCESS_MIXIN);
          _collection_query(rule, sortby, &result, 0, max, parent, idx, EINA_FALSE, NULL, EINA_TRUE, traverse);
          break;
       case ATSPI_Collection_TREE_RESTRICT_SIBLING:
@@ -3016,7 +3016,7 @@ _collection_get_matches_to_handle(Eo *obj, Eo *current, struct collection_match_
    Eo *collection = obj;
 
    if (limit)
-     collection = efl_access_parent_get(obj);
+     collection = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
 
    switch (tree)
      {
@@ -3218,7 +3218,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   _bridge_iter_object_reference_append(bridge, iter_struct, root);
 
   Eo *parent = NULL;
-  parent = efl_access_parent_get(data);
+  parent = efl_provider_find(efl_parent_get(data), EFL_ACCESS_MIXIN);
   /* Marshall parent */
   if ((!parent) && (EFL_ACCESS_ROLE_APPLICATION == role))
     _object_desktop_reference_append(iter_struct);

@@ -771,6 +771,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.provider_find;
       Efl.Object.finalize;
       Efl.Object.debug_name_override;
       Efl.Gfx.visible { set; }
@@ -787,7 +788,6 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_manager_create;
-      Efl.Access.parent { get; }
       Efl.Access.state_set { get; }
       Efl.Access.i18n_name { get; }
       Efl.Access.Component.extents { get; }
@@ -818,7 +818,6 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part;
-      Efl.Object.provider_find;
    }
    constructors {
       .win_name;

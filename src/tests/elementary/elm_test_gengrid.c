@@ -87,7 +87,7 @@ START_TEST(elm_atspi_children_parent)
    elm_gengrid_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
 
    ck_assert(content != NULL);
-   parent = efl_access_parent_get(content);
+   parent = efl_provider_find(efl_parent_get(content), EFL_ACCESS_MIXIN);
    ck_assert(it == parent);
 
    elm_shutdown();

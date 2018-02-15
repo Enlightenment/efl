@@ -1565,7 +1565,7 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_create)
           {
              Efl_Access *aparent;
-             aparent = efl_access_parent_get(sobj);
+             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_MIXIN);
              if (aparent)
                 efl_access_children_changed_added_signal_emit(aparent, sobj);
           }
@@ -1643,7 +1643,7 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_destroy)
           {
              Efl_Access *aparent;
-             aparent = efl_access_parent_get(sobj);
+             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_MIXIN);
              if (aparent)
                 efl_access_children_changed_del_signal_emit(aparent, sobj);
           }
@@ -5407,21 +5407,6 @@ _efl_ui_widget_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Dat
    return accs;
 }
 
-EOLIAN static Eo*
-_efl_ui_widget_efl_access_parent_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
-{
-   Efl_Access_Type type;
-   Efl_Access *parent = obj;
-
-   do {
-        ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd, NULL);
-        parent = wd->parent_obj;
-        type = efl_access_type_get(parent);
-   } while (parent && (type == EFL_ACCESS_TYPE_SKIPPED));
-
-   return efl_isa(parent, EFL_ACCESS_MIXIN) ? parent : NULL;
-}
-
 EOLIAN static Efl_Access_State_Set
 _efl_ui_widget_efl_access_state_set_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
@@ -5572,6 +5557,13 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
 
    if ((klass == EFL_CONFIG_INTERFACE) || (klass == EFL_CONFIG_GLOBAL_CLASS))
      return _efl_config_obj;
+
+   if (klass == EFL_ACCESS_MIXIN)
+     {
+        Efl_Access_Type type = efl_access_type_get(obj);
+        if (type != EFL_ACCESS_TYPE_SKIPPED)
+          return (Eo*)obj;
+     }
 
    if (pd->provider_lookup) return NULL;
    pd->provider_lookup = EINA_TRUE;

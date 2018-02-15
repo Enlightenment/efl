@@ -231,6 +231,7 @@ END_TEST
 START_TEST(elm_atspi_children_parent)
 {
    Efl_Access *parent;
+   Elm_Object_Item *it;
 
    elm_init(1, NULL);
    Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
@@ -239,15 +240,15 @@ START_TEST(elm_atspi_children_parent)
    Evas_Object *end = elm_icon_add(win);
 
    Evas_Object *list = elm_list_add(win);
-   elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
+   it = elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
 
    evas_object_show(list);
 
-   parent = efl_access_parent_get(icon);
-   ck_assert(list == parent);
+   parent = efl_provider_find(efl_parent_get(icon), EFL_ACCESS_MIXIN);
+   ck_assert(it == parent);
 
-   parent = efl_access_parent_get(end);
-   ck_assert(list == parent);
+   parent = efl_provider_find(efl_parent_get(end), EFL_ACCESS_MIXIN);
+   ck_assert(it == parent);
 
    elm_shutdown();
 }

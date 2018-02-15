@@ -656,8 +656,6 @@ _elm_list_deletions_process(Elm_List_Data *sd)
      {
         sd->items = eina_list_remove_list(sd->items, it->node);
 
-        /* issuing free because of "locking" item del pre hook */
-        _elm_list_item_free(it);
         efl_del(EO_OBJ(it));
      }
 
@@ -2282,11 +2280,8 @@ _item_new(Evas_Object *obj,
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
    edje_object_update_hints_set(VIEW(it), 1);
 
-   if (_elm_config->atspi_mode)
-   {
-       if (it->icon) efl_access_parent_set(it->icon, eo_it);
-       if (it->end) efl_access_parent_set(it->end, eo_it);
-   }
+   if (it->icon) efl_parent_set(it->icon, eo_it);
+   if (it->end) efl_parent_set(it->end, eo_it);
 
    /* access */
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -2441,10 +2436,6 @@ _elm_list_efl_canvas_group_group_del(Eo *obj, Elm_List_Data *sd)
 
    EINA_LIST_FREE(sd->items, eo_it)
      {
-        ELM_LIST_ITEM_DATA_GET(eo_it, it);
-        /* issuing free because of "locking" item del pre hook */
-        _elm_list_item_free(it);
-        WIDGET(it) = NULL;
         efl_del(eo_it);
      }
 
@@ -2706,9 +2697,6 @@ _elm_list_clear(Eo *obj, Elm_List_Data *sd)
 
    EINA_LIST_FREE(sd->items, eo_it)
      {
-        ELM_LIST_ITEM_DATA_GET(eo_it, it);
-        /* issuing free because of "locking" item del pre hook */
-        _elm_list_item_free(it);
         efl_del(eo_it);
      }
 

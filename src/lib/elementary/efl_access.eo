@@ -353,16 +353,6 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             description: string; [[Accessible contextual information]]
          }
       }
-      @property parent @beta {
-         [[Object's accessible parent.]]
-         get {
-         }
-         set {
-         }
-         values {
-            parent: Efl.Access; [[Accessible parent]]
-         }
-      }
       @property state_set @protected @beta {
          [[Gets set describing object accessible states.]]
          get {
@@ -469,6 +459,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
    }
    implements {
       Efl.Object.destructor;
+      Efl.Object.provider_find;
    }
    events {
       property,changed: string; [[Called when property has changed]]

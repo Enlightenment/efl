@@ -1393,10 +1393,12 @@ _elm_menu_item_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *
    return eina_list_clone(sd->submenu.items);
 }
 
-EOLIAN static Efl_Access*
-_elm_menu_item_efl_access_parent_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
+EOLIAN static Eo*
+_elm_menu_item_efl_object_parent_get(Eo *obj, Elm_Menu_Item_Data *sd)
 {
-   return sd->parent ? EO_OBJ(sd->parent) : WIDGET(sd);
+   if (sd->parent) return EO_OBJ(sd->parent);
+   if (sd->base) return WIDGET(sd);
+   return efl_parent_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
 }
 
 EOLIAN static Efl_Access_Role
