@@ -4,7 +4,7 @@ class Eldbus.Model.Proxy (Efl.Object, Efl.Model) {
     [[Eldbus model proxy class]]
 
     methods {
-        constructor {
+        custom_constructor {
             [[Custom Eldbus_Model_Proxy constructor.
 
               @since 1.16]]
@@ -33,6 +33,6 @@ class Eldbus.Model.Proxy (Efl.Object, Efl.Model) {
         Efl.Model.children_count_get;
     }
     constructors {
-        .constructor;
+        .custom_constructor;
     }
 }

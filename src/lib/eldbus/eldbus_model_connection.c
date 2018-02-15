@@ -37,7 +37,7 @@ _eldbus_model_connection_efl_object_constructor(Eo *obj, Eldbus_Model_Connection
 }
 
 static void
-_eldbus_model_connection_constructor(Eo *obj EINA_UNUSED,
+_eldbus_model_connection_custom_constructor(Eo *obj EINA_UNUSED,
                                      Eldbus_Model_Connection_Data *pd,
                                      Eldbus_Connection_Type type,
                                      const char* address,

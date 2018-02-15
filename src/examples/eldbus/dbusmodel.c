@@ -250,7 +250,7 @@ main(int argc, char **argv EINA_UNUSED)
                 ELDBUS_CONNECTION_TYPE_SESSION);
 
    root = efl_add_ref(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(),
-                      eldbus_model_object_constructor(efl_added, conn_type, NULL, EINA_FALSE, bus_name, path),
+                      eldbus_model_object_custom_constructor(efl_added, conn_type, NULL, EINA_FALSE, bus_name, path),
                       efl_event_callback_array_add(efl_added, event_cbs(), NULL));
 
    efl_future_then(efl_future_all(efl_model_children_slice_get(root, 0, 0),

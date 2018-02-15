@@ -46,7 +46,7 @@ _eldbus_model_object_efl_object_constructor(Eo *obj, Eldbus_Model_Object_Data *p
 }
 
 static void
-_eldbus_model_object_constructor(Eo *obj EINA_UNUSED,
+_eldbus_model_object_custom_constructor(Eo *obj EINA_UNUSED,
                                  Eldbus_Model_Object_Data *pd,
                                  Eldbus_Connection_Type type,
                                  const char* address,
@@ -487,7 +487,7 @@ _eldbus_model_object_create_children(Eldbus_Model_Object_Data *pd, Eldbus_Object
         DBG("(%p) Creating child: bus = %s, path = %s, interface = %s", pd->obj, pd->bus, current_path, interface->name);
 
         // TODO: increment reference to keep 'interface' in memory
-        child = efl_add_ref(ELDBUS_MODEL_PROXY_CLASS, pd->obj, eldbus_model_proxy_constructor(efl_added, object, interface));
+        child = efl_add_ref(ELDBUS_MODEL_PROXY_CLASS, pd->obj, eldbus_model_proxy_custom_constructor(efl_added, object, interface));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

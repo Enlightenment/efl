@@ -43,7 +43,7 @@ _eldbus_model_arguments_efl_object_constructor(Eo *obj, Eldbus_Model_Arguments_D
 }
 
 static void
-_eldbus_model_arguments_constructor(Eo *obj EINA_UNUSED,
+_eldbus_model_arguments_custom_constructor(Eo *obj EINA_UNUSED,
                                     Eldbus_Model_Arguments_Data *pd,
                                     Eldbus_Proxy *proxy,
                                     const char *name,

@@ -68,7 +68,7 @@ _eldbus_model_proxy_efl_object_constructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 }
 
 static void
-_eldbus_model_proxy_constructor(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_custom_constructor(Eo *obj EINA_UNUSED,
                                 Eldbus_Model_Proxy_Data *pd,
                                 Eldbus_Object *object,
                                 const Eldbus_Introspection_Interface *interface)

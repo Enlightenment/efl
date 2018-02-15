@@ -3,7 +3,7 @@ import eldbus_types;
 class Eldbus.Model.Method (Eldbus.Model.Arguments) {
     [[Eldbus model method class]]
     methods {
-        constructor {
+        method_constructor {
             [[Custom Eldbus_Model_Method constructor.
 
               @since 1.16]]
@@ -26,7 +26,7 @@ class Eldbus.Model.Method (Eldbus.Model.Arguments) {
         Efl.Object.constructor;
     }
     constructors {
-        .constructor;
+        .method_constructor;
     }
     events {
       successful,call; [[Event dispatched for a successful method call.]]
