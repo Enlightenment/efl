@@ -82,7 +82,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
                      item: Elm.Widget.Item; [[The item after $item, or $null if there's none (and on errors).]]
                 }
            }
-           @property parent {
+           @property parent_item {
                 get {
                      [[Get the parent item of the given item
 
@@ -90,6 +90,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
                        of the item $it on \@ref elm_genlist_item_append
                        and insertion related functions.
                      ]]
+                     legacy: elm_genlist_item_parent_get;
                 }
                 values {
                      item: Elm.Widget.Item; [[The parent of the item or $null if it has no parent.]]
