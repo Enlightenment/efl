@@ -4305,14 +4305,14 @@ _elm_interface_scrollable_single_direction_get(Eo *obj EINA_UNUSED, Elm_Scrollab
 }
 
 EOLIAN static void
-_elm_interface_scrollable_repeat_events_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool repeat_events)
+_elm_interface_scrollable_content_events_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool repeat_events)
 {
    if (sid->event_rect)
      evas_object_repeat_events_set(sid->event_rect, repeat_events);
 }
 
 EOLIAN static Eina_Bool
-_elm_interface_scrollable_repeat_events_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_interface_scrollable_content_events_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid)
 {
    if (sid->event_rect)
      return evas_object_repeat_events_get(sid->event_rect);

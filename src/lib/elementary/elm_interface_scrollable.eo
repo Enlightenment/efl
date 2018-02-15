@@ -153,7 +153,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
             h: int; [[Height of the region]]
          }
       }
-      @property repeat_events {
+      @property content_events {
          [[It decides whether the scrollable object propagates the events to content object or not.]]
          set {
          }
