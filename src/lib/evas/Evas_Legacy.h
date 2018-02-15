@@ -2343,6 +2343,24 @@ EAPI Evas *evas_object_evas_get(const Eo *obj);
  */
  EAPI Evas_Object* evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects);
 
+
+/**
+ * @brief Get all objects in the given rectangle
+ *
+ * @param[in] obj The object.
+ * @param[in] x X coordinate
+ * @param[in] y Y coordinate
+ * @param[in] w Width
+ * @param[in] h Height
+ * @param[in] include_pass_events_objects @c true if the list should include
+ * objects which pass events
+ * @param[in] include_hidden_objects @c true if the list should include hidden
+ * objects
+ *
+ * @return List of objects
+ */
+EAPI Eina_List *evas_objects_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @}
  */

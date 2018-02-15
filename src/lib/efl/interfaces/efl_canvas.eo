@@ -82,7 +82,7 @@ interface Efl.Canvas ()
             ]]
          }
       }
-      objects_in_rectangle_get @const {
+      objects_in_rectangle_get {
          [[Retrieve a list of objects lying over a given
            rectangular region in a canvas.
 

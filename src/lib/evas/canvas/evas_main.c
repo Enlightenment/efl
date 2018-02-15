@@ -1603,8 +1603,8 @@ _evas_canvas_efl_canvas_objects_at_xy_get(Eo *eo_e, Evas_Public_Data *e, Eina_Po
  * @return  The list of evas object in the rectangle region.
  *
  */
-EOLIAN Eina_List*
-_evas_canvas_objects_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+static Eina_List*
+_efl_canvas_objects_in_rectangle_get_helper(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *in = NULL;
    Evas_Layer *lay;
@@ -1649,6 +1649,21 @@ _evas_canvas_objects_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Da
           }
      }
    return in;
+}
+
+
+EOLIAN static Eina_Iterator*
+_evas_canvas_efl_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_List *l = _efl_canvas_objects_in_rectangle_get_helper(eo_e, e, rect.x, rect.y, rect.w, rect.h, include_pass_events_objects, include_hidden_objects);
+   if (!l) return NULL;
+   return efl_canvas_iterator_create(eo_e, eina_list_iterator_new(l), l);
+}
+
+EAPI Eina_List *
+evas_objects_in_rectangle_get(const Evas_Canvas *eo_e, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   return _efl_canvas_objects_in_rectangle_get_helper(eo_e, efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS), x, y, w, h, include_pass_events_objects, include_hidden_objects);
 }
 
 /* font related api */
