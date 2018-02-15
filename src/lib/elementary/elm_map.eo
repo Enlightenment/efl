@@ -93,12 +93,14 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
             zoom: int(-1); [[Minimum zoom value to be used.]]
          }
       }
-      @property rotate {
+      @property map_rotate {
          set {
             [[Rotate the map.]]
+            legacy: elm_map_rotate_set;
          }
          get {
             [[Get the rotate degree of the map.]]
+            legacy: elm_map_rotate_get;
          }
          values {
             degree: double; [[Angle from 0.0 to 360.0 to rotate around Z axis.]]

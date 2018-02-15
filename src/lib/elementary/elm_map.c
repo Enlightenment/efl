@@ -4452,7 +4452,7 @@ _elm_map_paused_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 }
 
 EOLIAN static void
-_elm_map_rotate_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double degree, Evas_Coord cx, Evas_Coord cy)
+_elm_map_map_rotate_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double degree, Evas_Coord cx, Evas_Coord cy)
 {
    sd->rotate.d = degree;
    sd->rotate.cx = cx;
@@ -4462,7 +4462,7 @@ _elm_map_rotate_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double degree, Evas_C
 }
 
 EOLIAN static void
-_elm_map_rotate_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *degree, Evas_Coord *cx, Evas_Coord *cy)
+_elm_map_map_rotate_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *degree, Evas_Coord *cx, Evas_Coord *cy)
 {
    if (degree) *degree = sd->rotate.d;
    if (cx) *cx = sd->rotate.cx;
