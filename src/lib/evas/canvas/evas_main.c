@@ -1445,14 +1445,14 @@ efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *lis
    return &it->iterator;
 }
 
-EOLIAN Evas_Object*
-_evas_canvas_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+EOLIAN static Evas_Object*
+_evas_canvas_efl_canvas_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy;
 
-   xx = x;
-   yy = y;
+   xx = pos.x;
+   yy = pos.y;
 ////   xx = evas_coord_world_x_to_screen(eo_e, x);
 ////   yy = evas_coord_world_y_to_screen(eo_e, y);
    EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
@@ -1480,6 +1480,13 @@ _evas_canvas_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *
    return NULL;
 }
 
+EAPI Evas_Object*
+evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_Position2D pos = {x, y};
+   return efl_canvas_object_top_at_xy_get(eo_e, pos, include_pass_events_objects, include_hidden_objects);
+}
+
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *eo_e)
 {
@@ -1489,7 +1496,7 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
 
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
-   return evas_canvas_object_top_at_xy_get((Eo *)eo_e, pdata->seat->x, pdata->seat->y, EINA_TRUE, EINA_TRUE);
+   return efl_canvas_object_top_at_xy_get((Eo *)eo_e, EINA_POSITION2D(pdata->seat->x, pdata->seat->y), EINA_TRUE, EINA_TRUE);
 }
 
 EOLIAN Evas_Object*
