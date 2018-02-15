@@ -2126,10 +2126,10 @@ _elm_list_item_efl_access_state_set_get(Eo *eo_it, Elm_List_Item_Data *data EINA
 }
 
 EOLIAN static const char*
-_elm_list_item_efl_access_name_get(Eo *eo_it, Elm_List_Item_Data *data)
+_elm_list_item_efl_access_i18n_name_get(Eo *eo_it, Elm_List_Item_Data *data)
 {
    const char *ret;
-   ret = efl_access_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
+   ret = efl_access_i18n_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    if (ret) return ret;
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->label);
 }

@@ -789,7 +789,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       Efl.Ui.Widget.focus_manager_create;
       Efl.Access.parent { get; }
       Efl.Access.state_set { get; }
-      Efl.Access.name { get; }
+      Efl.Access.i18n_name { get; }
       Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Input.State.modifier_enabled { get; }

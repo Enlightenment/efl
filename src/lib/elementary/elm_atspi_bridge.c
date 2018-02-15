@@ -2078,7 +2078,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
 
    if (!strcmp(property, "Name"))
      {
-        ret = efl_access_name_get(obj);
+        ret = efl_access_i18n_name_get(obj);
         if (!ret)
           ret = "";
         eldbus_message_iter_basic_append(iter, 's', ret);
@@ -3244,7 +3244,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
 
   /* Marshall name */
   const char *name = NULL;
-  name = efl_access_name_get(data);
+  name = efl_access_i18n_name_get(data);
   if (!name)
     name = "";
 
@@ -3915,7 +3915,7 @@ _property_changed_signal_send(void *data, const Efl_Event *event)
         prop = ATSPI_OBJECT_PROPERTY_PARENT;
         atspi_desc = "accessible-parent";
      }
-   else if (!strcmp(property, "name"))
+   else if (!strcmp(property, "i18n_name"))
      {
         prop = ATSPI_OBJECT_PROPERTY_NAME;
         atspi_desc = "accessible-name";

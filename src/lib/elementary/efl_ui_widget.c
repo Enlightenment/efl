@@ -5369,10 +5369,10 @@ _efl_ui_widget_efl_access_component_focus_grab(Eo *obj, Elm_Widget_Smart_Data *p
 }
 
 EOLIAN static const char*
-_efl_ui_widget_efl_access_name_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_efl_ui_widget_efl_access_i18n_name_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    const char *ret, *name;
-   name = efl_access_name_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
+   name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
 
    if (name) return name;
 

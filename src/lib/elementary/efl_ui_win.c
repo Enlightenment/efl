@@ -7021,10 +7021,10 @@ _efl_ui_win_efl_access_state_set_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_efl_ui_win_efl_access_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_i18n_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    const char *ret;
-   ret = efl_access_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
+   ret = efl_access_i18n_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
    return name;

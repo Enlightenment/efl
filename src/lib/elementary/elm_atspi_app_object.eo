@@ -5,7 +5,7 @@ class Elm.Atspi.App.Object (Efl.Object, Efl.Access)
    data: Elm_Atspi_App_Object_Data;
    implements {
       Efl.Object.destructor;
-      Efl.Access.name { get; }
+      Efl.Access.i18n_name { get; }
       Efl.Access.description { get; set; }
       Efl.Access.role { get; }
       Efl.Access.children { get; }

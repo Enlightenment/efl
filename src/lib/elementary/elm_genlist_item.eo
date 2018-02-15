@@ -459,7 +459,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
            Elm.Widget.Item.tooltip_unset;
            Elm.Widget.Item.cursor { set; }
            Elm.Widget.Item.cursor_unset;
-           Efl.Access.name { get; }
+           Efl.Access.i18n_name { get; }
            Efl.Access.state_set { get; }
            Efl.Ui.Focus.Object.prepare_logical;
       }

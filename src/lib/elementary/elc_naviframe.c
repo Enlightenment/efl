@@ -545,7 +545,7 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it,
         if (nit->title_label) strncat(buf, " ", 1);
         strncat(buf, nit->subtitle_label, sizeof(buf) - strlen(buf) - 2);
      }
-   efl_access_name_set(eo_it, buf);
+   efl_access_i18n_name_set(eo_it, buf);
 
    elm_layout_sizing_eval(WIDGET(nit));
 }
@@ -1269,7 +1269,7 @@ _item_new(Evas_Object *obj,
 
    eo_item = efl_add(ELM_NAVIFRAME_ITEM_CLASS, obj);
    efl_access_role_set(eo_item, EFL_ACCESS_ROLE_PAGE_TAB);
-   efl_access_name_set(eo_item, (char*)title_label);
+   efl_access_i18n_name_set(eo_item, (char*)title_label);
 
    if (!eo_item)
      {

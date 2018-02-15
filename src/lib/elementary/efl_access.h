@@ -90,8 +90,8 @@ EAPI Efl_Access_Relation_Set efl_access_relation_set_clone(const Efl_Access_Rela
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Name' property.
  */
-#define efl_access_name_changed_signal_emit(obj) \
-   efl_access_event_emit(EFL_ACCESS_MIXIN, obj, EFL_ACCESS_EVENT_PROPERTY_CHANGED, "name");
+#define efl_access_i18n_name_changed_signal_emit(obj) \
+   efl_access_event_emit(EFL_ACCESS_MIXIN, obj, EFL_ACCESS_EVENT_PROPERTY_CHANGED, "i18n_name");
 
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Description' property.

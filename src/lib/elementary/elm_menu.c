@@ -1406,10 +1406,10 @@ _elm_menu_item_efl_access_role_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
 }
 
 EOLIAN static const char*
-_elm_menu_item_efl_access_name_get(Eo *obj, Elm_Menu_Item_Data *sd)
+_elm_menu_item_efl_access_i18n_name_get(Eo *obj, Elm_Menu_Item_Data *sd)
 {
    const char *ret;
-   ret = efl_access_name_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
+   ret = efl_access_i18n_name_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
    if (ret) return ret;
    return sd->label;
 }

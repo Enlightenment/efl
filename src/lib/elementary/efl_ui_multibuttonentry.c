@@ -1983,10 +1983,10 @@ _efl_ui_multibuttonentry_efl_access_children_get(Eo *obj, Efl_Ui_Multibuttonentr
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_item_efl_access_name_get(Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
+_elm_multibuttonentry_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
 {
    const char *ret;
-   ret = efl_access_name_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+   ret = efl_access_i18n_name_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
    if (ret) return ret;
 
    ret = elm_object_part_text_get(VIEW(item), "elm.btn.text");

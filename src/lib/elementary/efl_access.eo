@@ -258,14 +258,14 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             localized_name: string; [[Localized accessible object role name]]
          }
       }
-      @property name @beta {
+      @property i18n_name @beta {
          [[Accessible name of the object.]]
          get {
          }
          set {
          }
          values {
-            name: string; [[Accessible name]]
+            i18n_name: string; [[Accessible name]]
          }
       }
       @property relation_set @protected @beta {

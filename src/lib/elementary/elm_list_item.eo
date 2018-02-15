@@ -115,7 +115,7 @@ class Elm.List.Item(Elm.Widget.Item, Efl.Ui.Legacy)
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }
            Elm.Widget.Item.part_content_unset;
-           Efl.Access.name { get; }
+           Efl.Access.i18n_name { get; }
            Efl.Access.state_set { get; }
       }
 }

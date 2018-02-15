@@ -68,7 +68,7 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Range.range_value { set; }
-      Efl.Access.name { get; }
+      Efl.Access.i18n_name { get; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }

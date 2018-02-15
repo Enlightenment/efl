@@ -1685,10 +1685,10 @@ _elm_index_efl_access_children_get(Eo *obj, Elm_Index_Data *data)
 }
 
 EOLIAN static const char*
-_elm_index_item_efl_access_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
+_elm_index_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
 {
    const char *name;
-   name = efl_access_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
+   name = efl_access_i18n_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
    if (name) return name;
 
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->letter);

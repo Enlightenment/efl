@@ -882,10 +882,10 @@ _efl_ui_spin_button_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Efl_Ui_S
 }
 
 EOLIAN static const char*
-_efl_ui_spin_button_efl_access_name_get(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_access_i18n_name_get(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    const char *name;
-   name = efl_access_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));
+   name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));
    if (name) return name;
    const char *ret = elm_layout_text_get(obj, "elm.text");
    return ret;

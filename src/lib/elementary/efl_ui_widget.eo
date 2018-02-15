@@ -585,7 +585,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_member_add;
-      Efl.Access.name { get; }
+      Efl.Access.i18n_name { get; }
       Efl.Access.state_set { get; }
       Efl.Access.children { get; }
       Efl.Access.parent { get; }

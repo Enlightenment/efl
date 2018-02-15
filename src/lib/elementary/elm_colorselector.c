@@ -2678,14 +2678,14 @@ _elm_color_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, 
 }
 
 EOLIAN static const char*
-_elm_color_item_efl_access_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
+_elm_color_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
 {
    Eina_Strbuf *buf;
    const char *color_name = NULL;
    const char *name;
    char *accessible_name;
 
-   name = efl_access_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
+   name = efl_access_i18n_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
    if (name) return name;
 
    buf = eina_strbuf_new();

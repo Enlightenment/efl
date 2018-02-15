@@ -1808,12 +1808,12 @@ _elm_popup_efl_access_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_elm_popup_efl_access_name_get(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_access_i18n_name_get(Eo *obj, Elm_Popup_Data *sd)
 {
    const char *name = NULL;
    Eina_Strbuf *buf;
 
-   name = efl_access_name_get(efl_super(obj, ELM_POPUP_CLASS));
+   name = efl_access_i18n_name_get(efl_super(obj, ELM_POPUP_CLASS));
    if (name) return name;
 
    buf = eina_strbuf_new();

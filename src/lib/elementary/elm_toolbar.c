@@ -3873,10 +3873,10 @@ _elm_toolbar_item_bring_in(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
 }
 
 EOLIAN static const char*
-_elm_toolbar_item_efl_access_name_get(Eo *eo_item, Elm_Toolbar_Item_Data *item)
+_elm_toolbar_item_efl_access_i18n_name_get(Eo *eo_item, Elm_Toolbar_Item_Data *item)
 {
    const char *ret;
-   ret = efl_access_name_get(efl_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
+   ret = efl_access_i18n_name_get(efl_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
    if (ret) return ret;
    return _elm_widget_item_accessible_plain_name_get(eo_item, item->label);
 }

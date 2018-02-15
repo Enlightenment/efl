@@ -317,7 +317,7 @@ _efl_access_role_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 }
 
 EOLIAN const char *
-_efl_access_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_i18n_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
 #ifdef ENABLE_NLS
    if (pd->translation_domain)
@@ -327,7 +327,7 @@ _efl_access_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 }
 
 EOLIAN static void
-_efl_access_name_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *val)
+_efl_access_i18n_name_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->name, val);
 }

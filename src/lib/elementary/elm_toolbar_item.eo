@@ -274,7 +274,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object, Efl.Ui
            Elm.Widget.Item.part_content_unset;
            Efl.Ui.Focus.Object.focus_geometry { get; }
            Efl.Ui.Focus.Object.focus { set; }
-           Efl.Access.name { get; }
+           Efl.Access.i18n_name { get; }
            Efl.Access.state_set { get; }
            Efl.Ui.Item.selected { get; set; }
            Efl.Ui.Item.prev { get; }

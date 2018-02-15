@@ -219,7 +219,7 @@ apply:
    else
      elm_layout_text_set(obj, "elm.text", buf);
 
-   efl_access_name_changed_signal_emit(obj);
+   efl_access_i18n_name_changed_signal_emit(obj);
    if (sd->entry_visible) _entry_show(sd);
 }
 
@@ -1682,10 +1682,10 @@ _elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Dat
 }
 
 EOLIAN static const char*
-_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_i18n_name_get(Eo *obj, Elm_Spinner_Data *sd)
 {
    const char *name, *ret;
-   name = efl_access_name_get(efl_super(obj, ELM_SPINNER_CLASS));
+   name = efl_access_i18n_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
    if (sd->button_layout)
      {

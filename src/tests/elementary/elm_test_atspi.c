@@ -38,7 +38,7 @@ START_TEST (test_efl_access_app_obj_name_get)
 
    elm_app_name_set("Test name");
 
-   ret = efl_access_name_get(root);
+   ret = efl_access_i18n_name_get(root);
 
    ck_assert_str_eq(ret, "Test name");
 
@@ -47,14 +47,14 @@ START_TEST (test_efl_access_app_obj_name_get)
 }
 END_TEST
 
-START_TEST (test_efl_access_name_get)
+START_TEST (test_efl_access_i18n_name_get)
 {
    elm_init(0, NULL);
    generate_app();
 
    const char *name;
 
-   name = efl_access_name_get(g_btn);
+   name = efl_access_i18n_name_get(g_btn);
 
    if (name && name[0]) {
       ck_assert(0);
@@ -63,7 +63,7 @@ START_TEST (test_efl_access_name_get)
    // Set name with additional text tags
    elm_object_text_set(g_btn, "Some<br>text");
 
-   name = efl_access_name_get(g_btn);
+   name = efl_access_i18n_name_get(g_btn);
 
    // Accessible name should have cleared tags
    ck_assert(name != NULL);
@@ -73,7 +73,7 @@ START_TEST (test_efl_access_name_get)
 }
 END_TEST
 
-START_TEST (test_efl_access_name_set)
+START_TEST (test_efl_access_i18n_name_set)
 {
    elm_init(0, NULL);
    generate_app();
@@ -81,15 +81,15 @@ START_TEST (test_efl_access_name_set)
    const char *name;
 
    elm_object_text_set(g_btn, "Other text");
-   efl_access_name_set(g_btn, "Test name");
+   efl_access_i18n_name_set(g_btn, "Test name");
 
-   name = efl_access_name_get(g_btn);
+   name = efl_access_i18n_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Test name");
 
-   efl_access_name_set(g_btn, NULL);
-   name = efl_access_name_get(g_btn);
+   efl_access_i18n_name_set(g_btn, NULL);
+   name = efl_access_i18n_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Other text");
@@ -483,8 +483,8 @@ END_TEST
 void elm_test_atspi(TCase *tc)
 {
    tcase_add_test(tc, test_efl_access_app_obj_name_get);
-   tcase_add_test(tc, test_efl_access_name_get);
-   tcase_add_test(tc, test_efl_access_name_set);
+   tcase_add_test(tc, test_efl_access_i18n_name_get);
+   tcase_add_test(tc, test_efl_access_i18n_name_set);
    tcase_add_test(tc, test_efl_access_role_get);
    tcase_add_test(tc, test_efl_access_role_set);
    tcase_add_test(tc, test_efl_access_role_name_get);

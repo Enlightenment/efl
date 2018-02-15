@@ -45,7 +45,7 @@ _elm_atspi_app_object_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Atspi_App
 }
 
 EOLIAN static const char*
-_elm_atspi_app_object_efl_access_name_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+_elm_atspi_app_object_efl_access_i18n_name_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    const char *ret;
    ret = elm_app_name_get();

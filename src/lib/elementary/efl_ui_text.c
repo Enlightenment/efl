@@ -4469,10 +4469,10 @@ _efl_ui_text_efl_access_state_set_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static const char*
-_efl_ui_text_efl_access_name_get(Eo *obj, Efl_Ui_Text_Data *pd)
+_efl_ui_text_efl_access_i18n_name_get(Eo *obj, Efl_Ui_Text_Data *pd)
 {
    const char *name;
-   name = efl_access_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(pd->entry_edje, "elm.guide");
    return ret;

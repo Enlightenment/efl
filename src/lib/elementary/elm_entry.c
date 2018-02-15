@@ -6038,10 +6038,10 @@ _elm_entry_efl_access_state_set_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_elm_entry_efl_access_name_get(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_access_i18n_name_get(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *name;
-   name = efl_access_name_get(efl_super(obj, ELM_ENTRY_CLASS));
+   name = efl_access_i18n_name_get(efl_super(obj, ELM_ENTRY_CLASS));
    if (name && strncmp("", name, 1)) return name;
 
    if (sd->password) return NULL;
