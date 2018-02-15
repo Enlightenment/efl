@@ -997,5 +997,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       Efl.Canvas.objects_in_rectangle_get;
       Efl.Canvas.object_top_in_rectangle_get;
       Efl.Canvas.smart_objects_calculate;
+      Efl.Canvas.smart_objects_calculating { get; }
    }
 }

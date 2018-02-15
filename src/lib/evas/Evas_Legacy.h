@@ -6260,6 +6260,16 @@ EAPI void evas_object_polygon_points_clear(Evas_Object *obj);
  */
 EAPI void evas_smart_objects_calculate(Eo *obj);
 
+/**
+ * @brief Get if the canvas is currently calculating smart objects.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if currently calculating smart objects.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_smart_objects_calculating_get(const Eo *obj);
 
 /**
  * Instantiates a new smart object described by @p s.

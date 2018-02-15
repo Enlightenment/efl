@@ -28,6 +28,14 @@ interface Efl.Canvas ()
            all smart objects in the canvas.
          ]]
       }
+      @property smart_objects_calculating {
+         get {
+            [[Get if the canvas is currently calculating smart objects.]]
+         }
+         values {
+            calculating: bool; [[$true if currently calculating smart objects.]]
+         }
+      }
       objects_at_xy_get {
          [[Retrieve a list of objects lying over a given position in
            a canvas.

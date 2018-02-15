@@ -1818,9 +1818,15 @@ evas_smart_objects_calculate(Eo *eo_e)
 }
 
 EOLIAN Eina_Bool
-_evas_canvas_smart_objects_calculating_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_efl_canvas_smart_objects_calculating_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return !!e->in_smart_calc;
+}
+
+EAPI Eina_Bool
+evas_smart_objects_calculating_get(const Eo *obj)
+{
+   return efl_canvas_smart_objects_calculating_get(obj);
 }
 
 EOLIAN int
