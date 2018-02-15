@@ -73,3 +73,15 @@ EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, E
  * @param[out] format The file format
  */
 EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
+
+
+/**
+ * @brief Forces calculation of the entry size and text layouting.
+ *
+ * This should be used after modifying the textblock object directly. See
+ * @ref elm_entry_textblock_get for more information.
+ * @param[in] obj The object.
+ *
+ * @ingroup Elm_Entry
+ */
+EAPI void elm_entry_calc_force(Evas_Object *obj);

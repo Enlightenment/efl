@@ -593,13 +593,6 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            This will typically cause the Input Method Context to clear the preedit state.
          ]]
       }
-      calc_force {
-         [[Forces calculation of the entry size and text layouting.
-
-           This should be used after modifying the textblock object directly. See
-           @.textblock.get for more information.
-         ]]
-      }
       anchor_hover_end {
          [[Ends the hover popup in the entry
 
@@ -848,6 +841,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
       Efl.Layout.Signal.signal_emit;
+      Efl.Layout.Calc.calc_force;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;

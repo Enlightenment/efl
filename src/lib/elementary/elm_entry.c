@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_LAYOUT_CALC_PROTECTED
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
@@ -4153,6 +4154,12 @@ _elm_entry_password_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EAPI void
+elm_entry_calc_force(Evas_Object *obj)
+{
+   efl_layout_calc_force(obj);
+}
+
+EAPI void
 elm_entry_entry_set(Evas_Object *obj,
                     const char *entry)
 {
@@ -4200,7 +4207,7 @@ _elm_entry_textblock_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_calc_force(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_layout_calc_calc_force(Eo *obj, Elm_Entry_Data *sd)
 {
    edje_object_calc_force(sd->entry_edje);
    sd->changed = EINA_TRUE;
