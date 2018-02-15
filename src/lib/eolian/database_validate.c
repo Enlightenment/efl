@@ -333,25 +333,15 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
    Eolian_Function_Parameter *param;
    char buf[512];
 
-   static int _duplicates_warn = -1;
-   if (EINA_UNLIKELY(_duplicates_warn < 0))
-     {
-        const char *s = getenv("EOLIAN_WARN_FUNC_DUPLICATES");
-        if (!s) _duplicates_warn = 0;
-        else _duplicates_warn = atoi(s);
-     }
-
    const Eolian_Function *ofunc = nhash ? eina_hash_find(nhash, func->name) : NULL;
-   if (EINA_UNLIKELY(ofunc && (ofunc != func) && (_duplicates_warn > 0)))
+   if (EINA_UNLIKELY(ofunc && (ofunc != func)))
      {
         snprintf(buf, sizeof(buf),
                  "%sfunction '%s' redefined (originally at %s:%d:%d)",
                  func->is_beta ? "beta " : "", func->name, ofunc->base.file,
                  ofunc->base.line, ofunc->base.column);
-        if ((!func->is_beta && !ofunc->is_beta) || (_duplicates_warn > 1))
-          _obj_error(&func->base, buf);
-        if (_duplicates_warn > 1)
-          vals->warned = EINA_TRUE;
+        _obj_error(&func->base, buf);
+        vals->warned = EINA_TRUE;
      }
 
    /* if already validated, no need to perform the other checks...
