@@ -16128,7 +16128,7 @@ ppar(Evas_Object_Textblock_Paragraph *par)
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_text_efl_object_dbg_info_get)
 
 EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_canvas_text_efl_text_cursor_cursor_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o, Efl_Text_Cursor_Cursor_Get_Type get_type)
+_efl_canvas_text_efl_text_cursor_text_cursor_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o, Efl_Text_Cursor_Cursor_Get_Type get_type)
 {
    if (get_type > EFL_TEXT_CURSOR_GET_MAIN)
      {

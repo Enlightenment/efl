@@ -33,7 +33,7 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       // Efl.Canvas.Layout.Part_Text
       Efl.Text.text { set; get; }
       Efl.Text.Markup.markup { get; set; }
-      Efl.Text.Cursor.cursor { get; }
+      Efl.Text.Cursor.text_cursor { get; }
       Efl.Text.Cursor.cursor_paragraph_first;
       Efl.Text.Cursor.cursor_paragraph_last;
       Efl.Text.Cursor.cursor_position { set; get; }

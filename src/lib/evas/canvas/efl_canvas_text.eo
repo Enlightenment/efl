@@ -316,7 +316,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
       Efl.Text.Format.tabstops { get; set; }
       Efl.Text.Format.password { get; set; }
       Efl.Text.Format.replacement_char { get; set; }
-      Efl.Text.Cursor.cursor { get; }
+      Efl.Text.Cursor.text_cursor { get; }
       Efl.Text.Cursor.cursor_position { set; get; }
       Efl.Text.Cursor.cursor_content { get; }
       Efl.Text.Cursor.cursor_geometry { get; }

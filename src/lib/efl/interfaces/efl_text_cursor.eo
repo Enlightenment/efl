@@ -29,7 +29,7 @@ interface Efl.Text.Cursor {
    ]]
    methods {
       // Cursor
-      @property cursor {
+      @property text_cursor {
          [[The object's main cursor.
 
            @since 1.18

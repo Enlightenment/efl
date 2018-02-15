@@ -40,7 +40,7 @@ _efl_canvas_layout_part_text_efl_text_markup_markup_set(Eo *obj,
 
 
 EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_canvas_layout_part_text_efl_text_cursor_cursor_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_text_cursor_get(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor_Get_Type get_type)
 {
    PROXY_DATA_GET(obj, pd);
