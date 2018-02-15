@@ -949,7 +949,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      {
         Efl_Ui_Theme_Apply ok = EFL_UI_THEME_APPLY_FAILED;
 
-        elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
+        efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
           ok = elm_widget_theme_object_set

@@ -3436,7 +3436,7 @@ _mirrored_set(Evas_Object *obj,
    ELM_GENLIST_DATA_GET(obj, sd);
 
    _item_cache_zero(sd);
-   elm_interface_scrollable_mirrored_set(obj, rtl);
+   efl_ui_mirrored_set(obj, rtl);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply

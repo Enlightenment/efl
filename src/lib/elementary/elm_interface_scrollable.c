@@ -1673,7 +1673,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
 }
 
 EOLIAN static void
-_elm_interface_scrollable_mirrored_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool mirrored)
+_elm_interface_scrollable_efl_ui_base_mirrored_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool mirrored)
 {
    Evas_Coord wx;
 
@@ -1693,6 +1693,7 @@ _elm_interface_scrollable_mirrored_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart
      wx = sid->wx;
 
    elm_interface_scrollable_content_pos_set(sid->obj, wx, sid->wy, EINA_FALSE);
+   efl_ui_mirrored_set(efl_super(obj, ELM_INTERFACE_SCROLLABLE_MIXIN), mirrored);
 }
 
 /* returns TRUE when we need to move the scroller, FALSE otherwise.

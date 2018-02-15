@@ -3553,7 +3553,7 @@ _mirrored_set(Evas_Object *obj,
    ELM_GENGRID_DATA_GET(obj, sd);
 
    _item_cache_zero(sd);
-   elm_interface_scrollable_mirrored_set(efl_super(obj, MY_CLASS), rtl);
+   efl_ui_mirrored_set(efl_super(obj, MY_CLASS), rtl);
 
    if (!sd->items) return;
    it = ELM_GEN_ITEM_FROM_INLIST(sd->items);

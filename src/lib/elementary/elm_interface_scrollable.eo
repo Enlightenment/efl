@@ -432,14 +432,6 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
             animate_stop_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
-      @property mirrored {
-          [[Mirroed property]]
-         set {
-         }
-         values {
-            mirrored: bool; [[$true if mirrored, $false otherwise]]
-         }
-      }
       @property content_min_limit_cb {
           [[set the callback to run on minimal limit content]]
          set {
@@ -670,6 +662,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
       Efl.Object.constructor;
       Efl.Ui.Focus.Manager.border_elements { get; }
       Efl.Ui.Widget.focus_manager_create;
+      Efl.Ui.Base.mirrored { set; }
    }
    events {
       changed; [[Called when content changed]]

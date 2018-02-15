@@ -1062,7 +1062,7 @@ _mirrored_set(Evas_Object *obj,
 
    ELM_LIST_DATA_GET(obj, sd);
 
-   elm_interface_scrollable_mirrored_set(obj, rtl);
+   efl_ui_mirrored_set(obj, rtl);
 
    EINA_LIST_FOREACH(sd->items, n, eo_it)
      {

@@ -384,7 +384,7 @@ static void
 _mirrored_set(Evas_Object *obj,
               Eina_Bool mirrored)
 {
-   elm_interface_scrollable_mirrored_set(obj, mirrored);
+   efl_ui_mirrored_set(obj, mirrored);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply

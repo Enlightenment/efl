@@ -924,7 +924,7 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    if (sd->scroll)
      {
-        elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
+        efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
           elm_widget_element_update(obj, sd->scr_edje, PART_NAME_SCROLLER);
