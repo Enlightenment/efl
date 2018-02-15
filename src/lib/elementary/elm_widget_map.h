@@ -441,7 +441,7 @@ struct _Elm_Map_Data
       int tile;    // Current pixel size of a grid item
    } size;
 
-   Elm_Map_Zoom_Mode                     mode;
+   Efl_Ui_Zoom_Mode                     mode;
 
    struct
    {
