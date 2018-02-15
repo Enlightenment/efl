@@ -73,7 +73,7 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
       Efl.Ui.List.Model.load_range { set;}
       Efl.Ui.List.Model.realize;
       Efl.Ui.List.Model.unrealize;
-      Efl.Ui.List.Model.size { get; }
+      Efl.Ui.List.Model.model_size { get; }
       Efl.Ui.List.Model.min_size { get; set; }
 
       // Widget

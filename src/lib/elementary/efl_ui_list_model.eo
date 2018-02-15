@@ -28,7 +28,7 @@ interface Efl.Ui.List.Model (Efl.Interface)
       //       count: int;
       //    }
       // }
-      @property size {
+      @property model_size {
          get {}
          values {
             s: int;

@@ -1051,7 +1051,7 @@ _efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj EINA_UNUSED, Efl_Ui_List_D
 }
 
 EOLIAN static int
-_efl_ui_list_efl_ui_list_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_ui_list_model_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
     return pd->item_count;
 }
