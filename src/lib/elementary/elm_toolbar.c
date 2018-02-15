@@ -3920,7 +3920,7 @@ _elm_toolbar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_T
 }
 
 EOLIAN static Eina_List*
-_elm_toolbar_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
    Elm_Toolbar_Item_Data *it;

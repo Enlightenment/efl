@@ -8,6 +8,6 @@ class Elm.Atspi.App.Object (Efl.Object, Efl.Access)
       Efl.Access.i18n_name { get; }
       Efl.Access.description { get; set; }
       Efl.Access.role { get; }
-      Efl.Access.children { get; }
+      Efl.Access.access_children { get; }
    }
 }

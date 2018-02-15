@@ -1677,7 +1677,7 @@ _item_action_activate(Eo *obj, const char *params EINA_UNUSED EINA_UNUSED)
 }
 
 EOLIAN static Eina_List*
-_elm_index_efl_access_children_get(Eo *obj, Elm_Index_Data *data)
+_elm_index_efl_access_access_children_get(Eo *obj, Elm_Index_Data *data)
 {
    Eina_List *ret;
    ret = efl_access_children_get(efl_super(obj, ELM_INDEX_CLASS));

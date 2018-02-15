@@ -166,7 +166,7 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.widget_event;
-      Efl.Access.children { get; }
+      Efl.Access.access_children { get; }
       Efl.Part.part;
       Efl.Ui.Format.format_cb { set; }
    }

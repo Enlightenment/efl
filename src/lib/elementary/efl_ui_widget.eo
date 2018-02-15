@@ -587,7 +587,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Canvas.Group.group_member_add;
       Efl.Access.i18n_name { get; }
       Efl.Access.state_set { get; }
-      Efl.Access.children { get; }
+      Efl.Access.access_children { get; }
       Efl.Access.attributes { get; }
       Efl.Access.Component.focus_grab;
       Efl.Ui.Focus.Object.focus_manager { get; }

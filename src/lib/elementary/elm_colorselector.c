@@ -2601,7 +2601,7 @@ _elm_colorselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List*
-_elm_colorselector_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    Eina_List *ret = NULL;
 

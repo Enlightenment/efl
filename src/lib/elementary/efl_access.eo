@@ -286,7 +286,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             role: Efl.Access.Role; [[Accessible role]]
          }
       }
-      @property children @protected @beta {
+      @property access_children @protected @beta {
          [[Gets object's accessible children.]]
          get {
          }
@@ -405,7 +405,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             domain: string; [[Translation domain]]
          }
       }
-      @property type @beta {
+      @property access_type @beta {
            [[Type of accessibility object]]
            get {
            }

@@ -1950,7 +1950,7 @@ _elm_naviframe_item_pop_cb_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Eina_List*
-_elm_naviframe_item_efl_access_children_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
+_elm_naviframe_item_efl_access_access_children_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
 {
    Eina_List *ret = NULL;
 

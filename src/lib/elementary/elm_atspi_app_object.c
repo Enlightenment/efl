@@ -26,7 +26,7 @@ _elm_atspi_app_object_efl_object_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_O
 }
 
 EOLIAN static Eina_List*
-_elm_atspi_app_object_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+_elm_atspi_app_object_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *win;

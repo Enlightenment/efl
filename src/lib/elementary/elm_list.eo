@@ -445,7 +445,7 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.policy { set; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.children { get; }
+      Efl.Access.access_children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;

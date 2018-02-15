@@ -3130,7 +3130,7 @@ _elm_list_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_List
 }
 
 EOLIAN Eina_List*
-_elm_list_efl_access_children_get(Eo *obj, Elm_List_Data *pd)
+_elm_list_efl_access_access_children_get(Eo *obj, Elm_List_Data *pd)
 {
    Eina_List *ret;
    ret = efl_access_children_get(efl_super(obj, ELM_LIST_CLASS));

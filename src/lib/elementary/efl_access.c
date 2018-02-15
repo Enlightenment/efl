@@ -350,7 +350,7 @@ _efl_access_localized_role_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EIN
 }
 
 EOLIAN static Eina_List *
-_efl_access_children_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_access_children_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    Eina_List *children = NULL;
    Eina_Iterator *iter = NULL;
@@ -653,13 +653,13 @@ _efl_access_access_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN Efl_Access_Type
-_efl_access_type_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_access_type_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
    return pd->type;
 }
 
 EOLIAN void
-_efl_access_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Type val)
+_efl_access_access_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Type val)
 {
    Efl_Access *parent;
    if (val == pd->type)

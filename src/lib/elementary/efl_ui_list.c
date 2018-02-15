@@ -970,7 +970,7 @@ _efl_ui_list_efl_ui_focus_composition_prepare(Eo *obj, Efl_Ui_List_Data *pd)
 }
 
 EOLIAN Eina_List*
-_efl_ui_list_efl_access_children_get(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_access_access_children_get(Eo *obj, Efl_Ui_List_Data *pd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
 

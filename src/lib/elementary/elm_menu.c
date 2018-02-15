@@ -1380,7 +1380,7 @@ _elm_menu_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_List*
-_elm_menu_efl_access_children_get(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_efl_access_access_children_get(Eo *obj, Elm_Menu_Data *sd)
 {
    Eina_List *ret;
    ret = efl_access_children_get(efl_super(obj, ELM_MENU_CLASS));
@@ -1388,7 +1388,7 @@ _elm_menu_efl_access_children_get(Eo *obj, Elm_Menu_Data *sd)
 }
 
 EOLIAN static Eina_List*
-_elm_menu_item_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
+_elm_menu_item_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
 {
    return eina_list_clone(sd->submenu.items);
 }

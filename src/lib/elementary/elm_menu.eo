@@ -62,7 +62,7 @@ class Elm.Menu (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.focus_manager_create;
-      Efl.Access.children { get; }
+      Efl.Access.access_children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Ui.Menu.selected_item { get; }

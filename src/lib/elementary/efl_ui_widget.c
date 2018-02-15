@@ -5383,7 +5383,7 @@ _efl_ui_widget_efl_access_i18n_name_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA
 }
 
 EOLIAN static Eina_List*
-_efl_ui_widget_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
+_efl_ui_widget_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *widget;

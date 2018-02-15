@@ -115,7 +115,7 @@ class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.children { get; }
+      Efl.Access.access_children { get; }
    }
    events {
       color,item,selected; [[Called when color item was selected]]

@@ -1975,7 +1975,7 @@ _efl_ui_multibuttonentry_class_constructor(Efl_Class *klass EINA_UNUSED)
 }
 
 EOLIAN static Eina_List*
-_efl_ui_multibuttonentry_efl_access_children_get(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_efl_access_access_children_get(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd)
 {
    Eina_List *ret;
    ret = efl_access_children_get(efl_super(obj, EFL_UI_MULTIBUTTONENTRY_CLASS));
