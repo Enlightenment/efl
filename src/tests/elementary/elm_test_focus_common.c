@@ -89,7 +89,7 @@ _focus_test_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Te
 }
 
 EOLIAN static void
-_focus_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rect rect)
+_focus_test_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rect rect)
 {
    pd->rect = rect;
 }

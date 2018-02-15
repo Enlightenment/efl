@@ -1,6 +1,6 @@
 class Focus.Test(Efl.Object, Efl.Ui.Focus.Object, Efl.Gfx) {
     methods {
-        size {
+        test_size {
             params {
                 rect : Eina.Rect;
             }
