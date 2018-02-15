@@ -302,7 +302,7 @@ _evas_grid_add_to(Eo *parent, Evas_Grid_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
+_evas_grid_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
 {
    if ((priv->size.w == w) && (priv->size.h == h)) return;
    priv->size.w = w;
@@ -311,7 +311,7 @@ _evas_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
 }
 
 EOLIAN static void
-_evas_grid_size_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, int *w, int *h)
+_evas_grid_grid_size_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, int *w, int *h)
 {
    if (w) *w = priv->size.w;
    if (h) *h = priv->size.h;

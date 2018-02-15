@@ -4,18 +4,20 @@ class Evas.Grid (Efl.Canvas.Group)
    legacy_prefix: evas_object_grid;
    eo_prefix: evas_obj_grid;
    methods {
-      @property size {
+      @property grid_size {
          set {
             [[Set the virtual resolution for the grid
 
               @since 1.1]]
+            legacy: evas_object_grid_size_set;
          }
          get {
             [[Get the current virtual resolution
 
-              See also @.size.set
+              See also @.grid_size.set
 
               @since 1.1]]
+            legacy: evas_object_grid_size_get;
          }
          values {
             w: int; [[The virtual horizontal size (resolution) in integer units.]]
