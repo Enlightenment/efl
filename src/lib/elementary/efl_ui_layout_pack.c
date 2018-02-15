@@ -31,7 +31,6 @@ Eina_Bool    _efl_ui_layout_table_clear(Eo *obj, Efl_Ui_Layout_Data *sd, const c
 
 typedef struct _Layout_Part_Data   Efl_Ui_Layout_Box_Data;
 typedef struct _Layout_Part_Data   Efl_Ui_Layout_Table_Data;
-typedef struct _Part_Item_Iterator Part_Item_Iterator;
 
 struct _Layout_Part_Data
 {
@@ -39,14 +38,6 @@ struct _Layout_Part_Data
    Efl_Ui_Layout_Data    *sd;  // data xref
    Eina_Stringshare      *part;
    unsigned char          temp;
-};
-
-struct _Part_Item_Iterator
-{
-   Eina_Iterator  iterator;
-   Eina_List     *list;
-   Eina_Iterator *real_iterator;
-   Eo            *object;
 };
 
 Eo *
@@ -80,63 +71,13 @@ _efl_ui_layout_part_box_real_part_set(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Eo *l
    pd->temp = 1;
 }
 
-/* this iterator is the same as efl_ui_box */
-static Eina_Bool
-_part_item_iterator_next(Part_Item_Iterator *it, void **data)
-{
-   Efl_Gfx *sub;
-
-   if (!it->object) return EINA_FALSE;
-   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
-     return EINA_FALSE;
-
-   if (data) *data = sub;
-   return EINA_TRUE;
-}
-
-static Eo *
-_part_item_iterator_get_container(Part_Item_Iterator *it)
-{
-   return it->object;
-}
-
-static void
-_part_item_iterator_free(Part_Item_Iterator *it)
-{
-   eina_iterator_free(it->real_iterator);
-   efl_wref_del(it->object, &it->object);
-   eina_list_free(it->list);
-   free(it);
-}
-
-static Eina_Iterator *
-_part_item_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list)
-{
-   Part_Item_Iterator *it;
-
-   it = calloc(1, sizeof(*it));
-   if (!it) return NULL;
-
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-
-   it->list = list;
-   it->real_iterator = real_iterator;
-   it->iterator.version = EINA_ITERATOR_VERSION;
-   it->iterator.next = FUNC_ITERATOR_NEXT(_part_item_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_part_item_iterator_get_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_part_item_iterator_free);
-   efl_wref_add(obj, &it->object);
-
-   return &it->iterator;
-}
-
 EOLIAN static Eina_Iterator *
 _efl_ui_layout_part_box_efl_container_content_iterate(Eo *obj, Efl_Ui_Layout_Box_Data *pd)
 {
    Eina_Iterator *it;
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
    it = evas_object_box_iterator_new(pack);
-   return _part_item_iterator_create(obj, it, NULL);
+   return efl_canvas_iterator_create(obj, it, NULL);
 }
 
 EOLIAN static int
@@ -289,7 +230,7 @@ _efl_ui_layout_part_table_efl_container_content_iterate(Eo *obj, Efl_Ui_Layout_T
 
    it = evas_object_table_iterator_new(pack);
 
-   return _part_item_iterator_create(obj, it, NULL);
+   return efl_canvas_iterator_create(obj, it, NULL);
 }
 
 EOLIAN static int
@@ -364,7 +305,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED,
           }
      }
 
-   return _part_item_iterator_create(pd->obj, eina_list_iterator_new(l), l);
+   return efl_canvas_iterator_create(pd->obj, eina_list_iterator_new(l), l);
 }
 
 EOLIAN static Eina_Bool

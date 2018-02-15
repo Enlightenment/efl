@@ -50,6 +50,8 @@ EAPI void evas_render_pending_objects_flush(Evas *eo_evas);
 
 EAPI void efl_input_pointer_finalize(Efl_Input_Pointer *obj);
 
+EAPI Eina_Iterator *efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list);
+
 static inline void
 evas_object_size_hint_combined_min_get(const Eo *obj, int *w, int *h)
 {

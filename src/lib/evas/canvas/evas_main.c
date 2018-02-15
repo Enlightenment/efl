@@ -1387,6 +1387,64 @@ get_layer_objects(Evas_Layer *l)
    return (EINA_INLIST_GET(l->objects));
 }
 
+typedef struct _Efl_Canvas_Iterator
+{
+   Eina_Iterator  iterator;
+   Eina_List     *list;
+   Eina_Iterator *real_iterator;
+   Eo            *object;
+} Efl_Canvas_Iterator;
+
+/* this iterator is the same as efl_ui_box */
+static Eina_Bool
+_efl_canvas_iterator_next(Efl_Canvas_Iterator *it, void **data)
+{
+   Efl_Gfx *sub;
+
+   if (!it->object) return EINA_FALSE;
+   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub;
+   return EINA_TRUE;
+}
+
+static Eo *
+_efl_canvas_iterator_get_container(Efl_Canvas_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_efl_canvas_iterator_free(Efl_Canvas_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   efl_wref_del(it->object, &it->object);
+   eina_list_free(it->list);
+   free(it);
+}
+
+EAPI Eina_Iterator *
+efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list)
+{
+   Efl_Canvas_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->list = list;
+   it->real_iterator = real_iterator;
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_canvas_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_canvas_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_iterator_free);
+   efl_wref_add(obj, &it->object);
+
+   return &it->iterator;
+}
+
 EOLIAN Evas_Object*
 _evas_canvas_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
