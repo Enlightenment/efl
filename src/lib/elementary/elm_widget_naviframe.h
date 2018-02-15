@@ -55,7 +55,6 @@ struct _Elm_Naviframe_Item_Data
    Evas_Display_Mode dispmode;
    Elm_Naviframe_Item_Pop_Cb pop_cb;
    void        *pop_data;
-   const char  *style;
    const char  *title_label;
    const char  *subtitle_label;
 

@@ -181,7 +181,6 @@ _item_free(Elm_Naviframe_Item_Data *it)
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   eina_stringshare_del(it->style);
    eina_stringshare_del(it->title_label);
    eina_stringshare_del(it->subtitle_label);
 
@@ -334,12 +333,12 @@ _item_style_set(Elm_Naviframe_Item_Data *it,
    if (!item_style)
      {
         strcpy(buf, "item/basic");
-        eina_stringshare_replace(&it->style, "basic");
+        elm_wdg_item_style_set(efl_super(EO_OBJ(it), ELM_NAVIFRAME_ITEM_CLASS), "basic");
      }
    else
      {
         snprintf(buf, sizeof(buf), "item/%s", item_style);
-        eina_stringshare_replace(&it->style, item_style);
+        elm_wdg_item_style_set(efl_super(EO_OBJ(it), ELM_NAVIFRAME_ITEM_CLASS),  item_style);
      }
 
    if (!elm_layout_theme_set(VIEW(it), "naviframe", buf,
@@ -403,7 +402,7 @@ _elm_naviframe_efl_ui_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
      {
         sstyle = efl_ui_widget_style_get(VIEW(it));
         if ((style && sstyle) && strcmp(style, sstyle))
-          _item_style_set(it, it->style);
+          _item_style_set(it, elm_wdg_item_style_get(EO_OBJ(it)));
         _item_signals_emit(it);
         _item_title_enabled_update(it, EINA_FALSE);
      }
@@ -1880,25 +1879,30 @@ _elm_naviframe_bottom_item_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 }
 
 EOLIAN static void
-_elm_naviframe_item_style_set(Eo *eo_item EINA_UNUSED,
+_elm_naviframe_item_elm_widget_item_style_set(Eo *eo_item EINA_UNUSED,
                               Elm_Naviframe_Item_Data *nit,
                               const char *item_style)
 {
-   if (item_style && !strcmp(item_style, nit->style)) return;
+   if (item_style && eina_streq(item_style, elm_wdg_item_style_get(EO_OBJ(nit)))) return;
 
    if (!item_style)
-     if (!strcmp("basic", nit->style)) return;
+     if (eina_streq("basic", elm_wdg_item_style_get(EO_OBJ(nit)))) return;
 
    _item_style_set(nit, item_style);
    _item_signals_emit(nit);
    _item_title_enabled_update(nit, EINA_FALSE);
 }
 
-EOLIAN static const char *
-_elm_naviframe_item_style_get(Eo *eo_item EINA_UNUSED,
-                              Elm_Naviframe_Item_Data *nit)
+EAPI void
+elm_naviframe_item_style_set(Elm_Object_Item *obj, const char *style)
 {
-   return nit->style;
+   elm_wdg_item_style_set(obj, style);
+}
+
+EAPI const char *
+elm_naviframe_item_style_get(const Elm_Object_Item *obj)
+{
+   return elm_wdg_item_style_get(obj);
 }
 
 EINA_DEPRECATED EAPI void
