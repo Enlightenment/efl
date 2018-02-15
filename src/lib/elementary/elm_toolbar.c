@@ -4004,7 +4004,7 @@ _elm_toolbar_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Elm_T
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_efl_access_selection_clear(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
+_elm_toolbar_efl_access_selection_access_selection_clear(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
 {
    if (pd->selected_item)
      elm_toolbar_item_selected_set(pd->selected_item, EINA_FALSE);

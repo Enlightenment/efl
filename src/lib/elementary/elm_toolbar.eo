@@ -339,7 +339,7 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.child_deselect;
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.clear;
+      Efl.Access.Selection.access_selection_clear;
       Efl.Ui.Menu.selected_item { get; }
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }

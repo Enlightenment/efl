@@ -3200,7 +3200,7 @@ _elm_list_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Elm_List
 }
 
 EOLIAN Eina_Bool
-_elm_list_efl_access_selection_clear(Eo *obj EINA_UNUSED, Elm_List_Data *pd)
+_elm_list_efl_access_selection_access_selection_clear(Eo *obj EINA_UNUSED, Elm_List_Data *pd)
 {
    Eo *it;
    Eina_List *l;

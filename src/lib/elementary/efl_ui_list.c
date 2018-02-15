@@ -853,7 +853,7 @@ _efl_ui_list_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
+_efl_ui_list_efl_access_selection_access_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }

@@ -100,6 +100,6 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
       Efl.Access.Selection.child_deselect;
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.clear;
+      Efl.Access.Selection.access_selection_clear;
    }
 }
