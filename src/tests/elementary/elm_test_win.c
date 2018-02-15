@@ -99,7 +99,7 @@ START_TEST (elm_atspi_role_get)
 }
 END_TEST
 
-START_TEST (elm_atspi_component_position)
+START_TEST (elm_atspi_component_screen_position)
 {
    Eina_Bool ret;
    int x, y;
@@ -108,7 +108,7 @@ START_TEST (elm_atspi_component_position)
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
-   ret = efl_access_component_position_set(win, EINA_TRUE, 45, 45);
+   ret = efl_access_component_screen_position_set(win, 45, 45);
    ck_assert(ret == EINA_TRUE);
 
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
@@ -116,26 +116,6 @@ START_TEST (elm_atspi_component_position)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
 
    ck_assert((x == 45) && (y == 45));
-
-   elm_shutdown();
-}
-END_TEST
-
-START_TEST (elm_atspi_component_size)
-{
-   Eina_Bool ret;
-   int w, h;
-
-   elm_init(0, NULL);
-
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   evas_object_resize(win, 50, 50);
-
-   ret = efl_access_component_size_set(win, 100, 100);
-   ck_assert(ret == EINA_TRUE);
-
-   evas_object_geometry_get(win, NULL, NULL, &w, &h);
-   ck_assert((w == 100) && (h == 100));
 
    elm_shutdown();
 }
@@ -419,8 +399,7 @@ void elm_test_win(TCase *tc)
 {
    tcase_add_test(tc, elm_win_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
-   tcase_add_test(tc, elm_atspi_component_position);
-   tcase_add_test(tc, elm_atspi_component_size);
+   tcase_add_test(tc, elm_atspi_component_screen_position);
    tcase_add_test(tc, elm_win_policy_quit_last_window_hidden);
    tcase_add_test(tc, efl_ui_win_multi_touch_inputs);
 #ifdef HAVE_ELEMENTARY_X
