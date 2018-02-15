@@ -1154,24 +1154,6 @@ _efl_canvas_group_group_calculate(Eo *eo_obj, Evas_Smart_Data *o)
    obj->smart.smart->smart_class->calculate(eo_obj);
 }
 
-EOLIAN void
-_evas_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
-{
-   evas_call_smarts_calculate(eo_e);
-}
-
-EOLIAN Eina_Bool
-_evas_canvas_smart_objects_calculating_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   return !!e->in_smart_calc;
-}
-
-EOLIAN int
-_evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   return e->smart_calc_count;
-}
-
 /**
  * Call calculate() on all smart objects that need_recalculate.
  *
