@@ -20,6 +20,10 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
    surface->wl2_win = NULL;
 
    free(surface);
+   /* We took a reference to ecore_wl2 in surface create to prevent
+    * modules unloading with surfaces in flight.  Release that now.
+    */
+   ecore_wl2_shutdown();
 }
 
 EAPI void
@@ -107,6 +111,11 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
                ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN,
                                        _ecore_wl2_surface_cb_offscreen,
                                        out);
+             /* Since we have loadable modules, we need to make sure this
+              * surface keeps ecore_wl2 from de-initting and dlclose()ing
+              * things until after it's destroyed
+              */
+             ecore_wl2_init();
              return out;
           }
      }
