@@ -18,6 +18,7 @@
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 typedef struct {
    Eina_Thread_Queue  *thq;
@@ -87,9 +88,7 @@ _efl_net_proxy_helper_spawn(void)
      }
    // find binary location path
    if (run_in_tree == 1)
-     snprintf
-       (buf, sizeof(buf),
-        PACKAGE_BUILD_DIR"/src/bin/ecore_con/utils/efl_net_proxy_helper"HELPER_EXT);
+     bs_binary_get(buf, sizeof(buf), "ecore_con/utils", "efl_net_proxy_helper");
    else
 #endif
      snprintf

@@ -32,6 +32,7 @@
 #include "Ecore.h"
 #include "Efl_Core.h"
 #include "ecore_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #include <malloc.h>
@@ -164,9 +165,7 @@ ecore_system_modules_load(void)
                   const char **itr;
                   for (itr = built_modules; *itr != NULL; itr++)
                     {
-                       snprintf(buf, sizeof(buf),
-                                "%s/src/modules/ecore/system/%s/.libs",
-                                PACKAGE_BUILD_DIR, *itr);
+                       bs_mod_get(buf, sizeof(buf), "ecore/system", "system");
                        module_list = eina_module_list_get(module_list, buf,
                                                           EINA_FALSE, NULL, NULL);
                     }
