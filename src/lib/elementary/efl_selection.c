@@ -65,6 +65,30 @@ _efl_selection_has_owner(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type,
 Eina_List *lost_cb_list = NULL;
 
 #ifdef HAVE_ELEMENTARY_WL2
+static Ecore_Evas *
+_wl_is_wl(const Evas_Object *obj)
+{
+   Ecore_Evas *ee;
+   Evas *evas;
+   const char *engine_name;
+
+   if (!(evas = evas_object_evas_get(obj)))
+     return NULL;
+   if (!(ee = ecore_evas_ecore_evas_get(evas)))
+     return NULL;
+
+   engine_name = ecore_evas_engine_name_get(ee);
+   if (!strcmp(engine_name, ELM_BUFFER))
+     {
+        ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
+        if (!ee) return NULL;
+        engine_name = ecore_evas_engine_name_get(ee);
+     }
+   if (!strncmp(engine_name, "wayland", sizeof("wayland") - 1))
+     return ee;
+   return NULL;
+}
+
 static Ecore_Wl2_Window *
 _wl_window_get(const Evas_Object *obj)
 {
@@ -80,23 +104,9 @@ _wl_window_get(const Evas_Object *obj)
      }
    if (!win)
      {
-        Ecore_Evas *ee;
-        Evas *evas;
-        const char *engine_name;
+        Ecore_Evas *ee = _wl_is_wl(obj);
 
-        if (!(evas = evas_object_evas_get(obj)))
-          return NULL;
-        if (!(ee = ecore_evas_ecore_evas_get(evas)))
-          return NULL;
-
-        engine_name = ecore_evas_engine_name_get(ee);
-        if (!strcmp(engine_name, ELM_BUFFER))
-          {
-             ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
-             if (!ee) return NULL;
-             engine_name = ecore_evas_engine_name_get(ee);
-          }
-        if (!strncmp(engine_name, "wayland", sizeof("wayland") - 1))
+        if (ee)
           {
              /* In case the engine is not a buffer, we want to check once. */
              win = ecore_evas_wayland2_window_get(ee);
@@ -112,9 +122,11 @@ _wl_default_seat_id_get(Evas_Object *obj)
 {
    Ecore_Wl2_Window *win = _wl_window_get(obj);
    Eo *seat, *parent2, *ewin;
+   Eina_Bool is_wl = EINA_FALSE;
 
    if (obj)
      {
+        if (_wl_is_wl(obj)) is_wl = EINA_TRUE;
         if (efl_isa(obj, EFL_UI_WIDGET_CLASS))
           {
              Eo *top = elm_widget_top_get(obj);
@@ -131,14 +143,17 @@ _wl_default_seat_id_get(Evas_Object *obj)
 
    if (!obj)
      {
-        Ecore_Wl2_Input *input;
-        Eina_Iterator *it;
+        if (is_wl)
+          {
+             Ecore_Wl2_Input *input;
+             Eina_Iterator *it;
 
-        it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(win));
-        EINA_ITERATOR_FOREACH(it, input) break;
-        eina_iterator_free(it);
-        if (input)
-          ecore_wl2_input_seat_id_get(input);
+             it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(win));
+             EINA_ITERATOR_FOREACH(it, input) break;
+             eina_iterator_free(it);
+             if (input)
+               ecore_wl2_input_seat_id_get(input);
+          }
      }
 
    seat = evas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT);
@@ -215,6 +230,7 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type type,
    if (!wdata) return EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_WL2
+   
    seatid = _wl_default_seat_id_get((Evas_Object *)obj);
 #endif
    wdata->udata = udata;
