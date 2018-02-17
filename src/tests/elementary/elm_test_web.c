@@ -16,16 +16,13 @@ START_TEST (elm_web_legacy_type_check)
 
    web = elm_web_add(win);
 
-   if (web)
-     {
-        type = elm_object_widget_type_get(web);
-        ck_assert(type != NULL);
-        ck_assert(!strcmp(type, "Elm_Web"));
+   type = elm_object_widget_type_get(web);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Web"));
 
-        type = evas_object_type_get(web);
-        ck_assert(type != NULL);
-        ck_assert(!strcmp(type, "elm_web"));
-     }
+   type = evas_object_type_get(web);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_web"));
 
    elm_shutdown();
 }
