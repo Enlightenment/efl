@@ -144,6 +144,7 @@ static const char *legacy_type_table[][2] =
      { "Elm.Slideshow", "Elm_Slideshow" },
      { "Elm.Spinner", "Elm_Spinner" },
      { "Elm.Plug", "Elm_Plug" },
+     { "Elm.Web.None", "Elm_Web" },
      { NULL, NULL }
 };
 
