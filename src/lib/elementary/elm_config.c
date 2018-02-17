@@ -4522,7 +4522,7 @@ elm_config_web_backend_set(const char *backend)
 {
    _elm_config->priv.web_backend = EINA_TRUE;
    if (_elm_web_init(backend))
-     _elm_config->web_backend = backend;
+     eina_stringshare_replace(&_elm_config->web_backend, backend);
 }
 
 EAPI const char *
