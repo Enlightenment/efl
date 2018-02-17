@@ -1513,6 +1513,7 @@ _elm_entry_entry_paste(Evas_Object *obj,
    ELM_ENTRY_CHECK(obj);
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->cnp_mode == ELM_CNP_MODE_NO_IMAGE)
      {
         str = _item_tags_remove(entry);
@@ -1536,6 +1537,7 @@ _paste_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
@@ -1555,6 +1557,7 @@ _selection_clear(void *data, Elm_Sel_Type selection)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->have_selection) return;
    if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
        (selection == ELM_SEL_TYPE_PRIMARY))
@@ -1571,6 +1574,7 @@ _selection_store(Elm_Sel_Type seltype,
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    sel = edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
 
@@ -1588,6 +1592,7 @@ _cut_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CUT, NULL);
    /* Store it */
@@ -1611,6 +1616,7 @@ _copy_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
@@ -1631,6 +1637,7 @@ _hover_cancel_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
@@ -1661,6 +1668,7 @@ _menu_call(Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->anchor_hover.hover) return;
 
    efl_event_callback_legacy_call(obj, ELM_ENTRY_EVENT_CONTEXT_OPEN, NULL);
@@ -1780,6 +1788,7 @@ _magnifier_create(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    double scale = _elm_config->magnifier_scale;
    Evas *e;
    Evas_Coord w, h, mw, mh;
@@ -1824,6 +1833,7 @@ _magnifier_move(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Evas_Coord x, y, w, h;
    Evas_Coord px, py, pw, ph;
    Evas_Coord cx, cy, ch;
@@ -1910,6 +1920,7 @@ static void
 _magnifier_hide(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    edje_object_signal_emit(sd->mgf_bg, "elm,action,hide,magnifier", "elm");
    elm_widget_scroll_freeze_pop(data);
    evas_object_hide(sd->mgf_clip);
@@ -1919,6 +1930,7 @@ static void
 _magnifier_show(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    edje_object_signal_emit(sd->mgf_bg, "elm,action,show,magnifier", "elm");
    elm_widget_scroll_freeze_push(data);
    evas_object_show(sd->mgf_clip);
@@ -1929,6 +1941,7 @@ _long_press_cb(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return ECORE_CALLBACK_CANCEL;
    if (_elm_config->magnifier_enable)
      {
         _magnifier_create(data);
@@ -1973,6 +1986,7 @@ _mouse_down_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (sd->disabled) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    sd->downx = ev->canvas.x;
@@ -2009,6 +2023,7 @@ _mouse_up_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (sd->disabled) return;
    if (ev->button == 1)
      {
@@ -2058,6 +2073,7 @@ _mouse_move_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (sd->disabled) return;
    if (ev->buttons == 1)
      {
@@ -2129,6 +2145,7 @@ _entry_changed_handle(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    evas_event_freeze(evas_object_evas_get(data));
    sd->changed = EINA_TRUE;
    /* Reset the size hints which are no more relevant. Keep the
@@ -2311,6 +2328,7 @@ _entry_selection_changed_signal_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->have_selection = EINA_TRUE;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
@@ -2329,6 +2347,7 @@ _entry_selection_cleared_signal_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->have_selection) return;
 
    sd->have_selection = EINA_FALSE;
@@ -2363,6 +2382,7 @@ _entry_paste_request_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
 
@@ -2412,6 +2432,7 @@ _entry_cursor_changed_signal_cb(void *data,
                                 const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
@@ -2482,6 +2503,7 @@ _entry_anchor_down_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    p = emission + sizeof("nchor,mouse,down,");
    ei.button = strtol(p, &p2, 10);
    ei.name = p2 + 1;
@@ -2505,6 +2527,7 @@ _entry_anchor_up_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    p = emission + sizeof("nchor,mouse,up,");
    ei.button = strtol(p, &p2, 10);
    ei.name = p2 + 1;
@@ -2524,6 +2547,7 @@ _anchor_hover_del_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    ELM_SAFE_FREE(sd->anchor_hover.pop, evas_object_del);
    evas_object_event_callback_del_full
      (sd->anchor_hover.hover, EVAS_CALLBACK_DEL, _anchor_hover_del_cb, obj);
@@ -2545,6 +2569,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->hoversel) return;
 
    ei.anchor_info = info;
@@ -2624,6 +2649,7 @@ _entry_anchor_clicked_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    p = emission + sizeof("nchor,mouse,clicked,");
    ei.button = strtol(p, &p2, 10);
    ei.name = p2 + 1;
@@ -2656,6 +2682,7 @@ _entry_anchor_in_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    ei.name = emission + sizeof("nchor,mouse,in,");
    ei.button = 0;
    ei.x = ei.y = ei.w = ei.h = 0;
@@ -2676,6 +2703,7 @@ _entry_anchor_out_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    ei.name = emission + sizeof("nchor,mouse,out,");
    ei.button = 0;
    ei.x = ei.y = ei.w = ei.h = 0;
@@ -2756,6 +2784,7 @@ _item_get(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return NULL;
    EINA_LIST_FOREACH(sd->item_providers, l, ip)
      {
         o = ip->func(ip->data, data, item);
@@ -2875,6 +2904,7 @@ _markup_filter_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    EINA_LIST_FOREACH(sd->markup_filters, l, tf)
      {
         tf->func(tf->data, data, text);
@@ -2893,6 +2923,7 @@ _text_append_idler(void *data)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return ECORE_CALLBACK_CANCEL;
    evas_event_freeze(evas_object_evas_get(obj));
    ELM_SAFE_FREE(sd->text, eina_stringshare_del);
    sd->changed = EINA_TRUE;
@@ -3170,6 +3201,7 @@ _entry_text_append(Evas_Object* obj, const char* entry, Eina_Bool set)
    if (!entry) return;
 
    ELM_ENTRY_DATA_GET(obj, sd);
+   if (!sd) return;
    len = strlen(entry);
 
    if (sd->append_text_left)
@@ -3326,6 +3358,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return NULL;
    if (sd->password) return NULL;
 
    txt = elm_widget_access_info_get(obj);
@@ -3343,6 +3376,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return NULL;
    ret = NULL;
    buf = eina_strbuf_new();
 
@@ -3439,6 +3473,7 @@ _elm_entry_resize_internal(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->line_wrap)
      {
         elm_layout_sizing_eval(obj);
@@ -3475,6 +3510,7 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler, Evas_Coo
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
    edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
                                                            &cx, &cy, &cw, &ch);
@@ -3504,6 +3540,7 @@ _start_handler_mouse_down_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Evas_Event_Mouse_Down *ev = event_info;
    int start_pos, end_pos, main_pos, pos;
 
@@ -3538,6 +3575,7 @@ _start_handler_mouse_up_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->start_handler_down = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_hide(data);
@@ -3556,6 +3594,7 @@ _start_handler_mouse_move_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->start_handler_down) return;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
@@ -3587,6 +3626,7 @@ _end_handler_mouse_down_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Evas_Event_Mouse_Down *ev = event_info;
    int pos, start_pos, end_pos, main_pos;
 
@@ -3621,6 +3661,7 @@ _end_handler_mouse_up_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->end_handler_down = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_hide(data);
@@ -3639,6 +3680,7 @@ _end_handler_mouse_move_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->end_handler_down) return;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
@@ -3669,6 +3711,7 @@ _entry_on_size_evaluate_signal(void *data,
                                const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    sd->cur_changed = EINA_TRUE;
    elm_entry_calc_force(data);
 }
