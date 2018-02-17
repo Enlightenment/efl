@@ -30,7 +30,6 @@ END_TEST
 
 START_TEST (elm_atspi_role_get)
 {
-#if 0
    Evas_Object *win, *web;
    Efl_Access_Role role;
 
@@ -43,7 +42,6 @@ START_TEST (elm_atspi_role_get)
    ck_assert(role == EFL_ACCESS_ROLE_HTML_CONTAINER);
 
    elm_shutdown();
-#endif
 }
 END_TEST
 
