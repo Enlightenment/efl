@@ -551,6 +551,7 @@ START_TEST (elm_code_test_widget_selection_select_line)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "line selection", 14, NULL);
    elm_code_file_line_append(file, "line2", 5, NULL);
+   elm_code_file_line_append(file, "\ttab", 4, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
@@ -564,6 +565,12 @@ START_TEST (elm_code_test_widget_selection_select_line)
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("line2", selection);
    free(selection);
+
+   elm_code_widget_selection_select_line(widget, 3);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("\ttab", selection);
+   free(selection);
+
    elm_shutdown();
 }
 END_TEST

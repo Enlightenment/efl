@@ -302,6 +302,7 @@ elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *lineobj;
+   unsigned int col;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    lineobj = elm_code_file_line_get(pd->code->file, line);
@@ -310,7 +311,8 @@ elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line)
      return;
 
    elm_code_widget_selection_start(widget, line, 1);
-   elm_code_widget_selection_end(widget, line, lineobj->length);
+   col = elm_code_widget_line_text_column_width_to_position(widget, lineobj, lineobj->length);
+   elm_code_widget_selection_end(widget, line, col);
 }
 
 #endif // ELM_CODE_TEST
