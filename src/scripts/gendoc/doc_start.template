@@ -10,12 +10,6 @@ Pratically there is nothing python related currently in this documentation,
 so it can be considered valid for all languages.
 
 
-^** Some numbers just for information **^^
-<!--(for label, val in totals)-->
-| ${label}$ | **${val}$** |
-<!--(end)-->
-
-
 <!--(for ns in nspaces)-->
 ===== ${ns.name}$ (namespace) =====
 

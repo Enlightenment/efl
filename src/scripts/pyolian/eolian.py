@@ -510,48 +510,56 @@ class Namespace(object):
         return self._name.split('.')
 
     @property
+    def sub_namespaces(self):
+        base = self._name + '.'
+        deep = self._name.count('.') + 1
+        return [ ns for ns in self._unit.all_namespaces
+                 if ns.name.startswith(base) and ns.name.count('.') == deep ]
+        
+
+    @property
     def classes(self):
-        return [ c for c in self._unit.all_classes
-                if c.namespace == self._name ]
+        return sorted([ c for c in self._unit.all_classes
+                        if c.namespace == self._name ])
 
     @property
     def regulars(self):
-        return [ c for c in self._unit.all_classes
-                if c.type == Eolian_Class_Type.REGULAR and
-                   c.namespace == self._name]
+        return sorted([ c for c in self._unit.all_classes
+                        if c.type == Eolian_Class_Type.REGULAR and
+                           c.namespace == self._name])
 
     @property
     def abstracts(self):
-        return [ c for c in self._unit.all_classes
-                if c.type == Eolian_Class_Type.ABSTRACT and
-                   c.namespace == self._name]
+        return sorted([ c for c in self._unit.all_classes
+                        if c.type == Eolian_Class_Type.ABSTRACT and
+                           c.namespace == self._name])
 
     @property
     def mixins(self):
-        return [ c for c in self._unit.all_classes
-                if c.type == Eolian_Class_Type.MIXIN and
-                   c.namespace == self._name]
+        return sorted([ c for c in self._unit.all_classes
+                        if c.type == Eolian_Class_Type.MIXIN and
+                           c.namespace == self._name])
 
     @property
     def interfaces(self):
-        return [ c for c in self._unit.all_classes
-                if c.type == Eolian_Class_Type.INTERFACE and
-                   c.namespace == self._name]
+        return sorted([ c for c in self._unit.all_classes
+                        if c.type == Eolian_Class_Type.INTERFACE and
+                           c.namespace == self._name])
 
     @property
     def aliases(self):
-        return [ td for td in self._unit.typedecl_all_aliases
-                if td.namespace == self._name]
+        return sorted([ td for td in self._unit.typedecl_all_aliases
+                        if td.namespace == self._name])
 
     @property
     def structs(self):
-        return [ td for td in self._unit.typedecl_all_structs
-                if td.namespace == self._name]
+        return sorted([ td for td in self._unit.typedecl_all_structs
+                        if td.namespace == self._name])
 
     @property
     def enums(self):
-        return [ td for td in self._unit.typedecl_all_enums
-                if td.namespace == self._name]
+        return sorted([ td for td in self._unit.typedecl_all_enums
+                        if td.namespace == self._name])
 
 
 ###  Eolian Classes  ##########################################################

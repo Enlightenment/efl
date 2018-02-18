@@ -76,6 +76,47 @@ def page_path_for_object(obj):
     return os.path.join(args.root_path, *path, output_file)
 
 
+# render a (temporary) page for analizying the namespaces hierarchy
+t = Template('namespaces.template')
+nspaces = [ ns for ns in eolian_db.all_namespaces
+            if ns.name.startswith(args.namespace) ]
+
+tot_classes = tot_regulars = tot_abstracts = tot_mixins = tot_ifaces = 0
+tot_enums = tot_structs = tot_aliases = 0
+for ns in nspaces:
+    for cls in ns.classes:
+        tot_classes += 1
+        if cls.type == eolian.Eolian_Class_Type.REGULAR:
+            tot_regulars += 1
+        elif cls.type == eolian.Eolian_Class_Type.ABSTRACT:
+            tot_abstracts += 1
+        elif cls.type == eolian.Eolian_Class_Type.MIXIN:
+            tot_mixins += 1
+        elif cls.type == eolian.Eolian_Class_Type.INTERFACE:
+            tot_ifaces += 1
+    tot_enums += len(ns.enums)
+    tot_structs += len(ns.structs)
+    tot_aliases += len(ns.aliases)
+
+
+totals = [
+    ('Namespaces', len(nspaces)),
+    ('ALL Classes', tot_classes),
+    ('Regular classes', tot_regulars),
+    ('Abstract classes', tot_abstracts),
+    ('Mixins', tot_mixins),
+    ('Interfaces', tot_ifaces),
+    ('Enums', tot_enums),
+    ('Structs', tot_structs),
+    ('Aliases', tot_aliases),
+]
+
+root_ns = eolian_db.namespace_get_by_name(args.namespace)
+
+output_file = os.path.join(args.root_path,'data','pages','develop','api','namespaces.txt')
+t.render(output_file, args.verbose, root_ns=root_ns, totals=totals)
+
+
 # render the main start.txt page
 if args.step in ('start', None):
     t = Template('doc_start.template')
@@ -83,29 +124,8 @@ if args.step in ('start', None):
     nspaces = [ ns for ns in eolian_db.all_namespaces
                 if ns.name.startswith(args.namespace) ]
 
-    tot_classes = tot_regulars = tot_abstracts = tot_mixins = tot_ifaces = 0
-    for ns in nspaces:
-        for cls in ns.classes:
-            tot_classes += 1
-            if cls.type == eolian.Eolian_Class_Type.REGULAR:
-                tot_regulars += 1
-            elif cls.type == eolian.Eolian_Class_Type.ABSTRACT:
-                tot_abstracts += 1
-            elif cls.type == eolian.Eolian_Class_Type.MIXIN:
-                tot_mixins += 1
-            elif cls.type == eolian.Eolian_Class_Type.INTERFACE:
-                tot_ifaces += 1
-    totals = [
-        ('Namespaces', len(nspaces)),
-        ('ALL Classes', tot_classes),
-        ('Regular classes', tot_regulars),
-        ('Abstract classes', tot_abstracts),
-        ('Mixins', tot_mixins),
-        ('Interfaces', tot_ifaces),
-    ]
-
     output_file = os.path.join(args.root_path,'data','pages','develop','api','start.txt')
-    t.render(output_file, args.verbose, nspaces=nspaces, totals=totals)
+    t.render(output_file, args.verbose, nspaces=nspaces)
 
 
 # render a page for each Class
