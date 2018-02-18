@@ -54,11 +54,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_pack_layout.eo \
       lib/efl/interfaces/efl_pack_linear.eo \
       lib/efl/interfaces/efl_pack_table.eo \
-      lib/efl/interfaces/efl_vpath.eo \
-      lib/efl/interfaces/efl_vpath_manager.eo \
-      lib/efl/interfaces/efl_vpath_file.eo \
-      lib/efl/interfaces/efl_vpath_core.eo \
-      lib/efl/interfaces/efl_vpath_file_core.eo \
       lib/efl/interfaces/efl_ui_base.eo \
       lib/efl/interfaces/efl_ui_direction.eo \
       lib/efl/interfaces/efl_ui_drag.eo \
@@ -122,10 +117,6 @@ lib/efl/interfaces/efl_interfaces_main.c \
 lib/efl/interfaces/efl_model_common.c \
 lib/efl/interfaces/efl_gfx_path.c \
 lib/efl/interfaces/efl_gfx_shape.c \
-lib/efl/interfaces/efl_vpath_file.c \
-lib/efl/interfaces/efl_vpath_manager.c \
-lib/efl/interfaces/efl_vpath_core.c \
-lib/efl/interfaces/efl_vpath_file_core.c \
 lib/efl/interfaces/efl_input_device.c \
 lib/efl/interfaces/efl_io_closer.c \
 lib/efl/interfaces/efl_io_positioner.c \

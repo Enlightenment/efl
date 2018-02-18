@@ -62,12 +62,6 @@ typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
 #include <Efl_Model_Common.h>
 
-#include "interfaces/efl_vpath_file.eo.h"
-#include "interfaces/efl_vpath.eo.h"
-#include "interfaces/efl_vpath_core.eo.h"
-#include "interfaces/efl_vpath_manager.eo.h"
-#include "interfaces/efl_vpath_file_core.eo.h"
-
 /* Data types */
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_types.eot.h"

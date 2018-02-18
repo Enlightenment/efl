@@ -46,8 +46,6 @@
 #include "interfaces/efl_canvas.eo.c"
 #include "interfaces/efl_canvas_pointer.eo.c"
 
-#include "interfaces/efl_vpath.eo.c"
-
 #include "interfaces/efl_screen.eo.c"
 
 /* Packing & containers */
