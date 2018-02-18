@@ -87,6 +87,7 @@ static const Efl_Test_Case etc[] = {
    { "Free Queue", eina_test_freeq },
    { "Util", eina_test_util },
    { "Short Lived Strings", eina_test_slstr },
+   { "Vpath", eina_test_vpath },
    { NULL, NULL }
 };
 
