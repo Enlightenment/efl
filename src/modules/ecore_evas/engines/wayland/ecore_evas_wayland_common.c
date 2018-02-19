@@ -1934,19 +1934,24 @@ _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, 
 }
 
 static void
-_ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi, int *ydpi)
+_ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
 {
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
    int dpi = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    if (xdpi) *xdpi = 0;
    if (ydpi) *ydpi = 0;
 
    /* FIXME: Ideally this needs to get the DPI from a specific screen */
 
-   /* TODO */
-   /* dpi = ecore_wl_dpi_get(); */
+   win = ecore_evas_wayland2_window_get(ee);
+   output = ecore_wl2_window_output_find(win);
+   dpi = ecore_wl2_output_dpi_get(output);
+
    if (xdpi) *xdpi = dpi;
    if (ydpi) *ydpi = dpi;
 }
