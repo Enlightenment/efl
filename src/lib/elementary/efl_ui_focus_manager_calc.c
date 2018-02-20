@@ -1650,6 +1650,11 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
    Efl_Ui_Focus_Object *candidate = NULL;
    Efl_Ui_Focus_Manager *early, *late;
 
+   // for the case that focus is set to a new element, a new redirect
+   // manager could have been set, to adjust everything
+   // in the new reidirect manager we have to call the first touch function.
+   Eina_Bool adjust_redirect_manager = EINA_FALSE;
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
    early = efl_ui_focus_manager_redirect_get(obj);
@@ -1666,11 +1671,22 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
              if (DIRECTION_IS_LOGICAL(direction))
                {
                   // lets just take the redirect_entry
-                  Node *n = eina_hash_find(pd->node_hash, &pd->redirect_entry);
+                  Node *n = node_get(obj, pd, pd->redirect_entry);
                   new_candidate = _request_move(obj, pd, direction, n);
 
                   if (new_candidate)
-                    efl_ui_focus_manager_focus_set(obj, new_candidate);
+                    {
+                       efl_ui_focus_manager_focus_set(obj, new_candidate);
+                       adjust_redirect_manager = EINA_TRUE;
+                    }
+                  else
+                    {
+                       //we set the redirect to NULL since it cannot
+                       //help us, later on the redirect manager can be
+                       //set to the same again, and it is strictly new setted up.
+                       efl_ui_focus_manager_redirect_set(obj, NULL);
+                       pd->redirect_entry = NULL;
+                    }
 
                   candidate = new_candidate;
                }
@@ -1688,6 +1704,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                     {
                        //redirect does not have smth. but we do have.
                        efl_ui_focus_manager_focus_set(obj, new_candidate);
+                       adjust_redirect_manager = EINA_TRUE;
                     }
 
                   candidate = new_candidate;
@@ -1703,15 +1720,19 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
         if (candidate)
           {
              efl_ui_focus_manager_focus_set(obj, candidate);
+             adjust_redirect_manager = EINA_TRUE;
           }
      }
 
-   late = efl_ui_focus_manager_redirect_get(obj);
-
-   if (early != late)
+   if (adjust_redirect_manager)
      {
-        //this is a new manager, we have to init its case!
-        efl_ui_focus_manager_setup_on_first_touch(pd->redirect, direction, candidate);
+        late = efl_ui_focus_manager_redirect_get(obj);
+
+        if (early != late)
+          {
+             //this is a new manager, we have to init its case!
+             efl_ui_focus_manager_setup_on_first_touch(pd->redirect, direction, candidate);
+          }
      }
 
    return candidate;
