@@ -162,3 +162,11 @@ ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface)
 
    return surface->wl2_win;
 }
+
+EAPI Eina_Bool
+ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
+
+   return surface->alpha;
+}
