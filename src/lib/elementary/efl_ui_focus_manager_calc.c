@@ -1731,7 +1731,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
         if (early != late)
           {
              //this is a new manager, we have to init its case!
-             efl_ui_focus_manager_setup_on_first_touch(pd->redirect, direction, candidate);
+             if (late)
+               efl_ui_focus_manager_setup_on_first_touch(late, direction, candidate);
           }
      }
 
