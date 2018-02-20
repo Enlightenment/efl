@@ -1456,6 +1456,13 @@ ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data)
    o->user_data = data;
 }
 
+EAPI void *
+ecore_drm2_output_user_data_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   return output->user_data;
+}
+
 EAPI void
 ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue)
 {

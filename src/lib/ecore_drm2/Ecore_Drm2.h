@@ -793,6 +793,18 @@ EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rot
 EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
 
 /**
+ * Get the user data for a given output
+ *
+ * @param output The output to get user data for
+ *
+ * @return The user data associated with given output
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *output);
+
+/**
  * Get the subpixel state of the output
  * @param output the output
  * @return The state value
