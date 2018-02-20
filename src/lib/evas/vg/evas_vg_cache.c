@@ -262,7 +262,7 @@ _apply_transformation(Efl_VG *root, double w, double h, Vg_File_Data *vg_data)
         eina_matrix3_scale(&m, sx, sy);
         eina_matrix3_translate(&m, -vg_data->view_box.x, -vg_data->view_box.y);
      }
-   evas_vg_node_transformation_set(root, &m);
+   efl_canvas_vg_node_transformation_set(root, &m);
 }
 
 static Efl_VG *

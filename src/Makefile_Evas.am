@@ -20,12 +20,12 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/evas_canvas3d_scene.eo\
 	lib/evas/canvas/evas_canvas3d_object.eo \
 	lib/evas/canvas/efl_canvas_vg.eo \
-	lib/evas/canvas/efl_vg.eo \
-	lib/evas/canvas/efl_vg_container.eo \
-	lib/evas/canvas/efl_vg_shape.eo \
-	lib/evas/canvas/efl_vg_gradient.eo \
-	lib/evas/canvas/efl_vg_gradient_radial.eo \
-	lib/evas/canvas/efl_vg_gradient_linear.eo \
+	lib/evas/canvas/efl_canvas_vg_node.eo \
+	lib/evas/canvas/efl_canvas_vg_container.eo \
+	lib/evas/canvas/efl_canvas_vg_shape.eo \
+	lib/evas/canvas/efl_canvas_vg_gradient.eo \
+	lib/evas/canvas/efl_canvas_vg_gradient_radial.eo \
+	lib/evas/canvas/efl_canvas_vg_gradient_linear.eo \
 	lib/evas/canvas/efl_canvas_image.eo \
 	lib/evas/canvas/efl_canvas_snapshot.eo \
 	lib/evas/canvas/efl_canvas_proxy.eo \

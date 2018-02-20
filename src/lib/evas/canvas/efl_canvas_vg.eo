@@ -65,7 +65,7 @@ class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.File)
               It takes the ownership of the root node. ]]
          }
          values {
-            root: Efl.VG; [[Root node of the VG canvas.]]
+            root: Efl.Canvas.VG.Node; [[Root node of the VG canvas.]]
          }
       }
    }

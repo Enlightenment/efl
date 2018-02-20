@@ -107,7 +107,7 @@ _update_vgtree_viewport(Eo *obj, Efl_Canvas_Vg_Data *pd)
         eina_matrix3_translate(&m, -pd->viewbox.x, -pd->viewbox.y);
      }
 
-   efl_vg_transformation_set(pd->root, &m);
+   efl_canvas_vg_node_transformation_set(pd->root, &m);
 }
 
 static void
@@ -212,7 +212,7 @@ _efl_canvas_vg_viewbox_set(Eo *obj, Efl_Canvas_Vg_Data *pd, Eina_Rect viewbox)
 
              pd->viewbox = EINA_RECT_EMPTY();
              eina_matrix3_identity(&m);
-             efl_vg_transformation_set(pd->root, &m);
+             efl_canvas_vg_node_transformation_set(pd->root, &m);
              // un register the resize callback
              efl_event_callback_del(obj, EFL_GFX_EVENT_RESIZE, _evas_vg_resize, pd);
           }
@@ -339,7 +339,7 @@ _efl_canvas_vg_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
    obj->type = o_type;
 
    /* root node */
-   pd->root = efl_add(EFL_VG_CONTAINER_CLASS, NULL);
+   pd->root = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
@@ -365,13 +365,13 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Data *vd,
                 void *engine, void *output, void *context, void *surface, Efl_VG *n,
                 Eina_Array *clips, Eina_Bool do_async)
 {
-   if (efl_isa(n, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(n, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
-        Efl_VG_Container_Data *vc;
+        Efl_Canvas_VG_Container_Data *vc;
         Efl_VG *child;
         Eina_List *l;
 
-        vc = efl_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
+        vc = efl_data_scope_get(n, EFL_CANVAS_VG_CONTAINER_CLASS);
 
         EINA_LIST_FOREACH(vc->children, l, child)
           _evas_vg_render(obj, vd,
@@ -380,9 +380,9 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Data *vd,
      }
    else
      {
-        Efl_VG_Data *nd;
+        Efl_Canvas_VG_Node_Data *nd;
 
-        nd = efl_data_scope_get(n, EFL_VG_CLASS);
+        nd = efl_data_scope_get(n, EFL_CANVAS_VG_NODE_CLASS);
 
         obj->layer->evas->engine.func->ector_renderer_draw(engine, output, context, surface, nd->renderer, clips, do_async);
 

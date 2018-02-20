@@ -302,12 +302,12 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
  * @}
  */
 
-#include "canvas/efl_vg.eo.h"
-#include "canvas/efl_vg_container.eo.h"
-#include "canvas/efl_vg_shape.eo.h"
-#include "canvas/efl_vg_gradient.eo.h"
-#include "canvas/efl_vg_gradient_linear.eo.h"
-#include "canvas/efl_vg_gradient_radial.eo.h"
+#include "canvas/efl_canvas_vg_node.eo.h"
+#include "canvas/efl_canvas_vg_container.eo.h"
+#include "canvas/efl_canvas_vg_shape.eo.h"
+#include "canvas/efl_canvas_vg_gradient.eo.h"
+#include "canvas/efl_canvas_vg_gradient_linear.eo.h"
+#include "canvas/efl_canvas_vg_gradient_radial.eo.h"
 #endif /* EFL_BETA_API_SUPPORT */
 
 #ifdef EFL_EO_API_SUPPORT

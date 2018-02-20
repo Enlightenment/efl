@@ -630,7 +630,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
              eina_matrix3_scale(&m, scale_X, scale_Y);
              eina_matrix3_translate(&m, cx_scaled - cx, cy_scaled - cy);
 
-             efl_vg_transformation_set(grad_obj, &m);
+             efl_canvas_vg_node_transformation_set(grad_obj, &m);
           }
      }
    else
@@ -894,7 +894,7 @@ _create_gradient_node(Efl_VG *vg)
         grad->stops = eina_list_append(grad->stops, new_stop);
         stops++;
      }
-   if (efl_isa(vg, EFL_VG_GRADIENT_LINEAR_CLASS))
+   if (efl_isa(vg, EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS))
      {
         grad->type = SVG_LINEAR_GRADIENT;
         grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
@@ -982,12 +982,12 @@ vg_common_create_svg_node_helper(Efl_VG *vg, Svg_Node *parent)
    unsigned int points_count, commands_count;
    const double *points;
 
-   if (efl_isa(vg, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(vg, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
         svg_node = _create_node(parent, SVG_NODE_G);
         _apply_svg_property(svg_node, vg);
         // apply property
-        it = efl_vg_container_children_get(vg);
+        it = efl_canvas_vg_container_children_get(vg);
         EINA_ITERATOR_FOREACH(it, child)
           {
              vg_common_create_svg_node_helper(child, svg_node);

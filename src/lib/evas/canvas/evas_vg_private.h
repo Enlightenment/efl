@@ -3,10 +3,10 @@
 
 #include <Ector.h>
 
-typedef struct _Efl_VG_Data                  Efl_VG_Data;
-typedef struct _Efl_VG_Container_Data        Efl_VG_Container_Data;
-typedef struct _Efl_VG_Gradient_Data         Efl_VG_Gradient_Data;
-typedef struct _Efl_VG_Interpolation         Efl_VG_Interpolation;
+typedef struct _Efl_Canvas_VG_Node_Data                  Efl_Canvas_VG_Node_Data;
+typedef struct _Efl_Canvas_VG_Container_Data        Efl_Canvas_VG_Container_Data;
+typedef struct _Efl_Canvas_VG_Gradient_Data         Efl_Canvas_VG_Gradient_Data;
+typedef struct _Efl_Canvas_VG_Interpolation         Efl_Canvas_VG_Interpolation;
 
 
 typedef struct _Efl_Canvas_Vg_Data           Efl_Canvas_Vg_Data;
@@ -54,15 +54,15 @@ struct _Efl_Canvas_Vg_Data
    Eina_Bool                 changed;
 };
 
-struct _Efl_VG_Data
+struct _Efl_Canvas_VG_Node_Data
 {
    Eina_Matrix3 *m;
-   Efl_VG_Interpolation *intp;
+   Efl_Canvas_VG_Interpolation *intp;
 
-   Efl_VG *mask;
+   Efl_Canvas_VG_Node *mask;
    Ector_Renderer *renderer;
 
-   void (*render_pre)(Eo *obj, Eina_Matrix3 *parent, Ector_Surface *s, void *data, Efl_VG_Data *nd);
+   void (*render_pre)(Eo *obj, Eina_Matrix3 *parent, Ector_Surface *s, void *data, Efl_Canvas_VG_Node_Data *nd);
    void *data;
 
    double x, y;
@@ -73,14 +73,14 @@ struct _Efl_VG_Data
    Eina_Bool changed : 1;
 };
 
-struct _Efl_VG_Container_Data
+struct _Efl_Canvas_VG_Container_Data
 {
    Eina_List *children;
 
    Eina_Hash *names;
 };
 
-struct _Efl_VG_Gradient_Data
+struct _Efl_Canvas_VG_Gradient_Data
 {
    // FIXME: Later on we should deduplicate it somehow (Using Ector ?).
    Efl_Gfx_Gradient_Stop *colors;
@@ -89,7 +89,7 @@ struct _Efl_VG_Gradient_Data
    Efl_Gfx_Gradient_Spread s;
 };
 
-struct _Efl_VG_Interpolation
+struct _Efl_Canvas_VG_Interpolation
 {
    Eina_Quaternion rotation;
    Eina_Quaternion perspective;
@@ -108,14 +108,14 @@ Vg_File_Data *              evas_cache_vg_file_info(const char *file, const char
 
 Eina_Bool                   evas_vg_save_to_file(Vg_File_Data *evg_data, const char *file, const char *key, const char *flags);
 
-static inline Efl_VG_Data *
+static inline Efl_Canvas_VG_Node_Data *
 _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
 {
-   Efl_VG_Data *child_nd = NULL;
+   Efl_Canvas_VG_Node_Data *child_nd = NULL;
 
    // FIXME: Prevent infinite loop
    if (child)
-     child_nd = efl_data_scope_get(child, EFL_VG_CLASS);
+     child_nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
    if (child_nd)
      child_nd->render_pre(child, m, s, child_nd->data, child_nd);
 
@@ -123,7 +123,7 @@ _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
 }
 
 static inline void
-_efl_vg_changed(Eo *obj)
+_efl_canvas_vg_node_changed(Eo *obj)
 {
    Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_FILL };
    efl_event_callback_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
@@ -147,7 +147,7 @@ _efl_vg_clean_object(Eo **obj)
    *obj = NULL;
 }
 
-#define EFL_VG_COMPUTE_MATRIX(Current, Parent, Nd)                      \
+#define EFL_CANVAS_VG_COMPUTE_MATRIX(Current, Parent, Nd)                      \
   Eina_Matrix3 *Current = Nd->m;                                        \
   Eina_Matrix3 _matrix_tmp;                                             \
                                                                         \

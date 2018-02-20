@@ -6,9 +6,9 @@
 #include <string.h>
 #include <math.h>
 
-#define MY_CLASS EFL_VG_CLASS
+#define MY_CLASS EFL_CANVAS_VG_NODE_CLASS
 
-static const Efl_VG_Interpolation interpolation_identity = {
+static const Efl_Canvas_VG_Interpolation interpolation_identity = {
   { 0, 0, 0, 1 },
   { 0, 0, 0, 1 },
   { 0, 0, 0 },
@@ -17,9 +17,9 @@ static const Efl_VG_Interpolation interpolation_identity = {
 };
 
 static void
-_efl_vg_property_changed(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_canvas_vg_node_property_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_VG_Data *pd = data;
+   Efl_Canvas_VG_Node_Data *pd = data;
    Eo *parent;
 
    if (!pd->flags) pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
@@ -29,8 +29,8 @@ _efl_vg_property_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_vg_transformation_set(Eo *obj,
-                                Efl_VG_Data *pd,
+_efl_canvas_vg_node_transformation_set(Eo *obj,
+                                Efl_Canvas_VG_Node_Data *pd,
                                 const Eina_Matrix3 *m)
 {
    if (pd->intp)
@@ -55,29 +55,29 @@ _efl_vg_transformation_set(Eo *obj,
      }
 
    pd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 const Eina_Matrix3 *
-_efl_vg_transformation_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
+_efl_canvas_vg_node_transformation_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
 {
    return pd->m;
 }
 
 static void
-_efl_vg_origin_set(Eo *obj,
-                        Efl_VG_Data *pd,
+_efl_canvas_vg_node_origin_set(Eo *obj,
+                        Efl_Canvas_VG_Node_Data *pd,
                         double x, double y)
 {
    pd->x = x;
    pd->y = y;
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 static void
-_efl_vg_origin_get(Eo *obj EINA_UNUSED,
-                        Efl_VG_Data *pd,
+_efl_canvas_vg_node_origin_get(Eo *obj EINA_UNUSED,
+                        Efl_Canvas_VG_Node_Data *pd,
                         double *x, double *y)
 {
    if (x) *x = pd->x;
@@ -85,41 +85,41 @@ _efl_vg_origin_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_efl_gfx_position_set(Eo *obj EINA_UNUSED, Efl_VG_Data *pd, Eina_Position2D pos)
+_efl_canvas_vg_node_efl_gfx_position_set(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd, Eina_Position2D pos)
 {
    pd->x = (double) pos.x;
    pd->y = (double) pos.y;
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 static Eina_Position2D
-_efl_vg_efl_gfx_position_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
+_efl_canvas_vg_node_efl_gfx_position_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
 {
    // NOTE: This casts double to int!
    return EINA_POSITION2D(pd->x, pd->y);
 }
 
 static void
-_efl_vg_efl_gfx_visible_set(Eo *obj EINA_UNUSED,
-                                      Efl_VG_Data *pd, Eina_Bool v)
+_efl_canvas_vg_node_efl_gfx_visible_set(Eo *obj EINA_UNUSED,
+                                      Efl_Canvas_VG_Node_Data *pd, Eina_Bool v)
 {
    pd->visibility = v;
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 
 static Eina_Bool
-_efl_vg_efl_gfx_visible_get(Eo *obj EINA_UNUSED,
-                                      Efl_VG_Data *pd)
+_efl_canvas_vg_node_efl_gfx_visible_get(Eo *obj EINA_UNUSED,
+                                      Efl_Canvas_VG_Node_Data *pd)
 {
    return pd->visibility;
 }
 
 static void
-_efl_vg_efl_gfx_color_color_set(Eo *obj EINA_UNUSED,
-                                    Efl_VG_Data *pd,
+_efl_canvas_vg_node_efl_gfx_color_color_set(Eo *obj EINA_UNUSED,
+                                    Efl_Canvas_VG_Node_Data *pd,
                                     int r, int g, int b, int a)
 {
    if (r > 255) r = 255;
@@ -151,12 +151,12 @@ _efl_vg_efl_gfx_color_color_set(Eo *obj EINA_UNUSED,
    pd->b = b;
    pd->a = a;
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 static void
-_efl_vg_efl_gfx_color_color_get(Eo *obj EINA_UNUSED,
-                                    Efl_VG_Data *pd,
+_efl_canvas_vg_node_efl_gfx_color_color_get(Eo *obj EINA_UNUSED,
+                                    Efl_Canvas_VG_Node_Data *pd,
                                     int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->r;
@@ -166,8 +166,8 @@ _efl_vg_efl_gfx_color_color_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_mask_set(Eo *obj EINA_UNUSED,
-                       Efl_VG_Data *pd,
+_efl_canvas_vg_node_mask_set(Eo *obj EINA_UNUSED,
+                       Efl_Canvas_VG_Node_Data *pd,
                        Efl_VG *r)
 {
    Efl_VG *tmp = pd->mask;
@@ -175,17 +175,17 @@ _efl_vg_mask_set(Eo *obj EINA_UNUSED,
    pd->mask = efl_ref(r);
    efl_unref(tmp);
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 static Efl_VG*
-_efl_vg_mask_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
+_efl_canvas_vg_node_mask_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
 {
    return pd->mask;
 }
 
 static Eina_Size2D
-_efl_vg_efl_gfx_size_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_size_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
 
@@ -194,7 +194,7 @@ _efl_vg_efl_gfx_size_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Rect
-_efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
    r.pos = efl_gfx_position_get(obj);
@@ -204,19 +204,19 @@ _efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 
 // Parent should be a container otherwise dismissing the stacking operation
 static Eina_Bool
-_efl_vg_parent_checked_get(Eo *obj,
+_efl_canvas_vg_node_parent_checked_get(Eo *obj,
                                 Eo **parent,
-                                Efl_VG_Container_Data **cd)
+                                Efl_Canvas_VG_Container_Data **cd)
 {
    *cd = NULL;
    *parent = efl_parent_get(obj);
 
-   if (efl_isa(*parent, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(*parent, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
-        *cd = efl_data_scope_get(*parent, EFL_VG_CONTAINER_CLASS);
+        *cd = efl_data_scope_get(*parent, EFL_CANVAS_VG_CONTAINER_CLASS);
         if (!*cd)
           {
-             ERR("Can't get EFL_VG_CONTAINER_CLASS data.");
+             ERR("Can't get EFL_CANVAS_VG_CONTAINER_CLASS data.");
              goto on_error;
           }
      }
@@ -239,20 +239,20 @@ _efl_vg_parent_checked_get(Eo *obj,
 }
 
 static Eo *
-_efl_vg_efl_object_constructor(Eo *obj,
-                                 Efl_VG_Data *pd)
+_efl_canvas_vg_node_efl_object_constructor(Eo *obj,
+                                 Efl_Canvas_VG_Node_Data *pd)
 {
-   Efl_VG_Container_Data *cd = NULL;
+   Efl_Canvas_VG_Container_Data *cd = NULL;
    Eo *parent;
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (!_efl_vg_parent_checked_get(obj, &parent, &cd)) {
+   if (!_efl_canvas_vg_node_parent_checked_get(obj, &parent, &cd)) {
         ERR("Failed");
         return NULL;
    }
 
-   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _efl_vg_property_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _efl_canvas_vg_node_property_changed, pd);
    pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
    pd->changed = EINA_TRUE;
 
@@ -260,7 +260,7 @@ _efl_vg_efl_object_constructor(Eo *obj,
 }
 
 static void
-_efl_vg_efl_object_destructor(Eo *obj, Efl_VG_Data *pd)
+_efl_canvas_vg_node_efl_object_destructor(Eo *obj, Efl_Canvas_VG_Node_Data *pd)
 {
    if (pd->m)
      {
@@ -283,7 +283,7 @@ _efl_vg_efl_object_destructor(Eo *obj, Efl_VG_Data *pd)
 }
 
 static void
-_efl_vg_name_insert(Eo *obj, Efl_VG_Container_Data *cd)
+_efl_canvas_vg_node_name_insert(Eo *obj, Efl_Canvas_VG_Container_Data *cd)
 {
    Eo *set;
    const char *name = efl_name_get(efl_super(obj, MY_CLASS));
@@ -304,37 +304,37 @@ _efl_vg_name_insert(Eo *obj, Efl_VG_Container_Data *cd)
 }
 
 static void
-_efl_vg_efl_object_name_set(Eo *obj, Efl_VG_Data *pd EINA_UNUSED, const char *name)
+_efl_canvas_vg_node_efl_object_name_set(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED, const char *name)
 {
-   Efl_VG_Container_Data *cd = NULL;
+   Efl_Canvas_VG_Container_Data *cd = NULL;
    Eo *parent = NULL;
    const char *pname = efl_name_get(obj);
 
-   if (_efl_vg_parent_checked_get(obj, &parent, &cd))
+   if (_efl_canvas_vg_node_parent_checked_get(obj, &parent, &cd))
      {
         if (pname) eina_hash_del(cd->names, pname, obj);
      }
 
    efl_name_set(efl_super(obj, MY_CLASS), name);
 
-   if (cd) _efl_vg_name_insert(obj, cd);
+   if (cd) _efl_canvas_vg_node_name_insert(obj, cd);
 }
 
 static void
-_efl_vg_efl_object_parent_set(Eo *obj,
-                                Efl_VG_Data *pd EINA_UNUSED,
+_efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
+                                Efl_Canvas_VG_Node_Data *pd EINA_UNUSED,
                                 Eo *parent)
 {
-   Efl_VG_Container_Data *cd = NULL;
-   Efl_VG_Container_Data *old_cd = NULL;
+   Efl_Canvas_VG_Container_Data *cd = NULL;
+   Efl_Canvas_VG_Container_Data *old_cd = NULL;
    Eo *old_parent;
 
-   if (efl_isa(parent, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
-        cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+        cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
         if (!cd)
           {
-             ERR("Can't get EFL_VG_CONTAINER_CLASS data from %p.", parent);
+             ERR("Can't get EFL_CANVAS_VG_CONTAINER_CLASS data from %p.", parent);
              goto on_error;
           }
      }
@@ -344,7 +344,7 @@ _efl_vg_efl_object_parent_set(Eo *obj,
         goto on_error;
      }
 
-   if (!_efl_vg_parent_checked_get(obj, &old_parent, &old_cd))
+   if (!_efl_canvas_vg_node_parent_checked_get(obj, &old_parent, &old_cd))
      {
         ERR("Can't check the old parent of %p.", obj);
         goto on_error;
@@ -363,12 +363,12 @@ _efl_vg_efl_object_parent_set(Eo *obj,
      {
         cd->children = eina_list_append(cd->children, obj);
 
-        _efl_vg_name_insert(obj, cd);
+        _efl_canvas_vg_node_name_insert(obj, cd);
      }
 
-   _efl_vg_changed(old_parent);
-   _efl_vg_changed(obj);
-   _efl_vg_changed(parent);
+   _efl_canvas_vg_node_changed(old_parent);
+   _efl_canvas_vg_node_changed(obj);
+   _efl_canvas_vg_node_changed(parent);
 
    return ;
 
@@ -377,15 +377,15 @@ _efl_vg_efl_object_parent_set(Eo *obj,
 }
 
 static void
-_efl_vg_efl_gfx_stack_raise(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_raise(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
-   Efl_VG_Container_Data *cd;
+   Efl_Canvas_VG_Container_Data *cd;
    Eina_List *lookup, *next;
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -397,7 +397,7 @@ _efl_vg_efl_gfx_stack_raise(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_append_relative_list(cd->children, obj, next);
 
-   _efl_vg_changed(parent);
+   _efl_canvas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -405,17 +405,17 @@ _efl_vg_efl_gfx_stack_raise(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 }
 
 static void
-_efl_vg_efl_gfx_stack_stack_above(Eo *obj,
-                                       Efl_VG_Data *pd EINA_UNUSED,
+_efl_canvas_vg_node_efl_gfx_stack_stack_above(Eo *obj,
+                                       Efl_Canvas_VG_Node_Data *pd EINA_UNUSED,
                                        Efl_Gfx_Stack *above)
 {
-   Efl_VG_Container_Data *cd;
+   Efl_Canvas_VG_Container_Data *cd;
    Eina_List *lookup, *ref;
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -427,7 +427,7 @@ _efl_vg_efl_gfx_stack_stack_above(Eo *obj,
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_append_relative_list(cd->children, obj, ref);
 
-   _efl_vg_changed(parent);
+   _efl_canvas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -435,17 +435,17 @@ _efl_vg_efl_gfx_stack_stack_above(Eo *obj,
 }
 
 static void
-_efl_vg_efl_gfx_stack_stack_below(Eo *obj,
-                                       Efl_VG_Data *pd EINA_UNUSED,
+_efl_canvas_vg_node_efl_gfx_stack_stack_below(Eo *obj,
+                                       Efl_Canvas_VG_Node_Data *pd EINA_UNUSED,
                                        Efl_Gfx_Stack *below)
 {
-   Efl_VG_Container_Data *cd;
+   Efl_Canvas_VG_Container_Data *cd;
    Eina_List *lookup, *ref;
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -457,7 +457,7 @@ _efl_vg_efl_gfx_stack_stack_below(Eo *obj,
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_prepend_relative_list(cd->children, obj, ref);
 
-   _efl_vg_changed(parent);
+   _efl_canvas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -465,15 +465,15 @@ _efl_vg_efl_gfx_stack_stack_below(Eo *obj,
 }
 
 static void
-_efl_vg_efl_gfx_stack_lower(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_lower(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
-   Efl_VG_Container_Data *cd;
+   Efl_Canvas_VG_Container_Data *cd;
    Eina_List *lookup, *prev;
    Eo *parent;
 
    parent = efl_parent_get(obj);
-   if (!efl_isa(parent, EFL_VG_CONTAINER_CLASS)) goto on_error;
-   cd = efl_data_scope_get(parent, EFL_VG_CONTAINER_CLASS);
+   if (!efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS)) goto on_error;
+   cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -485,7 +485,7 @@ _efl_vg_efl_gfx_stack_lower(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_prepend_relative_list(cd->children, obj, prev);
 
-   _efl_vg_changed(parent);
+   _efl_canvas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -493,18 +493,18 @@ _efl_vg_efl_gfx_stack_lower(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 }
 
 static Eo *
-_efl_vg_root_parent_get(Eo *obj)
+_efl_canvas_vg_node_root_parent_get(Eo *obj)
 {
    Eo *parent;
 
    parent = efl_parent_get(obj);
 
    if (!parent) return obj;
-   return _efl_vg_root_parent_get(parent);
+   return _efl_canvas_vg_node_root_parent_get(parent);
 }
 
 static void
-_efl_vg_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
+_efl_canvas_vg_node_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 {
    Eina_Rect bounds;
 
@@ -513,31 +513,31 @@ _efl_vg_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 
    eina_array_push(a, root);
 
-   if (efl_isa(root, EFL_VG_CONTAINER_CLASS))
+   if (efl_isa(root, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
-        Efl_VG_Container_Data *cd;
+        Efl_Canvas_VG_Container_Data *cd;
         Eina_List *l;
         Eo *child;
 
-        cd = efl_data_scope_get(root, EFL_VG_CONTAINER_CLASS);
+        cd = efl_data_scope_get(root, EFL_CANVAS_VG_CONTAINER_CLASS);
         EINA_LIST_FOREACH(cd->children, l, child)
-          _efl_vg_walk_down_at(child, a, r);
+          _efl_canvas_vg_node_walk_down_at(child, a, r);
      }
 }
 
 static void
-_efl_vg_object_at(Eo *obj, Eina_Array *a, Eina_Rectangle *r)
+_efl_canvas_vg_node_object_at(Eo *obj, Eina_Array *a, Eina_Rectangle *r)
 {
    Eo *root;
 
-   root = _efl_vg_root_parent_get(obj);
+   root = _efl_canvas_vg_node_root_parent_get(obj);
    if (!root) return ;
 
-   _efl_vg_walk_down_at(root, a, r);
+   _efl_canvas_vg_node_walk_down_at(root, a, r);
 }
 
 static Efl_Gfx_Stack *
-_efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_below_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
    Eina_Array a;
@@ -550,7 +550,7 @@ _efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 
-   _efl_vg_object_at(obj, &a, &r.rect);
+   _efl_canvas_vg_node_object_at(obj, &a, &r.rect);
 
    EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
      if (current == obj)
@@ -567,7 +567,7 @@ _efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 }
 
 static Efl_Gfx_Stack *
-_efl_vg_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_above_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
    Eina_Array a;
@@ -580,7 +580,7 @@ _efl_vg_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 
-   _efl_vg_object_at(obj, &a, &r.rect);
+   _efl_canvas_vg_node_object_at(obj, &a, &r.rect);
 
    EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
      if (current == obj)
@@ -595,15 +595,15 @@ _efl_vg_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
    return above;
 }
 
-static Efl_VG_Interpolation *
-_efl_vg_interpolation_get(Efl_VG_Data *pd)
+static Efl_Canvas_VG_Interpolation *
+_efl_canvas_vg_node_interpolation_get(Efl_Canvas_VG_Node_Data *pd)
 {
    Eina_Matrix4 m;
 
    if (!pd->m) return NULL;
    if (pd->intp) return pd->intp;
 
-   pd->intp = calloc(1, sizeof (Efl_VG_Interpolation));
+   pd->intp = calloc(1, sizeof (Efl_Canvas_VG_Interpolation));
    if (!pd->intp) return NULL;
 
    eina_matrix3_matrix4_to(&m, pd->m);
@@ -623,7 +623,7 @@ _efl_vg_interpolation_get(Efl_VG_Data *pd)
 }
 
 static inline void
-_efl_vg_interpolate_point(Eina_Point_3D *d,
+_efl_canvas_vg_node_interpolate_point(Eina_Point_3D *d,
                           const Eina_Point_3D *a, const Eina_Point_3D *b,
                           double pos_map, double from_map)
 {
@@ -633,16 +633,16 @@ _efl_vg_interpolate_point(Eina_Point_3D *d,
 }
 
 static Eina_Bool
-_efl_vg_efl_gfx_path_interpolate(Eo *obj,
-                         Efl_VG_Data *pd, const Efl_VG *from, const Efl_VG *to,
+_efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
+                         Efl_Canvas_VG_Node_Data *pd, const Efl_VG *from, const Efl_VG *to,
                          double pos_map)
 {
-   Efl_VG_Data *fromd, *tod;
+   Efl_Canvas_VG_Node_Data *fromd, *tod;
    double from_map;
    Eina_Bool r = EINA_TRUE;
 
-   fromd = efl_data_scope_get(from, EFL_VG_CLASS);
-   tod = efl_data_scope_get(to, EFL_VG_CLASS);
+   fromd = efl_data_scope_get(from, EFL_CANVAS_VG_NODE_CLASS);
+   tod = efl_data_scope_get(to, EFL_CANVAS_VG_NODE_CLASS);
    from_map = 1.0 - pos_map;
 
    efl_del(pd->renderer);
@@ -653,25 +653,25 @@ _efl_vg_efl_gfx_path_interpolate(Eo *obj,
         if (!pd->m) pd->m = malloc(sizeof (Eina_Matrix3));
         if (pd->m)
           {
-             const Efl_VG_Interpolation *fi, *ti;
-             Efl_VG_Interpolation result;
+             const Efl_Canvas_VG_Interpolation *fi, *ti;
+             Efl_Canvas_VG_Interpolation result;
              Eina_Matrix4 m;
 
-             fi = _efl_vg_interpolation_get(fromd);
+             fi = _efl_canvas_vg_node_interpolation_get(fromd);
              if (!fi) fi = &interpolation_identity;
-             ti = _efl_vg_interpolation_get(tod);
+             ti = _efl_canvas_vg_node_interpolation_get(tod);
              if (!ti) ti = &interpolation_identity;
 
              eina_quaternion_slerp(&result.rotation,
                                    &fi->rotation, &ti->rotation,
                                    pos_map);
-             _efl_vg_interpolate_point(&result.translation,
+             _efl_canvas_vg_node_interpolate_point(&result.translation,
                                        &fi->translation, &ti->translation,
                                        pos_map, from_map);
-             _efl_vg_interpolate_point(&result.scale,
+             _efl_canvas_vg_node_interpolate_point(&result.scale,
                                        &fi->scale, &ti->scale,
                                        pos_map, from_map);
-             _efl_vg_interpolate_point(&result.skew,
+             _efl_canvas_vg_node_interpolate_point(&result.skew,
                                        &fi->skew, &ti->skew,
                                        pos_map, from_map);
 
@@ -705,16 +705,16 @@ _efl_vg_efl_gfx_path_interpolate(Eo *obj,
         r &= efl_gfx_path_interpolate(pd->mask, fromd->mask, tod->mask, pos_map);
      }
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 
    return r;
 }
 
 EOLIAN static Efl_VG *
-_efl_vg_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Data *pd)
+_efl_canvas_vg_node_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_VG_Node_Data *pd)
 {
    Efl_VG *cn;
-   Efl_VG_Data *cd;
+   Efl_Canvas_VG_Node_Data *cd;
 
    cn = efl_add(efl_class_get(obj), NULL);
    cd = efl_data_scope_get(cn, MY_CLASS);
@@ -807,4 +807,4 @@ evas_vg_node_lower(Eo *obj)
    efl_gfx_stack_lower(obj);
 }
 
-#include "efl_vg.eo.c"
+#include "efl_canvas_vg_node.eo.c"
