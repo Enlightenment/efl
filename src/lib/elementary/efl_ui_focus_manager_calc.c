@@ -1004,8 +1004,10 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    if (refocus)
      {
         Node *n = eina_list_last_data_get(pd->focus_stack);
-        if (n)
-          efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
+        if (!n)
+          n = pd->root;
+
+        efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
      }
 
    //add all neighbors of the node to the dirty list
