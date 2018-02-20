@@ -413,7 +413,7 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
      }
 
    ret =
-     sym_drmModeAtomicCommit(output->fd, req, flags, NULL);
+     sym_drmModeAtomicCommit(output->fd, req, flags, output);
    if (ret < 0) goto err;
 
    /* clear any previous request */
@@ -450,7 +450,7 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
    res =
      sym_drmModeAtomicCommit(output->fd,
                              output->prep.atomic_req, flags,
-                             output->user_data);
+                             output);
    if (res < 0)
      {
         ERR("Failed Atomic Commit: %m");
@@ -503,7 +503,7 @@ _fb_flip(Ecore_Drm2_Output *output)
         repeat = EINA_FALSE;
         ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
                                   DRM_MODE_PAGE_FLIP_EVENT,
-                                  output->user_data);
+                                  output);
         /* Some drivers (RPI - looking at you) are broken and produce
          * flip events before they are ready for another flip, so be
          * a little robust in the face of badness and try a few times
