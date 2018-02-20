@@ -73,7 +73,7 @@ typedef struct {
     Eina_List *focus_stack;
     Eina_Hash *node_hash;
     Efl_Ui_Focus_Manager *redirect;
-    Efl_Ui_Focus_Manager *redirect_entry;
+    Efl_Ui_Focus_Object *redirect_entry;
     Eina_List *dirty;
 
     Node *root;
@@ -1663,9 +1663,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
 
              if (DIRECTION_IS_LOGICAL(direction))
                {
-                  // lets just take the last
-
-                  Node *n = eina_list_last_data_get(pd->focus_stack);
+                  // lets just take the redirect_entry
+                  Node *n = eina_hash_find(pd->node_hash, &pd->redirect_entry);
                   new_candidate = _request_move(obj, pd, direction, n);
 
                   if (new_candidate)
