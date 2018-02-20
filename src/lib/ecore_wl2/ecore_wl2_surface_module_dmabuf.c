@@ -52,16 +52,18 @@ _evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_da
    Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
    Eina_List *l, *tmp;
+//   Eina_Bool alpha_change;
 
    p = priv_data;
 
    if ((!w) || (!h)) return;
+//   alpha_change = ecore_wl2_surface_alpha_get(s) != alpha;
    EINA_LIST_FOREACH_SAFE(p->buffers, l, tmp, b)
      {
 /*      This would be nice, but requires a partial create to follow,
         and that partial create is buffer type specific.
 
-        if (ecore_wl2_buffer_fit(b, w, h))
+        if (!alpha_change && ecore_wl2_buffer_fit(b, w, h))
           continue;
 */
         ecore_wl2_buffer_destroy(b);
