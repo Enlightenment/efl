@@ -475,7 +475,7 @@ _fb_flip(Ecore_Drm2_Output *output)
      {
         ret =
           sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
-                             output->x, output->y, &output->conn_id, 1,
+                             0, 0, &output->conn_id, 1,
                              &output->current_mode->info);
         if (ret)
           {
@@ -500,10 +500,11 @@ _fb_flip(Ecore_Drm2_Output *output)
    do
      {
         static Eina_Bool bugged_about_bug = EINA_FALSE;
+
         repeat = EINA_FALSE;
         ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                                  DRM_MODE_PAGE_FLIP_EVENT,
-                                  output);
+                                  DRM_MODE_PAGE_FLIP_EVENT, output);
+
         /* Some drivers (RPI - looking at you) are broken and produce
          * flip events before they are ready for another flip, so be
          * a little robust in the face of badness and try a few times
