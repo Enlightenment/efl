@@ -7,6 +7,7 @@ local dutil = require("docgen.util")
 local writer = require("docgen.writer")
 local keyref = require("docgen.keyref")
 local dtree = require("docgen.doctree")
+local mono = require("docgen.mono")
 
 local printgen = function() end
 
@@ -1083,6 +1084,8 @@ local build_class = function(cl)
     local fulln = cl:name_get()
     local f = writer.Writer(cln, fulln)
     printgen("Generating class: " .. fulln)
+
+    mono.build_class(cl)
 
     f:write_h(cl:name_get() .. " (" .. cl:type_str_get() .. ")", 1)
  
