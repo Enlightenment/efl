@@ -3529,7 +3529,9 @@ evas_render_updates_internal(Evas *eo_e,
                   if (!do_async)
                     {
                        eina_evlog("+render_push", eo_e, 0.0, NULL);
-                       ENFN->output_redraws_next_update_push(ENC, out->output, surface, ux, uy, uw, uh, render_mode);
+                       ENFN->output_redraws_next_update_push(ENC, out->output, surface,
+                                                             ux - out->geometry.x, uy - out->geometry.y, uw, uh,
+                                                             render_mode);
                        eina_evlog("-render_push", eo_e, 0.0, NULL);
                     }
                }
@@ -3863,7 +3865,9 @@ evas_render_pipe_wakeup(void *data)
           {
              eina_evlog("+render_push", evas->evas, 0.0, NULL);
              ENFN->output_redraws_next_update_push
-               (ENC, out->output, ru->surface, ru->area->x, ru->area->y, ru->area->w, ru->area->h,
+               (ENC, out->output, ru->surface,
+                ru->area->x - out->geometry.x, ru->area->y - out->geometry.y,
+                ru->area->w, ru->area->h,
                 EVAS_RENDER_MODE_ASYNC_END);
              eina_evlog("-render_push", evas->evas, 0.0, NULL);
              //XXX: need a way to unref render output surfaces
