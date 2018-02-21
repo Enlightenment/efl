@@ -7,6 +7,21 @@
 #define FIXED_SIZE(_WIDTH, _HEIGHT) \
    min: _WIDTH _HEIGHT; max: _WIDTH _HEIGHT; fixed: 1 1;
 
+
+#define BACKGROUND_COMP LOSSY 99
+//#define BACKGROUND_COMP LOSSY_ETC1
+//#define BACKGROUND_COMP LOSSY_ETC2
+#define BACKGROUND_IMG \
+   set { name: "background"; \
+     image { image: "p-5120.png" BACKGROUND_COMP; size: 3841 2161 51200 28800; } \
+     image { image: "p-3840.png" BACKGROUND_COMP; size: 3201 1801  3840  2160; } \
+     image { image: "p-3200.png" BACKGROUND_COMP; size: 2561 1441  3200  1800; } \
+     image { image: "p-2560.png" BACKGROUND_COMP; size: 1921 1081  2560  1440; } \
+     image { image: "p-1920.png" BACKGROUND_COMP; size: 1601  900  1920  1080; } \
+     image { image: "p-1600.png" BACKGROUND_COMP; size: 1281  721  1600   900; } \
+     image { image: "p-1280.png" BACKGROUND_COMP; size:    0    0  1280   720; } \
+   }
+
 #define DARK_GREY_BG_COLOR 48 48 48 255
 #define DARK_GREY_BG_DISABLED_COLOR 64 64 64 255
 
