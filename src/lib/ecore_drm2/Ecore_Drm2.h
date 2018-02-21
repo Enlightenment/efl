@@ -825,6 +825,29 @@ EAPI void ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_D
 EAPI Ecore_Drm2_Relative_Mode ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output);
 
 /**
+ * Set which output a given output is relative to
+ *
+ * @param output The output for which to set relative
+ * @param relative The output for which the first output is relative to
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI void ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const char *relative);
+
+/**
+ * Get which output is relative to a given output
+ *
+ * @param output The output for which to retrieve relative
+ *
+ * @return The name of the output which is relative to the given output or NULL
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI const char *ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers

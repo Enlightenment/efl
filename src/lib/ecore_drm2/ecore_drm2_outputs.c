@@ -1668,3 +1668,17 @@ ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, ECORE_DRM2_RELATIVE_MODE_UNKNOWN);
    return output->relative.mode;
 }
+
+EAPI void
+ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const char *relative)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   eina_stringshare_replace(&output->relative.to, relative);
+}
+
+EAPI const char *
+ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   return output->relative.to;
+}
