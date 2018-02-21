@@ -131,14 +131,12 @@ push_typedecl(Eo_Lexer *ls)
 static void
 pop_type(Eo_Lexer *ls)
 {
-   eolian_object_ref((Eolian_Object *)eina_list_data_get(ls->tmp.type_defs));
    ls->tmp.type_defs = eina_list_remove_list(ls->tmp.type_defs, ls->tmp.type_defs);
 }
 
 static void
 pop_typedecl(Eo_Lexer *ls)
 {
-   eolian_object_ref((Eolian_Object *)eina_list_data_get(ls->tmp.type_decls));
    ls->tmp.type_decls = eina_list_remove_list(ls->tmp.type_decls, ls->tmp.type_decls);
 }
 
@@ -528,7 +526,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column);
-   if (name) database_struct_add(ls->state, def);
+   if (name) database_struct_add(ls->unit, def);
    return def;
 }
 
@@ -640,7 +638,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column);
-   if (name) database_enum_add(ls->state, def);
+   if (name) database_enum_add(ls->unit, def);
    return def;
 }
 
@@ -2154,13 +2152,13 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         }
       case KW_type:
         {
-           database_type_add(ls->state, parse_typedef(ls));
+           database_type_add(ls->unit, parse_typedef(ls));
            pop_typedecl(ls);
            break;
         }
       case KW_function:
         {
-           database_type_add(ls->state, parse_function_pointer(ls));
+           database_type_add(ls->unit, parse_function_pointer(ls));
            pop_typedecl(ls);
            break;
         }
@@ -2210,7 +2208,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 eo_lexer_get(ls);
                 FILL_DOC(ls, def, doc);
                 FILL_BASE(def->base, ls, line, col);
-                database_struct_add(ls->state, def);
+                database_struct_add(ls->unit, def);
                 pop_typedecl(ls);
                 break;
              }

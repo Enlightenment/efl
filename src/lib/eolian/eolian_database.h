@@ -344,9 +344,9 @@ void database_unit_del(Eolian_Unit *unit);
 
 /* types */
 
-void database_type_add(Eolian *state, Eolian_Typedecl *def);
-void database_struct_add(Eolian *state, Eolian_Typedecl *tp);
-void database_enum_add(Eolian *state, Eolian_Typedecl *tp);
+void database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
+void database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
+void database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
