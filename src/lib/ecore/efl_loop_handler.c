@@ -67,9 +67,12 @@ _handler_clear(Efl_Loop_Handler_Data *pd)
 static Ecore_Fd_Handler_Flags
 _handler_flags_get(Efl_Loop_Handler_Data *pd)
 {
-   return ((pd->references.read  > 0) ? ECORE_FD_READ  : 0) |
-          ((pd->references.write > 0) ? ECORE_FD_WRITE : 0) |
-          ((pd->references.error > 0) ? ECORE_FD_ERROR : 0);
+   return (((pd->flags & EFL_LOOP_HANDLER_FLAGS_READ) &&
+            (pd->references.read > 0)) ? ECORE_FD_READ  : 0) |
+          (((pd->flags & EFL_LOOP_HANDLER_FLAGS_WRITE) &&
+            (pd->references.write > 0)) ? ECORE_FD_WRITE  : 0) |
+          (((pd->flags & EFL_LOOP_HANDLER_FLAGS_ERROR) &&
+            (pd->references.error > 0)) ? ECORE_FD_ERROR  : 0);
 }
 
 static void
@@ -157,12 +160,14 @@ _cb_handler_fd(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Eo *obj = data;
 
+   efl_ref(obj);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      efl_event_callback_call(obj, EFL_LOOP_HANDLER_EVENT_READ, NULL);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      efl_event_callback_call(obj, EFL_LOOP_HANDLER_EVENT_WRITE, NULL);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      efl_event_callback_call(obj, EFL_LOOP_HANDLER_EVENT_ERROR, NULL);
+   efl_unref(obj);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -326,12 +331,11 @@ _efl_loop_handler_efl_object_finalize(Eo *obj, Efl_Loop_Handler_Data *pd)
 static void
 _efl_loop_handler_efl_object_destructor(Eo *obj, Efl_Loop_Handler_Data *pd)
 {
-   efl_destructor(efl_super(obj, MY_CLASS));
-
    if (pd->loop_data)
      pd->loop_data->fd_handlers_obj =
        eina_list_remove(pd->loop_data->fd_handlers_obj, obj);
    _handler_clear(pd);
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 #include "efl_loop_handler.eo.c"
