@@ -2287,12 +2287,9 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
      }
    ls->tmp.kls = NULL;
 
-   eina_hash_set(ls->state->unit.classes, cl->full_name, cl);
-   eina_hash_set(ls->unit->classes, cl->full_name, cl);
+   eolian_object_add(&cl->base, cl->full_name, ls->unit->classes);
+   eolian_object_add(&cl->base, cl->full_name, ls->state->unit.classes);
    eina_hash_set(ls->state->classes_f, cl->base.file, cl);
-   /* once for unit, once for state */
-   eolian_object_ref(&cl->base);
-   eolian_object_ref(&cl->base);
 
 done:
    ret = ls->unit;

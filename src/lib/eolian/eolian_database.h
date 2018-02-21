@@ -84,6 +84,13 @@ eolian_object_unref(Eolian_Object *obj)
    return (--obj->refcount > 0);
 }
 
+static inline void
+eolian_object_add(Eolian_Object *obj, Eina_Stringshare *name, Eina_Hash *hash)
+{
+   eina_hash_add(hash, name, obj);
+   eolian_object_ref(obj);
+}
+
 struct _Eolian_Documentation
 {
    Eolian_Object base;
