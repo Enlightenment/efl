@@ -10,6 +10,118 @@
 
 #include "eolian_suite.h"
 
+START_TEST(eolian_multiple_parse)
+{
+  const Eolian_Unit* unit;
+  
+  eolian_init();
+
+  Eolian *eos = eolian_new();
+
+  fail_if(!eolian_directory_scan(eos, TESTS_SRC_DIR"/data"));
+  /* fail_if(!eolian_directory_scan(eos, TESTS_SRC_DIR"/../../lib/efl/interfaces")); */
+  /* fail_if(!eolian_directory_scan(eos, TESTS_SRC_DIR"/../../lib/evas/canvas")); */
+  fail_if(!eolian_directory_scan(eos, TESTS_SRC_DIR"/../../lib"));
+
+  const char *files[] = {
+    TESTS_SRC_DIR"/data/base.eo",
+    TESTS_SRC_DIR"/data/class_funcs.eo",
+    //    TESTS_SRC_DIR"/data/class_simple.eo",
+    TESTS_SRC_DIR"/data/complex_type.eo",
+    TESTS_SRC_DIR"/data/consts.eo",
+    TESTS_SRC_DIR"/data/ctor_dtor.eo",
+    TESTS_SRC_DIR"/data/decl.eo",
+    //    TESTS_SRC_DIR"/data/docs.eo",
+    TESTS_SRC_DIR"/data/enum.eo",
+    TESTS_SRC_DIR"/data/events.eo",
+    //    TESTS_SRC_DIR"/data/extern.eo",
+    TESTS_SRC_DIR"/data/free_func.eo",
+    TESTS_SRC_DIR"/data/function_as_argument.eo",
+    TESTS_SRC_DIR"/data/function_types.eot",
+    TESTS_SRC_DIR"/data/import.eo",
+    TESTS_SRC_DIR"/data/nmsp1_class1.eo",
+    TESTS_SRC_DIR"/data/nmsp1_nmsp11_class2.eo",
+    TESTS_SRC_DIR"/data/nmsp2_class1.eo",
+    TESTS_SRC_DIR"/data/no_nmsp.eo",
+    TESTS_SRC_DIR"/data/null.eo",
+    TESTS_SRC_DIR"/data/object_impl_add.eo",
+    TESTS_SRC_DIR"/data/object_impl.eo",
+    TESTS_SRC_DIR"/data/override.eo",
+    TESTS_SRC_DIR"/data/owning.eo",
+    TESTS_SRC_DIR"/data/parts.eo",
+    TESTS_SRC_DIR"/data/scope.eo",
+    TESTS_SRC_DIR"/data/struct.eo",
+    //    TESTS_SRC_DIR"/data/typedef.eo",
+    //    TESTS_SRC_DIR"/data/var.eo"
+
+    TESTS_SRC_DIR"/../../lib/efl/interfaces/efl_text_types.eot",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_object.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_text_factory.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_group.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_image_internal.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_camera.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_texture.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_material.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_light.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_mesh.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_primitive.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_node.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_scene.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/evas_canvas3d_object.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_vg.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_vg.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_vg_container.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_vg_shape.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_vg_gradient.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_vg_gradient_radial.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_vg_gradient_linear.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_image.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_snapshot.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_proxy.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_scene3d.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_surface.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_surface_tbm.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_surface_x11.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_surface_wayland.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_canvas_filter_internal.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_state.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_interface.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_event.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_key.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_pointer.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_hold.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_input_focus.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_gfx_map.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_alpha.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_rotate.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_scale.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_translate.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_group.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_group_parallel.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_group_sequential.eo",
+    TESTS_SRC_DIR"/../../lib/evas/canvas/efl_animation_player.eo",
+    TESTS_SRC_DIR"/../../lib/evas/gesture/efl_gesture_touch.eo",
+    TESTS_SRC_DIR"/../../lib/evas/gesture/efl_gesture.eo",
+    TESTS_SRC_DIR"/../../lib/evas/gesture/efl_gesture_tap.eo",
+    TESTS_SRC_DIR"/../../lib/evas/gesture/efl_gesture_long_tap.eo",
+    TESTS_SRC_DIR"/../../lib/evas/gesture/efl_gesture_recognizer.eo",
+    TESTS_SRC_DIR"/../../lib/evas/gesture/efl_gesture_manager.eo"
+    
+   };
+
+  int i = 0;
+  for(;i != sizeof(files)/sizeof(files[0]);++i)
+    {
+      fprintf(stderr, "Parsing %s\n", files[i]); fflush(stderr);
+      fail_if(!(unit = eolian_file_parse(eos, files[i])));
+    }
+  
+  eolian_free(eos);
+  eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_namespaces)
 {
    const Eolian_Class *class11, *class112, *class21, *class_no, *impl_class,
@@ -1670,4 +1782,5 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_function_types);
    tcase_add_test(tc, eolian_function_as_arguments);
    tcase_add_test(tc, eolian_parts);
+   tcase_add_test(tc, eolian_multiple_parse);
 }
