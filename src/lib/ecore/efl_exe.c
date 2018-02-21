@@ -29,6 +29,9 @@
 # ifdef HAVE_SYS_WAIT_H
 #  include <sys/wait.h>
 # endif
+# ifndef HAVE_CLEARENV
+extern char **environ;
+# endif
 #endif
 
 #define MY_CLASS EFL_EXE_CLASS
@@ -479,7 +482,11 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 
    // actually setenv the env hash (clear what was there before so it is
    // the only env there)
-   clearenv();
+#ifdef HAVE_CLEARENV
+  clearenv();
+#else
+   environ = NULL;
+#endif
    eina_hash_foreach(td->env, _foreach_env, NULL);
 
    // actually execute!

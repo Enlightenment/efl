@@ -689,6 +689,7 @@ pause \
 gmtime_r \
 pthread_getcpuclockid \
 clock_gettime \
+clearenv
 ])
 
 AC_FUNC_ALLOCA
