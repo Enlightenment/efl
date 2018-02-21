@@ -1375,7 +1375,7 @@ ecore_main_fd_handler_add(int                    fd,
    fdh = _ecore_main_fd_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
                                     ML_DAT, NULL, fd, flags, func, data,
                                     buf_func, buf_data, EINA_FALSE);
-   fdh->legacy = EINA_TRUE;
+   if (fdh) fdh->legacy = EINA_TRUE;
    return fdh;
 }
 
