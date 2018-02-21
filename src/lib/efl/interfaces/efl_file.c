@@ -7,8 +7,6 @@
 typedef struct _Efl_File_Data Efl_File_Data;
 struct _Efl_File_Data
 {
-   Eo *vo;
-
    Efl_Image_Load_Error error;
 };
 
@@ -22,11 +20,7 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key
 
    if (file)
      {
-        pd->vo = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-        efl_vpath_file_do(pd->vo);
-        // XXX:FIXME: allow this to be async
-        efl_vpath_file_wait(pd->vo);
-        file = efl_vpath_file_result_get(pd->vo);
+        file = eina_vpath_resolve(file);
      }
 
    if (file)
@@ -41,12 +35,8 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key
    if (f) eina_file_close(f);
 
  on_error:
-   if (pd->vo && (!efl_vpath_file_keep_get(pd->vo)))
-     {
-        efl_del(pd->vo);
-        pd->vo = NULL;
-     }
 
+   free(file);
    return r;
 }
 

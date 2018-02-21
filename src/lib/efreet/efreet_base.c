@@ -279,7 +279,6 @@ efreet_dirs_reset(void)
 static void
 efreet_dirs_init(void)
 {
-    Efl_Vpath_File *file_obj;
     char buf[PATH_MAX];
 
     /* efreet_home_dir */
@@ -309,10 +308,9 @@ efreet_dirs_init(void)
 #endif
 
     /* xdg_runtime_dir */
-    file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                       "(:run:)/");
-    xdg_runtime_dir = eina_stringshare_add(efl_vpath_file_result_get(file_obj));
-    efl_del(file_obj);
+    char *tmp = eina_vpath_resolve("(:usr.run:)/");
+    xdg_runtime_dir = eina_stringshare_add(tmp);
+    free(tmp);
 
     /* hostname */
     if (gethostname(buf, sizeof(buf)) < 0)

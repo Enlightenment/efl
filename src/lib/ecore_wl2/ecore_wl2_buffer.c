@@ -310,15 +310,15 @@ err:
 static Buffer_Handle *
 _wl_shm_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
 {
-   Efl_Vpath_File *file_obj;
    Eina_Tmpstr *fullname;
    size_t size = w * h * 4;
    void *out = NULL;
+   char *tmp;
 
-   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                      "(:run:)/evas-wayland_shm-XXXXXX");
-   *fd = eina_file_mkstemp(efl_vpath_file_result_get(file_obj), &fullname);
-   efl_del(file_obj);
+   tmp = eina_vpath_resolve("(:usr.run:)/evas-wayland_shm-XXXXXX");
+   *fd = eina_file_mkstemp(tmp, &fullname);
+   free(tmp);
+
    if (*fd < 0) return NULL;
 
    unlink(fullname);

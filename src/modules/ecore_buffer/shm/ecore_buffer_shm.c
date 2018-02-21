@@ -55,7 +55,6 @@ _ecore_buffer_shm_buffer_alloc(Ecore_Buffer_Module_Data bmdata, int width, int h
    Ecore_Buffer_Shm_Data* b;
    char *name;
    int fd, page_size;
-   Efl_Vpath_File *file_obj;
 
    page_size = eina_cpu_page_size();
 
@@ -68,10 +67,7 @@ _ecore_buffer_shm_buffer_alloc(Ecore_Buffer_Module_Data bmdata, int width, int h
    b->size = page_size * (((b->stride * b->h) + (page_size - 1)) / page_size);
    b->am_owner = EINA_TRUE;
 
-   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                      "(:run:)/ecore-buffer-shared-XXXXXX");
-   name = strdup(efl_vpath_file_result_get(file_obj));
-   efl_del(file_obj);
+   name = eina_vpath_resolve("(:usr.run:)/ecore-buffer-shared-XXXXXX");
    if (!name) goto err;
 
    fd = mkostemp(name, O_CLOEXEC);

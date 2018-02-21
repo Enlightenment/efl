@@ -122,8 +122,6 @@ static void _systemd_watchdog_cb(void *data, const Efl_Event *event);
 static Efl_Loop_Timer *_systemd_watchdog = NULL;
 #endif
 
-static Efl_Vpath *vpath = NULL;
-
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
 
@@ -278,9 +276,6 @@ ecore_init(void)
    if (!ecore_mempool_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
    if (!_ecore_event_init()) goto shutdown_event;
-
-   vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
-   if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
 
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
@@ -450,12 +445,6 @@ ecore_shutdown(void)
      _ecore_event_shutdown();
      _ecore_main_shutdown();
      _ecore_signal_shutdown();
-
-   if (vpath)
-     {
-        efl_del(vpath);
-        vpath = NULL;
-     }
 
      _ecore_main_loop_shutdown();
 

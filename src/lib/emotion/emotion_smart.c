@@ -69,7 +69,6 @@ struct _Efl_Canvas_Video_Data
 
    Ecore_Job     *job;
 
-   Efl_Vpath_File *file_obj;
    Emotion_Xattr_Data *xattr;
 
    const char *title;
@@ -372,35 +371,17 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
         _emotion_image_data_zero(sd->obj);
         sd->open = 0;
 
-        if (sd->file_obj)
-          {
-             efl_del(sd->file_obj);
-             sd->file_obj = NULL;
-          }
         if (file)
           {
-             sd->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-             efl_vpath_file_do(sd->file_obj);
-             // XXX:FIXME: allow this to be async
-             efl_vpath_file_wait(sd->file_obj);
-             file2 = efl_vpath_file_result_get(sd->file_obj);
+             file2 = eina_vpath_resolve(file);
           }
 
         if (!emotion_engine_instance_file_open(sd->engine_instance, file2))
           {
              WRN("Couldn't open file=%s", sd->file);
-             if (sd->file_obj)
-               {
-                  efl_del(sd->file_obj);
-                  sd->file_obj = NULL;
-               }
              return EINA_FALSE;
           }
-        if ((sd->file_obj) && (!efl_vpath_file_keep_get(sd->file_obj)))
-          {
-             efl_del(sd->file_obj);
-             sd->file_obj = NULL;
-          }
+        free(file2);
         DBG("successfully opened file=%s", sd->file);
         sd->pos = 0.0;
         if (sd->play) emotion_engine_instance_play(sd->engine_instance, 0.0);

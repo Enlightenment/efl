@@ -262,18 +262,13 @@ edje_file_collection_list(const char *file)
    Eina_List *lst;
 
    if ((!file) || (!*file)) return NULL;
-   Efl_Vpath_File *file_obj =
-     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-   efl_vpath_file_do(file_obj);
-   // XXX:FIXME: allow this to be async
-   efl_vpath_file_wait(file_obj);
-   file = efl_vpath_file_result_get(file_obj);
+   file = eina_vpath_resolve(file);
    f = eina_file_open(file, EINA_FALSE);
 
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
-   efl_del(file_obj);
+   free(file);
    return lst;
 }
 

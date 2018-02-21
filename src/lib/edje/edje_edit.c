@@ -256,16 +256,11 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
     *    groups).
     *  P.S. don't forget about mmap version below
     */
-   Efl_Vpath_File *file_obj =
-     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-   efl_vpath_file_do(file_obj);
-   // XXX:FIXME: allow this to be async
-   efl_vpath_file_wait(file_obj);
-   file = efl_vpath_file_result_get(file_obj);
+   file = eina_vpath_resolve(file);
 
    Eina_Bool int_ret;
    int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, group);
-   efl_del(file_obj);
+
    if (!int_ret)
      return EINA_FALSE;
 

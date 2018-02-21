@@ -318,7 +318,6 @@ eina_vpath_interface_app_set(const char *app_domain, Eina_Prefix *app_pfx)
 EAPI void
 eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user)
 {
-   char buf[PATH_MAX];
    Eina_Bool free_run = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(user);
