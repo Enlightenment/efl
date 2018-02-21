@@ -28,9 +28,18 @@ end
 
 local get_func_csig_part = function(cn, tp)
     if not tp then
-        return "public void " .. cn
+        return "void " .. cn
     end
-    return "public " .. dtree.type_cstr_get(tp, cn)
+
+    tpt = tp:type_get()
+
+    if tpt == tp.REGULAR or tpt == tp.CLASS then
+       return tp:full_name_get() .. " " .. cn
+    --elseif tpt == tp.COMPLEX
+       --return tp:name_get() .. " " .. cn
+    else
+       return "unknown"
+    end
 end
 
 local find_parent_impl
