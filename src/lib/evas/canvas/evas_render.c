@@ -3420,6 +3420,10 @@ evas_render_updates_internal(Evas *eo_e,
              int fy = e->framespace.y;
              int j;
 
+             DBG("Rendering output %p [%i, %i, %i, %i]\n", out,
+                 out->geometry.x, out->geometry.y,
+                 out->geometry.w, out->geometry.h);
+
              if (do_async) _evas_render_busy_begin();
              eina_evlog("+render_surface", eo_e, 0.0, NULL);
              while ((surface =
@@ -3435,6 +3439,9 @@ evas_render_updates_internal(Evas *eo_e,
                   /* adjust the rendering rectangle to the output offset */
                   ux += out->geometry.x;
                   uy += out->geometry.y;
+
+                  DBG("Surface %p offset: [%i, %i, %i, %i]\n", surface,
+                      ux, uy, uw, uh);
 
                   /* phase 7.1 render every snapshot that needs to be updated
                      for this part of the screen */
