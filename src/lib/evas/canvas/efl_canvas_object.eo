@@ -1,5 +1,5 @@
 import efl_text_types;
-import efl_animation_types;
+import efl_canvas_animation_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
@@ -584,7 +584,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
                [[The event description for which the given $animation is set.]]
          }
          values {
-            animation: Efl.Animation;
+            animation: Efl.Canvas.Animation;
                [[The animation which starts when the given $event_name
                  happens to the object.]]
          }

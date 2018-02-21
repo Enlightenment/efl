@@ -8088,4 +8088,15 @@ EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name,
  */
 EAPI Evas_Object *evas_object_event_grabber_add(Evas *e);
 #include "canvas/efl_canvas_object_event_grabber.eo.legacy.h"
+
+#include "canvas/efl_canvas_animation_alpha.eo.legacy.h"
+#include "canvas/efl_canvas_animation.eo.legacy.h"
+#include "canvas/efl_canvas_animation_group.eo.legacy.h"
+#include "canvas/efl_canvas_animation_group_parallel.eo.legacy.h"
+#include "canvas/efl_canvas_animation_group_sequential.eo.legacy.h"
+#include "canvas/efl_canvas_animation_player.eo.legacy.h"
+#include "canvas/efl_canvas_animation_rotate.eo.legacy.h"
+#include "canvas/efl_canvas_animation_scale.eo.legacy.h"
+#include "canvas/efl_canvas_animation_translate.eo.legacy.h"
+
 #endif

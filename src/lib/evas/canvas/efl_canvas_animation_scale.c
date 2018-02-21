@@ -1,12 +1,12 @@
-#include "efl_animation_scale_private.h"
+#include "efl_canvas_animation_scale_private.h"
 
-#define MY_CLASS EFL_ANIMATION_SCALE_CLASS
+#define MY_CLASS EFL_CANVAS_ANIMATION_SCALE_CLASS
 
-static Efl_Animation_Scale_Property
+static Efl_Canvas_Animation_Scale_Property
 _scale_get(Eo *target)
 {
    double x1, x2, x3, y1, y2, y3, w, h;
-   Efl_Animation_Scale_Property scale;
+   Efl_Canvas_Animation_Scale_Property scale;
    Eina_Rect geometry;
 
    geometry = efl_gfx_geometry_get(target);
@@ -24,8 +24,8 @@ _scale_get(Eo *target)
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
-                               Efl_Animation_Scale_Data *pd,
+_efl_canvas_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
+                               Efl_Canvas_Animation_Scale_Data *pd,
                                double from_scale_x,
                                double from_scale_y,
                                double to_scale_x,
@@ -48,8 +48,8 @@ _efl_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_get(Eo *eo_obj EINA_UNUSED,
-                               Efl_Animation_Scale_Data *pd,
+_efl_canvas_animation_scale_scale_get(Eo *eo_obj EINA_UNUSED,
+                               Efl_Canvas_Animation_Scale_Data *pd,
                                double *from_scale_x,
                                double *from_scale_y,
                                double *to_scale_x,
@@ -87,8 +87,8 @@ _efl_animation_scale_scale_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_absolute_set(Eo *eo_obj EINA_UNUSED,
-                                        Efl_Animation_Scale_Data *pd,
+_efl_canvas_animation_scale_scale_absolute_set(Eo *eo_obj EINA_UNUSED,
+                                        Efl_Canvas_Animation_Scale_Data *pd,
                                         double from_scale_x,
                                         double from_scale_y,
                                         double to_scale_x,
@@ -109,8 +109,8 @@ _efl_animation_scale_scale_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_absolute_get(Eo *eo_obj EINA_UNUSED,
-                                        Efl_Animation_Scale_Data *pd,
+_efl_canvas_animation_scale_scale_absolute_get(Eo *eo_obj EINA_UNUSED,
+                                        Efl_Canvas_Animation_Scale_Data *pd,
                                         double *from_scale_x,
                                         double *from_scale_y,
                                         double *to_scale_x,
@@ -144,13 +144,13 @@ _efl_animation_scale_scale_absolute_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_animation_scale_efl_animation_animation_apply(Eo *eo_obj,
-                                                   Efl_Animation_Scale_Data *pd,
+_efl_canvas_animation_scale_efl_canvas_animation_animation_apply(Eo *eo_obj,
+                                                   Efl_Canvas_Animation_Scale_Data *pd,
                                                    double progress,
                                                    Efl_Canvas_Object *target)
 {
-   Efl_Animation_Scale_Property prev_scale;
-   Efl_Animation_Scale_Property new_scale;
+   Efl_Canvas_Animation_Scale_Property prev_scale;
+   Efl_Canvas_Animation_Scale_Property new_scale;
 
    progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
    if (!target) return progress;
@@ -179,8 +179,8 @@ _efl_animation_scale_efl_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_animation_scale_efl_object_constructor(Eo *eo_obj,
-                                            Efl_Animation_Scale_Data *pd)
+_efl_canvas_animation_scale_efl_object_constructor(Eo *eo_obj,
+                                            Efl_Canvas_Animation_Scale_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -201,4 +201,4 @@ _efl_animation_scale_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_animation_scale.eo.c"
+#include "efl_canvas_animation_scale.eo.c"

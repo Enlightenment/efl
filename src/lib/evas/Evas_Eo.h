@@ -50,19 +50,19 @@
  * @}
  */
 
-#include "canvas/efl_animation_types.eot.h"
+#include "canvas/efl_canvas_animation_types.eot.h"
 
 #include "canvas/efl_canvas_object.eo.h"
 
-#include "canvas/efl_animation.eo.h"
-#include "canvas/efl_animation_alpha.eo.h"
-#include "canvas/efl_animation_rotate.eo.h"
-#include "canvas/efl_animation_scale.eo.h"
-#include "canvas/efl_animation_translate.eo.h"
-#include "canvas/efl_animation_group.eo.h"
-#include "canvas/efl_animation_group_parallel.eo.h"
-#include "canvas/efl_animation_group_sequential.eo.h"
-#include "canvas/efl_animation_player.eo.h"
+#include "canvas/efl_canvas_animation.eo.h"
+#include "canvas/efl_canvas_animation_alpha.eo.h"
+#include "canvas/efl_canvas_animation_rotate.eo.h"
+#include "canvas/efl_canvas_animation_scale.eo.h"
+#include "canvas/efl_canvas_animation_translate.eo.h"
+#include "canvas/efl_canvas_animation_group.eo.h"
+#include "canvas/efl_canvas_animation_group_parallel.eo.h"
+#include "canvas/efl_canvas_animation_group_sequential.eo.h"
+#include "canvas/efl_canvas_animation_player.eo.h"
 
 #endif /* EFL_EO_API_SUPPORT */
 

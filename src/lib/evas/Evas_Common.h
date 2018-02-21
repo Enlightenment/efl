@@ -3329,6 +3329,10 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
  */
 EAPI void                    evas_font_reinit(void);
 
+
+/* this is now public, non-beta api forever because someone didn't add a beta
+   api guard.
+ */
 #ifndef _EFL_ANIMATION_EO_CLASS_TYPE
 #define _EFL_ANIMATION_EO_CLASS_TYPE
 
@@ -3452,7 +3456,13 @@ struct _Efl_Animation_Player_Running_Event_Info
 #define EFL_ANIMATION_REPEAT_INFINITE -1
 #define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
+
+#ifdef EFL_BETA_API_SUPPORT
+struct _Efl_Canvas_Animation_Player_Running_Event_Info
+{
+   double progress;
+};
+#endif
 /**
  * @}
  */
-

@@ -1,0 +1,14 @@
+import efl_canvas_animation_types;
+
+class Efl.Canvas.Animation.Group.Parallel (Efl.Canvas.Animation.Group)
+{
+   [[Efl group parallel animation class]]
+   eo_prefix: efl_animation_group_parallel;
+   data: null;
+   methods {
+   }
+   implements {
+      Efl.Canvas.Animation.duration { get; }
+      Efl.Canvas.Animation.animation_apply;
+   }
+}

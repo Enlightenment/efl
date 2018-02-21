@@ -1,8 +1,9 @@
-import efl_animation_types;
+import efl_canvas_animation_types;
 
-class Efl.Animation (Efl.Object, Efl.Playable)
+class Efl.Canvas.Animation (Efl.Object, Efl.Playable)
 {
    [[Efl animation class]]
+   eo_prefix: efl_animation;
    methods {
       @property final_state_keep {
          [[Keep final state property]]
@@ -31,7 +32,7 @@ class Efl.Animation (Efl.Object, Efl.Playable)
          get {
          }
          values {
-            mode: Efl.Animation.Repeat_Mode; [[Repeat mode. EFL_ANIMATION_REPEAT_MODE_RESTART restarts animation when the animation ends and EFL_ANIMATION_REPEAT_MODE_REVERSE reverses animation when the animation ends.]]
+            mode: Efl.Canvas.Animation.Repeat_Mode; [[Repeat mode. EFL_ANIMATION_REPEAT_MODE_RESTART restarts animation when the animation ends and EFL_ANIMATION_REPEAT_MODE_REVERSE reverses animation when the animation ends.]]
          }
       }
       @property repeat_count {

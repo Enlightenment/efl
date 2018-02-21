@@ -45,7 +45,7 @@ typedef struct _Event_Animation
 
    const Efl_Event_Description *desc;
 
-   Efl_Animation               *anim;
+   Efl_Canvas_Animation               *anim;
 } Event_Animation;
 
 static Eina_Bool
@@ -2460,13 +2460,13 @@ EOLIAN void
 _efl_canvas_object_event_animation_set(Eo *eo_obj,
                                        Evas_Object_Protected_Data *pd,
                                        const Efl_Event_Description *desc,
-                                       Efl_Animation *animation)
+                                       Efl_Canvas_Animation *animation)
 {
    Event_Animation *event_anim = _event_animation_find(pd, desc);
 
    if (!pd->anim_player)
      {
-        pd->anim_player = efl_add(EFL_ANIMATION_PLAYER_CLASS, eo_obj,
+        pd->anim_player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, eo_obj,
                                   efl_animation_player_target_set(efl_added, eo_obj));
      }
 
@@ -2504,7 +2504,7 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
       eina_inlist_append(pd->event_anims, EINA_INLIST_GET(event_anim));
 }
 
-EOLIAN Efl_Animation *
+EOLIAN Efl_Canvas_Animation *
 _efl_canvas_object_event_animation_get(Eo *eo_obj EINA_UNUSED,
                                        Evas_Object_Protected_Data *pd,
                                        const Efl_Event_Description *desc)

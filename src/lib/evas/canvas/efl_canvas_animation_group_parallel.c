@@ -1,9 +1,9 @@
-#include "efl_animation_group_parallel_private.h"
+#include "efl_canvas_animation_group_parallel_private.h"
 
-#define MY_CLASS EFL_ANIMATION_GROUP_PARALLEL_CLASS
+#define MY_CLASS EFL_CANVAS_ANIMATION_GROUP_PARALLEL_CLASS
 
 EOLIAN static double
-_efl_animation_group_parallel_efl_animation_animation_apply(Eo *eo_obj,
+_efl_canvas_animation_group_parallel_efl_canvas_animation_animation_apply(Eo *eo_obj,
                                                             void *_pd EINA_UNUSED,
                                                             double progress,
                                                             Efl_Canvas_Object *target)
@@ -20,7 +20,7 @@ _efl_animation_group_parallel_efl_animation_animation_apply(Eo *eo_obj,
    group_elapsed_time = group_length * progress;
 
    Eina_List *l;
-   Efl_Animation *anim;
+   Efl_Canvas_Animation *anim;
    EINA_LIST_FOREACH(group_anim, l, anim)
      {
         anim_length = efl_playable_length_get(anim);
@@ -53,7 +53,7 @@ _efl_animation_group_parallel_efl_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static double
-_efl_animation_group_parallel_efl_animation_duration_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_animation_group_parallel_efl_canvas_animation_duration_get(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    double child_total_duration;
    double total_duration = 0.0;
@@ -62,7 +62,7 @@ _efl_animation_group_parallel_efl_animation_duration_get(Eo *eo_obj, void *_pd E
    if (!animations) return 0.0;
 
    Eina_List *l;
-   Efl_Animation *anim;
+   Efl_Canvas_Animation *anim;
    EINA_LIST_FOREACH(animations, l, anim)
      {
         child_total_duration = efl_playable_length_get(anim);
@@ -74,4 +74,4 @@ _efl_animation_group_parallel_efl_animation_duration_get(Eo *eo_obj, void *_pd E
    return total_duration;
 }
 
-#include "efl_animation_group_parallel.eo.c"
+#include "efl_canvas_animation_group_parallel.eo.c"

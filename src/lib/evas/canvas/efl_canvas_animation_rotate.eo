@@ -1,9 +1,10 @@
-import efl_animation_types;
+import efl_canvas_animation_types;
 
-class Efl.Animation.Rotate (Efl.Animation)
+class Efl.Canvas.Animation.Rotate (Efl.Canvas.Animation)
 {
    [[Efl rotate animation class]]
-   data: Efl_Animation_Rotate_Data;
+   eo_prefix: efl_animation_rotate;
+   data: Efl_Canvas_Animation_Rotate_Data;
    methods {
       @property rotate {
          [[Rotate property]]
@@ -35,6 +36,6 @@ class Efl.Animation.Rotate (Efl.Animation)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Animation.animation_apply;
+      Efl.Canvas.Animation.animation_apply;
    }
 }

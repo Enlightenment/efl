@@ -1,6 +1,6 @@
-#include "efl_animation_translate_private.h"
+#include "efl_canvas_animation_translate_private.h"
 
-#define MY_CLASS EFL_ANIMATION_TRANSLATE_CLASS
+#define MY_CLASS EFL_CANVAS_ANIMATION_TRANSLATE_CLASS
 
 typedef struct __Translate_Property_Double
 {
@@ -26,8 +26,8 @@ _translation_get(Eo *target)
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
-                                       Efl_Animation_Translate_Data *pd,
+_efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
+                                       Efl_Canvas_Animation_Translate_Data *pd,
                                        Evas_Coord from_x,
                                        Evas_Coord from_y,
                                        Evas_Coord to_x,
@@ -43,8 +43,8 @@ _efl_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_get(Eo *eo_obj EINA_UNUSED,
-                                       Efl_Animation_Translate_Data *pd,
+_efl_canvas_animation_translate_translate_get(Eo *eo_obj EINA_UNUSED,
+                                       Efl_Canvas_Animation_Translate_Data *pd,
                                        Evas_Coord *from_x,
                                        Evas_Coord *from_y,
                                        Evas_Coord *to_x,
@@ -68,8 +68,8 @@ _efl_animation_translate_translate_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
-                                                Efl_Animation_Translate_Data *pd,
+_efl_canvas_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
+                                                Efl_Canvas_Animation_Translate_Data *pd,
                                                 Evas_Coord from_x,
                                                 Evas_Coord from_y,
                                                 Evas_Coord to_x,
@@ -85,8 +85,8 @@ _efl_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_absolute_get(Eo *eo_obj EINA_UNUSED,
-                                                Efl_Animation_Translate_Data *pd,
+_efl_canvas_animation_translate_translate_absolute_get(Eo *eo_obj EINA_UNUSED,
+                                                Efl_Canvas_Animation_Translate_Data *pd,
                                                 Evas_Coord *from_x,
                                                 Evas_Coord *from_y,
                                                 Evas_Coord *to_x,
@@ -110,8 +110,8 @@ _efl_animation_translate_translate_absolute_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_animation_translate_efl_animation_animation_apply(Eo *eo_obj,
-                                                       Efl_Animation_Translate_Data *pd,
+_efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
+                                                       Efl_Canvas_Animation_Translate_Data *pd,
                                                        double progress,
                                                        Efl_Canvas_Object *target)
 {
@@ -139,8 +139,8 @@ _efl_animation_translate_efl_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Object *
-_efl_animation_translate_efl_object_constructor(Eo *eo_obj,
-                                                Efl_Animation_Translate_Data *pd)
+_efl_canvas_animation_translate_efl_object_constructor(Eo *eo_obj,
+                                                Efl_Canvas_Animation_Translate_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -159,4 +159,4 @@ _efl_animation_translate_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_animation_translate.eo.c"
+#include "efl_canvas_animation_translate.eo.c"

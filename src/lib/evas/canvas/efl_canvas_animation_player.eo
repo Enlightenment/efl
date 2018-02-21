@@ -1,14 +1,15 @@
-import efl_animation_types;
+import efl_canvas_animation_types;
 
-class Efl.Animation.Player (Efl.Object, Efl.Player)
+class Efl.Canvas.Animation.Player (Efl.Object, Efl.Player)
 {
    [[Efl animation object class]]
+   eo_prefix: efl_animation_player;
    methods {
       @property animation {
          set {}
          get {}
          values {
-            animation: Efl.Animation;
+            animation: Efl.Canvas.Animation;
          }
       }
       @property auto_del {

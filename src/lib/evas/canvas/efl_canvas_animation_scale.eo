@@ -1,9 +1,10 @@
-import efl_animation_types;
+import efl_canvas_animation_types;
 
-class Efl.Animation.Scale (Efl.Animation)
+class Efl.Canvas.Animation.Scale (Efl.Canvas.Animation)
 {
    [[Efl scale animation class]]
-   data: Efl_Animation_Scale_Data;
+   eo_prefix: efl_animation_scale;
+   data: Efl_Canvas_Animation_Scale_Data;
    methods {
       @property scale {
          [[Scale property]]
@@ -39,6 +40,6 @@ class Efl.Animation.Scale (Efl.Animation)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Animation.animation_apply;
+      Efl.Canvas.Animation.animation_apply;
    }
 }
