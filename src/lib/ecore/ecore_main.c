@@ -136,6 +136,7 @@ struct _Ecore_Fd_Handler
    Eina_Bool               error_active : 1;
    Eina_Bool               delete_me : 1;
    Eina_Bool               file : 1;
+   Eina_Bool               legacy : 1;
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Fd_Handler);
 
@@ -1374,6 +1375,7 @@ ecore_main_fd_handler_add(int                    fd,
    fdh = _ecore_main_fd_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
                                     ML_DAT, NULL, fd, flags, func, data,
                                     buf_func, buf_data, EINA_FALSE);
+   fdh->legacy = EINA_TRUE;
    return fdh;
 }
 
@@ -1615,7 +1617,7 @@ _ecore_main_content_clear(Efl_Loop_Data *pd)
         pd->fd_handlers = (Ecore_Fd_Handler *)
           eina_inlist_remove(EINA_INLIST_GET(pd->fd_handlers),
                              EINA_INLIST_GET(fdh));
-        if (fdh->handler) efl_del(fdh->handler);
+        if ((fdh->handler) && (fdh->legacy)) efl_del(fdh->handler);
         else
           {
 // XXX: can't do this because this fd handler is legacy and might
