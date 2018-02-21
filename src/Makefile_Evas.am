@@ -55,12 +55,12 @@ evas_canvas_eolian_pub_files = \
 	$(NULL)
 
 evas_gesture_eolian_pub_files = \
-	lib/evas/gesture/efl_gesture_touch.eo \
-	lib/evas/gesture/efl_gesture.eo \
-	lib/evas/gesture/efl_gesture_tap.eo \
-	lib/evas/gesture/efl_gesture_long_tap.eo \
-	lib/evas/gesture/efl_gesture_recognizer.eo \
-	lib/evas/gesture/efl_gesture_manager.eo \
+	lib/evas/gesture/efl_canvas_gesture_touch.eo \
+	lib/evas/gesture/efl_canvas_gesture.eo \
+	lib/evas/gesture/efl_canvas_gesture_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_long_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer.eo \
+	lib/evas/gesture/efl_canvas_gesture_manager.eo \
 	$(NULL)
 
 evas_eolian_legacy_files = \
@@ -78,15 +78,15 @@ evas_canvas_eolian_priv_files = \
 	lib/evas/include/evas_ector_buffer.eo
 
 evas_gesture_eolian_priv_files = \
-	lib/evas/gesture/efl_gesture_recognizer_tap.eo \
-	lib/evas/gesture/efl_gesture_recognizer_long_tap.eo
+	lib/evas/gesture/efl_canvas_gesture_recognizer_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.eo
 
 evas_canvas_eolian_type_files = \
     lib/evas/canvas/evas_canvas3d_types.eot \
     lib/evas/canvas/efl_canvas_animation_types.eot
 
 evas_gesture_eolian_type_files = \
-    lib/evas/gesture/efl_gesture_types.eot
+    lib/evas/gesture/efl_canvas_gesture_types.eot
 
 evas_canvas_eolian_priv_c = $(evas_canvas_eolian_priv_files:%.eo=%.eo.c)
 evas_canvas_eolian_priv_h = $(evas_canvas_eolian_priv_files:%.eo=%.eo.h) \
@@ -182,7 +182,7 @@ lib/evas/canvas/efl_canvas_animation_group_parallel_private.h \
 lib/evas/canvas/efl_canvas_animation_group_sequential_private.h \
 lib/evas/canvas/efl_canvas_animation_player_private.h \
 lib/evas/canvas/evas_stack.x \
-lib/evas/gesture/efl_gesture_private.h
+lib/evas/gesture/efl_canvas_gesture_private.h
 
 # Linebreak
 
@@ -276,14 +276,14 @@ lib/evas/canvas/efl_canvas_animation_group.c \
 lib/evas/canvas/efl_canvas_animation_group_parallel.c \
 lib/evas/canvas/efl_canvas_animation_group_sequential.c \
 lib/evas/canvas/efl_canvas_animation_player.c \
-lib/evas/gesture/efl_gesture_touch.c \
-lib/evas/gesture/efl_gesture.c \
-lib/evas/gesture/efl_gesture_tap.c \
-lib/evas/gesture/efl_gesture_long_tap.c \
-lib/evas/gesture/efl_gesture_recognizer.c \
-lib/evas/gesture/efl_gesture_recognizer_tap.c \
-lib/evas/gesture/efl_gesture_recognizer_long_tap.c \
-lib/evas/gesture/efl_gesture_manager.c \
+lib/evas/gesture/efl_canvas_gesture_touch.c \
+lib/evas/gesture/efl_canvas_gesture.c \
+lib/evas/gesture/efl_canvas_gesture_tap.c \
+lib/evas/gesture/efl_canvas_gesture_long_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.c \
+lib/evas/gesture/efl_canvas_gesture_manager.c \
 $(NULL)
 
 EXTRA_DIST2 += \

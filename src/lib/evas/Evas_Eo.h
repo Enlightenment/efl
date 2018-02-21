@@ -321,11 +321,11 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #endif /* EFL_EO_API_SUPPORT */
 
 #ifdef EFL_EO_API_SUPPORT
-# include "gesture/efl_gesture_types.eot.h"
-# include "gesture/efl_gesture_touch.eo.h"
-# include "gesture/efl_gesture.eo.h"
-# include "gesture/efl_gesture_tap.eo.h"
-# include "gesture/efl_gesture_long_tap.eo.h"
-# include "gesture/efl_gesture_recognizer.eo.h"
-# include "gesture/efl_gesture_manager.eo.h"
+# include "gesture/efl_canvas_gesture_types.eot.h"
+# include "gesture/efl_canvas_gesture_touch.eo.h"
+# include "gesture/efl_canvas_gesture.eo.h"
+# include "gesture/efl_canvas_gesture_tap.eo.h"
+# include "gesture/efl_canvas_gesture_long_tap.eo.h"
+# include "gesture/efl_canvas_gesture_recognizer.eo.h"
+# include "gesture/efl_canvas_gesture_manager.eo.h"
 #endif /* EFL_EO_API_SUPPORT */

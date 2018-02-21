@@ -1,20 +1,20 @@
-#include "efl_gesture_private.h"
+#include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_GESTURE_RECOGNIZER_LONG_TAP_CLASS
+#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS
 
 #define LONG_TAP_TIME_OUT 0.2
 
-EOLIAN static Efl_Gesture *
-_efl_gesture_recognizer_long_tap_efl_gesture_recognizer_create(Eo *obj, void *pd EINA_UNUSED,
+EOLIAN static Efl_Canvas_Gesture *
+_efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_create(Eo *obj, void *pd EINA_UNUSED,
                                                                Efl_Object *target EINA_UNUSED)
 {
-   return efl_add(EFL_GESTURE_LONG_TAP_CLASS, obj);
+   return efl_add(EFL_CANVAS_GESTURE_LONG_TAP_CLASS, obj);
 }
 
 static Eina_Bool
 _long_tap_timeout_cb(void *data)
 {
-   Efl_Gesture_Long_Tap_Data *ltp = data;
+   Efl_Canvas_Gesture_Long_Tap_Data *ltp = data;
 
    /* FIXME: Needs to propagate this event back to evas! */
    ltp->is_timeout = EINA_TRUE;
@@ -22,16 +22,16 @@ _long_tap_timeout_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-EOLIAN static Efl_Gesture_Recognizer_Result
-_efl_gesture_recognizer_long_tap_efl_gesture_recognizer_recognize(Eo *obj EINA_UNUSED,
+EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
+_efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_recognize(Eo *obj EINA_UNUSED,
                                                                   void *pd EINA_UNUSED,
-                                                                  Efl_Gesture *gesture, Efl_Object *watched EINA_UNUSED,
-                                                                  Efl_Gesture_Touch *event)
+                                                                  Efl_Canvas_Gesture *gesture, Efl_Object *watched EINA_UNUSED,
+                                                                  Efl_Canvas_Gesture_Touch *event)
 {
    double length; // Manhattan distance
    Eina_Vector2 pos, dist;
-   Efl_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
-   Efl_Gesture_Long_Tap_Data *ltp = efl_data_scope_get(gesture, EFL_GESTURE_LONG_TAP_CLASS);
+   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
+   Efl_Canvas_Gesture_Long_Tap_Data *ltp = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_LONG_TAP_CLASS);
 
    switch (efl_gesture_touch_state_get(event))
      {
@@ -99,12 +99,12 @@ _efl_gesture_recognizer_long_tap_efl_gesture_recognizer_recognize(Eo *obj EINA_U
 }
 
 EOLIAN static void
-_efl_gesture_recognizer_long_tap_efl_gesture_recognizer_reset(Eo *obj,
+_efl_canvas_gesture_recognizer_long_tap_efl_canvas_gesture_recognizer_reset(Eo *obj,
                                                               void *pd EINA_UNUSED,
-                                                              Efl_Gesture *gesture)
+                                                              Efl_Canvas_Gesture *gesture)
 {
-   Efl_Gesture_Long_Tap_Data *ltp;
-   ltp = efl_data_scope_get(gesture, EFL_GESTURE_LONG_TAP_CLASS);
+   Efl_Canvas_Gesture_Long_Tap_Data *ltp;
+   ltp = efl_data_scope_get(gesture, EFL_CANVAS_GESTURE_LONG_TAP_CLASS);
    if (ltp->timeout)
      ecore_timer_del(ltp->timeout);
    ltp->timeout = NULL;
@@ -112,4 +112,4 @@ _efl_gesture_recognizer_long_tap_efl_gesture_recognizer_reset(Eo *obj,
    efl_gesture_recognizer_reset(efl_super(obj, MY_CLASS), gesture);
 }
 
-#include "efl_gesture_recognizer_long_tap.eo.c"
+#include "efl_canvas_gesture_recognizer_long_tap.eo.c"

@@ -1905,9 +1905,9 @@ Eina_List *_evas_pointer_list_in_rect_get(Evas_Public_Data *edata,
 void efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output);
 
 // Gesture Manager
-void _efl_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
-void _efl_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
-void _efl_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
+void _efl_canvas_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
 
 
 extern Eina_Cow *evas_object_proxy_cow;

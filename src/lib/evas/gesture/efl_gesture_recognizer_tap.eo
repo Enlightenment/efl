@@ -1,9 +1,0 @@
-class Efl.Gesture.Recognizer_Tap (Efl.Gesture.Recognizer)
-{
-   [[EFL Gesture Recognizer Tap class]]
-   data: null;
-   implements {
-      Efl.Gesture.Recognizer.create;
-      Efl.Gesture.Recognizer.recognize;
-   }
-}

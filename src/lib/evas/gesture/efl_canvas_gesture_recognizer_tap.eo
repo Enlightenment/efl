@@ -1,0 +1,10 @@
+class Efl.Canvas.Gesture.Recognizer_Tap (Efl.Canvas.Gesture.Recognizer)
+{
+   [[EFL Gesture Recognizer Tap class]]
+   data: null;
+   eo_prefix: efl_gesture_recognizer_tap;
+   implements {
+      Efl.Canvas.Gesture.Recognizer.create;
+      Efl.Canvas.Gesture.Recognizer.recognize;
+   }
+}

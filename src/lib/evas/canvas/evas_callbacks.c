@@ -385,7 +385,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         type == EVAS_CALLBACK_MULTI_DOWN ||
         type == EVAS_CALLBACK_MOUSE_UP ||
         type == EVAS_CALLBACK_MULTI_UP)
-     _efl_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
+     _efl_canvas_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
 
    if (!_evas_object_callback_has_by_type(obj, type))
      goto nothing_here;
@@ -708,7 +708,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_gesture_manager_callback_add_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+          _efl_canvas_gesture_manager_callback_add_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
 
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
@@ -735,7 +735,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_gesture_manager_callback_del_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+          _efl_canvas_gesture_manager_callback_del_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
 
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {

@@ -1,15 +1,16 @@
-import efl_gesture_types;
+import efl_canvas_gesture_types;
 
-abstract Efl.Gesture.Recognizer (Efl.Object)
+abstract Efl.Canvas.Gesture.Recognizer (Efl.Object)
 {
    [[EFL Gesture Recognizer abstract class]]
+   eo_prefix: efl_gesture_recognizer;
    methods {
       create @pure_virtual {
-         [[This function is called to create a new Efl.Gesture object for the given target]]
+         [[This function is called to create a new Efl.Canvas.Gesture object for the given target]]
          params {
             @in target: Efl.Object; [[The target widget]]
          }
-         return: Efl.Gesture; [[Returns the Efl.Gesture event object]]
+         return: Efl.Canvas.Gesture; [[Returns the Efl.Canvas.Gesture event object]]
       }
       recognize @pure_virtual {
          [[Handles the given event for the watched object.
@@ -18,17 +19,17 @@ abstract Efl.Gesture.Recognizer (Efl.Object)
            suitable result for the current recognition step.
          ]]
          params {
-            @in gesture: Efl.Gesture; [[The gesture object]]
+            @in gesture: Efl.Canvas.Gesture; [[The gesture object]]
             @in watched: Efl.Object; [[The watched object]]
-            @in event: Efl.Gesture.Touch; [[The pointer event]]
+            @in event: Efl.Canvas.Gesture.Touch; [[The pointer event]]
          }
-         return: Efl.Gesture.Recognizer_Result; [[Returns the Efl.Gesture event object]]
+         return: Efl.Canvas.Gesture.Recognizer_Result; [[Returns the Efl.Canvas.Gesture event object]]
       }
       /* FIXME: This function is not used? */
       reset {
          [[This function is called by the framework to reset a given gesture.]]
          params {
-            @in gesture: Efl.Gesture; [[The gesture object]]
+            @in gesture: Efl.Canvas.Gesture; [[The gesture object]]
          }
       }
       @property config {

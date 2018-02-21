@@ -227,7 +227,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
-   e->gesture_manager = efl_add(EFL_GESTURE_MANAGER_CLASS, eo_obj);
+   e->gesture_manager = efl_add(EFL_CANVAS_GESTURE_MANAGER_CLASS, eo_obj);
 
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
@@ -843,7 +843,7 @@ _evas_canvas_efl_object_provider_find(const Eo *eo_e,
      return (Eo *)eo_e;
    else if (klass == EFL_LOOP_CLASS)
      return efl_main_loop_get();
-   else if (klass == EFL_GESTURE_MANAGER_CLASS)
+   else if (klass == EFL_CANVAS_GESTURE_MANAGER_CLASS)
      return e->gesture_manager;
    return efl_provider_find(efl_super(eo_e, MY_CLASS), klass);
 }

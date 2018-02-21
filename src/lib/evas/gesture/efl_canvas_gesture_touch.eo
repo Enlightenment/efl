@@ -1,11 +1,12 @@
-import efl_gesture_types;
+import efl_canvas_gesture_types;
 import efl_input_types;
 
 /* FIXME: This class lacks a lot of useful helpers. */
 
-class Efl.Gesture.Touch(Efl.Object)
+class Efl.Canvas.Gesture.Touch(Efl.Object)
 {
    [[EFL Gesture Touch class]]
+   eo_prefix: efl_gesture_touch;
    methods {
       point_record {
          [[Touch point record method]]
@@ -47,7 +48,7 @@ class Efl.Gesture.Touch(Efl.Object)
       @property state {
          [[This property holds the state of the touch event.]]
          get {
-            return : Efl.Gesture.Touch.State; [[touch event state]]
+            return : Efl.Canvas.Gesture.Touch.State; [[touch event state]]
          }
       }
       /* FIXME: finger_list was broken by design - TODO */

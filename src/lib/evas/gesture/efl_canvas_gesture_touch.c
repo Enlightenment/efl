@@ -1,6 +1,6 @@
-#include "efl_gesture_private.h"
+#include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_GESTURE_TOUCH_CLASS
+#define MY_CLASS EFL_CANVAS_GESTURE_TOUCH_CLASS
 
 typedef struct _Pointer_Data
 {
@@ -12,14 +12,14 @@ typedef struct _Pointer_Data
    Efl_Pointer_Action action;
 } Pointer_Data;
 
-typedef struct _Efl_Gesture_Touch_Data
+typedef struct _Efl_Canvas_Gesture_Touch_Data
 {
-   Efl_Gesture_Touch_State state;
+   Efl_Canvas_Gesture_Touch_State state;
    Eina_Hash              *touch_points;
    int                     touch_down;
    Eina_Bool               multi_touch;
    Eo                     *target;
-} Efl_Gesture_Touch_Data;
+} Efl_Canvas_Gesture_Touch_Data;
 
 
 // This event object accumulates all the touch points
@@ -32,7 +32,7 @@ static void _hash_free_cb(Pointer_Data *point)
 }
 
 static inline void
-_touch_points_reset(Efl_Gesture_Touch_Data *pd)
+_touch_points_reset(Efl_Canvas_Gesture_Touch_Data *pd)
 {
    eina_hash_free(pd->touch_points);
    pd->touch_points = eina_hash_int32_new(EINA_FREE_CB(_hash_free_cb));
@@ -41,7 +41,7 @@ _touch_points_reset(Efl_Gesture_Touch_Data *pd)
 }
 
 EOLIAN static Efl_Object *
-_efl_gesture_touch_efl_object_constructor(Eo *obj, Efl_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    _touch_points_reset(pd);
@@ -49,20 +49,20 @@ _efl_gesture_touch_efl_object_constructor(Eo *obj, Efl_Gesture_Touch_Data *pd)
 }
 
 EOLIAN static void
-_efl_gesture_touch_efl_object_destructor(Eo *obj, Efl_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    eina_hash_free(pd->touch_points);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Gesture_Touch_State
-_efl_gesture_touch_state_get(Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd)
+EOLIAN static Efl_Canvas_Gesture_Touch_State
+_efl_canvas_gesture_touch_state_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    return pd->state;
 }
 
 EOLIAN static void
-_efl_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd,
+_efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd,
                                 int id, Eina_Vector2 pos, double timestamp, Efl_Pointer_Action action)
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &id);
@@ -122,13 +122,13 @@ bad_fingers:
 }
 
 EOLIAN static Eina_Bool
-_efl_gesture_touch_multi_touch_get(Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_multi_touch_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    return pd->multi_touch;
 }
 
 EOLIAN static Eina_Vector2
-_efl_gesture_touch_start_point_get(Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_start_point_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    int tool = 0;
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
@@ -141,7 +141,7 @@ _efl_gesture_touch_start_point_get(Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *
 }
 
 EOLIAN static Eina_Vector2
-_efl_gesture_touch_delta(const Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd, int tool)
+_efl_canvas_gesture_touch_delta(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd, int tool)
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
    Eina_Vector2 vec = { 0, 0 };
@@ -154,7 +154,7 @@ _efl_gesture_touch_delta(const Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd, 
 }
 
 EOLIAN static Eina_Vector2
-_efl_gesture_touch_distance(const Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *pd, int tool)
+_efl_canvas_gesture_touch_distance(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd, int tool)
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
    Eina_Vector2 vec = { 0, 0 };
@@ -166,4 +166,4 @@ _efl_gesture_touch_distance(const Eo *obj EINA_UNUSED, Efl_Gesture_Touch_Data *p
    return vec;
 }
 
-#include "efl_gesture_touch.eo.c"
+#include "efl_canvas_gesture_touch.eo.c"

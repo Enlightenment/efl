@@ -1,8 +1,9 @@
-import efl_gesture_types;
+import efl_canvas_gesture_types;
 
-abstract Efl.Gesture(Efl.Object)
+abstract Efl.Canvas.Gesture(Efl.Object)
 {
    [[EFL Gesture abstract class]]
+   eo_prefix: efl_gesture;
    methods {
       @property type {
          [[This property holds the type of the gesture.]]
@@ -19,7 +20,7 @@ abstract Efl.Gesture(Efl.Object)
          set {
          }
          values {
-            state: Efl.Gesture.State; [[gesture state]]
+            state: Efl.Canvas.Gesture.State; [[gesture state]]
          }
       }
       @property hotspot {

@@ -1,23 +1,23 @@
-#include "efl_gesture_private.h"
+#include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_GESTURE_RECOGNIZER_TAP_CLASS
+#define MY_CLASS EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS
 
-EOLIAN static Efl_Gesture *
-_efl_gesture_recognizer_tap_efl_gesture_recognizer_create(Eo *obj, void *pd EINA_UNUSED,
+EOLIAN static Efl_Canvas_Gesture *
+_efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_create(Eo *obj, void *pd EINA_UNUSED,
                                                           Efl_Object *target EINA_UNUSED)
 {
-   return efl_add(EFL_GESTURE_TAP_CLASS, obj);
+   return efl_add(EFL_CANVAS_GESTURE_TAP_CLASS, obj);
 }
 
-EOLIAN static Efl_Gesture_Recognizer_Result
-_efl_gesture_recognizer_tap_efl_gesture_recognizer_recognize(Eo *obj EINA_UNUSED,
+EOLIAN static Efl_Canvas_Gesture_Recognizer_Result
+_efl_canvas_gesture_recognizer_tap_efl_canvas_gesture_recognizer_recognize(Eo *obj EINA_UNUSED,
                                                              void *pd EINA_UNUSED,
-                                                             Efl_Gesture *gesture, Efl_Object *watched EINA_UNUSED,
-                                                             Efl_Gesture_Touch *event EINA_UNUSED)
+                                                             Efl_Canvas_Gesture *gesture, Efl_Object *watched EINA_UNUSED,
+                                                             Efl_Canvas_Gesture_Touch *event EINA_UNUSED)
 {
    double length;
    Eina_Vector2 pos, dist;
-   Efl_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
+   Efl_Canvas_Gesture_Recognizer_Result result = EFL_GESTURE_CANCEL;
 
    switch (efl_gesture_touch_state_get(event))
      {
@@ -52,4 +52,4 @@ _efl_gesture_recognizer_tap_efl_gesture_recognizer_recognize(Eo *obj EINA_UNUSED
    return result;
 }
 
-#include "efl_gesture_recognizer_tap.eo.c"
+#include "efl_canvas_gesture_recognizer_tap.eo.c"

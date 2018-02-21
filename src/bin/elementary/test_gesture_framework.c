@@ -173,7 +173,7 @@ _color_and_icon_set(infra_data *infra, char *name, int n, int max,
 
 /* START - Callbacks for gestures */
 static void
-finger_tap_start(void *data , Efl_Gesture *tap)
+finger_tap_start(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
@@ -182,13 +182,13 @@ finger_tap_start(void *data , Efl_Gesture *tap)
 }
 
 static void
-finger_tap_update(void *data , Efl_Gesture *tap EINA_UNUSED)
+finger_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 {
    _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
 }
 
 static void
-finger_tap_end(void *data , Efl_Gesture *tap)
+finger_tap_end(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
@@ -197,14 +197,14 @@ finger_tap_end(void *data , Efl_Gesture *tap)
 }
 
 static void
-finger_tap_abort(void *data , Efl_Gesture *tap EINA_UNUSED)
+finger_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 {
    _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, ABORT_COLOR);
    printf("Tap Aborted\n");
 }
 
 static void
-finger_long_tap_start(void *data , Efl_Gesture *tap)
+finger_long_tap_start(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
@@ -213,14 +213,14 @@ finger_long_tap_start(void *data , Efl_Gesture *tap)
 }
 
 static void
-finger_long_tap_update(void *data , Efl_Gesture *tap EINA_UNUSED)
+finger_long_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 {
    _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
    printf("Long Tap Gesture updated\n");
 }
 
 static void
-finger_long_tap_end(void *data , Efl_Gesture *tap)
+finger_long_tap_end(void *data , Efl_Canvas_Gesture *tap)
 {
    Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
@@ -229,7 +229,7 @@ finger_long_tap_end(void *data , Efl_Gesture *tap)
 }
 
 static void
-finger_long_tap_abort(void *data , Efl_Gesture *tap EINA_UNUSED)
+finger_long_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 {
    _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, ABORT_COLOR);
    printf("Long Tap Aborted\n");
@@ -238,7 +238,7 @@ finger_long_tap_abort(void *data , Efl_Gesture *tap EINA_UNUSED)
 static void
 tap_gesture_cb(void *data , const Efl_Event *ev)
 {
-   Efl_Gesture *g = ev->info;
+   Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
       case EFL_GESTURE_STARTED:
@@ -261,7 +261,7 @@ tap_gesture_cb(void *data , const Efl_Event *ev)
 static void
 long_tap_gesture_cb(void *data , const Efl_Event *ev)
 {
-   Efl_Gesture *g = ev->info;
+   Efl_Canvas_Gesture *g = ev->info;
    switch(efl_gesture_state_get(g))
    {
       case EFL_GESTURE_STARTED:

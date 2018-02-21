@@ -1,16 +1,16 @@
-#include "efl_gesture_private.h"
+#include "efl_canvas_gesture_private.h"
 
-#define MY_CLASS EFL_GESTURE_MANAGER_CLASS
+#define MY_CLASS EFL_CANVAS_GESTURE_MANAGER_CLASS
 
 typedef struct _Object_Gesture
 {
    Eo                             *object;
    const Efl_Event_Description    *type;
-   Efl_Gesture                    *gesture;
-   Efl_Gesture_Recognizer         *recognizer;
+   Efl_Canvas_Gesture                    *gesture;
+   Efl_Canvas_Gesture_Recognizer         *recognizer;
 }Object_Gesture;
 
-typedef struct _Efl_Gesture_Manager_Data
+typedef struct _Efl_Canvas_Gesture_Manager_Data
 {
    // keeps track of all the gesture request for a particular target
    Eina_Hash    *m_gesture_contex;  // (*target, *event_desc)
@@ -24,13 +24,13 @@ typedef struct _Efl_Gesture_Manager_Data
    Eina_List    *m_gestures_to_delete;
 
    Eina_Hash    *m_config;
-} Efl_Gesture_Manager_Data;
+} Efl_Canvas_Gesture_Manager_Data;
 
-static void _cleanup_cached_gestures(Efl_Gesture_Manager_Data *pd,
+static void _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
                                      Eo *target, const Efl_Event_Description *type);
-static Efl_Gesture*
-_get_state(Efl_Gesture_Manager_Data *pd, Eo *target,
-                       Efl_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
+static Efl_Canvas_Gesture*
+_get_state(Efl_Canvas_Gesture_Manager_Data *pd, Eo *target,
+                       Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type);
 
 static void
 _cleanup_object(Eina_List *list)
@@ -53,7 +53,7 @@ _hash_free_cb(Eo *obj)
 }
 
 EOLIAN static Efl_Object *
-_efl_gesture_manager_efl_object_constructor(Eo *obj, Efl_Gesture_Manager_Data *pd EINA_UNUSED)
+_efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
@@ -65,21 +65,21 @@ _efl_gesture_manager_efl_object_constructor(Eo *obj, Efl_Gesture_Manager_Data *p
 
    pd->m_config = eina_hash_string_superfast_new(EINA_FREE_CB(eina_value_free));
 
-   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_GESTURE_RECOGNIZER_TAP_CLASS, obj));
-   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_GESTURE_RECOGNIZER_LONG_TAP_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_TAP_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_CANVAS_GESTURE_RECOGNIZER_LONG_TAP_CLASS, obj));
 
    return obj;
 }
 
 
 EOLIAN static Eina_Value *
-_efl_gesture_manager_config_get(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *pd, const char *name)
+_efl_canvas_gesture_manager_config_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const char *name)
 {
    return eina_hash_find(pd->m_config, name);
 }
 
 EOLIAN static void
-_efl_gesture_manager_config_set(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *pd, const char *name, Eina_Value *value)
+_efl_canvas_gesture_manager_config_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const char *name, Eina_Value *value)
 {
    Eina_Value *v = eina_value_new(eina_value_type_get(value));
    eina_value_copy(value, v);
@@ -87,7 +87,7 @@ _efl_gesture_manager_config_set(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *p
 }
 
 EOLIAN static void
-_efl_gesture_manager_efl_object_destructor(Eo *obj, Efl_Gesture_Manager_Data *pd EINA_UNUSED)
+_efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Manager_Data *pd EINA_UNUSED)
 {
    eina_hash_free(pd->m_config);
    eina_hash_free(pd->m_recognizers);
@@ -98,11 +98,11 @@ _efl_gesture_manager_efl_object_destructor(Eo *obj, Efl_Gesture_Manager_Data *pd
 }
 
 void
-_efl_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
+_efl_canvas_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
 {
-   Efl_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
    // if there is a recognizer registered for that event then add it to the gesture context
-   Efl_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
+   Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
    if (recognizer)
      {
         // add it to the gesture context.
@@ -111,11 +111,11 @@ _efl_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Desc
 }
 
 void
-_efl_gesture_manager_callback_del_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
+_efl_canvas_gesture_manager_callback_del_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
 {
-   Efl_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
    // if there is a recognizer registered for that event then add it to the gesture context
-   Efl_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
+   Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
    if (recognizer)
      {
         eina_hash_list_remove(pd->m_gesture_contex, &target, type);
@@ -124,16 +124,16 @@ _efl_gesture_manager_callback_del_hook(Eo *obj, Eo *target, const Efl_Event_Desc
 }
 
 void
-_efl_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
+_efl_canvas_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
 {
    Eina_List *l, *gesture_context;
-   Efl_Gesture_Manager_Data *pd;
+   Efl_Canvas_Gesture_Manager_Data *pd;
    const Efl_Event_Description *gesture_type;
-   Efl_Gesture_Recognizer *recognizer;
-   Efl_Gesture *gesture;
-   Efl_Gesture_Recognizer_Result recog_result;
-   Efl_Gesture_Recognizer_Result recog_state;
-   Efl_Gesture_Touch *touch_event;
+   Efl_Canvas_Gesture_Recognizer *recognizer;
+   Efl_Canvas_Gesture *gesture;
+   Efl_Canvas_Gesture_Recognizer_Result recog_result;
+   Efl_Canvas_Gesture_Recognizer_Result recog_state;
+   Efl_Canvas_Gesture_Touch *touch_event;
    Efl_Input_Pointer_Data *pointer_data = efl_data_scope_get(event, EFL_INPUT_POINTER_CLASS);
 
    pd = efl_data_scope_get(obj, MY_CLASS);
@@ -144,7 +144,7 @@ _efl_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
         touch_event = eina_hash_find(pd->m_object_events, &target);
         if (!touch_event)
           {
-             touch_event = efl_add(EFL_GESTURE_TOUCH_CLASS, NULL);
+             touch_event = efl_add(EFL_CANVAS_GESTURE_TOUCH_CLASS, NULL);
              eina_hash_add(pd->m_object_events, &target, touch_event);
           }
 
@@ -207,11 +207,11 @@ _efl_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
 }
 
 EOLIAN static const Efl_Event_Description *
-_efl_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *pd,
-                                            Efl_Gesture_Recognizer *recognizer)
+_efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
+                                            Efl_Canvas_Gesture_Recognizer *recognizer)
 {
-   Efl_Gesture_Recognizer_Data *rpd;
-   Efl_Gesture *dummy = efl_gesture_recognizer_create(recognizer, 0);
+   Efl_Canvas_Gesture_Recognizer_Data *rpd;
+   Efl_Canvas_Gesture *dummy = efl_gesture_recognizer_create(recognizer, 0);
 
    if (!dummy)
      return NULL;
@@ -221,7 +221,7 @@ _efl_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Gesture_Manage
    // Add the recognizer to the m_recognizers
    eina_hash_add(pd->m_recognizers, &type, recognizer);
    // update the manager
-   rpd = efl_data_scope_get(recognizer, EFL_GESTURE_RECOGNIZER_CLASS);
+   rpd = efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
    rpd->manager = obj;
 
    efl_del(dummy);
@@ -230,13 +230,13 @@ _efl_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Gesture_Manage
 }
 
 EOLIAN static void
-_efl_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *pd,
-                                           Efl_Gesture_Recognizer *recognizer)
+_efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
+                                           Efl_Canvas_Gesture_Recognizer *recognizer)
 {
    Eina_List *l, *l_next;
    Object_Gesture *object_gesture;
    const Efl_Event_Description *type;
-   Efl_Gesture *dummy;
+   Efl_Canvas_Gesture *dummy;
 
    if (!recognizer) return;
 
@@ -266,7 +266,7 @@ _efl_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Gesture_Mana
 }
 
 // EOLIAN static void
-// _efl_gesture_manager_ungrab_all(Eo *obj EINA_UNUSED, Efl_Gesture_Manager_Data *pd,
+// _efl_canvas_gesture_manager_ungrab_all(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
 //                                    Eo *target)
 // {
 //    const Efl_Event_Description *type;
@@ -284,13 +284,13 @@ _efl_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Gesture_Mana
 // }
 
 // get or create a gesture object that will represent the state for a given object, used by the recognizer
-Efl_Gesture*
-_get_state(Efl_Gesture_Manager_Data *pd,
-           Eo *target, Efl_Gesture_Recognizer *recognizer, const Efl_Event_Description *type)
+Efl_Canvas_Gesture*
+_get_state(Efl_Canvas_Gesture_Manager_Data *pd,
+           Eo *target, Efl_Canvas_Gesture_Recognizer *recognizer, const Efl_Event_Description *type)
 {
    Eina_List *l;
    Object_Gesture *object_gesture;
-   Efl_Gesture *gesture;
+   Efl_Canvas_Gesture *gesture;
 
    // if the widget is being deleted we should be careful not to
    // create a new state.
@@ -327,7 +327,7 @@ _get_state(Efl_Gesture_Manager_Data *pd,
 }
 
 static void
-_cleanup_cached_gestures(Efl_Gesture_Manager_Data *pd,
+_cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
                          Eo *target, const Efl_Event_Description *type)
 {
    Eina_List *l, *l_next;
@@ -345,4 +345,4 @@ _cleanup_cached_gestures(Efl_Gesture_Manager_Data *pd,
 }
 
 
-#include "efl_gesture_manager.eo.c"
+#include "efl_canvas_gesture_manager.eo.c"
