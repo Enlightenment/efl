@@ -1,0 +1,12 @@
+import efl_types;
+import eina_types;
+
+class Efl.Thread (Efl.Task)
+{
+   methods {
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

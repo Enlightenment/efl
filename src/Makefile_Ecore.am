@@ -14,6 +14,8 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_loop_handler.eo \
 	lib/ecore/efl_loop_message.eo \
 	lib/ecore/efl_loop_message_handler.eo \
+	lib/ecore/efl_exe.eo \
+	lib/ecore/efl_thread.eo \
 	lib/ecore/efl_io_closer_fd.eo \
 	lib/ecore/efl_io_positioner_fd.eo \
 	lib/ecore/efl_io_reader_fd.eo \
@@ -33,8 +35,8 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_interpolator_divisor.eo \
 	lib/ecore/efl_interpolator_bounce.eo \
 	lib/ecore/efl_interpolator_spring.eo \
-	lib/ecore/efl_interpolator_cubic_bezier.eo
-
+	lib/ecore/efl_interpolator_cubic_bezier.eo \
+        lib/ecore/efl_task.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_public) \
@@ -130,6 +132,8 @@ lib/ecore/efl_interpolator_divisor.c \
 lib/ecore/efl_interpolator_bounce.c \
 lib/ecore/efl_interpolator_spring.c \
 lib/ecore/efl_interpolator_cubic_bezier.c \
+lib/ecore/efl_task.c \
+lib/ecore/efl_exe.c \
 lib/ecore/ecore_main_timechanges.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \

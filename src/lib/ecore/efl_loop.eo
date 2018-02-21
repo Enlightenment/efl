@@ -7,7 +7,7 @@ struct Efl.Loop.Arguments {
    initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
 }
 
-class Efl.Loop (Efl.Object)
+class Efl.Loop (Efl.Task)
 {
    [[The Efl Main Loop
 
@@ -159,5 +159,7 @@ class Efl.Loop (Efl.Object)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.provider_find;
+      Efl.Task.env { set; get; }
+      Efl.Task.priority { get; set; }
    }
 }

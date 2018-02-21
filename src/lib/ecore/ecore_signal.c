@@ -20,6 +20,14 @@
 /* make mono happy - this is evil though... */
 #undef SIGPWR
 
+typedef struct _Pid_Info Pid_Info;
+
+struct _Pid_Info
+{
+   pid_t pid;
+   int fd;
+};
+
 static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
 static void _ecore_signal_waitpid(Eina_Bool once, siginfo_t info);
 static void _ecore_signal_generic_free(void *data, void *event);
@@ -28,6 +36,8 @@ typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
 static int sig_pipe[2] = { -1, -1 }; // [0] == read, [1] == write
 static Eo *sig_pipe_handler = NULL;
+static Eina_Spinlock sig_pid_lock;
+static Eina_List *sig_pid_info_list = NULL;
 
 typedef struct _Signal_Data
 {
@@ -204,6 +214,7 @@ _signalhandler_setup(void)
 static void
 _ecore_signal_pipe_init(void)
 {
+   eina_spinlock_new(&sig_pid_lock);
    if (sig_pipe[0] == -1)
      {
         if (pipe(sig_pipe) != 0)
@@ -239,6 +250,7 @@ _ecore_signal_pipe_shutdown(void)
         efl_del(sig_pipe_handler);
         sig_pipe_handler = NULL;
      }
+   eina_spinlock_free(&sig_pid_lock);
 }
 
 static void
@@ -277,6 +289,45 @@ _ecore_signal_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    // a pipe fd and placed in a queue/list that
    // _ecore_signal_received_process() will then walk and process/do
    return 0;
+}
+
+void
+_ecore_signal_pid_lock(void)
+{
+   eina_spinlock_take(&sig_pid_lock);
+}
+
+void
+_ecore_signal_pid_unlock(void)
+{
+   eina_spinlock_release(&sig_pid_lock);
+}
+
+void
+_ecore_signal_pid_register(pid_t pid, int fd)
+{
+   Pid_Info *pi = calloc(1, sizeof(Pid_Info));
+   if (!pi) return;
+   pi->pid = pid;
+   pi->fd = fd;
+   sig_pid_info_list = eina_list_append(sig_pid_info_list, pi);
+}
+
+void
+_ecore_signal_pid_unregister(pid_t pid, int fd)
+{
+   Eina_List *l;
+   Pid_Info *pi;
+
+   EINA_LIST_FOREACH(sig_pid_info_list, l, pi)
+     {
+        if ((pi->pid == pid) && (pi->fd == fd))
+          {
+             sig_pid_info_list = eina_list_remove_list(sig_pid_info_list, l);
+             free(pi);
+             return;
+          }
+     }
 }
 
 static void
@@ -355,6 +406,45 @@ _ecore_signal_waitpid(Eina_Bool once, siginfo_t info)
                }
              else ecore_event_add(ECORE_EXE_EVENT_DEL, e,
                                   _ecore_exe_event_del_free, NULL);
+          }
+
+        // XXX: this is not brilliant. this ends up running from the main loop
+        // reading the signal pipe to handle signals. that means handling
+        // exe exits from children will be bottlenecked by how often
+        // the main loop can wake up (or well latency may not be great).
+        // this should probably have a dedicated thread ythat does a waitpid()
+        // and blocks and waits sending results to the resulting pipe
+        Eina_List *l, *ll;
+        Pid_Info *pi;
+
+        EINA_LIST_FOREACH_SAFE(sig_pid_info_list, l, ll, pi)
+          {
+             if (pi->pid == pid)
+               {
+                  Ecore_Signal_Pid_Info pinfo;
+
+                  sig_pid_info_list = eina_list_remove_list
+                    (sig_pid_info_list, ll);
+                  pinfo.pid = pid;
+                  pinfo.info = info;
+                  if (WIFEXITED(status))
+                    {
+                       pinfo.exit_code = WEXITSTATUS(status);
+                       pinfo.exit_signal = -1;
+                    }
+                  else if (WIFSIGNALED(status))
+                    {
+                       pinfo.exit_code = -1;
+                       pinfo.exit_signal = WTERMSIG(status);
+                    }
+                  if (write(pi->fd, &pinfo, sizeof(Ecore_Signal_Pid_Info))
+                      != sizeof(Ecore_Signal_Pid_Info))
+                    {
+                       ERR("Can't write to custom exe exit info pipe");
+                    }
+                  free(pi);
+                  break;
+               }
           }
         if (once) break;
      }

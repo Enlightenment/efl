@@ -7,11 +7,18 @@
 #include <string.h>
 #include <unistd.h>
 #include <math.h>
+#include <sys/time.h>
+#ifndef _WIN32
+# include <sys/resource.h>
+#endif
+#include <errno.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
 
 #include "ecore_main_common.h"
+
+extern char **environ;
 
 typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
 typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
@@ -50,6 +57,11 @@ Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
 
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
+
+extern Eina_Lock   _environ_lock;
+static Eina_List  *_environ_strings_set = NULL;
+
+static void _clean_old_environ(void);
 
 EOLIAN static Efl_Loop *
 _efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
@@ -345,6 +357,14 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
         pd->message_handlers = NULL;
      }
 
+   eina_lock_take(&_environ_lock);
+   _clean_old_environ();
+   _environ_strings_set = eina_list_free(_environ_strings_set);
+   pd->env.environ_ptr = NULL;
+   free(pd->env.environ_copy);
+   pd->env.environ_copy = NULL;
+   eina_lock_release(&_environ_lock);
+
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 
    if (obj == _mainloop_singleton)
@@ -395,9 +415,13 @@ ecore_loop_arguments_send(int argc, const char **argv)
    Eina_Array *arga;
    int i = 0;
 
+   efl_task_arg_reset(efl_main_loop_get());
    arga = eina_array_new(argc);
    for (i = 0; i < argc; i++)
-     eina_array_push(arga, eina_stringshare_add(argv[i]));
+     {
+        eina_array_push(arga, eina_stringshare_add(argv[i]));
+        efl_task_arg_append(efl_main_loop_get(), argv[i]);
+     }
 
    job = eina_future_then(efl_loop_job(efl_main_loop_get()),
                           _efl_loop_arguments_send, arga);
@@ -720,6 +744,222 @@ _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
       .flavor = NULL
    };
    return &version;
+}
+
+static void
+_env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)
+{
+   Eina_Bool update = EINA_FALSE;
+   unsigned int count = 0, i;
+   char **p;
+
+   // count environs
+   if (environ)
+     {
+        for (p = environ; *p; p++) count++;
+     }
+   // cached env ptr is the same... so look deeper if things changes
+   if (pd->env.environ_ptr == environ)
+     {
+        // if we have no cached copy then update
+        if (!pd->env.environ_copy) update = EINA_TRUE;
+        else
+          {
+             // if any ptr in the cached copy doesnt match environ ptr
+             // then update
+             for (i = 0; i <= count; i++)
+               {
+                  if (pd->env.environ_copy[i] != environ[i])
+                    {
+                       printf("  env %i mismatch\n", i);
+                       update = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
+     }
+   // cached env ptr changed so we need to update anyway
+   else update = EINA_TRUE;
+   if (!update) return;
+   // things changed - do the update
+   pd->env.environ_ptr = environ;
+   free(pd->env.environ_copy);
+   pd->env.environ_copy = NULL;
+   if (count > 0)
+     {
+        pd->env.environ_copy = malloc((count + 1) * sizeof(char *));
+        if (pd->env.environ_copy)
+          {
+             for (i = 0; i <= count; i++)
+               pd->env.environ_copy[i] = environ[i];
+          }
+     }
+   // clear previous env hash and rebuild it from environ so it matches
+   if (td->env) eina_hash_free(td->env);
+   td->env = eina_hash_string_superfast_new
+     ((Eina_Free_Cb)eina_stringshare_del);
+   for (i = 0; i < count; i++)
+     {
+        char *var;
+        const char *value;
+
+        if (!environ[i]) continue;
+        if ((value = strchr(environ[i], '=')))
+          {
+             if (*value)
+               {
+                  if ((var = malloc(value - environ[i] + 1)))
+                    {
+                       strncpy(var, environ[i], value - environ[i]);
+                       var[value - environ[i]] = 0;
+                       value++;
+                       eina_hash_add(td->env, var,
+                                     eina_stringshare_add(value));
+                       free(var);
+                    }
+               }
+          }
+     }
+}
+
+static void
+_clean_old_environ(void)
+{
+   char **p;
+   const char *str;
+   Eina_List *l, *ll;
+   Eina_Bool ok;
+
+   // clean up old strings no longer in environ
+   EINA_LIST_FOREACH_SAFE(_environ_strings_set, l, ll, str)
+     {
+        ok = EINA_FALSE;
+        for (p = environ; *p; p++)
+          {
+             if (*p == str)
+               {
+                  ok = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!ok)
+          {
+             _environ_strings_set =
+               eina_list_remove_list(_environ_strings_set, l);
+             eina_stringshare_del(str);
+          }
+     }
+}
+
+EOLIAN static void
+_efl_loop_efl_task_env_set(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const char *var, const char *value)
+{
+   char *str, *str2;
+   size_t varlen, vallen = 0;
+
+   if (!var) return;
+
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (!td) return;
+
+   varlen = strlen(var);
+   if (value) vallen = strlen(value);
+
+   str = malloc(varlen + 1 + vallen + 1);
+   if (!str) return;
+   strcpy(str, var);
+   str[varlen] = '=';
+   if (value) strcpy(str + varlen + 1, value);
+   else str[varlen + 1] = 0;
+
+   str2 = (char *)eina_stringshare_add(str);
+   free(str);
+   if (!str2) return;
+
+   eina_lock_take(&_environ_lock);
+   if (putenv(str2) != 0)
+     {
+        eina_stringshare_del(str2);
+        eina_lock_release(&_environ_lock);
+        return;
+     }
+   _environ_strings_set = eina_list_append(_environ_strings_set, str2);
+   eina_lock_release(&_environ_lock);
+
+   efl_task_env_set(efl_super(obj, EFL_LOOP_CLASS), var, value);
+
+   eina_lock_take(&_environ_lock);
+   _clean_old_environ();
+   eina_lock_release(&_environ_lock);
+}
+
+EOLIAN static const char *
+_efl_loop_efl_task_env_get(Eo *obj, Efl_Loop_Data *pd, const char *var)
+{
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (!td) return NULL;
+   eina_lock_take(&_environ_lock);
+   _env_sync(pd, td);
+   eina_lock_release(&_environ_lock);
+   return efl_task_env_get(efl_super(obj, EFL_LOOP_CLASS), var);
+}
+#ifdef _WIN32
+#else
+static const signed char primap[EFL_TASK_PRIORITY_ULTRA + 1] =
+{
+   10, // EFL_TASK_PRIORITY_NORMAL
+   19, // EFL_TASK_PRIORITY_BACKGROUND
+   15, // EFL_TASK_PRIORITY_LOW
+   5, // EFL_TASK_PRIORITY_HIGH
+   0  // EFL_TASK_PRIORITY_ULTRA
+};
+#endif
+
+EOLIAN static void
+_efl_loop_efl_task_priority_set(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Efl_Task_Priority priority)
+{
+   efl_task_priority_set(efl_super(obj, EFL_LOOP_CLASS), priority);
+#ifdef _WIN32
+#else
+   // -20 (high) -> 19 (low)
+   int p = 0;
+
+   if ((priority >= EFL_TASK_PRIORITY_NORMAL) &&
+       (priority <= EFL_TASK_PRIORITY_ULTRA))
+     p = primap[priority];
+   setpriority(PRIO_PROCESS, 0, p);
+#endif
+}
+
+EOLIAN static Efl_Task_Priority
+_efl_loop_efl_task_priority_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   Efl_Task_Priority pri = EFL_TASK_PRIORITY_NORMAL;
+#ifdef _WIN32
+#else
+   int p, i, dist = 0x7fffffff, d;
+
+   errno = 0;
+   p = getpriority(PRIO_PROCESS, 0);
+   if (errno != 0)
+     return efl_task_priority_get(efl_super(obj, EFL_LOOP_CLASS));
+
+   // find the closest matching priority in primap
+   for (i = EFL_TASK_PRIORITY_NORMAL; i <= EFL_TASK_PRIORITY_ULTRA; i++)
+     {
+        d = primap[i] - p;
+        if (d < 0) d = -d;
+        if (d < dist)
+          {
+             pri = i;
+             dist = d;
+          }
+     }
+
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (td) td->priority = pri;
+#endif
+   return pri;
 }
 
 EAPI Eina_Future_Scheduler *
