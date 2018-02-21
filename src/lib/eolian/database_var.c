@@ -8,7 +8,7 @@
 void
 database_var_del(Eolian_Variable *var)
 {
-   if (!var) return;
+   if (!var || eolian_object_unref(&var->base)) return;
    const char *sp;
    if (var->base.file) eina_stringshare_del(var->base.file);
    if (var->base_type)

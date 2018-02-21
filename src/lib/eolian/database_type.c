@@ -8,7 +8,7 @@
 void
 database_type_del(Eolian_Type *tp)
 {
-   if (!tp) return;
+   if (!tp || eolian_object_unref(&tp->base)) return;
    const char *sp;
    if (tp->base.file) eina_stringshare_del(tp->base.file);
    database_type_del(tp->base_type);
@@ -24,7 +24,7 @@ database_type_del(Eolian_Type *tp)
 void
 database_typedecl_del(Eolian_Typedecl *tp)
 {
-   if (!tp) return;
+   if (!tp || eolian_object_unref(&tp->base)) return;
    const char *sp;
    if (tp->base.file) eina_stringshare_del(tp->base.file);
    database_type_del(tp->base_type);

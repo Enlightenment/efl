@@ -15,7 +15,7 @@ database_class_del(Eolian_Class *cl)
    Eolian_Constructor *ctor;
    const char *s;
 
-   if (!cl) return;
+   if (!cl || eolian_object_unref(&cl->base)) return;
 
    if (cl->base.file) eina_stringshare_del(cl->base.file);
 

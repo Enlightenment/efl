@@ -702,6 +702,56 @@ _parse_deferred(Eolian_Unit *parent)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_merge_unit_cb(const Eina_Hash *hash EINA_UNUSED,
+               const void *key, void *data, void *fdata)
+{
+   if (eina_hash_add((Eina_Hash *)fdata, key, data))
+     eolian_object_ref((Eolian_Object *)data);
+   return EINA_TRUE;
+}
+
+static void
+_merge_unit(Eolian_Unit *dest, Eolian_Unit *src)
+{
+   eina_hash_foreach(src->classes, _merge_unit_cb, dest->classes);
+   eina_hash_foreach(src->globals, _merge_unit_cb, dest->globals);
+   eina_hash_foreach(src->constants, _merge_unit_cb, dest->constants);
+   eina_hash_foreach(src->aliases, _merge_unit_cb, dest->aliases);
+   eina_hash_foreach(src->structs, _merge_unit_cb, dest->structs);
+   eina_hash_foreach(src->enums, _merge_unit_cb, dest->enums);
+   eina_hash_foreach(src->decls, _merge_unit_cb, dest->decls);
+}
+
+typedef struct _Merge_Data
+{
+   Eina_Hash *cycles;
+   Eolian_Unit *unit;
+} Merge_Data;
+
+static Eina_Bool
+_merge_units_cb(const Eina_Hash *hash EINA_UNUSED,
+                const void *key EINA_UNUSED, void *data, void *fdata)
+{
+   Merge_Data *mdata = fdata;
+   Merge_Data imdata = { mdata->cycles, data };
+   if (!eina_hash_find(imdata.cycles, &imdata.unit))
+     {
+        eina_hash_add(imdata.cycles, &imdata.unit, imdata.unit);
+        eina_hash_foreach(imdata.unit->children, _merge_units_cb, &imdata);
+     }
+   _merge_unit(mdata->unit, imdata.unit);
+   return EINA_TRUE;
+}
+
+static void
+_merge_units(Eolian_Unit *unit)
+{
+   Merge_Data mdata = { eina_hash_pointer_new(NULL), unit };
+   eina_hash_foreach(unit->children, _merge_units_cb, &mdata);
+   eina_hash_free(mdata.cycles);
+}
+
 EAPI const Eolian_Unit *
 eolian_file_parse(Eolian *state, const char *filepath)
 {
@@ -713,6 +763,7 @@ eolian_file_parse(Eolian *state, const char *filepath)
      return NULL;
    if (!_parse_deferred(ret))
      return NULL;
+   _merge_units(ret);
    /* FIXME: pass unit properly */
    if (!database_validate(state, &state->unit))
      return NULL;
@@ -733,6 +784,7 @@ static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key
      unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_TRUE);
    pd->ret = !!unit;
    if (pd->ret) pd->ret = _parse_deferred(unit);
+   _merge_units(unit);
    return pd->ret;
 }
 
@@ -761,6 +813,7 @@ static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key 
      unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_FALSE);
    pd->ret = !!unit;
    if (pd->ret) pd->ret = _parse_deferred(unit);
+   _merge_units(unit);
    return pd->ret;
 }
 

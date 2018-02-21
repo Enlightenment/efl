@@ -2257,7 +2257,11 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    eina_stringshare_del(fname);
 
    if (ret)
-     return ret;
+     {
+        if (parent != ret)
+          eina_hash_add(parent->children, filename, ret);
+        return ret;
+     }
 
    Eo_Lexer *ls = eo_lexer_new(parent->state, filename);
    if (!ls)
@@ -2284,7 +2288,10 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    ls->tmp.kls = NULL;
 
    eina_hash_set(ls->state->unit.classes, cl->full_name, cl);
+   eina_hash_set(ls->unit->classes, cl->full_name, cl);
    eina_hash_set(ls->state->classes_f, cl->base.file, cl);
+   /* once for unit, once for state */
+   eolian_object_ref(&cl->base);
    eolian_object_ref(&cl->base);
 
 done:
