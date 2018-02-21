@@ -2595,7 +2595,9 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
 eng_err:
    /* ecore_evas_free() will call ecore_wl2_display_disconnect()
-    * and free(ee) */
+    * and free(ee), it will also call ecore_wl2_shutdown(), so we
+    * take an extra reference here to keep the count right. */
+   ecore_wl2_init();
    ecore_evas_free(ee);
    ee = NULL;
 w_err:
