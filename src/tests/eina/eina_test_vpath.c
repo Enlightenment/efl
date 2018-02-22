@@ -36,11 +36,11 @@ START_TEST(eina_test_vpath_invalid)
    ret = eina_init();
    ck_assert_int_ne(ret, 0);
 
-   ck_assert_ptr_null(eina_vpath_resolve("(:asdfasdfafasdf"));
-   ck_assert_ptr_null(eina_vpath_resolve("(:missing_slash:)"));
-   ck_assert_ptr_null(eina_vpath_resolve("(:"));
-   ck_assert_ptr_null(eina_vpath_resolve("(:home:)"));
-   ck_assert_ptr_null(eina_vpath_resolve("(:wrong_meta_key:)/"));
+   ck_assert_ptr_eq(eina_vpath_resolve("(:asdfasdfafasdf"), NULL);
+   ck_assert_ptr_eq(eina_vpath_resolve("(:missing_slash:)"), NULL);
+   ck_assert_ptr_eq(eina_vpath_resolve("(:"), NULL);
+   ck_assert_ptr_eq(eina_vpath_resolve("(:home:)"), NULL);
+   ck_assert_ptr_eq(eina_vpath_resolve("(:wrong_meta_key:)/"), NULL);
 
    ret = eina_shutdown();
 }
