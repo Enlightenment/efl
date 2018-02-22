@@ -10,12 +10,6 @@ local propt_to_type = {
     [dtree.Function.PROP_SET] = "(set)",
 }
 
-local build_property = function(impl, cl)
-end
-
-local build_method = function(impl, cl)
-end
-
 local gen_cparam = function(par, out)
     local part = par:type_get()
     out = out or (par:direction_get() == par.OUT)
@@ -26,7 +20,7 @@ local gen_cparam = function(par, out)
     return dtree.type_cstr_get(tstr, par:name_get())
 end
 
-local get_func_csig_part = function(cn, tp)
+local get_func_mono_sig_part = function(cn, tp)
     if not tp then
         return "void " .. cn
     end
@@ -138,7 +132,7 @@ local write_function = function(f, func, cl)
     end
 end
 
-local gen_func_csig = function(f, ftype)
+local gen_func_mono_sig = function(f, ftype)
     ftype = ftype or f.METHOD
     assert(ftype ~= f.PROPERTY)
 
@@ -154,7 +148,7 @@ local gen_func_csig = function(f, ftype)
 
     if f:type_get() == f.METHOD then
         local pars = f:parameters_get()
-        local cnrt = get_func_csig_part(cn, rtype)
+        local cnrt = get_func_mono_sig_part(cn, rtype)
         for i = 1, #pars do
             pars[i] = gen_cparam(pars[i])
         end
@@ -166,7 +160,7 @@ local gen_func_csig = function(f, ftype)
     local vals = f:property_values_get(ftype)
 
     if ftype == f.PROP_SET then
-        local cnrt = get_func_csig_part(cn, rtype)
+        local cnrt = get_func_mono_sig_part(cn, rtype)
         local pars = {}
         for i, par in ipairs(keys) do
             pars[#pars + 1] = gen_cparam(par)
@@ -182,13 +176,13 @@ local gen_func_csig = function(f, ftype)
     local cnrt
     if not rtype then
         if #vals == 1 then
-            cnrt = get_func_csig_part(cn, vals[1]:type_get())
+            cnrt = get_func_mono_sig_part(cn, vals[1]:type_get())
             table.remove(vals, 1)
         else
-            cnrt = get_func_csig_part(cn)
+            cnrt = get_func_mono_sig_part(cn)
         end
     else
-        cnrt = get_func_csig_part(cn, rtype)
+        cnrt = get_func_mono_sig_part(cn, rtype)
     end
     local pars = {}
     for i, par in ipairs(keys) do
@@ -405,21 +399,13 @@ M.write_functable = function(f, tcl, tbl)
         f:write_nl()
         local codes = {}
         if func:type_get() ~= dtree.Function.PROPERTY then
-            codes[#codes + 1] = gen_func_csig(func, func:type_get())
+            codes[#codes + 1] = gen_func_mono_sig(func, func:type_get())
         else
-            codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
-            codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
+            codes[#codes + 1] = gen_func_mono_sig(func, dtree.Function.PROP_GET)
+            codes[#codes + 1] = gen_func_mono_sig(func, dtree.Function.PROP_SET)
         end
         f:write_code(table.concat(codes, "\n"), "c")
         f:write_br(true)
-
-        if cl == tcl then
-            if impl:is_prop_get() or impl:is_prop_set() then
-                build_property(impl, cl)
-            else
-                build_method(impl, cl)
-            end
-        end
     end
     f:write_nl()
 end
