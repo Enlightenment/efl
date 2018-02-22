@@ -1287,6 +1287,17 @@ shell_surface_init(Comp_Surface *cs)
 }
 
 static void
+comp_surface_output_leave(Comp_Surface *cs)
+{
+   Eina_List *l;
+   struct wl_resource *res;
+
+   EINA_LIST_FOREACH(cs->c->output_resources, l, res)
+     if (wl_resource_get_client(res) == wl_resource_get_client(cs->res))
+       wl_surface_send_leave(cs->res, res);
+}
+
+static void
 comp_surface_output_enter(Comp_Surface *cs)
 {
    Eina_List *l;
@@ -2579,7 +2590,10 @@ comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint
    c->surfaces = eina_inlist_prepend(c->surfaces, EINA_INLIST_GET(cs));
    c->surfaces_count++;
    eina_hash_list_append(c->client_surfaces, &client, cs);
-   comp_surface_output_enter(cs);
+   if (evas_object_visible_get(cs->c->clip))
+     comp_surface_output_enter(cs);
+   else
+     comp_surface_output_leave(cs);
 
    cs->opaque = tiler_new();
    cs->input = tiler_new();
@@ -3188,7 +3202,12 @@ output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    output_resize(c, res);
    EINA_INLIST_FOREACH(c->surfaces, cs)
      if (wl_resource_get_client(cs->res) == client)
-       comp_surface_output_enter(cs);
+       {
+          if (evas_object_visible_get(c->clip))
+            comp_surface_output_enter(cs);
+          else
+            comp_surface_output_leave(cs);
+       }
 }
 
 /////////////////////////////////////////////////////////////////
@@ -5477,14 +5496,22 @@ static void
 comp_smart_show(Evas_Object *obj)
 {
    Comp *c = evas_object_smart_data_get(obj);
+   Comp_Surface *cs;
+
    evas_object_show(c->clip);
+   EINA_INLIST_FOREACH(c->surfaces, cs)
+     comp_surface_output_leave(cs);
 }
 
 static void
 comp_smart_hide(Evas_Object *obj)
 {
    Comp *c = evas_object_smart_data_get(obj);
+   Comp_Surface *cs;
+
    evas_object_hide(c->clip);
+   EINA_INLIST_FOREACH(c->surfaces, cs)
+     comp_surface_output_leave(cs);
 }
 
 static void
