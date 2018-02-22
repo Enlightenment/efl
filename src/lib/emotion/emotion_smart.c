@@ -362,7 +362,7 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    sd->video.h = 0;
    if ((file) && (file[0] != 0))
      {
-        const char *file2 = NULL;
+        char *file2 = NULL;
 
         eina_stringshare_replace(&sd->file, file);
         emotion_engine_instance_file_close(sd->engine_instance);
