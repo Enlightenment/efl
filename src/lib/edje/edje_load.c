@@ -260,15 +260,16 @@ edje_file_collection_list(const char *file)
 {
    Eina_File *f;
    Eina_List *lst;
+   char *tmp;
 
    if ((!file) || (!*file)) return NULL;
-   file = eina_vpath_resolve(file);
-   f = eina_file_open(file, EINA_FALSE);
+   tmp = eina_vpath_resolve(file);
+   f = eina_file_open(tmp, EINA_FALSE);
 
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
-   free(file);
+   free(tmp);
    return lst;
 }
 
