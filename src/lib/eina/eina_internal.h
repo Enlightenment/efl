@@ -41,6 +41,8 @@
 # endif
 #endif
 
+#include "eina_prefix.h"
+
 typedef struct _Eina_Vpath_Interface_User Eina_Vpath_Interface_User;
 
 struct _Eina_Vpath_Interface_User
@@ -67,6 +69,23 @@ struct _Eina_Vpath_Interface_User
  * @internal
  */
 EAPI void __eina_promise_cancel_all(void);
+
+/**
+ * Make the app specific paths accessable as virtual path
+ *
+ * This will create :
+ *   - app.dir
+ *   - app.bin
+ *   - app.lib
+ *   - app.data
+ *   - app.locale
+ *   - app.config
+ *   - app.cache
+ *   - app.local
+ *
+ * If you do NOT call this api the virtual paths for app.* will be unset
+ */
+EAPI void eina_vpath_interface_app_set(const char *app_name, Eina_Prefix *p);
 
 /**
  * Create the desktop specific vpaths

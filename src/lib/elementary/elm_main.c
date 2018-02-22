@@ -17,8 +17,11 @@
 #include <Emotion.h>
 
 #include <Elementary.h>
-#include "elm_priv.h"
+
+#include "eina_internal.h"
 #include "ecore_internal.h"
+
+#include "elm_priv.h"
 #include "elm_interface_scrollable.h"
 
 //we need those for legacy compatible code
