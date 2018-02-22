@@ -41,6 +41,24 @@
 # endif
 #endif
 
+typedef struct _Eina_Vpath_Interface_User Eina_Vpath_Interface_User;
+
+struct _Eina_Vpath_Interface_User
+{
+   const char *desktop;
+   const char *documents;
+   const char *downloads;
+   const char *music;
+   const char *pictures;
+   const char *pub;
+   const char *templates;
+   const char *videos;
+   const char *data;
+   const char *config;
+   const char *cache;
+   const char *run;
+};
+
 /**
  * @brief Cancels all pending promise/futures.
  *
@@ -49,6 +67,15 @@
  * @internal
  */
 EAPI void __eina_promise_cancel_all(void);
+
+/**
+ * Create the desktop specific vpaths
+ *
+ * The virtual paths will be named usr.<field-name-of-struct>
+ *
+ * If you do NOT call this api the virtual paths for usr.* will be unset.
+ */
+EAPI void eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user);
 
 #undef EAPI
 #define EAPI

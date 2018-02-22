@@ -20,23 +20,6 @@
  */
 typedef const char* Eina_Vpath;
 
-
-typedef struct
-{
-  const char *desktop;
-  const char *documents;
-  const char *downloads;
-  const char *music;
-  const char *pictures;
-  const char *pub;
-  const char *templates;
-  const char *videos;
-  const char *data;
-  const char *config;
-  const char *cache;
-  const char *run;
-} Eina_Vpath_Interface_User;
-
 /**
  * Make the app specific paths accessable as virtual path
  *
@@ -53,15 +36,6 @@ typedef struct
  * If you do NOT call this api the virtual paths for app.* will be unset
  */
 EAPI void eina_vpath_interface_app_set(const char *app_name, Eina_Prefix *p);
-
-/**
- * Create the desktop specific vpaths
- *
- * The virtual paths will be named usr.<field-name-of-struct>
- *
- * If you do NOT call this api the virtual paths for usr.* will be unset.
- */
-EAPI void eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user);
 
 /*
  * Translate a virtual path into a normal path.

@@ -1,5 +1,6 @@
 #include <Eina.h>
 
+#include "eina_internal.h"
 #include "eina_private.h"
 
 static Eina_Hash *vpath_data = NULL;

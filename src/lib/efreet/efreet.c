@@ -10,6 +10,8 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
+#include "eina_internal.h"
+
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM /* no logging in this file */
 
