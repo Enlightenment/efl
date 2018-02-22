@@ -13,19 +13,21 @@ struct _Efl_File_Data
 static Eina_Bool
 _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key)
 {
+   char *tmp = NULL;
    Eina_File *f = NULL;
    Eina_Bool r = EINA_FALSE;
 
    pd->error = EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 
-   if (file)
+   tmp = (char*)(file);
+   if (tmp)
      {
-        file = eina_vpath_resolve(file);
+        tmp = eina_vpath_resolve(tmp);
      }
 
-   if (file)
+   if (tmp)
      {
-        f = eina_file_open(file, EINA_FALSE);
+        f = eina_file_open(tmp, EINA_FALSE);
         if (!f) goto on_error;
      }
 
@@ -36,7 +38,7 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key
 
  on_error:
 
-   free(file);
+   free(tmp);
    return r;
 }
 
