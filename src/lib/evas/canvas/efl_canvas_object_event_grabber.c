@@ -123,13 +123,21 @@ _child_insert(Efl_Object_Event_Grabber_Data *pd, Evas_Object_Protected_Data *obj
         if (a->layer->layer > obj->layer->layer) continue;
         if (a->layer->layer < obj->layer->layer)
           {
+             /* new object is higher layer than 'a' */
              found = EINA_TRUE;
              break;
           }
         EINA_INLIST_FOREACH(EINA_INLIST_GET(a->layer->objects), i)
           {
-             if (a == i || obj == i)
+             if (obj == i)
                {
+                  /* new object is below 'a' */
+                  pd->contained = eina_list_prepend_relative(pd->contained, obj, a);
+                  return;
+               }
+             else if (a == i)
+               {
+                  /* new object is above 'a' */
                   found = EINA_TRUE;
                   break;
                }
