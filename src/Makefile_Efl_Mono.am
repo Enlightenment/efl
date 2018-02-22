@@ -125,17 +125,10 @@ lib/evas/canvas/efl_vg_shape.eo.cs
 
 efl_eolian_blacklisted_files = \
 lib/efl/interfaces/efl_io_buffer.eo.cs \
-lib/efl/interfaces/efl_io_closer.eo.cs \
 lib/efl/interfaces/efl_io_positioner.eo.cs \
 lib/efl/interfaces/efl_io_queue.eo.cs \
-lib/efl/interfaces/efl_io_reader.eo.cs \
 lib/efl/interfaces/efl_io_sizer.eo.cs \
-lib/efl/interfaces/efl_io_writer.eo.cs \
-lib/efl/interfaces/efl_gfx_buffer.eo.cs \
-lib/efl/interfaces/efl_gfx_shape.eo.cs \
-lib/efl/interfaces/efl_gfx_gradient.eo.cs \
-lib/efl/interfaces/efl_gfx_gradient_linear.eo.cs \
-lib/efl/interfaces/efl_gfx_gradient_radial.eo.cs
+lib/efl/interfaces/efl_gfx_buffer.eo.cs
 
 ecore_eolian_blacklisted_files = \
 lib/ecore/efl_io_closer_fd.eo.cs \
