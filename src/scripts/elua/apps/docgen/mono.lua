@@ -85,6 +85,21 @@ local not_verbs = {
     "end"
 }
 
+local get_mono_type = function(tp)
+    if not tp then
+        return "void "
+    end
+
+    tpt = tp:type_get()
+
+    if tpt == tp.REGULAR or tpt == tp.CLASS then
+       return tp:full_name_get()
+    else
+       return "unknown"
+    end
+end
+
+
 local is_verb = function(word)
    for i = 1, #verbs do
       if verbs[i] == word then
@@ -113,33 +128,31 @@ local mono_method_name_get = function(f, ftype)
       words[i] = words[i]:gsub("^%l", string.upper)
    end
 
+   if ftype == f.PROP_GET then
+      table.insert(words, 1, "Get")
+   elseif ftype == f.PROP_SET then
+      table.insert(words, 1, "Set")
+   end
+
    return table.concat(words)
 end
 
-local gen_cparam = function(par, out)
+local gen_mono_param = function(par, out)
     local part = par:type_get()
     out = out or (par:direction_get() == par.OUT)
-    local tstr = part:c_type_get()
     if out then
-        tstr = dtree.type_cstr_get(tstr, "*")
+       out = "out "
+    else
+       out = ""
     end
-    return dtree.type_cstr_get(tstr, par:name_get())
+
+    return out .. get_mono_type(par:type_get()) .. ' ' .. par:name_get()
+    --local tstr = part:c_type_get()
+    --return out .. dtree.type_cstr_get(tstr, par:name_get())
 end
 
 local get_func_mono_sig_part = function(cn, tp)
-    if not tp then
-        return "void " .. cn
-    end
-
-    tpt = tp:type_get()
-
-    if tpt == tp.REGULAR or tpt == tp.CLASS then
-       return tp:full_name_get() .. " " .. cn
-    --elseif tpt == tp.COMPLEX
-       --return tp:name_get() .. " " .. cn
-    else
-       return "unknown"
-    end
+   return get_mono_type(tp) .. " " .. cn
 end
 
 local find_parent_impl
@@ -257,9 +270,8 @@ local gen_func_mono_sig = function(f, ftype)
         local pars = f:parameters_get()
         local cnrt = get_func_mono_sig_part(cn, rtype)
         for i = 1, #pars do
-            pars[i] = gen_cparam(pars[i])
+            pars[i] = gen_mono_param(pars[i])
         end
-        --table.insert(pars, 1, fparam);
         return prefix .. cnrt .. "(" .. table.concat(pars, ", ") .. ")" .. suffix .. ";"
     end
 
@@ -270,12 +282,11 @@ local gen_func_mono_sig = function(f, ftype)
         local cnrt = get_func_mono_sig_part(cn, rtype)
         local pars = {}
         for i, par in ipairs(keys) do
-            pars[#pars + 1] = gen_cparam(par)
+            pars[#pars + 1] = gen_mono_param(par)
         end
         for i, par in ipairs(vals) do
-            pars[#pars + 1] = gen_cparam(par)
+            pars[#pars + 1] = gen_mono_param(par)
         end
-        --table.insert(pars, 1, fparam);
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
@@ -293,12 +304,13 @@ local gen_func_mono_sig = function(f, ftype)
     end
     local pars = {}
     for i, par in ipairs(keys) do
-        pars[#pars + 1] = gen_cparam(par)
+        pars[#pars + 1] = gen_mono_param(par)
     end
     for i, par in ipairs(vals) do
-        pars[#pars + 1] = gen_cparam(par, true)
+        print('parameter is value for get, so out')
+        pars[#pars + 1] = gen_mono_param(par, true)
     end
-    --table.insert(pars, 1, fparam);
+
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
 end
 
