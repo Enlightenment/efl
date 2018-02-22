@@ -3589,8 +3589,6 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
 
 #ifdef EFL_BETA_API_SUPPORT
 
-typedef Eo Efl_Canvas_VG_Node;
-
 /**
  * Creates a new vector object on the given Evas @p e canvas.
  *
@@ -3606,6 +3604,7 @@ typedef Eo Efl_Canvas_VG_Node;
  */
 EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+#include "canvas/efl_canvas_vg_node.eo.legacy.h"
 #include "canvas/efl_canvas_vg.eo.legacy.h"
 #include "canvas/efl_canvas_vg_container.eo.legacy.h"
 /**
