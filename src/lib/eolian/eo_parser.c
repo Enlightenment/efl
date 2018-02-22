@@ -2256,7 +2256,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
 
    if (ret)
      {
-        if (parent != ret)
+        if ((parent != ret) && !eina_hash_find(parent->children, filename))
           eina_hash_add(parent->children, filename, ret);
         return ret;
      }

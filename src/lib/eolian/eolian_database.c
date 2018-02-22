@@ -706,8 +706,12 @@ static Eina_Bool
 _merge_unit_cb(const Eina_Hash *hash EINA_UNUSED,
                const void *key, void *data, void *fdata)
 {
-   if (eina_hash_add((Eina_Hash *)fdata, key, data))
-     eolian_object_ref((Eolian_Object *)data);
+   Eina_Hash *dest = fdata;
+   if (!eina_hash_find(dest, key))
+     {
+        eina_hash_add(dest, key, data);
+        eolian_object_ref((Eolian_Object *)data);
+     }
    return EINA_TRUE;
 }
 
@@ -743,6 +747,7 @@ _merge_units_cb(const Eina_Hash *hash EINA_UNUSED,
    _merge_unit(mdata->unit, imdata.unit);
    return EINA_TRUE;
 }
+
 
 static void
 _merge_units(Eolian_Unit *unit)
