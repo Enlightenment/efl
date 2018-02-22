@@ -10,6 +10,112 @@ local propt_to_type = {
     [dtree.Function.PROP_SET] = "(set)",
 }
 
+local verbs = {
+    "add",
+    "get",
+    "is",
+    "del",
+    "thaw",
+    "freeze",
+    "save",
+    "wait",
+    "eject",
+    "raise",
+    "lower",
+    "load",
+    "dup",
+    "reset",
+    "unload",
+    "close",
+    "set",
+    "interpolate",
+    "has",
+    "grab",
+    "check",
+    "find",
+    "ungrab",
+    "unset",
+    "clear",
+    "pop",
+    "new",
+    "peek",
+    "push",
+    "update",
+    "show",
+    "move",
+    "hide",
+    "calculate",
+    "resize",
+    "attach",
+    "pack",
+    "unpack",
+    "emit",
+    "call",
+    "append"
+}
+
+local not_verbs = {
+    "below",
+    "above",
+    "name",
+    "unfreezable",
+    "value",
+    "r",
+    "g",
+    "b",
+    "a",
+    "finalize",
+    "destructor",
+    "to",
+    "circle",
+    "rect",
+    "path",
+    "commands",
+    "type",
+    "colorspace",
+    "op",
+    "type",
+    "properties",
+    "status",
+    "status",
+    "relative",
+    "ptr",
+    "pair",
+    "pos",
+    "end"
+}
+
+local is_verb = function(word)
+   for i = 1, #verbs do
+      if verbs[i] == word then
+         return true
+      end
+   end
+   return false
+end
+
+local mono_method_name_get = function(f, ftype)
+   local cn = f:name_get(ftype)
+
+   local words = {}
+
+   for word in string.gmatch(cn, "%a+") do
+      words[#words+1] = word
+   end
+
+   if #words > 1 and is_verb(words[#words]) then
+      local tmp = words[#words]
+      words[#words] = words[1]
+      words[1] = tmp
+   end
+
+   for i = 1, #words do
+      words[i] = words[i]:gsub("^%l", string.upper)
+   end
+
+   return table.concat(words)
+end
+
 local gen_cparam = function(par, out)
     local part = par:type_get()
     out = out or (par:direction_get() == par.OUT)
@@ -136,14 +242,15 @@ local gen_func_mono_sig = function(f, ftype)
     ftype = ftype or f.METHOD
     assert(ftype ~= f.PROPERTY)
 
-    local cn = f:full_c_name_get(ftype)
+    local cn = mono_method_name_get(f, ftype)
     local rtype = f:return_type_get(ftype)
+    local prefix = ""
+    local suffix = ""
 
-    local fparam = "Eo *obj"
     if f:is_class() then
-        fparam = "Efl_Class *klass"
+       prefix = "static "
     elseif f:is_const() or ftype == f.PROP_GET then
-        fparam = "const Eo *obj"
+       suffix = " const"
     end
 
     if f:type_get() == f.METHOD then
@@ -152,8 +259,8 @@ local gen_func_mono_sig = function(f, ftype)
         for i = 1, #pars do
             pars[i] = gen_cparam(pars[i])
         end
-        table.insert(pars, 1, fparam);
-        return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
+        --table.insert(pars, 1, fparam);
+        return prefix .. cnrt .. "(" .. table.concat(pars, ", ") .. ")" .. suffix .. ";"
     end
 
     local keys = f:property_keys_get(ftype)
@@ -168,7 +275,7 @@ local gen_func_mono_sig = function(f, ftype)
         for i, par in ipairs(vals) do
             pars[#pars + 1] = gen_cparam(par)
         end
-        table.insert(pars, 1, fparam);
+        --table.insert(pars, 1, fparam);
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
@@ -191,7 +298,7 @@ local gen_func_mono_sig = function(f, ftype)
     for i, par in ipairs(vals) do
         pars[#pars + 1] = gen_cparam(par, true)
     end
-    table.insert(pars, 1, fparam);
+    --table.insert(pars, 1, fparam);
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
 end
 
