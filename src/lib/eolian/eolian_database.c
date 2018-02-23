@@ -38,7 +38,7 @@ eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   const Eolian_Declaration *decl = eina_hash_find(unit->state->unit.decls, shr);
+   const Eolian_Declaration *decl = eina_hash_find(unit->decls, shr);
    eina_stringshare_del(shr);
    return decl;
 }
@@ -57,7 +57,7 @@ eolian_declarations_get_by_file(const Eolian *state, const char *fname)
 EAPI Eina_Iterator *
 eolian_all_declarations_get(const Eolian_Unit *unit)
 {
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.decls) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->decls) : NULL);
 }
 
 EAPI Eolian_Declaration_Type

@@ -36,7 +36,7 @@ eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name)
 {
    if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(class_name);
-   Eolian_Class *cl = eina_hash_find(unit->state->unit.classes, shr);
+   Eolian_Class *cl = eina_hash_find(unit->classes, shr);
    eina_stringshare_del(shr);
    return cl;
 }
@@ -61,7 +61,7 @@ eolian_class_type_get(const Eolian_Class *cl)
 EAPI Eina_Iterator *
 eolian_all_classes_get(const Eolian_Unit *unit)
 {
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.classes) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->classes) : NULL);
 }
 
 EAPI const Eolian_Documentation *

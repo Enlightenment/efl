@@ -10,7 +10,7 @@ eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->state->unit.globals, shr);
+   Eolian_Variable *v = eina_hash_find(unit->globals, shr);
    eina_stringshare_del(shr);
    return v;
 }
@@ -20,7 +20,7 @@ eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->state->unit.constants, shr);
+   Eolian_Variable *v = eina_hash_find(unit->constants, shr);
    eina_stringshare_del(shr);
    return v;
 }
@@ -51,13 +51,13 @@ eolian_variable_constants_get_by_file(const Eolian_Unit *unit,
 EAPI Eina_Iterator *
 eolian_variable_all_constants_get(const Eolian_Unit *unit)
 {
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.constants) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->constants) : NULL);
 }
 
 EAPI Eina_Iterator *
 eolian_variable_all_globals_get(const Eolian_Unit *unit)
 {
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.globals) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->globals) : NULL);
 }
 
 EAPI Eolian_Variable_Type

@@ -278,7 +278,7 @@ Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *unit, const Eolian_T
    int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
    if (!kw || kw < KW_byte || kw >= KW_true)
      {
-        Eolian_Declaration *decl = eina_hash_find(unit->state->unit.decls, tp->full_name);
+        Eolian_Declaration *decl = eina_hash_find(unit->decls, tp->full_name);
         if (decl && decl->type != EOLIAN_DECL_CLASS
                  && decl->type != EOLIAN_DECL_VAR)
           return decl->data;
