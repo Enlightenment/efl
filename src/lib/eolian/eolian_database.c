@@ -9,17 +9,29 @@
 #include "eolian_priv.h"
 
 void
-database_decl_add(Eolian *state, Eina_Stringshare *name,
+database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
                   Eolian_Declaration_Type type,
                   Eina_Stringshare *file, void *ptr)
 {
    Eolian_Declaration *decl = calloc(1, sizeof(Eolian_Declaration));
+   decl->base = *((Eolian_Object *)ptr);
+   decl->base.file = eina_stringshare_ref(decl->base.file);
+   decl->base.refcount = 0;
    decl->type = type;
    decl->name = name;
    decl->data = ptr;
-   eina_hash_set(state->unit.decls, name, decl);
-   eina_hash_set(state->decls_f, file, eina_list_append
-                 ((Eina_List*)eina_hash_find(state->decls_f, file), decl));
+   eolian_object_add(&decl->base, name, unit->state->unit.decls);
+   eolian_object_add(&decl->base, name, unit->decls);
+   eina_hash_set(unit->state->decls_f, file, eina_list_append
+                 ((Eina_List*)eina_hash_find(unit->state->decls_f, file), decl));
+}
+
+static void
+database_decl_del(Eolian_Declaration *decl)
+{
+   if (!decl || eolian_object_unref(&decl->base)) return;
+   eina_stringshare_del(decl->base.file);
+   free(decl);
 }
 
 EAPI const Eolian_Declaration *
@@ -514,7 +526,7 @@ database_unit_init(Eolian *state, Eolian_Unit *unit)
    unit->aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
-   unit->decls      = eina_hash_stringshared_new(free);
+   unit->decls      = eina_hash_stringshared_new(EINA_FREE_CB(database_decl_del));
 }
 
 void

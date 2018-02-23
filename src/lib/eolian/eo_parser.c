@@ -2165,7 +2165,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_const:
       case KW_var:
         {
-           database_var_add(ls->state, parse_variable(ls, ls->t.kw == KW_var));
+           database_var_add(ls->unit, parse_variable(ls, ls->t.kw == KW_var));
            eolian_object_ref(&ls->tmp.var->base);
            ls->tmp.var = NULL;
            break;
@@ -2226,7 +2226,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
      }
    return EINA_FALSE;
 found_class:
-   database_decl_add(ls->state, ls->tmp.kls->full_name, EOLIAN_DECL_CLASS,
+   database_decl_add(ls->unit, ls->tmp.kls->full_name, EOLIAN_DECL_CLASS,
                      ls->tmp.kls->base.file, ls->tmp.kls);
    return EINA_TRUE;
 }

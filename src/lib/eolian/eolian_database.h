@@ -101,6 +101,7 @@ struct _Eolian_Documentation
 
 struct _Eolian_Declaration
 {
+   Eolian_Object base;
    Eolian_Declaration_Type type;
    Eina_Stringshare *name;
    void *data;
@@ -333,7 +334,7 @@ struct _Eolian_Variable
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(Eolian *state, const Eolian_Unit *src);
 
-void database_decl_add(Eolian *state, Eina_Stringshare *name,
+void database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
                        Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);
 
@@ -367,7 +368,7 @@ void database_expr_print(Eolian_Expression *expr);
 /* variables */
 
 void database_var_del(Eolian_Variable *var);
-void database_var_add(Eolian *state, Eolian_Variable *var);
+void database_var_add(Eolian_Unit *unit, Eolian_Variable *var);
 
 /* classes */
 void database_class_del(Eolian_Class *cl);
