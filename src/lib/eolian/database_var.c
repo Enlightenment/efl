@@ -25,8 +25,7 @@ database_var_del(Eolian_Variable *var)
 static void
 database_var_global_add(Eolian_Unit *unit, Eolian_Variable *var)
 {
-   eolian_object_add(&var->base, var->full_name, unit->state->unit.globals);
-   eolian_object_add(&var->base, var->full_name, unit->globals);
+   EOLIAN_OBJECT_ADD(unit, var->full_name, var, globals);
    eina_hash_set(unit->state->globals_f, var->base.file, eina_list_append
                  ((Eina_List*)eina_hash_find(unit->state->globals_f, var->base.file), var));
    database_decl_add(unit, var->full_name, EOLIAN_DECL_VAR, var->base.file, var);
@@ -35,8 +34,7 @@ database_var_global_add(Eolian_Unit *unit, Eolian_Variable *var)
 static void
 database_var_constant_add(Eolian_Unit *unit, Eolian_Variable *var)
 {
-   eolian_object_add(&var->base, var->full_name, unit->state->unit.constants);
-   eolian_object_add(&var->base, var->full_name, unit->constants);
+    EOLIAN_OBJECT_ADD(unit, var->full_name, var, constants);
    eina_hash_set(unit->state->constants_f, var->base.file, eina_list_append
                  ((Eina_List*)eina_hash_find(unit->state->constants_f, var->base.file), var));
    database_decl_add(unit, var->full_name, EOLIAN_DECL_VAR, var->base.file, var);

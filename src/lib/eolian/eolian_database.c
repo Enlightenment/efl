@@ -20,8 +20,7 @@ database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
    decl->type = type;
    decl->name = name;
    decl->data = ptr;
-   eolian_object_add(&decl->base, name, unit->state->unit.decls);
-   eolian_object_add(&decl->base, name, unit->decls);
+   EOLIAN_OBJECT_ADD(unit, name, decl, decls);
    eina_hash_set(unit->state->decls_f, file, eina_list_append
                  ((Eina_List*)eina_hash_find(unit->state->decls_f, file), decl));
 }
