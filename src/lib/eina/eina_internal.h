@@ -59,6 +59,7 @@ struct _Eina_Vpath_Interface_User
    const char *config;
    const char *cache;
    const char *run;
+   const char *tmp;
 };
 
 /**

@@ -35,7 +35,7 @@ _eina_vpath_data_get(const char *key)
 }
 
 
-static char*
+static char *
 _fallback_runtime_dir(const char *home)
 {
    char buf[PATH_MAX];
@@ -109,7 +109,7 @@ _fallback_runtime_dir(const char *home)
    return strdup(buf);
 }
 
-static char*
+static char *
 _fallback_home_dir()
 {
    char buf[PATH_MAX];
@@ -178,7 +178,7 @@ eina_vpath_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI char*
+EAPI char *
 eina_vpath_resolve(const char* path)
 {
    // XXX: implement parse of path then look up in hash if not just create
@@ -306,14 +306,17 @@ eina_vpath_interface_app_set(const char *app_domain, Eina_Prefix *app_pfx)
    _eina_vpath_data_add("app.data", eina_prefix_data_get(app_pfx));
    _eina_vpath_data_add("app.locale", eina_prefix_locale_get(app_pfx));
    snprintf(buf, sizeof(buf), "%s/%s",
-            _eina_vpath_data_get("config"), app_domain);
+            _eina_vpath_data_get("usr.config"), app_domain);
    _eina_vpath_data_add("app.config", buf);
    snprintf(buf, sizeof(buf), "%s/%s",
-            _eina_vpath_data_get("cache"), app_domain);
+            _eina_vpath_data_get("usr.cache"), app_domain);
    _eina_vpath_data_add("app.cache", buf);
    snprintf(buf, sizeof(buf), "%s/%s",
-            _eina_vpath_data_get("data"), app_domain);
+            _eina_vpath_data_get("usr.data"), app_domain);
    _eina_vpath_data_add("app.local", buf);
+   snprintf(buf, sizeof(buf), "%s/%s",
+            _eina_vpath_data_get("usr.tmp"), app_domain);
+   _eina_vpath_data_add("app.tmp", buf);
 }
 
 EAPI void
@@ -342,8 +345,9 @@ eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user)
    ADD(config);
    ADD(cache);
    ADD(run);
+   ADD(tmp);
 #undef ADD
 
    if (free_run)
-     free((char*)user->run);
+     free((char *)user->run);
 }

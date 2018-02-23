@@ -86,6 +86,7 @@ _efreet_efreet_app_interface_set(void)
    //   not set or empty, a default equal to $HOME/.local/share should be
    //   used.
    ENV_HOME_SET("XDG_DATA_HOME", ".local/share", data);
+   ENV_HOME_SET("XDG_TMP_HOME", ".local/tmp", tmp);
    // $XDG_CONFIG_HOME defines the base directory relative to which user
    //   specific configuration files should be stored. If $XDG_CONFIG_HOME
    //   is either not set or empty, a default equal to $HOME/.config should
