@@ -626,7 +626,7 @@ _elm_config_user_dir_snprintf(char       *dst,
    if (use_xdg_config)
      tmp = eina_vpath_resolve("(:usr.config:)/elementary");
    else
-     tmp = eina_vpath_resolve("(:home:)/elementary" ELEMENTARY_BASE_DIR);
+     tmp = eina_vpath_resolve("(:home:)/" ELEMENTARY_BASE_DIR);
 
    eina_strlcpy(dst, tmp, size);
    free(tmp);
