@@ -44,3 +44,63 @@
 //   ICON("", 80, "")
 #endif
 #undef ICON
+
+// regular icons
+#define ICON(_NAME, _FILE) \
+   set { name: _FILE"_icon"; \
+      image { image: _FILE"_160.png" COMP; size: 81 81 16000 16000; } \
+      image { image: _FILE"_080.png" COMP; size: 41 41 80 80; } \
+      image { image: _FILE"_040.png" COMP; size: 0 0 40 40; } \
+   } \
+   group { \
+      name: "e/icons/"_NAME; \
+      max: 16000 16000; \
+      parts { \
+         part { name: "icon"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _FILE"_icon"; \
+            } \
+         } \
+      } \
+   }
+   ICON("modules-files", "efm_folder")
+   ICON("system-file-manager", "efm_folder")
+   ICON("folder", "efm_folder")
+   ICON("folder-image", "efm_folder")
+   ICON("inode/directory", "efm_folder")
+   ICON("user-home", "efm_home")
+   ICON("user-desktop", "efm_desktop")
+   ICON("user-temp", "efm_temp")
+   ICON("user-bookmarks", "efm_favorite")
+   ICON("computer", "efm_computer")
+   ICON("drive-optical", "efm_drive_cd")
+   ICON("drive-harddisk", "efm_drive_hdd")
+   ICON("drive-removable-media", "efm_drive_usb_media")
+   ICON("media-flash", "efm_drive_flash")
+
+   ICON("dialog-ask", "ic_unknown")
+   ICON("unknown", "ic_unknown")
+   ICON("emblem-symbolic-link", "ic_unknown")
+#undef ICON
+// mime icons
+#define ICON(_NAME, _FILE) \
+   set { name: _FILE"_icon"; \
+      image { image: _FILE"_160.png" COMP; size: 81 81 16000 16000; } \
+      image { image: _FILE"_080.png" COMP; size: 41 41 80 80; } \
+      image { image: _FILE"_040.png" COMP; size: 0 0 40 40; } \
+   } \
+   group { \
+      name: "e/icons/fileman/mime/"_NAME; \
+      max: 16000 16000; \
+      parts { \
+         part { name: "icon"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _FILE"_icon"; \
+            } \
+         } \
+      } \
+   }
+   ICON("inode/directory", "efm_folder")
+#undef ICON
