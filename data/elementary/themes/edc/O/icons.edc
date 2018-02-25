@@ -68,8 +68,8 @@
    //Standard Status Icons
    ICON("dialog-warning","icon_warning.png",128)                   // "enlightenment/warning"
    ICON("dialog-error","icon_warning.png",128)                     // "enlightenment/error"
-   ICON("dialog-ask","icon_dummy.png",64)                          // "enlightenment/unknown"
-   ICON("unknown","icon_dummy.png",64)                      // *** // "enlightenment/unknown"
+//   ICON("dialog-ask","icon_dummy.png",64)                          // "enlightenment/unknown"
+//   ICON("unknown","icon_dummy.png",64)                      // *** // "enlightenment/unknown"
    //Standard Application Icons
    ICON("preferences-desktop","icon_desktops.png",64)                         // "enlightenment/desktops"
    ICON("preferences-desktop-theme","icon_theme.png",64)                      // "enlightenment/themes"
@@ -159,33 +159,33 @@
    ICON("preferences-system-power-management","icon_power_management.png",64)         // "enlightenment/power_management"
    ICON("preferences-system-screen-resolution","icon_screen_resolution.png",64)// *** // "enlightenment/screen_resolution"
    ICON("preferences-illume","icon_illume.png",64)
-   ICON("system-file-manager","icon_efm_folder.png",64)                               // "enlightenment/fileman"
+//   ICON("system-file-manager","icon_efm_folder.png",64)                               // "enlightenment/fileman"
    //Standard Module Category Icons 
    ICON("modules-utils","icon_gadget.png",64)
    ICON("modules-system","icon_gadget.png",64)
    ICON("modules-look","icon_look.png",64)
-   ICON("modules-files","icon_efm_folder.png",64)
+//   ICON("modules-files","icon_efm_folder.png",64)
    ICON("modules-launcher","icon_run.png",64)
    ICON("modules-core","logo_white_128.png",64)
    ICON("modules-mobile","icon_globe.png",64)
    ICON("modules-settings","icon_config.png",64)
    //Standard Emblem Icons
-   ICON("emblem-symbolic-link","icon_dummy.png",64)                // EFMBUTTON("symlink")
+//   ICON("emblem-symbolic-link","icon_dummy.png",64)                // EFMBUTTON("symlink")
    //Standard Place Icons
    ICON("start-here","logo_white_128.png",128)                     // "enlightenment/e"
-   ICON("folder","icon_efm_folder.png",64)                         // "fileman/folder"
-   ICON("user-home","icon_efm_home.png",64)                        // "fileman/home"
-   ICON("user-temp","icon_efm_tmp.png",64)                  // *** // "fileman/tmp"
-   ICON("user-desktop","icon_efm_desktop.png",64)                  // "fileman/desktop"
-   ICON("user-bookmarks","icon_favorites.png",64)                  // "enlightenment/favorites"
-   ICON("folder-image","icon_wallpaper.png",64)                    // "enlightenment/picture"
+//   ICON("folder","icon_efm_folder.png",64)                         // "fileman/folder"
+//   ICON("user-home","icon_efm_home.png",64)                        // "fileman/home"
+//   ICON("user-temp","icon_efm_tmp.png",64)                  // *** // "fileman/tmp"
+//   ICON("user-desktop","icon_efm_desktop.png",64)                  // "fileman/desktop"
+//   ICON("user-bookmarks","icon_favorites.png",64)                  // "enlightenment/favorites"
+//   ICON("folder-image","icon_wallpaper.png",64)                    // "enlightenment/picture"
    ICON("network-website","icon_globe.png",64)                     // "enlightenment/website"
    //Standard Device Icons
-   ICON("computer","icon_efm_root.png", 64)                        // "fileman/root"
-   ICON("drive-harddisk","icon_efm_hdd.png", 128)                  // "fileman/hd" "fileman/hdd"
-   ICON("drive-optical","icon_efm_cd.png", 128)                    // "fileman/??"
-   ICON("media-flash","icon_efm_flash.png", 128)                   // "fileman/??"
-   ICON("drive-removable-media","icon_efm_usbmedia.png", 128);
+//   ICON("computer","icon_efm_root.png", 64)                        // "fileman/root"
+//   ICON("drive-harddisk","icon_efm_hdd.png", 128)                  // "fileman/hd" "fileman/hdd"
+//   ICON("drive-optical","icon_efm_cd.png", 128)                    // "fileman/??"
+//   ICON("media-flash","icon_efm_flash.png", 128)                   // "fileman/??"
+//   ICON("drive-removable-media","icon_efm_usbmedia.png", 128);
    ICON("media-eject","icon_efm_eject.png", 64)
    /* End of FreeDesktop.Org icons */
    //E Specific icons
@@ -195,6 +195,6 @@
    ICONMIME("inode/chardevice","icon_efm_file.png",128)
    ICONMIME("inode/blockdevice","icon_efm_file.png",128)
    ICONMIME("inode/directory-locked","icon_efm_file.png",128)
-   ICONMIME("inode/directory","icon_efm_folder.png",128)
+//   ICONMIME("inode/directory","icon_efm_folder.png",128)
    ICONMIME("inode/fifo","icon_efm_file.png",128)
    ICONMIME("inode/socket","icon_efm_file.png",128)
