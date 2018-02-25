@@ -159,7 +159,12 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
    if (sdata.sig >= 0)
      {
         int err = errno;
-        write(sig_pipe[1], &sdata, sizeof(sdata));
+        const ssize_t bytes = write(sig_pipe[1], &sdata, sizeof(sdata));
+        if (EINA_UNLIKELY(bytes != sizeof(sdata)))
+          {
+             err = errno;
+             ERR("write() failed: %s", strerror(err));
+          }
         errno = err;
      }
 }
