@@ -63,6 +63,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Eina_Bool ticking : 1;
    Eina_Bool once : 1;
    Ecore_Job *tick_job;
+   Ecore_Job *focus_job;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
@@ -198,6 +199,11 @@ _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
    Ecore_Event_Handler *h;
    if (--_drm_init_count != 0) return _drm_init_count;
 
+   if (edata->focus_job)
+     {
+        ecore_job_del(edata->focus_job);
+        edata->focus_job = NULL;
+     }
    ecore_drm2_outputs_destroy(edata->dev);
    ecore_drm2_device_close(edata->dev);
    ecore_drm2_shutdown();
@@ -383,6 +389,17 @@ _drm_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 }
 
 static void
+_drm_show_focus_job(void *data)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
+   edata = ee->engine.data;
+   edata->focus_job = NULL;
+}
+
+static void
 _drm_show(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Drm_Data *edata;
@@ -406,14 +423,10 @@ _drm_show(Ecore_Evas *ee)
    if (ee->visible) return;
 
    ee->visible = 1;
-   if (ee->prop.fullscreen)
-     {
-        evas_focus_in(ee->evas);
-        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-     }
    if (ee->func.fn_show) ee->func.fn_show(ee);
 
    edata = ee->engine.data;
+   edata->focus_job = ecore_job_add(_drm_show_focus_job, ee);
    /* HACK: sometimes we still have an animator ticking when we vc switch
     * so for now we just fire off a flip here to kick it when we come back.
     * This is just papering over a bug for now until I have time to track
