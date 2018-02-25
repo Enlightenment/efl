@@ -244,6 +244,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
 	lib/elementary/efl_ui_list_precise_layouter.eo \
+	lib/elementary/elm_view_list.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
