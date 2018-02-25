@@ -344,6 +344,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    int pipe_stdin[2];
    int pipe_stdout[2];
    int pipe_exited[2];
+   int ret;
 
    if (pd->pid != -1) return EINA_FALSE;
    if (!td) return EINA_FALSE;
@@ -352,7 +353,14 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    cmd = efl_task_command_get(obj);
    if (!cmd) return EINA_FALSE;
 
-   pipe(pipe_exited);
+   ret = pipe(pipe_exited);
+   if (EINA_UNLIKELY(ret != 0))
+     {
+        const int error = errno;
+        ERR("pipe() failed: %s", strerror(error));
+        return EINA_FALSE;
+     }
+
    pd->fd.exited_read = pipe_exited[0];
    eina_file_close_on_exec(pd->fd.exited_write,  EINA_TRUE);
    pd->fd.exited_write = pipe_exited[1];
@@ -360,7 +368,13 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 
    if (pd->flags & EFL_EXE_FLAGS_USE_STDIN)
      {
-        pipe(pipe_stdin);
+        ret = pipe(pipe_stdin);
+        if (EINA_UNLIKELY(ret != 0))
+          {
+             const int error = errno;
+             ERR("pipe() failed: %s", strerror(error));
+             return EINA_FALSE;
+          }
         pd->fd.in = pipe_stdin[1];
         fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
         eina_file_close_on_exec(pd->fd.in, EINA_TRUE);
@@ -372,7 +386,13 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
      }
    if (pd->flags & EFL_EXE_FLAGS_USE_STDOUT)
      {
-        pipe(pipe_stdout);
+        ret = pipe(pipe_stdout);
+        if (EINA_UNLIKELY(ret != 0))
+          {
+             const int error = errno;
+             ERR("pipe() failed: %s", strerror(error));
+             return EINA_FALSE;
+          }
         pd->fd.out = pipe_stdout[0];
         fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
         eina_file_close_on_exec(pd->fd.out, EINA_TRUE);
