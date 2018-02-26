@@ -154,6 +154,7 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
 {
    Signal_Data sdata;
 
+   memset(&sdata, 0, sizeof(Signal_Data));
    sdata.sig = sig;
    sdata.info = *si;
    if (sdata.sig >= 0)
