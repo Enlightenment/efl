@@ -600,6 +600,7 @@ struct _Edje_File
       int                          major;
       int                          minor;
    } efl_version;
+   Eina_Stringshare               *id;
 
    FLOAT_T                         base_scale;
 
