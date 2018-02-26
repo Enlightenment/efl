@@ -1381,7 +1381,7 @@ data_write_images(void)
         Image_Write *iw;
 
         img = &edje_file->image_dir->entries[cur_image_entry];
-        if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) || !img->entry)
+        if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_USER) || !img->entry)
           continue;
 
         if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1 ||
@@ -1452,7 +1452,7 @@ data_write_images(void)
                }
           }
 
-        if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+        if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_USER)
           {
              ext = strrchr(img->entry, '.');
              if (ext && (!strcasecmp(ext, ".svg") || !strcasecmp(ext, ".svgz")))
@@ -3944,7 +3944,7 @@ free_group:
 
                   if ((de->entry) && (!strcmp(de->entry, image->name)))
                     {
-                       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+                       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_USER)
                          *(image->dest) = -de->id - 1;
                        else
                          *(image->dest) = de->id;

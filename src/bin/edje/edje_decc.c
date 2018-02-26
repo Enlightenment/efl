@@ -299,7 +299,7 @@ output(void)
 
 	     if ((ei->source_type > EDJE_IMAGE_SOURCE_TYPE_NONE) &&
 		 (ei->source_type < EDJE_IMAGE_SOURCE_TYPE_LAST) &&
-		 (ei->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
+		 (ei->source_type != EDJE_IMAGE_SOURCE_TYPE_USER) &&
 		 (ei->entry))
 	       {
 		  Ecore_Evas *ee;
