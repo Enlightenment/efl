@@ -24,7 +24,6 @@ class Efl.Ui.Check (Efl.Ui.Nstate, Efl.Access.Widget.Action)
       Efl.Object.constructor;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Nstate.count { set; }
       Efl.Ui.Nstate.value { set; }

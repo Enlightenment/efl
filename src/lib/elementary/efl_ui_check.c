@@ -12,6 +12,7 @@
 #include "efl_ui_nstate.eo.h"
 #include "efl_ui_check_private.h"
 #include "efl_ui_nstate_private.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_CHECK_CLASS
 #define MY_CLASS_PFX efl_ui_check
@@ -84,23 +85,6 @@ _activate(Evas_Object *obj)
                                           efl_ui_nstate_value_get(obj));
 }
 
-/* FIXME: replicated from elm_layout just because check's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   char buf[64];
-
-   if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-   edje_object_message_signal_process(wd->resize_obj);
-}
-
 EOLIAN static Efl_Access_State_Set
 _efl_ui_check_efl_access_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
@@ -112,24 +96,6 @@ _efl_ui_check_efl_access_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUS
        STATE_TYPE_SET(states, EFL_ACCESS_STATE_CHECKED);
 
    return states;
-}
-
-/* FIXME: replicated from elm_layout just because check's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-EOLIAN static Eina_Bool
-_efl_ui_check_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
-   if (!int_ret) return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-
-   elm_layout_sizing_eval(obj);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -167,11 +133,6 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
      elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
 
    edje_object_message_signal_process(wd->resize_obj);
-
-   /* FIXME: replicated from elm_layout just because check's icon spot
-    * is elm.swallow.content, not elm.swallow.icon. Fix that whenever
-    * we can changed the theme API */
-   _icon_signal_emit(obj);
 
    elm_layout_sizing_eval(obj);
 
@@ -413,6 +374,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 #include "efl_ui_check.eo.c"
 
 #include "efl_ui_check_legacy.eo.h"
+#include "efl_ui_check_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_check"
 
@@ -429,6 +391,87 @@ _efl_ui_check_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    return obj;
 }
+
+/* FIXME: replicated from elm_layout just because check's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static void
+_icon_signal_emit(Evas_Object *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   char buf[64];
+
+   if (!elm_widget_resize_object_get(obj)) return;
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(wd->resize_obj);
+
+   elm_layout_sizing_eval(obj);
+}
+
+/* FIXME: replicated from elm_layout just because check's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Efl_Ui_Theme_Apply
+_efl_ui_check_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_LEGACY_CLASS));
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+
+   _icon_signal_emit(obj);
+
+   return int_ret;
+}
+
+/* FIXME: replicated from elm_layout just because check's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Eina_Bool
+_efl_ui_check_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *sobj)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_CHECK_LEGACY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* FIXME: replicated from elm_layout just because check's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_efl_ui_check_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_CHECK_LEGACY_CLASS), part), content);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* Efl.Part begin */
+
+static Eina_Bool
+_part_is_efl_ui_check_legacy_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return eina_streq(part, "elm.swallow.content");
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_check_legacy, EFL_UI_CHECK_LEGACY, void, _part_is_efl_ui_check_legacy_part)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_check_legacy, EFL_UI_CHECK_LEGACY, void)
+#include "efl_ui_check_legacy_part.eo.c"
+
+/* Efl.Part end */
 
 EAPI Evas_Object *
 elm_check_add(Evas_Object *parent)
