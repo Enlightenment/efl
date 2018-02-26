@@ -1401,8 +1401,8 @@ AM_TESTS_ENVIRONMENT += \
         ELM_RUN_IN_TREE=1 \
 	EFL_RUN_IN_TREE=1
 
-check_PROGRAMS += tests/elementary/elm_suite
-TESTS += tests/elementary/elm_suite
+check_PROGRAMS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
+TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 
 tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_suite.c \
@@ -1503,6 +1503,24 @@ tests_elementary_elm_suite_CPPFLAGS = \
 
 tests_elementary_elm_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
 tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
+
+tests_elementary_efl_ui_suite_SOURCES = \
+	tests/elementary/efl_ui_suite.c
+
+tests_elementary_efl_ui_suite_CPPFLAGS = \
+	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
+	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \
+	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data/elementary\" \
+	-DELM_TEST_DATA_DIR=\"${abs_top_builddir}/data/elementary\" \
+	-DPACKAGE_DATA_DIR=\"${abs_top_builddir}/data/elementary\" \
+	-I$(top_srcdir)/src/lib/elementary \
+	-I$(top_builddir)/src/lib/elementary \
+	-I$(top_builddir)/src/tests/elementary \
+	@CHECK_CFLAGS@ \
+	@ELEMENTARY_CFLAGS@
+
+tests_elementary_efl_ui_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
+tests_elementary_efl_ui_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
 endif
 
 if HAVE_ELUA
