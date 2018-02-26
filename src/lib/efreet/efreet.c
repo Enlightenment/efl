@@ -98,7 +98,11 @@ _efreet_efreet_app_interface_set(void)
    //   $HOME/.cache should be used.
    ENV_HOME_SET("XDG_CACHE_HOME", ".cache", cache);
 
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if ((getuid() != geteuid()) || (!(s = getenv("XDG_RUNTIME_DIR"))))
+#else
+   if (!(s = getenv("XDG_RUNTIME_DIR")))
+#endif
      user.run = NULL;
    else
      user.run = s;
