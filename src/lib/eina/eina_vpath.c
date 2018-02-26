@@ -1,3 +1,10 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <sys/types.h>
+#include <pwd.h>
+
 #include <Eina.h>
 
 #include "eina_internal.h"
@@ -39,6 +46,9 @@ static char *
 _fallback_runtime_dir(const char *home)
 {
    char buf[PATH_MAX];
+#if defined(HAVE_GETUID)
+   uid_t uid = getuid();
+#endif
    struct stat st;
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
