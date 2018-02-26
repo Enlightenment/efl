@@ -29,8 +29,9 @@ _slider_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 void
 test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *bx, *hbx;
+   Eo *win, *bx, *hbx, *ic;
    double step;
+   char buf[PATH_MAX];
 
    win = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
@@ -40,8 +41,13 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_content_set(win, efl_added));
 
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   ic = efl_add(EFL_UI_IMAGE_CLASS, win,
+                efl_file_set(efl_added, buf, NULL));
+
    efl_add(EFL_UI_SLIDER_CLASS, bx,
            efl_text_set(efl_added, "Horizontal"),
+           efl_content_set(efl_added, ic),
            efl_ui_slider_part_indicator_visible_mode_set(efl_part(efl_added, "indicator"),
                                                          EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE),
            efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
