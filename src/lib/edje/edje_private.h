@@ -430,7 +430,8 @@ typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1    3
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2    4
 #define EDJE_IMAGE_SOURCE_TYPE_USER             5
-#define EDJE_IMAGE_SOURCE_TYPE_LAST                 6
+#define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL             6
+#define EDJE_IMAGE_SOURCE_TYPE_LAST                 7
 
 #define EDJE_SOUND_SOURCE_TYPE_NONE           0
 #define EDJE_SOUND_SOURCE_TYPE_INLINE_RAW     1
@@ -551,6 +552,11 @@ struct _AABB {
    int               rel_to;
 };
 
+typedef struct Edje_Image_Hash
+{
+   int id;
+} Edje_Image_Hash;
+
 struct _Edje_File
 {
    const char                     *path;
@@ -562,6 +568,10 @@ struct _Edje_File
    Edje_Vibration_Directory       *vibration_dir;
    Edje_Mo_Directory              *mo_dir;
    Edje_Gfx_Filter_Directory      *filter_dir;
+
+   Eina_Hash                      *image_id_hash;
+   Eina_Stringshare              **requires;
+   unsigned int                    requires_count;
 
    Eina_List                      *styles;
 
@@ -682,6 +692,7 @@ struct _Edje_Image_Directory_Entry
    const char *entry; /* the nominal name of the image - if any */
    int   source_type; /* alternate source mode. 0 = none */
    int   source_param; /* extra params on encoding */
+   Eina_Stringshare *external_id;
    int   id; /* the id no. of the image */
 };
 
@@ -2377,6 +2388,7 @@ extern Eina_Cow *_edje_calc_params_map_cow;
 extern Eina_Cow *_edje_calc_params_physics_cow;
 
 extern Eina_Hash       *_edje_file_hash;
+extern Eina_Hash       *_edje_id_hash;
 
 extern const char      *_edje_language;
 extern const char      *_edje_cache_path;

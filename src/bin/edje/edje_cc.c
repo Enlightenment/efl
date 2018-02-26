@@ -33,6 +33,7 @@ char *depfile = NULL;
 char *authors = NULL;
 char *license = NULL;
 Eina_List *licenses = NULL;
+Eina_Array *requires;
 
 static const char *progname = NULL;
 
@@ -418,6 +419,7 @@ main(int argc, char **argv)
    edje_file->efl_version.major = 1;
    edje_file->efl_version.minor = 18;
    edje_file->base_scale = FROM_INT(1);
+   requires = eina_array_new(10);
 
 #ifdef HAVE_SYS_RESOURCE_H
    {
