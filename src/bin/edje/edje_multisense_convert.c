@@ -15,22 +15,22 @@ Edje_Sound_Encode *
 _edje_multisense_encode(const char *filename, Edje_Sound_Sample *sample, double quality EINA_UNUSED)
 {
    SF_INFO sfinfo;
-   SNDFILE* sfile;
+   SNDFILE *sfile;
    Edje_Sound_Encode *enc_info;
-   
+
    enc_info = calloc(1, sizeof(Edje_Sound_Encode));
    if (!enc_info)
      {
         ERR("while allocating memory to load file ");
         exit(-1);
      }
-   memset (&sfinfo, 0, sizeof (SF_INFO));
-   
+   memset(&sfinfo, 0, sizeof (SF_INFO));
+
    enc_info->encoded = EINA_FALSE;
    enc_info->comp_type = "RAW PCM";
-   
+
    // Open wav file using sndfile
-   sfile = sf_open (filename, SFM_READ, &sfinfo);
+   sfile = sf_open(filename, SFM_READ, &sfinfo);
    if (!sfile)
      {
         ERR("Unable to open audio file: %s", filename);
@@ -82,7 +82,7 @@ _edje_multisense_encode(const char *filename, Edje_Sound_Sample *sample, double 
 }
 
 #ifdef HAVE_LIBFLAC
-const char*
+const char *
 _edje_multisense_encode_to_flac(char *snd_path, SF_INFO sfinfo)
 {
    unsigned int total_samples = 0; /* can use a 32-bit number due to WAVE size limitations */
@@ -164,14 +164,14 @@ _edje_multisense_encode_to_flac(char *snd_path, SF_INFO sfinfo)
              ok = 0;
           }
      }
-   
+
    /* read blocks of samples from WAVE file and feed to encoder */
    while (ok)
      {
         FLAC__int32 readbuffer[READBUF * 2];
         sf_count_t count;
         int i;
-        
+
         count = sf_readf_int(sfile, readbuffer, READBUF);
         if (count <= 0) break;
         for (i = 0; i < (count * sfinfo.channels); i++)
@@ -187,8 +187,9 @@ _edje_multisense_encode_to_flac(char *snd_path, SF_INFO sfinfo)
 
    FLAC__stream_encoder_delete(encoder);
    sf_close(sfile);
-   return (snd_path);
+   return snd_path;
 }
+
 #endif
 
 #ifdef HAVE_VORBIS
@@ -233,7 +234,7 @@ _edje_multisense_encode_to_ogg_vorbis(char *snd_path, double quality, SF_INFO sf
 
    /********** Encode setup ************/
    vorbis_info_init(&vi);
-   ret = vorbis_encode_init(&vi, sfinfo.channels, sfinfo.samplerate, 
+   ret = vorbis_encode_init(&vi, sfinfo.channels, sfinfo.samplerate,
                             -1, (long)(quality * 1000), -1);
    if (ret == OV_EFAULT) printf("OV_EFAULT\n");
    if (ret == OV_EINVAL) printf("OV_EINVAL\n");
@@ -280,7 +281,7 @@ _edje_multisense_encode_to_ogg_vorbis(char *snd_path, double quality, SF_INFO sf
         int i, ch;
         float readbuffer[READBUF * 2];
         sf_count_t count;
-        
+
         count = sf_readf_float(sfile, readbuffer, READBUF);
 
         if (!count)
@@ -288,12 +289,12 @@ _edje_multisense_encode_to_ogg_vorbis(char *snd_path, double quality, SF_INFO sf
         else
           {
              float **buffer = vorbis_analysis_buffer(&vd, count);
-             
+
              /* uninterleave samples */
              for (i = 0; i < count; i++)
                {
                   for (ch = 0; ch < sfinfo.channels; ch++)
-                    buffer[ch][i]= readbuffer[(i * sfinfo.channels) + ch];
+                    buffer[ch][i] = readbuffer[(i * sfinfo.channels) + ch];
                }
              vorbis_analysis_wrote(&vd, i);
           }
@@ -322,8 +323,9 @@ _edje_multisense_encode_to_ogg_vorbis(char *snd_path, double quality, SF_INFO sf
    vorbis_comment_clear(&vc);
    vorbis_info_clear(&vi);
    sf_close(sfile);
-   fclose (fout);
+   fclose(fout);
    return snd_path;
 }
+
 #endif
 #endif
