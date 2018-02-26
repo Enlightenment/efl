@@ -107,6 +107,7 @@ elm_public_eolian_files = \
 elm_public_eolian_files += \
 	lib/elementary/efl_ui_legacy.eo \
 	lib/elementary/efl_ui_button_legacy_part.eo \
+	lib/elementary/efl_ui_radio_legacy_part.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_multibuttonentry_item.eo \
 	lib/elementary/elm_interface_scrollable.eo \
