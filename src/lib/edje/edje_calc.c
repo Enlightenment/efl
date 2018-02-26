@@ -597,6 +597,100 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
 }
 
 static void
+_edje_real_part_image_error_check(Edje_Real_Part *ep)
+{
+   switch (evas_object_image_load_error_get(ep->object))
+     {
+      case EVAS_LOAD_ERROR_GENERIC:
+        ERR("Error type: EVAS_LOAD_ERROR_GENERIC");
+        break;
+
+      case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
+        ERR("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST");
+        break;
+
+      case EVAS_LOAD_ERROR_PERMISSION_DENIED:
+        ERR("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED");
+        break;
+
+      case EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
+        ERR("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED");
+        break;
+
+      case EVAS_LOAD_ERROR_CORRUPT_FILE:
+        ERR("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE");
+        break;
+
+      case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
+        ERR("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT");
+        break;
+
+      default:
+        ERR("Error type: ???");
+        break;
+     }
+}
+
+static Eina_Bool
+_edje_real_part_image_internal_set(Edje_File *edf, Edje_Real_Part *ep, int image_id)
+{
+   char buf[1024] = "edje/images/";
+
+   /* Replace snprint("edje/images/%i") == memcpy + itoa */
+   eina_convert_itoa(image_id, buf + 12); /* No need to check length as 2³² need only 10 characteres. */
+
+   evas_object_image_mmap_set(ep->object, edf->f, buf);
+   if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Error loading image collection \"%s\" from "
+            "file \"%s\". Missing EET Evas loader module?",
+            buf, edf->path);
+        _edje_real_part_image_error_check(ep);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_edje_real_part_image_external_set(Edje_File *edf, Edje_Real_Part *ep, int image_id)
+{
+   Edje_Image_Directory_Entry *ie;
+
+   if (!edf->image_dir) return EINA_FALSE;
+   ie = edf->image_dir->entries + (-image_id) - 1;
+   if ((ie) &&
+       (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_USER) &&
+       (ie->entry))
+     {
+        evas_object_image_file_set(ep->object, ie->entry, NULL);
+        _edje_real_part_image_error_check(ep);
+        return EINA_TRUE;
+     }
+   else if ((ie) &&
+       (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
+       (ie->entry))
+     {
+        Edje_File *edff;
+        Eina_List *l, *ll;
+
+        l = eina_hash_find(_edje_id_hash, ie->external_id);
+        EINA_LIST_FOREACH(l, ll, edff)
+          {
+             Edje_Image_Hash *eih = eina_hash_find(edff->image_id_hash, ie->entry);
+
+             if (!eih) continue;
+             if (eih->id < 0)
+               return _edje_real_part_image_external_set(edff, ep, eih->id);
+             else
+               _edje_real_part_image_internal_set(edff, ep, eih->id);
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   return EINA_FALSE;
+}
+
+static void
 _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set, FLOAT_T pos)
 {
    int image_id;
@@ -609,16 +703,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
    if (set) *set = ep->param1.set;
    if (image_id < 0)
      {
-        Edje_Image_Directory_Entry *ie;
-
-        if (!ed->file->image_dir) ie = NULL;
-        else ie = ed->file->image_dir->entries + (-image_id) - 1;
-        if ((ie) &&
-            (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_USER) &&
-            (ie->entry))
-          {
-             evas_object_image_file_set(ep->object, ie->entry, NULL);
-          }
+        _edje_real_part_image_external_set(ed->file, ep, image_id);
      }
    else
      {
@@ -659,58 +744,18 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
           }
         if (image_id < 0)
           {
-             ERR("Part \"%s\" description, "
-                 "\"%s\" %3.3f with image %i index has a missing image id in a set of %i !!!",
-                 ep->part->name,
-                 ep->param1.description->state.name,
-                 ep->param1.description->state.value,
-                 image_num,
-                 image_count);
+             if (!_edje_real_part_image_external_set(ed->file, ep, image_id))
+               ERR("Part \"%s\" description, "
+                   "\"%s\" %3.3f with image %i index has a missing image id in a set of %i !!!",
+                   ep->part->name,
+                   ep->param1.description->state.name,
+                   ep->param1.description->state.value,
+                   image_num,
+                   image_count);
           }
         else
           {
-             char buf[1024] = "edje/images/";
-
-             /* Replace snprint("edje/images/%i") == memcpy + itoa */
-             eina_convert_itoa(image_id, buf + 12); /* No need to check length as 2³² need only 10 characteres. */
-
-             evas_object_image_mmap_set(ep->object, ed->file->f, buf);
-             if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
-               {
-                  ERR("Error loading image collection \"%s\" from "
-                      "file \"%s\". Missing EET Evas loader module?",
-                      buf, ed->file->path);
-                  switch (evas_object_image_load_error_get(ep->object))
-                    {
-                     case EVAS_LOAD_ERROR_GENERIC:
-                       ERR("Error type: EVAS_LOAD_ERROR_GENERIC");
-                       break;
-
-                     case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
-                       ERR("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST");
-                       break;
-
-                     case EVAS_LOAD_ERROR_PERMISSION_DENIED:
-                       ERR("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED");
-                       break;
-
-                     case EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
-                       ERR("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED");
-                       break;
-
-                     case EVAS_LOAD_ERROR_CORRUPT_FILE:
-                       ERR("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE");
-                       break;
-
-                     case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
-                       ERR("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT");
-                       break;
-
-                     default:
-                       ERR("Error type: ???");
-                       break;
-                    }
-               }
+             _edje_real_part_image_internal_set(ed->file, ep, image_id);
           }
      }
 }
