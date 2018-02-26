@@ -134,12 +134,6 @@ typedef enum _Eio_File_Op Eio_File_Op;
  */
 
 /**
- * @typedef Eio_File
- * Generic asynchronous I/O reference.
- */
-typedef struct _Eio_File Eio_File;
-
-/**
  * @typedef Eio_Progress
  * Progress information on a specific operation.
  */
@@ -148,7 +142,6 @@ typedef struct _Eio_Progress Eio_Progress;
 typedef Eina_Bool (*Eio_Filter_Cb)(void *data, Eio_File *handler, const char *file);
 typedef void      (*Eio_Main_Cb)(void *data, Eio_File *handler, const char *file);
 
-typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
 typedef Eina_Bool (*Eio_Filter_Dir_Cb)(void *data, Eio_File *handler, Eina_File_Direct_Info *info);
 typedef void      (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
 
