@@ -1,5 +1,4 @@
 group { name: "e/shelf/default/base"; nomouse;
-   alias: "e/shelf/alternate/base";
    data {
       /* this tells e the shelf is shaped, not rectangular */
 //      item: "shaped" "1";
@@ -18,6 +17,9 @@ group { name: "e/shelf/default/base"; nomouse;
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
+            color: 64 64 64 255;
+         }
+         description { state: "vert" 0.0;
             color: 64 64 64 255;
          }
       }
@@ -288,6 +290,20 @@ target: "sh_vert_clip"; \
    }
 }
 
+group { name: "e/shelf/alternate/base"; nomouse;
+   inherit: "e/shelf/default/base";
+   parts {
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            color: 32 32 32 255;
+         }
+         description { state: "vert" 0.0;
+            color: 32 32 32 255;
+         }
+      }
+   }
+}
+
 group { name: "e/shelf/invisible/base"; nomouse;
    inherit: "e/shelf/default/base";
    data {
@@ -352,10 +368,10 @@ group { name: "e/shelf/translucent/base"; nomouse;
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 255 255 255 128;
+            color: 32 32 32 128;
          }
          description { state: "vert" 0.0;
-            color: 255 255 255 128;
+            color: 32 32 32 128;
          }
       }
    }
