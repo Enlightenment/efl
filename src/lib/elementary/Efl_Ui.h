@@ -118,7 +118,9 @@
 #include <Efl_Net.h>
 
 #include <Evas.h>
-#include <Evas_GL.h>
+#ifndef EFL_NOLEGACY_API_SUPPORT
+# include <Evas_GL.h>
+#endif
 #include <Eio.h>
 #include <Edje.h>
 #include <Eldbus.h>
