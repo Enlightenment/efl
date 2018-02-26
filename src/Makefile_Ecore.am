@@ -264,8 +264,8 @@ endif
 
 if EFL_ENABLE_TESTS
 
-check_PROGRAMS += tests/ecore/ecore_suite
-TESTS += tests/ecore/ecore_suite
+check_PROGRAMS += tests/ecore/ecore_suite tests/ecore/efl_app_suite
+TESTS += tests/ecore/ecore_suite tests/ecore/efl_app_suite
 
 tests_ecore_ecore_suite_SOURCES = \
 tests/ecore/ecore_suite.c \
@@ -313,6 +313,51 @@ tests_ecore_ecore_suite_LDADD = \
 @ECORE_DRM_LIBS@ \
 @USE_ECORE_INPUT_LIBS@
 tests_ecore_ecore_suite_DEPENDENCIES = \
+@USE_ECORE_INTERNAL_LIBS@ \
+@USE_ECORE_AUDIO_INTERNAL_LIBS@ \
+@USE_ECORE_FILE_INTERNAL_LIBS@ \
+@USE_ECORE_X_INTERNAL_LIBS@ \
+@USE_ECORE_IMF_INTERNAL_LIBS@ \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_WAYLAND_INTERNAL_LIBS@ \
+@USE_ECORE_DRM_INTERNAL_LIBS@ \
+@USE_ECORE_FB_INTERNAL_LIBS@ \
+@USE_ECORE_INPUT_INTERNAL_LIBS@
+
+tests_ecore_efl_app_suite_SOURCES = \
+tests/ecore/efl_app_suite.c \
+tests/ecore/efl_app_suite.h
+
+tests_ecore_efl_app_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
+@CHECK_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@ECORE_AUDIO_CFLAGS@ \
+@ECORE_FILE_CFLAGS@ \
+@ECORE_X_CFLAGS@ \
+@ECORE_IMF_CFLAGS@ \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_WAYLAND_CFLAGS@ \
+@ECORE_WAYLAND_SRV_CFLAGS@ \
+@ECORE_DRM_CFLAGS@ \
+@ECORE_FB_CFLAGS@ \
+@ECORE_INPUT_CFLAGS@
+
+tests_ecore_efl_app_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ECORE_LIBS@ \
+@USE_ECORE_AUDIO_LIBS@ \
+@USE_ECORE_FILE_LIBS@ \
+@USE_ECORE_X_LIBS@ \
+@USE_ECORE_IMF_LIBS@ \
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_WAYLAND_LIBS@ \
+@USE_ECORE_FB_LIBS@ \
+@ECORE_WAYLAND_SRV_LIBS@ \
+@ECORE_DRM_LIBS@ \
+@USE_ECORE_INPUT_LIBS@
+tests_ecore_efl_app_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_AUDIO_INTERNAL_LIBS@ \
 @USE_ECORE_FILE_INTERNAL_LIBS@ \
