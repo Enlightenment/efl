@@ -2402,7 +2402,7 @@ static inline Edje_Global *
 _edje_global(void)
 {
 #ifndef NDEBUG
-   return efl_provider_find(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE);
+   return efl_provider_find(efl_app_main_loop_get(efl_app_get()), EFL_GFX_COLOR_CLASS_INTERFACE);
 #else
    extern Edje_Global *_edje_global_obj;
    return _edje_global_obj;

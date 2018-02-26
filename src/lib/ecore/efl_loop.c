@@ -53,30 +53,10 @@ _efl_loop_message_handler_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Loo
    return mh.handler;
 }
 
-Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
-
-Eo            *_mainloop_singleton = NULL;
-Efl_Loop_Data *_mainloop_singleton_data = NULL;
-
 extern Eina_Lock   _environ_lock;
 static Eina_List  *_environ_strings_set = NULL;
 
 static void _clean_old_environ(void);
-
-EOLIAN static Efl_Loop *
-_efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
-{
-   if (_mainloop_singleton) return _mainloop_singleton;
-   _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
-   _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
-   return _mainloop_singleton;
-}
-
-EAPI Eo *
-efl_main_loop_get(void)
-{
-   return efl_loop_main_get(EFL_LOOP_CLASS);
-}
 
 EOLIAN static void
 _efl_loop_iterate(Eo *obj, Efl_Loop_Data *pd)
@@ -124,7 +104,7 @@ efl_exit(int exit_code)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
    eina_value_set(&v, &exit_code);
-   efl_loop_quit(efl_main_loop_get(), v);
+   efl_loop_quit(efl_app_main_loop_get(efl_app_get()), v);
 }
 
 EOLIAN static Efl_Object *
@@ -322,6 +302,10 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
    obj = efl_constructor(efl_super(obj, EFL_LOOP_CLASS));
    if (!obj) return NULL;
 
+   efl_parent_set(obj, _efl_app);
+   if (ML_OBJ)
+     _efl_app_data->loops = eina_list_append(_efl_app_data->loops, obj);
+
    efl_event_callback_array_add(obj, event_catcher_watch(), pd);
 
    pd->loop_time = ecore_time_get();
@@ -365,13 +349,11 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    pd->env.environ_copy = NULL;
    eina_lock_release(&_environ_lock);
 
-   efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
+   efl_parent_set(obj, NULL);
+   if (obj != ML_OBJ)
+     _efl_app_data->loops = eina_list_remove(_efl_app_data->loops, obj);
 
-   if (obj == _mainloop_singleton)
-     {
-        _mainloop_singleton = NULL;
-        _mainloop_singleton_data = NULL;
-     }
+   efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
 
 static void
@@ -398,7 +380,7 @@ _efl_loop_arguments_send(void *data, const Eina_Value v,
    arge.initialization = initialization;
    initialization = EINA_FALSE;
 
-   efl_event_callback_call(efl_main_loop_get(),
+   efl_event_callback_call(efl_app_main_loop_get(efl_app_get()),
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
 on_error:
    _efl_loop_arguments_cleanup(arga);
@@ -415,17 +397,17 @@ ecore_loop_arguments_send(int argc, const char **argv)
    Eina_Array *arga;
    int i = 0;
 
-   efl_task_arg_reset(efl_main_loop_get());
+   efl_task_arg_reset(efl_app_main_loop_get(efl_app_get()));
    arga = eina_array_new(argc);
    for (i = 0; i < argc; i++)
      {
         eina_array_push(arga, eina_stringshare_add(argv[i]));
-        efl_task_arg_append(efl_main_loop_get(), argv[i]);
+        efl_task_arg_append(efl_app_main_loop_get(efl_app_get()), argv[i]);
      }
 
-   job = eina_future_then(efl_loop_job(efl_main_loop_get()),
+   job = eina_future_then(efl_loop_job(efl_app_main_loop_get(efl_app_get())),
                           _efl_loop_arguments_send, arga);
-   efl_future_Eina_FutureXXX_then(efl_main_loop_get(), job);
+   efl_future_Eina_FutureXXX_then(efl_app_main_loop_get(efl_app_get()), job);
 }
 
 // Only one main loop handle for now
@@ -709,42 +691,6 @@ _efl_loop_message_process(Eo *obj, Efl_Loop_Data *pd)
 }
 
 EOAPI EFL_FUNC_BODY(efl_loop_message_process, Eina_Bool, 0);
-
-EWAPI void
-efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
-                      const char *flavor, const char *build_id)
-{
-   // note: EFL has not been initialized yet at this point (ie. no eina call)
-   _app_efl_version.major = vmaj;
-   _app_efl_version.minor = vmin;
-   _app_efl_version.micro = vmic;
-   _app_efl_version.revision = revision;
-   free((char *)_app_efl_version.flavor);
-   free((char *)_app_efl_version.build_id);
-   _app_efl_version.flavor = flavor ? strdup(flavor) : NULL;
-   _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
-}
-
-EOLIAN static const Efl_Version *
-_efl_loop_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
-{
-   return &_app_efl_version;
-}
-
-EOLIAN static const Efl_Version *
-_efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
-{
-   /* vanilla EFL: flavor = NULL */
-   static const Efl_Version version = {
-      .major = VMAJ,
-      .minor = VMIN,
-      .micro = VMIC,
-      .revision = VREV,
-      .build_id = EFL_BUILD_ID,
-      .flavor = NULL
-   };
-   return &version;
-}
 
 static void
 _env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)

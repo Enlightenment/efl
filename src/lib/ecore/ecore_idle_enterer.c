@@ -30,8 +30,8 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
 
    // This avoid us duplicating code and should only be slightly slower
    // due to a useless cycle of callback registration
-   efl_event_callback_array_del(_mainloop_singleton, ecore_idle_enterer_callbacks(), ie);
-   efl_event_callback_array_priority_add(_mainloop_singleton, ecore_idle_enterer_callbacks(), EFL_CALLBACK_PRIORITY_BEFORE, ie);
+   efl_event_callback_array_del(ML_OBJ, ecore_idle_enterer_callbacks(), ie);
+   efl_event_callback_array_priority_add(ML_OBJ, ecore_idle_enterer_callbacks(), EFL_CALLBACK_PRIORITY_BEFORE, ie);
 
    return ie;
 }

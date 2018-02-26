@@ -130,7 +130,7 @@ START_TEST(eio_test_job_xattr_set)
    eina_init();
    eio_init();
 
-   job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
+   job = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
 
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,

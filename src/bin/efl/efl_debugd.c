@@ -569,7 +569,7 @@ _local_server_create(void)
    snprintf(path, sizeof(path) - 1, "%s/%s/%s/%i", socket_path,
          LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
 
-   loop = efl_main_loop_get();
+   loop = efl_app_main_loop_get(efl_app_get());
 
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    _local_server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,
@@ -624,7 +624,7 @@ _remote_server_create(void)
    Eina_Bool ret = EINA_FALSE;
    char address[256];
 
-   loop = efl_main_loop_get();
+   loop = efl_app_main_loop_get(efl_app_get());
 
    _remote_server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,
                     efl_net_server_simple_inner_class_set(efl_added, EFL_NET_SERVER_TCP_CLASS));

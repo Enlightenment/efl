@@ -156,7 +156,7 @@ _test_ls(Efl_Future *(*func)(Eo *obj, const char *path, Eina_Bool recursive),
          uint64_t expected_test_count,
          const char* test_dirname)
 {
-   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
+   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
    Efl_Future *f = NULL;
    uint64_t main_files = 0;
 
@@ -206,7 +206,7 @@ START_TEST(efl_io_manager_test_stat)
    nested_dirname = create_test_dirs(test_dirname);
    nested_filename = get_full_path(test_dirname, files[3]);
 
-   job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
+   job = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
    fail_if(!job);
 
    // Start testing
@@ -257,7 +257,7 @@ START_TEST(efl_io_manager_test_ls)
    nested_filename = get_full_path(test_dirname, files[3]);
 
    // Start testing
-   job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
+   job = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
    fail_if(!job);
 
    f = efl_io_manager_ls(job, test_dirname, &main_files, _access_cb, NULL);
@@ -311,7 +311,7 @@ START_TEST(efl_io_manager_test_open)
    nested_dirname = create_test_dirs(test_dirname);
    nested_filename = get_full_path(test_dirname, files[3]);
 
-   job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
+   job = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
 
    f = efl_io_manager_open(job, nested_filename, EINA_FALSE);
    eina_future_then(f, _open_done_cb, &opened_file);
@@ -340,11 +340,11 @@ START_TEST(efl_io_instantiated)
 
    ecore_init();
 
-   fail_if(efl_provider_find(efl_main_loop_get(), EFL_IO_MANAGER_CLASS) != NULL);
+   fail_if(efl_provider_find(efl_app_main_loop_get(efl_app_get()), EFL_IO_MANAGER_CLASS) != NULL);
 
    eio_init();
 
-   manager = efl_provider_find(efl_main_loop_get(), EFL_IO_MANAGER_CLASS);
+   manager = efl_provider_find(efl_app_main_loop_get(efl_app_get()), EFL_IO_MANAGER_CLASS);
    fail_if(manager == NULL);
    fail_if(!efl_isa(manager, EFL_IO_MANAGER_CLASS));
 

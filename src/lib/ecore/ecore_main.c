@@ -1069,7 +1069,7 @@ void
 _ecore_main_loop_init(void)
 {
    DBG("_ecore_main_loop_init");
-   if (!efl_main_loop_get()) ERR("Cannot create main loop object");
+   if (!efl_app_main_loop_get(efl_app_get())) ERR("Cannot create main loop object");
    _ecore_main_loop_setup(ML_OBJ, ML_DAT);
 }
 
@@ -1372,7 +1372,7 @@ ecore_main_fd_handler_add(int                    fd,
 {
    Ecore_Fd_Handler *fdh = NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   fdh = _ecore_main_fd_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
+   fdh = _ecore_main_fd_handler_add(efl_app_main_loop_get(efl_app_get()),
                                     ML_DAT, NULL, fd, flags, func, data,
                                     buf_func, buf_data, EINA_FALSE);
    if (fdh) fdh->legacy = EINA_TRUE;
@@ -1388,7 +1388,7 @@ ecore_main_fd_handler_file_add(int                    fd,
                                const void            *buf_data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   return _ecore_main_fd_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
+   return _ecore_main_fd_handler_add(efl_app_main_loop_get(efl_app_get()),
                                      ML_DAT, NULL, fd, flags, func, data,
                                      buf_func, buf_data, EINA_TRUE);
 }

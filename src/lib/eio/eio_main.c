@@ -319,8 +319,8 @@ eio_init(void)
 
    efreet_mime_init();
 
-   io_manager = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
-   efl_loop_register(efl_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
+   io_manager = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
+   efl_loop_register(efl_app_main_loop_get(efl_app_get()), EFL_IO_MANAGER_CLASS, io_manager);
 
    eina_log_timing(_eio_log_dom_global,
                    EINA_LOG_STATE_STOP,
@@ -358,7 +358,7 @@ eio_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
-   efl_loop_unregister(efl_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
+   efl_loop_unregister(efl_app_main_loop_get(efl_app_get()), EFL_IO_MANAGER_CLASS, io_manager);
    efl_del(io_manager);
    io_manager = NULL;
 

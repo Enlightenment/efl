@@ -70,7 +70,7 @@ _efl_model_item_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Dat
 static Efl_Future*
 _efl_model_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd, const char *property, const Eina_Value *value)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    Efl_Future* future = efl_promise_future_get(promise);
    Efl_Model_Property_Event evt;
 
@@ -119,7 +119,7 @@ err1:
 static Efl_Future *
 _efl_model_item_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd, const char *property)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    Eina_Stringshare *sshare = eina_stringshare_add(property);
@@ -136,7 +136,7 @@ _efl_model_item_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data 
 static Efl_Future *
 _efl_model_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd, unsigned int start, unsigned int count)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    Eina_Accessor* accessor = efl_model_list_slice(sd->children, start, count);
@@ -148,7 +148,7 @@ _efl_model_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Item
 static Efl_Future *
 _efl_model_item_efl_model_children_count_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    unsigned int *count = calloc(1, sizeof(unsigned int));

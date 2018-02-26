@@ -249,7 +249,7 @@ main(int argc, char **argv EINA_UNUSED)
                 ELDBUS_CONNECTION_TYPE_SYSTEM :
                 ELDBUS_CONNECTION_TYPE_SESSION);
 
-   root = efl_add_ref(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(),
+   root = efl_add_ref(ELDBUS_MODEL_OBJECT_CLASS, efl_app_main_loop_get(efl_app_get()),
                       eldbus_model_object_custom_constructor(efl_added, conn_type, NULL, EINA_FALSE, bus_name, path),
                       efl_event_callback_array_add(efl_added, event_cbs(), NULL));
 
