@@ -614,7 +614,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
         if (!ed->file->image_dir) ie = NULL;
         else ie = ed->file->image_dir->entries + (-image_id) - 1;
         if ((ie) &&
-            (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
+            (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_USER) &&
             (ie->entry))
           {
              evas_object_image_file_set(ep->object, ie->entry, NULL);

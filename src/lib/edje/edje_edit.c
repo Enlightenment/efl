@@ -10416,7 +10416,7 @@ edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
       case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2: // LOSSY_ETC2
         return EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2;
 
-      case EDJE_IMAGE_SOURCE_TYPE_EXTERNAL: // USER
+      case EDJE_IMAGE_SOURCE_TYPE_USER: // USER
         return EDJE_EDIT_IMAGE_COMP_USER;
      }
 
@@ -10483,7 +10483,7 @@ edje_edit_image_compression_type_set(Evas_Object *obj, const char *image, Edje_E
 
       case EDJE_EDIT_IMAGE_COMP_USER: // USER
       {
-         de->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
+         de->source_type = EDJE_IMAGE_SOURCE_TYPE_USER;
          return EINA_TRUE;
       }
      }

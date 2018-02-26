@@ -2376,7 +2376,7 @@ st_images_image(void)
      }
    else if (v == 5)
      {
-	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
+	img->source_type = EDJE_IMAGE_SOURCE_TYPE_USER;
 	img->source_param = 0;
      }
    if ((img->source_type < EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) ||
