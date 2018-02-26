@@ -124,9 +124,6 @@ class Efl.Loop (Efl.Task)
       pause; [[Called when the window is not going be displayed for some time]]
       resume; [[Called before a window is rendered after a pause event]]
       terminate; [[Called before starting the shutdown of Elementary]]
-      signal,usr1; [[System specific, but on unix maps to SIGUSR1 signal to the process - only called on main loop object]]
-      signal,usr2; [[System specific, but on unix maps to SIGUSR2 signal to the process - only called on main loop object]]
-      signal,hup; [[System specific, but on unix maps to SIGHUP signal to the process - only called on main loop object]]
    }
    implements {
       Efl.Object.constructor;

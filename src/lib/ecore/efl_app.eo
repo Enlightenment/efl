@@ -38,6 +38,11 @@ class Efl.App (Efl.Object)
          }
       }
    }
+   events {
+      signal,usr1; [[System specific, but on unix maps to SIGUSR1 signal to the process - only called on main loop object]]
+      signal,usr2; [[System specific, but on unix maps to SIGUSR2 signal to the process - only called on main loop object]]
+      signal,hup; [[System specific, but on unix maps to SIGHUP signal to the process - only called on main loop object]]
+   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
