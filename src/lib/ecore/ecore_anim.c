@@ -181,8 +181,8 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
         pollfd = -1;
      }
 
-#define INPUT_TIMER_CONTROL ((void *) ((unsigned long) 0x11))
-#define INPUT_TIMER_TIMERFD ((void *) ((unsigned long) 0x22))
+#define INPUT_TIMER_CONTROL (&(pollincoming[0]))
+#define INPUT_TIMER_TIMERFD (&(pollincoming[1]))
 
    if (pollfd >= 0)
      {
