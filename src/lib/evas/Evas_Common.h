@@ -3456,13 +3456,6 @@ struct _Efl_Animation_Player_Running_Event_Info
 #define EFL_ANIMATION_REPEAT_INFINITE -1
 #define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
-
-#ifdef EFL_BETA_API_SUPPORT
-struct _Efl_Canvas_Animation_Player_Running_Event_Info
-{
-   double progress;
-};
-#endif
 /**
  * @}
  */
