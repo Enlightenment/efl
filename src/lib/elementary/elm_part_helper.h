@@ -79,7 +79,7 @@ ELM_PART_IMPLEMENT(const Efl_Class *part_klass, const Eo *obj, const char *part)
      EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
      if (_is_part_cb(obj, part)) \
        return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \
-     return efl_part(efl_super(obj, MY_CLASS), part); \
+     return efl_part(efl_super(obj, TYPE ## _CLASS), part); \
    }
 
 #define ELM_PART_OVERRIDE(type, TYPE, typedata) \
