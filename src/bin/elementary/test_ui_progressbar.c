@@ -113,6 +113,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 {
    Eo *win, *bx, *btbx;
    pbdata *pd;
+   char buf[PATH_MAX];
 
    pd = (pbdata *)calloc(1, sizeof(pbdata));
 
@@ -134,6 +135,12 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                      efl_ui_range_min_max_set(efl_added, 0, 100),
                      efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(250, 20))
                     );
+
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   efl_add(EFL_UI_IMAGE_CLASS, pd->pb1,
+           efl_file_set(efl_added, buf, NULL),
+           efl_content_set(pd->pb1, efl_added)
+          );
 
    pd->pb2 = efl_add(EFL_UI_PROGRESSBAR_CLASS, bx,
                      efl_pack(bx, efl_added),

@@ -169,41 +169,6 @@ _efl_ui_progressbar_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Progressbar_Data *_pd
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-/* FIXME: replicated from elm_layout just because progressbar's icon
- * spot is elm.swallow.content, not elm.swallow.icon. Fix that
- * whenever we can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   char buf[64];
-
-   if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_progressbar_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
-{
-   if (!efl_ui_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj))
-     return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_efl_ui_progressbar_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
-{
-   if (!efl_ui_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj))
-     return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-   return EINA_TRUE;
-}
-
 //TODO: efl_ui_slider also use this.
 static const char *
 _theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len, Eina_Bool is_legacy)
@@ -306,11 +271,6 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
 
    _units_set(obj);
    _val_set(obj);
-
-   /* FIXME: replicated from elm_layout just because progressbar's
-    * icon spot is elm.swallow.content, not elm.swallow.icon. Fix that
-    * whenever we can changed the theme API */
-   _icon_signal_emit(obj);
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -745,6 +705,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 #include "efl_ui_progressbar.eo.c"
 
 #include "efl_ui_progressbar_legacy.eo.h"
+#include "efl_ui_progressbar_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_progressbar"
 
@@ -761,6 +722,84 @@ _efl_ui_progressbar_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    return obj;
 }
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static void
+_icon_signal_emit(Evas_Object *obj)
+{
+   char buf[64];
+
+   if (!elm_widget_resize_object_get(obj)) return;
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(elm_layout_edje_get(obj));
+   elm_layout_sizing_eval(obj);
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Efl_Ui_Theme_Apply
+_efl_ui_progressbar_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   _icon_signal_emit(obj);
+
+   return int_ret;
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Eina_Bool
+_efl_ui_progressbar_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *sobj)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_efl_ui_progressbar_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS), part), content);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* Efl.Part for legacy begin */
+
+static Eina_Bool
+_part_is_efl_ui_progressbar_legacy_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return eina_streq(part, "elm.swallow.content");
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_progressbar_legacy, EFL_UI_PROGRESSBAR_LEGACY, void, _part_is_efl_ui_progressbar_legacy_part)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_progressbar_legacy, EFL_UI_PROGRESSBAR_LEGACY, void)
+#include "efl_ui_progressbar_legacy_part.eo.c"
+
+/* Efl.Part for legacy end */
 
 EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
