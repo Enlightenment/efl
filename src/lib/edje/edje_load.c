@@ -2111,6 +2111,16 @@ _edje_file_free(Edje_File *edf)
    HASH_FREE(edf->fonts);
    HASH_FREE(edf->collection);
    HASH_FREE(edf->data);
+   HASH_FREE(edf->image_id_hash);
+
+   if (edf->requires_count)
+     {
+        unsigned int i;
+
+        for (i = 0; i < edf->requires_count; i++)
+          eina_stringshare_del(edf->requires[i]);
+        free(edf->requires);
+     }
 
    if (edf->image_dir)
      {
