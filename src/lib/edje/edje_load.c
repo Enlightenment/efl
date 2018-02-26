@@ -2229,6 +2229,7 @@ _edje_file_free(Edje_File *edf)
    if (edf->collection_patterns) edje_match_patterns_free(edf->collection_patterns);
    if (edf->path) eina_stringshare_del(edf->path);
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
+   if (edf->free_strings) eina_stringshare_del(edf->id);
    _edje_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
    if (edf->f) eina_file_close(edf->f);
