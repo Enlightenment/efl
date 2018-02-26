@@ -19,19 +19,19 @@ typedef enum
 {
    TOKEN_TYPE_INVALID = -1,
    TOKEN_TYPE_EOF,
-   TOKEN_TYPE_COLON      = (1 << 0),
-   TOKEN_TYPE_SEMICOLON  = (1 << 1),
-   TOKEN_TYPE_COMMA      = (1 << 2),
-   TOKEN_TYPE_PARENS     = (1 << 3),
-   TOKEN_TYPE_BRACES     = (1 << 4),
+   TOKEN_TYPE_COLON = (1 << 0),
+   TOKEN_TYPE_SEMICOLON = (1 << 1),
+   TOKEN_TYPE_COMMA = (1 << 2),
+   TOKEN_TYPE_PARENS = (1 << 3),
+   TOKEN_TYPE_BRACES = (1 << 4),
    TOKEN_TYPE_EQUAL_MARK = (1 << 5),
-   TOKEN_TYPE_PUBLIC     = (1 << 6),
+   TOKEN_TYPE_PUBLIC = (1 << 6),
    TOKEN_TYPE_IDENTIFIER = (1 << 7)
 } Token_Type;
 
 typedef struct _Token
 {
-   char *str;
+   char      *str;
    Token_Type type;
 } Token;
 
@@ -102,6 +102,7 @@ code_parse_internal(Code *code)
                sym = mem_alloc(SZ(Code_Symbol));
              sym->tag = eina_array_pop(name_stack);
              break;
+
            case TOKEN_TYPE_SEMICOLON:
              if (eina_array_count(name_stack))
                {
@@ -114,6 +115,7 @@ code_parse_internal(Code *code)
                }
              is_public = EINA_FALSE;
              break;
+
            case TOKEN_TYPE_COMMA:
              if (!sym)
                sym = mem_alloc(SZ(Code_Symbol));
@@ -127,6 +129,7 @@ code_parse_internal(Code *code)
                }
              sym = NULL;
              break;
+
            case TOKEN_TYPE_PARENS:
              is_args = !is_args;
              if (is_args)
@@ -152,6 +155,7 @@ code_parse_internal(Code *code)
                   sym = func;
                }
              break;
+
            case TOKEN_TYPE_BRACES:
              depth = 1;
              body = begin;
@@ -164,6 +168,7 @@ code_parse_internal(Code *code)
                           case '{':
                             depth++;
                             break;
+
                           case '}':
                             depth--;
                             break;
@@ -182,13 +187,16 @@ code_parse_internal(Code *code)
              sym = NULL;
              is_public = EINA_FALSE;
              break;
+
            case TOKEN_TYPE_PUBLIC:
              is_public = EINA_TRUE;
              break;
+
            case TOKEN_TYPE_IDENTIFIER:
              eina_array_push(name_stack, token->str);
              token->str = NULL;
              break;
+
            default:
              break;
           }
@@ -228,9 +236,10 @@ next_token(char **begin, char *end)
            case ' ':
            case '\t':
            case '\n':
-              if (index > 0)
-                parsed = EINA_TRUE;
-              break;
+             if (index > 0)
+               parsed = EINA_TRUE;
+             break;
+
            case ':':
            case ';':
            case ',':
@@ -239,46 +248,53 @@ next_token(char **begin, char *end)
            case '{':
            case '}':
            case '=':
-              if (!index)
-                {
-                   buf[index++] = ch;
-                   src++;
-                }
-              goto exit;
+             if (!index)
+               {
+                  buf[index++] = ch;
+                  src++;
+               }
+             goto exit;
+
            default:
-              if (parsed)
-                goto exit;
-              buf[index++] = ch;
-              break;
+             if (parsed)
+               goto exit;
+             buf[index++] = ch;
+             break;
           }
      }
 
 exit:
    switch (buf[0])
      {
-       case ':':
-         token->type = TOKEN_TYPE_COLON;
-         break;
-       case ';':
-         token->type = TOKEN_TYPE_SEMICOLON;
-         break;
-       case ',':
-         token->type = TOKEN_TYPE_COMMA;
-         break;
-       case '(':
-       case ')':
-         token->type = TOKEN_TYPE_PARENS;
-         break;
-       case '{':
-       case '}':
-         token->type = TOKEN_TYPE_BRACES;
-         break;
-       case '=':
-         token->type = TOKEN_TYPE_EQUAL_MARK;
-         break;
-       case '\0':
-         token->type = TOKEN_TYPE_EOF;
-         break;
+      case ':':
+        token->type = TOKEN_TYPE_COLON;
+        break;
+
+      case ';':
+        token->type = TOKEN_TYPE_SEMICOLON;
+        break;
+
+      case ',':
+        token->type = TOKEN_TYPE_COMMA;
+        break;
+
+      case '(':
+      case ')':
+        token->type = TOKEN_TYPE_PARENS;
+        break;
+
+      case '{':
+      case '}':
+        token->type = TOKEN_TYPE_BRACES;
+        break;
+
+      case '=':
+        token->type = TOKEN_TYPE_EQUAL_MARK;
+        break;
+
+      case '\0':
+        token->type = TOKEN_TYPE_EOF;
+        break;
      }
 
    if (token->type < 0)
@@ -448,3 +464,4 @@ script_rewrite(Code *code)
    code->vars = vars;
    code->func = func;
 }
+

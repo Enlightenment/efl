@@ -17,7 +17,7 @@ static int _log_dom;
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 #define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
-#define INDENT "   "
+#define INDENT  "   "
 #define INDENT2 INDENT INDENT
 #define INDENT3 INDENT2 INDENT
 #define INDENT4 INDENT3 INDENT
@@ -27,15 +27,14 @@ static char *module_patterns_str = NULL;
 static int detail = 1;
 static Eina_Bool machine = EINA_FALSE;
 static char *type_glob = NULL;
-static char * const *module_patterns;
+static char *const *module_patterns;
 static const Eina_List *modules;
-
 
 static char *
 _module_patterns_str_new(void)
 {
    Eina_Strbuf *buf;
-   char * const *itr;
+   char *const *itr;
    char *ret;
    if (!module_patterns) return strdup("*");
 
@@ -53,7 +52,7 @@ _module_patterns_str_new(void)
 static Eina_Bool
 module_matches(const char *name)
 {
-   char * const *itr;
+   char *const *itr;
    if (!module_patterns) return EINA_TRUE;
 
    for (itr = module_patterns; *itr != NULL; itr++)
@@ -93,13 +92,18 @@ _param_type_str_get(const Edje_External_Param_Info *param)
    switch (param->type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_INT: return "int";
+
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE: return "double";
+
       case EDJE_EXTERNAL_PARAM_TYPE_STRING: return "string";
+
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL: return "bool";
+
       case EDJE_EXTERNAL_PARAM_TYPE_CHOICE: return "choice";
+
       default:
-         ERR("Unknown parameter type %d", param->type);
-         return "???";
+        ERR("Unknown parameter type %d", param->type);
+        return "???";
      }
 }
 
@@ -109,38 +113,39 @@ _param_value_str_get(const Edje_External_Type *type, const Edje_External_Param_I
    switch (param->type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
-         if (param->info.i.def == EDJE_EXTERNAL_INT_UNSET) return NULL;
-         snprintf(buf, buflen, "%d", param->info.i.def);
-         return buf;
+        if (param->info.i.def == EDJE_EXTERNAL_INT_UNSET) return NULL;
+        snprintf(buf, buflen, "%d", param->info.i.def);
+        return buf;
 
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-         if (EINA_DBL_EQ(param->info.d.def, EDJE_EXTERNAL_DOUBLE_UNSET)) return NULL;
-         snprintf(buf, buflen, "%g", param->info.d.def);
-         return buf;
+        if (EINA_DBL_EQ(param->info.d.def, EDJE_EXTERNAL_DOUBLE_UNSET)) return NULL;
+        snprintf(buf, buflen, "%g", param->info.d.def);
+        return buf;
 
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-         return param->info.s.def;
+        return param->info.s.def;
 
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-         if (param->info.b.def == 0) return "0";
-         else if (param->info.b.def == 1) return "1";
-         return NULL;
+        if (param->info.b.def == 0) return "0";
+        else if (param->info.b.def == 1)
+          return "1";
+        return NULL;
 
       case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
-        {
-           char *def;
-           if (param->info.c.def) return param->info.c.def;
-           if (!param->info.c.def_get) return NULL;
-           def = param->info.c.def_get(type->data, param);
-           if (!def) return NULL;
-           eina_strlcpy(buf, def, buflen);
-           free(def);
-           return buf;
-        }
+      {
+         char *def;
+         if (param->info.c.def) return param->info.c.def;
+         if (!param->info.c.def_get) return NULL;
+         def = param->info.c.def_get(type->data, param);
+         if (!def) return NULL;
+         eina_strlcpy(buf, def, buflen);
+         free(def);
+         return buf;
+      }
 
       default:
-         ERR("Unknown parameter type %d", param->type);
-         return NULL;
+        ERR("Unknown parameter type %d", param->type);
+        return NULL;
      }
 }
 
@@ -179,7 +184,7 @@ _param_flags_str_get(const Edje_External_Param_Info *param)
 }
 
 static void
-_param_choices_print(const char * const *choices)
+_param_choices_print(const char *const *choices)
 {
    if (machine) puts("CHOICES-BEGIN");
    else fputs(", choices:", stdout);
@@ -201,90 +206,91 @@ _param_extra_details(const Edje_External_Type *type, const Edje_External_Param_I
    switch (param->type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
-         if (param->info.i.min != EDJE_EXTERNAL_INT_UNSET)
-           {
-              if (machine) printf("MIN: %d\n", param->info.i.min);
-              else printf(", min: %d", param->info.i.min);
-           }
-         if (param->info.i.max != EDJE_EXTERNAL_INT_UNSET)
-           {
-              if (machine) printf("MAX: %d\n", param->info.i.max);
-              else printf(", max: %d", param->info.i.max);
-           }
-         if (param->info.i.step != EDJE_EXTERNAL_INT_UNSET)
-           {
-              if (machine) printf("STEP: %d\n", param->info.i.step);
-              else printf(", step: %d", param->info.i.step);
-           }
-         break;
-
-      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-         if (EINA_DBL_EQ(param->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET))
-           {
-              if (machine) printf("MIN: %g\n", param->info.d.min);
-              else printf(", min: %g", param->info.d.min);
-           }
-         if (EINA_DBL_EQ(param->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET))
-           {
-              if (machine) printf("MAX: %g\n", param->info.d.max);
-              else printf(", max: %g", param->info.d.max);
-           }
-         if (EINA_DBL_EQ(param->info.d.step, EDJE_EXTERNAL_DOUBLE_UNSET))
-           {
-              if (machine) printf("STEP: %g\n", param->info.d.step);
-              else printf(", step: %g", param->info.d.step);
-           }
-         break;
-
-      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-         if (param->info.s.accept_fmt)
-           {
-              if (machine) printf("ACCEPT_FMT: %s\n", param->info.s.accept_fmt);
-              else printf(", accept_fmt: \"%s\"", param->info.s.accept_fmt);
-           }
-         if (param->info.s.deny_fmt)
-           {
-              if (machine) printf("DENY_FMT: %s\n", param->info.s.deny_fmt);
-              else printf(", deny_fmt: \"%s\"", param->info.s.deny_fmt);
-           }
-         break;
-
-      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-         if (param->info.b.false_str)
-           {
-              if (machine) printf("FALSE_STR: %s\n", param->info.b.false_str);
-              else printf(", false_str: \"%s\"", param->info.b.false_str);
-           }
-         if (param->info.b.true_str)
-           {
-              if (machine) printf("TRUE_STR: %s\n", param->info.b.true_str);
-              else printf(", true_str: \"%s\"", param->info.b.true_str);
-           }
-         break;
-
-      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
-        {
-           if (param->info.c.choices)
-             _param_choices_print(param->info.c.choices);
-           else if (param->info.c.query)
-             {
-                char **choices = param->info.c.query(type->data, param);
-                if (choices)
-                  {
-                     char **itr;
-                     _param_choices_print((const char * const*)choices);
-                     for (itr = choices; *itr; itr++) free(*itr);
-                     free(choices);
-                  }
-             }
-        }
+        if (param->info.i.min != EDJE_EXTERNAL_INT_UNSET)
+          {
+             if (machine) printf("MIN: %d\n", param->info.i.min);
+             else printf(", min: %d", param->info.i.min);
+          }
+        if (param->info.i.max != EDJE_EXTERNAL_INT_UNSET)
+          {
+             if (machine) printf("MAX: %d\n", param->info.i.max);
+             else printf(", max: %d", param->info.i.max);
+          }
+        if (param->info.i.step != EDJE_EXTERNAL_INT_UNSET)
+          {
+             if (machine) printf("STEP: %d\n", param->info.i.step);
+             else printf(", step: %d", param->info.i.step);
+          }
         break;
 
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+        if (EINA_DBL_EQ(param->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET))
+          {
+             if (machine) printf("MIN: %g\n", param->info.d.min);
+             else printf(", min: %g", param->info.d.min);
+          }
+        if (EINA_DBL_EQ(param->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET))
+          {
+             if (machine) printf("MAX: %g\n", param->info.d.max);
+             else printf(", max: %g", param->info.d.max);
+          }
+        if (EINA_DBL_EQ(param->info.d.step, EDJE_EXTERNAL_DOUBLE_UNSET))
+          {
+             if (machine) printf("STEP: %g\n", param->info.d.step);
+             else printf(", step: %g", param->info.d.step);
+          }
+        break;
+
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+        if (param->info.s.accept_fmt)
+          {
+             if (machine) printf("ACCEPT_FMT: %s\n", param->info.s.accept_fmt);
+             else printf(", accept_fmt: \"%s\"", param->info.s.accept_fmt);
+          }
+        if (param->info.s.deny_fmt)
+          {
+             if (machine) printf("DENY_FMT: %s\n", param->info.s.deny_fmt);
+             else printf(", deny_fmt: \"%s\"", param->info.s.deny_fmt);
+          }
+        break;
+
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+        if (param->info.b.false_str)
+          {
+             if (machine) printf("FALSE_STR: %s\n", param->info.b.false_str);
+             else printf(", false_str: \"%s\"", param->info.b.false_str);
+          }
+        if (param->info.b.true_str)
+          {
+             if (machine) printf("TRUE_STR: %s\n", param->info.b.true_str);
+             else printf(", true_str: \"%s\"", param->info.b.true_str);
+          }
+        break;
+
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+      {
+         if (param->info.c.choices)
+           _param_choices_print(param->info.c.choices);
+         else if (param->info.c.query)
+           {
+              char **choices = param->info.c.query(type->data, param);
+              if (choices)
+                {
+                   char **itr;
+                   _param_choices_print((const char *const *)choices);
+                   for (itr = choices; *itr; itr++)
+                     free(*itr);
+                   free(choices);
+                }
+           }
+      }
+      break;
+
       default:
-         ERR("Unknown parameter type %d", param->type);
+        ERR("Unknown parameter type %d", param->type);
      }
 
-   if (!machine) fputs(" */", stdout); /* \n not desired */
+   if (!machine) fputs(" */", stdout);  /* \n not desired */
 }
 
 static int
@@ -397,12 +403,14 @@ _info_list(void)
              if (!type->label_get) str = NULL;
              else str = type->label_get(type->data);
              if (machine) printf("LABEL: %s\n", str ? str : "");
-             else if (str) printf(INDENT3 "label: \"%s\";\n", str);
+             else if (str)
+               printf(INDENT3 "label: \"%s\";\n", str);
 
              if (!type->description_get) str = NULL;
              else str = type->description_get(type->data);
              if (machine) printf("DESCRIPTION: %s\n", str ? str : "");
-             else if (str) printf(INDENT3 "description: \"%s\";\n", str);
+             else if (str)
+               printf(INDENT3 "description: \"%s\";\n", str);
           }
 
         if (machine) puts("PARAMS-BEGIN");
@@ -420,9 +428,10 @@ _info_list(void)
              if (detail > 0)
                {
                   const char *str = _param_value_str_get
-                    (type, param, buf, sizeof(buf));
+                      (type, param, buf, sizeof(buf));
                   if (machine) printf("DEFAULT: %s\n", str ? str : "");
-                  else if (str) printf(" \"%s\"", str);
+                  else if (str)
+                    printf(" \"%s\"", str);
 
                   if (detail > 1)
                     {
@@ -432,7 +441,8 @@ _info_list(void)
                }
 
              if (machine) puts("PARAM-END");
-             else if (detail > 1) putchar('\n');
+             else if (detail > 1)
+               putchar('\n');
              else puts(";");
           }
 
@@ -544,40 +554,40 @@ _modules_names_list(void)
 }
 
 static const char *mode_choices[] = {
-  "info",
-  "modules-names",
-  "types-names",
-  NULL,
+   "info",
+   "modules-names",
+   "types-names",
+   NULL,
 };
 
 static const char *detail_choices[] = {
-  "none",
-  "terse",
-  "all",
-  NULL
+   "none",
+   "terse",
+   "all",
+   NULL
 };
 
 const Ecore_Getopt optdesc = {
-  "edje_external_inspector",
-  "%prog [options] [module|module-glob] ... [module|module-glob]",
-  PACKAGE_VERSION,
-  "(C) 2010 - The Enlightenment Project",
-  "BSD",
-  "Edje external module inspector.",
-  0,
-  {
-    ECORE_GETOPT_CHOICE('m', "mode", "Choose which mode to operate.",
-                        mode_choices),
-    ECORE_GETOPT_STORE_STR('t', "type", "Limit output to type (or glob)."),
-    ECORE_GETOPT_CHOICE('d', "detail", "Choose detail level (default=terse)",
-                        detail_choices),
-    ECORE_GETOPT_STORE_TRUE('M', "machine", "Produce machine readable output."),
-    ECORE_GETOPT_LICENSE('L', "license"),
-    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-    ECORE_GETOPT_VERSION('V', "version"),
-    ECORE_GETOPT_HELP('h', "help"),
-    ECORE_GETOPT_SENTINEL
-  }
+   "edje_external_inspector",
+   "%prog [options] [module|module-glob] ... [module|module-glob]",
+   PACKAGE_VERSION,
+   "(C) 2010 - The Enlightenment Project",
+   "BSD",
+   "Edje external module inspector.",
+   0,
+   {
+      ECORE_GETOPT_CHOICE('m', "mode", "Choose which mode to operate.",
+                          mode_choices),
+      ECORE_GETOPT_STORE_STR('t', "type", "Limit output to type (or glob)."),
+      ECORE_GETOPT_CHOICE('d', "detail", "Choose detail level (default=terse)",
+                          detail_choices),
+      ECORE_GETOPT_STORE_TRUE('M', "machine", "Produce machine readable output."),
+      ECORE_GETOPT_LICENSE('L', "license"),
+      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+      ECORE_GETOPT_VERSION('V', "version"),
+      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
 };
 
 int
@@ -589,15 +599,15 @@ main(int argc, char **argv)
    int arg_index;
    int ret = 0;
    Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_STR(mode),
-     ECORE_GETOPT_VALUE_STR(type_glob),
-     ECORE_GETOPT_VALUE_STR(detail_name),
-     ECORE_GETOPT_VALUE_BOOL(machine),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_NONE
+      ECORE_GETOPT_VALUE_STR(mode),
+      ECORE_GETOPT_VALUE_STR(type_glob),
+      ECORE_GETOPT_VALUE_STR(detail_name),
+      ECORE_GETOPT_VALUE_BOOL(machine),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_NONE
    };
 
    setlocale(LC_NUMERIC, "C");
@@ -609,7 +619,7 @@ main(int argc, char **argv)
    edje_init();
 
    _log_dom = eina_log_domain_register
-     ("edje_external_inspector", EINA_COLOR_YELLOW);
+       ("edje_external_inspector", EINA_COLOR_YELLOW);
    if (_log_dom < 0)
      {
         EINA_LOG_CRIT
@@ -625,27 +635,32 @@ main(int argc, char **argv)
         ret = 1;
         goto error_getopt;
      }
-   else if (quit_option) goto error_getopt;
+   else if (quit_option)
+     goto error_getopt;
 
    if (!mode) mode = (char *)mode_choices[0];
 
    if (detail_name)
      {
         if (!strcmp(detail_name, "none")) detail = 0;
-        else if (!strcmp(detail_name, "terse")) detail = 1;
-        else if (!strcmp(detail_name, "all")) detail = 2;
+        else if (!strcmp(detail_name, "terse"))
+          detail = 1;
+        else if (!strcmp(detail_name, "all"))
+          detail = 2;
         else ERR("Unknown detail level: '%s'", detail_name);
      }
 
    if (arg_index < argc) module_patterns = argv + arg_index;
-   else                  module_patterns = NULL;
+   else module_patterns = NULL;
 
    modules = edje_available_modules_get();
    module_patterns_str = _module_patterns_str_new();
 
    if (!strcmp(mode, "info")) ret = _info_list();
-   else if (!strcmp(mode, "modules-names")) ret = _modules_names_list();
-   else if (!strcmp(mode, "types-names")) ret = _types_names_list();
+   else if (!strcmp(mode, "modules-names"))
+     ret = _modules_names_list();
+   else if (!strcmp(mode, "types-names"))
+     ret = _types_names_list();
    else
      {
         ERR("Unknown mode: %s", mode);
@@ -654,12 +669,13 @@ main(int argc, char **argv)
 
    free(module_patterns_str);
 
- error_getopt:
+error_getopt:
    eina_log_domain_unregister(_log_dom);
- error_log:
+error_log:
    edje_shutdown();
    ecore_shutdown();
    eina_shutdown();
 
    return ret;
 }
+
