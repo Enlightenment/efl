@@ -729,6 +729,17 @@ ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer)
    buffer->age++;
 }
 
+/* The only user of this function has been removed, but it
+ * will likely come back later.  The problem is that
+ * a dmabuf buffer needs to be resized on the compositor
+ * even if the allocation still fits.  Doing the resize
+ * properly isn't something that will be fixed in the 1.21
+ * timeframe, so the optimization has been (temporarily)
+ * removed.
+ *
+ * This is currently beta api - don't move it out of beta
+ * with no users...
+ */
 EAPI Eina_Bool
 ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h)
 {

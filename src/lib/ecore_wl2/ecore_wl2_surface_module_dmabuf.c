@@ -58,9 +58,12 @@ _evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_da
    if ((!w) || (!h)) return;
    EINA_LIST_FOREACH_SAFE(p->buffers, l, tmp, b)
      {
+/*      This would be nice, but requires a partial create to follow,
+        and that partial create is buffer type specific.
+
         if (ecore_wl2_buffer_fit(b, w, h))
           continue;
-
+*/
         ecore_wl2_buffer_destroy(b);
         p->buffers = eina_list_remove_list(p->buffers, l);
      }
