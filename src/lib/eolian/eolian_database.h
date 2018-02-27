@@ -33,6 +33,7 @@ extern Eina_Prefix *_eolian_prefix;
 
 struct _Eolian_Unit
 {
+   const char    *file;
    Eolian_State  *state;
    Eina_Hash     *children;
    Eina_Hash     *classes;
@@ -346,7 +347,7 @@ void database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
 
 void database_doc_del(Eolian_Documentation *doc);
 
-void database_unit_init(Eolian_State *state, Eolian_Unit *unit);
+void database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file);
 void database_unit_del(Eolian_Unit *unit);
 
 /* types */

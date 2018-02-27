@@ -571,6 +571,18 @@ EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
 EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
 
 /*
+ * @brief Get the file name a unit is associated with.
+ *
+ * This will be `NULL` if not associated with a file (like the master unit
+ * within `Eolian_State`).
+ *
+ * @param[in] unit The unit.
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
+
+/*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
  * The input can be either a full path to the file or only a filename.

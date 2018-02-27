@@ -514,8 +514,9 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
 }
 
 void
-database_unit_init(Eolian_State *state, Eolian_Unit *unit)
+database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
 {
+   unit->file  = eina_stringshare_ref(file);
    unit->state = state;
 
    unit->children   = eina_hash_stringshared_new(NULL);
@@ -534,6 +535,7 @@ database_unit_del(Eolian_Unit *unit)
    if (!unit)
      return;
 
+   eina_stringshare_del(unit->file);
    eina_hash_free(unit->classes);
    eina_hash_free(unit->globals);
    eina_hash_free(unit->constants);
@@ -556,7 +558,7 @@ eolian_state_new(void)
    if (!state)
      return NULL;
 
-   database_unit_init(state, &state->unit);
+   database_unit_init(state, &state->unit, NULL);
 
    state->filenames_eo  = eina_hash_string_small_new(free);
    state->filenames_eot = eina_hash_string_small_new(free);
@@ -682,6 +684,13 @@ eolian_unit_children_get(const Eolian_Unit *unit)
 {
    if (!unit) return NULL;
    return eina_hash_iterator_data_new(unit->children);
+}
+
+EAPI const char *
+eolian_unit_file_get(const Eolian_Unit *unit)
+{
+   if (!unit) return NULL;
+   return unit->file;
 }
 
 char *

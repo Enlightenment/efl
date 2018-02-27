@@ -1038,7 +1038,7 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
 
    Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
    ls->unit = ncunit;
-   database_unit_init(state, ncunit);
+   database_unit_init(state, ncunit, ls->filename);
    eina_hash_add(state->units, ls->filename, ncunit);
 
    if (ls->current != 0xEF)
