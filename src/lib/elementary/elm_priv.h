@@ -116,21 +116,22 @@ struct _Edje_Signal_Data
    void          *data;
 };
 
-struct _Elm_Theme_Files
+typedef struct Elm_Theme_File
 {
+   EINA_INLIST;
    /*
     * We are conserving a list of path even if that's duplicated
     * because we expose those directly to the outside world :'(
     */
-   Eina_List *items;
-   Eina_List *handles;
-};
+   Eina_Stringshare *item;
+   Eina_File *handle;
+} Elm_Theme_File;
 
 struct _Elm_Theme
 {
-   Elm_Theme_Files overlay;
-   Elm_Theme_Files themes;
-   Elm_Theme_Files extension;
+   Eina_Inlist *overlay;
+   Eina_Inlist *themes;
+   Eina_Inlist *extension;
 
    Eina_Hash  *cache;
    Eina_Hash  *cache_data;
@@ -139,6 +140,11 @@ struct _Elm_Theme
    const char *theme;
    int         ref;
    Eina_Hash  *cache_style_load_failed;
+
+   /* these only exist to preserve compat with bad elm_theme_XYZ_list_get() api */
+   Eina_List *overlay_items;
+   Eina_List *theme_items;
+   Eina_List *extension_items;
 };
 
 /* increment this whenever we change config enough that you need new
