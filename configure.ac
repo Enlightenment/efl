@@ -21,7 +21,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 # Due to a bug in automake 1.14 we need to use this after AM_INIT_AUTOMAKE
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=15981
 AC_USE_SYSTEM_EXTENSIONS
-
+AC_PROG_LN_S
 CFOPT_WARNING=""
 
 #### Apply configuring with legacy api's only, eo api's or both.

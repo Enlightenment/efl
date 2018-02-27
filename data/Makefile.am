@@ -119,16 +119,7 @@ EXTRA_DIST += $(eluafiles_DATA)
 
 # themes
 
-elementaryfilesdir = $(datadir)/elementary/themes
-elementaryfiles_DATA = elementary/themes/default.edj
-CLEANFILES += elementary/themes/default.edj
-
-include elementary/themes/Makefile.am
-
-elementary/themes/default.edj: elementary/themes/default.edc $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files) $(top_builddir)/src/bin/edje/edje_cc${EXEEXT}
-	$(AM_V_EDJ) \
-	$(MKDIR_P) elementary/themes/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) $< $@
+include elementary/themes/dark/Makefile.am
 
 # desktop files
 
@@ -139,43 +130,6 @@ elementaryicondir = $(datadir)/icons
 elementaryicon_DATA = elementary/desktop/elementary.png
 
 EXTRA_DIST += $(elementarydesktop_DATA) $(elementaryicon_DATA)
-
-# fdo icon theme
-
-elementaryfdodir = $(datadir)/icons/Enlightenment-X/
-elementaryfdo_DATA = elementary/themes/fdo/index.theme elementary/themes/fdo/README
-
-EXTRA_DIST += $(elementaryfdo_DATA)
-
-elementaryfdo_actions_128dir = $(datadir)/icons/Enlightenment-X/actions/128
-elementaryfdo_actions_128_DATA = $(elementary_fdo_actions_128_files)
-
-elementaryfdo_categories_16dir = $(datadir)/icons/Enlightenment-X/categories/16
-elementaryfdo_categories_16_DATA = $(elementary_fdo_categories_16_files)
-
-elementaryfdo_categories_128dir = $(datadir)/icons/Enlightenment-X/categories/128
-elementaryfdo_categories_128_DATA = $(elementary_fdo_categories_128_files)
-
-elementaryfdo_emblems_96dir = $(datadir)/icons/Enlightenment-X/emblems/96
-elementaryfdo_emblems_96_DATA = $(elementary_fdo_emblems_96_files)
-
-elementaryfdo_places_16dir = $(datadir)/icons/Enlightenment-X/places/16
-elementaryfdo_places_16_DATA = $(elementary_fdo_places_16_files)
-
-elementaryfdo_places_128dir = $(datadir)/icons/Enlightenment-X/places/128
-elementaryfdo_places_128_DATA = $(elementary_fdo_places_128_files)
-
-elementaryfdo_status_128dir = $(datadir)/icons/Enlightenment-X/status/128
-elementaryfdo_status_128_DATA = $(elementary_fdo_status_128_files)
-
-elementaryfdo_devices_128dir = $(datadir)/icons/Enlightenment-X/devices/128
-elementaryfdo_devices_128_DATA = $(elementary_fdo_devices_128_files)
-
-elementaryfdo_apps_64dir = $(datadir)/icons/Enlightenment-X/apps/64
-elementaryfdo_apps_64_DATA = $(elementary_fdo_apps_64_files)
-
-elementaryfdo_intl_128dir = $(datadir)/icons/Enlightenment-X/intl/128
-elementaryfdo_intl_128_DATA = $(elementary_fdo_intl_128_files)
 
 # edje_externals
 
@@ -274,15 +228,20 @@ elementary/objects/test_prefs.edj: elementary/objects/test_prefs.edc
 elementary/objects/test_focus_style.edj: elementary/objects/test_focus_style.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/img $< $@
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/dark/img $< $@
 
 elementary/objects/test_tooltip.edj: elementary/objects/test_tooltip.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/img $< $@
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/dark/img $< $@
 
 elementary/objects/test_prefs.epb: elementary/objects/test_prefs.epc
 	$(AM_V_EPB) \
 	$(MKDIR_P) elementary/objects/; \
 	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) $< $@
 
+install-data-local:
+	(cd ${datadir}/elementary/themes; $(LN_S) -f dark.edj default.edj)
+
+uninstall-local:
+	(cd ${datadir}/elementary/themes; rm -f default.edj)

@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131087;
+  value "config_version" int: 131088;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -39,7 +39,7 @@ group "Elm_Config" struct {
   value "edje_collection_cache" int: 64;
   value "finger_size" int: 10;
   value "fps" double: 60.0;
-  value "theme" string: "default";
+  value "theme" string: "dark";
   value "modules" string: "prefs>prefs_iface:access_output>access/api:clock_input_ctxpopup>clock/api";
   value "tooltip_delay" double: 1.0;
   value "cursor_engine_only" uchar: 0;
