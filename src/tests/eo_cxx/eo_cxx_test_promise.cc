@@ -16,7 +16,7 @@ START_TEST(eo_cxx_future_construct_and_destroy)
    ecore_init();
 
    {
-      p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p);
   
       f = efl_promise_future_get(p);
@@ -35,7 +35,7 @@ START_TEST(eo_cxx_future_wait)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    fail_if(!p);
   
    f = efl_promise_future_get(p);
@@ -74,7 +74,7 @@ START_TEST(eo_cxx_future_get)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    fail_if(!p);
   
    f = efl_promise_future_get(p);
@@ -114,7 +114,7 @@ START_TEST(eo_cxx_future_get_error)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    fail_if(!p);
   
    f = efl_promise_future_get(p);
@@ -157,7 +157,7 @@ START_TEST(eo_cxx_future_then_value)
 
    ecore_init();
 
-   promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
    fail_if(!promise);
   
    f = efl_promise_future_get(promise);
@@ -208,13 +208,13 @@ START_TEST(eo_cxx_future_composite_construct_and_destroy)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -236,13 +236,13 @@ START_TEST(eo_cxx_future_composite_wait)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future* f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future* f2 = efl_promise_future_get(p2);
@@ -286,13 +286,13 @@ START_TEST(eo_cxx_future_composite_get)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -339,13 +339,13 @@ START_TEST(eo_cxx_future_composite_then_value)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
 
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
 
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -403,13 +403,13 @@ START_TEST(eo_cxx_future_all_construct_and_destroy)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -431,13 +431,13 @@ START_TEST(eo_cxx_future_all_wait)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future* f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future* f2 = efl_promise_future_get(p2);
@@ -478,13 +478,13 @@ START_TEST(eo_cxx_future_all_get)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -528,13 +528,13 @@ START_TEST(eo_cxx_future_all_then_value)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
 
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
 
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -591,13 +591,13 @@ START_TEST(eo_cxx_future_race_construct_and_destroy)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -617,13 +617,13 @@ START_TEST(eo_cxx_future_race_wait)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future* f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future* f2 = efl_promise_future_get(p2);
@@ -661,13 +661,13 @@ START_TEST(eo_cxx_future_race_get)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -707,13 +707,13 @@ START_TEST(eo_cxx_future_race_then_value)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
 
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
 
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -765,13 +765,13 @@ START_TEST(eo_cxx_future_race_variant_get)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
   
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
   
       Efl_Future *f2 = efl_promise_future_get(p2);
@@ -812,13 +812,13 @@ START_TEST(eo_cxx_future_race_variant_then_value)
    ecore_init();
 
    {
-      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p1);
 
       Efl_Future *f1 = efl_promise_future_get(p1);
       fail_if(!f1);
 
-      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+      Efl_Promise *p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
       fail_if(!p2);
 
       Efl_Future *f2 = efl_promise_future_get(p2);
