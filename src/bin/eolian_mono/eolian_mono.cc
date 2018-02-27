@@ -40,7 +40,7 @@ struct options_type
    std::string in_file;
    std::string out_file;
    std::string dllimport;
-   mutable Eolian* state;
+   mutable Eolian_State* state;
    mutable Eolian_Unit const* unit;
    int v_major;
    int v_minor;
@@ -196,7 +196,7 @@ run(options_type const& opts)
 static void
 state_init(options_type const& opts)
 {
-   Eolian *eos = ::eolian_new();
+   Eolian_State *eos = ::eolian_state_new();
    if (!eos)
      {
         EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)

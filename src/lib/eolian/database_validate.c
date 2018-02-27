@@ -845,7 +845,7 @@ _var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 }
 
 Eina_Bool
-database_validate(Eolian *state, const Eolian_Unit *src)
+database_validate(Eolian_State *state, const Eolian_Unit *src)
 {
    Eolian_Class *cl;
 

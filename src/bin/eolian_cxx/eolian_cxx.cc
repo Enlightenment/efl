@@ -34,7 +34,7 @@ struct options_type
 {
    std::vector<std::string> include_dirs;
    std::vector<std::string> in_files;
-   mutable Eolian* state;
+   mutable Eolian_State* state;
    mutable Eolian_Unit const* unit;
    std::string out_file;
    bool main_header;
@@ -42,7 +42,7 @@ struct options_type
    options_type() : main_header(false) {}
    ~options_type()
      {
-        eolian_free(state);
+        eolian_state_free(state);
      }
 };
 
@@ -354,7 +354,7 @@ run(options_type const& opts)
 static void
 state_init(options_type const& opts)
 {
-   Eolian *eos = ::eolian_new();
+   Eolian_State *eos = ::eolian_state_new();
    if (!eos)
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)

@@ -1014,7 +1014,7 @@ get_filename(Eo_Lexer *ls)
 }
 
 static void
-eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
+eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
 {
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
@@ -1115,7 +1115,7 @@ eo_lexer_free(Eo_Lexer *ls)
 }
 
 Eo_Lexer *
-eo_lexer_new(Eolian *state, const char *source)
+eo_lexer_new(Eolian_State *state, const char *source)
 {
    volatile Eo_Lexer *ls = calloc(1, sizeof(Eo_Lexer));
 

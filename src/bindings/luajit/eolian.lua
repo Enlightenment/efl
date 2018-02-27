@@ -13,7 +13,7 @@ ffi.cdef [[
     typedef unsigned char Eina_Bool;
     typedef struct _Eina_Iterator Eina_Iterator;
 
-    typedef struct _Eolian Eolian;
+    typedef struct _Eolian_State Eolian_State;
     typedef struct _Eolian_Class Eolian_Class;
     typedef struct _Eolian_Function Eolian_Function;
     typedef struct _Eolian_Type Eolian_Type;
@@ -287,17 +287,17 @@ ffi.cdef [[
 
     int eolian_init(void);
     int eolian_shutdown(void);
-    Eolian *eolian_new(void);
-    void eolian_free(Eolian *state);
-    const Eolian_Unit *eolian_file_parse(Eolian *state, const char *filepath);
-    Eina_Iterator *eolian_all_eo_file_paths_get(Eolian *state);
-    Eina_Iterator *eolian_all_eot_file_paths_get(Eolian *state);
-    Eina_Iterator *eolian_all_eo_files_get(Eolian *state);
-    Eina_Iterator *eolian_all_eot_files_get(Eolian *state);
-    Eina_Bool eolian_directory_scan(Eolian *state, const char *dir);
-    Eina_Bool eolian_system_directory_scan(Eolian *state);
-    Eina_Bool eolian_all_eo_files_parse(Eolian *state);
-    Eina_Bool eolian_all_eot_files_parse(Eolian *state);
+    Eolian_State *eolian_state_new(void);
+    void eolian_state_free(Eolian_State *state);
+    const Eolian_Unit *eolian_file_parse(Eolian_State *state, const char *filepath);
+    Eina_Iterator *eolian_all_eo_file_paths_get(Eolian_State *state);
+    Eina_Iterator *eolian_all_eot_file_paths_get(Eolian_State *state);
+    Eina_Iterator *eolian_all_eo_files_get(Eolian_State *state);
+    Eina_Iterator *eolian_all_eot_files_get(Eolian_State *state);
+    Eina_Bool eolian_directory_scan(Eolian_State *state, const char *dir);
+    Eina_Bool eolian_system_directory_scan(Eolian_State *state);
+    Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
+    Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
     const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
     const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
@@ -455,7 +455,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
     Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
     const Eolian_Declaration *eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name);
-    Eina_Iterator *eolian_declarations_get_by_file(const Eolian *state, const char *fname);
+    Eina_Iterator *eolian_declarations_get_by_file(const Eolian_State *state, const char *fname);
     Eina_Iterator *eolian_all_declarations_get(const Eolian_Unit *unit);
     Eolian_Declaration_Type eolian_declaration_type_get(const Eolian_Declaration *decl);
     const char *eolian_declaration_name_get(const Eolian_Declaration *decl);
@@ -512,7 +512,7 @@ M.object_scope = {
     PROTECTED = 3
 }
 
-ffi.metatype("Eolian", {
+ffi.metatype("Eolian_State", {
     __index = {
         directory_scan = function(self, dir)
             return eolian.eolian_directory_scan(self, dir) ~= 0
@@ -564,12 +564,12 @@ ffi.metatype("Eolian", {
         end
     },
     __gc = function(self)
-        eolian.eolian_free(self)
+        eolian.eolian_state_free(self)
     end
 })
 
 M.new = function()
-    return eolian.eolian_new()
+    return eolian.eolian_state_new()
 end
 
 M.declaration_type = {

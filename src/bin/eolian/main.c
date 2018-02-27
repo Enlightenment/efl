@@ -318,7 +318,7 @@ void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
 }
 
 static Eina_Bool
-_write_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
+_write_header(const Eolian_State *eos, const Eolian_Unit *src, const char *ofname,
               const char *ifname, Eina_Bool legacy)
 {
    INF("generating header: %s (legacy: %d)", ofname, legacy);
@@ -354,7 +354,7 @@ _write_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
 }
 
 static Eina_Bool
-_write_stub_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
+_write_stub_header(const Eolian_State *eos, const Eolian_Unit *src, const char *ofname,
                    const char *ifname)
 {
    INF("generating stub header: %s", ofname);
@@ -379,7 +379,7 @@ _write_stub_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname
 }
 
 static Eina_Bool
-_write_source(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
+_write_source(const Eolian_State *eos, const Eolian_Unit *src, const char *ofname,
               const char *ifname, Eina_Bool eot)
 {
    INF("generating source: %s", ofname);
@@ -432,7 +432,7 @@ main(int argc, char **argv)
    eina_init();
    eolian_init();
 
-   Eolian *eos = eolian_new();
+   Eolian_State *eos = eolian_state_new();
 
    const char *dom = "eolian_gen";
    _eolian_gen_log_dom = eina_log_domain_register(dom, EINA_COLOR_GREEN);
@@ -593,7 +593,7 @@ end:
      free(outs[i]);
    free(basen);
 
-   eolian_free(eos);
+   eolian_state_free(eos);
    eolian_shutdown();
    eina_shutdown();
 

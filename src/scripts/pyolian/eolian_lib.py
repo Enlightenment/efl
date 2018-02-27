@@ -39,47 +39,47 @@ lib.eolian_init.restype = c_int
 lib.eolian_shutdown.argtypes = []
 lib.eolian_shutdown.restype = c_int
 
-# EAPI Eolian *eolian_new(void);
-lib.eolian_new.argtypes = []
-lib.eolian_new.restype = c_void_p
+# EAPI Eolian_State *eolian_state_new(void);
+lib.eolian_state_new.argtypes = []
+lib.eolian_state_new.restype = c_void_p
 
-# EAPI void eolian_free(Eolian *state);
-lib.eolian_free.argtypes = [c_void_p,]
-lib.eolian_free.restype = None
+# EAPI void eolian_state_free(Eolian_State *state);
+lib.eolian_state_free.argtypes = [c_void_p,]
+lib.eolian_state_free.restype = None
 
-# EAPI const Eolian_Unit *eolian_file_parse(Eolian *state, const char *filepath);
+# EAPI const Eolian_Unit *eolian_file_parse(Eolian_State *state, const char *filepath);
 lib.eolian_file_parse.argtypes = [c_void_p, c_char_p]
 lib.eolian_file_parse.restype = c_void_p
 
-# EAPI Eina_Iterator *eolian_all_eo_file_paths_get(const Eolian *state);
+# EAPI Eina_Iterator *eolian_all_eo_file_paths_get(const Eolian_State *state);
 lib.eolian_all_eo_file_paths_get.argtypes = [c_void_p,]
 lib.eolian_all_eo_file_paths_get.restype = c_void_p
 
-# EAPI Eina_Iterator *eolian_all_eot_file_paths_get(const Eolian *state);
+# EAPI Eina_Iterator *eolian_all_eot_file_paths_get(const Eolian_State *state);
 lib.eolian_all_eot_file_paths_get.argtypes = [c_void_p,]
 lib.eolian_all_eot_file_paths_get.restype = c_void_p
 
-# EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian *state);
+# EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian_State *state);
 lib.eolian_all_eo_files_get.argtypes = [c_void_p,]
 lib.eolian_all_eo_files_get.restype = c_void_p
 
-# EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian *state);
+# EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian_State *state);
 lib.eolian_all_eot_files_get.argtypes = [c_void_p,]
 lib.eolian_all_eot_files_get.restype = c_void_p
 
-# EAPI Eina_Bool eolian_directory_scan(Eolian *state, const char *dir);
+# EAPI Eina_Bool eolian_directory_scan(Eolian_State *state, const char *dir);
 lib.eolian_directory_scan.argtypes = [c_void_p, c_char_p]
 lib.eolian_directory_scan.restype = c_bool
 
-# EAPI Eina_Bool eolian_system_directory_scan(Eolian *state);
+# EAPI Eina_Bool eolian_system_directory_scan(Eolian_State *state);
 lib.eolian_system_directory_scan.argtypes = [c_void_p,]
 lib.eolian_system_directory_scan.restype = c_bool
 
-# EAPI Eina_Bool eolian_all_eo_files_parse(Eolian *state);
+# EAPI Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
 lib.eolian_all_eo_files_parse.argtypes = [c_void_p,]
 lib.eolian_all_eo_files_parse.restype = c_bool
 
-# EAPI Eina_Bool eolian_all_eot_files_parse(Eolian *state);
+# EAPI Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
 lib.eolian_all_eot_files_parse.argtypes = [c_void_p,]
 lib.eolian_all_eot_files_parse.restype = c_bool
 
@@ -684,7 +684,7 @@ lib.eolian_variable_is_extern.restype = c_bool
 lib.eolian_declaration_get_by_name.argtypes = [c_void_p, c_char_p]
 lib.eolian_declaration_get_by_name.restype = c_void_p
 
-# EAPI Eina_Iterator *eolian_declarations_get_by_file(const Eolian *state, const char *fname);
+# EAPI Eina_Iterator *eolian_declarations_get_by_file(const Eolian_State *state, const char *fname);
 lib.eolian_declarations_get_by_file.argtypes = [c_void_p, c_char_p]
 lib.eolian_declarations_get_by_file.restype = c_void_p
 
