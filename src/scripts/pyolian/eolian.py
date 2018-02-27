@@ -462,11 +462,11 @@ class Eolian(Eolian_Unit):
     def all_eot_files(self):
         return Iterator(_str_to_py, lib.eolian_all_eot_files_get(self._obj))
 
-    def directory_scan(self, dir_path):
-        return bool(lib.eolian_directory_scan(self._obj, _str_to_bytes(dir_path)))
+    def directory_add(self, dir_path):
+        return bool(lib.eolian_state_directory_add(self._obj, _str_to_bytes(dir_path)))
 
-    def system_directory_scan(self):
-        return bool(lib.eolian_system_directory_scan(self._obj))
+    def system_directory_add(self):
+        return bool(lib.eolian_state_system_directory_add(self._obj))
 
     def all_eo_files_parse(self):
         return bool(lib.eolian_all_eo_files_parse(self._obj))

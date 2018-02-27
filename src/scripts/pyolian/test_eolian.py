@@ -576,11 +576,11 @@ if __name__ == '__main__':
         raise(RuntimeError('Eolian, failed to create Eolian state'))
 
     # eolian system scan (BROKEN)
-    #  if not eolian_db.system_directory_scan():
+    #  if not eolian_db.system_directory_add():
         #  raise(RuntimeError('Eolian, failed to scan system directories'))
 
     # eolian source tree scan
-    if not eolian_db.directory_scan(SCAN_FOLDER):
+    if not eolian_db.directory_add(SCAN_FOLDER):
         raise(RuntimeError('Eolian, failed to scan source directory'))
 
     # Parse all known eo files

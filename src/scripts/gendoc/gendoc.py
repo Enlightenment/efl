@@ -50,7 +50,7 @@ eolian_db = eolian.Eolian()
 if not isinstance(eolian_db, eolian.Eolian):
     raise(RuntimeError('Eolian, failed to create Eolian state'))
 
-if not eolian_db.directory_scan(SCAN_FOLDER):
+if not eolian_db.directory_add(SCAN_FOLDER):
     raise(RuntimeError('Eolian, failed to scan source directory'))
 
 if not eolian_db.all_eot_files_parse():
