@@ -547,6 +547,34 @@ EAPI Eina_Bool eolian_state_system_directory_add(Eolian_State *state);
 EAPI const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filepath);
 
 /*
+ * @brief Parse all known eo files.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_state_directory_add
+ * @see eolian_state_all_eot_files_parse
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_state_all_eo_files_parse(Eolian_State *state);
+
+/*
+ * @brief Parse all known eot files.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_state_directory_add
+ * @see eolian_state_all_eo_files_parse
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
+
+/*
  * @brief Get an Eolian unit by file name.
  *
  * For any .eo or .eot file (must be within a directory previously scanned
@@ -649,36 +677,6 @@ EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian_State *state);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian_State *state);
-
-/*
- * @brief Force parsing of all the .eo files located in the directories
- * given in eolian_directory_scan..
- *
- * @param[in] state The Eolian state.
- *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- *
- * @see eolian_directory_scan
- * @see eolian_all_eot_files_parse
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
-
-/*
- * @brief Force parsing of all the .eot files located in the directories
- * given in eolian_directory_scan..
- *
- * @param[in] state The Eolian state.
- *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- *
- * @see eolian_directory_scan
- * @see eolian_all_eo_files_parse
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
 
 /*
  * @brief Gets a class by its name
@@ -2671,6 +2669,11 @@ EAPI Eina_Bool eolian_system_directory_scan(Eolian_State *state);
 /* DEPRECATED */
 EAPI const Eolian_Unit *eolian_file_parse(Eolian_State *state, const char *filepath);
 
+/* DEPRECATED */
+EAPI Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
+
+/* DEPRECATED */
+EAPI Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
 
 #endif
 

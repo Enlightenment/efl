@@ -808,7 +808,7 @@ static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key
 }
 
 EAPI Eina_Bool
-eolian_all_eot_files_parse(Eolian_State *state)
+eolian_state_all_eot_files_parse(Eolian_State *state)
 {
    Parse_Data pd = { state, EINA_TRUE };
 
@@ -824,6 +824,12 @@ eolian_all_eot_files_parse(Eolian_State *state)
    return pd.ret;
 }
 
+EAPI Eina_Bool
+eolian_all_eot_files_parse(Eolian_State *state)
+{
+   return eolian_state_all_eot_files_parse(state);
+}
+
 static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Parse_Data *pd = fdata;
@@ -837,7 +843,7 @@ static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key 
 }
 
 EAPI Eina_Bool
-eolian_all_eo_files_parse(Eolian_State *state)
+eolian_state_all_eo_files_parse(Eolian_State *state)
 {
    Parse_Data pd = { state, EINA_TRUE };
 
@@ -851,6 +857,12 @@ eolian_all_eo_files_parse(Eolian_State *state)
      return EINA_FALSE;
 
    return pd.ret;
+}
+
+EAPI Eina_Bool
+eolian_all_eo_files_parse(Eolian_State *state)
+{
+   return eolian_state_all_eo_files_parse(state);
 }
 
 EAPI const Eolian_Unit *
