@@ -75,13 +75,13 @@ lib.eolian_state_directory_add.restype = c_bool
 lib.eolian_state_system_directory_add.argtypes = [c_void_p,]
 lib.eolian_state_system_directory_add.restype = c_bool
 
-# EAPI Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
-lib.eolian_all_eo_files_parse.argtypes = [c_void_p,]
-lib.eolian_all_eo_files_parse.restype = c_bool
+# EAPI Eina_Bool eolian_state_all_eo_files_parse(Eolian_State *state);
+lib.eolian_state_all_eo_files_parse.argtypes = [c_void_p,]
+lib.eolian_state_all_eo_files_parse.restype = c_bool
 
-# EAPI Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
-lib.eolian_all_eot_files_parse.argtypes = [c_void_p,]
-lib.eolian_all_eot_files_parse.restype = c_bool
+# EAPI Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
+lib.eolian_state_all_eot_files_parse.argtypes = [c_void_p,]
+lib.eolian_state_all_eot_files_parse.restype = c_bool
 
 # EAPI const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
 lib.eolian_class_get_by_name.argtypes = [c_void_p, c_char_p]

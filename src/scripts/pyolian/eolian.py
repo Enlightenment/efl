@@ -469,10 +469,10 @@ class Eolian(Eolian_Unit):
         return bool(lib.eolian_state_system_directory_add(self._obj))
 
     def all_eo_files_parse(self):
-        return bool(lib.eolian_all_eo_files_parse(self._obj))
+        return bool(lib.eolian_state_all_eo_files_parse(self._obj))
 
     def all_eot_files_parse(self):
-        return bool(lib.eolian_all_eot_files_parse(self._obj))
+        return bool(lib.eolian_state_all_eot_files_parse(self._obj))
 
 
 ###  Namespace Utility Class  #################################################
