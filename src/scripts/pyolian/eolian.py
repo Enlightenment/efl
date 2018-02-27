@@ -434,7 +434,7 @@ class Eolian_Unit(EolianBaseObject):
             lib.eolian_declarations_get_by_file(self._obj, _str_to_bytes(fname)))
 
 
-class Eolian(Eolian_Unit):
+class Eolian_State(Eolian_Unit):
     def __init__(self):
         self._obj = lib.eolian_state_new()  # Eolian_State *
 

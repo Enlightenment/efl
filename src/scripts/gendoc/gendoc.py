@@ -46,8 +46,8 @@ args = parser.parse_args()
 
 
 # load the whole eolian db (from .eo files in source tree)
-eolian_db = eolian.Eolian()
-if not isinstance(eolian_db, eolian.Eolian):
+eolian_db = eolian.Eolian_State()
+if not isinstance(eolian_db, eolian.Eolian_State):
     raise(RuntimeError('Eolian, failed to create Eolian state'))
 
 if not eolian_db.directory_add(SCAN_FOLDER):

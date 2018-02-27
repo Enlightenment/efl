@@ -571,8 +571,8 @@ class TestEolianExpression(unittest.TestCase):
 
 if __name__ == '__main__':
     # create main eolian state
-    eolian_db = eolian.Eolian()
-    if not isinstance(eolian_db, eolian.Eolian):
+    eolian_db = eolian.Eolian_State()
+    if not isinstance(eolian_db, eolian.Eolian_State):
         raise(RuntimeError('Eolian, failed to create Eolian state'))
 
     # eolian system scan (BROKEN)

@@ -57,8 +57,8 @@ SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
 
 
 # load the whole eolian db
-eolian_db = eolian.Eolian()
-if not isinstance(eolian_db, eolian.Eolian):
+eolian_db = eolian.Eolian_State()
+if not isinstance(eolian_db, eolian.Eolian_State):
     raise(RuntimeError('Eolian, failed to create Eolian state'))
 
 if not eolian_db.directory_add(SCAN_FOLDER):
