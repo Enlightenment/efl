@@ -497,6 +497,40 @@ EAPI Eolian_State *eolian_state_new(void);
 EAPI void eolian_state_free(Eolian_State *state);
 
 /*
+ * @brief Scan the given directory for .eo and .eot files.
+ *
+ * You need to add every directory you plan to use .eo/.eot files from.
+ * The directory is scanned recursively, so all of its sub-directories
+ * are also added.
+ *
+ * @param[in] state The Eolian state.
+ * @param[in] dir the directory to scan
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_state_system_directory_add
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_state_directory_add(Eolian_State *state, const char *dir);
+
+/*
+ * @brief Scan the system directory for .eo and .eot files.
+ *
+ * This is just like eolian_state_directory_add, except it uses the system
+ * directory. The system directory is determined from the prefix of the
+ * Eolian library. Typically it tends to be $PREFIX/share/eolian.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_state_directory_add
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_state_system_directory_add(Eolian_State *state);
+
+/*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
  * The input can be either a full path to the file or only a filename.
@@ -563,36 +597,6 @@ EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian_State *state);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian_State *state);
-
-/*
- * @brief Scan the given directory (recursively) and search for .eo and
- * .eot files.
- *
- * The found files are just open to extract the class name.
- *
- * @param[in] state The Eolian state.
- * @param[in] dir the directory to scan
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- *
- * @see eolian_system_directory_scan
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_directory_scan(Eolian_State *state, const char *dir);
-
-/*
- * @brief Scan the system directory (recursively) and search for .eo and
- * .eot files.
- *
- * @param[in] state The Eolian state.
- *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- *
- * @see eolian_directory_scan
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_system_directory_scan(Eolian_State *state);
 
 /*
  * @brief Force parsing of all the .eo files located in the directories
@@ -2605,6 +2609,12 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  * @return the kind of reference this is
  */
 EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
+
+/* DEPRECATED */
+EAPI Eina_Bool eolian_directory_scan(Eolian_State *state, const char *dir);
+
+/* DEPRECATED */
+EAPI Eina_Bool eolian_system_directory_scan(Eolian_State *state);
 
 #endif
 

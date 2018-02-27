@@ -629,7 +629,7 @@ _scan_cb(const char *name, const char *path, void *data EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-eolian_directory_scan(Eolian_State *state, const char *dir)
+eolian_state_directory_add(Eolian_State *state, const char *dir)
 {
    if (!dir || !state) return EINA_FALSE;
    eina_file_dir_list(dir, EINA_TRUE, _scan_cb, state);
@@ -637,7 +637,7 @@ eolian_directory_scan(Eolian_State *state, const char *dir)
 }
 
 EAPI Eina_Bool
-eolian_system_directory_scan(Eolian_State *state)
+eolian_state_system_directory_add(Eolian_State *state)
 {
    Eina_Bool ret;
    Eina_Strbuf *buf = eina_strbuf_new();
@@ -646,6 +646,18 @@ eolian_system_directory_scan(Eolian_State *state)
    ret = eolian_directory_scan(state, eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
+}
+
+EAPI Eina_Bool
+eolian_directory_scan(Eolian_State *state, const char *dir)
+{
+   return eolian_state_directory_add(state, dir);
+}
+
+EAPI Eina_Bool
+eolian_system_directory_scan(Eolian_State *state)
+{
+   return eolian_state_system_directory_add(state);
 }
 
 char *
