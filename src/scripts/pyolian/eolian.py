@@ -443,7 +443,7 @@ class Eolian(Eolian_Unit):
             lib.eolian_state_free(self._obj)
 
     def file_parse(self, filepath):
-        c_unit = lib.eolian_file_parse(self._obj, _str_to_bytes(filepath))
+        c_unit = lib.eolian_state_file_parse(self._obj, _str_to_bytes(filepath))
         return Eolian_Unit(c_unit) if c_unit else None
 
     @property
