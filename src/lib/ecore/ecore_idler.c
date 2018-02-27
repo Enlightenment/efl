@@ -57,7 +57,7 @@ _ecore_factorized_idle_del(Ecore_Idler *idler)
         return idler->data;
      }
 
-   efl_event_callback_array_del(ML_OBJ, idler->desc, idler);
+   efl_event_callback_array_del(_mainloop_singleton, idler->desc, idler);
 
    data = idler->data;
    eina_mempool_free(idler_mp, idler);
@@ -94,7 +94,7 @@ _ecore_factorized_idle_add(const Efl_Callback_Array_Item *desc,
    ret->references = 0;
    ret->delete_me = EINA_FALSE;
 
-   efl_event_callback_array_add(ML_OBJ, desc, ret);
+   efl_event_callback_array_add(_mainloop_singleton, desc, ret);
 
    return ret;
 }

@@ -117,7 +117,7 @@ _timeout(void *data,
   do \
     { \
        Eina_Bool _did_timeout = EINA_FALSE; \
-       Eina_Future *_timeout_future = efl_loop_timeout(efl_app_main_loop_get(efl_app_get()), t); \
+       Eina_Future *_timeout_future = efl_loop_timeout(efl_main_loop_get(), t); \
        eina_future_then(_timeout_future, _timeout, &_did_timeout); \
        mark_point(); \
        ecore_main_loop_begin(); \

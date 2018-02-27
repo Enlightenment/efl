@@ -2330,7 +2330,7 @@ _efl_canvas_object_efl_object_provider_find(const Eo *eo_obj EINA_UNUSED, Evas_O
         return obj->layer->evas->evas;
      }
    else if (klass == EFL_LOOP_CLASS)
-     return efl_app_main_loop_get(efl_app_get());
+     return efl_main_loop_get();
 fallback:
    return efl_provider_find(efl_super(eo_obj, MY_CLASS), klass);
 }
@@ -2338,7 +2338,7 @@ fallback:
 EOLIAN static Efl_Loop *
 _efl_canvas_object_efl_loop_consumer_loop_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
-   return efl_app_main_loop_get(efl_app_get());
+   return efl_main_loop_get();
 }
 
 EOLIAN static void

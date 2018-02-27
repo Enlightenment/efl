@@ -183,7 +183,7 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
      }
    legacy->func = func;
    legacy->data = data;
-   timer = efl_add(MY_CLASS, efl_app_main_loop_get(efl_app_get()),
+   timer = efl_add(MY_CLASS, efl_main_loop_get(),
                   efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
                   efl_key_data_set(efl_added, "_legacy", legacy),
                   efl_loop_timer_interval_set(efl_added, in));
@@ -206,7 +206,7 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
      }
    legacy->func = func;
    legacy->data = data;
-   timer = efl_add(MY_CLASS, efl_app_main_loop_get(efl_app_get()),
+   timer = efl_add(MY_CLASS, efl_main_loop_get(),
                   efl_event_callback_array_add(efl_added, legacy_timer(), legacy),
                   efl_key_data_set(efl_added, "_legacy", legacy),
                   efl_loop_timer_loop_reset(efl_added),

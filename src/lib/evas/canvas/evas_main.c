@@ -842,7 +842,7 @@ _evas_canvas_efl_object_provider_find(const Eo *eo_e,
    if (klass == EVAS_CANVAS_CLASS)
      return (Eo *)eo_e;
    else if (klass == EFL_LOOP_CLASS)
-     return efl_app_main_loop_get(efl_app_get());
+     return efl_main_loop_get();
    else if (klass == EFL_CANVAS_GESTURE_MANAGER_CLASS)
      return e->gesture_manager;
    return efl_provider_find(efl_super(eo_e, MY_CLASS), klass);
@@ -851,7 +851,7 @@ _evas_canvas_efl_object_provider_find(const Eo *eo_e,
 EOLIAN static Efl_Loop *
 _evas_canvas_efl_loop_consumer_loop_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EINA_UNUSED)
 {
-   return efl_app_main_loop_get(efl_app_get());
+   return efl_main_loop_get();
 }
 
 Ector_Surface *

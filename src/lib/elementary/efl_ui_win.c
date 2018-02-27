@@ -5431,7 +5431,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      efl_access_window_created_signal_emit(obj);
 
    // attach config API
-   efl_composite_attach(obj, efl_provider_find(efl_app_main_loop_get(efl_app_get()), EFL_CONFIG_GLOBAL_CLASS));
+   efl_composite_attach(obj, efl_provider_find(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS));
 
    efl_event_callback_array_add(sd->evas, _elm_evas_tracking(), sd);
    efl_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);

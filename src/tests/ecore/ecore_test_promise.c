@@ -66,7 +66,7 @@ START_TEST(efl_test_promise_future_success)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -106,7 +106,7 @@ START_TEST(efl_test_promise_future_success_before_get)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_promise_value_set(p, &value, NULL);
@@ -146,7 +146,7 @@ START_TEST(efl_test_promise_future_cancel)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f, efl_promise_future_get(p));
@@ -191,7 +191,7 @@ START_TEST(efl_test_promise_before_future_success)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -229,7 +229,7 @@ START_TEST(efl_test_promise_before_future_cancel)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f, efl_promise_future_get(p));
@@ -310,7 +310,7 @@ START_TEST(efl_test_promise_future_chain_success)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f1 = efl_promise_future_get(p);
@@ -357,7 +357,7 @@ START_TEST(efl_test_promise_future_chain_cancel)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f1, efl_promise_future_get(p));
@@ -409,7 +409,7 @@ START_TEST(efl_test_promise_future_multi_success)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -454,7 +454,7 @@ START_TEST(efl_test_promise_future_multi_success_noref)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -497,7 +497,7 @@ START_TEST(efl_test_promise_future_multi_cancel)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f, efl_promise_future_get(p));
@@ -545,7 +545,7 @@ START_TEST(efl_test_promise_before_future_multi_success)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -588,7 +588,7 @@ START_TEST(efl_test_promise_before_future_multi_success_noref)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -630,7 +630,7 @@ START_TEST(efl_test_promise_before_future_multi_cancel)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f, efl_promise_future_get(p));
@@ -682,7 +682,7 @@ START_TEST(efl_test_promise_before_future_multi_cancel_noref)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f, efl_promise_future_get(p));
@@ -742,7 +742,7 @@ START_TEST(efl_test_promise_future_optional_success)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    f = efl_promise_future_get(p);
@@ -782,7 +782,7 @@ START_TEST(efl_test_promise_future_optional_cancel)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
    efl_future_use(&f, efl_promise_future_get(p));
@@ -843,9 +843,9 @@ START_TEST(efl_test_promise_all)
 
    ecore_init();
 
-   p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
-   p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
-   p3 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p3 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p1 || !p2 || !p3);
 
    f1 = efl_ref(efl_promise_future_get(p1));
@@ -893,9 +893,9 @@ START_TEST(efl_test_promise_all_after_value_set)
 
    ecore_init();
 
-   p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
-   p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
-   p3 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p3 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p1 || !p2 || !p3);
 
    f1 = efl_promise_future_get(p1);
@@ -951,9 +951,9 @@ START_TEST(efl_test_promise_race)
 
    ecore_init();
 
-   p1 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
-   p2 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
-   p3 = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
+   p3 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p1 || !p2 || !p3);
 
    f1 = efl_ref(efl_promise_future_get(p1));
@@ -989,9 +989,9 @@ START_TEST(efl_test_future_link)
 
    ecore_init();
 
-   o = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_loop_get(efl_app_get()),
+   o = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                efl_loop_timer_interval_set(efl_added, 0.0));
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    efl_future_use(&f, efl_promise_future_get(p));
    efl_future_link(o, f);
 
@@ -999,7 +999,7 @@ START_TEST(efl_test_future_link)
    efl_del(o);
    fail_if(f);
 
-   o = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_loop_get(efl_app_get()),
+   o = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                efl_loop_timer_interval_set(efl_added, 0.0));
    efl_future_use(&f, efl_promise_future_get(p));
    efl_future_cancel(f);
@@ -1026,7 +1026,7 @@ START_TEST(efl_test_recursive_mess)
 
    ecore_init();
 
-   p = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    efl_future_use(&recursive_future, efl_promise_future_get(p));
    efl_future_then(recursive_future, _then_cleanup, _cancel, NULL, &done);
 

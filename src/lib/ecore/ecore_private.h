@@ -113,13 +113,6 @@ struct _Efl_Loop_Future_Scheduler
    Efl_Loop_Data         *loop_data;
 };
 
-typedef struct _Efl_App_Data
-{
-   Eo *main_loop;
-   Efl_Loop_Data *main_loop_data;
-   Eina_List *loops; // contains non-main_loop objects
-} Efl_App_Data;
-
 struct _Efl_Loop_Data
 {
    double               loop_time;
@@ -515,10 +508,10 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 
 #undef GENERIC_ALLOC_FREE_HEADER
 
-Eo *_efl_app;
-Efl_App_Data *_efl_app_data;
-#define ML_OBJ (_efl_app_data->main_loop)
-#define ML_DAT (_efl_app_data->main_loop_data)
+extern Eo *_mainloop_singleton;
+extern Efl_Loop_Data *_mainloop_singleton_data;
+#define ML_OBJ _mainloop_singleton
+#define ML_DAT _mainloop_singleton_data
 //#define ML_DAT efl_data_scope_get(ML_OBJ, EFL_LOOP_CLASS)
 
 extern Efl_Version _app_efl_version;
@@ -532,7 +525,7 @@ void ecore_loop_promise_fulfill(Efl_Promise *p);
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL
 
-#define EFL_LOOP_DATA efl_data_scope_get(efl_app_main_loop_get(efl_app_get()), EFL_LOOP_CLASS)
+#define EFL_LOOP_DATA efl_data_scope_get(efl_loop_main_get(EFL_LOOP_CLASS), EFL_LOOP_CLASS)
 
 EOAPI Eina_Bool efl_loop_message_process(Eo *obj);
 

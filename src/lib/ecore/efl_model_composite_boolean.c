@@ -160,7 +160,7 @@ _efl_model_composite_boolean_children_efl_model_property_get(Eo *obj EINA_UNUSED
    Efl_Model_Hash_Value *hv = eina_hash_find(pd->parent_pd->values, property);
    if (hv)
      {
-        Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+        Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
         Efl_Future *rfuture = efl_promise_future_get(promise);
 
         Eina_Value *eina_value = eina_value_new(EINA_VALUE_TYPE_UCHAR);
@@ -180,7 +180,7 @@ _efl_model_composite_boolean_children_efl_model_property_get(Eo *obj EINA_UNUSED
      return efl_model_property_get(pd->composite_child, property);
    else
      {
-        Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+        Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
         Efl_Future *rfuture = efl_promise_future_get(promise);
 
         efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
@@ -192,7 +192,7 @@ static Efl_Future *
 _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj EINA_UNUSED,
   Efl_Model_Composite_Boolean_Children_Data *pd, const char *property, const Eina_Value *value)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    Efl_Model_Hash_Value *hv = eina_hash_find(pd->parent_pd->values, property);
@@ -567,7 +567,7 @@ _efl_model_composite_boolean_efl_model_property_get(Eo *obj EINA_UNUSED,
    if (pd->composite_model)
      return efl_model_property_get(pd->composite_model, property);
 
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
@@ -579,7 +579,7 @@ _efl_model_composite_boolean_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Mod
    const char *property, const Eina_Value *value)
 {
 
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    if (pd->composite_model)
@@ -598,7 +598,7 @@ _efl_model_composite_boolean_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Mod
 static Efl_Future *
 _efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj, Efl_Model_Composite_Boolean_Data *pd, unsigned int start, unsigned int count)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future *rfuture = efl_promise_future_get(promise);
 
    if (pd->composite_model)
@@ -632,7 +632,7 @@ _efl_model_composite_boolean_efl_model_children_count_get(Eo *obj EINA_UNUSED, E
     return efl_model_children_count_get(pd->composite_model);
   else
     {
-      Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_app_main_loop_get(efl_app_get()));
+      Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
       Efl_Future *rfuture = efl_promise_future_get(promise);
 
       unsigned int *count = malloc(sizeof(unsigned int));

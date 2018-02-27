@@ -215,7 +215,7 @@ ecore_file_download_full(const char *url,
         return EINA_FALSE;
      }
 
-   loop = efl_app_main_loop_get(efl_app_get());
+   loop = efl_main_loop_get();
    EINA_SAFETY_ON_NULL_RETURN_VAL(loop, EINA_FALSE);
 
    job = calloc(1, sizeof(Ecore_File_Download_Job));

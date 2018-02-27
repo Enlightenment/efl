@@ -317,7 +317,7 @@ START_TEST(ecore_test_efl_loop_fd)
    ret = pipe(comm);
    fail_if(ret != 0);
 
-   fd = efl_add(EFL_LOOP_FD_CLASS, efl_app_main_loop_get(efl_app_get()),
+   fd = efl_add(EFL_LOOP_FD_CLASS, efl_main_loop_get(),
                efl_loop_fd_set(efl_added, comm[0]),
                efl_event_callback_add(efl_added, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
    fail_if(fd == NULL);
@@ -360,7 +360,7 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
    ret = pipe(comm);
    fail_if(ret != 0);
 
-   fd = efl_add(EFL_LOOP_FD_CLASS, efl_app_main_loop_get(efl_app_get()),
+   fd = efl_add(EFL_LOOP_FD_CLASS, efl_main_loop_get(),
                efl_loop_fd_set(efl_added, comm[0]),
                efl_event_callback_add(efl_added, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
                efl_event_callback_add(efl_added, EFL_EVENT_DEL, _efl_del_cb, &dead));
@@ -857,6 +857,67 @@ START_TEST(ecore_test_ecore_main_loop_poller_add_del)
 }
 END_TEST
 
+START_TEST(ecore_test_efl_loop_register)
+{
+   Efl_Object *t, *n;
+
+   ecore_init();
+
+   t = efl_provider_find(efl_main_loop_get(), EFL_LOOP_CLASS);
+   fail_if(!efl_isa(t, EFL_LOOP_CLASS));
+
+   t = efl_provider_find(efl_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   fail_if(t != NULL);
+
+   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get());
+   fail_if(n != NULL);
+
+   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
+               efl_loop_timer_interval_set(efl_added, 1.0));
+   efl_loop_register(efl_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
+
+   t = efl_provider_find(efl_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   fail_if(!efl_isa(t, EFL_LOOP_TIMER_CLASS));
+   fail_if(t != n);
+
+   efl_loop_unregister(efl_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
+
+   t = efl_provider_find(efl_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   fail_if(t != NULL);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(ecore_test_efl_app_version)
+{
+   const Efl_Version *ver;
+   Eo *loop;
+
+   ecore_init();
+
+   loop = efl_loop_main_get(EFL_LOOP_CLASS);
+   fail_if(!efl_isa(loop, EFL_LOOP_CLASS));
+
+   efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, 0, 0, NULL, EFL_BUILD_ID);
+   ver = efl_loop_app_efl_version_get(loop);
+   fail_if(!ver);
+   fail_if(ver->major != EFL_VERSION_MAJOR);
+   fail_if(ver->minor != EFL_VERSION_MINOR);
+   fail_if(ver->micro != 0);
+   fail_if(ver->revision != 0);
+   fail_if(ver->flavor);
+   fail_if(!eina_streq(ver->build_id, EFL_BUILD_ID));
+
+   ver = efl_loop_efl_version_get(loop);
+   fail_if(!ver);
+   fail_if(ver->major != EFL_VERSION_MAJOR);
+   fail_if(ver->minor != EFL_VERSION_MINOR);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -879,4 +940,6 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
    tcase_add_test(tc, ecore_test_efl_loop_fd);
    tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
+   tcase_add_test(tc, ecore_test_efl_loop_register);
+   tcase_add_test(tc, ecore_test_efl_app_version);
 }

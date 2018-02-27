@@ -323,7 +323,7 @@ ecore_init(void)
         sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
 
         _systemd_watchdog =
-           efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_loop_get(efl_app_get()),
+           efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                    efl_loop_timer_interval_set(efl_added, sec / 2),
                    efl_event_callback_add(efl_added,
                                           EFL_LOOP_TIMER_EVENT_TICK,
@@ -347,7 +347,7 @@ ecore_init(void)
      ecore_system_modules_load();
 
    if (getenv("EFL_FIRST_LOOP"))
-     efl_event_callback_add(efl_app_main_loop_get(efl_app_get()),
+     efl_event_callback_add(efl_main_loop_get(),
                             EFL_LOOP_EVENT_RESUME,
                             _efl_first_loop_iterate,
                             getenv("EFL_FIRST_LOOP"));
@@ -391,7 +391,7 @@ ecore_shutdown(void)
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
 
-     efl_event_callback_call(efl_app_main_loop_get(efl_app_get()), EFL_LOOP_EVENT_TERMINATE, NULL);
+     efl_event_callback_call(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
 
      ecore_system_modules_unload();
 

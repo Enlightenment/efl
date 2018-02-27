@@ -704,7 +704,7 @@ _ecore_con_url_request_prepare(Ecore_Con_Url *url_con, const char *method)
    if (proxy_url)
      DBG("proxy_url='%s'", proxy_url);
 
-   url_con->dialer = efl_add(EFL_NET_DIALER_HTTP_CLASS, efl_app_main_loop_get(efl_app_get()),
+   url_con->dialer = efl_add(EFL_NET_DIALER_HTTP_CLASS, efl_main_loop_get(),
                              efl_net_dialer_http_method_set(efl_added, url_con->custom_request ? url_con->custom_request : method),
                              efl_net_dialer_http_primary_mode_set(efl_added, (strcmp(method, "PUT") == 0) ? EFL_NET_DIALER_HTTP_PRIMARY_MODE_UPLOAD : EFL_NET_DIALER_HTTP_PRIMARY_MODE_DOWNLOAD),
                              efl_net_dialer_proxy_set(efl_added, proxy_url),

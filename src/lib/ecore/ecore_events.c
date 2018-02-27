@@ -247,7 +247,7 @@ _ecore_event_init(void)
 
    _event_msg_handler =
      efl_loop_message_handler_get(EFL_LOOP_CLASS,
-                                  ML_OBJ,
+                                  _mainloop_singleton,
                                   ECORE_EVENT_MESSAGE_HANDLER_CLASS);
    if (!_event_msg_handler)
      {

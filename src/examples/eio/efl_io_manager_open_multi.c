@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
    eio_init();
    ecore_init();
 
-   job = efl_add(EFL_IO_MANAGER_CLASS, efl_app_main_loop_get(efl_app_get()));
+   job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
 
    path = getenv("HOME");
    path2 = "./";
