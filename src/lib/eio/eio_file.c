@@ -42,8 +42,8 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
    ls = eina_file_ls(async->ls.directory);
    if (!ls)
      {
-	eio_file_thread_error(&async->ls.common, thread);
-	return;
+        eio_file_thread_error(&async->ls.common, thread);
+        return;
      }
 
    eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
@@ -52,14 +52,14 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 
    EINA_ITERATOR_FOREACH(ls, file)
      {
-	Eina_Bool filter = EINA_TRUE;
+        Eina_Bool filter = EINA_TRUE;
 
-	if (async->filter_cb)
-	  {
-	     filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, file);
-	  }
+        if (async->filter_cb)
+	         {
+             filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, file);
+	         }
 
-	if (filter)
+        if (filter)
           {
              Eio_File_Char *send_fc;
 
@@ -67,14 +67,14 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
              if (!send_fc) goto on_error;
 
              send_fc->filename = file;
-	     send_fc->associated = async->ls.common.worker.associated;
-	     async->ls.common.worker.associated = NULL;
+	            send_fc->associated = async->ls.common.worker.associated;
+             async->ls.common.worker.associated = NULL;
 
-	     pack = eina_list_append(pack, send_fc);
+	            pack = eina_list_append(pack, send_fc);
           }
-	else
+        else
           {
-          on_error:
+on_error:
              eina_stringshare_del(file);
 
              if (async->ls.common.worker.associated)
@@ -86,8 +86,8 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 
         pack = eio_pack_send(thread, pack, &start);
 
-	if (ecore_thread_check(thread))
-	  break;
+        if (ecore_thread_check(thread))
+          break;
      }
 
    if (pack) ecore_thread_feedback(thread, pack);
@@ -155,8 +155,8 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 
    if (!ls)
      {
-	eio_file_thread_error(&async->ls.common, thread);
-	return;
+        eio_file_thread_error(&async->ls.common, thread);
+        return;
      }
 
    eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
@@ -165,36 +165,36 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 
    EINA_ITERATOR_FOREACH(ls, info)
      {
-	Eina_Bool filter = EINA_TRUE;
+        Eina_Bool filter = EINA_TRUE;
 
-	if (async->filter_cb)
-	  {
-	     filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, info);
-	  }
+        if (async->filter_cb)
+          {
+             filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, info);
+          }
 
-	if (filter)
-	  {
-	     Eio_File_Direct_Info *send_di;
+        if (filter)
+          {
+	            Eio_File_Direct_Info *send_di;
 
-	     send_di = eio_direct_info_malloc();
-	     if (!send_di) continue;
+             send_di = eio_direct_info_malloc();
+	            if (!send_di) continue;
 
-	     memcpy(&send_di->info, info, sizeof (Eina_File_Direct_Info));
-	     send_di->associated = async->ls.common.worker.associated;
-	     async->ls.common.worker.associated = NULL;
+             memcpy(&send_di->info, info, sizeof (Eina_File_Direct_Info));
+             send_di->associated = async->ls.common.worker.associated;
+	            async->ls.common.worker.associated = NULL;
 
              pack = eina_list_append(pack, send_di);
-	  }
-	else if (async->ls.common.worker.associated)
-	  {
+	         }
+        else if (async->ls.common.worker.associated)
+          {
              eina_hash_free(async->ls.common.worker.associated);
              async->ls.common.worker.associated = NULL;
-	  }
+          }
 
         pack = eio_pack_send(thread, pack, &start);
 
-	if (ecore_thread_check(thread))
-	  break;
+        if (ecore_thread_check(thread))
+          break;
      }
 
    if (pack) ecore_thread_feedback(thread, pack);
@@ -415,24 +415,23 @@ _eio_file_move_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if (move->copy)
      {
-	eio_file_cancel(move->copy);
-	return;
+        eio_file_cancel(move->copy);
+        return;
      }
 
    if (move->progress.common.error == EXDEV)
      {
-	Eio_File *eio_cp;
+        Eio_File *eio_cp;
 
-	eio_cp = eio_file_copy(move->progress.source, move->progress.dest,
-			       move->progress.progress_cb ? _eio_file_move_copy_progress : NULL,
-			       _eio_file_move_copy_done,
-			       _eio_file_move_copy_error,
-			       move);
+        eio_cp = eio_file_copy(move->progress.source, move->progress.dest,
+                               move->progress.progress_cb ? _eio_file_move_copy_progress : NULL,
+                               _eio_file_move_copy_done,
+                               _eio_file_move_copy_error,
+                               move);
 
-	if (eio_cp)
+        if (eio_cp)
           {
              move->copy = eio_cp;
-
              move->progress.common.thread = ((Eio_File_Progress*)move->copy)->common.thread;
              return;
           }
