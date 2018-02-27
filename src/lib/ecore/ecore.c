@@ -215,8 +215,7 @@ _efl_first_loop_iterate(void *data, const Efl_Event *event)
       case 'T': fprintf(stderr, "Loop started: '%f' - '%f' = '%f' sec\n", end, _efl_startup_time, end - _efl_startup_time);
          break;
      }
-
-   efl_event_callback_del(event->object, EFL_LOOP_EVENT_RESUME,
+   efl_event_callback_del(event->object, EFL_APP_EVENT_RESUME,
                           _efl_first_loop_iterate, data);
 }
 
@@ -345,13 +344,11 @@ ecore_init(void)
 
    if (!_no_system_modules)
      ecore_system_modules_load();
-
    if (getenv("EFL_FIRST_LOOP"))
      efl_event_callback_add(efl_main_loop_get(),
-                            EFL_LOOP_EVENT_RESUME,
+                            EFL_APP_EVENT_RESUME,
                             _efl_first_loop_iterate,
                             getenv("EFL_FIRST_LOOP"));
-
    _ecore_init_count_threshold = _ecore_init_count;
 
    eina_log_timing(_ecore_log_dom,
@@ -390,8 +387,7 @@ ecore_shutdown(void)
        }
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
-
-     efl_event_callback_call(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
+     efl_event_callback_call(efl_main_loop_get(), EFL_APP_EVENT_TERMINATE, NULL);
 
      ecore_system_modules_unload();
 

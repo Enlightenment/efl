@@ -4061,9 +4061,10 @@ elm_entry_add(Evas_Object *parent)
 static void
 _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    ELM_ENTRY_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators++;
 }
@@ -4071,9 +4072,10 @@ _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    ELM_ENTRY_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators--;
    return;

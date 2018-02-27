@@ -2975,9 +2975,10 @@ _efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Ev
 static void
 _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
      sd->validators++;
 }
@@ -2985,9 +2986,10 @@ _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
      sd->validators--;
    return;

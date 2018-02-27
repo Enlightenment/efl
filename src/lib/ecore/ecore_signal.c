@@ -78,9 +78,9 @@ _ecore_signal_pipe_read(Eo *obj)
              if (loop)
                {
                   if (sdata.sig == SIGUSR1)
-                    efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_USR1, NULL);
+                    efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR1, NULL);
                   else
-                    efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_USR2, NULL);
+                    efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR2, NULL);
                }
           }
         break;
@@ -95,7 +95,7 @@ _ecore_signal_pipe_read(Eo *obj)
                }
              Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
              if (loop)
-               efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_HUP, NULL);
+               efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_HUP, NULL);
           }
         break;
       case SIGQUIT:
@@ -112,6 +112,9 @@ _ecore_signal_pipe_read(Eo *obj)
                   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
                                   _ecore_signal_generic_free, NULL);
                }
+             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+             if (loop)
+               efl_event_callback_call(loop, EFL_TASK_EVENT_EXIT, NULL);
           }
         break;
 #ifdef SIGPWR

@@ -566,6 +566,27 @@ __eina_promise_cancel_all(void)
    eina_lock_release(&_pending_futures_lock);
 }
 
+EAPI void
+__eina_promise_cancel_data(void *data)
+{
+   Eina_List *del = NULL, *l;
+   Eina_Future *f;
+
+   eina_lock_take(&_pending_futures_lock);
+   EINA_LIST_FOREACH(_pending_futures, l, f)
+     {
+        if (f->data == data)
+          {
+             del = eina_list_append(del, f);
+          }
+     }
+   EINA_LIST_FREE(del, f)
+     {
+        _eina_future_cancel(f, ECANCELED);
+     }
+   eina_lock_release(&_pending_futures_lock);
+}
+
 Eina_Bool
 eina_promise_shutdown(void)
 {

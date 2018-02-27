@@ -8,9 +8,6 @@
 #include <unistd.h>
 #include <math.h>
 #include <sys/time.h>
-#ifndef _WIN32
-# include <sys/resource.h>
-#endif
 #include <errno.h>
 
 #include "Ecore.h"
@@ -53,8 +50,6 @@ _efl_loop_message_handler_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Loo
    return mh.handler;
 }
 
-Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
-
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
 
@@ -63,19 +58,10 @@ static Eina_List  *_environ_strings_set = NULL;
 
 static void _clean_old_environ(void);
 
-EOLIAN static Efl_Loop *
-_efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
-{
-   if (_mainloop_singleton) return _mainloop_singleton;
-   _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
-   _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
-   return _mainloop_singleton;
-}
-
 EAPI Eo *
 efl_main_loop_get(void)
 {
-   return efl_loop_main_get(EFL_LOOP_CLASS);
+   return efl_app_loop_main_get(EFL_APP_CLASS);
 }
 
 EOLIAN static void
@@ -172,8 +158,8 @@ efl_loop_exit_code_process(Eina_Value *value)
         Eina_Value v = EINA_VALUE_EMPTY;
 
         eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-        if (!eina_value_convert(&v, value)) r = -1;
-        else eina_value_get(&v, &v);
+        if (!eina_value_convert(value, &v)) r = -1;
+        else eina_value_get(&v, &r);
      }
    else
      {
@@ -203,7 +189,7 @@ _poll_trigger(void *data, const Efl_Event *event)
 static void
 _check_event_catcher_add(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Efl_Loop_Data *pd = data;
    int i;
 
@@ -272,7 +258,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
 static void
 _check_event_catcher_del(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Efl_Loop_Data *pd = data;
    int i;
 
@@ -337,7 +323,7 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   _ecore_main_content_clear(pd);
+   _ecore_main_content_clear(obj, pd);
 
    pd->future_message_handler = NULL;
 
@@ -725,6 +711,7 @@ efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
    _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
 }
 
+/* HHH:
 EOLIAN static const Efl_Version *
 _efl_loop_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
@@ -734,7 +721,7 @@ _efl_loop_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED
 EOLIAN static const Efl_Version *
 _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
-   /* vanilla EFL: flavor = NULL */
+   // vanilla EFL: flavor = NULL
    static const Efl_Version version = {
       .major = VMAJ,
       .minor = VMIN,
@@ -745,6 +732,7 @@ _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    };
    return &version;
 }
+*/
 
 static void
 _env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)
@@ -903,63 +891,23 @@ _efl_loop_efl_task_env_get(Eo *obj, Efl_Loop_Data *pd, const char *var)
    eina_lock_release(&_environ_lock);
    return efl_task_env_get(efl_super(obj, EFL_LOOP_CLASS), var);
 }
-#ifdef _WIN32
-#else
-static const signed char primap[EFL_TASK_PRIORITY_ULTRA + 1] =
-{
-   10, // EFL_TASK_PRIORITY_NORMAL
-   19, // EFL_TASK_PRIORITY_BACKGROUND
-   15, // EFL_TASK_PRIORITY_LOW
-   5, // EFL_TASK_PRIORITY_HIGH
-   0  // EFL_TASK_PRIORITY_ULTRA
-};
-#endif
 
-EOLIAN static void
-_efl_loop_efl_task_priority_set(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Efl_Task_Priority priority)
+EOLIAN static Eina_Bool
+_efl_loop_efl_task_run(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
-   efl_task_priority_set(efl_super(obj, EFL_LOOP_CLASS), priority);
-#ifdef _WIN32
-#else
-   // -20 (high) -> 19 (low)
-   int p = 0;
+   Eina_Value *ret;
+   int real;
 
-   if ((priority >= EFL_TASK_PRIORITY_NORMAL) &&
-       (priority <= EFL_TASK_PRIORITY_ULTRA))
-     p = primap[priority];
-   setpriority(PRIO_PROCESS, 0, p);
-#endif
+   ret = efl_loop_begin(obj);
+   real = efl_loop_exit_code_process(ret);
+   if (real == 0) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
-EOLIAN static Efl_Task_Priority
-_efl_loop_efl_task_priority_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+EOLIAN static void
+_efl_loop_efl_task_end(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
-   Efl_Task_Priority pri = EFL_TASK_PRIORITY_NORMAL;
-#ifdef _WIN32
-#else
-   int p, i, dist = 0x7fffffff, d;
-
-   errno = 0;
-   p = getpriority(PRIO_PROCESS, 0);
-   if (errno != 0)
-     return efl_task_priority_get(efl_super(obj, EFL_LOOP_CLASS));
-
-   // find the closest matching priority in primap
-   for (i = EFL_TASK_PRIORITY_NORMAL; i <= EFL_TASK_PRIORITY_ULTRA; i++)
-     {
-        d = primap[i] - p;
-        if (d < 0) d = -d;
-        if (d < dist)
-          {
-             pri = i;
-             dist = d;
-          }
-     }
-
-   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
-   if (td) td->priority = pri;
-#endif
-   return pri;
+   efl_loop_quit(obj, eina_value_int_init(0));
 }
 
 EAPI Eina_Future_Scheduler *

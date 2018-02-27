@@ -1,16 +1,16 @@
 import efl_types;
 import eina_types;
 
-class Efl.Thread (Efl.Task)
+class Efl.Appthread (Efl.Loop)
 {
+   [[ ]]
    methods {
+   }
+   events {
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.parent { set; }
-      Efl.Task.run;
-      Efl.Task.end;
       Efl.Io.Closer.close;
       Efl.Io.Closer.closed { get; }
       Efl.Io.Reader.read;

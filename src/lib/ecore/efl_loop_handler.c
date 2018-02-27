@@ -132,7 +132,7 @@ _handler_reset(Eo *obj, Efl_Loop_Handler_Data *pd)
 static Eina_Bool
 _event_references_update(Efl_Loop_Handler_Data *pd, const Efl_Event *event, int increment)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    int i;
    Eina_Bool need_reset = EINA_FALSE;
 

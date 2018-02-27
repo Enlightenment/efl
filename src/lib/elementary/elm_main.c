@@ -927,8 +927,8 @@ static void (*qre_terminate)(void *data,
 
 EFL_CALLBACKS_ARRAY_DEFINE(_qre_main_ex,
                            { EFL_LOOP_EVENT_ARGUMENTS, qre_main },
-                           { EFL_LOOP_EVENT_PAUSE, qre_pause },
-                           { EFL_LOOP_EVENT_RESUME, qre_resume },
+                           { EFL_APP_EVENT_PAUSE, qre_pause },
+                           { EFL_APP_EVENT_RESUME, qre_resume },
                            { EFL_EVENT_DEL, qre_terminate });
 
 EAPI Eina_Bool
@@ -1304,12 +1304,12 @@ elm_policy_set(unsigned int policy,
      {
         if (value == ELM_POLICY_EXIT_WINDOWS_DEL)
           {
-             efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
+             efl_event_callback_add(efl_main_loop_get(), EFL_APP_EVENT_TERMINATE,
                                     _on_terminate, NULL);
           }
         else
           {
-             efl_event_callback_del(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
+             efl_event_callback_del(efl_main_loop_get(), EFL_APP_EVENT_TERMINATE,
                                     _on_terminate, NULL);
           }
      }

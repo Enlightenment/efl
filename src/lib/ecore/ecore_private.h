@@ -88,6 +88,7 @@ typedef struct _Efl_Loop_Future_Scheduler Efl_Loop_Future_Scheduler;
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 
 typedef struct _Efl_Task_Data Efl_Task_Data;
+typedef struct _Efl_Appthread_Data Efl_Appthread_Data;
 
 typedef struct _Message_Handler Message_Handler;
 typedef struct _Message Message;
@@ -191,6 +192,18 @@ struct _Efl_Task_Data
    int                exit_code;
    Eina_Bool          command_dirty : 1;
    Eina_Bool          exited : 1;
+};
+
+struct _Efl_Appthread_Data
+{
+   struct {
+      int in, out;
+      Eo *in_handler, *out_handler;
+      Eina_Bool can_read : 1;
+      Eina_Bool eos_read : 1;
+      Eina_Bool can_write : 1;
+   } fd, ctrl;
+   int read_listeners;
 };
 
 
@@ -325,7 +338,7 @@ _ecore_main_win32_handler_del(Eo *obj,
                               Efl_Loop_Data *pd,
                               Ecore_Win32_Handler *win32_handler);
 
-void       _ecore_main_content_clear(Efl_Loop_Data *pd);
+void       _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd);
 void       _ecore_main_shutdown(void);
 
 #if defined (_WIN32) || defined (__lv2ppu__) || defined (HAVE_EXOTIC)
@@ -525,7 +538,7 @@ void ecore_loop_promise_fulfill(Efl_Promise *p);
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL
 
-#define EFL_LOOP_DATA efl_data_scope_get(efl_loop_main_get(EFL_LOOP_CLASS), EFL_LOOP_CLASS)
+#define EFL_LOOP_DATA efl_data_scope_get(efl_main_loop_get(), EFL_LOOP_CLASS)
 
 EOAPI Eina_Bool efl_loop_message_process(Eo *obj);
 

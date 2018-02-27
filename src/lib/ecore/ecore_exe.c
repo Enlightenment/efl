@@ -66,7 +66,7 @@ ecore_exe_pipe_run(const char      *exe_cmd,
                    const void      *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe *ret = efl_add(MY_CLASS, efl_loop_main_get(EFL_LOOP_CLASS),
+   Ecore_Exe *ret = efl_add(MY_CLASS, efl_main_loop_get(),
                             ecore_obj_exe_command_set(efl_added, exe_cmd,
                                                       flags));
    if (ret)

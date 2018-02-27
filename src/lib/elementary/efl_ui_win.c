@@ -1904,7 +1904,7 @@ _elm_win_evas_device_changed(void *data,
 static void
 _win_event_add_cb(void *data, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *array = ev->info;
+   const Efl_Callback_Array_Item_Full *array = ev->info;
    Efl_Ui_Win_Data *sd = data;
    Efl_Ui_Win *win = ev->object;
    int i;
@@ -2035,7 +2035,7 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
 static void
 _win_event_del_cb(void *data, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *array = ev->info;
+   const Efl_Callback_Array_Item_Full *array = ev->info;
    Efl_Ui_Win_Data *sd = data;
    Efl_Ui_Win *win = ev->object;
    int i;
@@ -2177,7 +2177,7 @@ _win_paused(void *data, const Efl_Event *ev)
    _paused_windows++;
 
    if (_elm_win_count == _paused_windows)
-     efl_event_callback_call(efl_loop_get(ev->object), EFL_LOOP_EVENT_PAUSE, NULL);
+     efl_event_callback_call(efl_loop_get(ev->object), EFL_APP_EVENT_PAUSE, NULL);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_elm_win_tracking,
@@ -2205,7 +2205,7 @@ _elm_win_resume(void *data, const Efl_Event *ev)
    sd->paused = EINA_FALSE;
 
    if (_elm_win_count == _paused_windows)
-     efl_event_callback_call(efl_loop_get(ev->object), EFL_LOOP_EVENT_RESUME, NULL);
+     efl_event_callback_call(efl_loop_get(ev->object), EFL_APP_EVENT_RESUME, NULL);
 
    _paused_windows--;
 }
@@ -2831,7 +2831,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    _elm_win_state_eval_queue();
 
    if (_elm_win_count == _paused_windows)
-     efl_event_callback_call(efl_loop_get(obj), EFL_LOOP_EVENT_PAUSE, NULL);
+     efl_event_callback_call(efl_loop_get(obj), EFL_APP_EVENT_PAUSE, NULL);
 
    if (sd->ee)
      {
@@ -5474,7 +5474,7 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
    obj = _elm_win_finalize_internal(obj, sd, sd->name, sd->type);
    if (!obj) return NULL;
    obj = efl_finalize(efl_super(obj, MY_CLASS));
-   if (obj && resume) efl_event_callback_call(efl_loop_get(obj), EFL_LOOP_EVENT_RESUME, NULL);
+   if (obj && resume) efl_event_callback_call(efl_loop_get(obj), EFL_APP_EVENT_RESUME, NULL);
    return obj;
 }
 

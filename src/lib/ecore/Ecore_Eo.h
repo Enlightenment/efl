@@ -45,9 +45,12 @@
 #include "efl_loop_message_handler.eo.h"
 
 #include "efl_task.eo.h"
+#include "efl_thread.eo.h"
 #include "efl_exe.eo.h"
 
 #include "efl_loop.eo.h"
+#include "efl_app.eo.h"
+#include "efl_appthread.eo.h"
 
 /**
  * @brief Quits the main loop once all the events currently on the queue have
@@ -103,6 +106,7 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *efl_main_loop_get(void);
+EAPI Eo *efl_app_get(void);
 
 typedef struct _Efl_Future_Composite_Progress Efl_Future_All_Progress;
 

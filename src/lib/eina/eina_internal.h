@@ -71,6 +71,8 @@ struct _Eina_Vpath_Interface_User
  */
 EAPI void __eina_promise_cancel_all(void);
 
+EAPI void __eina_promise_cancel_data(void *data);
+
 /**
  * Make the app specific paths accessable as virtual path
  *

@@ -20,33 +20,6 @@ class Efl.Loop (Efl.Task)
    you can provide these if you need to.
    ]]
    methods {
-      @property main @class {
-         [[Points to the main loop instance of the application.]]
-         get {}
-         values {
-            main_loop: Efl.Loop; [[Application main loop]]
-         }
-      }
-      @property app_efl_version {
-         [[Indicates the version of EFL with which this application was compiled.
-
-           This might differ from @.efl_version.
-         ]]
-         get {}
-         values {
-            @cref version: Efl.Version; [[Efl version]]
-         }
-      }
-      @property efl_version {
-         [[Indicates the currently running version of EFL.
-
-           This might differ from @.app_efl_version.
-         ]]
-         get {}
-         values {
-            @cref version: Efl.Version; [[Efl version]]
-         }
-      }
       iterate {
          [[Runs a single iteration of the main loop to process everything on the
          queue.]]
@@ -148,18 +121,13 @@ class Efl.Loop (Efl.Task)
       poll,high; [[Event occurs multiple times per second. The exact tick is undefined and can be adjusted system wide.]]
       poll,medium; [[Event occurs multiple times per minute. The exact tick is undefined and can be adjusted system wide.]]
       poll,low; [[Event occurs multiple times every 15 minutes. The exact tick is undefined and can be adjusted system wide.]]
-      pause; [[Called when the window is not going be displayed for some time]]
-      resume; [[Called before a window is rendered after a pause event]]
-      terminate; [[Called before starting the shutdown of Elementary]]
-      signal,usr1; [[System specific, but on unix maps to SIGUSR1 signal to the process - only called on main loop object]]
-      signal,usr2; [[System specific, but on unix maps to SIGUSR2 signal to the process - only called on main loop object]]
-      signal,hup; [[System specific, but on unix maps to SIGHUP signal to the process - only called on main loop object]]
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.provider_find;
       Efl.Task.env { set; get; }
-      Efl.Task.priority { get; set; }
+      Efl.Task.run;
+      Efl.Task.end;
    }
 }

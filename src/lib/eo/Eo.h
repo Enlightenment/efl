@@ -241,9 +241,24 @@ typedef short Efl_Callback_Priority;
  */
 typedef struct _Efl_Callback_Array_Item
 {
-  const Efl_Event_Description *desc; /**< The event description. */
-  Efl_Event_Cb func; /**< The callback function. */
+   const Efl_Event_Description *desc; /**< The event description. */
+   Efl_Event_Cb func; /**< The callback function. */
 } Efl_Callback_Array_Item;
+
+
+/**
+ * @struct _Efl_Callback_Array_Item_Full
+ * @brief An item provided by EFL_EVENT_CALLBACK_ADD/EFL_EVENT_CALLBACK_DEL.
+ *
+ * See also EFL_EVENT_CALLBACK_ADD EFL_EVENT_CALLBACK_DEL.
+ */
+typedef struct _Efl_Callback_Array_Item_Full
+{
+   const Efl_Event_Description *desc; /**< The event description. */
+   Efl_Callback_Priority priority; /** < The priorit of the event */
+   Efl_Event_Cb func; /**< The callback function. */
+   void *user_data; /**< The user data pointer to be passed to the func */
+} Efl_Callback_Array_Item_Full;
 
 /**
  * @brief Add a callback for an event with a specific priority.

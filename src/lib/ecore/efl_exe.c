@@ -179,15 +179,30 @@ _foreach_env(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, voi
    return EINA_TRUE;
 }
 
+static Eina_Value
+_efl_loop_task_exit(void *data, const Eina_Value v,
+                    const Eina_Future *dead EINA_UNUSED)
+{
+   Eo *obj = data;
+
+   efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
+   efl_unref(obj);
+   return v;
+}
+
 static void
 _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
 {
-   // XXX: defer the below in a job
-   if ((pd->fd.out == -1) && (pd->fd.exited_read == -1) &&
-      (!pd->exit_called))
+   if ((pd->fd.out == -1) && /*(pd->fd.in == -1) &&*/
+       (pd->fd.exited_read == -1) && (!pd->exit_called))
      {
+        Eina_Future *job;
+        Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+
         pd->exit_called = EINA_TRUE;
-        efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
+        efl_ref(obj);
+        job = eina_future_then(efl_loop_job(loop), _efl_loop_task_exit, obj);
+        efl_future_Eina_FutureXXX_then(loop, job);
      }
 }
 
@@ -666,10 +681,11 @@ _efl_exe_efl_io_reader_can_read_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_rea
    Eina_Bool old = efl_io_reader_can_read_get(obj);
    if (old == can_read) return;
    pd->fd.can_read = can_read;
+   if (!pd->fd.out_handler) return;
    if (can_read)
-     efl_loop_handler_active_set(pd->fd.in_handler, 0);
+     efl_loop_handler_active_set(pd->fd.out_handler, 0);
    else
-     efl_loop_handler_active_set(pd->fd.in_handler,
+     efl_loop_handler_active_set(pd->fd.out_handler,
                                  EFL_LOOP_HANDLER_FLAGS_READ);
    efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
 }

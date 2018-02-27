@@ -32,7 +32,7 @@ void
 _cb_added(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Simple_Public_Data *pd = efl_data_scope_get(event->object, MY_CLASS);
-   const Efl_Callback_Array_Item *callback_array = event->info;
+   const Efl_Callback_Array_Item_Full *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
       return;
@@ -46,7 +46,7 @@ void
 _cb_deled(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Simple_Public_Data *pd = efl_data_scope_get(event->object, MY_CLASS);
-   const Efl_Callback_Array_Item *callback_array = event->info;
+   const Efl_Callback_Array_Item_Full *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
       return;

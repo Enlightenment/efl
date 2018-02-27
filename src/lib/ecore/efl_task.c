@@ -186,8 +186,8 @@ _escape(const char *s)
      {
         *d = '\"';
         d++;
-        *d = 0;
      }
+   *d = 0;
    return s2;
 }
 
@@ -215,7 +215,7 @@ _rebuild_command(Efl_Task_Data *pd)
              char *str = _escape(arg);
              if (str)
                {
-                  if (!have_args) eina_strbuf_append(sb, " ");
+                  if (have_args) eina_strbuf_append(sb, " ");
                   eina_strbuf_append(sb, str);
                   free(str);
                   have_args = EINA_TRUE;
@@ -272,14 +272,17 @@ _efl_task_arg_value_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, unsigned int num
 
    if (!pd->args) pd->args = eina_array_new(16);
    count = eina_array_count(pd->args);
-   if (count > num)
+   if ((count > 0) && (count > num))
      parg = eina_array_data_get(pd->args, num);
    else
      {
         unsigned int i;
 
         for (i = count; i <= num; i++)
-          eina_array_push(pd->args, NULL);
+          {
+             eina_array_push(pd->args, "");
+             eina_array_data_set(pd->args, i, NULL);
+          }
      }
 
    if (arg)

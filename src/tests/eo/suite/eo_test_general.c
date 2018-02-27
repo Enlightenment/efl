@@ -181,11 +181,9 @@ _eo_signals_efl_del_cb(void *_data EINA_UNUSED, const Efl_Event *event EINA_UNUS
 void
 _eo_signals_cb_added_deled(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *callback_array = event->info;
-   const Efl_Callback_Array_Item *(*callback_data)(void) = data;
+   const Efl_Callback_Array_Item_Full *callback_array = event->info;
 
-   fail_if((callback_data() != callback_array) &&
-           (callback_array->func != _eo_signals_cb_added_deled));
+   fail_if(callback_array->func != _eo_signals_cb_added_deled);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,

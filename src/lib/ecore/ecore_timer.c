@@ -74,7 +74,7 @@ static void
 _check_timer_event_catcher_add(void *data, const Efl_Event *event)
 {
    Efl_Loop_Timer_Data *timer = data;
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
@@ -94,7 +94,7 @@ static void
 _check_timer_event_catcher_del(void *data, const Efl_Event *event)
 {
    Efl_Loop_Timer_Data *timer = data;
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)

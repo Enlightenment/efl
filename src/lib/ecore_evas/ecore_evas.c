@@ -3195,7 +3195,7 @@ _ecore_evas_animator_fallback(void *data)
 static void
 _check_animator_event_catcher_add(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 
@@ -3229,7 +3229,7 @@ _check_animator_event_catcher_add(void *data, const Efl_Event *event)
 static void
 _check_animator_event_catcher_del(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 

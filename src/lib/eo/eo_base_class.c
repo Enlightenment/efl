@@ -1228,7 +1228,8 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
                                         Efl_Event_Cb func,
                                         const void *user_data)
 {
-   const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
+   const Efl_Callback_Array_Item_Full arr[] =
+     { {desc, priority, func, (void *)user_data}, {NULL, 0, NULL, NULL}};
    Eo_Callback_Description *cb = _eo_callback_new();
 
    // very unlikely so improve l1 instr cache by using goto
@@ -1265,7 +1266,7 @@ EOAPI EFL_FUNC_BODYV(efl_event_callback_priority_add,
 
 static void
 _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
-                                 const Efl_Callback_Array_Item *array,
+                                 const Efl_Callback_Array_Item_Full *array,
                                  Eo_Callback_Description **cb)
 {
    (*cb)->delete_me = EINA_TRUE;
@@ -1295,7 +1296,8 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
             ((*cb)->items.item.func == func) &&
             ((*cb)->func_data == user_data))
           {
-             const Efl_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
+             const Efl_Callback_Array_Item_Full arr[] =
+               { {desc, (*cb)->priority, func, (*cb)->func_data}, {NULL, 0, NULL, NULL}};
 
              _efl_object_event_callback_clean(obj, pd, arr, cb);
              return EINA_TRUE;
@@ -1318,9 +1320,9 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
                                               const void *user_data)
 {
    Eo_Callback_Description *cb = _eo_callback_new();
-#if  defined(EFL_EVENT_SPECIAL_SKIP) ||  defined(EO_DEBUG)
    const Efl_Callback_Array_Item *it;
-#endif
+   unsigned int num, i;
+   Efl_Callback_Array_Item_Full *ev_array;
 #ifdef EO_DEBUG
    const Efl_Callback_Array_Item *prev;
 #endif
@@ -1363,7 +1365,21 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
      }
 #endif
 
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)array);
+   num = 0;
+   for (it = cb->items.item_array; it->func; it++) num++;
+   ev_array = alloca((num + 1) * sizeof(Efl_Callback_Array_Item_Full));
+   for (i = 0, it = cb->items.item_array; it->func; it++, i++)
+     {
+        ev_array[i].desc = cb->items.item_array[i].desc;
+        ev_array[i].priority = cb->priority;
+        ev_array[i].func = cb->items.item_array[i].func;
+        ev_array[i].user_data = cb->func_data;
+     }
+   ev_array[i].desc = NULL;
+   ev_array[i].priority = 0;
+   ev_array[i].func = NULL;
+   ev_array[i].user_data = NULL;
+   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, ev_array);
 
    return EINA_TRUE;
 
@@ -1384,17 +1400,35 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
                                      const void *user_data)
 {
    Eo_Callback_Description **cb;
-   unsigned int i;
+   unsigned int j;
 
-   for (cb = pd->callbacks, i = 0;
-        i < pd->callbacks_count;
-        cb++, i++)
+   for (cb = pd->callbacks, j = 0;
+        j < pd->callbacks_count;
+        cb++, j++)
      {
         if (!(*cb)->delete_me &&
             ((*cb)->items.item_array == array) &&
             ((*cb)->func_data == user_data))
           {
-             _efl_object_event_callback_clean(obj, pd, array, cb);
+             const Efl_Callback_Array_Item *it;
+             unsigned int num, i;
+             Efl_Callback_Array_Item_Full *ev_array;
+
+             num = 0;
+             for (it = (*cb)->items.item_array; it->func; it++) num++;
+             ev_array = alloca((num + 1) * sizeof(Efl_Callback_Array_Item_Full));
+             for (i = 0, it = (*cb)->items.item_array; it->func; it++, i++)
+               {
+                  ev_array[i].desc = (*cb)->items.item_array[i].desc;
+                  ev_array[i].priority = (*cb)->priority;
+                  ev_array[i].func = (*cb)->items.item_array[i].func;
+                  ev_array[i].user_data = (*cb)->func_data;
+               }
+             ev_array[i].desc = NULL;
+             ev_array[i].priority = 0;
+             ev_array[i].func = NULL;
+             ev_array[i].user_data = NULL;
+             _efl_object_event_callback_clean(obj, pd, ev_array, cb);
              return EINA_TRUE;
           }
      }

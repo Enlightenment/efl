@@ -896,11 +896,11 @@ START_TEST(ecore_test_efl_app_version)
 
    ecore_init();
 
-   loop = efl_loop_main_get(EFL_LOOP_CLASS);
+   loop = efl_app_loop_main_get(EFL_APP_CLASS);
    fail_if(!efl_isa(loop, EFL_LOOP_CLASS));
 
    efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, 0, 0, NULL, EFL_BUILD_ID);
-   ver = efl_loop_app_efl_version_get(loop);
+   ver = efl_app_build_efl_version_get(loop);
    fail_if(!ver);
    fail_if(ver->major != EFL_VERSION_MAJOR);
    fail_if(ver->minor != EFL_VERSION_MINOR);
@@ -909,7 +909,7 @@ START_TEST(ecore_test_efl_app_version)
    fail_if(ver->flavor);
    fail_if(!eina_streq(ver->build_id, EFL_BUILD_ID));
 
-   ver = efl_loop_efl_version_get(loop);
+   ver = efl_app_efl_version_get(loop);
    fail_if(!ver);
    fail_if(ver->major != EFL_VERSION_MAJOR);
    fail_if(ver->minor != EFL_VERSION_MINOR);

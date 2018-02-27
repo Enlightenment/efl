@@ -111,7 +111,7 @@ _efl_loop_fd_fd_file_get(Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
 static void
 _check_fd_event_catcher_add(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Efl_Loop_Fd_Data *fd = data;
    Eina_Bool need_reset = EINA_FALSE;
    int i;
@@ -142,7 +142,7 @@ _check_fd_event_catcher_add(void *data, const Efl_Event *event)
 static void
 _check_fd_event_catcher_del(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Efl_Loop_Fd_Data *fd = data;
    Eina_Bool need_reset = EINA_FALSE;
    int i;
