@@ -447,20 +447,20 @@ class Eolian(Eolian_Unit):
         return Eolian_Unit(c_unit) if c_unit else None
 
     @property
-    def all_eo_file_paths(self):
-        return Iterator(_str_to_py, lib.eolian_all_eo_file_paths_get(self._obj))
+    def eo_file_paths(self):
+        return Iterator(_str_to_py, lib.eolian_state_eo_file_paths_get(self._obj))
 
     @property
-    def all_eot_file_paths(self):
-        return Iterator(_str_to_py, lib.eolian_all_eot_file_paths_get(self._obj))
+    def eot_file_paths(self):
+        return Iterator(_str_to_py, lib.eolian_state_eot_file_paths_get(self._obj))
 
     @property
-    def all_eo_files(self):
-        return Iterator(_str_to_py, lib.eolian_all_eo_files_get(self._obj))
+    def eo_files(self):
+        return Iterator(_str_to_py, lib.eolian_state_eo_files_get(self._obj))
 
     @property
-    def all_eot_files(self):
-        return Iterator(_str_to_py, lib.eolian_all_eot_files_get(self._obj))
+    def eot_files(self):
+        return Iterator(_str_to_py, lib.eolian_state_eot_files_get(self._obj))
 
     def directory_add(self, dir_path):
         return bool(lib.eolian_state_directory_add(self._obj, _str_to_bytes(dir_path)))

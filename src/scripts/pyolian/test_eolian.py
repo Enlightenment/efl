@@ -54,19 +54,19 @@ class TestBaseObject(unittest.TestCase):
 
 class TestEolianUnit(unittest.TestCase):
     def test_file_listing(self):
-        l = list(eolian_db.all_eo_file_paths)
+        l = list(eolian_db.eo_file_paths)
         self.assertGreater(len(l), 400)
         self.assertTrue(l[0].endswith('.eo'))
 
-        l = list(eolian_db.all_eo_files)
+        l = list(eolian_db.eo_files)
         self.assertGreater(len(l), 400)
         self.assertTrue(l[0].endswith('.eo'))
 
-        l = list(eolian_db.all_eot_file_paths)
+        l = list(eolian_db.eot_file_paths)
         self.assertGreater(len(l), 10)
         self.assertTrue(l[0].endswith('.eot'))
 
-        l = list(eolian_db.all_eot_files)
+        l = list(eolian_db.eot_files)
         self.assertGreater(len(l), 10)
         self.assertTrue(l[0].endswith('.eot'))
 
