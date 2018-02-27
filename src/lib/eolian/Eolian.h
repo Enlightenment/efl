@@ -560,6 +560,17 @@ EAPI const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state,
 EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
 
 /*
+ * @brief Get the children (dependencies) of a unit.
+ *
+ * The iterator is obviously again to `const Eolian_Unit *`.
+ *
+ * @param[in] unit The unit.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
+
+/*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
  * The input can be either a full path to the file or only a filename.

@@ -677,6 +677,13 @@ eolian_state_units_get(const Eolian_State *state)
    return eina_hash_iterator_data_new(state->units);
 }
 
+EAPI Eina_Iterator *
+eolian_unit_children_get(const Eolian_Unit *unit)
+{
+   if (!unit) return NULL;
+   return eina_hash_iterator_data_new(unit->children);
+}
+
 char *
 database_class_to_filename(const char *cname)
 {
