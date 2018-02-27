@@ -5,6 +5,7 @@ externals.external: "elm";
 // theme api version. from 1.10 on we will check version to avoid
 // compat issues
 data.item: "version" "119";
+data.item: "efl_theme_base" "dark";
 
 collections {
 #include "fonts.edc"
