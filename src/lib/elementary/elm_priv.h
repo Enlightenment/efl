@@ -125,6 +125,8 @@ typedef struct Elm_Theme_File
     */
    Eina_Stringshare *item;
    Eina_File *handle;
+   Eina_Stringshare *base_theme; // data.item: efl_theme_base name
+   Eina_Stringshare *match_theme; // data.item: efl_theme_match name
 } Elm_Theme_File;
 
 struct _Elm_Theme
