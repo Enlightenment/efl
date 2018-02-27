@@ -662,54 +662,6 @@ eolian_system_directory_scan(Eolian_State *state)
    return eolian_state_system_directory_add(state);
 }
 
-EAPI const Eolian_Unit *
-eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name)
-{
-   if (!state) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(file_name);
-   Eolian_Unit *unit = eina_hash_find(state->units, shr);
-   eina_stringshare_del(shr);
-   return unit;
-}
-
-EAPI Eina_Iterator *
-eolian_state_units_get(const Eolian_State *state)
-{
-   if (!state) return NULL;
-   return eina_hash_iterator_data_new(state->units);
-}
-
-EAPI Eina_Iterator *
-eolian_unit_children_get(const Eolian_Unit *unit)
-{
-   if (!unit) return NULL;
-   return eina_hash_iterator_data_new(unit->children);
-}
-
-EAPI const char *
-eolian_unit_file_get(const Eolian_Unit *unit)
-{
-   if (!unit) return NULL;
-   return unit->file;
-}
-
-char *
-database_class_to_filename(const char *cname)
-{
-   char *ret;
-   Eina_Strbuf *strbuf = eina_strbuf_new();
-   eina_strbuf_append(strbuf, cname);
-   eina_strbuf_replace_all(strbuf, ".", "_");
-   eina_strbuf_append(strbuf, ".eo");
-
-   ret = eina_strbuf_string_steal(strbuf);
-   eina_strbuf_free(strbuf);
-
-   eina_str_tolower(&ret);
-
-   return ret;
-}
-
 static Eolian_Unit *
 _eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
 {
@@ -814,7 +766,7 @@ _merge_units(Eolian_Unit *unit)
 }
 
 EAPI const Eolian_Unit *
-eolian_file_parse(Eolian_State *state, const char *filepath)
+eolian_state_file_parse(Eolian_State *state, const char *filepath)
 {
    if (!state)
      return NULL;
@@ -829,6 +781,12 @@ eolian_file_parse(Eolian_State *state, const char *filepath)
    if (!database_validate(state, &state->unit))
      return NULL;
    return &state->unit;
+}
+
+EAPI const Eolian_Unit *
+eolian_file_parse(Eolian_State *state, const char *filepath)
+{
+   return eolian_state_file_parse(state, filepath);
 }
 
 typedef struct _Parse_Data
@@ -893,6 +851,54 @@ eolian_all_eo_files_parse(Eolian_State *state)
      return EINA_FALSE;
 
    return pd.ret;
+}
+
+EAPI const Eolian_Unit *
+eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name)
+{
+   if (!state) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(file_name);
+   Eolian_Unit *unit = eina_hash_find(state->units, shr);
+   eina_stringshare_del(shr);
+   return unit;
+}
+
+EAPI Eina_Iterator *
+eolian_state_units_get(const Eolian_State *state)
+{
+   if (!state) return NULL;
+   return eina_hash_iterator_data_new(state->units);
+}
+
+EAPI Eina_Iterator *
+eolian_unit_children_get(const Eolian_Unit *unit)
+{
+   if (!unit) return NULL;
+   return eina_hash_iterator_data_new(unit->children);
+}
+
+EAPI const char *
+eolian_unit_file_get(const Eolian_Unit *unit)
+{
+   if (!unit) return NULL;
+   return unit->file;
+}
+
+char *
+database_class_to_filename(const char *cname)
+{
+   char *ret;
+   Eina_Strbuf *strbuf = eina_strbuf_new();
+   eina_strbuf_append(strbuf, cname);
+   eina_strbuf_replace_all(strbuf, ".", "_");
+   eina_strbuf_append(strbuf, ".eo");
+
+   ret = eina_strbuf_string_steal(strbuf);
+   eina_strbuf_free(strbuf);
+
+   eina_str_tolower(&ret);
+
+   return ret;
 }
 
 EAPI Eina_Iterator *
