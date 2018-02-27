@@ -1642,6 +1642,12 @@ _config_system_load(void)
                           _elm_profile);
 
    ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (!ef)
+     {
+        _elm_data_dir_snprintf(buf, sizeof(buf), "config/default/base.cfg");
+
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+     }
    if (ef)
      {
         cfg = eet_data_read(ef, _config_edd, "config");
