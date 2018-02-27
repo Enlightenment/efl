@@ -475,6 +475,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
 
    EINA_LIST_FREE(names, p)
      _elm_theme_file_item_add(&th->themes, p, EINA_FALSE, EINA_TRUE);
+   elm_theme_get(th);
 }
 
 void
