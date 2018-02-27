@@ -531,6 +531,35 @@ EAPI Eina_Bool eolian_state_directory_add(Eolian_State *state, const char *dir);
 EAPI Eina_Bool eolian_state_system_directory_add(Eolian_State *state);
 
 /*
+ * @brief Get an Eolian unit by file name.
+ *
+ * For any .eo or .eot file (must be within a directory previously scanned
+ * by eolian_state_directory_add or eolian_state_system_directory_add), get
+ * its corresponding unit.
+ *
+ * This only works if the file has been previously parsed.
+ *
+ * @param[in] state The Eolian state.
+ * @param[in] file The file name.
+ *
+ * @see eolian_state_units_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all Eolian units in a state.
+ *
+ * This means units of all files that have been parsed so far.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
+
+/*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
  * The input can be either a full path to the file or only a filename.

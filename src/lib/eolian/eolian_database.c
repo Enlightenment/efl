@@ -660,6 +660,23 @@ eolian_system_directory_scan(Eolian_State *state)
    return eolian_state_system_directory_add(state);
 }
 
+EAPI const Eolian_Unit *
+eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name)
+{
+   if (!state) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(file_name);
+   Eolian_Unit *unit = eina_hash_find(state->units, shr);
+   eina_stringshare_del(shr);
+   return unit;
+}
+
+EAPI Eina_Iterator *
+eolian_state_units_get(const Eolian_State *state)
+{
+   if (!state) return NULL;
+   return eina_hash_iterator_data_new(state->units);
+}
+
 char *
 database_class_to_filename(const char *cname)
 {
