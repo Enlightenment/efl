@@ -101,7 +101,7 @@ group { name: "e/modules/pager/desk";
             rel2.offset: -1 0;
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
-            max: 99999 6;
+            max: 99999 5;
          }
          desc { "active"; inherit;
             inherit: "default" 0.0;
@@ -362,12 +362,12 @@ group { name: "e/gadget/pager/plain/desk";
             rel1.to: "e.swallow.content";
             rel2.to: "e.swallow.content";
             align: 0.5 1.0;
-            max: 99999 6;
+            max: 99999 5;
          }
          description { state: "left" 0.0;
             inherit: "default" 0.0;
             align: 0.0 0.5;
-            max: 6 99999;
+            max: 5 99999;
             rel2.relative: 0.5 1.0;
          }
          description { state: "top" 0.0;
@@ -378,7 +378,7 @@ group { name: "e/gadget/pager/plain/desk";
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             align: 1.0 0.5;
-            max: 6 99999;
+            max: 5 99999;
             rel1.relative: 0.5 0.0;
          }
          description { state: "bottom" 0.0;
@@ -686,12 +686,12 @@ group { name: "e/gadget/pager/default/desk";
             rel1.to: "e.swallow.content";
             rel2.to: "e.swallow.content";
             align: 0.5 1.0;
-            max: 99999 6;
+            max: 99999 5;
          }
          description { state: "left" 0.0;
             inherit: "default" 0.0;
             align: 0.0 0.5;
-            max: 6 99999;
+            max: 5 99999;
             rel2.relative: 0.5 1.0;
          }
          description { state: "top" 0.0;
@@ -702,7 +702,7 @@ group { name: "e/gadget/pager/default/desk";
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             align: 1.0 0.5;
-            max: 6 99999;
+            max: 5 99999;
             rel1.relative: 0.5 0.0;
          }
          description { state: "bottom" 0.0;
