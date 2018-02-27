@@ -86,6 +86,9 @@ extern "C" {
 
 /* State information
  *
+ * Possible to cast to Eolian_Unit and use as such, as this represents
+ * a master unit as well as other state.
+ *
  * @ingroup Eolian
  */
 typedef struct _Eolian_State Eolian_State;
@@ -531,6 +534,58 @@ EAPI Eina_Bool eolian_state_directory_add(Eolian_State *state, const char *dir);
 EAPI Eina_Bool eolian_state_system_directory_add(Eolian_State *state);
 
 /*
+ * @brief Get an iterator to all .eo file names with paths.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @see eolian_state_eo_files_get
+ * @see eolian_state_eot_file_paths_get
+ * @see eolian_state_eot_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_eo_file_paths_get(const Eolian_State *state);
+
+/*
+ * @brief Get an iterator to all .eot file names with paths.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @see eolian_state_eo_files_get
+ * @see eolian_state_eo_file_paths_get
+ * @see eolian_state_eot_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_eot_file_paths_get(const Eolian_State *state);
+
+/*
+ * @brief Get an iterator to all .eo file names (without paths).
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @see eolian_state_eo_file_paths_get
+ * @see eolian_state_eot_file_paths_get
+ * @see eolian_state_eot_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_eo_files_get(const Eolian_State *state);
+
+/*
+ * @brief Get an iterator to all .eot file names (without paths).
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @see eolian_state_eo_file_paths_get
+ * @see eolian_stete_eot_file_paths_get
+ * @see eolian_state_eo_files_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_eot_files_get(const Eolian_State *state);
+
+/*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
  * The input can be either a full path to the file or only a filename.
@@ -625,58 +680,6 @@ EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
  * @ingroup Eolian
  */
 EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
-
-/*
- * @brief Get an iterator to all .eo file names with paths.
- *
- * @param[in] state The Eolian state.
- *
- * @see eolian_all_eo_files_get
- * @see eolian_all_eot_file_paths_get
- * @see eolian_all_eot_files_get
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_all_eo_file_paths_get(const Eolian_State *state);
-
-/*
- * @brief Get an iterator to all .eot file names with paths.
- *
- * @param[in] state The Eolian state.
- *
- * @see eolian_all_eo_files_get
- * @see eolian_all_eo_file_paths_get
- * @see eolian_all_eot_files_get
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_all_eot_file_paths_get(const Eolian_State *state);
-
-/*
- * @brief Get an iterator to all .eo file names (without paths).
- *
- * @param[in] state The Eolian state.
- *
- * @see eolian_all_eo_file_paths_get
- * @see eolian_all_eot_file_paths_get
- * @see eolian_all_eot_files_get
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian_State *state);
-
-/*
- * @brief Get an iterator to all .eot file names (without paths).
- *
- * @param[in] state The Eolian state.
- *
- * @see eolian_all_eo_file_paths_get
- * @see eolian_all_eot_file_paths_get
- * @see eolian_all_eo_files_get
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian_State *state);
 
 /*
  * @brief Gets a class by its name
@@ -2674,6 +2677,18 @@ EAPI Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
 
 /* DEPRECATED */
 EAPI Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_all_eo_file_paths_get(const Eolian_State *state);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_all_eot_file_paths_get(const Eolian_State *state);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian_State *state);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian_State *state);
 
 #endif
 
