@@ -237,9 +237,15 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_NEON;
    else
      {
+        /* On linux eina_cpu sets this up with getauxval() */
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+        cpu_feature_mask |= CPU_FEATURE_NEON *
+          !!(eina_cpu_features_get() & EINA_CPU_NEON);
+#else
         cpu_feature_mask |= CPU_FEATURE_NEON *
           evas_common_cpu_feature_test(evas_common_cpu_neon_test);
         evas_common_cpu_end_opt();
+#endif
      }
 # endif
 #endif
