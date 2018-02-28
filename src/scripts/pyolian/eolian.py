@@ -483,6 +483,14 @@ class Eolian_State(Eolian_Unit):
     def all_eot_files_parse(self):
         return bool(lib.eolian_state_all_eot_files_parse(self._obj))
 
+    def unit_by_file_get(self, file_name):
+        c_unit = lib.eolian_state_unit_by_file_get(self._obj, _str_to_bytes(file_name))
+        return Eolian_Unit(c_unit) if c_unit else None
+
+    @property
+    def units(self):
+        return Iterator(Eolian_Unit, lib.eolian_state_units_get(self._obj))
+
 
 ###  Namespace Utility Class  #################################################
 

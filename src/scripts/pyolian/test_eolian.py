@@ -52,7 +52,26 @@ class TestBaseObject(unittest.TestCase):
         self.assertNotEqual(cls1, enum1)
 
 
+class TestEolianState(unittest.TestCase):
+    def test_unit_getters(self):
+        count = 0
+        for unit in eolian_db.units:
+            self.assertIsInstance(unit, eolian.Eolian_Unit)
+            self.assertTrue(unit.file.endswith(('.eo', '.eot')))
+            count += 1
+        self.assertGreater(count, 500)
+
+        unit = eolian_db.unit_by_file_get('efl_ui_win.eo')
+        self.assertIsInstance(unit, eolian.Eolian_Unit)
+        self.assertEqual(unit.file, 'efl_ui_win.eo')
+
+
 class TestEolianUnit(unittest.TestCase):
+    def test_file_get(self):
+        unit = eolian_db.unit_by_file_get('efl_ui_win.eo')
+        self.assertIsInstance(unit, eolian.Eolian_Unit)
+        self.assertEqual(unit.file, 'efl_ui_win.eo')
+
     def test_children_listing(self):
         l = list(eolian_db.children)
         self.assertGreater(len(l), 500)
