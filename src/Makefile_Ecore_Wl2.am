@@ -44,8 +44,6 @@ lib/ecore_wl2/xdg-shell-client-protocol.h \
 lib/ecore_wl2/xdg-shell-protocol.c \
 lib/ecore_wl2/xdg-shell-unstable-v6-client-protocol.h \
 lib/ecore_wl2/xdg-shell-unstable-v6-protocol.c \
-lib/ecore_wl2/text-input-unstable-v1-client-protocol.h \
-lib/ecore_wl2/text-input-unstable-v1-protocol.c \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
 
@@ -73,8 +71,6 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
  lib/ecore_wl2/linux-dmabuf-unstable-v1-client-protocol.h \
  lib/ecore_wl2/session-recovery-protocol.c \
  lib/ecore_wl2/session-recovery-client-protocol.h \
- lib/ecore_wl2/text-input-unstable-v1-client-protocol.h \
- lib/ecore_wl2/text-input-unstable-v1-protocol.c \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
 
