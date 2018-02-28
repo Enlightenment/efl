@@ -6156,6 +6156,8 @@ _elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
                _elm_genlist_item_unfocused(sd->focused_item);
              _elm_genlist_item_focused(eo_it);
 
+             efl_ui_focus_manager_focus_set(it->base->widget, eo_it);
+
              /* If item is not realized state, widget couldn't get focus_highlight data. */
              if (it->realized)
                {
