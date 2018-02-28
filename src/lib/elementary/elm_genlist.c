@@ -6163,6 +6163,7 @@ _elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
                   _elm_widget_highlight_in_theme_update(obj);
                   _elm_widget_focus_highlight_start(obj);
                }
+             efl_ui_focus_manager_focus_set(it->base->widget, eo_it);
           }
      }
    else
