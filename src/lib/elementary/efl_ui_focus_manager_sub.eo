@@ -18,5 +18,6 @@ mixin Efl.Ui.Focus.Manager.Sub (Efl.Interface, Efl.Ui.Focus.Manager, Efl.Object)
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
+        Efl.Ui.Focus.Manager.move;
     }
 }

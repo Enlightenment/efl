@@ -211,5 +211,17 @@ _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Su
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_manager_sub_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Direction direction)
+{
+   Eo *target = efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
+
+   if (!target)
+     _border_flush(obj, pd);
+
+   return target;
+}
+
+
 
 #include "efl_ui_focus_manager_sub.eo.c"
