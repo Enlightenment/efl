@@ -95,7 +95,7 @@ _eina_bezier_length_helper(const Eina_Bezier *b)
 
    chord = _line_length(b->start.x, b->start.y, b->end.x, b->end.y);
 
-   if (fabsf(len - chord) > FLT_MIN) {
+   if (!EINA_FLT_EQ(len, chord)) {
       _eina_bezier_split(b, &left, &right); /* split in two */
       length =
         _eina_bezier_length_helper(&left) + /* try left side */
