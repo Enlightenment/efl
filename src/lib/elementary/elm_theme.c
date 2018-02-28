@@ -16,11 +16,11 @@ static Elm_Theme theme_default =
 static Eina_List *themes = NULL;
 
 static Eina_File *
-_elm_theme_find_try(Elm_Theme *th, Elm_Theme_File *etf, const char *group)
+_elm_theme_find_try(Elm_Theme *th, Elm_Theme_File *etf, const char *group, Eina_Bool force)
 {
    if (edje_mmap_group_exists(etf->handle, group))
      {
-        if (etf->match_theme) // overlay or extension
+        if (etf->match_theme && (!force)) // overlay or extension
           {
              Elm_Theme_File *base_etf;
              Eina_Bool found = EINA_FALSE;
@@ -218,8 +218,8 @@ _elm_theme_clear(Elm_Theme *th)
      }
 }
 
-Eina_File *
-_elm_theme_group_file_find(Elm_Theme *th, const char *group)
+static Eina_File *
+_elm_theme_group_file_find_internal(Elm_Theme *th, const char *group, Eina_Bool force)
 {
    Elm_Theme_File *etf;
    Eina_File *file = eina_hash_find(th->cache, group);
@@ -228,21 +228,30 @@ _elm_theme_group_file_find(Elm_Theme *th, const char *group)
 
    EINA_INLIST_FOREACH(th->overlay, etf)
      {
-        file = _elm_theme_find_try(th, etf, group);
+        file = _elm_theme_find_try(th, etf, group, force);
         if (file) return file;
      }
    EINA_INLIST_FOREACH(th->themes, etf)
      {
-        file = _elm_theme_find_try(th, etf, group);
+        file = _elm_theme_find_try(th, etf, group, force);
         if (file) return file;
      }
    EINA_INLIST_FOREACH(th->extension, etf)
      {
-        file = _elm_theme_find_try(th, etf, group);
+        file = _elm_theme_find_try(th, etf, group, force);
         if (file) return file;
      }
-   if (th->ref_theme) return _elm_theme_group_file_find(th->ref_theme, group);
+   if (th->ref_theme) return _elm_theme_group_file_find_internal(th->ref_theme, group, force);
    return NULL;
+}
+
+Eina_File *
+_elm_theme_group_file_find(Elm_Theme *th, const char *group)
+{
+   Eina_File *file = _elm_theme_group_file_find_internal(th, group, EINA_FALSE);
+   if (file) return file;
+   file = _elm_theme_group_file_find_internal(th, group, EINA_TRUE);
+   return file;
 }
 
 static const char *
