@@ -337,6 +337,10 @@ class Eolian_Unit(EolianBaseObject):
     def children(self):
         return Iterator(Eolian_Unit, lib.eolian_unit_children_get(self._obj))
 
+    @property
+    def file(self):
+        return _str_to_py(lib.eolian_unit_file_get(self._obj))
+
     def class_get_by_name(self, class_name):
         c_cls = lib.eolian_class_get_by_name(self._obj, _str_to_bytes(class_name))
         return Class(c_cls) if c_cls else None
