@@ -53,6 +53,11 @@ class TestBaseObject(unittest.TestCase):
 
 
 class TestEolianUnit(unittest.TestCase):
+    def test_children_listing(self):
+        l = list(eolian_db.children)
+        self.assertGreater(len(l), 500)
+        self.assertIsInstance(l[0], eolian.Eolian_Unit)
+
     def test_file_listing(self):
         l = list(eolian_db.eo_file_paths)
         self.assertGreater(len(l), 400)
