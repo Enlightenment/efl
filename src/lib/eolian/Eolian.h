@@ -755,6 +755,105 @@ EAPI Eina_Iterator *eolian_state_constants_get(const Eolian_State *state);
 EAPI Eina_Iterator *eolian_state_globals_get(const Eolian_State *state);
 
 /*
+ * @brief Get an alias type declaration within a state by name.
+ *
+ * @param[in] state The state.
+ * @param[in] name The name of the alias.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Typedecl *eolian_state_alias_by_name_get(const Eolian_State *state, const char *name);
+
+/*
+ * @brief Get a struct declaration within a state by name.
+ *
+ * @param[in] state The state.
+ * @param[in] name The name of the alias.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Typedecl *eolian_state_struct_by_name_get(const Eolian_State *state, const char *name);
+
+/*
+ * @brief Get an enum declaration within a state by name.
+ *
+ * @param[in] state The state.
+ * @param[in] name The name of the alias.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Typedecl *eolian_state_enum_by_name_get(const Eolian_State *state, const char *name);
+
+/*
+ * @brief Get an iterator to all aliases contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all named structs contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_structs_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all enums contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all aliases in the Eolian database.
+ *
+ * @param[in] state The state.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_aliases_get(const Eolian_State *state);
+
+/*
+ * @brief Get an iterator to all structs in the Eolian database.
+ *
+ * @param[in] state The state.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_structs_get(const Eolian_State *state);
+
+/*
+ * @brief Get an iterator to all enums in the Eolian database.
+ *
+ * @param[in] state The state.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_enums_get(const Eolian_State *state);
+
+/*
  * @brief Get the children (dependencies) of a unit.
  *
  * The iterator is obviously again to `const Eolian_Unit *`.
@@ -837,6 +936,69 @@ EAPI Eina_Iterator *eolian_unit_constants_get(const Eolian_Unit *unit);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_unit_globals_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get an alias type declaration within a unit by name.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name The name of the alias.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Typedecl *eolian_unit_alias_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
+ * @brief Get a struct declaration within a unit by name.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name The name of the alias.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Typedecl *eolian_unit_struct_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
+ * @brief Get an enum declaration within a unit by name.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name The name of the alias.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Typedecl *eolian_unit_enum_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
+ * @brief Get an iterator to all aliases in the Eolian database.
+ *
+ * @param[in] unit The unit.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_aliases_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get an iterator to all structs in the Eolian database.
+ *
+ * @param[in] unit The unit.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get an iterator to all enums in the Eolian database.
+ *
+ * @param[in] unit The unit.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
 
 /*
  * @brief Returns the name of the file containing the given class.
@@ -1698,114 +1860,6 @@ EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
-
-/*
- * @brief Get an alias type declaration by name. Supports namespaces.
- *
- * @param[in] unit the unit to look in
- * @param[in] name the name of the alias
- * @return the alias type or NULL
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get a struct declaration by name. Supports namespaces.
- *
- * @param[in] unit the unit to look in
- * @param[in] name the name of the struct
- * @return the struct or NULL
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get an enum declaration by name. Supports namespaces.
- *
- * @param[in] unit the unit to look in
- * @param[in] name the name of the struct
- * @return the struct or NULL
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get an iterator to all aliases contained in a file.
- *
- * @param[in] unit the unit to look in
- * @param[in] fname the file name without full path
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/*
- * @brief Get an iterator to all named structs contained in a file.
- *
- * @param[in] unit the unit to look in
- * @param[in] fname the file name without full path
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/*
- * @brief Get an iterator to all enums contained in a file.
- *
- * @param[in] unit the unit to look in
- * @param[in] fname the file name without full path
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/*
- * @brief Get an iterator to all aliases in the Eolian database.
- *
- * @param[in] unit the unit to look in
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(const Eolian_Unit *unit);
-
-/*
- * @brief Get an iterator to all structs in the Eolian database.
- *
- * @param[in] unit the unit to look in
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
-
-/*
- * @brief Get an iterator to all enums in the Eolian database.
- *
- * @param[in] unit the unit to look in
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the type of a type declaration.
@@ -2771,6 +2825,33 @@ EAPI Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
 
 /* DEPRECATED */
 EAPI Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
+
+/* DEPRECATED */
+EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
+
+/* DEPRECATED */
+EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name);
+
+/* DEPRECATED */
+EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(const Eolian_Unit *unit);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
 
 #endif
 

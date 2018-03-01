@@ -1002,6 +1002,75 @@ eolian_state_globals_get(const Eolian_State *state)
    return eolian_unit_globals_get((Eolian_Unit *)state);
 }
 
+EAPI const Eolian_Typedecl *
+eolian_state_alias_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_alias_by_name_get((Eolian_Unit *)state, name);
+}
+
+EAPI const Eolian_Typedecl *
+eolian_state_struct_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_struct_by_name_get((Eolian_Unit *)state, name);
+}
+
+EAPI const Eolian_Typedecl *
+eolian_state_enum_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_enum_by_name_get((Eolian_Unit *)state, name);
+}
+
+EAPI Eina_Iterator *
+eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_name)
+{
+   if (!state) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(file_name);
+   Eina_List *l = eina_hash_find(state->aliases_f, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
+eolian_state_structs_by_file_get(const Eolian_State *state, const char *file_name)
+{
+   if (!state) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(file_name);
+   Eina_List *l = eina_hash_find(state->structs_f, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
+eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name)
+{
+   if (!state) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(file_name);
+   Eina_List *l = eina_hash_find(state->enums_f, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
+eolian_state_aliases_get(const Eolian_State *state)
+{
+   return eolian_unit_aliases_get((Eolian_Unit *)state);
+}
+
+EAPI Eina_Iterator *
+eolian_state_structs_get(const Eolian_State *state)
+{
+   return eolian_unit_structs_get((Eolian_Unit *)state);
+}
+
+EAPI Eina_Iterator *
+eolian_state_enums_get(const Eolian_State *state)
+{
+   return eolian_unit_enums_get((Eolian_Unit *)state);
+}
+
 EAPI Eina_Iterator *
 eolian_unit_children_get(const Eolian_Unit *unit)
 {
@@ -1120,6 +1189,114 @@ EAPI Eina_Iterator *
 eolian_variable_all_globals_get(const Eolian_Unit *unit)
 {
    return eolian_unit_globals_get(unit);
+}
+
+EAPI const Eolian_Typedecl *
+eolian_unit_alias_by_name_get(const Eolian_Unit *unit, const char *name)
+{
+   if (!unit) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   Eolian_Typedecl *tp = eina_hash_find(unit->aliases, shr);
+   eina_stringshare_del(shr);
+   if (!tp) return NULL;
+   return tp;
+}
+
+EAPI const Eolian_Typedecl *
+eolian_unit_struct_by_name_get(const Eolian_Unit *unit, const char *name)
+{
+   if (!unit) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   Eolian_Typedecl *tp = eina_hash_find(unit->structs, shr);
+   eina_stringshare_del(shr);
+   if (!tp) return NULL;
+   return tp;
+}
+
+EAPI const Eolian_Typedecl *
+eolian_unit_enum_by_name_get(const Eolian_Unit *unit, const char *name)
+{
+   if (!unit) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   Eolian_Typedecl *tp = eina_hash_find(unit->enums, shr);
+   eina_stringshare_del(shr);
+   if (!tp) return NULL;
+   return tp;
+}
+
+EAPI Eina_Iterator *
+eolian_unit_aliases_get(const Eolian_Unit *unit)
+{
+   return (unit ? eina_hash_iterator_data_new(unit->aliases) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_unit_structs_get(const Eolian_Unit *unit)
+{
+   return (unit ? eina_hash_iterator_data_new(unit->structs) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_unit_enums_get(const Eolian_Unit *unit)
+{
+   return (unit ? eina_hash_iterator_data_new(unit->enums) : NULL);
+}
+
+EAPI const Eolian_Typedecl *
+eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name)
+{
+   return eolian_unit_alias_by_name_get(unit, name);
+}
+
+EAPI const Eolian_Typedecl *
+eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name)
+{
+   return eolian_unit_struct_by_name_get(unit, name);
+}
+
+EAPI const Eolian_Typedecl *
+eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name)
+{
+   return eolian_unit_enum_by_name_get(unit, name);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname)
+{
+   if (!unit) return NULL;
+   return eolian_state_aliases_by_file_get(unit->state, fname);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname)
+{
+   if (!unit) return NULL;
+   return eolian_state_structs_by_file_get(unit->state, fname);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname)
+{
+   if (!unit) return NULL;
+   return eolian_state_enums_by_file_get(unit->state, fname);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_all_aliases_get(const Eolian_Unit *unit)
+{
+   return eolian_unit_aliases_get(unit);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_all_structs_get(const Eolian_Unit *unit)
+{
+   return eolian_unit_structs_get(unit);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_all_enums_get(const Eolian_Unit *unit)
+{
+   return eolian_unit_enums_get(unit);
 }
 
 char *
