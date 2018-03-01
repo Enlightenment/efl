@@ -5,61 +5,6 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI const Eolian_Variable *
-eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->globals, shr);
-   eina_stringshare_del(shr);
-   return v;
-}
-
-EAPI const Eolian_Variable *
-eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->constants, shr);
-   eina_stringshare_del(shr);
-   return v;
-}
-
-EAPI Eina_Iterator *
-eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(unit->state->globals_f, shr);
-   eina_stringshare_del(shr);
-   if (!l) return NULL;
-   return eina_list_iterator_new(l);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_constants_get_by_file(const Eolian_Unit *unit,
-                                      const char *fname)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(unit->state->constants_f, shr);
-   eina_stringshare_del(shr);
-   if (!l) return NULL;
-   return eina_list_iterator_new(l);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_all_constants_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->constants) : NULL);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_all_globals_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->globals) : NULL);
-}
-
 EAPI Eolian_Variable_Type
 eolian_variable_type_get(const Eolian_Variable *var)
 {

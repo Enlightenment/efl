@@ -688,6 +688,73 @@ EAPI const Eolian_Class *eolian_state_class_by_file_get(const Eolian_State *stat
 EAPI Eina_Iterator *eolian_state_classes_get(const Eolian_State *state);
 
 /*
+ * @brief Get a global variable in a state by name.
+ *
+ * @param[in] state The state.
+ * @param[in] name the name of the variable
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_state_global_by_name_get(const Eolian_State *state, const char *name);
+
+/*
+ * @brief Get a constant variable in a state by name.
+ *
+ * @param[in] state The state.
+ * @param[in] name the name of the variable
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_state_constant_by_name_get(const Eolian_State *state, const char *name);
+
+/*
+ * @brief Get an iterator to all global variables contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_globals_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all constant variables contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all constant variables in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_constants_get(const Eolian_State *state);
+
+/*
+ * @brief Get an iterator to all global variables in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_globals_get(const Eolian_State *state);
+
+/*
  * @brief Get the children (dependencies) of a unit.
  *
  * The iterator is obviously again to `const Eolian_Unit *`.
@@ -728,6 +795,48 @@ EAPI const Eolian_Class *eolian_unit_class_by_name_get(const Eolian_Unit *unit, 
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_unit_classes_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get a global variable in a unit by name.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name the name of the variable
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_unit_global_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
+ * @brief Get a constant variable in a unit by name.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name the name of the variable
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
+ * @brief Get an iterator to all constant variables in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_constants_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get an iterator to all global variables in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_globals_get(const Eolian_Unit *unit);
 
 /*
  * @brief Returns the name of the file containing the given class.
@@ -2305,76 +2414,6 @@ EAPI const Eolian_Expression *eolian_expression_unary_expression_get(const Eolia
 EAPI Eolian_Value eolian_expression_value_get(const Eolian_Expression *expr);
 
 /*
- * @brief Get a global variable by name. Supports namespaces.
- *
- * @param[in] unit the unit to look in
- * @param[in] name the name of the variable
- * @return the variable handle or NULL
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get a constant variable by name. Supports namespaces.
- *
- * @param[in] unit the unit to look in
- * @param[in] name the name of the variable
- * @return the variable handle or NULL
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get an iterator to all global variables contained in a file.
- *
- * @param[in] unit the unit to look in
- * @param[in] fname the file name without full path
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/*
- * @brief Get an iterator to all constant variables contained in a file.
- *
- * @param[in] unit the unit to look in
- * @param[in] fname the file name without full path
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/*
- * @brief Get an iterator to all constant variables in the Eolian database.
- *
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
-
-/*
- * @brief Get an iterator to all global variables in the Eolian database.
- *
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
-
-/*
  * @brief Get the type of a variable (global, constant)
  *
  * @param[in] var the variable.
@@ -2714,6 +2753,24 @@ EAPI const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const
 
 /* DEPRECATED */
 EAPI Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
+
+/* DEPRECATED */
+EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
+
+/* DEPRECATED */
+EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *unit, const char *fname);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
 
 #endif
 
