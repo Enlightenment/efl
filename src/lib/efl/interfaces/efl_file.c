@@ -50,6 +50,7 @@ _efl_file_file_get(Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **file, co
    efl_file_mmap_get(obj, &f, key);
 
    if (f && file) *file = eina_file_filename_get(f);
+   else if (file) *file = NULL;
 }
 
 static Efl_Image_Load_Error
