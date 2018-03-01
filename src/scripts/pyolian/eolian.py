@@ -365,6 +365,30 @@ class Eolian_Unit(EolianBaseObject):
         c_var = lib.eolian_unit_global_by_name_get(self._obj, _str_to_bytes(name))
         return Variable(c_var) if c_var else None
 
+    @property
+    def enums(self):
+        return Iterator(Typedecl, lib.eolian_unit_enums_get(self._obj))
+
+    def enum_by_name_get(self, name):
+        c_tdecl = lib.eolian_unit_enum_by_name_get(self._obj, _str_to_bytes(name))
+        return Typedecl(c_tdecl) if c_tdecl else None
+
+    @property
+    def structs(self):
+        return Iterator(Typedecl, lib.eolian_unit_structs_get(self._obj))
+
+    def struct_by_name_get(self, name):
+        c_tdecl = lib.eolian_unit_struct_by_name_get(self._obj, _str_to_bytes(name))
+        return Typedecl(c_tdecl) if c_tdecl else None
+
+    @property
+    def aliases(self):
+        return Iterator(Typedecl, lib.eolian_unit_aliases_get(self._obj))
+
+    def alias_by_name_get(self, name):
+        c_tdecl = lib.eolian_unit_alias_by_name_get(self._obj, _str_to_bytes(name))
+        return Typedecl(c_tdecl) if c_tdecl else None
+
 
     @property
     def all_namespaces(self):
@@ -372,52 +396,16 @@ class Eolian_Unit(EolianBaseObject):
         nspaces = set()
         for obj in self.classes:
             nspaces.add(Namespace(self, obj.namespace))
-        for obj in self.typedecl_all_aliases:
+        for obj in self.aliases:
             nspaces.add(Namespace(self, obj.namespace))
-        for obj in self.typedecl_all_structs:
+        for obj in self.structs:
             nspaces.add(Namespace(self, obj.namespace))
-        for obj in self.typedecl_all_enums:
+        for obj in self.enums:
             nspaces.add(Namespace(self, obj.namespace))
         return sorted(nspaces)
 
     def namespace_get_by_name(self, name):
         return Namespace(self, name)
-
-    @property
-    def typedecl_all_enums(self):
-        return Iterator(Typedecl, lib.eolian_typedecl_all_enums_get(self._obj))
-
-    def typedecl_enum_get_by_name(self, name):
-        c_tdecl = lib.eolian_typedecl_enum_get_by_name(self._obj, _str_to_bytes(name))
-        return Typedecl(c_tdecl) if c_tdecl else None
-
-    def typedecl_enums_get_by_file(self, fname):
-        return Iterator(Typedecl,
-            lib.eolian_typedecl_enums_get_by_file(self._obj, _str_to_bytes(fname)))
-
-    @property
-    def typedecl_all_structs(self):
-        return Iterator(Typedecl, lib.eolian_typedecl_all_structs_get(self._obj))
-
-    def typedecl_struct_get_by_name(self, name):
-        c_tdecl = lib.eolian_typedecl_struct_get_by_name(self._obj, _str_to_bytes(name))
-        return Typedecl(c_tdecl) if c_tdecl else None
-
-    def typedecl_structs_get_by_file(self, fname):
-        return Iterator(Typedecl,
-            lib.eolian_typedecl_structs_get_by_file(self._obj, _str_to_bytes(fname)))
-
-    @property
-    def typedecl_all_aliases(self):
-        return Iterator(Typedecl, lib.eolian_typedecl_all_aliases_get(self._obj))
-
-    def typedecl_alias_get_by_name(self, name):
-        c_tdecl = lib.eolian_typedecl_alias_get_by_name(self._obj, _str_to_bytes(name))
-        return Typedecl(c_tdecl) if c_tdecl else None
-
-    def typedecl_aliases_get_by_file(self, fname):
-        return Iterator(Typedecl,
-            lib.eolian_typedecl_aliases_get_by_file(self._obj, _str_to_bytes(fname)))
 
     @property
     def all_declarations(self):
@@ -516,6 +504,42 @@ class Eolian_State(Eolian_Unit):
         return Iterator(Variable,
             lib.eolian_state_globals_by_file_get(self._obj, _str_to_bytes(file_name)))
 
+    @property
+    def aliases(self):
+        return Iterator(Typedecl, lib.eolian_state_aliases_get(self._obj))
+
+    def alias_by_name_get(self, name):
+        c_tdecl = lib.eolian_state_alias_by_name_get(self._obj, _str_to_bytes(name))
+        return Typedecl(c_tdecl) if c_tdecl else None
+
+    def aliases_by_file_get(self, file_name):
+        return Iterator(Typedecl,
+            lib.eolian_state_aliases_by_file_get(self._obj, _str_to_bytes(file_name)))
+
+    @property
+    def structs(self):
+        return Iterator(Typedecl, lib.eolian_state_structs_get(self._obj))
+
+    def struct_by_name_get(self, name):
+        c_tdecl = lib.eolian_state_struct_by_name_get(self._obj, _str_to_bytes(name))
+        return Typedecl(c_tdecl) if c_tdecl else None
+
+    def structs_by_file_get(self, file_name):
+        return Iterator(Typedecl,
+            lib.eolian_state_structs_by_file_get(self._obj, _str_to_bytes(file_name)))
+
+    @property
+    def enums(self):
+        return Iterator(Typedecl, lib.eolian_state_enums_get(self._obj))
+
+    def enum_by_name_get(self, name):
+        c_tdecl = lib.eolian_state_enum_by_name_get(self._obj, _str_to_bytes(name))
+        return Typedecl(c_tdecl) if c_tdecl else None
+
+    def enums_by_file_get(self, file_name):
+        return Iterator(Typedecl,
+            lib.eolian_state_enums_by_file_get(self._obj, _str_to_bytes(file_name)))
+
 
 ###  Namespace Utility Class  #################################################
 
@@ -590,17 +614,17 @@ class Namespace(object):
 
     @property
     def aliases(self):
-        return sorted([ td for td in self._unit.typedecl_all_aliases
+        return sorted([ td for td in self._unit.aliases
                         if td.namespace == self._name])
 
     @property
     def structs(self):
-        return sorted([ td for td in self._unit.typedecl_all_structs
+        return sorted([ td for td in self._unit.structs
                         if td.namespace == self._name])
 
     @property
     def enums(self):
-        return sorted([ td for td in self._unit.typedecl_all_enums
+        return sorted([ td for td in self._unit.enums
                         if td.namespace == self._name])
 
 

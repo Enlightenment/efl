@@ -37,8 +37,8 @@ class TestBaseObject(unittest.TestCase):
         self.assertNotEqual(cls1, None)
         self.assertNotEqual(cls1, 0)
 
-        enum1 = eolian_db.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
-        enum2 = eolian_db.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
+        enum1 = eolian_db.enum_by_name_get('Efl.Ui.Focus.Direction')
+        enum2 = eolian_db.enum_by_name_get('Efl.Ui.Focus.Direction')
         self.assertIsInstance(enum1, eolian.Typedecl)
         self.assertIsInstance(enum2, eolian.Typedecl)
         self.assertEqual(enum1, enum2)
@@ -95,20 +95,20 @@ class TestEolianUnit(unittest.TestCase):
         self.assertTrue(l[0].endswith('.eot'))
 
     def test_enum_listing(self):
-        l = list(eolian_db.typedecl_enums_get_by_file('efl_ui_win.eo'))
+        l = list(eolian_db.enums_by_file_get('efl_ui_win.eo'))
         self.assertGreater(len(l), 5)
         self.assertIsInstance(l[0], eolian.Typedecl)
         self.assertEqual(l[0].type, eolian.Eolian_Typedecl_Type.ENUM)
 
         all_count = 0
-        for enum in eolian_db.typedecl_all_enums:
+        for enum in eolian_db.enums:
             self.assertIsInstance(enum, eolian.Typedecl)
             self.assertEqual(enum.type, eolian.Eolian_Typedecl_Type.ENUM)
             all_count += 1
         self.assertGreater(all_count, 50)
 
     def test_struct_listing(self):
-        l = list(eolian_db.typedecl_structs_get_by_file('eina_types.eot'))
+        l = list(eolian_db.structs_by_file_get('eina_types.eot'))
         self.assertGreater(len(l), 10)
         self.assertIsInstance(l[0], eolian.Typedecl)
         self.assertIn(l[0].type, (
@@ -116,7 +116,7 @@ class TestEolianUnit(unittest.TestCase):
                         eolian.Eolian_Typedecl_Type.STRUCT_OPAQUE))
 
         all_count = 0
-        for struct in eolian_db.typedecl_all_structs:
+        for struct in eolian_db.structs:
             self.assertIsInstance(struct, eolian.Typedecl)
             self.assertIn(struct.type, (
                             eolian.Eolian_Typedecl_Type.STRUCT,
@@ -125,12 +125,12 @@ class TestEolianUnit(unittest.TestCase):
         self.assertGreater(all_count, 50)
 
     def test_alias_listing(self):
-        l = list(eolian_db.typedecl_aliases_get_by_file('edje_types.eot'))
+        l = list(eolian_db.aliases_by_file_get('edje_types.eot'))
         self.assertGreater(len(l), 5)
         self.assertIsInstance(l[0], eolian.Typedecl)
 
         all_count = 0
-        for alias in eolian_db.typedecl_all_aliases:
+        for alias in eolian_db.aliases:
             self.assertIsInstance(alias, eolian.Typedecl)
             self.assertIn(alias.type, (
                             eolian.Eolian_Typedecl_Type.ALIAS,
@@ -422,7 +422,7 @@ class TestEolianVariable(unittest.TestCase):
 
 class TestEolianTypedecl(unittest.TestCase):
     def test_typedecl_enum(self):
-        td = eolian_db.typedecl_enum_get_by_name('Efl.Net.Http.Version')
+        td = eolian_db.enum_by_name_get('Efl.Net.Http.Version')
         self.assertIsInstance(td, eolian.Typedecl)
         self.assertEqual(td.name, 'Version')
         self.assertEqual(td.full_name, 'Efl.Net.Http.Version')
@@ -437,7 +437,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertEqual(td.c_type, 'enum Efl_Net_Http_Version { v1_0 = 100, v1_1 = 101, v2_0 = 200 }')
 
     def test_typedecl_enum_field(self):
-        td = eolian_db.typedecl_enum_get_by_name('Efl.Net.Http.Version')
+        td = eolian_db.enum_by_name_get('Efl.Net.Http.Version')
         field = td.enum_field_get('v1_0')
         self.assertIsInstance(field, eolian.Enum_Type_Field)
         self.assertEqual(field.name, 'v1_0')
@@ -446,7 +446,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsInstance(field.value, eolian.Expression)
 
     def test_typedecl_struct(self):
-        td = eolian_db.typedecl_struct_get_by_name('Efl.Gfx.Color32')
+        td = eolian_db.struct_by_name_get('Efl.Gfx.Color32')
         self.assertIsInstance(td, eolian.Typedecl)
         self.assertEqual(td.name, 'Color32')
         self.assertEqual(td.full_name, 'Efl.Gfx.Color32')
@@ -461,7 +461,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertEqual(td.c_type, 'struct Efl_Gfx_Color32 { uint8_t r; uint8_t g; uint8_t b; uint8_t a; }')
 
     def test_typedecl_struct_field(self):
-        td = eolian_db.typedecl_struct_get_by_name('Efl.Gfx.Color32')
+        td = eolian_db.struct_by_name_get('Efl.Gfx.Color32')
         field = td.struct_field_get('b')
         self.assertIsInstance(field, eolian.Struct_Type_Field)
         self.assertEqual(field.name, 'b')
@@ -469,7 +469,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsInstance(field.documentation, eolian.Documentation)
 
     def test_typedecl_alias(self):
-        alias = eolian_db.typedecl_alias_get_by_name('Eina.Error')
+        alias = eolian_db.alias_by_name_get('Eina.Error')
         self.assertIsInstance(alias, eolian.Typedecl)
         self.assertEqual(alias.type, eolian.Eolian_Typedecl_Type.ALIAS)
         self.assertEqual(alias.name, 'Error')
@@ -567,7 +567,7 @@ class TestEolianDeclaration(unittest.TestCase):
 
 class TestEolianExpression(unittest.TestCase):
     def test_expression_simple(self):
-        td = eolian_db.typedecl_enum_get_by_name('Efl.Net.Http.Version')
+        td = eolian_db.enum_by_name_get('Efl.Net.Http.Version')
         field = td.enum_field_get('v1_0')
         exp = field.value
         self.assertIsInstance(exp, eolian.Expression)

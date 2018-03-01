@@ -167,11 +167,11 @@ class Template(pyratemp.Template):
         if ns:
             ctx['namespace'] = eolian_db.namespace_get_by_name(ns)
         if struct:
-            ctx['struct'] = eolian_db.typedecl_struct_get_by_name(struct)
+            ctx['struct'] = eolian_db.struct_by_name_get(struct)
         if enum:
-            ctx['enum'] = eolian_db.typedecl_enum_get_by_name(enum)
+            ctx['enum'] = eolian_db.enum_by_name_get(enum)
         if alias:
-            ctx['alias'] = eolian_db.typedecl_alias_get_by_name(alias)
+            ctx['alias'] = eolian_db.alias_by_name_get(alias)
 
         if verbose and filename:
             print("rendering: {} => {}".format(

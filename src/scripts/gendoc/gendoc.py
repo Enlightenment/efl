@@ -139,7 +139,7 @@ if args.step in ('classes', None):
 # render a page for each Enum
 if args.step in ('enums', None):
     t = Template('doc_enum.template')
-    for enum in eolian_db.typedecl_all_enums:
+    for enum in eolian_db.enums:
         if enum.full_name.startswith(args.namespace):
             output_file = page_path_for_object(enum)
             t.render(output_file, args.verbose, enum=enum.full_name)
@@ -147,7 +147,7 @@ if args.step in ('enums', None):
 # render a page for each Struct
 if args.step in ('structs', None):
     t = Template('doc_struct.template')
-    for struct in eolian_db.typedecl_all_structs:
+    for struct in eolian_db.structs:
         if struct.full_name.startswith(args.namespace):
             output_file = page_path_for_object(struct)
             t.render(output_file, args.verbose, struct=struct.full_name)
@@ -155,7 +155,7 @@ if args.step in ('structs', None):
 # render a page for each Alias
 if args.step in ('aliases', None):
     t = Template('doc_alias.template')
-    for alias in eolian_db.typedecl_all_aliases:
+    for alias in eolian_db.aliases:
         if alias.full_name.startswith(args.namespace):
             output_file = page_path_for_object(alias)
             t.render(output_file, args.verbose, alias=alias.full_name)
