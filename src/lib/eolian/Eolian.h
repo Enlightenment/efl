@@ -659,6 +659,35 @@ EAPI const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state,
 EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
 
 /*
+ * @brief Get a class within a state by name.
+ *
+ * @param[in] state The state.
+ * @param[in] class_name The full name of the class.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_state_class_by_name_get(const Eolian_State *state, const char *class_name);
+
+/*
+ * @brief Get a class within a state by file name (class_name.eo).
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The full name of the class.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all the classes stored into a state.
+ *
+ * @param[in] state The Eolian state.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_classes_get(const Eolian_State *state);
+
+/*
  * @brief Get the children (dependencies) of a unit.
  *
  * The iterator is obviously again to `const Eolian_Unit *`.
@@ -682,26 +711,23 @@ EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
 EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
 
 /*
- * @brief Gets a class by its name
+ * @brief Get a class within a unit by name.
  *
- * @param[in] unit the unit to look in
- * @param[in] class_name name of the class to get.
- * @return the class
+ * @param[in] unit The unit.
+ * @param[in] class_name The full name of the class.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
+EAPI const Eolian_Class *eolian_unit_class_by_name_get(const Eolian_Unit *unit, const char *class_name);
 
 /*
- * @brief Gets a class by its filename (name.eo)
+ * @brief Get an iterator to all the classes stored into a unit.
  *
- * @param[in] unit the unit to look in
- * @param[in] file_name the filename
- * @return the class stored in the file
+ * @param[in] unit The Eolian unit.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
+EAPI Eina_Iterator *eolian_unit_classes_get(const Eolian_Unit *unit);
 
 /*
  * @brief Returns the name of the file containing the given class.
@@ -755,16 +781,6 @@ EAPI Eina_Iterator *eolian_class_namespaces_get(const Eolian_Class *klass);
  * @ingroup Eolian
  */
 EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
-
-/*
- * @brief Returns an iterator to all the classes stored into the database.
- *
- * @param[in] unit the unit to look in
- * @return the iterator
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
 
 /*
  * @brief Returns the documentation of a class.
@@ -2689,6 +2705,15 @@ EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian_State *state);
 
 /* DEPRECATED */
 EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian_State *state);
+
+/* DEPRECATED */
+EAPI const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
+
+/* DEPRECATED */
+EAPI const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
+
+/* DEPRECATED */
+EAPI Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
 
 #endif
 
