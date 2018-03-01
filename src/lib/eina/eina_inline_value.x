@@ -617,6 +617,9 @@ eina_value_array_vget(const Eina_Value *value, unsigned int position, va_list ar
    if (!eina_value_pget(value, &desc))
      return EINA_FALSE;
 
+   if (position >= eina_inarray_count(desc.array))
+     return EINA_FALSE;
+
    mem = eina_inarray_nth(desc.array, position);
    if (!mem)
      return EINA_FALSE;
