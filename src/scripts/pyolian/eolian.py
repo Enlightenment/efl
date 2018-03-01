@@ -350,6 +350,23 @@ class Eolian_Unit(EolianBaseObject):
         return Class(c_cls) if c_cls else None
 
     @property
+    def constants(self):
+        return Iterator(Variable, lib.eolian_unit_constants_get(self._obj))
+
+    def constant_by_name_get(self, name):
+        c_var = lib.eolian_unit_constant_by_name_get(self._obj, _str_to_bytes(name))
+        return Variable(c_var) if c_var else None
+
+    @property
+    def globals(self):
+        return Iterator(Variable, lib.eolian_unit_globals_get(self._obj))
+
+    def global_by_name_get(self, name):
+        c_var = lib.eolian_unit_global_by_name_get(self._obj, _str_to_bytes(name))
+        return Variable(c_var) if c_var else None
+
+
+    @property
     def all_namespaces(self):
         # TODO find a better way to find namespaces (maybe inside eolian?)
         nspaces = set()
@@ -401,30 +418,6 @@ class Eolian_Unit(EolianBaseObject):
     def typedecl_aliases_get_by_file(self, fname):
         return Iterator(Typedecl,
             lib.eolian_typedecl_aliases_get_by_file(self._obj, _str_to_bytes(fname)))
-
-    @property
-    def variable_all_constants(self):
-        return Iterator(Variable, lib.eolian_variable_all_constants_get(self._obj))
-
-    def variable_constant_get_by_name(self, name):
-        c_var = lib.eolian_variable_constant_get_by_name(self._obj, _str_to_bytes(name))
-        return Variable(c_var) if c_var else None
-
-    def variable_constants_get_by_file(self, fname):
-        return Iterator(Variable,
-            lib.eolian_variable_constants_get_by_file(self._obj, _str_to_bytes(fname)))
-
-    @property
-    def variable_all_globals(self):
-        return Iterator(Variable, lib.eolian_variable_all_globals_get(self._obj))
-
-    def variable_global_get_by_name(self, name):
-        c_var = lib.eolian_variable_global_get_by_name(self._obj, _str_to_bytes(name))
-        return Variable(c_var) if c_var else None
-
-    def variable_globals_get_by_file(self, fname):
-        return Iterator(Variable,
-            lib.eolian_variable_globals_get_by_file(self._obj, _str_to_bytes(fname)))
 
     @property
     def all_declarations(self):
@@ -498,6 +491,30 @@ class Eolian_State(Eolian_Unit):
     def class_by_file_get(self, file_name):
         c_cls = lib.eolian_state_class_by_file_get(self._obj, _str_to_bytes(file_name))
         return Class(c_cls) if c_cls else None
+
+    @property
+    def constants(self):
+        return Iterator(Variable, lib.eolian_state_constants_get(self._obj))
+
+    def constant_by_name_get(self, name):
+        c_var = lib.eolian_state_constant_by_name_get(self._obj, _str_to_bytes(name))
+        return Variable(c_var) if c_var else None
+
+    def constants_by_file_get(self, file_name):
+        return Iterator(Variable,
+            lib.eolian_state_constants_by_file_get(self._obj, _str_to_bytes(file_name)))
+
+    @property
+    def globals(self):
+        return Iterator(Variable, lib.eolian_state_globals_get(self._obj))
+
+    def global_by_name_get(self, name):
+        c_var = lib.eolian_state_global_by_name_get(self._obj, _str_to_bytes(name))
+        return Variable(c_var) if c_var else None
+
+    def globals_by_file_get(self, file_name):
+        return Iterator(Variable,
+            lib.eolian_state_globals_by_file_get(self._obj, _str_to_bytes(file_name)))
 
 
 ###  Namespace Utility Class  #################################################

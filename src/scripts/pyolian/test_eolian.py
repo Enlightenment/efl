@@ -139,19 +139,19 @@ class TestEolianUnit(unittest.TestCase):
         self.assertGreater(all_count, 10)
 
     def test_variable_listing(self):
-        l = list(eolian_db.variable_all_constants)
+        l = list(eolian_db.constants)
         self.assertGreater(len(l), 2)
         self.assertIsInstance(l[0], eolian.Variable)
 
-        l = list(eolian_db.variable_all_globals)
+        l = list(eolian_db.globals)
         self.assertGreater(len(l), 20)
         self.assertIsInstance(l[0], eolian.Variable)
 
-        l = list(eolian_db.variable_constants_get_by_file('efl_gfx_stack.eo'))
+        l = list(eolian_db.constants_by_file_get('efl_gfx_stack.eo'))
         self.assertGreater(len(l), 1)
         self.assertIsInstance(l[0], eolian.Variable)
 
-        l = list(eolian_db.variable_globals_get_by_file('efl_net_http_types.eot'))
+        l = list(eolian_db.globals_by_file_get('efl_net_http_types.eot'))
         self.assertGreater(len(l), 10)
         self.assertIsInstance(l[0], eolian.Variable)
 
@@ -393,7 +393,7 @@ class TestEolianDocumentation(unittest.TestCase):
 
 class TestEolianVariable(unittest.TestCase):
     def test_variable_global(self):
-        var = eolian_db.variable_global_get_by_name('Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
+        var = eolian_db.global_by_name_get('Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
         self.assertIsInstance(var, eolian.Variable)
         self.assertEqual(var.full_name, 'Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
         self.assertEqual(var.name, 'BAD_CONTENT_ENCODING')
@@ -406,7 +406,7 @@ class TestEolianVariable(unittest.TestCase):
         self.assertIsNone(var.value)  # TODO is None correct here? no value?
 
     def test_variable_constant(self):
-        var = eolian_db.variable_constant_get_by_name('Efl.Gfx.Size.Hint.Fill')
+        var = eolian_db.constant_by_name_get('Efl.Gfx.Size.Hint.Fill')
         self.assertIsInstance(var, eolian.Variable)
         self.assertEqual(var.full_name, 'Efl.Gfx.Size.Hint.Fill')
         self.assertEqual(var.name, 'Fill')
@@ -575,7 +575,7 @@ class TestEolianExpression(unittest.TestCase):
         self.assertEqual(exp.serialize, '100')
 
     def test_expression_unary(self):
-        var = eolian_db.variable_constant_get_by_name('Efl.Gfx.Size.Hint.Fill')
+        var = eolian_db.constant_by_name_get('Efl.Gfx.Size.Hint.Fill')
         exp = var.value
         self.assertIsInstance(exp, eolian.Expression)
         self.assertEqual(exp.type, eolian.Eolian_Expression_Type.UNARY)
