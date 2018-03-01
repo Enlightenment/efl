@@ -35,7 +35,14 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    if (ev->info != data) return;
 
    if (pd) /* if the obect is dead pd is NULL */
-     pd->realized = EINA_FALSE;
+     {
+        //only delete the adapter when not focused, this will lead to awfull artifacts
+        if (!efl_ui_focus_object_focus_get(pd->adapter))
+          {
+             efl_del(pd->adapter);
+          }
+        pd->realized = EINA_FALSE;
+     }
 }
 
 EOLIAN static void
@@ -105,6 +112,10 @@ _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Sta
         efl_event_callback_del(wpd->widget, ELM_GENGRID_EVENT_REALIZED, _realized_cb, obj);
         efl_event_callback_del(wpd->widget, ELM_GENGRID_EVENT_UNREALIZED, _unrealized_cb, obj);
      }
+
+   if (pd->adapter)
+     efl_del(pd->adapter);
+
    return efl_destructor(efl_super(obj, MY_CLASS));
 }
 
