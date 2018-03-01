@@ -163,7 +163,7 @@ class Template(pyratemp.Template):
         if kargs:
             ctx.update(kargs)
         if cls:
-            ctx['cls'] = eolian_db.class_get_by_name(cls)
+            ctx['cls'] = eolian_db.class_by_name_get(cls)
         if ns:
             ctx['namespace'] = eolian_db.namespace_get_by_name(ns)
         if struct:

@@ -131,7 +131,7 @@ if args.step in ('start', None):
 # render a page for each Class
 if args.step in ('classes', None):
     t = Template('doc_class.template')
-    for cls in eolian_db.all_classes:
+    for cls in eolian_db.classes:
         if cls.full_name.startswith(args.namespace):
             output_file = page_path_for_object(cls)
             t.render(output_file, args.verbose, cls=cls.full_name)

@@ -341,23 +341,19 @@ class Eolian_Unit(EolianBaseObject):
     def file(self):
         return _str_to_py(lib.eolian_unit_file_get(self._obj))
 
-    def class_get_by_name(self, class_name):
-        c_cls = lib.eolian_class_get_by_name(self._obj, _str_to_bytes(class_name))
-        return Class(c_cls) if c_cls else None
-
-    def class_get_by_file(self, file_name):
-        c_cls = lib.eolian_class_get_by_file(self._obj, _str_to_bytes(file_name))
-        return Class(c_cls) if c_cls else None
-
     @property
-    def all_classes(self):
-        return Iterator(Class, lib.eolian_all_classes_get(self._obj))
+    def classes(self):
+        return Iterator(Class, lib.eolian_unit_classes_get(self._obj))
+
+    def class_by_name_get(self, class_name):
+        c_cls = lib.eolian_unit_class_by_name_get(self._obj, _str_to_bytes(class_name))
+        return Class(c_cls) if c_cls else None
 
     @property
     def all_namespaces(self):
         # TODO find a better way to find namespaces (maybe inside eolian?)
         nspaces = set()
-        for obj in self.all_classes:
+        for obj in self.classes:
             nspaces.add(Namespace(self, obj.namespace))
         for obj in self.typedecl_all_aliases:
             nspaces.add(Namespace(self, obj.namespace))
@@ -491,6 +487,18 @@ class Eolian_State(Eolian_Unit):
     def units(self):
         return Iterator(Eolian_Unit, lib.eolian_state_units_get(self._obj))
 
+    @property
+    def classes(self):
+        return Iterator(Class, lib.eolian_state_classes_get(self._obj))
+
+    def class_by_name_get(self, class_name):
+        c_cls = lib.eolian_state_class_by_name_get(self._obj, _str_to_bytes(class_name))
+        return Class(c_cls) if c_cls else None
+
+    def class_by_file_get(self, file_name):
+        c_cls = lib.eolian_state_class_by_file_get(self._obj, _str_to_bytes(file_name))
+        return Class(c_cls) if c_cls else None
+
 
 ###  Namespace Utility Class  #################################################
 
@@ -536,30 +544,30 @@ class Namespace(object):
 
     @property
     def classes(self):
-        return sorted([ c for c in self._unit.all_classes
+        return sorted([ c for c in self._unit.classes
                         if c.namespace == self._name ])
 
     @property
     def regulars(self):
-        return sorted([ c for c in self._unit.all_classes
+        return sorted([ c for c in self._unit.classes
                         if c.type == Eolian_Class_Type.REGULAR and
                            c.namespace == self._name])
 
     @property
     def abstracts(self):
-        return sorted([ c for c in self._unit.all_classes
+        return sorted([ c for c in self._unit.classes
                         if c.type == Eolian_Class_Type.ABSTRACT and
                            c.namespace == self._name])
 
     @property
     def mixins(self):
-        return sorted([ c for c in self._unit.all_classes
+        return sorted([ c for c in self._unit.classes
                         if c.type == Eolian_Class_Type.MIXIN and
                            c.namespace == self._name])
 
     @property
     def interfaces(self):
-        return sorted([ c for c in self._unit.all_classes
+        return sorted([ c for c in self._unit.classes
                         if c.type == Eolian_Class_Type.INTERFACE and
                            c.namespace == self._name])
 
