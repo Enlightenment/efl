@@ -455,9 +455,9 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
         eina_strbuf_free(buf);
      }
    p = eina_list_data_get(eina_list_last(names));
-   if ((!p) || (strcmp(p, "dark")))
+   if ((!p) || (strcmp(p, "default")))
      {
-        p = eina_stringshare_add("dark");
+        p = eina_stringshare_add("default");
         if (p) names = eina_list_append(names, p);
      }
    if (th->cache) eina_hash_free(th->cache);
@@ -492,7 +492,7 @@ elm_theme_new(void)
    Elm_Theme *th = calloc(1, sizeof(Elm_Theme));
    if (!th) return NULL;
    th->ref = 1;
-   _elm_theme_file_item_add(&th->themes, "dark", EINA_FALSE, EINA_TRUE);
+   _elm_theme_file_item_add(&th->themes, "default", EINA_FALSE, EINA_TRUE);
    themes = eina_list_append(themes, th);
    return th;
 }

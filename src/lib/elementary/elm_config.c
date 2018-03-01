@@ -1748,7 +1748,7 @@ _config_load(void)
    _elm_config->edje_collection_cache = 64;
    _elm_config->finger_size = 10;
    _elm_config->fps = 60.0;
-   _elm_config->theme = eina_stringshare_add("dark");
+   _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
    _elm_config->tooltip_delay = 1.0;
    _elm_config->cursor_engine_only = EINA_TRUE;
@@ -2431,20 +2431,6 @@ _config_update(void)
 
    IFCFG(0x000f)
    _elm_key_bindings_update(_elm_config, tcfg);
-   IFCFGEND
-
-   /* default.edj -> dark.edj */
-   IFCFG(16)
-   if (!_elm_config->theme)
-     COPYSTR(theme);
-   else
-     {
-        if (strstr(_elm_config->theme, "default"))
-          {
-             eina_stringshare_del(_elm_config->theme);
-             COPYSTR(theme);
-          }
-     }
    IFCFGEND
 
    /**

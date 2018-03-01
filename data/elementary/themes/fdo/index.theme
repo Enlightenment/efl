@@ -1,7 +1,7 @@
 [Icon Theme]
-Name=Enlightenment-Dark
+Name=Enlightenment-X
 Inherits=Mint-X,RAVE-X,Faenza,hicolor
-Comment=The Enlightenment-Dark Icon theme. Orig. based on Rave-X, Mint-X and Faenza Icon Themes.
+Comment=The Enlightenment-X Icon theme. Orig. based on Rave-X, Mint-X and Faenza Icon Themes.
 Directories=actions/128,status/128,places/128,places/16,devices/128,emblems/96,categories/128,categories/16,apps/64,intl/128
 Example=folder-home
 
