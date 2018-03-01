@@ -85,15 +85,45 @@ local not_verbs = {
     "end"
 }
 
-local get_mono_type = function(tp)
+local get_class_name = function(cls)
+   local words = {}
+   local klass = cls:full_name_get()
+   for word in string.gmatch(klass, "%a+") do
+      words[#words+1] = word
+   end
+   for i = 1, #words -1 do
+      words[i] = string.lower(words[i])
+   end
+   return table.concat(words, '.')
+end
+
+local get_mono_type
+get_mono_type = function(tp)
     if not tp then
         return "void "
     end
 
     tpt = tp:type_get()
+    tpdecl = tp:typedecl_get()
 
-    if tpt == tp.REGULAR or tpt == tp.CLASS then
-       return tp:full_name_get()
+    if tpt == tp.REGULAR then
+       if tp:full_name_get() == "string" then
+          return "System.String"
+       elseif tp:full_name_get() == "list" then
+          ntp = tp:base_type_get()
+          --assert(btp ~= nil)
+          --ntp = btp:next_type_get()
+          return "eina.List<" .. get_mono_type(ntp) .. ">"
+       elseif tpdecl then
+          --print("typedecl type is ", tp:full_name_get())
+          tpt = tpdecl:type_get()
+          return get_class_name(tp) --tp:full_name_get()
+       else
+          --print("regular type is ", tp:full_name_get())
+          return tp:full_name_get()
+       end
+    elseif tpt == tp.CLASS then
+       return get_class_name(tp)
     else
        return "unknown"
     end
@@ -160,6 +190,7 @@ find_parent_impl = function(fulln, cl)
     for i, pcl in ipairs(cl:inherits_get()) do
         for j, impl in ipairs(pcl:implements_get()) do
             if impl:full_name_get() == fulln then
+            --if get_class_name(impl) == fulln then
                 return impl, pcl
             end
         end
@@ -403,7 +434,7 @@ M.build_inherits = function(cl, t, lvl)
         cln[#cln] = cln[#cln] .. "_mono"
         cln = ":" .. 'develop:api' .. ":"
            .. table.concat(cln, ":")
-        lbuf:write_raw("[[", cln, "|", cl:full_name_get(), "]]")
+        lbuf:write_raw("[[", cln, "|", get_class_name(cl), "]]")
         --lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
         lbuf:write_raw(" ")
         lbuf:write_i("(" .. cl:type_str_get() .. ")")
@@ -426,7 +457,7 @@ M.build_inherit_summary = function(cl, buf)
     cln[#cln] = cln[#cln] .. "_mono"
     cln = ":" .. 'develop:api' .. ":"
        .. table.concat(cln, ":")
-    buf:write_raw("[[", cln, "|", cl:full_name_get(), "]]")
+    buf:write_raw("[[", cln, "|", get_class_name(cl), "]]")
     buf:write_raw(" ")
     buf:write_i("(" .. cl:type_str_get() .. ")")
 
