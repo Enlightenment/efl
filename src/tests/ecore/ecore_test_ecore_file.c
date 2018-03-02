@@ -479,7 +479,7 @@ START_TEST(ecore_test_ecore_file_download)
 {
    const char *download_dir;
    const char *download_file;
-   const char *download_url = "http://check.sourceforge.net/xml/check_unittest.xslt";
+   const char *download_url = "http://www.enlightenment.org/feed.php";
    char dest_name[MAXSIZE] = {'\0'};
    Eina_Bool res;
    Eina_Hash *headers;
