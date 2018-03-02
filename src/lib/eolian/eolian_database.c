@@ -678,30 +678,6 @@ eolian_state_eo_file_paths_get(const Eolian_State *state)
    return eina_hash_iterator_data_new(state->filenames_eo);
 }
 
-EAPI Eina_Iterator *
-eolian_all_eot_files_get(const Eolian_State *state)
-{
-   return eolian_state_eot_files_get(state);
-}
-
-EAPI Eina_Iterator *
-eolian_all_eo_files_get(const Eolian_State *state)
-{
-   return eolian_state_eo_files_get(state);
-}
-
-EAPI Eina_Iterator *
-eolian_all_eot_file_paths_get(const Eolian_State *state)
-{
-   return eolian_state_eot_file_paths_get(state);
-}
-
-EAPI Eina_Iterator *
-eolian_all_eo_file_paths_get(const Eolian_State *state)
-{
-   return eolian_state_eo_file_paths_get(state);
-}
-
 static Eolian_Unit *
 _eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
 {
