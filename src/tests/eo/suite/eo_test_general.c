@@ -178,12 +178,17 @@ _eo_signals_efl_del_cb(void *_data EINA_UNUSED, const Efl_Event *event EINA_UNUS
    _eo_signals_cb_flag |= 0x4;
 }
 
+static check_is_deled = 0;
+
 void
 _eo_signals_cb_added_deled(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item_Full *callback_array = event->info;
 
-   fail_if(callback_array->func != _eo_signals_cb_added_deled);
+   if (check_is_deled)
+     fail_if(callback_array->func == _eo_signals_cb_added_deled);
+   else
+     fail_if(callback_array->func != _eo_signals_cb_added_deled);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,
@@ -202,6 +207,7 @@ START_TEST(eo_signals)
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, &_eo_signals_callbacks);
    r = efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, &_eo_signals_callbacks);
    fail_if(!r);
+   check_is_deled = 1;
    efl_event_callback_array_priority_add(obj, _eo_signals_callbacks(), -100, (void *) 1);
    efl_event_callback_array_add(obj, _eo_signals_callbacks(), (void *) 3);
    r = efl_event_callback_array_priority_add(obj, _eo_signals_callbacks(), -50, (void *) 2);
