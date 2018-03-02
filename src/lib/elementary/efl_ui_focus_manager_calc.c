@@ -79,6 +79,9 @@ typedef struct {
     Node *root;
 } Efl_Ui_Focus_Manager_Calc_Data;
 
+
+static Node* _request_subchild(Node *node);
+
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
@@ -1001,15 +1004,6 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    if (pd->redirect_entry == node->focusable)
      pd->redirect_entry = NULL;
 
-   if (refocus)
-     {
-        Node *n = eina_list_last_data_get(pd->focus_stack);
-        if (!n)
-          n = pd->root;
-
-        efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
-     }
-
    //add all neighbors of the node to the dirty list
    for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
@@ -1026,6 +1020,16 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    pd->dirty = eina_list_remove(pd->dirty, node);
 
    eina_hash_del_by_key(pd->node_hash, &child);
+
+   if (refocus)
+     {
+        Node *n = eina_list_last_data_get(pd->focus_stack);
+        if (!n)
+          n = pd->root;
+
+        if (_request_subchild(n))
+          efl_ui_focus_manager_focus_set(obj, n->focusable);
+     }
 }
 
 EOLIAN static void
