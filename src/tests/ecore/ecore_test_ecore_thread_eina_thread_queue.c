@@ -129,7 +129,7 @@ thspeed2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
              msgs++;
              eina_thread_queue_wait_done(thq1, ref);
           }
-        if (msgs == 10000000)
+        if (msgs == 1000)
           {
              printf("msgs done\n");
              break;
@@ -142,24 +142,26 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
    Msg2 *msg;
    void *ref;
    int i, mcount;
+   Ecore_Thread *th;
 
    eina_init();
    ecore_init();
 
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
-   ecore_thread_feedback_run(thspeed2_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   th = ecore_thread_feedback_run(thspeed2_do, NULL, NULL, NULL, NULL, EINA_TRUE);
 
-   for (i = 0; i < 10000000; i++)
+   for (i = 0; i < 1000; i++)
      {
         msg = eina_thread_queue_send(thq1, sizeof(Msg2), &ref);
         if (!msg) fail();
         if (msg) eina_thread_queue_send_done(thq1, ref);
      }
+   ecore_thread_wait(th, 100.0);
    mcount = msgs;
-   if (mcount < 1000000)
+   if (mcount < 1000)
      {
-        printf("ERR: not enough messages recieved\n");
+        printf("ERR: not enough messages recieved -> %i\n", mcount);
         fail();
      }
    printf("%i messages sent\n", i);
@@ -191,7 +193,7 @@ th31_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg->value = val;
         eina_thread_queue_send_done(thq1, ref);
         val++;
-        if (val == 1000100) break;
+        if (val == 1100) break;
      }
 }
 
@@ -210,7 +212,7 @@ th32_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg->value = val;
         eina_thread_queue_send_done(thq2, ref);
         val++;
-        if (val == 1000100) break;
+        if (val == 1100) break;
      }
 }
 
@@ -276,7 +278,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
           }
         eina_thread_queue_wait_done(thq, ref);
         cnt++;
-        if (cnt == 2000000) break;
+        if (cnt == 2000) break;
      }
    printf("enough msgs\n");
 
@@ -306,14 +308,14 @@ th41_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg->value = val;
         eina_thread_queue_send_done(thq1, ref);
         val++;
-        if (val == 1000100) break;
+        if (val == 1100) break;
      }
 }
 
 static void
 th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
-   int val = 10000000;
+   int val = 10000;
 
    for (;;)
      {
@@ -324,7 +326,7 @@ th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg->value = val;
         eina_thread_queue_send_done(thq1, ref);
         val++;
-        if (val == 11000000) break;
+        if (val == 11000) break;
      }
 }
 
@@ -332,7 +334,7 @@ th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
 {
    int cnt = 0;
-   int val1 = 99, val2 = 9999999;
+   int val1 = 99, val2 = 9999;
 
    eina_init();
    ecore_init();
@@ -346,7 +348,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
         void *ref;
         msg = eina_thread_queue_wait(thq1, &ref);
         if (DEBUG) printf("V %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
-        if (msg->value >= 10000000)
+        if (msg->value >= 10000)
           {
              if ((val2 + 1) != msg->value)
                {
@@ -366,7 +368,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
           }
         eina_thread_queue_wait_done(thq1, ref);
         cnt++;
-        if (cnt == 2000000) break;
+        if (cnt == 2000) break;
      }
    printf("msgs ok\n");
 
@@ -501,7 +503,7 @@ th61_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 100;
 
-   for (val = 100; val < 10100; val++)
+   for (val = 100; val < 200; val++)
      {
         Msg6 *msg;
         void *ref;
@@ -541,7 +543,7 @@ th62_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      }
 
    eina_spinlock_take(&msgnum_lock);
-   ck_assert_int_eq(msgnum, 10000);
+   ck_assert_int_eq(msgnum, 100);
    eina_spinlock_release(&msgnum_lock);
    eina_semaphore_release(&th6_sem, 1);
    if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
@@ -571,7 +573,7 @@ th63_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      }
 
    eina_spinlock_take(&msgnum_lock);
-   ck_assert_int_eq(msgnum, 10000);
+   ck_assert_int_eq(msgnum, 100);
    eina_spinlock_release(&msgnum_lock);
    eina_semaphore_release(&th6_sem, 1);
    if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
@@ -602,8 +604,8 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
      {
         eina_spinlock_take(&msgnum_lock);
         if (DEBUG) printf("msgnum %i\n", msgnum);
-        if (msgnum == 10000) do_break = 1;
-        else ck_assert_int_lt(msgnum, 10000);
+        if (msgnum == 100) do_break = 1;
+        else ck_assert_int_lt(msgnum, 100);
         eina_spinlock_release(&msgnum_lock);
      }
 
@@ -647,7 +649,7 @@ thspeed7_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
    void *ref;
    int i;
 
-   for (i = 0; i < 1000000; i++)
+   for (i = 0; i < 10000; i++)
      {
         msg = eina_thread_queue_send(thq1, sizeof(Msg7), &ref);
         if (msg) eina_thread_queue_send_done(thq1, ref);
@@ -688,7 +690,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
              msgcnt++;
              if (DEBUG) printf("msgcnt: %i\n", msgcnt);
           }
-        if (msgcnt == 1000000) break;
+        if (msgcnt == 10000) break;
      }
    printf("msg fd ok\n");
 
