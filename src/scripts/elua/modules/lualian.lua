@@ -711,7 +711,7 @@ M.generate = function(fname, fstream)
     end
     gen_unit = unit
     local sfn = fname:match(".*[\\/](.+)$") or fname
-    local klass = eolian.class_get_by_file(unit, sfn)
+    local klass = get_state():class_by_file_get(sfn)
     File(fname, klass, { gen_class(klass) }):generate(fstream or io.stdout)
 end
 

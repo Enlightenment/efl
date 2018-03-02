@@ -303,8 +303,7 @@ M.Class = Node:clone {
         if ret then
             return ret
         end
-        -- FIXME: unit
-        local v = eolian.class_get_by_name(eos:unit_get(), name)
+        local v = eos:class_by_name_get(name)
         if not v then
             return nil
         end
@@ -319,8 +318,7 @@ M.Class = Node:clone {
         if ret then
             return ret
         end
-        -- FIXME: unit
-        local v = eolian.class_get_by_file(eos:unit_get(), name)
+        local v = eos:class_by_file_get(name)
         if not v then
             return nil
         end
@@ -333,7 +331,7 @@ M.Class = Node:clone {
         local ret, had = get_cache(M.Class, "_cache_all")
         if not had then
             -- FIXME: unit
-            for cl in eolian.all_classes_get(eos:unit_get()) do
+            for cl in eos:classes_get() do
                 local cls = M.Class(cl)
                 if matches_filter(cls) then
                    ret[#ret + 1] = cls
@@ -1539,8 +1537,8 @@ M.parse = function(st)
             error("failed parsing eo files")
         end
     end
-    -- build reverse inheritance hierarchy, FIXME: unit
-    for cl in eolian.all_classes_get(eos:unit_get()) do
+    -- build reverse inheritance hierarchy
+    for cl in eos:classes_get() do
         local cln = cl:full_name_get()
         for icl in cl:inherits_get() do
             local t = revh[icl]
