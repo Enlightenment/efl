@@ -595,6 +595,19 @@ ffi.metatype("Eolian_State", {
             return ffi.cast("Eolian_Unit *", self)
         end,
 
+        unit_by_file_get = function(self, fname)
+            local v = eolian.eolian_state_unit_by_file_get(state, fname)
+            if v == nil then
+                return nil
+            end
+            return v
+        end,
+
+        units_get = function(self)
+            return Ptr_Iterator("const Eolian_Unit*",
+                eolian.eolian_state_units_get(self))
+        end,
+
         class_by_name_get = function(self, cname)
             local v = eolian.eolian_state_class_by_name_get(self, cname)
             if v == nil then return nil end
@@ -619,6 +632,17 @@ ffi.metatype("Eolian_State", {
 
 ffi.metatype("Eolian_Unit", {
     __index = {
+        children_get = function(self)
+            return Ptr_Iterator("const Eolian_Unit*",
+                eolian.eolian_unit_children_get(self))
+        end,
+
+        file_get = function(self)
+            local v = eolian.eolian_unit_file_get(self)
+            if v == nil then return nil end
+            return ffi.string(v)
+        end,
+
         class_by_name_get = function(self, cname)
             local v = eolian.eolian_unit_class_by_name_get(self, cname)
             if v == nil then return nil end
