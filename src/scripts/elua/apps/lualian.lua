@@ -52,7 +52,7 @@ getopt.parse {
                 lualian.include_dir(v)
             end
             if os.getenv("EFL_RUN_IN_TREE") then
-                lualian.system_directory_scan()
+                lualian.system_directory_add()
             end
             lualian.load_eot_files()
             for i, fname in ipairs(args) do

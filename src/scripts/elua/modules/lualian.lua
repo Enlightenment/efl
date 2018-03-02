@@ -691,7 +691,7 @@ local gen_class = function(klass)
 end
 
 M.include_dir = function(dir)
-    if not get_state():directory_scan(dir) then
+    if not get_state():directory_add(dir) then
         error("Failed including directory: " .. dir)
     end
 end
@@ -700,8 +700,8 @@ M.load_eot_files = function()
     return get_state():all_eot_files_parse()
 end
 
-M.system_directory_scan = function()
-    return get_state():system_directory_scan()
+M.system_directory_add = function()
+    return get_state():system_directory_add()
 end
 
 M.generate = function(fname, fstream)

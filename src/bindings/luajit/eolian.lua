@@ -333,15 +333,10 @@ ffi.cdef [[
     Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
     Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
 
-    const Eolian_Unit *eolian_file_parse(Eolian_State *state, const char *filepath);
     Eina_Iterator *eolian_all_eo_file_paths_get(Eolian_State *state);
     Eina_Iterator *eolian_all_eot_file_paths_get(Eolian_State *state);
     Eina_Iterator *eolian_all_eo_files_get(Eolian_State *state);
     Eina_Iterator *eolian_all_eot_files_get(Eolian_State *state);
-    Eina_Bool eolian_directory_scan(Eolian_State *state, const char *dir);
-    Eina_Bool eolian_system_directory_scan(Eolian_State *state);
-    Eina_Bool eolian_all_eo_files_parse(Eolian_State *state);
-    Eina_Bool eolian_all_eot_files_parse(Eolian_State *state);
     const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
     const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
@@ -558,16 +553,16 @@ M.object_scope = {
 
 ffi.metatype("Eolian_State", {
     __index = {
-        directory_scan = function(self, dir)
-            return eolian.eolian_directory_scan(self, dir) ~= 0
+        directory_add = function(self, dir)
+            return eolian.eolian_state_directory_add(self, dir) ~= 0
         end,
 
-        system_directory_scan = function(self)
-            return eolian.eolian_system_directory_scan(self) ~= 0
+        system_directory_add = function(self)
+            return eolian.eolian_state_system_directory_add(self) ~= 0
         end,
 
         file_parse = function(self, fpath)
-            local v = eolian.eolian_file_parse(self, fpath)
+            local v = eolian.eolian_state_file_parse(self, fpath)
             if v == nil then
                 return nil
             end
@@ -575,11 +570,11 @@ ffi.metatype("Eolian_State", {
         end,
 
         all_eo_files_parse = function(self)
-            return eolian.eolian_all_eo_files_parse(self) ~= 0
+            return eolian.eolian_state_all_eo_files_parse(self) ~= 0
         end,
 
         all_eot_files_parse = function(self)
-            return eolian.eolian_all_eot_files_parse(self) ~= 0
+            return eolian.eolian_state_all_eot_files_parse(self) ~= 0
         end,
 
         all_eo_file_paths_get = function(self)

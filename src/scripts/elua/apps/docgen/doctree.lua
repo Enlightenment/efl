@@ -1516,12 +1516,12 @@ M.DocTokenizer = Node:clone {
 
 M.scan_directory = function(dir)
     if not dir then
-        if not eos:system_directory_scan() then
+        if not eos:system_directory_add() then
             error("failed scanning system directory")
         end
         return
     end
-    if not eos:directory_scan(dir) then
+    if not eos:directory_add(dir) then
         error("failed scanning directory: " .. dir)
     end
 end
