@@ -645,21 +645,9 @@ eolian_state_system_directory_add(Eolian_State *state)
    Eina_Strbuf *buf = eina_strbuf_new();
    eina_strbuf_append(buf, eina_prefix_data_get(_eolian_prefix));
    eina_strbuf_append(buf, "/include");
-   ret = eolian_directory_scan(state, eina_strbuf_string_get(buf));
+   ret = eolian_state_directory_add(state, eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
-}
-
-EAPI Eina_Bool
-eolian_directory_scan(Eolian_State *state, const char *dir)
-{
-   return eolian_state_directory_add(state, dir);
-}
-
-EAPI Eina_Bool
-eolian_system_directory_scan(Eolian_State *state)
-{
-   return eolian_state_system_directory_add(state);
 }
 
 EAPI Eina_Iterator *
@@ -835,12 +823,6 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    return &state->unit;
 }
 
-EAPI const Eolian_Unit *
-eolian_file_parse(Eolian_State *state, const char *filepath)
-{
-   return eolian_state_file_parse(state, filepath);
-}
-
 typedef struct _Parse_Data
 {
    Eolian_State *state;
@@ -876,12 +858,6 @@ eolian_state_all_eot_files_parse(Eolian_State *state)
    return pd.ret;
 }
 
-EAPI Eina_Bool
-eolian_all_eot_files_parse(Eolian_State *state)
-{
-   return eolian_state_all_eot_files_parse(state);
-}
-
 static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Parse_Data *pd = fdata;
@@ -909,12 +885,6 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
      return EINA_FALSE;
 
    return pd.ret;
-}
-
-EAPI Eina_Bool
-eolian_all_eo_files_parse(Eolian_State *state)
-{
-   return eolian_state_all_eo_files_parse(state);
 }
 
 EAPI const Eolian_Unit *
