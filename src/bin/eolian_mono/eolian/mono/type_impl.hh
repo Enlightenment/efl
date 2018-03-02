@@ -229,7 +229,7 @@ struct visitor_generate
       //     else
       //       return false;
       //   }
-      // else if(Eolian_Typedecl const* typedecl = eolian_typedecl_struct_get_by_name(c_type.c_str()))
+      // else if(Eolian_Typedecl const* typedecl = eolian_state_struct_by_name_get(c_type.c_str()))
       //   {
       //   return as_generator
       //        (

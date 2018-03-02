@@ -1170,7 +1170,7 @@ inline Eolian_Class const* get_klass(klass_name const& klass_name_, Eolian_Unit 
                , context_null{}))
     return nullptr;
   else
-    return ::eolian_class_get_by_name(unit, klass_name.c_str());
+    return ::eolian_unit_class_by_name_get(unit, klass_name.c_str());
 }
 
 inline std::vector<std::string> cpp_namespaces(std::vector<std::string> namespaces)

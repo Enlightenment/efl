@@ -99,8 +99,8 @@ run(options_type const& opts)
    const Eolian_Typedecl *tp = NULL;
    char* dup = strdup(opts.in_file.c_str());
    std::string basename_input = basename(dup);
-   klass = ::eolian_class_get_by_file(opts.unit, basename_input.c_str());
-   aliases= ::eolian_typedecl_aliases_get_by_file(opts.unit, basename_input.c_str());
+   klass = ::eolian_state_class_by_file_get(opts.state, basename_input.c_str());
+   aliases= ::eolian_state_aliases_by_file_get(opts.state, basename_input.c_str());
    free(dup);
 
    std::string class_file_name = opts.out_file;
@@ -169,7 +169,7 @@ run(options_type const& opts)
      }
    //else
      {
-       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_typedecl_enums_get_by_file(opts.unit, basename_input.c_str()))
+       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_state_enums_by_file_get(opts.state, basename_input.c_str()))
                , enum_last; enum_iterator != enum_last; ++enum_iterator)
          {
             efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator, opts.unit);
@@ -179,7 +179,7 @@ run(options_type const& opts)
               }
          }
 
-       for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_typedecl_structs_get_by_file(opts.unit, basename_input.c_str()))
+       for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_state_structs_by_file_get(opts.state, basename_input.c_str()))
                , struct_last; struct_iterator != struct_last; ++struct_iterator)
          {
             efl::eolian::grammar::attributes::struct_def struct_(&*struct_iterator, opts.unit);

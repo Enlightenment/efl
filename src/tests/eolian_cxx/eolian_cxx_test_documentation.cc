@@ -26,7 +26,7 @@ klass_def init_test_data(efl::eolian::eolian_state const& state)
    ck_assert(::eolian_state_all_eot_files_parse(state.value));
    ck_assert(::eolian_state_file_parse(state.value, PACKAGE_DATA_DIR"/docs.eo"));
 
-   const Eolian_Class *c_klass = ::eolian_class_get_by_name(state.as_unit(), "Docs");
+   const Eolian_Class *c_klass = ::eolian_state_class_by_name_get(state.value, "Docs");
    ck_assert_ptr_ne(c_klass, NULL);
 
    klass_def klass(c_klass, state.as_unit());
@@ -172,7 +172,7 @@ START_TEST(eolian_cxx_test_enum_docs)
    klass_def klass = init_test_data(eolian_state);
 
    auto unit = eolian_state.as_unit();
-   enum_def _enum(::eolian_typedecl_enum_get_by_name(unit, "Bar"), unit);
+   enum_def _enum(::eolian_state_enum_by_name_get(eolian_state.value, "Bar"), unit);
 
    documentation_def doc = _enum.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Docs for enum Bar.");
@@ -215,7 +215,7 @@ START_TEST(eolian_cxx_test_struct_docs)
    klass_def klass = init_test_data(eolian_state);
 
    auto unit = eolian_state.as_unit();
-   struct_def _struct(::eolian_typedecl_struct_get_by_name(unit, "Foo"), unit);
+   struct_def _struct(::eolian_state_struct_by_name_get(eolian_state.value, "Foo"), unit);
 
    documentation_def doc = _struct.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "This is struct Foo. "

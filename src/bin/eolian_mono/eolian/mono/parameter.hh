@@ -1277,7 +1277,7 @@ struct native_convert_function_pointer_generator
       // Getting the type through C api
       std::string type_name = param.type.original_type.visit(type_name_visitor{});
 
-      const Eolian_Typedecl *tpd = ::eolian_typedecl_alias_get_by_name(param.unit, type_name.c_str());
+      const Eolian_Typedecl *tpd = ::eolian_unit_alias_by_name_get(param.unit, type_name.c_str());
       if (!tpd)
         {
            EINA_LOG_ERR("Failed to get typedecl for c type [%s]", param.type.c_type.c_str());
