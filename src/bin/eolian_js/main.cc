@@ -489,18 +489,18 @@ int main(int argc, char** argv)
 
    // Add include paths to eolian library
    for(auto src : include_paths)
-     if (!::eolian_directory_scan(src.c_str()))
+     if (!::eolian_state_directory_add(src.c_str()))
        {
          EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
            << "Couldn't load eolian from '" << src << "'.";
        }
-   if (!::eolian_all_eot_files_parse())
+   if (!::eolian_state_all_eot_files_parse())
      {
        EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
          << "Eolian failed parsing eot files";
        assert(false && "Error parsing eot files");
      }
-   if (!::eolian_file_parse(in_file.c_str()))
+   if (!::eolian_state_file_parse(in_file.c_str()))
      {
        EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
          << "Failed parsing: " << in_file << ".";

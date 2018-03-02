@@ -212,13 +212,13 @@ database_load(options_type const& opts)
 {
    for (auto src : opts.include_dirs)
      {
-        if (!::eolian_directory_scan(opts.state, src.c_str()))
+        if (!::eolian_state_directory_add(opts.state, src.c_str()))
           {
              EINA_CXX_DOM_LOG_WARN(eolian_mono::domain)
                << "Couldn't load eolian from '" << src << "'.";
           }
      }
-   if (!::eolian_all_eot_files_parse(opts.state))
+   if (!::eolian_state_all_eot_files_parse(opts.state))
      {
         EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
           << "Eolian failed parsing eot files";
@@ -230,7 +230,7 @@ database_load(options_type const& opts)
          << "No input file.";
        assert(false && "Error parsing input file");
      }
-   if (!::eolian_file_parse(opts.state, opts.in_file.c_str()))
+   if (!::eolian_state_file_parse(opts.state, opts.in_file.c_str()))
      {
        EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
          << "Failed parsing: " << opts.in_file << ".";

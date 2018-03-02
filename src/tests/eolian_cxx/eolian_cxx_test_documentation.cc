@@ -22,9 +22,9 @@ using efl::eolian::grammar::attributes::struct_def;
 
 klass_def init_test_data(efl::eolian::eolian_state const& state)
 {
-   ck_assert(::eolian_directory_scan(state.value, PACKAGE_DATA_DIR));
-   ck_assert(::eolian_all_eot_files_parse(state.value));
-   ck_assert(::eolian_file_parse(state.value, PACKAGE_DATA_DIR"/docs.eo"));
+   ck_assert(::eolian_state_directory_add(state.value, PACKAGE_DATA_DIR));
+   ck_assert(::eolian_state_all_eot_files_parse(state.value));
+   ck_assert(::eolian_state_file_parse(state.value, PACKAGE_DATA_DIR"/docs.eo"));
 
    const Eolian_Class *c_klass = ::eolian_class_get_by_name(state.as_unit(), "Docs");
    ck_assert_ptr_ne(c_klass, NULL);

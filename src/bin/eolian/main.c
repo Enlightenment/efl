@@ -534,7 +534,7 @@ main(int argc, char **argv)
 
    if (scan_system)
      {
-        if (!eolian_system_directory_scan(eos))
+        if (!eolian_state_system_directory_add(eos))
           {
              fprintf(stderr, "eolian: could not scan system directory\n");
              goto end;
@@ -544,14 +544,14 @@ main(int argc, char **argv)
    const char *inc;
    EINA_LIST_FREE(includes, inc)
      {
-        if (!eolian_directory_scan(eos, inc))
+        if (!eolian_state_directory_add(eos, inc))
           {
              fprintf(stderr, "eolian: could not scan '%s'\n", inc);
              goto end;
           }
      }
 
-   const Eolian_Unit *src = eolian_file_parse(eos, input);
+   const Eolian_Unit *src = eolian_state_file_parse(eos, input);
    if (!src)
      {
         fprintf(stderr, "eolian: could not parse file '%s'\n", input);
