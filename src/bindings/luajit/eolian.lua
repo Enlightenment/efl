@@ -333,10 +333,6 @@ ffi.cdef [[
     Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
     Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
 
-    Eina_Iterator *eolian_all_eo_file_paths_get(Eolian_State *state);
-    Eina_Iterator *eolian_all_eot_file_paths_get(Eolian_State *state);
-    Eina_Iterator *eolian_all_eo_files_get(Eolian_State *state);
-    Eina_Iterator *eolian_all_eot_files_get(Eolian_State *state);
     const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
     const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
@@ -577,20 +573,20 @@ ffi.metatype("Eolian_State", {
             return eolian.eolian_state_all_eot_files_parse(self) ~= 0
         end,
 
-        all_eo_file_paths_get = function(self)
-            return iterator.String_Iterator(eolian.eolian_all_eo_file_paths_get(self))
+        eo_file_paths_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_state_eo_file_paths_get(self))
         end,
 
-        all_eot_file_paths_get = function(self)
-            return iterator.String_Iterator(eolian.eolian_all_eot_file_paths_get(self))
+        eot_file_paths_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_state_eot_file_paths_get(self))
         end,
 
-        all_eo_files_get = function(self)
-            return iterator.String_Iterator(eolian.eolian_all_eo_files_get(self))
+        eo_files_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_state_eo_files_get(self))
         end,
 
-        all_eot_files_get = function(self)
-            return iterator.String_Iterator(eolian.eolian_all_eot_files_get(self))
+        eot_files_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_state_eot_files_get(self))
         end,
 
         declarations_get_by_file = function(self, fname)
