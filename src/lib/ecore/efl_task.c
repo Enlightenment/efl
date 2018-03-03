@@ -344,6 +344,13 @@ _efl_task_env_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, const char *var)
 }
 
 EOLIAN static void
+_efl_task_env_reset(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+{
+   if (pd->env) eina_hash_free(pd->env);
+   pd->env = NULL;
+}
+
+EOLIAN static void
 _efl_task_priority_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, Efl_Task_Priority priority)
 {
    pd->priority = priority;

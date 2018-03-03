@@ -108,6 +108,9 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
                               is $NULL or if it is an empty string ]]
          }
       }
+      env_reset {
+         [[ Clear all environment variables. ]]
+      }
       @property priority {
          [[ The priority of this task. ]]
          get { }

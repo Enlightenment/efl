@@ -901,6 +901,21 @@ _efl_loop_efl_task_env_get(Eo *obj, Efl_Loop_Data *pd, const char *var)
    return efl_task_env_get(efl_super(obj, EFL_LOOP_CLASS), var);
 }
 
+EOLIAN static void
+_efl_loop_efl_task_env_reset(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
+{
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (!td) return;
+   eina_lock_take(&_environ_lock);
+#ifdef HAVE_CLEARENV
+   clearenv();
+#else
+   environ = NULL;
+#endif
+   _env_sync(pd, td);
+   eina_lock_release(&_environ_lock);
+}
+
 EOLIAN static Eina_Bool
 _efl_loop_efl_task_run(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
