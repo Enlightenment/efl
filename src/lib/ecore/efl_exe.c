@@ -518,7 +518,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    // actually setenv the env hash (clear what was there before so it is
    // the only env there)
 #ifdef HAVE_CLEARENV
-  clearenv();
+   clearenv();
 #else
    environ = NULL;
 #endif
