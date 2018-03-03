@@ -488,7 +488,10 @@ static void
 _efl_loop_idle_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
+
    ecore_idler_del(d->idler);
+   d->idler = NULL;
+   d->promise = NULL;
    efl_loop_promise_simple_data_mp_free(d);
 }
 
@@ -497,6 +500,8 @@ _efl_loop_idle_done(void *data)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
    eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
+   d->idler = NULL;
+   d->promise = NULL;
    efl_loop_promise_simple_data_mp_free(d);
    return EINA_FALSE;
 }
@@ -523,6 +528,8 @@ _efl_loop_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
 
 idler_error:
+   d->idler = NULL;
+   d->promise = NULL;
    efl_loop_promise_simple_data_mp_free(d);
    return NULL;
 }
@@ -552,6 +559,7 @@ _efl_loop_timeout_del(void *data, const Efl_Event *event EINA_UNUSED)
    Efl_Loop_Promise_Simple_Data *d = data;
 
    d->timer = NULL;
+   d->promise = NULL;
    efl_loop_promise_simple_data_mp_free(d);
 }
 
@@ -585,6 +593,8 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
    return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
 
 timer_error:
+   d->timer = NULL;
+   d->promise = NULL;
    efl_loop_promise_simple_data_mp_free(d);
    return NULL;
 }
@@ -759,7 +769,6 @@ _env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)
                {
                   if (pd->env.environ_copy[i] != environ[i])
                     {
-                       printf("  env %i mismatch\n", i);
                        update = EINA_TRUE;
                        break;
                     }
