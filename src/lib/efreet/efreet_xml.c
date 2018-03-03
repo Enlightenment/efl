@@ -86,7 +86,7 @@ efreet_xml_new(const char *file)
 {
     Efreet_Xml *xml = NULL;
     int size, fd = -1;
-    char *data = MAP_FAILED;
+    char *tmp, *data = MAP_FAILED;
     struct stat st;
     int error = 0;
 
@@ -109,11 +109,12 @@ efreet_xml_new(const char *file)
     data = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
     if (data == MAP_FAILED) goto efreet_error;
 
+    tmp = data;
+
     error = 0;
     size = st.st_size;
-    xml = efreet_xml_parse(&data, &size, &error);
+    xml = efreet_xml_parse(&tmp, &size, &error);
     if (!xml || error) goto efreet_error;
-
     munmap(data, st.st_size);
     close(fd);
     return xml;
