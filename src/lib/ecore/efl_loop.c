@@ -721,29 +721,6 @@ efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
    _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
 }
 
-/* HHH:
-EOLIAN static const Efl_Version *
-_efl_loop_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
-{
-   return &_app_efl_version;
-}
-
-EOLIAN static const Efl_Version *
-_efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
-{
-   // vanilla EFL: flavor = NULL
-   static const Efl_Version version = {
-      .major = VMAJ,
-      .minor = VMIN,
-      .micro = VMIC,
-      .revision = VREV,
-      .build_id = EFL_BUILD_ID,
-      .flavor = NULL
-   };
-   return &version;
-}
-*/
-
 static void
 _env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)
 {
