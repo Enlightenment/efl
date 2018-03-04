@@ -112,6 +112,7 @@ elm_code_widget_selection_select_all(Evas_Object *widget)
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
 
+#ifndef ELM_CODE_TEST
 
 EAPI Elm_Code_Widget_Selection_Data *
 elm_code_widget_selection_normalized_get(Evas_Object *widget)
@@ -153,8 +154,6 @@ elm_code_widget_selection_normalized_get(Evas_Object *widget)
 
    return selection;
 }
-
-#ifndef ELM_CODE_TEST
 
 EAPI void
 elm_code_widget_selection_clear(Evas_Object *widget)
@@ -404,6 +403,8 @@ _selection_loss_cb(void *data EINA_UNUSED, Elm_Sel_Type selection EINA_UNUSED)
 //   elm_code_widget_selection_clear(widget);
 }
 
+#ifndef ELM_CODE_TEST
+
 EAPI void
 elm_code_widget_selection_cut(Evas_Object *widget)
 {
@@ -483,3 +484,5 @@ elm_code_widget_selection_is_empty(Evas_Object *widget)
 
    return ret;
 }
+
+#endif // ELM_CODE_TEST
