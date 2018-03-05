@@ -3386,8 +3386,8 @@ static Eina_Bool
 _eo_value_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, va_list args)
 {
    Eo **dst = mem;
-   Eo **src = va_arg(args, Eo **);
-   efl_replace(dst, *src);
+   Eo *src = va_arg(args, Eo *);
+   efl_replace(dst, src);
    return EINA_TRUE;
 }
 
