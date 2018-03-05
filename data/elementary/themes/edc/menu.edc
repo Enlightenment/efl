@@ -99,6 +99,7 @@ group { name: "e/widgets/menu/default/item_bg";
             rel1.relative: 0.0 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
+            min: 0 17;
          }
       }
       part { name: "events"; type: RECT;
@@ -168,7 +169,7 @@ group { name: "e/widgets/menu/default/label";
             rel1.offset: 4 -1;
             rel2.offset: -5 -1;
             color: 160 160 160 255;
-            color3: 0 0 0 0;
+            min: 0 16;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -179,7 +180,6 @@ group { name: "e/widgets/menu/default/label";
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color3: 0 0 0 64;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
