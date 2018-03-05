@@ -507,7 +507,7 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
    Evas_Cache_Target *tg;
    Image_Entry_Task *task;
 
-   if (!ie->cache) return;
+   if (!ie->cache) return 0;
    evas_cache_image_ref(ie);
    if (ie->flags.preload_done)
      {
