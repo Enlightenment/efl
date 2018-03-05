@@ -73,7 +73,7 @@ _future_done_cb(void *data EINA_UNUSED,
         fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
         abort();
      }
-   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, v)
      {
         buf = eina_value_to_binbuf(&v);
         fail_if(!buf);
@@ -103,7 +103,7 @@ _future_all_cb(void *data,
         fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
         abort();
      }
-   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, v)
      {
         if (v.type == EINA_VALUE_TYPE_ERROR)
           {
