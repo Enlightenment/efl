@@ -39,7 +39,7 @@ _open_cb(void *data, const Eina_Value array, const Eina_Future *dead EINA_UNUSED
    Eina_Value v = EINA_VALUE_EMPTY;
    Eina_Future *futures[eina_value_array_count(&array) + 1];
 
-   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, v)
      {
         if (v.type == EINA_VALUE_TYPE_ERROR)
           {
