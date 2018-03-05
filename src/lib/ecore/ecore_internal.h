@@ -42,15 +42,12 @@ efl_model_list_value_get(Eina_List *childrens,
 
    eina_value_array_setup(&v, EINA_VALUE_TYPE_OBJECT, eina_list_count(childrens));
 
+   childrens = eina_list_nth_list(childrens, start);
+
    EINA_LIST_FOREACH(childrens, l, child)
      {
-        if (start != 0)
-          {
-             start--;
-             continue;
-          }
         if (count == 0)
-          continue;
+          break;
         count--;
 
         eina_value_array_append(&v, child);
