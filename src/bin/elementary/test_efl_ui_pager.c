@@ -366,7 +366,7 @@ static void check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Evas_Object *pager = data;
    Eina_Bool state = elm_check_state_get(obj);
 
-   efl_ui_pager_loop_set(pager, state);
+   efl_ui_pager_loop_mode_set(pager, state);
 }
 
 static void page_set_btn_del_cb(void *data,
@@ -603,7 +603,7 @@ static void loop_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    check = elm_check_add(navi);
    elm_object_style_set(check, "toggle");
-   elm_check_state_set(check, efl_ui_pager_loop_get(pager));
+   elm_check_state_set(check, efl_ui_pager_loop_mode_get(pager));
    evas_object_smart_callback_add(check, "changed", check_cb, pager);
    evas_object_show(check);
    elm_box_pack_end(box, check);

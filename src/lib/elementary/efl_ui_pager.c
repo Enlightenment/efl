@@ -654,9 +654,9 @@ _efl_ui_pager_scroll_block_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_pager_loop_set(Eo *obj EINA_UNUSED,
-                       Efl_Ui_Pager_Data *pd,
-                       Efl_Ui_Pager_Loop loop)
+_efl_ui_pager_loop_mode_set(Eo *obj EINA_UNUSED,
+                            Efl_Ui_Pager_Data *pd,
+                            Efl_Ui_Pager_Loop loop)
 {
    pd->loop = loop;
 
@@ -664,8 +664,8 @@ _efl_ui_pager_loop_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Ui_Pager_Loop
-_efl_ui_pager_loop_get(Eo *obj EINA_UNUSED,
-                       Efl_Ui_Pager_Data *pd)
+_efl_ui_pager_loop_mode_get(Eo *obj EINA_UNUSED,
+                            Efl_Ui_Pager_Data *pd)
 {
    return pd->loop;
 }

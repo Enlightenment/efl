@@ -39,7 +39,7 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
             next: bool;
          }
       }
-      @property loop {
+      @property loop_mode {
          values {
             loop: Efl.Ui.Pager.Loop;
          }
