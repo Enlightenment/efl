@@ -6,28 +6,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
    methods {
-      @property step {
-         set {
-            [[Set the step by which slider indicator will move.
-
-              This value is used when a draggable object is moved automatically
-              such as when key events like the up/down/left/right key are pressed
-              or in case accessibility is set and flick event is used to
-              inc/dec slider values. By default step value is 0.05.
-
-              @since 1.8
-            ]]
-         }
-         get {
-            [[Get the step by which slider indicator moves.
-
-              @since 1.8
-            ]]
-         }
-         values {
-            step: double; [[The step value.]]
-         }
-      }
    }
    parts {
       indicator: Efl.Ui.Slider.Part_Indicator;
@@ -42,6 +20,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Range.range_min_max {get; set; }
+      Efl.Ui.Range.range_step { get; set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }

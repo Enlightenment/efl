@@ -1279,8 +1279,14 @@ _efl_ui_slider_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_D
    return sd->val;
 }
 
+EOLIAN static double
+_efl_ui_slider_efl_ui_range_range_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
+{
+   return sd->step;
+}
+
 EOLIAN static void
-_efl_ui_slider_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double step)
+_efl_ui_slider_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double step)
 {
    if (sd->step == step) return;
 
@@ -1288,12 +1294,6 @@ _efl_ui_slider_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double step
    else if (step > 1.0) step = 1.0;
 
    sd->step = step;
-}
-
-EOLIAN static double
-_efl_ui_slider_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return sd->step;
 }
 
 EOLIAN static Eina_Bool
@@ -1841,6 +1841,18 @@ EAPI Elm_Slider_Indicator_Visible_Mode
 elm_slider_indicator_visible_mode_get(const Evas_Object *obj)
 {
    return efl_ui_slider_part_indicator_visible_mode_get(efl_part(obj, "indicator"));
+}
+
+EAPI double
+elm_slider_step_get(const Evas_Object *obj)
+{
+   return efl_ui_range_step_get(obj);
+}
+
+EAPI void
+elm_slider_step_set(Evas_Object *obj, double step)
+{
+   efl_ui_range_step_set(obj, step);
 }
 
 #include "efl_ui_slider_legacy.eo.c"
