@@ -368,6 +368,18 @@ _efl_task_exit_code_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
    return pd->exit_code;
 }
 
+EOLIAN static void
+_efl_task_flags_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, Efl_Task_Flags flags)
+{
+   pd->flags = flags;
+}
+
+EOLIAN static Efl_Task_Flags
+_efl_task_flags_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+{
+   return pd->flags;
+}
+
 EOLIAN static Eina_Bool
 _efl_task_run(Eo *obj EINA_UNUSED, Efl_Task_Data *pd EINA_UNUSED)
 {

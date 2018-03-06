@@ -41,6 +41,7 @@ typedef struct _Efl_Exe_Data Efl_Exe_Data;
 struct _Efl_Exe_Data
 {
    int exit_signal;
+   Efl_Exe_Flags flags;
 #ifdef _WIN32
    struct {
       Eo *in_handler, *out_handler;
@@ -60,7 +61,6 @@ struct _Efl_Exe_Data
    } fd;
 #endif
    Eina_Bool exit_called : 1;
-   Efl_Exe_Flags flags;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -282,13 +282,13 @@ _efl_exe_signal(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Exe_Signal sig)
 }
 
 EOLIAN static void
-_efl_exe_flags_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Exe_Flags flags)
+_efl_exe_exe_flags_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Exe_Flags flags)
 {
    pd->flags = flags;
 }
 
 EOLIAN static Efl_Exe_Flags
-_efl_exe_flags_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_exe_flags_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    return pd->flags;
 }
@@ -381,7 +381,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    pd->fd.exited_write = pipe_exited[1];
    eina_file_close_on_exec(pd->fd.exited_read,  EINA_TRUE);
 
-   if (pd->flags & EFL_EXE_FLAGS_USE_STDIN)
+   if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
      {
         ret = pipe(pipe_stdin);
         if (EINA_UNLIKELY(ret != 0))
@@ -399,7 +399,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
                   efl_event_callback_add
                     (efl_added, EFL_LOOP_HANDLER_EVENT_WRITE, _cb_exe_in, obj));
      }
-   if (pd->flags & EFL_EXE_FLAGS_USE_STDOUT)
+   if (td->flags & EFL_TASK_FLAGS_USE_STDOUT)
      {
         ret = pipe(pipe_stdout);
         if (EINA_UNLIKELY(ret != 0))
@@ -425,8 +425,8 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    if (pd->pid != 0)
      {
         // parent process is here inside this if block
-        if (pd->flags & EFL_EXE_FLAGS_USE_STDIN)  close(pipe_stdin[0]);
-        if (pd->flags & EFL_EXE_FLAGS_USE_STDOUT) close(pipe_stdout[1]);
+        if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[0]);
+        if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[1]);
         // fork failed... close up and clean and release locks
         if (pd->pid == -1)
           {
@@ -450,24 +450,24 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.
 
-   if (pd->flags & EFL_EXE_FLAGS_USE_STDIN)  close(pipe_stdin[1]);
-   if (pd->flags & EFL_EXE_FLAGS_USE_STDOUT) close(pipe_stdout[0]);
+   if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[1]);
+   if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[0]);
    // set priority of self
    if ((td->priority >= EFL_TASK_PRIORITY_NORMAL) &&
        (td->priority <= EFL_TASK_PRIORITY_ULTRA))
      setpriority(PRIO_PROCESS, 0, primap[td->priority]);
 
    // if we want to hide or use any of the stdio, close the fd's
-   if ((pd->flags & EFL_EXE_FLAGS_USE_STDIN) ||
+   if ((td->flags & EFL_TASK_FLAGS_USE_STDIN) ||
        (pd->flags & EFL_EXE_FLAGS_HIDE_IO))
      close(STDIN_FILENO);
-   if ((pd->flags & EFL_EXE_FLAGS_USE_STDOUT) ||
+   if ((td->flags & EFL_TASK_FLAGS_USE_STDOUT) ||
        (pd->flags & EFL_EXE_FLAGS_HIDE_IO))
      close(STDOUT_FILENO);
    if ((pd->flags & EFL_EXE_FLAGS_HIDE_IO))
      close(STDERR_FILENO);
 
-   if (!(pd->flags & EFL_EXE_FLAGS_USE_STDIN) &&
+   if (!(td->flags & EFL_TASK_FLAGS_USE_STDIN) &&
        (pd->flags & EFL_EXE_FLAGS_HIDE_IO))
      {
         // hide stdin
@@ -475,14 +475,14 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
         dup2(devnull, STDIN_FILENO);
         close(devnull);
      }
-   else if ((pd->flags & EFL_EXE_FLAGS_USE_STDIN))
+   else if ((td->flags & EFL_TASK_FLAGS_USE_STDIN))
      {
         // hook up stdin to the pipe going to the parent
         dup2(pipe_stdin[0], STDIN_FILENO);
         close(pipe_stdin[0]);
      }
 
-   if (!(pd->flags & EFL_EXE_FLAGS_USE_STDOUT) &&
+   if (!(td->flags & EFL_TASK_FLAGS_USE_STDOUT) &&
        (pd->flags & EFL_EXE_FLAGS_HIDE_IO))
      {
         // hide stdout
@@ -490,7 +490,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
         dup2(devnull, STDOUT_FILENO);
         close(devnull);
      }
-   else if ((pd->flags & EFL_EXE_FLAGS_USE_STDOUT))
+   else if ((td->flags & EFL_TASK_FLAGS_USE_STDOUT))
      {
         // hook up stdout to the pipe going to the parent
         dup2(pipe_stdout[1], STDOUT_FILENO);

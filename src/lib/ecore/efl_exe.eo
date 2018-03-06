@@ -19,9 +19,7 @@ enum Efl.Exe.Flags {
    none             = 0,
    group_leader     = 1,
    exit_with_parent = 2,
-   hide_io          = 4,
-   use_stdin        = 8,
-   use_stdout       = 16,
+   hide_io          = 4
 }
 
 class Efl.Exe (Efl.Task)
@@ -33,7 +31,7 @@ class Efl.Exe (Efl.Task)
             sig: Efl.Exe.Signal; [[ Send this signal to the task ]]
          }
       }
-      @property flags {
+      @property exe_flags {
         set { }
         get { }
         values {

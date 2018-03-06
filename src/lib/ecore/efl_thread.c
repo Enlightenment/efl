@@ -524,7 +524,9 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    int pipe_from_thread[2];
    unsigned int argc, i, num;
    Efl_Callback_Array_Item_Full *it;
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
+   if (!td) return EINA_FALSE;
    thdat = calloc(1, sizeof(Thread_Data));
    if (!thdat) return EINA_FALSE;
    thdat->fd.in = -1;
@@ -532,45 +534,59 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    thdat->ctrl.in = -1;
    thdat->ctrl.out = -1;
 
-   if (pipe(pipe_to_thread) != 0)
+   // input/output pipes
+   if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
      {
-        ERR("Can't create to_thread pipe");
-        free(thdat);
-        return EINA_FALSE;
+        if (pipe(pipe_to_thread) != 0)
+          {
+             ERR("Can't create to_thread pipe");
+             free(thdat);
+             return EINA_FALSE;
+          }
      }
-   if (pipe(pipe_from_thread) != 0)
+   if (td->flags & EFL_TASK_FLAGS_USE_STDOUT)
      {
-        ERR("Can't create from_thread pipe");
-        close(pipe_to_thread[0]);
-        close(pipe_to_thread[1]);
-        free(thdat);
-        return EINA_FALSE;
+        if (pipe(pipe_from_thread) != 0)
+          {
+             ERR("Can't create from_thread pipe");
+             close(pipe_to_thread[0]);
+             close(pipe_to_thread[1]);
+             free(thdat);
+             return EINA_FALSE;
+          }
      }
-   thdat->fd.in  = pipe_from_thread[1]; // write - input to parent
-   thdat->fd.out = pipe_to_thread  [0]; // read - output from parent
-   pd->fd.in     = pipe_to_thread  [1]; // write - input to child
-   pd->fd.out    = pipe_from_thread[0]; // read - output from child
-   eina_file_close_on_exec(pd->fd.in, EINA_TRUE);
-   eina_file_close_on_exec(pd->fd.out, EINA_TRUE);
-   eina_file_close_on_exec(thdat->fd.in, EINA_TRUE);
-   eina_file_close_on_exec(thdat->fd.out, EINA_TRUE);
-   fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
-   fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
-   fcntl(thdat->fd.in, F_SETFL, O_NONBLOCK);
-   fcntl(thdat->fd.out, F_SETFL, O_NONBLOCK);
-   pd->fd.in_handler =
-     efl_add(EFL_LOOP_HANDLER_CLASS, obj,
-             efl_loop_handler_fd_set(efl_added, pd->fd.in),
-             efl_event_callback_add
-               (efl_added, EFL_LOOP_HANDLER_EVENT_WRITE, _cb_thread_parent_in, obj));
-   pd->fd.out_handler =
-     efl_add(EFL_LOOP_HANDLER_CLASS, obj,
-             efl_loop_handler_fd_set(efl_added, pd->fd.out),
-             efl_event_callback_add
-               (efl_added, EFL_LOOP_HANDLER_EVENT_READ, _cb_thread_parent_out, obj));
-   if (pd->read_listeners > 0)
-     efl_loop_handler_active_set(pd->fd.out_handler, EFL_LOOP_HANDLER_FLAGS_READ);
+   if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
+     {
+        thdat->fd.in  = pipe_from_thread[1]; // write - input to parent
+        pd->fd.out    = pipe_from_thread[0]; // read - output from child
+        eina_file_close_on_exec(thdat->fd.in, EINA_TRUE);
+        eina_file_close_on_exec(pd->fd.out, EINA_TRUE);
+        fcntl(thdat->fd.in, F_SETFL, O_NONBLOCK);
+        fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
+        pd->fd.out_handler =
+          efl_add(EFL_LOOP_HANDLER_CLASS, obj,
+                  efl_loop_handler_fd_set(efl_added, pd->fd.out),
+                  efl_event_callback_add
+                    (efl_added, EFL_LOOP_HANDLER_EVENT_READ, _cb_thread_parent_out, obj));
+        if (pd->read_listeners > 0)
+          efl_loop_handler_active_set(pd->fd.out_handler, EFL_LOOP_HANDLER_FLAGS_READ);
+     }
+   if (td->flags & EFL_TASK_FLAGS_USE_STDOUT)
+     {
+        pd->fd.in     = pipe_to_thread  [1]; // write - input to child
+        thdat->fd.out = pipe_to_thread  [0]; // read - output from parent
+        eina_file_close_on_exec(pd->fd.in, EINA_TRUE);
+        eina_file_close_on_exec(thdat->fd.out, EINA_TRUE);
+        fcntl(thdat->fd.out, F_SETFL, O_NONBLOCK);
+        fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
+        pd->fd.in_handler =
+          efl_add(EFL_LOOP_HANDLER_CLASS, obj,
+                  efl_loop_handler_fd_set(efl_added, pd->fd.in),
+                  efl_event_callback_add
+                    (efl_added, EFL_LOOP_HANDLER_EVENT_WRITE, _cb_thread_parent_in, obj));
+     }
 
+   // control pipes
    if (pipe(pipe_to_thread) != 0)
      {
         ERR("Can't create to_thread control pipe");

@@ -190,6 +190,7 @@ struct _Efl_Task_Data
    Eina_Hash         *env;
    Efl_Task_Priority  priority;
    int                exit_code;
+   Efl_Task_Flags     flags;
    Eina_Bool          command_dirty : 1;
    Eina_Bool          exited : 1;
 };

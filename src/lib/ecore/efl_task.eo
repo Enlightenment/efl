@@ -10,6 +10,13 @@ enum Efl.Task.Priority {
    ultra
 }
 
+enum Efl.Task.Flags {
+   [[ ]]
+   none             = 0,
+   use_stdin        = 1,
+   use_stdout       = 2
+}
+
 class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
 {
    [[ ]]
@@ -124,6 +131,13 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
          get { }
          values {
             code: int; [[ ]]
+         }
+      }
+      @property flags {
+         set { }
+         get { }
+         values {
+            flags: Efl.Task.Flags; [[ ]]
          }
       }
       run {
