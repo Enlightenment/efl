@@ -4000,7 +4000,7 @@ seat_tch_create(struct wl_client *client, struct wl_resource *resource, uint32_t
    Comp_Seat *s = wl_resource_get_user_data(resource);
    struct wl_resource *res;
 
-   res = wl_resource_create(client, &wl_pointer_interface, wl_resource_get_version(resource), id);
+   res = wl_resource_create(client, &wl_touch_interface, wl_resource_get_version(resource), id);
    wl_resource_set_implementation(res, &seat_tch_interface, s, seat_tch_unbind);
    if (!s->tch.resources) s->tch.resources = eina_hash_pointer_new(NULL);
    eina_hash_list_append(s->tch.resources, &client, res);
