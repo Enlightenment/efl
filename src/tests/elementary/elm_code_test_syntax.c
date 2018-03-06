@@ -57,7 +57,8 @@ START_TEST (elm_code_syntax_c)
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -122,7 +123,8 @@ START_TEST (elm_code_syntax_scope_change_braces_test)
    Elm_Code_Line *line;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    code->file->mime = "text/x-csrc";
    elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_SYNTAX);

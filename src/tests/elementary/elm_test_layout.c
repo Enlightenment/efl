@@ -11,7 +11,8 @@ START_TEST (elm_layout_legacy_type_check)
    Evas_Object *win, *layout;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
    layout = elm_layout_add(win);
@@ -33,7 +34,8 @@ START_TEST(elm_atspi_role_get)
    Evas_Object *win, *layout;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
    layout = elm_layout_add(win);
@@ -50,7 +52,8 @@ START_TEST(elm_layout_swallows)
    char buf[PATH_MAX];
    Evas_Object *win, *ly, *bt, *bt2;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
@@ -87,7 +90,8 @@ START_TEST(elm_layout_model_connect)
    const char *part_text;
    const char text_value[] = "A random string for elm_layout_model_connect test";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);

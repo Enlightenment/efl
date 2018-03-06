@@ -13,7 +13,8 @@ START_TEST (elm_entry_legacy_type_check)
    Evas_Object *win, *entry;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -34,7 +35,8 @@ START_TEST (elm_entry_del)
 {
    Evas_Object *win, *entry;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -56,7 +58,8 @@ START_TEST (elm_entry_signal_callback)
    void *data;
    int k;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -100,7 +103,8 @@ START_TEST (elm_entry_atspi_text_char_get)
    const char *txt = "ĄA11Y Ł TEST";
    const char *mtxt = "<b>ĄA11Y</b> <title>Ł</> TEST";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -138,7 +142,8 @@ START_TEST (elm_entry_atspi_text_char_count)
 
    const char *mtxt = "<b>AĄ11Y</b> <title>Ł</> TEST";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -159,7 +164,8 @@ START_TEST (elm_entry_atspi_text_string_get_char)
 
    const char *txt = "Lorem ipśum   dolor sit amęt";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -204,7 +210,8 @@ START_TEST (elm_entry_atspi_text_string_get_word)
 
    const char *txt = "Lorem ipśum   dolor sit amęt";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -250,7 +257,8 @@ START_TEST (elm_entry_atspi_text_string_get_paragraph)
 
    const char *txt = "Lorem ipśum<br>   dolor sit<br> amęt";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -296,7 +304,8 @@ START_TEST (elm_entry_atspi_text_string_get_line)
 
    const char *txt = "Lorem ipśum<br>   dolor sit amęt";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -329,7 +338,8 @@ START_TEST (elm_entry_atspi_text_text_get)
    char *val;
    const char *txt = "Lorem Xpśum dolor sit amęt";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -362,7 +372,8 @@ START_TEST (elm_entry_atspi_text_selections)
    Eina_Bool ret;
    const char *txt = "Lorem ipśum<br>   dolor sit\n amęt";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
@@ -405,7 +416,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *entry;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);

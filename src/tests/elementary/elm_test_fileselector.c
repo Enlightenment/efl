@@ -11,7 +11,8 @@ START_TEST (elm_fileselector_legacy_type_check)
    Evas_Object *win, *fileselector;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
@@ -33,7 +34,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *fileselector;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
@@ -61,7 +63,8 @@ START_TEST (elm_fileselector_selected)
    char *path;
    Eina_Bool open, selected;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    if (!eina_file_mkdtemp("elm_test-XXXXXX", &tmp_path))
      {

@@ -11,7 +11,8 @@ START_TEST (elm_diskselector_legacy_type_check)
    Evas_Object *win, *diskselector;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "diskselector", ELM_WIN_BASIC);
 
    diskselector = elm_diskselector_add(win);
@@ -33,7 +34,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *diskselector;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "diskselector", ELM_WIN_BASIC);
 
    diskselector = elm_diskselector_add(win);

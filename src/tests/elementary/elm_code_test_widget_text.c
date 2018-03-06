@@ -13,7 +13,8 @@ START_TEST (elm_code_test_widget_text_tab_width)
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
@@ -36,7 +37,8 @@ START_TEST (elm_code_test_widget_text_position)
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "a\tb", 4, NULL);

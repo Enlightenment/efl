@@ -10,7 +10,8 @@ START_TEST (elm_bg_legacy_type_check)
    Evas_Object *win, *bg;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "bg", ELM_WIN_BASIC);
 
    bg = elm_bg_add(win);

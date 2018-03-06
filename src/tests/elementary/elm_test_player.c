@@ -11,7 +11,8 @@ START_TEST (elm_player_legacy_type_check)
    Evas_Object *win, *player;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "player", ELM_WIN_BASIC);
 
    player = elm_player_add(win);
@@ -33,7 +34,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *player;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "player", ELM_WIN_BASIC);
 
    player = elm_player_add(win);

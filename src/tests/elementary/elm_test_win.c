@@ -68,7 +68,8 @@ START_TEST (elm_win_legacy_type_check)
    Evas_Object *win;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
    type = elm_object_widget_type_get(win);
@@ -88,7 +89,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
    role = efl_access_role_get(win);
@@ -104,7 +106,8 @@ START_TEST (elm_atspi_component_screen_position)
    Eina_Bool ret;
    int x, y;
 
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
@@ -123,7 +126,8 @@ END_TEST
 
 START_TEST (elm_win_autohide)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
    elm_win_autohide_set(win, EINA_TRUE);
@@ -145,7 +149,8 @@ END_TEST
 
 START_TEST (elm_win_policy_quit_last_window_hidden)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
@@ -171,7 +176,8 @@ END_TEST
 
 START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
@@ -373,7 +379,8 @@ START_TEST (efl_ui_win_multi_touch_inputs)
     * pointer x: down, move, move, ...
     */
 
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 

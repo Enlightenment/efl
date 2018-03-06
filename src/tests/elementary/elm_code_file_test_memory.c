@@ -11,7 +11,8 @@ START_TEST (elm_code_file_memory_lines)
 {
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    ck_assert_uint_eq(0, elm_code_file_lines_get(code->file));
 
@@ -29,7 +30,8 @@ START_TEST (elm_code_file_memory_tokens)
    Elm_Code_Line *line;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = code->file;
    elm_code_file_line_append(file, "a line", 6, NULL);

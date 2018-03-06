@@ -7,8 +7,9 @@
 
 START_TEST (elm_main)
 {
-    ck_assert(elm_init(1, NULL) == 1);
-    ck_assert(elm_shutdown() == 0);
+   char *args[] = { "exe" };
+   ck_assert(elm_init(1, args) == 1);
+   ck_assert(elm_shutdown() == 0);
 }
 END_TEST
 

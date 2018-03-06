@@ -110,7 +110,8 @@ START_TEST(correct_register)
    Eina_List *set1 = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    _setup(&manager, &sub, &root);
 
@@ -150,7 +151,8 @@ START_TEST(correct_unregister)
    Eina_List *set = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    _setup(&manager, &sub, &root);
 
@@ -193,7 +195,8 @@ START_TEST(correct_un_register)
    Eina_List *set_add = NULL, *set_del = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    _setup(&manager, &sub, &root);
 

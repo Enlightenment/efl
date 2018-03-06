@@ -11,7 +11,8 @@ START_TEST (elm_naviframe_legacy_type_check)
    Evas_Object *win, *naviframe;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "naviframe", ELM_WIN_BASIC);
 
    naviframe = elm_naviframe_add(win);
@@ -33,7 +34,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *naviframe;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "naviframe", ELM_WIN_BASIC);
 
    naviframe = elm_naviframe_add(win);

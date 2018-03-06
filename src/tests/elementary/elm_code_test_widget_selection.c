@@ -16,7 +16,8 @@ START_TEST (elm_code_test_widget_selection_set)
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -41,7 +42,8 @@ START_TEST (elm_code_test_widget_selection_normalized_get)
    Elm_Code_Widget_Selection_Data *selection;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -83,7 +85,8 @@ START_TEST (elm_code_test_widget_selection_text_get)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -116,7 +119,8 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -149,7 +153,8 @@ START_TEST (elm_code_test_widget_selection_text_get_twoline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -178,7 +183,8 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -207,7 +213,8 @@ START_TEST (elm_code_test_widget_selection_text_get_multiline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -237,7 +244,8 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -269,7 +277,8 @@ START_TEST (elm_code_test_widget_selection_delete)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -305,7 +314,8 @@ START_TEST (elm_code_test_widget_selection_reverse_delete)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -341,7 +351,8 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -388,7 +399,8 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -435,7 +447,8 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -484,7 +497,8 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -531,7 +545,8 @@ START_TEST (elm_code_test_widget_selection_select_line)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "line selection", 14, NULL);
@@ -561,7 +576,8 @@ START_TEST (elm_code_test_widget_selection_select_word)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "word selection test", 19, NULL);
@@ -602,7 +618,8 @@ START_TEST (elm_code_test_widget_selection_select_word_punctuation)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "comma, stop. question? mark!", 38, NULL);
@@ -641,7 +658,8 @@ START_TEST (elm_code_test_widget_selection_select_word_symbols)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "colon: [array] (brackets) {braces}", 38, NULL);

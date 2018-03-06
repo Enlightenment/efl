@@ -15,8 +15,8 @@ efl_main(void *data EINA_UNUSED,
    
    fail_if(!arge->initialization);
    fprintf(stderr, "ARGC %d\n", eina_array_count(arge->argv));
-   fail_if(eina_array_count(arge->argv) != 1);
-   fail_if(!eina_streq(eina_array_data_get(arge->argv, 0), "test"));
+   fail_if(eina_array_count(arge->argv) != 2);
+   fail_if(!eina_streq(eina_array_data_get(arge->argv, 1), "test"));
 
    efl_loop_quit(ev->object, eina_value_string_init("success"));
 }

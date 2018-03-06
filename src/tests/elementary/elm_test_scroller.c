@@ -11,7 +11,8 @@ START_TEST (elm_scroller_legacy_type_check)
    Evas_Object *win, *scroller;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "scroller", ELM_WIN_BASIC);
 
    scroller = elm_scroller_add(win);
@@ -33,7 +34,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *scroller;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "scroller", ELM_WIN_BASIC);
 
    scroller = elm_scroller_add(win);

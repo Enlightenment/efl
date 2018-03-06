@@ -17,7 +17,8 @@ START_TEST (elm_code_text_get_test)
    const char *str;
    unsigned int len;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -38,7 +39,8 @@ START_TEST (elm_code_text_insert_test)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -58,7 +60,8 @@ START_TEST (elm_code_text_contains_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -80,7 +83,8 @@ START_TEST (elm_code_text_strpos_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -106,7 +110,8 @@ START_TEST (elm_code_text_newline_position_test)
    const char *unixtext = "a test\nwith newline";
    const char *wintext = "a windows\r\nnewline";
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    ck_assert_int_eq(6, elm_code_text_newlinenpos(unixtext, strlen(unixtext), &nllen));
    ck_assert_int_eq(1, nllen);
    ck_assert_int_eq(9, elm_code_text_newlinenpos(wintext, strlen(wintext), &nllen));
@@ -119,7 +124,8 @@ START_TEST (elm_code_text_is_whitespace_test)
 {
    const char *text;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    text = " ";
    ck_assert_int_eq(1, elm_code_text_is_whitespace(text, strlen(text)));
 

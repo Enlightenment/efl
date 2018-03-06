@@ -490,8 +490,8 @@ ecore_init_ex(int argc, char **argv)
    if (_ecore_init_ex++ != 0) return _ecore_init_ex;
 
    ecore_init();
-   ecore_loop_arguments_send(argc - 1,
-                             (argc > 1) ? ((const char **) argv + 1) : NULL);
+   ecore_loop_arguments_send(argc,
+                             (argc > 0) ? ((const char **)argv) : NULL);
    ecore_app_args_set(argc, (const char**) argv);
 
    return _ecore_init_ex;

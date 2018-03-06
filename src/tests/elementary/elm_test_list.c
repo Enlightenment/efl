@@ -13,7 +13,8 @@ START_TEST (elm_list_legacy_type_check)
    Evas_Object *win, *list;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
    list = elm_list_add(win);
@@ -40,7 +41,8 @@ START_TEST (elm_list_atspi_selection_selected_children_count_get)
  Elm_Object_Item *item;
  int val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -67,7 +69,8 @@ START_TEST (elm_list_atspi_selection_child_select)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -87,7 +90,8 @@ START_TEST (elm_list_atspi_selection_selected_child_deselect)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -110,7 +114,8 @@ START_TEST (elm_list_atspi_selection_is_child_selected)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -133,7 +138,8 @@ START_TEST (elm_list_atspi_selection_all_children_select)
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -161,7 +167,8 @@ START_TEST (elm_list_atspi_selection_clear)
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -187,7 +194,8 @@ START_TEST (elm_list_atspi_selection_child_deselect)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -211,7 +219,8 @@ START_TEST (elm_atspi_role_get)
  Evas_Object *win, *list;
  Efl_Access_Role role;
 
- elm_init(1, NULL);
+ char *args[] = { "exe" };
+   elm_init(1, args);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -233,7 +242,8 @@ START_TEST(elm_atspi_children_parent)
    Efl_Access *parent;
    Elm_Object_Item *it;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
    Evas_Object *icon = elm_icon_add(win);

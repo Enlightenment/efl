@@ -28,7 +28,8 @@ void generate_app(void)
 
 START_TEST (test_efl_access_app_obj_name_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -49,7 +50,8 @@ END_TEST
 
 START_TEST (test_efl_access_i18n_name_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    const char *name;
@@ -75,7 +77,8 @@ END_TEST
 
 START_TEST (test_efl_access_i18n_name_set)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    const char *name;
@@ -100,7 +103,8 @@ END_TEST
 
 START_TEST (test_efl_access_role_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -117,7 +121,8 @@ END_TEST
 
 START_TEST (test_efl_access_role_set)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
    Efl_Access_Role role;
 
@@ -139,7 +144,8 @@ END_TEST
 
 START_TEST (test_efl_access_role_name_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -156,7 +162,8 @@ END_TEST
 
 START_TEST (test_efl_access_localized_role_name_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -173,7 +180,8 @@ END_TEST
 
 START_TEST (test_efl_access_description_set)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -204,7 +212,8 @@ END_TEST
 /* Test if initial description value is NULL */
 START_TEST (test_efl_access_description_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    const char *descr;
@@ -218,7 +227,8 @@ END_TEST
 
 START_TEST (test_efl_access_children_and_parent)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    generate_app();
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
@@ -245,7 +255,8 @@ END_TEST
 
 START_TEST (test_efl_access_children_and_parent2)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    generate_app();
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
@@ -275,7 +286,8 @@ END_TEST
 /* Initial value of translation domain should be NULL */
 START_TEST (test_efl_access_translation_domain_get)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    const char *domain;
@@ -290,7 +302,8 @@ END_TEST
 
 START_TEST (test_efl_access_translation_domain_set)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    const char *domain;
@@ -312,7 +325,8 @@ END_TEST
 
 START_TEST (test_efl_access_relationship_append)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    Efl_Access_Relation_Set set;
@@ -375,7 +389,8 @@ END_TEST
 
 START_TEST (test_efl_access_relationship_remove)
 {
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    Efl_Access_Relation_Set set;
@@ -456,7 +471,8 @@ START_TEST (test_efl_access_relationships_clear)
    Efl_Access_Relation *rel;
    Eina_List *l;
 
-   elm_init(0, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    generate_app();
 
    efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);

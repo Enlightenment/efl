@@ -11,7 +11,8 @@ START_TEST (elm_check_legacy_type_check)
    Evas_Object *win, *check;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
@@ -32,7 +33,8 @@ START_TEST (elm_check_onoff_text)
 {
    Evas_Object *win, *check;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
@@ -56,7 +58,8 @@ START_TEST (elm_check_state)
    Evas_Object *win, *check;
    Eina_Bool state = EINA_TRUE;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
@@ -77,7 +80,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *check;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);

@@ -11,7 +11,8 @@ START_TEST (elm_glview_legacy_type_check)
    Evas_Object *win, *glview;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
 
    glview = elm_glview_add(win);
@@ -36,7 +37,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *glview;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
 
    glview = elm_glview_add(win);

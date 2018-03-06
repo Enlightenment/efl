@@ -18,7 +18,8 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    unsigned int length;
    const char *content;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -68,7 +69,8 @@ START_TEST (elm_code_test_widget_undo_text_insert_multiple)
    unsigned int length;
    const char *content;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -105,7 +107,8 @@ START_TEST (elm_code_test_widget_undo_newline)
    unsigned int length;
    const char *content;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -142,7 +145,8 @@ START_TEST (elm_code_test_widget_undo_delete)
    unsigned int length;
    const char *content;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
@@ -204,7 +208,8 @@ START_TEST (elm_code_test_widget_undo_delete_multiple)
    unsigned int length;
    const char *content;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);

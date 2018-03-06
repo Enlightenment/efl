@@ -31,7 +31,8 @@ START_TEST (elm_code_indent_whitespace_test)
    Elm_Code *code;
    Elm_Code_File *file;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -49,7 +50,8 @@ START_TEST (elm_code_indent_comments_test)
    Elm_Code *code;
    Elm_Code_File *file;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -71,7 +73,8 @@ START_TEST (elm_code_indent_simple_braces)
    Elm_Code *code;
    Elm_Code_File *file;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -93,7 +96,8 @@ START_TEST (elm_code_indent_matching_braces)
    const char *str;
    unsigned int str_len;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -130,7 +134,8 @@ START_TEST (elm_code_indent_startswith_keyword)
    Elm_Code_File *file;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 

@@ -16,7 +16,8 @@ START_TEST (elm_code_file_load)
    Elm_Code_File *file;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
    ck_assert_ptr_ne(realpath(path, real), NULL);
@@ -35,7 +36,8 @@ START_TEST (elm_code_file_load_lines)
    Elm_Code_File *file;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -52,7 +54,8 @@ START_TEST (elm_code_file_load_blank_lines)
    Elm_Code_File *file;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -69,7 +72,8 @@ START_TEST (elm_code_file_load_windows)
    Elm_Code_File *file;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -98,7 +102,8 @@ START_TEST (elm_code_file_load_content)
    Elm_Code_File *file;
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -117,7 +122,8 @@ START_TEST (elm_code_file_line_ending_unix)
    Elm_Code *code;
    short len;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -138,7 +144,8 @@ START_TEST (elm_code_file_line_ending_windows)
    Elm_Code *code;
    short len;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 

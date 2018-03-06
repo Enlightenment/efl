@@ -13,7 +13,8 @@ START_TEST (elm_code_create_test)
 {
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
 
    ck_assert(!!code);
@@ -29,7 +30,8 @@ START_TEST (elm_code_open_test)
    char realpath1[PATH_MAX], realpath2[PATH_MAX];
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    elm_code_file_open(code, path);
 

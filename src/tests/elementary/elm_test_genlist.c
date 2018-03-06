@@ -19,7 +19,8 @@ START_TEST (elm_genlist_legacy_type_check)
    Evas_Object *win, *genlist;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
@@ -38,7 +39,8 @@ END_TEST
 
 void test_init(void)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    elm_config_atspi_mode_set(EINA_TRUE);
    win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
    genlist = elm_genlist_add(win);

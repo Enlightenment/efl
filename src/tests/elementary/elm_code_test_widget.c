@@ -51,7 +51,8 @@ START_TEST (elm_code_widget_token_render_simple_test)
 
    Evas_Textgrid_Cell cells[25];
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
 
    win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
@@ -82,7 +83,8 @@ START_TEST (elm_code_widget_construct)
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
@@ -99,7 +101,8 @@ START_TEST (elm_code_widget_construct_nocode)
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, NULL);
@@ -116,7 +119,8 @@ START_TEST (elm_code_widget_position)
    Evas_Object *win;
    Evas_Coord x, y, w, h, x2, y2, w2, h2;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);

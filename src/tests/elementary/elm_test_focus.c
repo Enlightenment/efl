@@ -2,7 +2,8 @@
 
 START_TEST(focus_unregister_twice)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    Efl_Ui_Focus_Object *r1 = efl_add(FOCUS_TEST_CLASS, NULL);
    Efl_Ui_Focus_Object *r2 = efl_add(FOCUS_TEST_CLASS, NULL);
 
@@ -26,7 +27,8 @@ END_TEST
 
 START_TEST(focus_register_twice)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Efl_Ui_Focus_Object *r1 = elm_focus_test_object_new("r1", 0, 0, 10, 10);
    Efl_Ui_Focus_Object *r2 = elm_focus_test_object_new("r2", 0, 10, 10, 10);
@@ -50,7 +52,8 @@ START_TEST(pos_check)
    Efl_Ui_Focus_Manager *m;
    Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
@@ -120,7 +123,8 @@ START_TEST(pos_check2)
    Efl_Ui_Focus_Relations *rel;
    Efl_Ui_Focus_Object *root, *middle, *north_east, *north_west, *south_east, *south_west;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    middle = elm_focus_test_object_new("middle", 40, 40, 5, 5);
 
@@ -162,7 +166,8 @@ START_TEST(pos_check2)
 END_TEST
 START_TEST(redirect)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 0, 20, 20);
    TEST_OBJ_NEW(root2, 0, 0, 20, 20);
@@ -197,7 +202,8 @@ START_TEST(border_check)
    Eina_Iterator *iter;
    Efl_Ui_Focus_Object *obj;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
@@ -234,7 +240,8 @@ START_TEST(logical_chain)
    Efl_Ui_Focus_Object *lroot;
    int i = 0;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 0, 20, 20);
 
@@ -298,7 +305,8 @@ START_TEST(finalize_check)
 {
    Efl_Ui_Focus_Manager *m;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL);
    fail_if(m);
@@ -311,7 +319,8 @@ START_TEST(redirect_param)
 {
    Efl_Ui_Focus_Manager *m, *m2;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 20, 20, 20);
    TEST_OBJ_NEW(root2, 0, 20, 20, 20);
@@ -338,7 +347,8 @@ START_TEST(invalid_args_check)
 {
    Efl_Ui_Focus_Manager *m;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 20, 20, 20);
    TEST_OBJ_NEW(child, 0, 20, 20, 20);
@@ -371,7 +381,8 @@ START_TEST(order_check)
    Efl_Ui_Focus_Manager *m;
    Eina_List *order = NULL;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 20, 20, 20);
    TEST_OBJ_NEW(child1, 0, 20, 20, 20);
@@ -408,7 +419,8 @@ START_TEST(logical_shift)
 {
    Efl_Ui_Focus_Manager *m;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 0, 10, 10);
    TEST_OBJ_NEW(child, 0, 0, 10, 10);
@@ -442,7 +454,8 @@ START_TEST(root_redirect_chain)
 {
    Efl_Ui_Focus_Manager *m, *m2;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 20, 20, 20);
    TEST_OBJ_NEW(root2, 0, 20, 20, 20);
@@ -472,7 +485,8 @@ START_TEST(root_redirect_chain_unset)
 {
    Efl_Ui_Focus_Manager *m, *m2, *m3, *m4;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    TEST_OBJ_NEW(root, 0, 20, 20, 20);
    TEST_OBJ_NEW(root2, 0, 20, 20, 20);
@@ -587,7 +601,8 @@ START_TEST(first_touch_check)
    Efl_Ui_Focus_Manager *m;
    Efl_Ui_Focus_Object *most_left, *most_right;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    m = _recursive_triangle_manager(0, &most_right, &most_left);
 

@@ -22,7 +22,8 @@ START_TEST (elm_image_legacy_type_check)
    Evas_Object *win, *image;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = elm_image_add(win);
@@ -44,7 +45,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *image;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = elm_image_add(win);
@@ -137,7 +139,8 @@ START_TEST (elm_image_async_path)
    Eina_Bool ok;
    Test_Data td;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    td.success = 0;
@@ -169,7 +172,8 @@ START_TEST (elm_image_async_mmap)
    Eina_File *f;
    char path[PATH_MAX];
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    td.success = 1; // skip "error" case
@@ -205,7 +209,8 @@ START_TEST (efl_ui_image_icon)
    Eina_Bool ok;
    const char *icon_name;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = efl_add(EFL_UI_IMAGE_CLASS, win);

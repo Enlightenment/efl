@@ -11,7 +11,8 @@ START_TEST (elm_fileselector_button_legacy_type_check)
    Evas_Object *win, *fs_button;
    const char *type;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "fileselector_button", ELM_WIN_BASIC);
 
    fs_button = elm_fileselector_button_add(win);
@@ -33,7 +34,8 @@ START_TEST (elm_atspi_role_get)
    Evas_Object *win, *fs_button;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    win = elm_win_add(NULL, "fileselector_button", ELM_WIN_BASIC);
 
    fs_button = elm_fileselector_button_add(win);

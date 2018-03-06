@@ -11,7 +11,8 @@ typedef unsigned int uint;
 
 START_TEST (elm_config_eoapi)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
@@ -148,7 +149,8 @@ END_TEST
 
 START_TEST (elm_config_win)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
@@ -180,7 +182,8 @@ _eina_list_string_has(const Eina_List *list, const char *str)
 
 START_TEST (elm_config_profiles)
 {
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
 
    // this only tests some of the profile APIs. we're not going to mess with
    // the global config during make check :)
