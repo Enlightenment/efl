@@ -1,7 +1,7 @@
 import efl_types;
 import eina_types;
 
-class Efl.Thread (Efl.Task)
+class Efl.Thread (Efl.Task, Efl.ThreadIO)
 {
    methods {
    }
@@ -18,5 +18,7 @@ class Efl.Thread (Efl.Task)
       Efl.Io.Reader.eos { get; set; }
       Efl.Io.Writer.write;
       Efl.Io.Writer.can_write { get; set; }
+      Efl.ThreadIO.call;
+      Efl.ThreadIO.call_sync;
    }
 }

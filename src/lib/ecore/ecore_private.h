@@ -197,6 +197,7 @@ struct _Efl_Task_Data
 
 struct _Efl_Appthread_Data
 {
+   int read_listeners;
    struct {
       int in, out;
       Eo *in_handler, *out_handler;
@@ -204,7 +205,7 @@ struct _Efl_Appthread_Data
       Eina_Bool eos_read : 1;
       Eina_Bool can_write : 1;
    } fd, ctrl;
-   int read_listeners;
+   void *thdat;
 };
 
 

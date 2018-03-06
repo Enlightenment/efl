@@ -17,6 +17,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_loop_message_handler.eo \
 	lib/ecore/efl_exe.eo \
 	lib/ecore/efl_thread.eo \
+	lib/ecore/efl_threadio.eo \
         lib/ecore/efl_appthread.eo \
         lib/ecore/efl_task.eo \
 	lib/ecore/efl_io_closer_fd.eo \
@@ -138,6 +139,7 @@ lib/ecore/efl_interpolator_cubic_bezier.c \
 lib/ecore/efl_task.c \
 lib/ecore/efl_exe.c \
 lib/ecore/efl_thread.c \
+lib/ecore/efl_threadio.c \
 lib/ecore/efl_appthread.c \
 lib/ecore/ecore_main_timechanges.c \
 lib/ecore/ecore_pipe.c \

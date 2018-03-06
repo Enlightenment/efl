@@ -240,6 +240,22 @@ _efl_appthread_efl_io_writer_can_write_get(Eo *obj EINA_UNUSED, Efl_Appthread_Da
    return pd->fd.can_write;
 }
 
+void _appthread_threadio_call(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb);
+
+EOLIAN static void
+_efl_appthread_efl_threadio_call(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+{
+   _appthread_threadio_call(obj, pd, func_data, func, func_free_cb);
+}
+
+void *_appthread_threadio_call_sync(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb);
+
+EOLIAN static void *
+_efl_appthread_efl_threadio_call_sync(Eo *obj, Efl_Appthread_Data *pd, void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+{
+   return _appthread_threadio_call_sync(obj, pd, func_data, func, func_free_cb);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 #include "efl_appthread.eo.c"

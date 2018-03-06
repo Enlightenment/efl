@@ -16,6 +16,8 @@
 
 #define MY_CLASS EFL_THREAD_CLASS
 
+#define APPTHREAD_CLASS EFL_APPTHREAD_CLASS
+
 typedef struct
 {
    const char *name;
@@ -28,15 +30,30 @@ typedef struct
       const char **argv;
    } args;
    Efl_Callback_Array_Item_Full *event_cb;
+   void *indata, *outdata;
 } Thread_Data;
 
-#define CMD_EXIT   1
-#define CMD_EXITED 2
+#define CMD_EXIT        1
+#define CMD_EXITED      2
+#define CMD_CALL        3
+#define CMD_CALL_SYNC   4
 
 typedef struct
 {
-   int command;
-   int data;
+   Eina_Semaphore sem;
+   void *data;
+} Control_Reply;
+
+typedef struct
+{
+   union {
+      struct {
+         int command;
+         int data;
+         void *ptr[4];
+      } d;
+      unsigned char b[64];
+   };
 } Control_Data;
 
 typedef struct _Efl_Thread_Data Efl_Thread_Data;
@@ -84,16 +101,33 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
    ssize_t ret;
    Efl_Appthread_Data *ad;
 
-   ad = efl_data_scope_get(obj, EFL_APPTHREAD_CLASS);
-   cmd.command = 0;
-   cmd.data = 0;
+   ad = efl_data_scope_get(obj, APPTHREAD_CLASS);
+   memset(&cmd, 0, sizeof(cmd));
    ret = read(ad->ctrl.out, &cmd, sizeof(Control_Data));
    if (ret == sizeof(Control_Data))
      {
-        if (cmd.command == CMD_EXIT)
+        if (cmd.d.command == CMD_EXIT)
           {
              efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
              efl_loop_quit(obj, eina_value_int_init(0));
+          }
+        else if (cmd.d.command == CMD_CALL)
+          {
+             EFlThreadIOCall func = cmd.d.ptr[0];
+             void *data = cmd.d.ptr[1];
+             Eina_Free_Cb free_func = cmd.d.ptr[2];
+             if (func) func(data, obj);
+             if (free_func) free_func(data);
+          }
+        else if (cmd.d.command == CMD_CALL_SYNC)
+          {
+             EFlThreadIOCallSync func = cmd.d.ptr[0];
+             void *data = cmd.d.ptr[1];
+             Eina_Free_Cb free_func = cmd.d.ptr[2];
+             Control_Reply *rep = cmd.d.ptr[3];
+             if (func) rep->data = func(data, obj);
+             if (free_func) free_func(data);
+             eina_semaphore_release(&(rep->sem), 1);
           }
      }
 }
@@ -193,8 +227,10 @@ _efl_thread_main(void *data, Eina_Thread t)
    if (thdat->name) eina_thread_name_set(t, thdat->name);
    else eina_thread_name_set(t, "Eflthread");
 
-   obj = efl_add(EFL_APPTHREAD_CLASS, NULL);
-   ad = efl_data_scope_get(obj, EFL_APPTHREAD_CLASS);
+   obj = efl_add(APPTHREAD_CLASS, NULL);
+   ad = efl_data_scope_get(obj, APPTHREAD_CLASS);
+   efl_threadio_indata_set(obj, thdat->indata);
+   efl_threadio_outdata_set(obj, thdat->outdata);
    efl_event_callback_array_add(obj, _appthread_event_callback_watch(), ad);
 
    // add handlers for "stdio"
@@ -227,6 +263,7 @@ _efl_thread_main(void *data, Eina_Thread t)
    ad->fd.out_handler = thdat->fd.out_handler;
    ad->ctrl.in_handler = thdat->ctrl.in_handler;
    ad->ctrl.out_handler = thdat->ctrl.out_handler;
+   ad->thdat = thdat;
 
    if (thdat->event_cb)
      {
@@ -248,9 +285,11 @@ _efl_thread_main(void *data, Eina_Thread t)
 
    ret = efl_loop_begin(obj);
    real = efl_loop_exit_code_process(ret);
+   thdat->outdata = efl_threadio_outdata_get(obj);
 
-   cmd.command = CMD_EXITED;
-   cmd.data = real;
+   memset(&cmd, 0, sizeof(cmd));
+   cmd.d.command = CMD_EXITED;
+   cmd.d.data = real;
    write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
 
    efl_del(obj);
@@ -292,6 +331,7 @@ _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
 
         pd->exit_called = EINA_TRUE;
         efl_ref(obj);
+        if (pd->thdat) efl_threadio_outdata_set(obj, pd->thdat->outdata);
         job = eina_future_then(efl_loop_job(loop), _efl_loop_task_exit, obj);
         efl_future_Eina_FutureXXX_then(loop, job);
      }
@@ -321,21 +361,38 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
 
    if (!pd) return;
 
-   cmd.command = 0;
-   cmd.data = 0;
+   memset(&cmd, 0, sizeof(cmd));
    ret = read(pd->ctrl.out, &cmd, sizeof(Control_Data));
    if (ret == sizeof(Control_Data))
      {
-        if (cmd.command == CMD_EXITED)
+        if (cmd.d.command == CMD_EXITED)
           {
              if (!pd->exit_read)
                {
                   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
-                  if (td) td->exit_code = cmd.data;
+                  if (td) td->exit_code = cmd.d.data;
                   pd->exit_read = EINA_TRUE;
                   _thread_exit_eval(obj, pd);
                }
+          }
+        else if (cmd.d.command == CMD_CALL)
+          {
+             EFlThreadIOCall func = cmd.d.ptr[0];
+             void *data = cmd.d.ptr[1];
+             Eina_Free_Cb free_func = cmd.d.ptr[2];
+             if (func) func(data, obj);
+             if (free_func) free_func(data);
+          }
+        else if (cmd.d.command == CMD_CALL_SYNC)
+          {
+             EFlThreadIOCallSync func = cmd.d.ptr[0];
+             void *data = cmd.d.ptr[1];
+             Eina_Free_Cb free_func = cmd.d.ptr[2];
+             Control_Reply *rep = cmd.d.ptr[3];
+             if (func) rep->data = func(data, obj);
+             if (free_func) free_func(data);
+             eina_semaphore_release(&(rep->sem), 1);
           }
      }
 }
@@ -461,18 +518,17 @@ _efl_thread_efl_object_destructor(Eo *obj, Efl_Thread_Data *pd)
 
              // if it hasn't been asked to exit... ask it
              if (!pd->end_sent) efl_task_end(obj);
-             cmd.command = 0;
-             cmd.data = 0;
+             memset(&cmd, 0, sizeof(cmd));
              ret = read(pd->ctrl.out, &cmd, sizeof(Control_Data));
              while (ret == sizeof(Control_Data))
                {
-                  if (cmd.command == CMD_EXITED)
+                  if (cmd.d.command == CMD_EXITED)
                     {
                        if (!pd->exit_read)
                          {
                             Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
-                            if (td) td->exit_code = cmd.data;
+                            if (td) td->exit_code = cmd.d.data;
                             pd->exit_read = EINA_TRUE;
                             efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
                             break;
@@ -533,6 +589,9 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    thdat->fd.out = -1;
    thdat->ctrl.in = -1;
    thdat->ctrl.out = -1;
+
+   thdat->indata = efl_threadio_indata_get(obj);
+   thdat->outdata = efl_threadio_outdata_get(obj);
 
    // input/output pipes
    if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
@@ -625,7 +684,10 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    thdat->ctrl.out = pipe_to_thread  [0]; // read - output from parent
    pd->ctrl.in     = pipe_to_thread  [1]; // write - input to child
    pd->ctrl.out    = pipe_from_thread[0]; // read - output from child
-   // yes - these are blocking because we write and read very little
+   fcntl(thdat->ctrl.in, F_SETFL, O_NONBLOCK);
+   fcntl(thdat->ctrl.out, F_SETFL, O_NONBLOCK);
+   fcntl(pd->ctrl.in, F_SETFL, O_NONBLOCK);
+   fcntl(pd->ctrl.out, F_SETFL, O_NONBLOCK);
    eina_file_close_on_exec(pd->ctrl.in, EINA_TRUE);
    eina_file_close_on_exec(pd->ctrl.out, EINA_TRUE);
    eina_file_close_on_exec(thdat->ctrl.in, EINA_TRUE);
@@ -733,8 +795,8 @@ _efl_thread_efl_task_end(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
         Control_Data cmd;
 
         pd->end_sent = EINA_TRUE;
-        cmd.command = CMD_EXIT;
-        cmd.data = 0;
+        memset(&cmd, 0, sizeof(cmd));
+        cmd.d.command = CMD_EXIT;
         write(pd->ctrl.in, &cmd, sizeof(Control_Data));
      }
 }
@@ -926,6 +988,88 @@ EOLIAN static Eina_Bool
 _efl_thread_efl_io_writer_can_write_get(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
 {
    return pd->fd.can_write;
+}
+
+void
+_appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
+                         void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+{
+   Thread_Data *thdat = pd->thdat;
+   Control_Data cmd;
+
+   memset(&cmd, 0, sizeof(cmd));
+   cmd.d.command = CMD_CALL;
+   cmd.d.ptr[0] = func;
+   cmd.d.ptr[1] = func_data;
+   cmd.d.ptr[2] = func_free_cb;
+   write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
+}
+
+EOLIAN static void
+_efl_thread_efl_threadio_call(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
+                              void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+{
+   Thread_Data *thdat = pd->thdat;
+   Control_Data cmd;
+
+   memset(&cmd, 0, sizeof(cmd));
+   cmd.d.command = CMD_CALL;
+   cmd.d.ptr[0] = func;
+   cmd.d.ptr[1] = func_data;
+   cmd.d.ptr[2] = func_free_cb;
+   write(pd->ctrl.in, &cmd, sizeof(Control_Data));
+}
+
+void *
+_appthread_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
+                              void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+{
+   Thread_Data *thdat = pd->thdat;
+   Control_Data cmd;
+   Control_Reply *rep;
+   void *data;
+
+   memset(&cmd, 0, sizeof(cmd));
+   cmd.d.command = CMD_CALL_SYNC;
+   cmd.d.ptr[0] = func;
+   cmd.d.ptr[1] = func_data;
+   cmd.d.ptr[2] = func_free_cb;
+   rep = malloc(sizeof(Control_Reply));
+   if (!rep) return NULL;
+   cmd.d.ptr[3] = rep;
+   rep->data = NULL;
+   eina_semaphore_new(&(rep->sem), 0);
+   write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
+   eina_semaphore_lock(&(rep->sem));
+   data = rep->data;
+   free(rep);
+   return data;
+}
+
+EOLIAN static void *
+_efl_thread_efl_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
+                                   void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+{
+   Thread_Data *thdat = pd->thdat;
+   Control_Data cmd;
+   Control_Reply *rep;
+   void *data;
+
+   memset(&cmd, 0, sizeof(cmd));
+   cmd.d.command = CMD_CALL_SYNC;
+   cmd.d.ptr[0] = func;
+   cmd.d.ptr[1] = func_data;
+   cmd.d.ptr[2] = func_free_cb;
+   rep = malloc(sizeof(Control_Reply));
+   if (!rep) return NULL;
+   cmd.d.ptr[3] = rep;
+   rep->data = NULL;
+   eina_semaphore_new(&(rep->sem), 0);
+   write(pd->ctrl.in, &cmd, sizeof(Control_Data));
+   eina_semaphore_lock(&(rep->sem));
+   data = rep->data;
+   free(rep);
+   return data;
 }
 
 //////////////////////////////////////////////////////////////////////////
