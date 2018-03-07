@@ -622,13 +622,13 @@ EAPI void *eina_hash_find(const Eina_Hash *hash,
                           const void      *key) EINA_ARG_NONNULL(2);
 
 /**
- * @brief Modifies the entry pointer at the specified key and returns the old
- * entry.
+ * @brief Modifies the entry pointer at the specified key and returns
+ * the previous entry.
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
  * @param data The new data.
- * @return The data pointer for the old stored entry on success, or
- * @c NULL otherwise.
+ * @return The data pointer for the previously stored entry on success,
+ * or @c NULL otherwise.
  *
  * This function modifies the data of @p key with @p data in @p
  * hash. If no entry is found, nothing is added to @p hash.
@@ -639,12 +639,12 @@ EAPI void *eina_hash_modify(Eina_Hash  *hash,
 
 /**
  * @brief Modifies the entry pointer at the specified key and returns the
- * old entry or adds the entry if not found.
+ * previous entry or adds the entry if not found.
  *
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
- * @param data The data to replace the old entry
- * @return The data pointer for the old stored entry, or @c NULL
+ * @param data The data to replace the previous entry.
+ * @return The data pointer for the previous stored entry, or @c NULL
  * otherwise.
  *
  * This function modifies the value of @p key to @p data in @p
@@ -906,7 +906,7 @@ EAPI void *eina_hash_find_by_hash(const Eina_Hash *hash,
 
 /**
  * @brief Modifies the entry pointer at the specified key and returns
- * the old entry.
+ * the previous entry.
  *
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
@@ -914,10 +914,10 @@ EAPI void *eina_hash_find_by_hash(const Eina_Hash *hash,
  * '\\0' for string).
  * @param key_hash The hash that always matches the key. Ignored if @p
  * key is @c NULL.
- * @param data The data to replace the old entry, if it exists.
- * @return The data pointer for the old stored entry, or @c NULL if not
- * found. If an existing entry is not found, nothing is added to the
- * hash.
+ * @param data The data to replace the current entry, if it exists.
+ * @return The data pointer for the previously stored entry, or @c NULL
+ * if not found. If an existing entry is not found, nothing is added to
+ * the hash.
  */
 EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
                                     const void *key,
@@ -934,11 +934,10 @@ EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
  * This function returns a newly allocated iterator associated with @p
  * hash. If @p hash is not populated, this function still returns a
  * valid iterator that will always return false on
- * eina_iterator_next(), thus keeping API sane.
+ * eina_iterator_next().
  *
  * @warning If the hash structure changes then the iterator becomes
- * invalid. That is, if you add or remove items this iterator behavior
- * is undefined and your program may crash.
+ * invalid; adding or removing items may lead to program crash.
  */
 EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -951,11 +950,10 @@ EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLO
  * This function returns a newly allocated iterator associated with
  * @p hash. If @p hash is not populated, this function still returns a
  * valid iterator that will always return false on
- * eina_iterator_next(), thus keeping API sane.
+ * eina_iterator_next().
  *
  * @warning If the hash structure changes then the iterator becomes
- * invalid. That is, if you add or remove items this iterator behavior
- * is undefined and your program may crash.
+ * invalid; adding or removing items may lead to program crash.
  */
 EAPI Eina_Iterator *eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -968,14 +966,13 @@ EAPI Eina_Iterator *eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALL
  * This function returns a newly allocated iterator associated with @p
  * hash. If @p hash is not populated, this function still returns a
  * valid iterator that will always return false on
- * eina_iterator_next(), thus keeping API sane.
+ * eina_iterator_next().
  *
  * @note Iterator data will provide values as Eina_Hash_Tuple that
  * should not be modified!
  *
  * @warning If the hash structure changes then the iterator becomes
- * invalid. That is, if you add or remove items this iterator behavior
- * is undefined and your program may crash.
+ * invalid; adding or removing items may lead to program crash.
  */
 EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
