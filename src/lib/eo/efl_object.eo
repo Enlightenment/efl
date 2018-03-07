@@ -130,6 +130,14 @@ abstract Efl.Object ()
             finalized: bool; [[$true if the object is finalized, $false otherwise]]
          }
       }
+      @property invalidated {
+         [[True if the object is already invalidated, otherwise false.]]
+         get {
+         }
+         values {
+            finalized: bool; [[$true if the object is invalidated, $false otherwise]]
+         }
+      }
       provider_find @const {
         [[Searches upwards in the object tree for a provider which knows the given class/interface.
 
@@ -155,12 +163,22 @@ abstract Efl.Object ()
       destructor {
          [[Call the object's destructor.
 
-           Should not be used with #eo_do. Only use it with #eo_do_super.
+           Should not be used with #efl_do. Only use it with #efl_do_super.
+	   Will be triggered once #invalidate and #noref have been triggered.
          ]]
       }
       finalize {
          [[Called at the end of efl_add. Should not be called, just overridden.]]
          return: Efl.Object; [[The new object created, can be NULL if aborting]]
+      }
+      invalidate {
+         [[Called when parent reference is lost/set to $NULL and switch the state of the object to invalidate.]]
+      }
+      noref {
+         [[Triggered when no reference are keeping the object alive.
+
+           The parent can be the last one keeping an object alive and so $noref can happen before $invalidate
+           as it is only impacted by the ref/unref of the object.]]
       }
       name_find @const {
          [[Find a child object with the given name and return it.

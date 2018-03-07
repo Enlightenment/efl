@@ -60,6 +60,7 @@ typedef struct
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
    Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
+   Eina_Bool                  invalidate : 1; // Object become invalide once it loose its parent
 } Efl_Object_Data;
 
 typedef enum
@@ -620,6 +621,9 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
        ((parent_id) && (!_eo_id_domain_compatible(parent_id, obj))))
      return;
 
+   // Invalidated object can not be bring back to life
+   if (pd->invalidate) return ;
+
    EO_OBJ_POINTER(obj, eo_obj);
    if (pd->parent)
      {
@@ -660,6 +664,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    else
      {
         pd->parent = NULL;
+        if (prev_parent) efl_invalidate(obj);
         if (prev_parent && !eo_obj->del_triggered) efl_unref(obj);
      }
 
@@ -694,13 +699,18 @@ _efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
    return finalized;
 }
 
+EOLIAN static Eina_Bool
+_efl_object_invalidated_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
+{
+   return pd->invalidate;
+}
+
 EOLIAN static Efl_Object *
 _efl_object_provider_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Object *klass)
 {
    if (pd->parent) return efl_provider_find(pd->parent, klass);
    return NULL;
 }
-
 
 /* Children accessor */
 typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
@@ -2135,6 +2145,17 @@ EOLIAN static Eo *
 _efl_object_finalize(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
    return obj;
+}
+
+static void
+_efl_object_invalidate(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
+{
+   pd->invalidate = EINA_TRUE;
+}
+
+static void
+_efl_object_noref(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED)
+{
 }
 
 EOLIAN static void

@@ -1887,6 +1887,7 @@ efl_unref(const Eo *obj_id)
              EO_OBJ_DONE(obj_id);
              return;
           }
+        efl_noref((Eo *) obj_id);
         _efl_unref(obj);
      }
    EO_OBJ_DONE(obj_id);
