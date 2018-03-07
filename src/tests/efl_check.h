@@ -92,7 +92,7 @@ _efl_test_fork_has(SRunner *sr)
      {
         char *res;
 
-        res = getenv("CF_FORK");
+        res = getenv("CK_FORK");
         if (res && (strcmp(res, "no") == 0))
           return 0;
         else
