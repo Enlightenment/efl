@@ -625,6 +625,7 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
 {
    Ecore_Event_Key *ev;
    char key[256], keyname[256], compose[256];
+   int name_len, key_len, comp_len;
 
    memset(key, 0, sizeof(key));
    memset(keyname, 0, sizeof(keyname));
@@ -636,18 +637,22 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    _ecore_wl2_input_key_translate(sym, input->keyboard.modifiers,
                                   compose, sizeof(compose));
 
-   ev = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
-               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
+   name_len = strlen(keyname);
+   key_len = strlen(key);
+   comp_len = strlen(compose);
+
+   ev = calloc(1, sizeof(Ecore_Event_Key) + key_len + name_len +
+               ((compose[0] != '\0') ? comp_len : 0) + 3);
    if (!ev) return;
 
    ev->keyname = (char *)(ev + 1);
-   ev->key = ev->keyname + strlen(keyname) + 1;
-   ev->compose = strlen(compose) ? ev->key + strlen(key) + 1 : NULL;
+   ev->key = ev->keyname + name_len + 1;
+   ev->compose = comp_len ? ev->key + key_len + 1 : NULL;
    ev->string = ev->compose;
 
    strcpy((char *)ev->keyname, keyname);
    strcpy((char *)ev->key, key);
-   if (strlen(compose)) strcpy((char *)ev->compose, compose);
+   if (comp_len) strcpy((char *)ev->compose, compose);
 
    ev->window = window->id;
    ev->event_window = window->id;
