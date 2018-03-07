@@ -471,12 +471,6 @@ ffi.cdef [[
     Eolian_Unary_Operator eolian_expression_unary_operator_get(const Eolian_Expression *expr);
     const Eolian_Expression *eolian_expression_unary_expression_get(const Eolian_Expression *expr);
     Eolian_Value_t eolian_expression_value_get(const Eolian_Expression *expr);
-    const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
-    const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
-    Eina_Iterator *eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname);
-    Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *unit, const char *fname);
-    Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
-    Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
     Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
     const Eolian_Documentation *eolian_variable_documentation_get(const Eolian_Variable *var);
     const char *eolian_variable_file_get(const Eolian_Variable *var);
@@ -623,6 +617,38 @@ ffi.metatype("Eolian_State", {
         classes_get = function(self)
             return Ptr_Iterator("const Eolian_Class*",
                 eolian.eolian_state_classes_get(self))
+        end,
+
+        global_by_name_get = function(unit, name)
+            local v = eolian.eolian_state_global_by_name_get(self, name)
+            if v == nil then return nil end
+            return v
+        end,
+
+        constant_by_name_get = function(unit, name)
+            local v = eolian.eolian_state_constant_by_name_get(self, name)
+            if v == nil then return nil end
+            return v
+        end,
+
+        globals_by_file_get = function(unit, fname)
+            return Ptr_Iterator("const Eolian_Variable*",
+                eolian.eolian_state_globals_by_file_get(self, fname))
+        end,
+
+        constants_by_file_get = function(unit, fname)
+            return Ptr_Iterator("const Eolian_Variable*",
+                eolian.eolian_state_constants_by_file_get(self, fname))
+        end,
+
+        constants_get = function(self)
+            return Ptr_Iterator("const Eolian_Variable *",
+                eolian.eolian_state_constants_get(self))
+        end,
+
+        globals_get = function(self)
+            return Ptr_Iterator("const Eolian_Variable *",
+                eolian.eolian_state_globals_get(self))
         end
     },
     __gc = function(self)
@@ -652,6 +678,28 @@ ffi.metatype("Eolian_Unit", {
         classes_get = function(self)
             return Ptr_Iterator("const Eolian_Class*",
                 eolian.eolian_unit_classes_get(self))
+        end,
+
+        global_by_name_get = function(unit, name)
+            local v = eolian.eolian_unit_global_by_name_get(self, name)
+            if v == nil then return nil end
+            return v
+        end,
+
+        constant_by_name_get = function(unit, name)
+            local v = eolian.eolian_unit_constant_by_name_get(self, name)
+            if v == nil then return nil end
+            return v
+        end,
+
+        constants_get = function(self)
+            return Ptr_Iterator("const Eolian_Variable *",
+                eolian.eolian_unit_constants_get(self))
+        end,
+
+        globals_get = function(self)
+            return Ptr_Iterator("const Eolian_Variable *",
+                eolian.eolian_unit_globals_get(self))
         end
     }
 })
@@ -1603,38 +1651,6 @@ M.Expression = ffi.metatype("Eolian_Expression", {
         end
     }
 })
-
-M.variable_global_get_by_name = function(unit, name)
-    local v = eolian.eolian_variable_global_get_by_name(unit, name)
-    if v == nil then return nil end
-    return v
-end
-
-M.variable_constant_get_by_name = function(unit, name)
-    local v = eolian.eolian_variable_constant_get_by_name(unit, name)
-    if v == nil then return nil end
-    return v
-end
-
-M.variable_globals_get_by_file = function(unit, fname)
-    return Ptr_Iterator("const Eolian_Variable*",
-        eolian.eolian_variable_globals_get_by_file(unit, fname))
-end
-
-M.variable_constants_get_by_file = function(unit, fname)
-    return Ptr_Iterator("const Eolian_Variable*",
-        eolian.eolian_variable_constants_get_by_file(unit, fname))
-end
-
-M.variable_all_constants_get = function(unit)
-    return Ptr_Iterator("const Eolian_Variable *",
-        eolian.eolian_variable_all_constants_get(unit))
-end
-
-M.variable_all_globals_get = function(unit)
-    return Ptr_Iterator("const Eolian_Variable *",
-        eolian.eolian_variable_all_globals_get(unit))
-end
 
 M.Variable = ffi.metatype("Eolian_Variable", {
     __index = {

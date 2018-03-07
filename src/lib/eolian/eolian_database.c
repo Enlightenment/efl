@@ -1079,45 +1079,6 @@ eolian_unit_globals_get(const Eolian_Unit *unit)
    return (unit ? eina_hash_iterator_data_new(unit->globals) : NULL);
 }
 
-EAPI const Eolian_Variable *
-eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   return eolian_unit_global_by_name_get(unit, name);
-}
-
-EAPI const Eolian_Variable *
-eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   return eolian_unit_constant_by_name_get(unit, name);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname)
-{
-   if (!unit) return NULL;
-   return eolian_state_globals_by_file_get(unit->state, fname);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_constants_get_by_file(const Eolian_Unit *unit,
-                                      const char *fname)
-{
-   if (!unit) return NULL;
-   return eolian_state_constants_by_file_get(unit->state, fname);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_all_constants_get(const Eolian_Unit *unit)
-{
-   return eolian_unit_constants_get(unit);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_all_globals_get(const Eolian_Unit *unit)
-{
-   return eolian_unit_globals_get(unit);
-}
-
 EAPI const Eolian_Typedecl *
 eolian_unit_alias_by_name_get(const Eolian_Unit *unit, const char *name)
 {

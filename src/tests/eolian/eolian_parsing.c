@@ -804,7 +804,7 @@ START_TEST(eolian_var)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular constant */
-   fail_if(!(var = eolian_variable_constant_get_by_name(unit, "Foo")));
+   fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Foo")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -816,7 +816,7 @@ START_TEST(eolian_var)
    fail_if(v.value.i != 5);
 
    /* regular global */
-   fail_if(!(var = eolian_variable_global_get_by_name(unit, "Bar")));
+   fail_if(!(var = eolian_unit_global_by_name_get(unit, "Bar")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -828,7 +828,7 @@ START_TEST(eolian_var)
    fail_if(((int)v.value.f) != 10);
 
    /* no-value global */
-   fail_if(!(var = eolian_variable_global_get_by_name(unit, "Baz")));
+   fail_if(!(var = eolian_unit_global_by_name_get(unit, "Baz")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -837,7 +837,7 @@ START_TEST(eolian_var)
    fail_if(eolian_variable_value_get(var));
 
    /* extern global  */
-   fail_if(!(var = eolian_variable_global_get_by_name(unit, "Bah")));
+   fail_if(!(var = eolian_unit_global_by_name_get(unit, "Bah")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
    fail_if(!eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -931,7 +931,7 @@ START_TEST(eolian_enum)
    fail_if(strcmp(cname, "NAME_SPACED_PANTS"));
    eina_stringshare_del(cname);
 
-   fail_if(!(var = eolian_variable_constant_get_by_name(unit, "Bah")));
+   fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Bah")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -942,7 +942,7 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
-   fail_if(!(var = eolian_variable_constant_get_by_name(unit, "Pants")));
+   fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Pants")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
    fail_if(!(exp = eolian_variable_value_get(var)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
@@ -1337,7 +1337,7 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "2.0"));
 
-   fail_if(!(var = eolian_variable_global_get_by_name(unit, "pants")));
+   fail_if(!(var = eolian_unit_global_by_name_get(unit, "pants")));
    fail_if(!(doc = eolian_variable_documentation_get(var)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for var."));

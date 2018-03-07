@@ -505,7 +505,7 @@ eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
                 return eval_exp(NULL, expr->expr, mask, out);
              }
 
-           const Eolian_Variable *var = eolian_variable_constant_get_by_name
+           const Eolian_Variable *var = eolian_unit_constant_by_name_get
              (unit, expr->value.s);
            Eolian_Expression *exp = NULL;
 
