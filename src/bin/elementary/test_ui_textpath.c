@@ -9,6 +9,9 @@
 #define CY 150
 #define CR 100
 
+#define TEST_UI_TEXTPATH_LONG_TEXT "This text follows the path which you defined. This is a &lt;long&gt; text designed to make it ellipsis."
+#define TEST_UI_TEXTPATH_SHORT_TEXT "This text is short."
+
 static Evas_Object *angle_sld, *slice_sld, *dir_chk;
 static int path_type;
 
@@ -47,6 +50,18 @@ _angle_changed_cb(void *data, const Efl_Event *event)
    Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                          EFL_UI_TEXTPATH_DIRECTION_CCW;
    efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+}
+
+static void
+_short_text_changed_cb(void *data, const Efl_Event *event)
+{
+   Evas_Object *txtpath = data;
+   Eina_Bool val = elm_check_selected_get(event->object);
+
+   if (val)
+     efl_text_set(txtpath, TEST_UI_TEXTPATH_SHORT_TEXT);
+   else
+     efl_text_set(txtpath, TEST_UI_TEXTPATH_LONG_TEXT);
 }
 
 static void
@@ -99,7 +114,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_box_pack_end(box, txtpath);
    efl_ui_textpath_autofit_set(txtpath, EINA_TRUE);
 
-   efl_text_set(txtpath, "This text follows the path which you defined. This is a &lt;long&gt; text designed to make it ellipsis.");
+   efl_text_set(txtpath, TEST_UI_TEXTPATH_LONG_TEXT);
 
    efl_ui_textpath_circle_set(txtpath, CX, CY, CR, 0, EFL_UI_TEXTPATH_DIRECTION_CCW);
    efl_gfx_visible_set(txtpath, EINA_TRUE);
@@ -132,6 +147,12 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_box_pack_end(hbox, chk);
    efl_gfx_visible_set(chk, EINA_TRUE);
    dir_chk = chk;
+
+   chk = elm_check_add(win);
+   elm_object_text_set(chk, "Short text");
+   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_CHANGED, _short_text_changed_cb, txtpath);
+   elm_box_pack_end(hbox, chk);
+   efl_gfx_visible_set(chk, EINA_TRUE);
 
    hbox = elm_box_add(win);
    elm_box_horizontal_set(hbox, EINA_TRUE);

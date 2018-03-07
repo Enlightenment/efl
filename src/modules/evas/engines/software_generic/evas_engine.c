@@ -2773,7 +2773,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 static void
 evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
 {
-   if (m->count - offset < 3) return;
+   if (m->count - offset < 4) return;
 
    if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
        (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
@@ -2834,7 +2834,7 @@ evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context
 
    if (m->count > 4)
      {
-        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 2);
+        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 4);
      }
 }
 
