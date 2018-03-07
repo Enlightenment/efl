@@ -579,6 +579,7 @@ _efl_ui_spin_button_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Spin_But
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
      }
    else
      {
