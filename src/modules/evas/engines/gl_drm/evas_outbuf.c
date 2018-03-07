@@ -226,6 +226,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
+   eng_gl_symbols(ob->egl.disp);
+
    if (!eglGetConfigs(ob->egl.disp, NULL, 0, &ncfg) || (ncfg == 0))
      {
         ERR("eglGetConfigs() fail. code=%#x", eglGetError());
@@ -333,8 +335,6 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         ERR("Version: %s", (const char *)version);
         goto err;
      }
-
-   eng_gl_symbols(ob->egl.disp);
 
    ob->gl_context = glsym_evas_gl_common_context_new();
    if (!ob->gl_context) goto err;
