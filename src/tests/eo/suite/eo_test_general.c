@@ -652,10 +652,8 @@ START_TEST(efl_refs)
    ck_assert_int_eq(efl_ref_count(obj2), 1);
    ck_assert_int_eq(efl_ref_count(obj3), 1);
 
-   efl_parent_set(obj2, obj);
-   efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_count(obj2), 2);
-   ck_assert_int_eq(efl_ref_count(obj3), 2);
+   fail_if(!efl_invalidated_get(obj2));
+   fail_if(!efl_invalidated_get(obj3));
 
    efl_del(obj);
    efl_del(obj2);
@@ -679,10 +677,8 @@ START_TEST(efl_refs)
    ck_assert_int_eq(efl_ref_count(obj2), 1);
    ck_assert_int_eq(efl_ref_count(obj3), 1);
 
-   efl_parent_set(obj2, obj);
-   efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_count(obj2), 2);
-   ck_assert_int_eq(efl_ref_count(obj3), 2);
+   fail_if(!efl_invalidated_get(obj2));
+   fail_if(!efl_invalidated_get(obj3));
 
    efl_del(obj);
    efl_del(obj2);
