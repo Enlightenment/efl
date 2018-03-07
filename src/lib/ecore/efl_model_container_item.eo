@@ -19,10 +19,6 @@ class Efl.Model.Container.Item (Efl.Object, Efl.Model)
                            children.]]
          }
       }
-      invalidate {
-         [[Invalidates the object preventing it from using the given parent
-           data.]]
-      }
    }
    implements {
       Efl.Model.properties { get; }
@@ -32,6 +28,7 @@ class Efl.Model.Container.Item (Efl.Object, Efl.Model)
       Efl.Model.child_del;
       Efl.Model.children_slice_get;
       Efl.Model.children_count_get;
+      Efl.Object.invalidate;
    }
    constructors {
        .define;

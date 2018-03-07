@@ -90,11 +90,7 @@ _efl_model_container_efl_object_destructor(Eo *obj, Efl_Model_Container_Data *sd
 
    EINA_LIST_FREE(sd->children, child)
      {
-        if (child)
-          {
-             efl_model_container_item_invalidate(child);
-             efl_parent_set(child, NULL);
-          }
+        if (child) efl_parent_set(child, NULL);
      }
 
    eina_array_free(sd->defined_properties);

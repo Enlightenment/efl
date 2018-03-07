@@ -23,8 +23,10 @@ _efl_model_container_item_define(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_D
 }
 
 EOLIAN static void
-_efl_model_container_item_invalidate(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
+_efl_model_container_item_efl_object_invalidate(Eo *obj, Efl_Model_Container_Item_Data *sd)
 {
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
    sd->parent_data = NULL;
    sd->index = 0;
 }
