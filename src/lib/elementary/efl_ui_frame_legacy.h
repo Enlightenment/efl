@@ -1,3 +1,5 @@
+typedef Eo Elm_Frame;
+
 /**
  * @brief Add a new frame to the parent
  *

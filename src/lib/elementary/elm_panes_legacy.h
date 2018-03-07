@@ -1,3 +1,5 @@
+typedef Eo Elm_Panes;
+
 /**
  * Add a new panes widget to the given parent Elementary
  * (container) object.

@@ -1,3 +1,5 @@
+typedef Eo Elm_Multibuttonentry;
+
 /**
  * @brief Add a new multibuttonentry to the parent
  *
