@@ -637,12 +637,11 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    _ecore_wl2_input_key_translate(sym, input->keyboard.modifiers,
                                   compose, sizeof(compose));
 
-   name_len = strlen(keyname);
-   key_len = strlen(key);
-   comp_len = strlen(compose);
+   name_len = (keyname) ? strlen(keyname) : 0;
+   key_len = (key) ? strlen(key) : 0;
+   comp_len = (compose) ? strlen(compose) : 0;
 
-   ev = calloc(1, sizeof(Ecore_Event_Key) + key_len + name_len +
-               ((compose[0] != '\0') ? comp_len : 0) + 3);
+   ev = calloc(1, sizeof(Ecore_Event_Key) + key_len + name_len + comp_len + 3);
    if (!ev) return;
 
    ev->keyname = (char *)(ev + 1);
