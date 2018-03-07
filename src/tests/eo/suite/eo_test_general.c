@@ -178,10 +178,10 @@ _eo_signals_efl_del_cb(void *_data EINA_UNUSED, const Efl_Event *event EINA_UNUS
    _eo_signals_cb_flag |= 0x4;
 }
 
-static check_is_deled = 0;
+static int check_is_deled = 0;
 
 void
-_eo_signals_cb_added_deled(void *data, const Efl_Event *event)
+_eo_signals_cb_added_deled(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item_Full *callback_array = event->info;
 
