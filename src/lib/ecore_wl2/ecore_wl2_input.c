@@ -624,12 +624,8 @@ static void
 _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_keysym_t sym, xkb_keysym_t sym_name, unsigned int code, unsigned int state, unsigned int timestamp)
 {
    Ecore_Event_Key *ev;
-   char key[256], keyname[256], compose[256];
+   char key[256] = "", keyname[256] = "", compose[256] = "";
    int name_len, key_len, comp_len;
-
-   memset(key, 0, sizeof(key));
-   memset(keyname, 0, sizeof(keyname));
-   memset(compose, 0, sizeof(compose));
 
    /*try to get a name or utf char of the given symbol */
    _ecore_wl2_input_symbol_rep_find(sym, key, sizeof(key), code);
@@ -637,9 +633,9 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    _ecore_wl2_input_key_translate(sym, input->keyboard.modifiers,
                                   compose, sizeof(compose));
 
-   name_len = (keyname) ? strlen(keyname) : 0;
-   key_len = (key) ? strlen(key) : 0;
-   comp_len = (compose) ? strlen(compose) : 0;
+   name_len = strlen(keyname);
+   key_len = strlen(key);
+   comp_len = strlen(compose);
 
    ev = calloc(1, sizeof(Ecore_Event_Key) + key_len + name_len + comp_len + 3);
    if (!ev) return;
