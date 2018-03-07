@@ -2720,7 +2720,10 @@ _entry_key_enter_signal_cb(void *data,
                            const char *emission EINA_UNUSED,
                            const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ACTIVATED, NULL);
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (sd->single_line)
+     efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ACTIVATED, NULL);
 }
 
 static void
@@ -2729,7 +2732,10 @@ _entry_key_escape_signal_cb(void *data,
                             const char *emission EINA_UNUSED,
                             const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ABORTED, NULL);
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (sd->single_line)
+     efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ABORTED, NULL);
 }
 
 static void
