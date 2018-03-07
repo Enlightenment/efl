@@ -346,7 +346,7 @@ struct _Eina_List_Accounting
  *
  * @param list The given list.
  * @param data The data to append.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function appends @p data to @p list. If @p list is @c NULL, a
  * new list is returned. On success, a new list pointer that should be
@@ -373,7 +373,7 @@ EAPI Eina_List            *eina_list_append(Eina_List *list, const void *data) E
  *
  * @param list The given list.
  * @param data The data to prepend.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function prepends @p data to @p list. If @p list is @c NULL, a
  * new list is returned. On success, a new list pointer that should be
@@ -402,7 +402,7 @@ EAPI Eina_List            *eina_list_prepend(Eina_List *list, const void *data) 
  * @param list The given linked list.
  * @param data The data to insert.
  * @param relative The data to insert after.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function inserts @p data into @p list after @p relative. If
  * @p relative is not in the list, @p data is appended to
@@ -435,7 +435,7 @@ EAPI Eina_List            *eina_list_append_relative(Eina_List *list, const void
  * @param list The given linked list.
  * @param data The data to insert.
  * @param relative The list node to insert after.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function inserts @p data into @p list after the list node
  * @p relative. If @p list or @p relative are @c NULL, @p data is just
@@ -457,7 +457,7 @@ EAPI Eina_List            *eina_list_append_relative_list(Eina_List *list, const
  * @param list The given linked list.
  * @param data The data to insert.
  * @param relative The member that data will be inserted before.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function inserts @p data to @p list before @p relative. If
  * @p relative is not in the list, @p data is prepended to the list
@@ -490,7 +490,7 @@ EAPI Eina_List            *eina_list_prepend_relative(Eina_List *list, const voi
  * @param list The given linked list.
  * @param data The data to insert.
  * @param relative The list node to insert before.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function inserts @p data to @p list before the list node
  * @p relative. If @p list or @p relative are @c NULL, @p data is just
@@ -512,7 +512,7 @@ EAPI Eina_List            *eina_list_prepend_relative_list(Eina_List *list, cons
  * @param list The given linked list, @b must be sorted.
  * @param func The function called for the sort.
  * @param data The data to be inserted in sorted order.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function inserts values into a linked list assuming it was
  * sorted and the result will be sorted. If @p list is @c NULL, a new
@@ -537,7 +537,7 @@ EAPI Eina_List            *eina_list_sorted_insert(Eina_List *list, Eina_Compare
  *
  * @param list The given list.
  * @param data The specified data.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function removes the first instance of @p data from @p list. If
  * @p data is not in the given list or is @c NULL, nothing is done and
@@ -555,7 +555,7 @@ EAPI Eina_List            *eina_list_remove(Eina_List *list, const void *data) E
  *
  * @param list The given linked list.
  * @param remove_list The list node which is to be removed.
- * @return A list pointer.
+ * @return A list pointer, or @c NULL on error.
  *
  * This function removes the list node @p remove_list from @p list and
  * frees the list node structure @p remove_list. If @p list is
@@ -593,7 +593,7 @@ EAPI Eina_List            *eina_list_remove_list(Eina_List *list, Eina_List *rem
  *
  * @param list The given linked list.
  * @param move_list The list node to move.
- * @return A new list handle to replace the old one.
+ * @return A new list handle to replace the old one, or @c NULL on error.
  *
  * This function moves @p move_list to the front of @p list. If list is
  * @c NULL, @c NULL is returned. If @p move_list is @c NULL, @p list is
@@ -627,7 +627,7 @@ EAPI Eina_List            *eina_list_promote_list(Eina_List *list, Eina_List *mo
  *
  * @param list The given linked list.
  * @param move_list The list node to move.
- * @return A new list handle to replace the old one.
+ * @return A new list handle to replace the old one, or @c NULL on error.
  *
  * This function move @p move_list to the end of @p list. If list is @c
  * NULL, @c NULL is returned. If @p move_list is @c NULL, @p list is
@@ -747,7 +747,8 @@ EAPI Eina_Bool             eina_list_move_list(Eina_List **to, Eina_List **from,
 EAPI Eina_List            *eina_list_free(Eina_List *list);
 
 /**
- * @brief Gets the nth member's data pointer in a list.
+ * @brief Gets the nth member's data pointer in a list, or @c NULL on
+ * error.
  *
  * @param list The list to get the specified member number from.
  * @param n The number of the element (0 being the first).
@@ -769,7 +770,8 @@ EAPI void                 *eina_list_nth(const Eina_List *list, unsigned int n) 
  *
  * @param list The list to get the specified member number from.
  * @param n The number of the element (0 being the first).
- * @return The list node stored in the numbered element.
+ * @return The list node stored in the numbered element, or @c NULL on
+ * error.
  *
  * This function returns the list node of element number @p n, in
  * @p list. The first element in the array is element number 0. If the
@@ -789,7 +791,8 @@ EAPI Eina_List            *eina_list_nth_list(const Eina_List *list, unsigned in
  * @brief Reverses all the elements in the list.
  *
  * @param list The list to reverse.
- * @return The list head after it has been reversed.
+ * @return The list head after it has been reversed, or @c NULL on
+ * error.
  *
  * This function reverses the order of all elements in @p list, so the
  * last member is now first, and so on. If @p list is @c NULL, this
@@ -810,7 +813,7 @@ EAPI Eina_List            *eina_list_reverse(Eina_List *list) EINA_WARN_UNUSED_R
  * @brief Clones (copies) all the elements in the list in reverse order.
  *
  * @param list The list to reverse.
- * @return The new list that has been reversed.
+ * @return The new list that has been reversed, or @c NULL on error.
  *
  * This function reverses the order of all elements in @p list, so the
  * last member is now first, and so on. If @p list is @c NULL, this
@@ -831,7 +834,7 @@ EAPI Eina_List            *eina_list_reverse_clone(const Eina_List *list) EINA_W
  * @brief Clones (copies) all the elements in the list in exactly same order.
  *
  * @param list The list to clone.
- * @return The new list that has been cloned.
+ * @return The new list that has been cloned, or @c NULL on error.
  *
  * This function clone in order of all elements in @p list. If @p list
  * is @c NULL, this function returns @c NULL. This returns a copy of
@@ -1289,16 +1292,13 @@ static inline void        *eina_list_last_data_get(const Eina_List *list);
  * @brief Returns a new iterator associated with a list.
  *
  * @param list The list.
- * @return A new iterator.
+ * @return A new iterator, or @c NULL on memory allocation failure.
  *
  * This function returns a newly allocated iterator associated with @p
  * list. If @p list is @c NULL or the count member of @p list is less than
  * or equal to 0, this function still returns a valid iterator that
  * will always return false on eina_iterator_next(), thus keeping API
  * sane.
- *
- * If the memory cannot be allocated, @c NULL is returned.
- * Otherwise, a valid iterator is returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  *
@@ -1313,7 +1313,7 @@ EAPI Eina_Iterator        *eina_list_iterator_new(const Eina_List *list) EINA_MA
  * @brief Returns a new reversed iterator associated with a list.
  *
  * @param list The list.
- * @return A new iterator.
+ * @return A new iterator, or @c NULL on memory allocation failure.
  *
  * This function returns a newly allocated iterator associated with @p
  * list. If @p list is @c NULL or the count member of @p list is less than
@@ -1322,9 +1322,6 @@ EAPI Eina_Iterator        *eina_list_iterator_new(const Eina_List *list) EINA_MA
  * sane.
  *
  * Unlike eina_list_iterator_new(), this will walk the list backwards.
- *
- * If the memory cannot be allocated, @c NULL is returned.
- * Otherwise, a valid iterator is returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  *
@@ -1339,7 +1336,7 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
  * @brief Returns a new accessor associated with a list.
  *
  * @param list The list.
- * @return A new accessor.
+ * @return A new accessor, or @c NULL on error.
  *
  * This function returns a newly allocated accessor associated with
  * @p list. If @p list is @c NULL or the count member of @p list is
