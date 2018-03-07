@@ -29,6 +29,7 @@ struct scanout_handle
 /* external variables */
 int _evas_engine_gl_drm_log_dom = -1;
 int _extn_have_buffer_age = 1;
+int _extn_have_context_priority = 0;
 
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
@@ -235,6 +236,9 @@ eng_gl_symbols(EGLDisplay edsp)
 
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
+
+   if (strstr(exts, "EGL_IMG_context_priority"))
+     _extn_have_context_priority = 1;
 
    done = EINA_TRUE;
 }

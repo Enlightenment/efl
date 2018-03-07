@@ -28,6 +28,7 @@
 
 extern int _evas_engine_gl_drm_log_dom;
 extern int _extn_have_buffer_age;
+extern int _extn_have_context_priority;
 
 # ifdef ERR
 #  undef ERR

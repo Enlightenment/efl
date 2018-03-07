@@ -161,9 +161,9 @@ _evas_outbuf_init(void)
 static Eina_Bool
 _evas_outbuf_egl_setup(Outbuf *ob)
 {
-   int ctx_attr[3];
+   int ctx_attr[5];
    int cfg_attr[40];
-   int maj = 0, min = 0, n = 0, i = 0;
+   int maj = 0, min = 0, n = 0, i = 0, cn = 0;
    EGLint ncfg = 0;
    EGLConfig *cfgs;
    const GLubyte *vendor, *renderer, *version, *glslversion;
@@ -176,9 +176,15 @@ _evas_outbuf_egl_setup(Outbuf *ob)
      }
 
    /* setup gbm egl surface */
-   ctx_attr[0] = EGL_CONTEXT_CLIENT_VERSION;
-   ctx_attr[1] = 2;
-   ctx_attr[2] = EGL_NONE;
+   ctx_attr[cn++] = EGL_CONTEXT_CLIENT_VERSION;
+   ctx_attr[cn++] = 2;
+
+   if (_extn_have_context_priority)
+     {
+        ctx_attr[cn++] = EGL_CONTEXT_PRIORITY_LEVEL_IMG;
+        ctx_attr[cn++] = EGL_CONTEXT_PRIORITY_HIGH_IMG;
+     }
+   ctx_attr[cn++] = EGL_NONE;
 
    cfg_attr[n++] = EGL_RENDERABLE_TYPE;
    cfg_attr[n++] = EGL_OPENGL_ES2_BIT;
