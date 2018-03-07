@@ -28,6 +28,8 @@ struct _Efl_Ui_Bg_Widget_Data
 {
    Evas_Object          *rect; /*<< Used for elm_bg_color_set(): elm.swallow.rectangle */
    Evas_Object          *img; /*<< Used for elm_bg_file_set(): elm.swallow.content */
+   const char           *file; /*<< Used for elm_bg_file_set() with legacy widget */
+   const char           *key; /*<< Used for elm_bg_file_set() with legacy widget */
 };
 
 /**

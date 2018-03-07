@@ -45,12 +45,23 @@ _efl_ui_bg_widget_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Widget_Data *pd)
    pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
                      efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
                      efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
+   pd->file = NULL;
+   pd->key = NULL;
 
    efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_bg_widget_efl_object_destructor(Eo *obj, Efl_Ui_Bg_Widget_Data *sd)
+{
+   ELM_SAFE_FREE(sd->file, eina_stringshare_del);
+   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EAPI void
@@ -191,6 +202,9 @@ elm_bg_file_set(Eo *obj, const char *file, const char *group)
 EOLIAN static Eina_Bool
 _efl_ui_bg_widget_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, const char *file, const char *key)
 {
+   eina_stringshare_replace(&sd->file, file);
+   eina_stringshare_replace(&sd->key, key);
+
    return efl_file_set(sd->img, file, key);
 }
 EAPI void
@@ -200,8 +214,15 @@ elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, const char **file, const char **key)
+_efl_ui_bg_widget_efl_file_file_get(Eo *obj, Efl_Ui_Bg_Widget_Data *sd, const char **file, const char **key)
 {
+   if (elm_widget_is_legacy(obj))
+     {
+        *file = sd->file;
+        *key = sd->key;
+        return;
+     }
+
    efl_file_get(sd->img, file, key);
 }
 

@@ -28,7 +28,35 @@ START_TEST (elm_bg_legacy_type_check)
 }
 END_TEST
 
+START_TEST (elm_bg_legacy_file_set_get_check)
+{
+   Evas_Object *win, *bg;
+   const char *file = NULL, *key = NULL;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "bg", ELM_WIN_BASIC);
+
+   bg = elm_bg_add(win);
+
+   /* This test case will check the following things for legacy widget.
+	* It is all about backward compatibility.
+	* 1. Set and Get file path, key even if there is no proper image file for the given file path.
+	* 2. Even if there is a proper image file and the given file path is interpreted to full file path,
+	*    the Get function should give original file path. NOT interpreted. */
+   elm_bg_file_set(bg, "~/test.png", "test_key");
+   elm_bg_file_get(bg, &file, &key);
+
+   ck_assert(file != NULL);
+   ck_assert(!strcmp(file, "~/test.png"));
+   ck_assert(key != NULL);
+   ck_assert(!strcmp(key, "test_key"));
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_bg(TCase *tc EINA_UNUSED)
 {
    tcase_add_test(tc, elm_bg_legacy_type_check);
+   tcase_add_test(tc, elm_bg_legacy_file_set_get_check);
 }
