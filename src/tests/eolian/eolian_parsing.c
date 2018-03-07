@@ -29,10 +29,10 @@ START_TEST(eolian_namespaces)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/nmsp1_class1.eo")));
 
    /* Classes existence  */
-   fail_if(!(class11 = eolian_class_get_by_name(unit, "nmsp1.class1")));
-   fail_if(!(class112 = eolian_class_get_by_name(unit, "nmsp1.nmsp11.class2")));
-   fail_if(!(class21 = eolian_class_get_by_name(unit, "nmsp2.class1")));
-   fail_if(!(class_no = eolian_class_get_by_name(unit, "no_nmsp")));
+   fail_if(!(class11 = eolian_unit_class_by_name_get(unit, "nmsp1.class1")));
+   fail_if(!(class112 = eolian_unit_class_by_name_get(unit, "nmsp1.nmsp11.class2")));
+   fail_if(!(class21 = eolian_unit_class_by_name_get(unit, "nmsp2.class1")));
+   fail_if(!(class_no = eolian_unit_class_by_name_get(unit, "no_nmsp")));
 
    /* Check names and namespaces*/
    fail_if(strcmp(eolian_class_name_get(class11), "class1"));
@@ -112,7 +112,7 @@ START_TEST(eolian_events)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/events.eo")));
 
    /* Class */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Events")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Events")));
    fail_if(strcmp(eolian_class_event_prefix_get(class), "totally_not_events"));
 
    /* Events */
@@ -187,8 +187,8 @@ START_TEST(eolian_override)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/override.eo")));
 
    /* Class */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Override")));
-   fail_if(!(base = eolian_class_get_by_name(unit, "Base")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Override")));
+   fail_if(!(base = eolian_unit_class_by_name_get(unit, "Base")));
 
    /* Implements */
    fail_if(!(iter = eolian_class_implements_get(class)));
@@ -242,7 +242,7 @@ START_TEST(eolian_consts)
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/consts.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Consts")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Consts")));
 
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
@@ -269,8 +269,8 @@ START_TEST(eolian_ctor_dtor)
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/ctor_dtor.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Ctor_Dtor")));
-   fail_if(!(base = eolian_class_get_by_name(unit, "Base")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Ctor_Dtor")));
+   fail_if(!(base = eolian_unit_class_by_name_get(unit, "Base")));
 
    /* Class ctor/dtor */
    fail_if(!eolian_class_ctor_enable_get(class));
@@ -340,7 +340,7 @@ START_TEST(eolian_typedef)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/typedef.eo")));
 
    /* Check that the class Dummy is still readable */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Typedef")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Typedef")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* Basic type */
@@ -423,7 +423,7 @@ START_TEST(eolian_complex_type)
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/complex_type.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Complex_Type")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Complex_Type")));
 
    /* Properties return type */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
@@ -507,7 +507,7 @@ START_TEST(eolian_scope)
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/scope.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Scope")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Scope")));
 
    /* Property scope */
    fail_if(eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY));
@@ -550,8 +550,8 @@ START_TEST(eolian_simple_parsing)
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/class_simple.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Class_Simple")));
-   fail_if(eolian_class_get_by_file(unit, "class_simple.eo") != class);
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Class_Simple")));
+   fail_if(eolian_state_class_by_file_get(eos, "class_simple.eo") != class);
    fail_if(strcmp(eolian_class_file_get(class), "class_simple.eo"));
 
    /* Class */
@@ -690,7 +690,7 @@ START_TEST(eolian_struct)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/struct.eo")));
 
    /* Check that the class Dummy is still readable */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Struct")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Struct")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* named struct */
@@ -758,7 +758,7 @@ START_TEST(eolian_extern)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/extern.eo")));
 
    /* Check that the class Dummy is still readable */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Extern")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Extern")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular type */
@@ -800,7 +800,7 @@ START_TEST(eolian_var)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/var.eo")));
 
    /* Check that the class Dummy is still readable */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Var")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Var")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular constant */
@@ -871,7 +871,7 @@ START_TEST(eolian_enum)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/enum.eo")));
 
    /* Check that the class Dummy is still readable */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Enum")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Enum")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    fail_if(!(tdl = eolian_typedecl_enum_get_by_name(unit, "Foo")));
@@ -965,7 +965,7 @@ START_TEST(eolian_class_funcs)
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/class_funcs.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Class_Funcs")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Class_Funcs")));
 
    /* Class properties */
    fail_if(eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY));
@@ -1008,7 +1008,7 @@ START_TEST(eolian_free_func)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/free_func.eo")));
 
    /* Check that the class Dummy is still readable */
-   fail_if(!(class = eolian_class_get_by_name(unit, "Free_Func")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Free_Func")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular struct */
@@ -1057,7 +1057,7 @@ START_TEST(eolian_null)
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/null.eo")));
 
-   fail_if(!(class = eolian_class_get_by_name(unit, "Null")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Null")));
    fail_if(!(func = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
 
    fail_if(!(iter = eolian_function_parameters_get(func)));
@@ -1106,7 +1106,7 @@ START_TEST(eolian_import)
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
 
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/import.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Import")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Import")));
 
    fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Imported")));
    fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
@@ -1134,7 +1134,7 @@ START_TEST(eolian_decl)
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
 
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/decl.eo")));
-   fail_if(!(class = eolian_class_get_by_name(unit, "Decl")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Decl")));
 
    fail_if(!(itr = eolian_declarations_get_by_file(eos, "decl.eo")));
 
@@ -1349,7 +1349,7 @@ START_TEST(eolian_docs)
                   "Opaque struct docs. See @Foo for another struct."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(class = eolian_class_get_by_name(unit, "Docs")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Docs")));
    fail_if(!(doc = eolian_class_documentation_get(class)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for class."));
@@ -1576,7 +1576,7 @@ START_TEST(eolian_function_as_arguments)
 
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/function_as_argument.eo")));
 
-   fail_if(!(cls = eolian_class_get_by_name(unit, "Function_As_Argument")));
+   fail_if(!(cls = eolian_unit_class_by_name_get(unit, "Function_As_Argument")));
 
    fail_if(!(fid = eolian_class_function_get_by_name(cls, "set_cb", EOLIAN_METHOD)));
 
@@ -1618,7 +1618,7 @@ START_TEST(eolian_parts)
 
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/parts.eo")));
 
-   fail_if(!(cls = eolian_class_get_by_name(unit, "Parts")));
+   fail_if(!(cls = eolian_unit_class_by_name_get(unit, "Parts")));
 
    fail_if(!(iter = eolian_class_parts_get(cls)));
 

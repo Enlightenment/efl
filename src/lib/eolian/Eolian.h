@@ -2773,15 +2773,6 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
 EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
 
 /* DEPRECATED */
-EAPI const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
-
-/* DEPRECATED */
-EAPI const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
-
-/* DEPRECATED */
 EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /* DEPRECATED */

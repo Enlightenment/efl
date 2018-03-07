@@ -68,7 +68,7 @@ _generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
         return;
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_name(src, bname);
+   const Eolian_Class *cl = eolian_unit_class_by_name_get(src, bname);
    const Eolian_Function *fn = NULL;
    /* match methods and properties; we're only figuring out existence */
    Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
@@ -84,7 +84,7 @@ _generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
              while ((mname != refn) && (*mname != '.')) --mname;
              if (mname == refn) goto noref;
              bname = eina_stringshare_add_length(refn, mname - refn);
-             cl = eolian_class_get_by_name(src, bname);
+             cl = eolian_unit_class_by_name_get(src, bname);
              eina_stringshare_del(bname);
           }
         if (cl)

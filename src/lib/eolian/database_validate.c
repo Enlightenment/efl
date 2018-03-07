@@ -277,7 +277,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
         }
       case EOLIAN_TYPE_CLASS:
         {
-           tp->klass = (Eolian_Class *)eolian_class_get_by_name(src, tp->full_name);
+           tp->klass = (Eolian_Class *)eolian_unit_class_by_name_get(src, tp->full_name);
            if (!tp->klass)
              {
                 snprintf(buf, sizeof(buf), "undefined class %s "
@@ -851,7 +851,7 @@ database_validate(Eolian_State *state, const Eolian_Unit *src)
 
    Validate_State vals = { EINA_FALSE };
 
-   Eina_Iterator *iter = eolian_all_classes_get(src);
+   Eina_Iterator *iter = eolian_unit_classes_get(src);
    Eina_Hash *nhash = eina_hash_string_small_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {

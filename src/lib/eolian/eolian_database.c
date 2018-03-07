@@ -385,7 +385,7 @@ _resolve_event(const Eolian_Unit *src, char *name, const void **data,
      return EOLIAN_DOC_REF_INVALID;
 
    *evname++ = '\0';
-   const Eolian_Class *cl = eolian_class_get_by_name(src, name);
+   const Eolian_Class *cl = eolian_unit_class_by_name_get(src, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 
@@ -499,7 +499,7 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
         *suffix++ = '\0';
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_name(unit, name);
+   const Eolian_Class *cl = eolian_unit_class_by_name_get(unit, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 
@@ -1045,25 +1045,6 @@ EAPI Eina_Iterator *
 eolian_unit_classes_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->classes) : NULL);
-}
-
-EAPI const Eolian_Class *
-eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name)
-{
-   return eolian_unit_class_by_name_get(unit, class_name);
-}
-
-EAPI const Eolian_Class *
-eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name)
-{
-   if (!unit) return NULL;
-   return eolian_state_class_by_file_get(unit->state, file_name);
-}
-
-EAPI Eina_Iterator *
-eolian_all_classes_get(const Eolian_Unit *unit)
-{
-   return eolian_unit_classes_get(unit);
 }
 
 EAPI const Eolian_Variable *

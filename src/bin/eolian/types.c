@@ -304,9 +304,9 @@ void eo_gen_types_source_gen(Eina_Iterator *itr, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 }
 
-Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_Unit *src, const char *eof)
+Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_State *eos, const char *eof)
 {
-   const Eolian_Class *cl = eolian_class_get_by_file(src, eof);
+   const Eolian_Class *cl = eolian_state_class_by_file_get(eos, eof);
    if (!cl)
      return NULL;
    char *clfn = eo_gen_c_full_name_get(eolian_class_full_name_get(cl));
