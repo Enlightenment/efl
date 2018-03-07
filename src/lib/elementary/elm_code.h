@@ -11,7 +11,6 @@
 #include "elm_code_parse.h"
 #include "elm_code_syntax.h"
 #include "elm_code_widget.eo.h"
-#include "elm_code_widget_legacy.eo.h"
 #include "elm_code_widget_legacy.h"
 #include "elm_code_widget_selection.h"
 #include "elm_code_diff_widget.h"
