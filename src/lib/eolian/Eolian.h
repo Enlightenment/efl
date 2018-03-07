@@ -2772,33 +2772,6 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  */
 EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
 
-/* DEPRECATED */
-EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/* DEPRECATED */
-EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/* DEPRECATED */
-EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(const Eolian_Unit *unit);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
-
-/* DEPRECATED */
-EAPI Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
-
 #endif
 
 /**

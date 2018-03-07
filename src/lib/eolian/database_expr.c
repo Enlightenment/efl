@@ -524,7 +524,7 @@ eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
                 if (!(mask & EOLIAN_MASK_INT))
                   return expr_type_error(expr, EOLIAN_MASK_INT, mask);
 
-                etpd = eolian_typedecl_alias_get_by_name(unit, fulln);
+                etpd = eolian_unit_alias_by_name_get(unit, fulln);
                 while (etpd && etpd->type == EOLIAN_TYPEDECL_ALIAS)
                   {
                      const Eolian_Type *etp = eolian_typedecl_base_type_get(etpd);
@@ -533,7 +533,7 @@ eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
                      etpd = database_type_decl_find(unit, etp);
                   }
 
-                if (!etpd) etpd = eolian_typedecl_enum_get_by_name(unit, fulln);
+                if (!etpd) etpd = eolian_unit_enum_by_name_get(unit, fulln);
                 if (!etpd || etpd->type != EOLIAN_TYPEDECL_ENUM)
                   {
                      free(fulln);
