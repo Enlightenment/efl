@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 
-static Efl_Ui_Multibuttonentry_Format_Cb format_func = NULL;
+static Elm_Multibuttonentry_Format_Cb format_func = NULL;
 
 static char *
 _custom_format(int count, void *data EINA_UNUSED)

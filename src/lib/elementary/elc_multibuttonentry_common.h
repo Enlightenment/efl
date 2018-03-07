@@ -30,4 +30,4 @@ typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_Cb)(Evas_
  *
  * @ingroup Multibuttonentry
  */
-typedef char * (*Efl_Ui_Multibuttonentry_Format_Cb)(int count, void *data);
+typedef char * (*Elm_Multibuttonentry_Format_Cb)(int count, void *data);

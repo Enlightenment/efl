@@ -2099,7 +2099,7 @@ elm_multibuttonentry_add(Evas_Object *parent)
 
 typedef struct
 {
-   Efl_Ui_Multibuttonentry_Format_Cb format_cb;
+   Elm_Multibuttonentry_Format_Cb format_cb;
    void *data;
 } Mbe_Format_Wrapper_Data ;
 
@@ -2130,7 +2130,7 @@ _format_legacy_to_format_eo_free_cb(void *data)
 }
 
 EAPI void
-elm_multibuttonentry_format_function_set(Eo *obj, Efl_Ui_Multibuttonentry_Format_Cb format_function, const void *data)
+elm_multibuttonentry_format_function_set(Eo *obj, Elm_Multibuttonentry_Format_Cb format_function, const void *data)
 {
    Mbe_Format_Wrapper_Data *mfwd = malloc(sizeof(Mbe_Format_Wrapper_Data));
 
