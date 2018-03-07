@@ -57,7 +57,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::ui::Slider sl5(instantiate, win);
    sl5.indicator().format_string_set("%1.0f rabbit(s)");
    sl5.range_min_max_set(0, 100);
-   sl5.step_set(1);
+   sl5.range_step_set(1);
    sl5.direction_set(EFL_UI_DIR_UP);
    sl5.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    sl5.hint_min_set({0, 120});
