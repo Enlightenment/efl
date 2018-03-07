@@ -918,6 +918,10 @@ evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s)
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
    unsigned int i;
 
+   MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
+   return;
+   MAGIC_CHECK_END();
+
    obj->smart.smart = s;
    obj->type = s->smart_class->name;
    evas_object_smart_use(s);
