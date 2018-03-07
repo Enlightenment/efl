@@ -861,6 +861,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
    Efl_Ui_Theme_Apply theme_apply;
+   int cursor_pos;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
@@ -898,6 +899,8 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
    eina_stringshare_del(stl_user);
 
+   cursor_pos = sd->cursor_pos;
+
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);
 
@@ -928,10 +931,9 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_prediction_hint_set
      (sd->entry_edje, "elm.text", sd->prediction_hint);
 
-   // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
-   // -> smart_objects_calculate will call all smart calculate functions,
-   // and one of them can delete elm_entry.
    evas_object_ref(obj);
+
+   if (cursor_pos) elm_entry_cursor_pos_set(obj, cursor_pos);
 
    if (efl_ui_focus_object_focus_get(obj))
      {
