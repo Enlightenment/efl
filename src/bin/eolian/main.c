@@ -324,7 +324,7 @@ _write_header(const Eolian_State *eos, const Eolian_Unit *src, const char *ofnam
    INF("generating header: %s (legacy: %d)", ofname, legacy);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   eo_gen_types_header_gen(src, eolian_declarations_get_by_file(eos, ifname),
+   eo_gen_types_header_gen(src, eolian_state_objects_by_file_get(eos, ifname),
                            buf, EINA_TRUE, legacy);
    buf = _include_guard(ifname, "TYPES", buf);
 
@@ -360,7 +360,7 @@ _write_stub_header(const Eolian_State *eos, const Eolian_Unit *src, const char *
    INF("generating stub header: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   eo_gen_types_header_gen(src, eolian_declarations_get_by_file(eos, ifname),
+   eo_gen_types_header_gen(src, eolian_state_objects_by_file_get(eos, ifname),
                            buf, EINA_FALSE, EINA_FALSE);
 
    Eina_Strbuf *cltd = eo_gen_class_typedef_gen(eos, ifname);
@@ -386,7 +386,7 @@ _write_source(const Eolian_State *eos, const char *ofname,
    Eina_Strbuf *buf = eina_strbuf_new();
 
    const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
-   eo_gen_types_source_gen(eolian_declarations_get_by_file(eos, ifname), buf);
+   eo_gen_types_source_gen(eolian_state_objects_by_file_get(eos, ifname), buf);
    eo_gen_source_gen(cl, buf);
    if (cl || (eot && eina_strbuf_length_get(buf)))
      {

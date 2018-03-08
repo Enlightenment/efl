@@ -207,14 +207,14 @@ void eo_gen_types_header_gen(const Eolian_Unit *src,
                              Eina_Iterator *itr, Eina_Strbuf *buf,
                              Eina_Bool full, Eina_Bool legacy)
 {
-   const Eolian_Declaration *decl;
+   const Eolian_Object *decl;
    EINA_ITERATOR_FOREACH(itr, decl)
      {
-        Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
+        Eolian_Object_Type dt = eolian_object_type_get(decl);
 
-        if (dt == EOLIAN_DECL_VAR)
+        if (dt == EOLIAN_OBJECT_VARIABLE)
           {
-             const Eolian_Variable *vr = eolian_declaration_variable_get(decl);
+             const Eolian_Variable *vr = (const Eolian_Variable *)decl;
              if (!vr || eolian_variable_is_extern(vr))
                continue;
 
@@ -228,18 +228,20 @@ void eo_gen_types_header_gen(const Eolian_Unit *src,
              continue;
           }
 
-        if ((dt != EOLIAN_DECL_ALIAS) &&
-            (dt != EOLIAN_DECL_STRUCT) &&
-            (dt != EOLIAN_DECL_ENUM))
-          continue;
-        if (dt == EOLIAN_DECL_ENUM && !full)
+        if (dt != EOLIAN_OBJECT_TYPEDECL)
           continue;
 
-        const Eolian_Typedecl *tp = eolian_declaration_data_type_get(decl);
-        if (!tp || eolian_typedecl_is_extern(tp))
+        const Eolian_Typedecl *tp = (const Eolian_Typedecl *)decl;
+
+        if (eolian_typedecl_is_extern(tp))
           continue;
 
-        if (eolian_typedecl_type_get(tp) == EOLIAN_TYPEDECL_ALIAS)
+        Eolian_Typedecl_Type tpt = eolian_typedecl_type_get(tp);
+
+        if (tpt == EOLIAN_TYPEDECL_ENUM && !full)
+          continue;
+
+        if (tpt == EOLIAN_TYPEDECL_ALIAS)
           {
              const Eolian_Type *btp = eolian_typedecl_base_type_get(tp);
              if (eolian_type_type_get(btp) == EOLIAN_TYPE_UNDEFINED)
@@ -259,16 +261,16 @@ void eo_gen_types_header_gen(const Eolian_Unit *src,
 
 void eo_gen_types_source_gen(Eina_Iterator *itr, Eina_Strbuf *buf)
 {
-   const Eolian_Declaration *decl;
+   const Eolian_Object *decl;
    EINA_ITERATOR_FOREACH(itr, decl)
      {
-        Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
+        Eolian_Object_Type dt = eolian_object_type_get(decl);
 
-        if (dt != EOLIAN_DECL_VAR)
+        if (dt != EOLIAN_OBJECT_VARIABLE)
           continue;
 
-        const Eolian_Variable *vr = eolian_declaration_variable_get(decl);
-        if (!vr || eolian_variable_is_extern(vr))
+        const Eolian_Variable *vr = (const Eolian_Variable *)decl;
+        if (eolian_variable_is_extern(vr))
           continue;
 
         if (eolian_variable_type_get(vr) == EOLIAN_VAR_CONSTANT)

@@ -22,10 +22,10 @@ static void
 _generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
               Eina_Bool use_legacy)
 {
-   const Eolian_Declaration *decl = eolian_declaration_get_by_name(src, refn);
+   const Eolian_Object *decl = eolian_unit_object_by_name_get(src, refn);
    if (decl)
      {
-        char *n = strdup(eolian_declaration_name_get(decl));
+        char *n = strdup(eolian_object_name_get(decl));
         char *p = n;
         while ((p = strchr(p, '.'))) *p = '_';
         eina_strbuf_append(wbuf, n);
