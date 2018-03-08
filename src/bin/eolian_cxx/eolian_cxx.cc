@@ -236,7 +236,7 @@ types_generate(std::string const& fname, options_type const& opts,
         if (dt != EOLIAN_OBJECT_TYPEDECL)
           continue;
 
-        const Eolian_Typedecl *tp = (const Eolian_Typdecl *)decl;
+        const Eolian_Typedecl *tp = (const Eolian_Typedecl *)decl;
 
         if (eolian_typedecl_is_extern(tp))
           continue;
