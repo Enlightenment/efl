@@ -144,15 +144,21 @@ static Eina_Bool
 _evas_outbuf_init(void)
 {
    static int _init = 0;
+
    if (_init) return EINA_TRUE;
 #ifdef EGL_MESA_platform_gbm
-   /* FIXME: Pretty sure we should be checking if EGL_EXT_platform_base
-    * exists before looking these up and trusting them?
-    */
-   dlsym_eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
-         eglGetProcAddress("eglGetPlatformDisplayEXT");
-   dlsym_eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)
-         eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
+   {
+     const char *exts;
+
+     exts = eglQueryString(NULL, EGL_EXTENSIONS);
+     if (exts && strstr(exts, "EGL_EXT_platform_base"))
+       {
+          dlsym_eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
+                eglGetProcAddress("eglGetPlatformDisplayEXT");
+          dlsym_eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)
+                eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
+       }
+   }
 #endif
    _init = 1;
    return EINA_TRUE;
