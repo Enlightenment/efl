@@ -53,7 +53,6 @@ class Eolian_Object_Type(IntEnum):
     IMPLEMENT = 12
     CONSTRUCTOR = 13
     DOCUMENTATION = 14
-    DECLARATION = 15
 
 class Eolian_Function_Type(IntEnum):
     UNRESOLVED = 0
@@ -224,14 +223,6 @@ class Eolian_Unary_Operator(IntEnum):
     UNP = 2  # + sint
     NOT = 3   # ! int, float, bool
     BNOT = 4  # ~ int
-
-class Eolian_Declaration_Type(IntEnum):
-    UNKNOWN = 0
-    CLASS = 1
-    ALIAS = 2
-    STRUCT = 3
-    ENUM = 4
-    VAR = 5
 
 class Eolian_Doc_Token_Type(IntEnum):
     UNKNOWN = 0
@@ -424,19 +415,6 @@ class Eolian_Unit(EolianBaseObject):
 
     def namespace_get_by_name(self, name):
         return Namespace(self, name)
-
-    @property
-    def all_declarations(self):
-        return Iterator(Declaration, lib.eolian_all_declarations_get(self._obj))
-
-    def declaration_get_by_name(self, name):
-        c_decl = lib.eolian_declaration_get_by_name(self._obj, _str_to_bytes(name))
-        return Declaration(c_decl) if c_decl else None
-
-    def declarations_get_by_file(self, fname):
-        return Iterator(Declaration,
-            lib.eolian_declarations_get_by_file(self._obj, _str_to_bytes(fname)))
-
 
 class Eolian_State(Eolian_Unit):
     def __init__(self):
@@ -1456,34 +1434,6 @@ class Variable(Object):
     def documentation(self):
         c_doc = lib.eolian_variable_documentation_get(self._obj)
         return Documentation(c_doc) if c_doc else None
-
-
-class Declaration(Object):
-    def __repr__(self):
-        return "<eolian.Declaration '{0.name}'>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_declaration_name_get(self._obj))
-
-    @cached_property
-    def type(self):
-        return Eolian_Declaration_Type(lib.eolian_declaration_type_get(self._obj))
-
-    @cached_property
-    def class_(self):
-        c_cls = lib.eolian_declaration_class_get(self._obj)
-        return Class(c_cls) if c_cls else None
-
-    @cached_property
-    def data_type(self):
-        c_typedec = lib.eolian_declaration_data_type_get(self._obj)
-        return Typedecl(c_typedec) if c_typedec else None
-
-    @cached_property
-    def variable(self):
-        c_var = lib.eolian_declaration_variable_get(self._obj)
-        return Variable(c_var) if c_var else None
 
 
 class _Eolian_Doc_Token_Struct(ctypes.Structure):
