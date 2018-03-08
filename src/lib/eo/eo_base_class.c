@@ -613,6 +613,13 @@ _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink)
    pd->parent_sunk = sink;
 }
 
+void
+_efl_object_reuse(Eo *obj)
+{
+   Efl_Object_Data *pd = efl_data_scope_get(obj, EFL_OBJECT_CLASS);
+   pd->invalidate = EINA_FALSE;
+}
+
 EOLIAN static void
 _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
