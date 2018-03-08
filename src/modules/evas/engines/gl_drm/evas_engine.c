@@ -208,7 +208,7 @@ symbols(void)
 }
 
 void
-eng_gl_symbols(EGLDisplay edsp)
+eng_egl_symbols(EGLDisplay edsp)
 {
    static Eina_Bool done = EINA_FALSE;
    const char *exts = NULL;

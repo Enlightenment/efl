@@ -233,7 +233,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
-   eng_gl_symbols(ob->egl.disp);
+   eng_egl_symbols(ob->egl.disp);
 
    if (!eglGetConfigs(ob->egl.disp, NULL, 0, &ncfg) || (ncfg == 0))
      {

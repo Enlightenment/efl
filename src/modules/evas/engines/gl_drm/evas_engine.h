@@ -141,7 +141,7 @@ void *evas_outbuf_egl_display_get(Outbuf *ob);
 Context_3D *evas_outbuf_gl_context_new(Outbuf *ob);
 void evas_outbuf_gl_context_use(Context_3D *ctx);
 
-void eng_gl_symbols(EGLDisplay edsp);
+void eng_egl_symbols(EGLDisplay edsp);
 
 static inline Eina_Bool
 _re_wincheck(Outbuf *ob)
