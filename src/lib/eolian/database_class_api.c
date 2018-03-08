@@ -7,12 +7,6 @@
 #include "eolian_priv.h"
 
 EAPI Eina_Stringshare *
-eolian_class_file_get(const Eolian_Class *cl)
-{
-   return cl ? cl->base.file : NULL;
-}
-
-EAPI Eina_Stringshare *
 eolian_class_full_name_get(const Eolian_Class *cl)
 {
    return cl ? cl->base.name : NULL;

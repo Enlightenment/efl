@@ -1173,16 +1173,6 @@ EAPI Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
 EAPI Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
 
 /*
- * @brief Returns the name of the file containing the given class.
- *
- * @param[in] klass the class.
- * @return the name of the file on success or NULL otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_class_file_get(const Eolian_Class *klass);
-
-/*
  * @brief Returns the full name of the given class.
  *
  * @param[in] class the class.
@@ -2190,16 +2180,6 @@ EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typed
 EAPI const Eolian_Documentation *eolian_typedecl_documentation_get(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get the filename of a type declaration.
- *
- * @param[in] tp the type declaration.
- * @return the filename.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_typedecl_file_get(const Eolian_Typedecl *tp);
-
-/*
  * @brief Get the base type of an alias declaration.
  *
  * @param[in] tp the type declaration.
@@ -2319,16 +2299,6 @@ EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eolian_Type_Builtin_Type eolian_type_builtin_type_get(const Eolian_Type *tp);
-
-/*
- * @brief Get the filename of a type.
- *
- * @param[in] tp the type.
- * @return the filename.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the base type of a type.
@@ -2658,16 +2628,6 @@ EAPI Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_variable_documentation_get(const Eolian_Variable *var);
-
-/*
- * @brief Get the filename of a variable.
- *
- * @param[in] var the variable.
- * @return the filename or NULL.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_variable_file_get(const Eolian_Variable *var);
 
 /*
  * @brief Get the base type of a variable.

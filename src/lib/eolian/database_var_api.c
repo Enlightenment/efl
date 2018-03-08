@@ -19,13 +19,6 @@ eolian_variable_documentation_get(const Eolian_Variable *var)
    return var->doc;
 }
 
-EAPI Eina_Stringshare *
-eolian_variable_file_get(const Eolian_Variable *var)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return var->base.file;
-}
-
 EAPI const Eolian_Type *
 eolian_variable_base_type_get(const Eolian_Variable *var)
 {

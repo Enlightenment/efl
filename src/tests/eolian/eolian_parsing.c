@@ -359,7 +359,7 @@ START_TEST(eolian_typedef)
    fail_if(strcmp(type_name, "int"));
 
    /* File */
-   fail_if(!(file = eolian_typedecl_file_get(tdl)));
+   fail_if(!(file = eolian_object_file_get((const Eolian_Object *)tdl)));
    fail_if(strcmp(file, "typedef.eo"));
 
    /* Lowest alias base */
@@ -552,7 +552,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/class_simple.eo")));
    fail_if(!(class = eolian_unit_class_by_name_get(unit, "Class_Simple")));
    fail_if(eolian_state_class_by_file_get(eos, "class_simple.eo") != class);
-   fail_if(strcmp(eolian_class_file_get(class), "class_simple.eo"));
+   fail_if(strcmp(eolian_object_file_get((const Eolian_Object *)class), "class_simple.eo"));
 
    /* Class */
    fail_if(eolian_class_type_get(class) != EOLIAN_CLASS_REGULAR);
@@ -696,7 +696,7 @@ START_TEST(eolian_struct)
    /* named struct */
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Named")));
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
-   fail_if(!(file = eolian_typedecl_file_get(tdl)));
+   fail_if(!(file = eolian_object_file_get((const Eolian_Object *)tdl)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
    fail_if(strcmp(type_name, "Named"));
    fail_if(strcmp(file, "struct.eo"));
@@ -715,7 +715,7 @@ START_TEST(eolian_struct)
    /* referencing */
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Another")));
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
-   fail_if(!(file = eolian_typedecl_file_get(tdl)));
+   fail_if(!(file = eolian_object_file_get((const Eolian_Object *)tdl)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
    fail_if(strcmp(type_name, "Another"));
    fail_if(strcmp(file, "struct.eo"));
@@ -1109,10 +1109,10 @@ START_TEST(eolian_import)
    fail_if(!(class = eolian_unit_class_by_name_get(unit, "Import")));
 
    fail_if(!(tdl = eolian_unit_alias_by_name_get(unit, "Imported")));
-   fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
+   fail_if(strcmp(eolian_object_file_get((const Eolian_Object *)tdl), "import_types.eot"));
 
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Imported_Struct")));
-   fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
+   fail_if(strcmp(eolian_object_file_get((const Eolian_Object *)tdl), "import_types.eot"));
 
    eolian_state_free(eos);
    eolian_shutdown();

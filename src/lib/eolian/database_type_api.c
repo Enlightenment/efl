@@ -153,20 +153,6 @@ eolian_typedecl_documentation_get(const Eolian_Typedecl *tp)
    return tp->doc;
 }
 
-EAPI Eina_Stringshare *
-eolian_type_file_get(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->base.file;
-}
-
-EAPI Eina_Stringshare *
-eolian_typedecl_file_get(const Eolian_Typedecl *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->base.file;
-}
-
 EAPI const Eolian_Type *
 eolian_type_base_type_get(const Eolian_Type *tp)
 {
