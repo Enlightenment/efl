@@ -629,7 +629,11 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
      return;
 
    // Invalidated object can not be bring back to life
-   if (pd->invalidate) return ;
+   if (pd->invalidate)
+     {
+        ERR("Call of efl_parent_set(%p, %p) when object is already invalidated.\n", obj, parent_id);
+	return ;
+     }
 
    EO_OBJ_POINTER(obj, eo_obj);
    if (pd->parent)
@@ -713,8 +717,13 @@ _efl_object_invalidated_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
 }
 
 EOLIAN static Efl_Object *
-_efl_object_provider_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Object *klass)
+_efl_object_provider_find(const Eo *obj, Efl_Object_Data *pd, const Efl_Object *klass)
 {
+   if (pd->invalidate)
+     {
+        ERR("Calling efl_provider_find(%p) after the object was invalidated.", obj);
+	return NULL;
+     }
    if (pd->parent) return efl_provider_find(pd->parent, klass);
    return NULL;
 }
