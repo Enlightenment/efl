@@ -64,14 +64,15 @@ struct _Eolian_State
    Eina_Hash *decls_f;
 };
 
-typedef struct _Eolian_Object
+struct _Eolian_Object
 {
    const char *file;
    int line;
    int column;
    int refcount;
+   Eolian_Object_Type type;
    Eina_Bool validated;
-} Eolian_Object;
+};
 
 static inline void
 eolian_object_ref(Eolian_Object *obj)

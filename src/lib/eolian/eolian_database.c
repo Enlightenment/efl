@@ -602,6 +602,34 @@ eolian_state_free(Eolian_State *state)
    free(state);
 }
 
+EAPI Eolian_Object_Type
+eolian_object_type_get(const Eolian_Object *obj)
+{
+   if (!obj) return EOLIAN_OBJECT_UNKNOWN;
+   return obj->type;
+}
+
+EAPI const char *
+eolian_object_file_get(const Eolian_Object *obj)
+{
+   if (!obj) return NULL;
+   return obj->file;
+}
+
+EAPI int
+eolian_object_line_get(const Eolian_Object *obj)
+{
+   if (!obj) return 0;
+   return obj->line;
+}
+
+EAPI int
+eolian_object_column_get(const Eolian_Object *obj)
+{
+   if (!obj) return 0;
+   return obj->column;
+}
+
 #define EO_SUFFIX ".eo"
 #define EOT_SUFFIX ".eot"
 

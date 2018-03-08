@@ -93,6 +93,14 @@ extern "C" {
  */
 typedef struct _Eolian_State Eolian_State;
 
+/* Any Eolian object
+ *
+ * @see Eolian_Object_Type
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Object Eolian_Object;
+
 /* Class type used to extract information on classes
  *
  * @ingroup Eolian
@@ -188,6 +196,26 @@ typedef struct _Eolian_Documentation Eolian_Documentation;
  * @ingroup Eolian
  */
 typedef struct _Eolian_Unit Eolian_Unit;
+
+typedef enum
+{
+   EOLIAN_OBJECT_UNKNOWN = 0,
+   EOLIAN_OBJECT_CLASS,
+   EOLIAN_OBJECT_TYPEDECL,
+   EOLIAN_OBJECT_STRUCT_FIELD,
+   EOLIAN_OBJECT_ENUM_FIELD,
+   EOLIAN_OBJECT_TYPE,
+   EOLIAN_OBJECT_VARIABLE,
+   EOLIAN_OBJECT_EXPRESSION,
+   EOLIAN_OBJECT_FUNCTION,
+   EOLIAN_OBJECT_FUNCTION_PARAMETER,
+   EOLIAN_OBJECT_EVENT,
+   EOLIAN_OBJECT_PART,
+   EOLIAN_OBJECT_IMPLEMENT,
+   EOLIAN_OBJECT_CONSTRUCTOR,
+   EOLIAN_OBJECT_DOCUMENTATION,
+   EOLIAN_OBJECT_DECLARATION
+} Eolian_Object_Type;
 
 typedef enum
 {
@@ -498,6 +526,64 @@ EAPI Eolian_State *eolian_state_new(void);
  *
  */
 EAPI void eolian_state_free(Eolian_State *state);
+
+/*
+ * @brief Get the type of an Eolian object.
+ *
+ * Most handles returned by Eolian somewhere are Eolian_Objects. You can cast
+ * them to Eolian_Object, store or manipulate them and then use this function
+ * to check their type in order to for example cast it back.
+ *
+ * @see eolian_object_file_get
+ * @see eolian_object_line_get
+ * @see eolian_object_column_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Object_Type eolian_object_type_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get the name of the file the object comes from.
+ *
+ * This returns the name of the file the object was declared in. It's not
+ * a full path, just the file name.
+ *
+ * @see eolian_object_type_get
+ * @see eolian_object_line_get
+ * @see eolian_object_column_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_object_file_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get the line the object was declared at.
+ *
+ * This returns the line number in the file the object was declared at.
+ *
+ * @see eolian_object_type_get
+ * @see eolian_object_file_get
+ * @see eolian_object_column_get
+ *
+ * @ingroup Eolian
+ */
+EAPI int eolian_object_line_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get the column the object was declared at.
+ *
+ * This returns the column number in the file the object was declared at,
+ * that means which character on the line. It is Unicode-aware, Eolian
+ * assumes all input files are encoded in UTF-8, so this is really the
+ * code point number, not the byte number.
+ *
+ * @see eolian_object_type_get
+ * @see eolian_object_file_get
+ * @see eolian_object_line_get
+ *
+ * @ingroup Eolian
+ */
+EAPI int eolian_object_column_get(const Eolian_Object *obj);
 
 /*
  * @brief Scan the given directory for .eo and .eot files.
