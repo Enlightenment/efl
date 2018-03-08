@@ -53,7 +53,7 @@ EAPI Eina_Stringshare *
 eolian_typedecl_struct_field_name_get(const Eolian_Struct_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
-   return fl->name;
+   return fl->base.name;
 }
 
 EAPI const Eolian_Documentation *
@@ -96,7 +96,7 @@ EAPI Eina_Stringshare *
 eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
-   return fl->name;
+   return fl->base.name;
 }
 
 EAPI Eina_Stringshare *
@@ -110,9 +110,9 @@ eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
    if (fl->base_enum->legacy)
      eina_strbuf_append(buf, fl->base_enum->legacy);
    else
-     eina_strbuf_append(buf, fl->base_enum->full_name);
+     eina_strbuf_append(buf, fl->base_enum->base.name);
    eina_strbuf_append_char(buf, '_');
-   eina_strbuf_append(buf, fl->name);
+   eina_strbuf_append(buf, fl->base.name);
    bufp = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
    eina_str_toupper(&bufp);
@@ -297,14 +297,14 @@ EAPI Eina_Stringshare *
 eolian_type_full_name_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->full_name;
+   return tp->base.name;
 }
 
 EAPI Eina_Stringshare *
 eolian_typedecl_full_name_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->full_name;
+   return tp->base.name;
 }
 
 EAPI Eina_Iterator *

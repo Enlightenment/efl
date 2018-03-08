@@ -17,7 +17,8 @@ database_class_del(Eolian_Class *cl)
 
    if (!cl || eolian_object_unref(&cl->base)) return;
 
-   if (cl->base.file) eina_stringshare_del(cl->base.file);
+   eina_stringshare_del(cl->base.file);
+   eina_stringshare_del(cl->base.name);
 
    EINA_LIST_FREE(cl->implements, impl)
      database_implement_del(impl);
@@ -31,7 +32,6 @@ database_class_del(Eolian_Class *cl)
    EINA_LIST_FREE(cl->parts, pt) database_part_del(pt);
 
    if (cl->name) eina_stringshare_del(cl->name);
-   if (cl->full_name) eina_stringshare_del(cl->full_name);
    if (cl->legacy_prefix) eina_stringshare_del(cl->legacy_prefix);
    if (cl->eo_prefix) eina_stringshare_del(cl->eo_prefix);
    if (cl->ev_prefix) eina_stringshare_del(cl->ev_prefix);

@@ -10,11 +10,11 @@ database_type_del(Eolian_Type *tp)
 {
    if (!tp || eolian_object_unref(&tp->base)) return;
    const char *sp;
-   if (tp->base.file) eina_stringshare_del(tp->base.file);
+   eina_stringshare_del(tp->base.file);
+   eina_stringshare_del(tp->base.name);
    database_type_del(tp->base_type);
    database_type_del(tp->next_type);
    if (tp->name) eina_stringshare_del(tp->name);
-   if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
      eina_stringshare_del(sp);
    if (tp->freefunc) eina_stringshare_del(tp->freefunc);
@@ -26,10 +26,10 @@ database_typedecl_del(Eolian_Typedecl *tp)
 {
    if (!tp || eolian_object_unref(&tp->base)) return;
    const char *sp;
-   if (tp->base.file) eina_stringshare_del(tp->base.file);
+   eina_stringshare_del(tp->base.file);
+   eina_stringshare_del(tp->base.name);
    database_type_del(tp->base_type);
    if (tp->name) eina_stringshare_del(tp->name);
-   if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->fields) eina_hash_free(tp->fields);
    if (tp->field_list) eina_list_free(tp->field_list);
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
@@ -43,29 +43,29 @@ database_typedecl_del(Eolian_Typedecl *tp)
 void
 database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
-   EOLIAN_OBJECT_ADD(unit, tp->full_name, tp, aliases);
+   EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, aliases);
    eina_hash_set(unit->state->aliases_f, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(unit->state->aliases_f, tp->base.file),
                 tp));
-   database_decl_add(unit, tp->full_name, EOLIAN_DECL_ALIAS, tp->base.file, tp);
+   database_decl_add(unit, tp->base.name, EOLIAN_DECL_ALIAS, tp->base.file, tp);
 }
 
 void
 database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
-   EOLIAN_OBJECT_ADD(unit, tp->full_name, tp, structs);
+   EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
    eina_hash_set(unit->state->structs_f, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(unit->state->structs_f, tp->base.file), tp));
-   database_decl_add(unit, tp->full_name, EOLIAN_DECL_STRUCT, tp->base.file, tp);
+   database_decl_add(unit, tp->base.name, EOLIAN_DECL_STRUCT, tp->base.file, tp);
 }
 
 void
 database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
-   EOLIAN_OBJECT_ADD(unit, tp->full_name, tp, enums);
+   EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, enums);
    eina_hash_set(unit->state->enums_f, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(unit->state->enums_f, tp->base.file), tp));
-   database_decl_add(unit, tp->full_name, EOLIAN_DECL_ENUM, tp->base.file, tp);
+   database_decl_add(unit, tp->base.name, EOLIAN_DECL_ENUM, tp->base.file, tp);
 }
 
 Eina_Bool
@@ -169,7 +169,7 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
    eina_strbuf_append(buf, " { ");
    EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
-        database_type_to_str(sf->type, buf, sf->name,
+        database_type_to_str(sf->type, buf, sf->base.name,
                              EOLIAN_C_TYPE_DEFAULT);
         eina_strbuf_append(buf, "; ");
      }
@@ -192,7 +192,7 @@ _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
    eina_strbuf_append(buf, " { ");
    EINA_LIST_FOREACH(tp->field_list, l, ef)
      {
-        eina_strbuf_append(buf, ef->name);
+        eina_strbuf_append(buf, ef->base.name);
         if (ef->value)
           {
              Eolian_Value val = eolian_expression_eval(ef->value,
@@ -275,10 +275,10 @@ Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *unit, const Eolian_T
    /* try looking up if it belongs to a struct, enum or an alias... otherwise
     * return NULL, but first check for builtins
     */
-   int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
+   int  kw = eo_lexer_keyword_str_to_id(tp->base.name);
    if (!kw || kw < KW_byte || kw >= KW_true)
      {
-        Eolian_Declaration *decl = eina_hash_find(unit->decls, tp->full_name);
+        Eolian_Declaration *decl = eina_hash_find(unit->decls, tp->base.name);
         if (decl && decl->type != EOLIAN_DECL_CLASS
                  && decl->type != EOLIAN_DECL_VAR)
           return decl->data;

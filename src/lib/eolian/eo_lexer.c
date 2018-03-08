@@ -401,7 +401,7 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
           {
              next_char(ls);
              if (isalpha(ls->current) || ls->current == '_')
-               eina_strbuf_append(ls->buff, ls->tmp.kls->full_name);
+               eina_strbuf_append(ls->buff, ls->tmp.kls->base.name);
              eina_strbuf_append_char(ls->buff, '.');
           }
         continue;

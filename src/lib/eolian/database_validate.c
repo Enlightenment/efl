@@ -186,7 +186,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
    char buf[256];
    if (tp->owned && !database_type_is_ownable(src, tp))
      {
-        snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
+        snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->base.name);
         return _obj_error(&tp->base, buf);
      }
 
@@ -210,7 +210,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
         {
            if (tp->base_type)
              {
-                int kwid = eo_lexer_keyword_str_to_id(tp->full_name);
+                int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
                 if (!tp->freefunc)
                   {
                      tp->freefunc = eina_stringshare_add(eo_complex_frees[
@@ -228,7 +228,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
                             {
                                snprintf(buf, sizeof(buf),
                                         "%s cannot contain value types (%s)",
-                                        tp->full_name, itp->full_name);
+                                        tp->base.name, itp->base.name);
                                return _obj_error(&itp->base, buf);
                             }
                        }
@@ -237,7 +237,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
                 return _validate(&tp->base);
              }
            /* builtins */
-           int id = eo_lexer_keyword_str_to_id(tp->full_name);
+           int id = eo_lexer_keyword_str_to_id(tp->base.name);
            if (id)
              {
                 if (!eo_lexer_is_type_keyword(id))
@@ -266,7 +266,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
            tp->tdecl = database_type_decl_find(src, tp);
            if (!tp->tdecl)
              {
-                snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
+                snprintf(buf, sizeof(buf), "undefined type %s", tp->base.name);
                 return _obj_error(&tp->base, buf);
              }
            if (!_validate_typedecl(vals, src, tp->tdecl))
@@ -277,11 +277,11 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
         }
       case EOLIAN_TYPE_CLASS:
         {
-           tp->klass = (Eolian_Class *)eolian_unit_class_by_name_get(src, tp->full_name);
+           tp->klass = (Eolian_Class *)eolian_unit_class_by_name_get(src, tp->base.name);
            if (!tp->klass)
              {
                 snprintf(buf, sizeof(buf), "undefined class %s "
-                         "(likely wrong namespacing)", tp->full_name);
+                         "(likely wrong namespacing)", tp->base.name);
                 return _obj_error(&tp->base, buf);
              }
            if (!tp->freefunc)
@@ -333,12 +333,12 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
    Eolian_Function_Parameter *param;
    char buf[512];
 
-   const Eolian_Function *ofunc = nhash ? eina_hash_find(nhash, func->name) : NULL;
+   const Eolian_Function *ofunc = nhash ? eina_hash_find(nhash, func->base.name) : NULL;
    if (EINA_UNLIKELY(ofunc && (ofunc != func)))
      {
         snprintf(buf, sizeof(buf),
                  "%sfunction '%s' redefined (originally at %s:%d:%d)",
-                 func->is_beta ? "beta " : "", func->name, ofunc->base.file,
+                 func->is_beta ? "beta " : "", func->base.name, ofunc->base.file,
                  ofunc->base.line, ofunc->base.column);
         _obj_error(&func->base, buf);
         vals->warned = EINA_TRUE;
@@ -351,7 +351,7 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
      {
         /* it might be validated, but need to add it anyway */
         if (!ofunc && nhash)
-          eina_hash_add(nhash, func->name, func);
+          eina_hash_add(nhash, func->base.name, func);
         return EINA_TRUE;
      }
 
@@ -390,7 +390,7 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
 
    /* just for now, when dups become errors there will be no need to check */
    if (!ofunc && nhash)
-     eina_hash_add(nhash, func->name, func);
+     eina_hash_add(nhash, func->base.name, func);
 
    return _validate(&func->base);
 }
@@ -398,13 +398,13 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
 static Eina_Bool
 _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
 {
-   const Eolian_Function *ofunc = eina_hash_find(nhash, part->name);
+   const Eolian_Function *ofunc = eina_hash_find(nhash, part->base.name);
    if (ofunc)
      {
         char buf[512];
         snprintf(buf, sizeof(buf),
                  "part '%s' conflicts with a function (defined at %s:%d:%d)",
-                 part->name, ofunc->base.file,
+                 part->base.name, ofunc->base.file,
                  ofunc->base.line, ofunc->base.column);
         _obj_error(&part->base, buf);
      }
@@ -450,7 +450,7 @@ _validate_event(Validate_State *vals, const Eolian_Unit *src, Eolian_Event *even
 const Eolian_Class *
 _get_impl_class(const Eolian_Class *cl, const char *cln)
 {
-   if (!cl || !strcmp(cl->full_name, cln))
+   if (!cl || !strcmp(cl->base.name, cln))
      return cl;
    Eina_List *l;
    Eolian_Class *icl;
@@ -481,9 +481,9 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    else if (impl->is_prop_set)
      ftype = EOLIAN_PROP_SET;
 
-   size_t imlen = strlen(impl->full_name);
+   size_t imlen = strlen(impl->base.name);
    char *clbuf = alloca(imlen + 1);
-   memcpy(clbuf, impl->full_name, imlen + 1);
+   memcpy(clbuf, impl->base.name, imlen + 1);
 
    char *ldot = strrchr(clbuf, '.');
    if (!ldot)
@@ -497,7 +497,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    if (!tcl)
      {
         _eo_parser_log(&impl->base, "class '%s' not found within the inheritance tree of '%s'",
-                       clname, cl->full_name);
+                       clname, cl->base.name);
         return EINA_FALSE;
      }
 
@@ -555,7 +555,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         /* only allow explicit implements from other classes, besides auto and
          * empty... also prevents pure virtuals from being implemented
          */
-        _eo_parser_log(&impl->base, "invalid implement '%s'", impl->full_name);
+        _eo_parser_log(&impl->base, "invalid implement '%s'", impl->base.name);
         return EINA_FALSE;
      }
 
@@ -577,9 +577,9 @@ _db_fill_implements(Eolian_Class *cl)
    EINA_LIST_FOREACH(cl->implements, l, impl)
      {
         Eina_Bool prop = (impl->is_prop_get || impl->is_prop_set);
-        if (eina_hash_find(prop ? pth : th, impl->full_name))
+        if (eina_hash_find(prop ? pth : th, impl->base.name))
           {
-             _eo_parser_log(&impl->base, "duplicate implement '%s'", impl->full_name);
+             _eo_parser_log(&impl->base, "duplicate implement '%s'", impl->base.name);
              ret = EINA_FALSE;
              goto end;
           }
@@ -598,7 +598,7 @@ _db_fill_implements(Eolian_Class *cl)
              ret = EINA_FALSE;
              goto end;
           }
-        eina_hash_add(prop ? pth : th, impl->full_name, impl->full_name);
+        eina_hash_add(prop ? pth : th, impl->base.name, impl->base.name);
      }
 
 end:
@@ -618,26 +618,26 @@ _db_fill_ctors(Eolian_Class *cl)
    Eina_Hash *th = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(cl->constructors, l, ctor)
      {
-        if (eina_hash_find(th, ctor->full_name))
+        if (eina_hash_find(th, ctor->base.name))
           {
-             _eo_parser_log(&ctor->base, "duplicate ctor '%s'", ctor->full_name);
+             _eo_parser_log(&ctor->base, "duplicate ctor '%s'", ctor->base.name);
              ret = EINA_FALSE;
              goto end;
           }
-        const char *ldot = strrchr(ctor->full_name, '.');
+        const char *ldot = strrchr(ctor->base.name, '.');
         if (!ldot)
           {
              ret = EINA_FALSE;
              goto end;
           }
-        char *cnbuf = alloca(ldot - ctor->full_name + 1);
-        memcpy(cnbuf, ctor->full_name, ldot - ctor->full_name);
-        cnbuf[ldot - ctor->full_name] = '\0';
+        char *cnbuf = alloca(ldot - ctor->base.name + 1);
+        memcpy(cnbuf, ctor->base.name, ldot - ctor->base.name);
+        cnbuf[ldot - ctor->base.name] = '\0';
         const Eolian_Class *tcl = _get_impl_class(cl, cnbuf);
         if (!tcl)
           {
              _eo_parser_log(&ctor->base, "class '%s' not found within the inheritance tree of '%s'",
-                            cnbuf, cl->full_name);
+                            cnbuf, cl->base.name);
              ret = EINA_FALSE;
              goto end;
           }
@@ -645,12 +645,12 @@ _db_fill_ctors(Eolian_Class *cl)
         const Eolian_Function *cfunc = eolian_constructor_function_get(ctor);
         if (!cfunc)
           {
-             _eo_parser_log(&ctor->base, "unable to find function '%s'", ctor->full_name);
+             _eo_parser_log(&ctor->base, "unable to find function '%s'", ctor->base.name);
              ret = EINA_FALSE;
              goto end;
           }
         database_function_constructor_add((Eolian_Function *)cfunc, tcl);
-        eina_hash_add(th, ctor->full_name, ctor->full_name);
+        eina_hash_add(th, ctor->base.name, ctor->base.name);
      }
 
 end:
@@ -661,7 +661,7 @@ end:
 static Eina_Bool
 _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
 {
-   if (eina_hash_find(fhash, cl->full_name))
+   if (eina_hash_find(fhash, cl->base.name))
      return EINA_TRUE;
 
    Eina_List *il = cl->inherits;
@@ -694,7 +694,7 @@ _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
         eina_stringshare_del(inn);
      }
 
-   eina_hash_add(fhash, cl->full_name, cl);
+   eina_hash_add(fhash, cl->base.name, cl);
 
    /* make sure impls/ctors are filled first, but do it only once */
    if (!_db_fill_implements(cl))
@@ -761,7 +761,7 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
                {
                   char buf[PATH_MAX];
                   snprintf(buf, sizeof(buf), "regular classes ('%s') cannot inherit from non-regular classes ('%s')",
-                           cl->full_name, icl->full_name);
+                           cl->base.name, icl->base.name);
                   return _obj_error(&cl->base, buf);
                }
              break;
@@ -771,7 +771,7 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
                {
                   char buf[PATH_MAX];
                   snprintf(buf, sizeof(buf), "non-regular classes ('%s') cannot inherit from regular classes ('%s')",
-                           cl->full_name, icl->full_name);
+                           cl->base.name, icl->base.name);
                   return _obj_error(&cl->base, buf);
                }
              break;

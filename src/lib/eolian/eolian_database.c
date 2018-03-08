@@ -16,9 +16,9 @@ database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
    Eolian_Declaration *decl = calloc(1, sizeof(Eolian_Declaration));
    decl->base = *((Eolian_Object *)ptr);
    decl->base.file = eina_stringshare_ref(decl->base.file);
+   decl->base.name = eina_stringshare_ref(decl->base.name);
    decl->base.refcount = 0;
    decl->type = type;
-   decl->name = name;
    decl->data = ptr;
    EOLIAN_OBJECT_ADD(unit, name, decl, decls);
    eina_hash_set(unit->state->decls_f, file, eina_list_append
@@ -35,6 +35,7 @@ database_decl_del(Eolian_Declaration *decl)
 {
    if (!decl || eolian_object_unref(&decl->base)) return;
    eina_stringshare_del(decl->base.file);
+   eina_stringshare_del(decl->base.name);
    free(decl);
 }
 
@@ -76,7 +77,7 @@ EAPI Eina_Stringshare *
 eolian_declaration_name_get(const Eolian_Declaration *decl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
-   return decl->name;
+   return decl->base.name;
 }
 
 EAPI const Eolian_Class *
@@ -637,6 +638,13 @@ eolian_object_column_get(const Eolian_Object *obj)
 {
    if (!obj) return 0;
    return obj->column;
+}
+
+EAPI const char *
+eolian_object_name_get(const Eolian_Object *obj)
+{
+   if (!obj) return NULL;
+   return obj->name;
 }
 
 #define EO_SUFFIX ".eo"

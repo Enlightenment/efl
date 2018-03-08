@@ -537,6 +537,7 @@ EAPI void eolian_state_free(Eolian_State *state);
  * @see eolian_object_file_get
  * @see eolian_object_line_get
  * @see eolian_object_column_get
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
@@ -551,6 +552,7 @@ EAPI Eolian_Object_Type eolian_object_type_get(const Eolian_Object *obj);
  * @see eolian_object_type_get
  * @see eolian_object_line_get
  * @see eolian_object_column_get
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
@@ -564,6 +566,7 @@ EAPI const char *eolian_object_file_get(const Eolian_Object *obj);
  * @see eolian_object_type_get
  * @see eolian_object_file_get
  * @see eolian_object_column_get
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
@@ -580,10 +583,27 @@ EAPI int eolian_object_line_get(const Eolian_Object *obj);
  * @see eolian_object_type_get
  * @see eolian_object_file_get
  * @see eolian_object_line_get
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
 EAPI int eolian_object_column_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get the name of an object.
+ *
+ * This name is the full name of the object, if named at all.
+ * For toplevel file declarations, this will be the fully namespaced
+ * name, for things like params this will be just the name itself.
+ *
+ * @see eolian_object_type_get
+ * @see eolian_object_file_get
+ * @see eolian_object_line_get
+ * @see eolian_object_column_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_object_name_get(const Eolian_Object *obj);
 
 /*
  * @brief Scan the given directory for .eo and .eot files.

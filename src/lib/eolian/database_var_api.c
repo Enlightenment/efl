@@ -51,7 +51,7 @@ EAPI Eina_Stringshare *
 eolian_variable_full_name_get(const Eolian_Variable *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return var->full_name;
+   return var->base.name;
 }
 
 EAPI Eina_Iterator *

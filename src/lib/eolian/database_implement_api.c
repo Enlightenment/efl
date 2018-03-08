@@ -9,7 +9,7 @@ EAPI Eina_Stringshare *
 eolian_implement_full_name_get(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
-   return impl->full_name;
+   return impl->base.name;
 }
 
 EAPI const Eolian_Class *
