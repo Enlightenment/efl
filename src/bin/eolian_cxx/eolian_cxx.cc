@@ -226,18 +226,19 @@ types_generate(std::string const& fname, options_type const& opts,
    using namespace efl::eolian::grammar::attributes;
 
    std::vector<function_def> functions;
-   Eina_Iterator *itr = eolian_declarations_get_by_file(opts.state, fname.c_str());
-   /* const */ Eolian_Declaration *decl;
+   Eina_Iterator *itr = eolian_state_objects_by_file_get(opts.state, fname.c_str());
+   /* const */ Eolian_Object *decl;
 
    // Build list of functions with their parameters
    while(::eina_iterator_next(itr, reinterpret_cast<void**>(&decl)))
      {
-        Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
-        if (dt != EOLIAN_DECL_ALIAS)
+        Eolian_Object_Type dt = eolian_object_type_get(decl);
+        if (dt != EOLIAN_OBJECT_TYPEDECL)
           continue;
 
-        const Eolian_Typedecl *tp = eolian_declaration_data_type_get(decl);
-        if (!tp || eolian_typedecl_is_extern(tp))
+        const Eolian_Typedecl *tp = (const Eolian_Typdecl *)decl;
+
+        if (eolian_typedecl_is_extern(tp))
           continue;
 
         if (::eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
