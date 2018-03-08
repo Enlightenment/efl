@@ -351,6 +351,14 @@ class Eolian_Unit(EolianBaseObject):
         return _str_to_py(lib.eolian_unit_file_get(self._obj))
 
     @property
+    def objects(self):
+        return Iterator(Object, lib.eolian_unit_objects_get(self._obj))
+
+    def object_by_name_get(self, name):
+        c_obj = lib.eolian_unit_object_by_name_get(self._obj, _str_to_bytes(name))
+        return Object(c_obj) if c_obj else None
+
+    @property
     def classes(self):
         return Iterator(Class, lib.eolian_unit_classes_get(self._obj))
 
@@ -463,6 +471,18 @@ class Eolian_State(Eolian_Unit):
     @property
     def units(self):
         return Iterator(Eolian_Unit, lib.eolian_state_units_get(self._obj))
+
+    @property
+    def objects(self):
+        return Iterator(Object, lib.eolian_state_objects_get(self._obj))
+
+    def object_by_name_get(self, name):
+        c_obj = lib.eolian_state_object_by_name_get(self._obj, _str_to_bytes(name))
+        return Object(c_obj) if c_obj else None
+
+    def objects_by_file_get(self, file_name):
+        return Iterator(Object,
+            lib.eolian_state_objects_by_file_get(self._obj, _str_to_bytes(file_name)))
 
     @property
     def classes(self):
