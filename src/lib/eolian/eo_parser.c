@@ -2055,7 +2055,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    int line, col;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.kls = calloc(1, sizeof(Eolian_Class));
-   FILL_BASE(ls->tmp.kls->base, ls, ls->line_number, ls->column, DECLARATION);
+   FILL_BASE(ls->tmp.kls->base, ls, ls->line_number, ls->column, CLASS);
    eo_lexer_get(ls);
    ls->tmp.kls->type = type;
    eo_lexer_context_push(ls);
