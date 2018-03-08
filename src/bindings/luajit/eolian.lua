@@ -14,6 +14,7 @@ ffi.cdef [[
     typedef struct _Eina_Iterator Eina_Iterator;
 
     typedef struct _Eolian_State Eolian_State;
+    typedef struct _Eolian_Object Eolian_Object;
     typedef struct _Eolian_Class Eolian_Class;
     typedef struct _Eolian_Function Eolian_Function;
     typedef struct _Eolian_Type Eolian_Type;
@@ -30,6 +31,25 @@ ffi.cdef [[
     typedef struct _Eolian_Documentation Eolian_Documentation;
     typedef struct _Eolian_Value Eolian_Value;
     typedef struct _Eolian_Unit Eolian_Unit;
+
+    typedef enum {
+        EOLIAN_OBJECT_UNKNOWN = 0,
+        EOLIAN_OBJECT_CLASS,
+        EOLIAN_OBJECT_TYPEDECL,
+        EOLIAN_OBJECT_STRUCT_FIELD,
+        EOLIAN_OBJECT_ENUM_FIELD,
+        EOLIAN_OBJECT_TYPE,
+        EOLIAN_OBJECT_VARIABLE,
+        EOLIAN_OBJECT_EXPRESSION,
+        EOLIAN_OBJECT_FUNCTION,
+        EOLIAN_OBJECT_FUNCTION_PARAMETER,
+        EOLIAN_OBJECT_EVENT,
+        EOLIAN_OBJECT_PART,
+        EOLIAN_OBJECT_IMPLEMENT,
+        EOLIAN_OBJECT_CONSTRUCTOR,
+        EOLIAN_OBJECT_DOCUMENTATION,
+        EOLIAN_OBJECT_DECLARATION
+    } Eolian_Object_Type;
 
     typedef enum
     {
@@ -289,6 +309,11 @@ ffi.cdef [[
     int eolian_shutdown(void);
     Eolian_State *eolian_state_new(void);
     void eolian_state_free(Eolian_State *state);
+    Eolian_Object_Type eolian_object_type_get(const Eolian_Object *obj);
+    const char *eolian_object_file_get(const Eolian_Object *obj);
+    int eolian_object_line_get(const Eolian_Object *obj);
+    int eolian_object_column_get(const Eolian_Object *obj);
+    const char *eolian_object_name_get(const Eolian_Object *obj);
     Eina_Bool eolian_state_directory_add(Eolian_State *state, const char *dir);
     Eina_Bool eolian_state_system_directory_add(Eolian_State *state);
     Eina_Iterator *eolian_state_eo_file_paths_get(const Eolian_State *state);
@@ -300,6 +325,9 @@ ffi.cdef [[
     Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
     const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name);
     Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
+    const Eolian_Object *eolian_state_object_by_name_get(const Eolian_State *state, const char *name);
+    Eina_Iterator *eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_name);
+    Eina_Iterator *eolian_state_objects_get(const Eolian_State *state);
     const Eolian_Class *eolian_state_class_by_name_get(const Eolian_State *state, const char *class_name);
     const Eolian_Class *eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name);
     Eina_Iterator *eolian_state_classes_get(const Eolian_State *state);
@@ -320,6 +348,8 @@ ffi.cdef [[
     Eina_Iterator *eolian_state_enums_get(const Eolian_State *state);
     Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
     const char *eolian_unit_file_get(const Eolian_Unit *unit);
+    const Eolian_Object *eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name);
+    Eina_Iterator *eolian_unit_objects_get(const Eolian_Unit *unit);
     const Eolian_Class *eolian_unit_class_by_name_get(const Eolian_Unit *unit, const char *class_name);
     Eina_Iterator *eolian_unit_classes_get(const Eolian_Unit *unit);
     const Eolian_Variable *eolian_unit_global_by_name_get(const Eolian_Unit *unit, const char *name);
@@ -333,7 +363,6 @@ ffi.cdef [[
     Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
     Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
 
-    const char *eolian_class_file_get(const Eolian_Class *klass);
     const char *eolian_class_full_name_get(const Eolian_Class *klass);
     const char *eolian_class_name_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_namespaces_get(const Eolian_Class *klass);
@@ -416,8 +445,6 @@ ffi.cdef [[
 
     const char *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
     const Eolian_Documentation *eolian_typedecl_documentation_get(const Eolian_Typedecl *tp);
-    const char *eolian_type_file_get(const Eolian_Type *tp);
-    const char *eolian_typedecl_file_get(const Eolian_Typedecl *tp);
 
     const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
     const Eolian_Type *eolian_type_next_type_get(const Eolian_Type *tp);
@@ -464,7 +491,6 @@ ffi.cdef [[
     Eolian_Value_t eolian_expression_value_get(const Eolian_Expression *expr);
     Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
     const Eolian_Documentation *eolian_variable_documentation_get(const Eolian_Variable *var);
-    const char *eolian_variable_file_get(const Eolian_Variable *var);
     const Eolian_Type *eolian_variable_base_type_get(const Eolian_Variable *var);
     const Eolian_Expression *eolian_variable_value_get(const Eolian_Variable *var);
     const char *eolian_variable_name_get(const Eolian_Variable *var);
@@ -522,12 +548,70 @@ end
 
 cutil.init_module(init, shutdown)
 
+M.object_type = {
+    UNKNOWN            = 0,
+    CLASS              = 1,
+    TYPEDECL           = 2,
+    STRUCT_FIELD       = 3,
+    ENUM_FIELD         = 4,
+    TYPE               = 5,
+    VARIABLE           = 6,
+    EXPRESSION         = 7,
+    FUNCTION           = 8,
+    FUNCTION_PARAMETER = 9,
+    EVENT              = 10,
+    PART               = 11,
+    IMPLEMENT          = 12,
+    CONSTRUCTOR        = 13,
+    DOCUMENTATION      = 14,
+    DECLARATION        = 15
+}
+
 M.object_scope = {
     UNKNOWN   = 0,
     PUBLIC    = 1,
     PRIVATE   = 2,
     PROTECTED = 3
 }
+
+local cast_obj = function(self)
+    return ffi.cast("const Eolian_Object *", self)
+end
+
+local object_idx = {
+    type_get = function(self)
+        return tonumber(eolian.eolian_object_type_get(cast_obj(self)))
+    end,
+
+    line_get = function(self)
+        return tonumber(eolian.eolian_object_line_get(cast_obj(self)))
+    end,
+
+    column_get = function(self)
+        return tonumber(eolian.eolian_object_column_get(cast_obj(self)))
+    end,
+
+    file_get = function(self)
+        local v = eolian.eolian_object_file_get(cast_obj(self))
+        if v == nil then
+            return nil
+        end
+        return ffi.string(v)
+    end,
+
+    name_get = function(self)
+        local v = eolian.eolian_object_name_get(cast_obj(self))
+        if v == nil then
+            return nil
+        end
+        return ffi.string(v)
+    end
+}
+ffi.metatype("Eolian_Object", { __index = object_idx })
+
+local wrap_object = function(t)
+    return setmetatable(t, { __index = object_idx })
+end
 
 ffi.metatype("Eolian_State", {
     __index = {
@@ -591,6 +675,22 @@ ffi.metatype("Eolian_State", {
         units_get = function(self)
             return Ptr_Iterator("const Eolian_Unit*",
                 eolian.eolian_state_units_get(self))
+        end,
+
+        object_by_name_get = function(self, name)
+            local v = eolian.eolian_state_object_by_name_get(self, name)
+            if v == nil then return nil end
+            return v
+        end,
+
+        objects_by_file_get = function(self, fname)
+            return Ptr_Iterator("const Eolian_Object *",
+                eolian.eolian_state_objects_by_file_get(self, fname))
+        end,
+
+        objects_get = function(self, fname)
+            return Ptr_Iterator("const Eolian_Object *",
+                eolian.eolian_state_objects_get(self, fname))
         end,
 
         class_by_name_get = function(self, cname)
@@ -706,6 +806,17 @@ ffi.metatype("Eolian_Unit", {
             local v = eolian.eolian_unit_file_get(self)
             if v == nil then return nil end
             return ffi.string(v)
+        end,
+
+        object_by_name_get = function(self, name)
+            local v = eolian.eolian_unit_object_by_name_get(self, name)
+            if v == nil then return nil end
+            return v
+        end,
+
+        objects_get = function(self, fname)
+            return Ptr_Iterator("const Eolian_Object *",
+                eolian.eolian_unit_objects_get(self, fname))
         end,
 
         class_by_name_get = function(self, cname)
@@ -873,7 +984,7 @@ M.c_type_type = {
 }
 
 ffi.metatype("Eolian_Struct_Type_Field", {
-    __index = {
+    __index = wrap_object {
         name_get = function(self)
             local v = eolian.eolian_typedecl_struct_field_name_get(self)
             if v == nil then return nil end
@@ -895,7 +1006,7 @@ ffi.metatype("Eolian_Struct_Type_Field", {
 })
 
 ffi.metatype("Eolian_Enum_Type_Field", {
-    __index = {
+    __index = wrap_object {
         name_get = function(self)
             local v = eolian.eolian_typedecl_enum_field_name_get(self)
             if v == nil then return nil end
@@ -923,7 +1034,7 @@ ffi.metatype("Eolian_Enum_Type_Field", {
 })
 
 M.Typedecl = ffi.metatype("Eolian_Typedecl", {
-    __index = {
+    __index = wrap_object {
         type_get = function(self)
             return tonumber(eolian.eolian_typedecl_type_get(self))
         end,
@@ -960,12 +1071,6 @@ M.Typedecl = ffi.metatype("Eolian_Typedecl", {
             local v = eolian.eolian_typedecl_documentation_get(self)
             if v == nil then return nil end
             return v
-        end,
-
-        file_get = function(self, name)
-            local v = eolian.eolian_typedecl_file_get(self)
-            if v == nil then return nil end
-            return ffi.string(v)
         end,
 
         base_type_get = function(self)
@@ -1022,19 +1127,13 @@ M.Typedecl = ffi.metatype("Eolian_Typedecl", {
 })
 
 M.Type = ffi.metatype("Eolian_Type", {
-    __index = {
+    __index = wrap_object {
         type_get = function(self)
             return tonumber(eolian.eolian_type_type_get(self))
         end,
 
         builtin_type_get = function(self)
             return tonumber(eolian.eolian_type_builtin_type_get(self))
-        end,
-
-        file_get = function(self, name)
-            local v = eolian.eolian_type_file_get(self)
-            if v == nil then return nil end
-            return ffi.string(v)
         end,
 
         base_type_get = function(self)
@@ -1120,7 +1219,7 @@ M.function_type = {
 }
 
 M.Function = ffi.metatype("Eolian_Function", {
-    __index = {
+    __index = wrap_object {
         type_get = function(self)
             return tonumber(eolian.eolian_function_type_get(self))
         end,
@@ -1225,7 +1324,7 @@ M.parameter_dir = {
 }
 
 ffi.metatype("Eolian_Function_Parameter", {
-    __index = {
+    __index = wrap_object {
         direction_get = function(self)
             return tonumber(eolian.eolian_parameter_direction_get(self))
         end,
@@ -1269,7 +1368,7 @@ ffi.metatype("Eolian_Function_Parameter", {
 })
 
 ffi.metatype("Eolian_Implement", {
-    __index = {
+    __index = wrap_object {
         full_name_get = function(self)
             local v = eolian.eolian_implement_full_name_get(self)
             if v == nil then return nil end
@@ -1318,7 +1417,7 @@ ffi.metatype("Eolian_Implement", {
 })
 
 ffi.metatype("Eolian_Constructor", {
-    __index = {
+    __index = wrap_object {
         full_name_get = function(self)
             local v = eolian.eolian_constructor_full_name_get(self)
             if v == nil then return nil end
@@ -1344,7 +1443,7 @@ ffi.metatype("Eolian_Constructor", {
 })
 
 ffi.metatype("Eolian_Event", {
-    __index = {
+    __index = wrap_object {
         name_get = function(self)
             local v = eolian.eolian_event_name_get(self)
             if v == nil then return nil end
@@ -1396,13 +1495,7 @@ M.class_type = {
 }
 
 M.Class = ffi.metatype("Eolian_Class", {
-    __index = {
-        file_get = function(self)
-            local v = eolian.eolian_class_file_get(self)
-            if v == nil then return nil end
-            return ffi.string(v)
-        end,
-
+    __index = wrap_object {
         full_name_get = function(self)
             local v = eolian.eolian_class_full_name_get(self)
             if v == nil then return nil end
@@ -1618,7 +1711,7 @@ M.unary_operator = {
 }
 
 M.Expression = ffi.metatype("Eolian_Expression", {
-    __index = {
+    __index = wrap_object {
         eval = function(self, mask)
             mask = mask or emask.ALL
             local v = eolian.eolian_expression_eval(self, mask)
@@ -1677,7 +1770,7 @@ M.Expression = ffi.metatype("Eolian_Expression", {
 })
 
 M.Variable = ffi.metatype("Eolian_Variable", {
-    __index = {
+    __index = wrap_object {
         type_get = function(self)
             return tonumber(eolian.eolian_variable_type_get(self))
         end,
@@ -1686,12 +1779,6 @@ M.Variable = ffi.metatype("Eolian_Variable", {
             local v = eolian.eolian_variable_documentation_get(self)
             if v == nil then return nil end
             return v
-        end,
-
-        file_get = function(self)
-            local v = eolian.eolian_variable_file_get(self)
-            if v == nil then return nil end
-            return ffi.string(v)
         end,
 
         base_type_get = function(self)
@@ -1743,7 +1830,7 @@ M.all_declarations_get = function(unit)
 end
 
 M.Declaration = ffi.metatype("Eolian_Declaration", {
-    __index = {
+    __index = wrap_object {
         type_get = function(self)
             return tonumber(eolian.eolian_declaration_type_get(self))
         end,
@@ -1775,7 +1862,7 @@ M.Declaration = ffi.metatype("Eolian_Declaration", {
 })
 
 M.Documentation = ffi.metatype("Eolian_Documentation", {
-    __index = {
+    __index = wrap_object {
         summary_get = function(self)
             local v = eolian.eolian_documentation_summary_get(self)
             if v == nil then return nil end
