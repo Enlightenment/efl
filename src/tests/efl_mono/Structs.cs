@@ -245,6 +245,17 @@ class TestStructs
         checkZeroedStructComplex(complex);
     }
 
+    public static void parameter_initialization()
+    {
+        var simple = new test.StructSimple(0x1, 0x2, (char)0x3, 0x4, 0x5);
+        Test.AssertEquals(0x1, simple.Fbyte);
+        Test.AssertEquals(0x2, simple.Fubyte);
+        Test.AssertEquals(0x3, simple.Fchar);
+        Test.AssertEquals(0x4, simple.Fshort);
+        Test.AssertEquals(0x5, simple.Fushort);
+        Test.AssertEquals(0, simple.Fint);
+    }
+
     // As parameters
 
     public static void simple_in()

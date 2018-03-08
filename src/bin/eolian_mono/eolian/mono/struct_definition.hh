@@ -11,6 +11,7 @@
 #include "keyword.hh"
 #include "using_decl.hh"
 #include "documentation.hh"
+#include "struct_fields.hh"
 
 namespace eolian_mono {
 
@@ -22,13 +23,6 @@ inline std::string binding_struct_name(attributes::struct_def const& struct_)
 inline std::string binding_struct_internal_name(attributes::struct_def const& struct_)
 {
    return struct_.cxx_name + "_StructInternal";
-}
-
-inline std::string to_field_name(std::string const& in)
-{
-  std::string field_name = in;
-  field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
-  return field_name;
 }
 
 struct struct_definition_generator
@@ -69,6 +63,21 @@ struct struct_definition_generator
        {
            if (!as_generator("///<summary>Placeholder field</summary>\npublic IntPtr field;\n").generate(sink, nullptr, context))
              return false;
+       }
+     else
+       {
+          // Constructor with default parameters for easy struct initialization
+          auto struct_name = binding_struct_name(struct_);
+          if(!as_generator(
+                      scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
+                      << scope_tab << "public " << string << "(\n"
+                      << ((scope_tab << scope_tab << field_argument_default) % ",\n")
+                      << scope_tab << ")\n"
+                      << scope_tab << "{\n"
+                      << *(scope_tab << scope_tab << field_argument_assignment << ";\n")
+                      << scope_tab << "}\n")
+             .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
+              return false;
        }
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;

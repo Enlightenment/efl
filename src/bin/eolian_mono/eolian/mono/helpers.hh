@@ -76,6 +76,12 @@ inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
    return false;
 }
 
+inline std::string to_field_name(std::string const& in)
+{
+  std::string field_name = in;
+  field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
+  return field_name;
+}
 
 }
 
