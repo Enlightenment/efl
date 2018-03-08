@@ -37,6 +37,24 @@ _already_halted = False
 
 ###  Eolian Enums  ############################################################
 
+class Eolian_Object_Type(IntEnum):
+    UNKNOWN = 0
+    CLASS = 1
+    TYPEDECL = 2
+    STRUCT_FIELD = 3
+    ENUM_FIELD = 4
+    TYPE = 5
+    VARIABLE = 6
+    EXPRESSION = 7
+    FUNCTION = 8
+    FUNCTION_PARAMETER = 9
+    EVENT = 10
+    PART = 11
+    IMPLEMENT = 12
+    CONSTRUCTOR = 13
+    DOCUMENTATION = 14
+    DECLARATION = 15
+
 class Eolian_Function_Type(IntEnum):
     UNRESOLVED = 0
     PROPERTY = 1
@@ -630,7 +648,31 @@ class Namespace(object):
 
 ###  Eolian Classes  ##########################################################
 
-class Class(EolianBaseObject):
+class Object(EolianBaseObject):
+    def __repr__(self):
+        return "<eolian.Object '{0.name}', {0.type!s}>".format(self)
+
+    @cached_property
+    def name(self):
+        return _str_to_py(lib.eolian_object_name_get(self._obj))
+
+    @cached_property
+    def file(self):
+        return _str_to_py(lib.eolian_object_file_get(self._obj))
+
+    @cached_property
+    def line(self):
+        return int(lib.eolian_object_line_get(self._obj))
+
+    @cached_property
+    def column(self):
+        return int(lib.eolian_object_column_get(self._obj))
+
+    @cached_property
+    def type(self):
+        return Eolian_Object_Type(lib.eolian_object_type_get(self._obj))
+
+class Class(Object):
     def __repr__(self):
         return "<eolian.Class '{0.full_name}', {0.type!s}>".format(self)
 
@@ -741,10 +783,6 @@ class Class(EolianBaseObject):
         return '.'.join(self.namespaces)
 
     @cached_property
-    def file(self):
-        return _str_to_py(lib.eolian_class_file_get(self._obj))
-
-    @cached_property
     def ctor_enable(self):
         return bool(lib.eolian_class_ctor_enable_get(self._obj))
 
@@ -779,7 +817,7 @@ class Class(EolianBaseObject):
         return Iterator(Part, lib.eolian_class_parts_get(self._obj))
 
 
-class Part(EolianBaseObject):
+class Part(Object):
     def __repr__(self):
         return "<eolian.Part '{0.name}'>".format(self)
 
@@ -797,7 +835,7 @@ class Part(EolianBaseObject):
         return Documentation(c_doc) if c_doc else None
 
 
-class Constructor(EolianBaseObject):
+class Constructor(Object):
     def __repr__(self):
         return "<eolian.Constructor '{0.full_name}', optional={0.is_optional}>".format(self)
 
@@ -818,7 +856,7 @@ class Constructor(EolianBaseObject):
         return Class(lib.eolian_constructor_class_get(self._obj))
 
 
-class Event(EolianBaseObject):
+class Event(Object):
     def __repr__(self):
         return "<eolian.Event '{0.name}', c_name='{0.c_name}'>".format(self)
 
@@ -860,7 +898,7 @@ class Event(EolianBaseObject):
         return bool(lib.eolian_event_is_restart(self._obj))
 
 
-class Function(EolianBaseObject):
+class Function(Object):
     def __repr__(self):
         return "<eolian.Function '{0.name}'>".format(self)
 
@@ -1023,7 +1061,7 @@ class Function(EolianBaseObject):
         return Implement(c_impl) if c_impl else None
 
 
-class Function_Parameter(EolianBaseObject):
+class Function_Parameter(Object):
     def __repr__(self):
         return "<eolian.Function_Parameter '{0.name}', type={0.type}," \
                " optional={0.is_optional}, nullable={0.is_nullable}>".format(self)
@@ -1064,7 +1102,7 @@ class Function_Parameter(EolianBaseObject):
         return Expression(c_expr) if c_expr else None
 
 
-class Implement(EolianBaseObject):
+class Implement(Object):
     def __repr__(self):
         return "<eolian.Implement '{0.full_name}'>".format(self)
 
@@ -1117,7 +1155,7 @@ class Implement(EolianBaseObject):
         return not self.is_property
 
 
-class Type(EolianBaseObject):
+class Type(Object):
     def __repr__(self):
         #  return "<eolian.Type '{0.full_name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
         return "<eolian.Type '{0.full_name}', type={0.type!s}>".format(self)
@@ -1194,10 +1232,6 @@ class Type(EolianBaseObject):
         return Class(c_cls) if c_cls else None
 
     @cached_property
-    def file(self):
-        return _str_to_py(lib.eolian_type_file_get(self._obj))
-
-    @cached_property
     def is_owned(self):
         return bool(lib.eolian_type_is_owned(self._obj))
 
@@ -1210,7 +1244,7 @@ class Type(EolianBaseObject):
         return bool(lib.eolian_type_is_ptr(self._obj))
 
 
-class Typedecl(EolianBaseObject):
+class Typedecl(Object):
     def __repr__(self):
         return "<eolian.Typedecl '{0.full_name}', type={0.type!s}>".format(self)
 
@@ -1221,10 +1255,6 @@ class Typedecl(EolianBaseObject):
     @cached_property
     def full_name(self):
         return _str_to_py(lib.eolian_typedecl_full_name_get(self._obj))
-
-    @cached_property
-    def file(self):
-        return _str_to_py(lib.eolian_typedecl_file_get(self._obj))
 
     @cached_property
     def type(self):
@@ -1296,7 +1326,7 @@ class Typedecl(EolianBaseObject):
         return Function(c_func) if c_func else None
 
 
-class Enum_Type_Field(EolianBaseObject):
+class Enum_Type_Field(Object):
     def __repr__(self):
         return "<eolian.Enum_Type_Field '{0.name}', c_name='{0.c_name}'>".format(self)
 
@@ -1322,7 +1352,7 @@ class Enum_Type_Field(EolianBaseObject):
         return Documentation(c_doc) if c_doc else None
 
 
-class Struct_Type_Field(EolianBaseObject):
+class Struct_Type_Field(Object):
     def __repr__(self):
         return "<eolian.Struct_Type_Field '{0.name}', type={0.type!s}>".format(self)
 
@@ -1341,7 +1371,7 @@ class Struct_Type_Field(EolianBaseObject):
         return Documentation(c_doc) if c_doc else None
 
 
-class Expression(EolianBaseObject):
+class Expression(Object):
     def __repr__(self):
         return "<eolian.Expression type={0.type!s}, serialize='{0.serialize}'>".format(self)
 
@@ -1384,7 +1414,7 @@ class Expression(EolianBaseObject):
         return Expression(c_expr) if c_expr is not None else None
 
 
-class Variable(EolianBaseObject):
+class Variable(Object):
     def __repr__(self):
         return "<eolian.Variable '{0.full_name}', type={0.type!s}, file={0.file}>".format(self)
 
@@ -1414,10 +1444,6 @@ class Variable(EolianBaseObject):
         return Expression(c_expr) if c_expr else None
 
     @cached_property
-    def file(self):
-        return _str_to_py(lib.eolian_variable_file_get(self._obj))
-
-    @cached_property
     def base_type(self):
         c_type = lib.eolian_variable_base_type_get(self._obj)
         return Type(c_type) if c_type else None
@@ -1432,7 +1458,7 @@ class Variable(EolianBaseObject):
         return Documentation(c_doc) if c_doc else None
 
 
-class Declaration(EolianBaseObject):
+class Declaration(Object):
     def __repr__(self):
         return "<eolian.Declaration '{0.name}'>".format(self)
 
@@ -1466,7 +1492,7 @@ class _Eolian_Doc_Token_Struct(ctypes.Structure):
                 ("text_end", c_char_p)]
 
 
-class Documentation(EolianBaseObject):  # OK (1 TODO Unit*)
+class Documentation(Object):  # OK (1 TODO Unit*)
     # def __repr__(self):
         # return "<eolian.Documentation '{0.name}'>".format(self)
 
