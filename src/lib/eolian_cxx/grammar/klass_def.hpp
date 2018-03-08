@@ -634,7 +634,7 @@ struct function_def
      if (type != EOLIAN_FUNCTION_POINTER)
        {
           const Eolian_Class *klass = eolian_function_class_get(function);
-          filename = eolian_class_file_get(klass);
+          filename = eolian_object_file_get((const Eolian_Object *)klass);
        }
      else
        {
@@ -941,7 +941,7 @@ struct klass_def
           this->namespaces.push_back(&*namespace_iterator);
        }
      cxx_name = eolian_name = eolian_class_name_get(klass);
-     filename = eolian_class_file_get(klass);
+     filename = eolian_object_file_get((const Eolian_Object *)klass);
      for(efl::eina::iterator<Eolian_Function const> eolian_functions ( ::eolian_class_functions_get(klass, EOLIAN_PROPERTY))
        , functions_last; eolian_functions != functions_last; ++eolian_functions)
        {
