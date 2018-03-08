@@ -42,6 +42,7 @@ struct _Eolian_Unit
    Eina_Hash     *aliases;
    Eina_Hash     *structs;
    Eina_Hash     *enums;
+   Eina_Hash     *objects;
    Eina_Hash     *decls;
 };
 
@@ -61,6 +62,7 @@ struct _Eolian_State
    Eina_Hash *enums_f;
    Eina_Hash *globals_f;
    Eina_Hash *constants_f;
+   Eina_Hash *objects_f;
    Eina_Hash *decls_f;
 };
 

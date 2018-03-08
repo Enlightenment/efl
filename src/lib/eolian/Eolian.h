@@ -745,6 +745,46 @@ EAPI const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state,
 EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
 
 /*
+ * @brief Get an object in a state by name.
+ *
+ * Only objects declared directly within the file can be retrieved, i.e.
+ * classes, typedecls and variables.
+ *
+ * @param[in] state The state.
+ * @param[in] name The fully namespaced object name.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Object *eolian_state_object_by_name_get(const Eolian_State *state, const char *name);
+
+/*
+ * @brief Get a list of objects from a file.
+ *
+ * The list follows declaration order in the file. Only objects declared
+ * directly within the file can be retrieved, i.e. classes, typedecls and
+ * variables.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get all objects in the state.
+ *
+ * The order is not necessarily the declaration order. Only objects declared
+ * directly within the file can be retrieved, i.e. classes, typedecls and
+ * variables.
+ *
+ * @param[in] state The state.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_objects_get(const Eolian_State *state);
+
+/*
  * @brief Get a class within a state by name.
  *
  * @param[in] state The state.
@@ -961,6 +1001,32 @@ EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
  * @ingroup Eolian
  */
 EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get an object in a unit by name.
+ *
+ * Only objects declared directly within the file can be retrieved, i.e.
+ * classes, typedecls and variables.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name The fully namespaced object name.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Object *eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
+ * @brief Get all objects in the unit.
+ *
+ * The order is not necessarily the declaration order. Only objects declared
+ * directly within the file can be retrieved, i.e. classes, typedecls and
+ * variables.
+ *
+ * @param[in] unit The unit.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_objects_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get a class within a unit by name.
