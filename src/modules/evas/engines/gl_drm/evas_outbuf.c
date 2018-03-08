@@ -151,7 +151,7 @@ _evas_outbuf_init(void)
      const char *exts;
 
      exts = eglQueryString(NULL, EGL_EXTENSIONS);
-     if (exts && strstr(exts, "EGL_EXT_platform_base"))
+     if (_ckext(exts, "EGL_EXT_platform_base"))
        {
           dlsym_eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
                 eglGetProcAddress("eglGetPlatformDisplayEXT");

@@ -67,6 +67,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 extern Evas_Gl_Symbols glsym_evas_gl_symbols;
 extern void * (*glsym_eglGetProcAddress) (const char *a);
+extern Evas_Gl_Extension_String_Check _ckext;
 
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
