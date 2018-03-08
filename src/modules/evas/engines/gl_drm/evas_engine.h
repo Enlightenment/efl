@@ -65,6 +65,8 @@ extern Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize;
 extern Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
+extern Evas_Gl_Symbols glsym_evas_gl_symbols;
+extern void * (*glsym_eglGetProcAddress) (const char *a);
 
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine

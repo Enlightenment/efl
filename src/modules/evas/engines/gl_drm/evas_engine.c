@@ -219,7 +219,6 @@ eng_gl_symbols(EGLDisplay edsp)
    if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
 
    exts = eglQueryString(edsp, EGL_EXTENSIONS);
-   glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES,
            "glEGLImageTargetTexture2DOES", glsym_func_void);

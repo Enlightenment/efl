@@ -161,6 +161,7 @@ _evas_outbuf_init(void)
 static Eina_Bool
 _evas_outbuf_egl_setup(Outbuf *ob)
 {
+   const char *exts;
    int ctx_attr[5];
    int cfg_attr[40];
    int maj = 0, min = 0, n = 0, i = 0, cn = 0;
@@ -306,6 +307,9 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
         goto err;
      }
+
+   exts = eglQueryString(ob->egl.disp, EGL_EXTENSIONS);
+   glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
