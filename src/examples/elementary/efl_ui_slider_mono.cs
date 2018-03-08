@@ -8,7 +8,7 @@ public class Example
                                              EventHandler callback) {
         efl.ui.Button button = new efl.ui.ButtonConcrete(parent);
         button.SetText(text);
-        button.SetSize(w, h);
+        button.SetSize(new eina.Size2D(w, h));
 
         button.CLICKED += callback;
 
@@ -21,6 +21,9 @@ public class Example
     [STAThreadAttribute()]
 #endif
     public static void Main() {
+        int W = 120;
+        int H = 30;
+
         efl.All.Init(efl.Components.Ui);
 
         efl.ui.Win win = new efl.ui.WinConcrete(null);
@@ -37,10 +40,10 @@ public class Example
         box.Pack(button);
 
         efl.ui.Progressbar bar = new efl.ui.ProgressbarConcrete(box);
-        bar.SetSize(120, 30);
+        bar.SetSize(new eina.Size2D(W, H));
 
         efl.ui.Slider slider = new efl.ui.SliderConcrete(box);
-        slider.SetSize(120, 30);
+        slider.SetSize(new eina.Size2D(W, H));
 
         slider.CHANGED += (object sender, EventArgs e) => {
             bar.SetRangeValue(slider.GetRangeValue());
@@ -52,7 +55,7 @@ public class Example
         button.SetVisible(true);
         box.SetVisible(true);
 
-        win.SetSize(120, 90);
+        win.SetSize(new eina.Size2D(W, 3 * H));
         win.SetVisible(true);
 
         efl.ui.Config.Run();

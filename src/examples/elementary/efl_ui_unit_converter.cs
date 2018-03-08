@@ -22,7 +22,7 @@ public class Example
         popup.SetContent(popup_text);
         popup.SetVisible(true);
         popup.SetButton(efl.ui.popup_alert.Button.Positive, "Ok");
-        popup.SetSize(150, 30);
+        popup.SetSize(new eina.Size2D(150, 30));
         popup.BUTTON_CLICKED += (object sender, efl.ui.BUTTON_CLICKED_Args e) => {
             popup.SetParent(null);
             popup.Del();
@@ -35,6 +35,10 @@ public class Example
     [STAThreadAttribute()]
 #endif
     public static void Main() {
+        int W = 120;
+        int H = 30;
+        eina.Size2D size = new eina.Size2D(W, H);
+
         efl.All.Init(efl.Components.Ui);
 
         efl.ui.Win win = new efl.ui.WinConcrete(null);
@@ -51,18 +55,18 @@ public class Example
 
         efl.ui.Text miles_label = new efl.ui.TextConcrete(miles_box);
         miles_label.SetText("Miles:");
-        miles_label.SetSize(120, 30);
+        miles_label.SetSize(size);
         miles_label.SetVisible(true);
 
         efl.ui.text.Editable miles_input = new efl.ui.text.EditableConcrete(miles_box);
         miles_input.SetText("");
         miles_input.SetScrollable(true);
-        miles_input.SetSize(120, 30);
+        miles_input.SetSize(size);
         miles_input.SetVisible(true);
 
         efl.ui.Button miles_button = new efl.ui.ButtonConcrete(miles_box);
         miles_button.SetText("To Km");
-        miles_button.SetSize(120, 30);
+        miles_button.SetSize(size);
         miles_button.SetVisible(true);
 
         miles_box.Pack(miles_label);
@@ -77,18 +81,18 @@ public class Example
 
         efl.ui.Text kms_label = new efl.ui.TextConcrete(kms_box);
         kms_label.SetText("Kilometers:");
-        kms_label.SetSize(120, 30);
+        kms_label.SetSize(size);
         kms_label.SetVisible(true);
 
         efl.ui.text.Editable kms_input = new efl.ui.text.EditableConcrete(kms_box);
         kms_input.SetText("");
         kms_input.SetScrollable(true);
-        kms_input.SetSize(120, 30);
+        kms_input.SetSize(size);
         kms_input.SetVisible(true);
 
         efl.ui.Button kms_button = new efl.ui.ButtonConcrete(kms_box);
         kms_button.SetText("To Miles");
-        kms_button.SetSize(120, 30);
+        kms_button.SetSize(size);
         kms_button.SetVisible(true);
 
         kms_box.Pack(kms_label);
@@ -130,18 +134,12 @@ public class Example
         kms_box.SetVisible(true);
         miles_box.SetVisible(true);
 
-        eina.Position2D pos;
-
-        pos.X = 20;
-        pos.Y = 30;
-        box.SetPosition(pos);
+        box.SetPosition(new eina.Position2D(20, 30));
         box.SetVisible(true);
 
-        pos.X = 200;
-        pos.Y = 200;
-        win.SetPosition(pos);
+        win.SetPosition(new eina.Position2D(200, 200));
 
-        win.SetSize(400,120);
+        win.SetSize(new eina.Size2D(400, 120));
         win.SetVisible(true);
 
         efl.ui.Config.Run();
