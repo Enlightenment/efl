@@ -84,11 +84,35 @@ sym_missing(void)
    ERR("GL symbols missing!");
 }
 
+/* This check is based heavily on the check from libepoxy.
+ * Previously we used strstr(), however there are some extensions
+ * whose names are subsets of others.
+ */
 EAPI Eina_Bool
 evas_gl_extension_string_check(const char *exts, const char *ext)
 {
+   const char *ptr;
+   int len;
+
    if (!exts || !ext) return EINA_FALSE;
-   return strstr(exts, ext) != NULL;
+   ptr = exts;
+
+   if (*ptr == '\0')
+     return EINA_FALSE;
+
+   len = strlen(ext);
+
+   while (1)
+     {
+        ptr = strstr(ptr, ext);
+        if (!ptr)
+          return EINA_FALSE;
+
+        if (ptr[len] == ' ' || ptr[len] == '\0')
+          return EINA_TRUE;
+
+        ptr += len;
+     }
 }
 
 /* Totally gross, but I didn't want to reindent all the
