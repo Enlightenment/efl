@@ -161,26 +161,63 @@ compare_class_file(const char *fn1, const char *fn2)
    return !strcmp(fn1, fn2);
 }
 
-static const char *declnames[] = {
-    "class", "type alias", "struct", "enum", "variable"
-};
+
+static Eolian_Object *
+_eolian_decl_get(Eo_Lexer *ls, const char *name)
+{
+   Eolian_Object *obj = eina_hash_find(ls->state->unit.objects, name);
+   if (obj && ((obj->type == EOLIAN_OBJECT_CLASS) ||
+               (obj->type == EOLIAN_OBJECT_TYPEDECL) ||
+               (obj->type == EOLIAN_OBJECT_VARIABLE)))
+     return obj;
+
+   return NULL;
+}
+
+static const char *
+_eolian_decl_name_get(Eolian_Object *obj)
+{
+   switch (obj->type)
+     {
+      case EOLIAN_OBJECT_CLASS:
+        return "class";
+      case EOLIAN_OBJECT_TYPEDECL:
+        switch (((Eolian_Typedecl *)obj)->type)
+          {
+           case EOLIAN_TYPEDECL_ALIAS:
+             return "type alias";
+           case EOLIAN_TYPEDECL_STRUCT:
+           case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
+             return "struct";
+           case EOLIAN_TYPEDECL_ENUM:
+             return "enum";
+           default:
+             break;
+          }
+      case EOLIAN_OBJECT_VARIABLE:
+        return "variable";
+      default:
+        break;
+     }
+   return "unknown";
+}
 
 static void
-redef_error(Eo_Lexer *ls, Eolian_Declaration *decl, Eolian_Declaration_Type newt)
+redef_error(Eo_Lexer *ls, Eolian_Object *obj, Eolian_Object *nobj)
 {
-   Eolian_Object *obj = (Eolian_Object *)decl->data;
    char buf[256], fbuf[256] = { '\0' };
    if (ls->filename != obj->file)
      snprintf(fbuf, sizeof(fbuf), "%s:%d:%d", obj->file, obj->line, obj->column);
    else
      snprintf(fbuf, sizeof(fbuf), "%d:%d", obj->line, obj->column);
 
-   if (newt != decl->type)
+   if (nobj->type != obj->type)
      snprintf(buf, sizeof(buf), "%s '%s' redefined as %s (originally at %s)",
-              declnames[decl->type], decl->base.name, declnames[newt], fbuf);
+              _eolian_decl_name_get(obj), obj->name,
+              _eolian_decl_name_get(nobj), fbuf);
    else
      snprintf(buf, sizeof(buf), "%s '%s' redefined (originally at %s)",
-              declnames[decl->type], decl->base.name, fbuf);
+              _eolian_decl_name_get(obj), obj->name, fbuf);
 
    eo_lexer_syntax_error(ls, buf);
 }
@@ -832,7 +869,6 @@ parse_type_void(Eo_Lexer *ls)
 static Eolian_Typedecl *
 parse_typedef(Eo_Lexer *ls)
 {
-   Eolian_Declaration *decl;
    Eolian_Typedecl *def = push_typedecl(ls);
    Eina_Bool has_extern;
    const char *freefunc;
@@ -849,11 +885,11 @@ parse_typedef(Eo_Lexer *ls)
    parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &def->base.name, &def->name, &def->namespaces);
-   decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, def->base.name);
+   Eolian_Object *decl = _eolian_decl_get(ls, def->base.name);
    if (decl)
      {
         eo_lexer_context_restore(ls);
-        redef_error(ls, decl, EOLIAN_DECL_ALIAS);
+        redef_error(ls, decl, &def->base);
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
@@ -868,7 +904,6 @@ parse_typedef(Eo_Lexer *ls)
 static Eolian_Variable *
 parse_variable(Eo_Lexer *ls, Eina_Bool global)
 {
-   Eolian_Declaration *decl;
    Eolian_Variable *def = calloc(1, sizeof(Eolian_Variable));
    Eina_Strbuf *buf;
    ls->tmp.var = def;
@@ -885,11 +920,11 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &def->base.name, &def->name, &def->namespaces);
-   decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, def->base.name);
+   Eolian_Object *decl = _eolian_decl_get(ls, def->base.name);
    if (decl)
      {
         eo_lexer_context_restore(ls);
-        redef_error(ls, decl, EOLIAN_DECL_VAR);
+        redef_error(ls, decl, &def->base);
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
@@ -2048,7 +2083,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
 static void
 parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
 {
-   Eolian_Declaration *decl;
    const char *bnm;
    char *fnm;
    Eina_Bool same;
@@ -2073,11 +2107,11 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &ls->tmp.kls->base.name, &ls->tmp.kls->name,
               &ls->tmp.kls->namespaces);
-   decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, ls->tmp.kls->base.name);
+   Eolian_Object *decl = _eolian_decl_get(ls, ls->tmp.kls->base.name);
    if (decl)
      {
         eo_lexer_context_restore(ls);
-        redef_error(ls, decl, EOLIAN_DECL_CLASS);
+        redef_error(ls, decl, &ls->tmp.kls->base);
      }
    eo_lexer_context_pop(ls);
    pop_strbuf(ls);
@@ -2177,7 +2211,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            Eina_Bool is_enum = (ls->t.kw == KW_enum);
            const char *name;
            int line, col;
-           Eolian_Declaration *decl;
            Eina_Bool has_extern;
            const char *freefunc;
            Eina_Strbuf *buf;
@@ -2189,12 +2222,15 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            col = ls->column;
            parse_name(ls, buf);
            name = eina_stringshare_add(eina_strbuf_string_get(buf));
-           decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, name);
+           Eolian_Object *decl = _eolian_decl_get(ls, name);
            if (decl)
              {
                 eina_stringshare_del(name);
                 eo_lexer_context_restore(ls);
-                redef_error(ls, decl, is_enum ? EOLIAN_DECL_ENUM : EOLIAN_DECL_STRUCT);
+                Eolian_Typedecl tdecl;
+                tdecl.base.type = EOLIAN_OBJECT_TYPEDECL;
+                tdecl.type = is_enum ? EOLIAN_TYPEDECL_ENUM : EOLIAN_TYPEDECL_STRUCT;
+                redef_error(ls, decl, &tdecl.base);
              }
            eo_lexer_context_pop(ls);
            pop_strbuf(ls);
@@ -2227,8 +2263,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
      }
    return EINA_FALSE;
 found_class:
-   database_decl_add(ls->unit, ls->tmp.kls->base.name, EOLIAN_DECL_CLASS,
-                     ls->tmp.kls->base.file, ls->tmp.kls);
+   database_object_add(ls->unit, &ls->tmp.kls->base);
    return EINA_TRUE;
 }
 

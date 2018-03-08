@@ -9,102 +9,13 @@
 #include "eolian_priv.h"
 
 void
-database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
-                  Eolian_Declaration_Type type,
-                  Eina_Stringshare *file, void *ptr)
+database_object_add(Eolian_Unit *unit, const Eolian_Object *obj)
 {
-   Eolian_Declaration *decl = calloc(1, sizeof(Eolian_Declaration));
-   decl->base = *((Eolian_Object *)ptr);
-   decl->base.file = eina_stringshare_ref(decl->base.file);
-   decl->base.name = eina_stringshare_ref(decl->base.name);
-   decl->base.refcount = 0;
-   decl->type = type;
-   decl->data = ptr;
-   EOLIAN_OBJECT_ADD(unit, name, decl, decls);
-   eina_hash_set(unit->state->decls_f, file, eina_list_append
-                 ((Eina_List *)eina_hash_find(unit->state->decls_f, file), decl));
    /* object storage */
-   eina_hash_add(unit->objects, name, ptr);
-   eina_hash_add(unit->state->unit.objects, name, ptr);
-   eina_hash_set(unit->state->objects_f, file, eina_list_append
-                 ((Eina_List *)eina_hash_find(unit->state->objects_f, file), ptr));
-}
-
-static void
-database_decl_del(Eolian_Declaration *decl)
-{
-   if (!decl || eolian_object_unref(&decl->base)) return;
-   eina_stringshare_del(decl->base.file);
-   eina_stringshare_del(decl->base.name);
-   free(decl);
-}
-
-EAPI const Eolian_Declaration *
-eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(name);
-   const Eolian_Declaration *decl = eina_hash_find(unit->decls, shr);
-   eina_stringshare_del(shr);
-   return decl;
-}
-
-EAPI Eina_Iterator *
-eolian_declarations_get_by_file(const Eolian_State *state, const char *fname)
-{
-   if (!state) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(state->decls_f, shr);
-   eina_stringshare_del(shr);
-   if (!l) return NULL;
-   return eina_list_iterator_new(l);
-}
-
-EAPI Eina_Iterator *
-eolian_all_declarations_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->decls) : NULL);
-}
-
-EAPI Eolian_Declaration_Type
-eolian_declaration_type_get(const Eolian_Declaration *decl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, EOLIAN_DECL_UNKNOWN);
-   return decl->type;
-}
-
-EAPI Eina_Stringshare *
-eolian_declaration_name_get(const Eolian_Declaration *decl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
-   return decl->base.name;
-}
-
-EAPI const Eolian_Class *
-eolian_declaration_class_get(const Eolian_Declaration *decl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_CLASS, NULL);
-   return (const Eolian_Class *)decl->data;
-}
-
-EAPI const Eolian_Typedecl *
-eolian_declaration_data_type_get(const Eolian_Declaration *decl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_ALIAS ||
-                                   decl->type == EOLIAN_DECL_STRUCT ||
-                                   decl->type == EOLIAN_DECL_ENUM, NULL);
-   return (const Eolian_Typedecl *)decl->data;
-}
-
-
-EAPI const Eolian_Variable *
-eolian_declaration_variable_get(const Eolian_Declaration *decl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_VAR, NULL);
-   return (const Eolian_Variable *)decl->data;
+   eina_hash_add(unit->objects, obj->name, obj);
+   eina_hash_add(unit->state->unit.objects, obj->name, obj);
+   eina_hash_set(unit->state->objects_f, obj->file, eina_list_append
+                 ((Eina_List *)eina_hash_find(unit->state->objects_f, obj->file), obj));
 }
 
 void database_doc_del(Eolian_Documentation *doc)
@@ -428,27 +339,32 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
    memcpy(name, tok->text, nlen);
    name[nlen] = '\0';
 
-   const Eolian_Declaration *decl = eolian_declaration_get_by_name(unit, name);
-   if (decl) switch (eolian_declaration_type_get(decl))
+   const Eolian_Object *decl = eolian_unit_object_by_name_get(unit, name);
+   if (decl)
      {
-      case EOLIAN_DECL_CLASS:
-        if (data) *data = eolian_declaration_class_get(decl);
-        return EOLIAN_DOC_REF_CLASS;
-      case EOLIAN_DECL_ALIAS:
-        if (data) *data = eolian_declaration_data_type_get(decl);
-        return EOLIAN_DOC_REF_ALIAS;
-      case EOLIAN_DECL_STRUCT:
-        if (data) *data = eolian_declaration_data_type_get(decl);
-        return EOLIAN_DOC_REF_STRUCT;
-      case EOLIAN_DECL_ENUM:
-        if (data) *data = eolian_declaration_data_type_get(decl);
-        return EOLIAN_DOC_REF_ENUM;
-      case EOLIAN_DECL_VAR:
-        if (data) *data = eolian_declaration_variable_get(decl);
-        return EOLIAN_DOC_REF_VAR;
-      default:
-        /* this will not happen but silence static analyzers */
-        return EOLIAN_DOC_REF_INVALID;
+       if (data) *data = decl;
+       switch (eolian_object_type_get(decl))
+         {
+          case EOLIAN_OBJECT_CLASS:
+            return EOLIAN_DOC_REF_CLASS;
+          case EOLIAN_OBJECT_TYPEDECL:
+            switch (eolian_typedecl_type_get((Eolian_Typedecl *)decl))
+              {
+               case EOLIAN_TYPEDECL_ALIAS:
+                 return EOLIAN_DOC_REF_ALIAS;
+               case EOLIAN_TYPEDECL_STRUCT:
+               case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
+                 return EOLIAN_DOC_REF_STRUCT;
+               case EOLIAN_TYPEDECL_ENUM:
+                 return EOLIAN_DOC_REF_ENUM;
+               default:
+                 return EOLIAN_DOC_REF_INVALID;
+              }
+          case EOLIAN_OBJECT_VARIABLE:
+            return EOLIAN_DOC_REF_VAR;
+          default:
+            return EOLIAN_DOC_REF_INVALID;
+         }
      }
 
    /* from here it can only be a function, a struct field or an enum field */
@@ -533,7 +449,6 @@ database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->objects    = eina_hash_stringshared_new(NULL);
-   unit->decls      = eina_hash_stringshared_new(EINA_FREE_CB(database_decl_del));
 }
 
 void
@@ -550,7 +465,6 @@ database_unit_del(Eolian_Unit *unit)
    eina_hash_free(unit->structs);
    eina_hash_free(unit->enums);
    eina_hash_free(unit->objects);
-   eina_hash_free(unit->decls);
 }
 
 static void
@@ -581,7 +495,6 @@ eolian_state_new(void)
    state->globals_f   = eina_hash_stringshared_new(_hashlist_free);
    state->constants_f = eina_hash_stringshared_new(_hashlist_free);
    state->objects_f   = eina_hash_stringshared_new(_hashlist_free);
-   state->decls_f     = eina_hash_stringshared_new(_hashlist_free);
 
    return state;
 }
@@ -607,7 +520,6 @@ eolian_state_free(Eolian_State *state)
    eina_hash_free(state->globals_f);
    eina_hash_free(state->constants_f);
    eina_hash_free(state->objects_f);
-   eina_hash_free(state->decls_f);
 
    free(state);
 }
@@ -793,7 +705,6 @@ _merge_unit(Eolian_Unit *dest, Eolian_Unit *src)
    eina_hash_foreach(src->aliases, _merge_unit_cb, dest->aliases);
    eina_hash_foreach(src->structs, _merge_unit_cb, dest->structs);
    eina_hash_foreach(src->enums, _merge_unit_cb, dest->enums);
-   eina_hash_foreach(src->decls, _merge_unit_cb, dest->decls);
 }
 
 typedef struct _Merge_Data

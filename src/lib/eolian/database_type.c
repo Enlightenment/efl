@@ -47,7 +47,7 @@ database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
    eina_hash_set(unit->state->aliases_f, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(unit->state->aliases_f, tp->base.file),
                 tp));
-   database_decl_add(unit, tp->base.name, EOLIAN_DECL_ALIAS, tp->base.file, tp);
+   database_object_add(unit, &tp->base);
 }
 
 void
@@ -56,7 +56,7 @@ database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
    eina_hash_set(unit->state->structs_f, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(unit->state->structs_f, tp->base.file), tp));
-   database_decl_add(unit, tp->base.name, EOLIAN_DECL_STRUCT, tp->base.file, tp);
+   database_object_add(unit, &tp->base);
 }
 
 void
@@ -65,7 +65,7 @@ database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, enums);
    eina_hash_set(unit->state->enums_f, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(unit->state->enums_f, tp->base.file), tp));
-   database_decl_add(unit, tp->base.name, EOLIAN_DECL_ENUM, tp->base.file, tp);
+   database_object_add(unit, &tp->base);
 }
 
 Eina_Bool
@@ -278,10 +278,9 @@ Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *unit, const Eolian_T
    int  kw = eo_lexer_keyword_str_to_id(tp->base.name);
    if (!kw || kw < KW_byte || kw >= KW_true)
      {
-        Eolian_Declaration *decl = eina_hash_find(unit->decls, tp->base.name);
-        if (decl && decl->type != EOLIAN_DECL_CLASS
-                 && decl->type != EOLIAN_DECL_VAR)
-          return decl->data;
+        Eolian_Object *decl = eina_hash_find(unit->objects, tp->base.name);
+        if (decl && decl->type == EOLIAN_OBJECT_TYPEDECL)
+          return (Eolian_Typedecl *)decl;
      }
    return NULL;
 }

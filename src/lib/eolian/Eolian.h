@@ -179,12 +179,6 @@ typedef struct _Eolian_Struct_Type_Field Eolian_Struct_Type_Field;
  */
 typedef struct _Eolian_Enum_Type_Field Eolian_Enum_Type_Field;
 
-/* Declaration information
- *
- * @ingroup Eolian
- */
-typedef struct _Eolian_Declaration Eolian_Declaration;
-
 /* Documentation information
  *
  * @ingroup Eolian
@@ -213,8 +207,7 @@ typedef enum
    EOLIAN_OBJECT_PART,
    EOLIAN_OBJECT_IMPLEMENT,
    EOLIAN_OBJECT_CONSTRUCTOR,
-   EOLIAN_OBJECT_DOCUMENTATION,
-   EOLIAN_OBJECT_DECLARATION
+   EOLIAN_OBJECT_DOCUMENTATION
 } Eolian_Object_Type;
 
 typedef enum
@@ -443,16 +436,6 @@ typedef enum
    EOLIAN_UNOP_NOT,  /* ! int, float, bool */
    EOLIAN_UNOP_BNOT, /* ~ int */
 } Eolian_Unary_Operator;
-
-typedef enum
-{
-   EOLIAN_DECL_UNKNOWN = 0,
-   EOLIAN_DECL_CLASS,
-   EOLIAN_DECL_ALIAS,
-   EOLIAN_DECL_STRUCT,
-   EOLIAN_DECL_ENUM,
-   EOLIAN_DECL_VAR
-} Eolian_Declaration_Type;
 
 typedef enum
 {
@@ -2688,97 +2671,6 @@ EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
-
-/*
- * @brief Get a declaration by name.
- *
- * @param[in] unit the unit to look in
- * @param[in] name the declaration name.
- * @return the declaration.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Declaration *eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get a list of declarations in a file.
- *
- * This function gets an iterator to a list of declarations in a particular
- * file. Declarations are either a class, a type alias, a struct, an enum
- * or a variable. This way you can get them all in the original order they
- * were declared in, which is useful during generation.
- *
- * @param[in] state the state to look in
- * @param[in] fname the filename.
- * @return the iterator or NULL.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_declarations_get_by_file(const Eolian_State *state, const char *fname);
-
-/*
- * @brief Get an iterator to all declarations in the Eolian database.
- *
- * @param[in] unit the unit to look in
- * @return the iterator or NULL.
- *
- * Thanks to internal caching this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_all_declarations_get(const Eolian_Unit *unit);
-
-/*
- * @brief Get the type of a declaration
- *
- * @param[in] decl the declaration
- * @return the declaration type
- *
- * @ingroup Eolian
- */
-EAPI Eolian_Declaration_Type eolian_declaration_type_get(const Eolian_Declaration *decl);
-
-/*
- * @brief Get the name of a declaration
- *
- * This matches the full namespaced name of the data it's holding.
- *
- * @param[in] decl the declaration
- * @return the declaration name
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_declaration_name_get(const Eolian_Declaration *decl);
-
-/*
- * @brief Get the class of a class declaration.
- *
- * @param[in] decl the declaration
- * @return the class
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Class *eolian_declaration_class_get(const Eolian_Declaration *decl);
-
-/*
- * @brief Get the type of a type (alias, struct, enum) declaration.
- *
- * @param[in] decl the declaration
- * @return the type
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_declaration_data_type_get(const Eolian_Declaration *decl);
-
-/*
- * @brief Get the variable of a variable (constant, global) declaration.
- *
- * @param[in] decl the declaration
- * @return the class
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Variable *eolian_declaration_variable_get(const Eolian_Declaration *decl);
 
 /*
  * @brief Get the summary of the documentation.

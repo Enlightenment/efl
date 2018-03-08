@@ -43,7 +43,6 @@ struct _Eolian_Unit
    Eina_Hash     *structs;
    Eina_Hash     *enums;
    Eina_Hash     *objects;
-   Eina_Hash     *decls;
 };
 
 struct _Eolian_State
@@ -63,7 +62,6 @@ struct _Eolian_State
    Eina_Hash *globals_f;
    Eina_Hash *constants_f;
    Eina_Hash *objects_f;
-   Eina_Hash *decls_f;
 };
 
 struct _Eolian_Object
@@ -108,13 +106,6 @@ struct _Eolian_Documentation
    Eina_Stringshare *summary;
    Eina_Stringshare *description;
    Eina_Stringshare *since;
-};
-
-struct _Eolian_Declaration
-{
-   Eolian_Object base;
-   Eolian_Declaration_Type type;
-   void *data;
 };
 
 struct _Eolian_Class
@@ -332,9 +323,7 @@ struct _Eolian_Variable
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(Eolian_State *state, const Eolian_Unit *src);
 
-void database_decl_add(Eolian_Unit *unit, Eina_Stringshare *name,
-                       Eolian_Declaration_Type type,
-                       Eina_Stringshare *file, void *ptr);
+void database_object_add(Eolian_Unit *unit, const Eolian_Object *obj);
 
 void database_doc_del(Eolian_Documentation *doc);
 
