@@ -211,7 +211,7 @@ void
 eng_egl_symbols(EGLDisplay edsp)
 {
    static Eina_Bool done = EINA_FALSE;
-   const char *exts = NULL;
+   const char *exts;
 
    if (done) return;
 
