@@ -665,6 +665,12 @@ ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf)
 }
 
 EAPI void
+ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b)
+{
+   b->locked = EINA_TRUE;
+}
+
+EAPI void
 ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b)
 {
    ecore_wl2_buffer_unmap(b);
