@@ -2780,7 +2780,7 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  * @param[out] data2 the secondary data
  * @return the kind of reference this is
  */
-EAPI Eolian_Object_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
+EAPI Eolian_Object_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const Eolian_Object **data, const Eolian_Object **data2);
 
 #endif
 

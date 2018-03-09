@@ -290,8 +290,8 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
 }
 
 static Eolian_Object_Type
-_resolve_event(const Eolian_Unit *src, char *name, const void **data,
-               const void **data2)
+_resolve_event(const Eolian_Unit *src, char *name, const Eolian_Object **data,
+               const Eolian_Object **data2)
 {
    /* never trust the user */
    if (name[0] == ',')
@@ -310,14 +310,14 @@ _resolve_event(const Eolian_Unit *src, char *name, const void **data,
    if (!ev)
      return EOLIAN_OBJECT_UNKNOWN;
 
-   if (data) *data = cl;
-   if (data2) *data2 = ev;
+   if (data) *data = &cl->base;
+   if (data2) *data2 = &ev->base;
    return EOLIAN_OBJECT_EVENT;
 }
 
 EAPI Eolian_Object_Type
 eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
-                         const void **data, const void **data2)
+                         const Eolian_Object **data, const Eolian_Object **data2)
 {
    if (tok->type != EOLIAN_DOC_TOKEN_REF)
      return EOLIAN_OBJECT_UNKNOWN;
@@ -374,8 +374,8 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
         /* field itself is invalid */
         if (!fld)
           return EOLIAN_OBJECT_UNKNOWN;
-        if (data) *data = tpd;
-        if (data2) *data2 = fld;
+        if (data) *data = &tpd->base;
+        if (data2) *data2 = &fld->base;
         return EOLIAN_OBJECT_STRUCT_FIELD;
      }
 
@@ -387,8 +387,8 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
         /* field itself is invalid */
         if (!fld)
           return EOLIAN_OBJECT_UNKNOWN;
-        if (data) *data = tpd;
-        if (data2) *data2 = fld;
+        if (data) *data = &tpd->base;
+        if (data2) *data2 = &fld->base;
         return EOLIAN_OBJECT_ENUM_FIELD;
      }
 
@@ -419,8 +419,8 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
      return EOLIAN_OBJECT_UNKNOWN;
 
    /* got a func */
-   if (data) *data = cl;
-   if (data2) *data2 = fid;
+   if (data) *data = &cl->base;
+   if (data2) *data2 = &fid->base;
    return EOLIAN_OBJECT_FUNCTION;
 }
 
