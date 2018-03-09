@@ -196,10 +196,38 @@ typedef struct {
    Evas_Object *object;
 }  Efl_Ui_Focus_Composition_Adapter_Data;
 
-EOLIAN static void
-_efl_ui_focus_composition_adapter_canvas_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Canvas_Object *v)
+static void
+_canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 {
+  efl_ui_focus_composition_adapter_canvas_object_set(data, NULL);
+}
+
+static void
+_new_geom(void *data, const Efl_Event *event)
+{
+   efl_event_callback_call(data, event->desc, event->info);
+}
+
+
+EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
+    {EFL_GFX_EVENT_RESIZE, _new_geom},
+    {EFL_GFX_EVENT_MOVE, _new_geom},
+    {EFL_EVENT_DEL, _canvas_object_deleted},
+);
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_canvas_object_set(Eo *obj, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Canvas_Object *v)
+{
+   if (pd->object)
+     {
+        efl_event_callback_array_del(pd->object, canvas_obj(), obj);
+     }
    pd->object = v;
+   if (v)
+     {
+        efl_event_callback_array_add(pd->object, canvas_obj(), obj);
+     }
+
 }
 
 EOLIAN static Efl_Canvas_Object*
@@ -221,5 +249,14 @@ _efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_set(Eo *obj EINA_UNU
 
    evas_object_focus_set(pd->object, efl_ui_focus_object_focus_get(obj));
 }
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+{
+   efl_ui_focus_composition_adapter_canvas_object_set(obj, NULL);
+
+   efl_destructor(efl_super(obj, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS));
+}
+
 
 #include "efl_ui_focus_composition_adapter.eo.c"
