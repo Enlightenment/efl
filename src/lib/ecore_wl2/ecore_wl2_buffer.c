@@ -694,6 +694,7 @@ ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf)
 EAPI void
 ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b)
 {
+   if (b->locked) ERR("Buffer already locked\n");
    if (buffer_manager->lock) buffer_manager->lock(b);
    b->locked = EINA_TRUE;
 }
@@ -701,6 +702,7 @@ ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b)
 EAPI void
 ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b)
 {
+   if (!b->locked) ERR("Buffer already unlocked\n");
    if (buffer_manager->unlock) buffer_manager->unlock(b);
    ecore_wl2_buffer_unmap(b);
    b->mapping = NULL;
