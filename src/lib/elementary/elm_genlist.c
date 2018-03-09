@@ -5815,10 +5815,7 @@ _genlist_element_focused(void *data, const Efl_Event *ev)
 
    if (efl_isa(item, ELM_GENLIST_ITEM_CLASS))
      {
-        _elm_genlist_item_focused(item);
-        _all_items_deselect(pd);
-        elm_genlist_item_selected_set(item, EINA_TRUE);
-        elm_genlist_item_bring_in(item, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+        elm_object_item_focus_set(item, EINA_TRUE);
      }
 }
 
