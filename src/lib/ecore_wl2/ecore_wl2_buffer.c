@@ -17,6 +17,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include <linux/dma-buf.h>
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 #define SYM(lib, xx)               \
@@ -101,6 +102,24 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
    zwp_linux_buffer_params_v1_destroy(dp);
 
    return buf;
+}
+
+static void
+_dmabuf_lock(Ecore_Wl2_Buffer *b)
+{
+   struct dma_buf_sync s;
+
+   s.flags = DMA_BUF_SYNC_START;
+   ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+}
+
+static void
+_dmabuf_unlock(Ecore_Wl2_Buffer *b)
+{
+   struct dma_buf_sync s;
+
+   s.flags = DMA_BUF_SYNC_START;
+   ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
 }
 
 static Buffer_Handle *
@@ -194,6 +213,8 @@ _intel_buffer_manager_setup(int fd)
    buffer_manager->map = _intel_map;
    buffer_manager->unmap = _intel_unmap;
    buffer_manager->discard = _intel_discard;
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
    buffer_manager->manager_destroy = _intel_manager_destroy;
    buffer_manager->dl_handle = drm_intel_lib;
 
@@ -300,6 +321,8 @@ _exynos_buffer_manager_setup(int fd)
    buffer_manager->map = _exynos_map;
    buffer_manager->unmap = _exynos_unmap;
    buffer_manager->discard = _exynos_discard;
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
    buffer_manager->manager_destroy = _exynos_manager_destroy;
    buffer_manager->dl_handle = drm_exynos_lib;
    return EINA_TRUE;
@@ -530,6 +553,8 @@ _vc4_buffer_manager_setup(int fd)
    buffer_manager->map = _vc4_map;
    buffer_manager->unmap = _vc4_unmap;
    buffer_manager->discard = _vc4_discard;
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
    buffer_manager->manager_destroy = NULL;
    buffer_manager->dl_handle = drm_lib;
    return EINA_TRUE;
