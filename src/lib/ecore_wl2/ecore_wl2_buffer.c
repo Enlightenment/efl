@@ -655,7 +655,7 @@ ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
 
-   if (buf->locked)
+   if (buf->mapping)
      {
         out = buf->mapping;
      }
@@ -674,6 +674,9 @@ ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride)
    if (w) *w = buf->w;
    if (h) *h = buf->h;
    if (stride) *stride = (int)buf->stride;
+
+   if (!buf->locked) ecore_wl2_buffer_lock(buf);
+
    return out;
 }
 
@@ -704,8 +707,6 @@ ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b)
 {
    if (!b->locked) ERR("Buffer already unlocked\n");
    if (buffer_manager->unlock) buffer_manager->unlock(b);
-   ecore_wl2_buffer_unmap(b);
-   b->mapping = NULL;
    b->locked = EINA_FALSE;
 }
 
