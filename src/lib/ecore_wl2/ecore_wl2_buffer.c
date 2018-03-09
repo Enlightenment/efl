@@ -39,6 +39,8 @@ struct _Buffer_Manager
    void *(*map)(Ecore_Wl2_Buffer *buf);
    void (*unmap)(Ecore_Wl2_Buffer *buf);
    void (*discard)(Ecore_Wl2_Buffer *buf);
+   void (*lock)(Ecore_Wl2_Buffer *buf);
+   void (*unlock)(Ecore_Wl2_Buffer *buf);
    void (*manager_destroy)(void);
    void *priv;
    void *dl_handle;
@@ -667,12 +669,14 @@ ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf)
 EAPI void
 ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b)
 {
+   if (buffer_manager->lock) buffer_manager->lock(b);
    b->locked = EINA_TRUE;
 }
 
 EAPI void
 ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b)
 {
+   if (buffer_manager->unlock) buffer_manager->unlock(b);
    ecore_wl2_buffer_unmap(b);
    b->mapping = NULL;
    b->locked = EINA_FALSE;
