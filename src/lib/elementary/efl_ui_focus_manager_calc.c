@@ -1010,10 +1010,15 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
         Node *partner;
         Eina_List *n;
 
-        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).partners, n, partner)
-          {
-             dirty_add(obj, pd, partner);
+#define MAKE_LIST_DIRTY(node, field) \
+        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, n, partner) \
+          { \
+             dirty_add(obj, pd, partner); \
           }
+
+        MAKE_LIST_DIRTY(node, partners)
+        MAKE_LIST_DIRTY(node, one_direction)
+        MAKE_LIST_DIRTY(node, cleanup_nodes)
      }
 
    //remove from the dirty parts
