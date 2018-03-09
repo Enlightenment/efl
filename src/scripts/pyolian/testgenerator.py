@@ -49,11 +49,12 @@ def load_file(filename):
 It will find methods and functions with owned return and without other params
 """
 def custom_loads(cls, filedir):
-    cls.custom = load_file(os.path.join(filedir, "custom.c"))
+    cls.custom = load_file(os.path.join(filedir, "custom.c")) or ''
     cls.init = load_file(os.path.join(filedir, "init.c"))
     cls.shutdown = load_file(os.path.join(filedir, "shutdown.c"))
 
     for func in cls.methods:
+        cls.custom += load_file(os.path.join(filedir, func.name, "custom.c")) or ''
         func.init = load_file(os.path.join(filedir, func.name, "init.c"))
         func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown.c"))
         func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init.c")) or "/* Zero/NULL args init */"
@@ -61,12 +62,14 @@ def custom_loads(cls, filedir):
 
     for func in cls.properties:
         if func.getter_scope:
+            cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom.c")) or ""
             func.init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init.c"))
             func.shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown.c"))
             func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init.c")) or "/* Zero/NULL args getter init */"
             func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args getter shutdown */"
 
         if func.setter_scope:
+            cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom.c")) or ""
             func.init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init.c"))
             func.shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown.c"))
             func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init.c")) or "/* Zero/NULL args setter init */"
@@ -121,7 +124,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Pyolian search owned functions.')
     parser.add_argument('testcase', help='The TestCase Name to use. (REQUIRED)')
-    parser.add_argument('classname', help='The Class Name to use. (REQUIRED)')
+    parser.add_argument('-c', '--classname', help='The Class Name to use.')
+    parser.add_argument('-e', '--eofiles', nargs='*', help='The Class Name to use.')
 
     args = parser.parse_args()
 
@@ -130,16 +134,19 @@ if __name__ == '__main__':
     if not os.path.isfile(template):
         template = os.path.join(testdir, "automated.template")
 
-    clsname = args.classname
+    cls_list = [ eolian_db.class_by_file_get(os.path.basename(eofile)) for eofile in args.eofiles or [] ]
 
-    cls = eolian_db.class_by_name_get(clsname)
-    if cls:
+    if args.classname:
+        cls = eolian_db.class_by_name_get(args.classname)
+        if cls: cls_list.append(cls)
+
+    print(cls_list)
+
+    for cls in filter(None, cls_list):
         custom_loads(cls, os.path.join(testdir, cls.c_name.lower()))
         filename = os.path.join(testdir, "{}_test.c".format(cls.c_name.lower()))
 
         t = Template(template)
         t.render(cls, filename)
-    else:
-        print("Did not find Eolian Class: {}".format(clsname))
 
 
