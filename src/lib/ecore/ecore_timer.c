@@ -557,7 +557,8 @@ _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer, double when)
 {
    if (timer->frozen) return;
 
-   if (timer->loop_data)
+   if (timer->loop_data &&
+       (EINA_INLIST_GET(timer)->next || EINA_INLIST_GET(timer)->prev))
      {
         if (timer->loop_data->timers && (!timer->noparent))
           timer->loop_data->timers = eina_inlist_remove
