@@ -1,12 +1,16 @@
 group { name: "e/modules/music-control/icon";
    alias: "modules/music-control/icon";
-   max: 24 24;
-   images.image: "music_control_icon.png" COMP;
+   max: 160 160;
+   set { name: "efm_drive_cd_icon";
+      image { image: "efm_drive_cd_160.png" COMP; size: 81 81 16000 16000; }
+      image { image: "efm_drive_cd_080.png" COMP; size: 41 41 80 80; }
+      image { image: "efm_drive_cd_040.png" COMP; size: 0 0 40 40; }
+   }
    parts {
       part { name: "image"; mouse_events: 0;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "music_control_icon.png";
+            image.normal: "efm_drive_cd_icon";
          }
       }
    }
@@ -14,12 +18,16 @@ group { name: "e/modules/music-control/icon";
 
 group { name: "e/modules/music-control/main";
    alias: "modules/music-control/main";
-   images.image: "music_control_icon.png" COMP;
+   set { name: "efm_drive_cd_icon";
+      image { image: "efm_drive_cd_160.png" COMP; size: 81 81 16000 16000; }
+      image { image: "efm_drive_cd_080.png" COMP; size: 41 41 80 80; }
+      image { image: "efm_drive_cd_040.png" COMP; size: 0 0 40 40; }
+   }
    parts {
       part { name: "icon";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "music_control_icon.png";
+            image.normal: "efm_drive_cd_icon";
          }
       }
    }
@@ -34,9 +42,9 @@ group { name: "e/modules/music-control/popup";
    images.image: "icon_play.png" COMP;
    styles {
       style { name: "music_control_metadata_style";
-         base: "font="FN" font_size=10 align=left text_class=tb_plain color=#ffff style=shadow,bottom shadow_color=#00000080";
-         tag: "title" "+ font_size=12 font="FNBD" text_class=tb_big";
-         tag: "tag" "+ font_size=8 color=#888f";
+         base: "font="FN" font_size=10 align=left text_class=tb_plain color=#a0a0a0";
+         tag: "title" "+ font_size=10 font="FNBD" text_class=tb_big";
+         tag: "tag" "+ font_size=8 color=#888";
          tag: "br" "\n";
       }
    }
@@ -49,11 +57,12 @@ group { name: "e/modules/music-control/popup";
    }
    parts {
       part { name: "cover_bg";
+         scale: 1;
          description { state: "default" 0;
-            min: 90 90;
+            min: 80 80;
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.35 1.0;
-            image.normal: "music_control_icon.png";
+            image.normal: "efm_drive_cd_icon";
          }
       }
       part { name: "cover_swallow"; type: SWALLOW;
@@ -63,20 +72,25 @@ group { name: "e/modules/music-control/popup";
          }
       }
       part { name: "player_name"; type: TEXT;
-         effect: GLOW;
+         scale : 1;
          description { state: "default" 0;
-            color: FN_COL_HIGHLIGHT;
-            text.size: 12;
+            align: 0.5 0.0;
+            color: 160 160 160 255;
+            text.size: 10;
             text.text: "Music player";
             text.font: FNBD;
             rel1.to: "cover_bg";
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 0.0;
-            rel2.offset: 0 12;
+            rel1.offset: 8 8;
+            rel2.offset: -9 8;
+            offscale;
          }
       }
       part { name: "metadata"; type: TEXTBLOCK;
+         scale : 1;
          description { state: "default" 0;
+            align: 0.5 0.0;
             text {
                style: "music_control_metadata_style";
                text: "Song Title";
@@ -84,21 +98,27 @@ group { name: "e/modules/music-control/popup";
             }
             rel1.to: "player_name";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 3 0;
+            rel1.offset: 0 8;
+            rel2.offset: -1 8;
+            offscale;
          }
       }
       part { name: "previous_btn";
+         scale: 1;
          description { state: "default" 0;
-            max: 32 32;
+            min: 40 40;
+            max: 40 40;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            align: 0.1 1.0;
+            align: 0.0 1.0;
             rel1.relative: 0.35 0.0;
             image.normal: "icon_prev.png";
          }
       }
       part { name: "play_btn";
+         scale: 1;
          description { state: "default" 0;
-            max: 32 32;
+            min: 40 40;
+            max: 40 40;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             align: 0.5 1.0;
             rel1.relative: 0.35 0.0;
@@ -110,10 +130,12 @@ group { name: "e/modules/music-control/popup";
          }
       }
       part { name: "next_btn";
+         scale: 1;
          description { state: "default" 0;
-            max: 32 32;
+            min: 40 40;
+            max: 40 40;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            align: 0.9 1.0;
+            align: 1.0 1.0;
             rel1.relative: 0.35 0.0;
             rel1.to: "player_name";
             image.normal: "icon_next.png";
