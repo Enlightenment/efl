@@ -1,0 +1,137 @@
+<!--(macro init)-->
+   /** init **/
+   fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
+   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
+   fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
+
+  <!--(if exists("mfunc") and mfunc!= None)-->
+   ${mfunc}$
+  <!--(elif exists("mcls") and mcls!= None)-->
+   ${mcls}$
+  <!--(else)-->
+   Eo *obj = efl_add(${cls.c_name}$, NULL);
+   fail_if(!obj, "ERROR: Cannot init ${cls.full_name}$!\n");
+  <!--(end)-->
+<!--(end)-->
+<!--(macro shutdown)-->
+   /** shutdown **/
+  <!--(if exists("mfunc") and mfunc != None)-->
+   ${mfunc}$
+  <!--(elif exists("mcls") and mcls != None)-->
+   ${mcls}$
+  <!--(end)-->
+   efl_unref(obj);
+   eio_shutdown();
+   ecore_shutdown();
+   eina_shutdown();
+<!--(end)-->
+<!--(macro args_declaration)-->
+  <!--(for arg in args)-->
+   ${arg.type.c_type_return}$ arg_${arg.name}$ = <!--(if arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(else)-->0<!--(end)-->;
+  <!--(end)-->
+<!--(end)-->
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "${cls.c_name.lower()}$_suite.h"
+#include "../efl_check.h"
+
+static const Efl_Test_Case etc[] = {
+  { "${cls.c_name}$", automated_test_${cls.c_name.lower()}$},
+  { NULL, NULL }
+};
+<!--(if cls.custom != None)-->
+
+${cls.custom}$
+<!--(end)-->
+
+START_TEST(automated_test_${cls.c_name.lower()}$_smoke)
+{
+${init(mcls=cls.init)}$
+${shutdown(mcls=cls.shutdown)}$
+}
+END_TEST
+
+<!--(for func in cls.methods)-->
+START_TEST(automated_test_${func.full_c_method_name}$)
+{
+${args_declaration(args=func.parameters)}$${init(mcls=cls.init,mfunc=func.init)}$
+${func.arg_init}$
+   <!--(if func.method_return_type)-->${func.method_return_type.c_type_return}$ r = <!--(end)-->${func.full_c_method_name}$(obj<!--(for arg in func.parameters)-->, arg_${arg.name}$<!--(end)-->);
+${func.arg_shutdown}$
+${shutdown(mcls=cls.shutdown,mfunc=func.shutdown)}$
+}
+END_TEST
+
+<!--(end)-->
+
+<!--(for func in cls.properties)-->
+  <!--(if func.getter_scope)-->
+START_TEST(automated_test_${func.full_c_getter_name}$)
+{
+    <!--(if len(list(func.getter_values)) > 1)-->
+${args_declaration(args=func.getter_values)}$
+    <!--(end)-->
+${args_declaration(args=func.getter_keys)}$${init(mcls=cls.init,mfunc=func.init)}$
+${func.arg_get_init}$
+   <!--(if len(list(func.getter_values)) == 1)-->
+   ${list(func.getter_values)[0].type.c_type_return}$ r = ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_keys)-->arg_${arg.name}$<!--(end)-->);
+   <!--(else)-->
+   ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_values)-->, &arg_${arg.name}$<!--(end)--><!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
+   <!--(end)-->
+${func.arg_get_shutdown}$
+${shutdown(mcustom=cls.shutdown,mfunc=func.shutdown)}$
+}
+END_TEST
+
+  <!--(end)-->
+  <!--(if func.setter_scope)-->
+START_TEST(automated_test_${func.full_c_setter_name}$)
+{
+${args_declaration(args=func.setter_keys)}$${args_declaration(args=func.setter_values)}$${init(mcls=cls.init,mfunc=func.init)}$
+${func.arg_set_init}$
+   ${func.full_c_getter_name}$(obj<!--(for arg in func.setter_values)-->, &arg_${arg.name}$<!--(end)--><!--(for arg in func.setter_keys)-->, arg_${arg.name}$<!--(end)-->);
+${func.arg_set_shutdown}$
+${shutdown(mcls=cls.shutdown,mfunc=func.shutdown)}$
+}
+END_TEST
+
+  <!--(end)-->
+<!--(end)-->
+void automated_test_${cls.c_name.lower()}$(TCase *tc)
+{
+   tcase_add_test(tc, automated_test_${cls.c_name.lower()}$_smoke);
+
+   <!--(for func in cls.methods)-->
+   tcase_add_test(tc, automated_test_${func.full_c_method_name}$);
+   <!--(end)-->
+   <!--(for func in cls.properties)-->
+    <!--(if func.getter_scope)-->
+   tcase_add_test(tc, automated_test_${func.full_c_getter_name}$);
+    <!--(end)-->
+    <!--(if func.setter_scope)-->
+   tcase_add_test(tc, automated_test_${func.full_c_setter_name}$);
+    <!--(end)-->
+   <!--(end)-->
+}
+
+int
+main(int argc, char **argv)
+{
+   int failed_count;
+
+   if (!_efl_test_option_disp(argc, argv, etc))
+     return 0;
+
+#ifdef NEED_RUN_IN_TREE
+   putenv("EFL_RUN_IN_TREE=1");
+#endif
+
+   failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                           "${cls.c_name}$", etc);
+
+   return (failed_count == 0) ? 0 : 255;
+}
+
