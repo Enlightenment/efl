@@ -289,38 +289,38 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
    return ptr;
 }
 
-static Eolian_Doc_Ref_Type
+static Eolian_Object_Type
 _resolve_event(const Eolian_Unit *src, char *name, const void **data,
                const void **data2)
 {
    /* never trust the user */
    if (name[0] == ',')
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    char *evname = strrchr(name, '.');
    if (!evname)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    *evname++ = '\0';
    const Eolian_Class *cl = eolian_unit_class_by_name_get(src, name);
    if (!cl)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    const Eolian_Event *ev = eolian_class_event_get_by_name(cl, evname);
    if (!ev)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    if (data) *data = cl;
    if (data2) *data2 = ev;
-   return EOLIAN_DOC_REF_EVENT;
+   return EOLIAN_OBJECT_EVENT;
 }
 
-EAPI Eolian_Doc_Ref_Type
+EAPI Eolian_Object_Type
 eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
                          const void **data, const void **data2)
 {
    if (tok->type != EOLIAN_DOC_TOKEN_REF)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    size_t nlen = tok->text_end - tok->text;
 
@@ -343,27 +343,16 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
    if (decl)
      {
        if (data) *data = decl;
-       switch (eolian_object_type_get(decl))
+       Eolian_Object_Type tp = eolian_object_type_get(decl);
+       switch (tp)
          {
           case EOLIAN_OBJECT_CLASS:
-            return EOLIAN_DOC_REF_CLASS;
           case EOLIAN_OBJECT_TYPEDECL:
-            switch (eolian_typedecl_type_get((Eolian_Typedecl *)decl))
-              {
-               case EOLIAN_TYPEDECL_ALIAS:
-                 return EOLIAN_DOC_REF_ALIAS;
-               case EOLIAN_TYPEDECL_STRUCT:
-               case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
-                 return EOLIAN_DOC_REF_STRUCT;
-               case EOLIAN_TYPEDECL_ENUM:
-                 return EOLIAN_DOC_REF_ENUM;
-               default:
-                 return EOLIAN_DOC_REF_INVALID;
-              }
           case EOLIAN_OBJECT_VARIABLE:
-            return EOLIAN_DOC_REF_VAR;
+            /* we only allow certain types to be referenced */
+            return tp;
           default:
-            return EOLIAN_DOC_REF_INVALID;
+            return EOLIAN_OBJECT_UNKNOWN;
          }
      }
 
@@ -372,7 +361,7 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
    char *suffix = strrchr(name, '.');
    /* no suffix, therefore invalid */
    if (!suffix)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    /* name will terminate before suffix, suffix will be standalone */
    *suffix++ = '\0';
@@ -384,10 +373,10 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
         const Eolian_Struct_Type_Field *fld = eolian_typedecl_struct_field_get(tpd, suffix);
         /* field itself is invalid */
         if (!fld)
-          return EOLIAN_DOC_REF_INVALID;
+          return EOLIAN_OBJECT_UNKNOWN;
         if (data) *data = tpd;
         if (data2) *data2 = fld;
-        return EOLIAN_DOC_REF_STRUCT_FIELD;
+        return EOLIAN_OBJECT_STRUCT_FIELD;
      }
 
    /* try an enum field */
@@ -397,10 +386,10 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
         const Eolian_Enum_Type_Field *fld = eolian_typedecl_enum_field_get(tpd, suffix);
         /* field itself is invalid */
         if (!fld)
-          return EOLIAN_DOC_REF_INVALID;
+          return EOLIAN_OBJECT_UNKNOWN;
         if (data) *data = tpd;
         if (data2) *data2 = fld;
-        return EOLIAN_DOC_REF_ENUM_FIELD;
+        return EOLIAN_OBJECT_ENUM_FIELD;
      }
 
    /* now it can only be a function or invalid */
@@ -416,23 +405,23 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
         suffix = strrchr(name, '.');
         /* wrong suffix, therefore invalid */
         if (!suffix)
-          return EOLIAN_DOC_REF_INVALID;
+          return EOLIAN_OBJECT_UNKNOWN;
         /* re-terminate */
         *suffix++ = '\0';
      }
 
    const Eolian_Class *cl = eolian_unit_class_by_name_get(unit, name);
    if (!cl)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    const Eolian_Function *fid = eolian_class_function_get_by_name(cl, suffix, ftype);
    if (!fid)
-     return EOLIAN_DOC_REF_INVALID;
+     return EOLIAN_OBJECT_UNKNOWN;
 
    /* got a func */
    if (data) *data = cl;
    if (data2) *data2 = fid;
-   return EOLIAN_DOC_REF_FUNC;
+   return EOLIAN_OBJECT_FUNCTION;
 }
 
 void

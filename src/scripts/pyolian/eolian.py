@@ -234,18 +234,6 @@ class Eolian_Doc_Token_Type(IntEnum):
     MARK_TODO = 6
     MARKUP_MONOSPACE = 7
 
-class Eolian_Doc_Ref_Type(IntEnum):
-    INVALID = 0
-    CLASS = 1
-    FUNC = 2
-    EVENT = 3
-    ALIAS = 4
-    STRUCT = 5
-    STRUCT_FIELD = 6
-    ENUM = 7
-    ENUM_FIELD = 8
-    VAR = 9
-
 
 ###  internal Classes  ########################################################
 

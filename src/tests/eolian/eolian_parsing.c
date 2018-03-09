@@ -1256,7 +1256,7 @@ START_TEST(eolian_docs)
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
    fail_if(strcmp(txt, "pants"));
-   fail_if(eolian_doc_token_ref_get(unit, &tok, NULL, NULL) != EOLIAN_DOC_REF_VAR);
+   fail_if(eolian_doc_token_ref_get(unit, &tok, NULL, NULL) != EOLIAN_OBJECT_VARIABLE);
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
@@ -1267,7 +1267,7 @@ START_TEST(eolian_docs)
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
    fail_if(strcmp(txt, "Docs.meth"));
-   fail_if(eolian_doc_token_ref_get(unit, &tok, NULL, NULL) != EOLIAN_DOC_REF_FUNC);
+   fail_if(eolian_doc_token_ref_get(unit, &tok, NULL, NULL) != EOLIAN_OBJECT_FUNCTION);
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);

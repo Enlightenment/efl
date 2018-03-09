@@ -129,6 +129,7 @@ class Template(pyratemp.Template):
             'Documentation': eolian.Documentation,
             'Documentation_Token': eolian.Documentation_Token,
             # Eolian Enums
+            'Eolian_Object_Type': eolian.Eolian_Object_Type,
             'Eolian_Function_Type': eolian.Eolian_Function_Type,
             'Eolian_Parameter_Dir': eolian.Eolian_Parameter_Dir,
             'Eolian_Class_Type': eolian.Eolian_Class_Type,
@@ -142,9 +143,7 @@ class Template(pyratemp.Template):
             'Eolian_Variable_Type': eolian.Eolian_Variable_Type,
             'Eolian_Binary_Operator': eolian.Eolian_Binary_Operator,
             'Eolian_Unary_Operator': eolian.Eolian_Unary_Operator,
-            'Eolian_Declaration_Type': eolian.Eolian_Declaration_Type,
             'Eolian_Doc_Token_Type': eolian.Eolian_Doc_Token_Type,
-            'Eolian_Doc_Ref_Type': eolian.Eolian_Doc_Ref_Type,
         })
 
         # Call the parent __init__ func

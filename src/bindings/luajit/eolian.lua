@@ -276,19 +276,6 @@ ffi.cdef [[
         EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE
     } Eolian_Doc_Token_Type;
 
-    typedef enum {
-        EOLIAN_DOC_REF_INVALID = 0,
-        EOLIAN_DOC_REF_CLASS,
-        EOLIAN_DOC_REF_FUNC,
-        EOLIAN_DOC_REF_EVENT,
-        EOLIAN_DOC_REF_ALIAS,
-        EOLIAN_DOC_REF_STRUCT,
-        EOLIAN_DOC_REF_STRUCT_FIELD,
-        EOLIAN_DOC_REF_ENUM,
-        EOLIAN_DOC_REF_ENUM_FIELD,
-        EOLIAN_DOC_REF_VAR
-    } Eolian_Doc_Ref_Type;
-
     typedef struct _Eolian_Doc_Token {
         Eolian_Doc_Token_Type type;
         const char *text, *text_end;
@@ -494,7 +481,7 @@ ffi.cdef [[
     void eolian_doc_token_init(Eolian_Doc_Token *tok);
     Eolian_Doc_Token_Type eolian_doc_token_type_get(const Eolian_Doc_Token *tok);
     char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
-    Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
+    Eolian_Object_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
 ]]
 
 local cutil = require("cutil")
@@ -1815,19 +1802,6 @@ M.doc_token_type = {
     MARKUP_MONOSPACE = 7
 }
 
-M.doc_ref_type = {
-    INVALID      = 0,
-    CLASS        = 1,
-    FUNC         = 2,
-    EVENT        = 3,
-    ALIAS        = 4,
-    STRUCT       = 5,
-    STRUCT_FIELD = 6,
-    ENUM         = 7,
-    ENUM_FIELD   = 8,
-    VAR          = 9
-}
-
 M.documentation_string_split = function(str)
     if not str then
         return {}
@@ -1881,7 +1855,7 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
         ref_get = function(self, unit)
             local stor = ffi.new("const void *[2]")
             local tp = tonumber(eolian.eolian_doc_token_ref_get(unit, self, stor, stor + 1))
-            local reft = M.doc_ref_type
+            local reft = M.object_type
             if tp == reft.CLASS then
                 return tp, ffi.cast("const Eolian_Class *", stor[0])
             elseif tp == reft.FUNC then
@@ -1905,7 +1879,7 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
             elseif tp == reft.VAR then
                 return tp, ffi.cast("const Eolian_Variable *", stor[0])
             else
-                return reft.INVALID
+                return reft.UNKNOWN
             end
         end
     }

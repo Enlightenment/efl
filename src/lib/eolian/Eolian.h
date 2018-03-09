@@ -449,20 +449,6 @@ typedef enum
    EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE
 } Eolian_Doc_Token_Type;
 
-typedef enum
-{
-   EOLIAN_DOC_REF_INVALID = 0,
-   EOLIAN_DOC_REF_CLASS,
-   EOLIAN_DOC_REF_FUNC,
-   EOLIAN_DOC_REF_EVENT,
-   EOLIAN_DOC_REF_ALIAS,
-   EOLIAN_DOC_REF_STRUCT,
-   EOLIAN_DOC_REF_STRUCT_FIELD,
-   EOLIAN_DOC_REF_ENUM,
-   EOLIAN_DOC_REF_ENUM_FIELD,
-   EOLIAN_DOC_REF_VAR
-} Eolian_Doc_Ref_Type;
-
 typedef struct _Eolian_Doc_Token
 {
    Eolian_Doc_Token_Type type;
@@ -2779,7 +2765,7 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
 /*
  * @brief Get the thing that a reference token references.
  *
- * Returns EOLIAN_DOC_REF_INVALID on failure (when not ref token or
+ * Returns EOLIAN_OBJECT_UNKNOWN on failure (when not ref token or
  * invalid ref, but invalid refs don't happen when database is valid).
  *
  * When the reference is a class, alias, struct, enum or var, the first data arg
@@ -2794,7 +2780,7 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  * @param[out] data2 the secondary data
  * @return the kind of reference this is
  */
-EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
+EAPI Eolian_Object_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
 
 #endif
 
