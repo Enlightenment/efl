@@ -413,7 +413,7 @@ inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
 
 enum class parameter_direction
 {
-  in, inout, out
+  unknown, in, inout, out
 };
 
 namespace detail {
