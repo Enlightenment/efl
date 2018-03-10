@@ -1297,7 +1297,7 @@ efl_main(void *data EINA_UNUSED,
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (eina_array_count(arge->argv) == 1)
+   if (eina_array_count(arge->argv) == 2)
      {
         if (!strcmp(eina_array_data_get(arge->argv, 0), "--help"))
           {
@@ -1312,15 +1312,15 @@ efl_main(void *data EINA_UNUSED,
           }
         autorun = eina_array_data_get(arge->argv, 0);
      }
-   else if (eina_array_count(arge->argv) == 2)
+   else if (eina_array_count(arge->argv) == 3)
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 0), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 0), "-to")))
+        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
           {
              test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 1);
+             autorun = eina_array_data_get(arge->argv, 2);
           }
      }
 
