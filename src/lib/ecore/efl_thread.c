@@ -75,6 +75,7 @@ struct _Efl_Thread_Data
    Eina_Bool end_sent : 1;
    Eina_Bool exit_read : 1;
    Eina_Bool exit_called : 1;
+   Eina_Bool run : 1;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -582,6 +583,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    Efl_Callback_Array_Item_Full *it;
    Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
+   if (pd->run) return EINA_FALSE;
    if (!td) return EINA_FALSE;
    thdat = calloc(1, sizeof(Thread_Data));
    if (!thdat) return EINA_FALSE;
@@ -783,6 +785,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         return EINA_FALSE;
      }
    pd->thdat = thdat;
+   pd->run = EINA_TRUE;
    return EINA_TRUE;
 }
 

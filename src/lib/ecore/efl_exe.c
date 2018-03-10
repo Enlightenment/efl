@@ -61,6 +61,7 @@ struct _Efl_Exe_Data
    } fd;
 #endif
    Eina_Bool exit_called : 1;
+   Eina_Bool run : 1;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -202,7 +203,7 @@ _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
         pd->exit_called = EINA_TRUE;
         efl_ref(obj);
         job = eina_future_then(efl_loop_job(loop), _efl_loop_task_exit, obj);
-        efl_future_Eina_FutureXXX_then(loop, job);
+        efl_future_Eina_FutureXXX_then(obj, job);
      }
 }
 
@@ -361,6 +362,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    int pipe_exited[2];
    int ret;
 
+   if (pd->run) return EINA_FALSE;
    if (pd->pid != -1) return EINA_FALSE;
    if (!td) return EINA_FALSE;
 
@@ -445,6 +447,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
                   efl_loop_handler_active_set(efl_added,
                                               EFL_LOOP_HANDLER_FLAGS_READ));
         _ecore_signal_pid_unlock();
+        pd->run = EINA_TRUE;
         return EINA_TRUE;
      }
    // this code is in the child here, and is temporary setup until we
