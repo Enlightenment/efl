@@ -1012,7 +1012,6 @@ EOLIAN static void
 _efl_thread_efl_threadio_call(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
                               void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
-   Thread_Data *thdat = pd->thdat;
    Control_Data cmd;
 
    memset(&cmd, 0, sizeof(cmd));
@@ -1053,7 +1052,6 @@ EOLIAN static void *
 _efl_thread_efl_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
                                    void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
-   Thread_Data *thdat = pd->thdat;
    Control_Data cmd;
    Control_Reply *rep;
    void *data;
