@@ -109,7 +109,7 @@ efl_exit(int exit_code)
    Eina_Value v = EINA_VALUE_EMPTY;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-   eina_value_set(&v, &exit_code);
+   eina_value_set(&v, exit_code);
    efl_loop_quit(efl_main_loop_get(), v);
 }
 
