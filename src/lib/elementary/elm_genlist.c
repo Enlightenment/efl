@@ -2046,6 +2046,15 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
    if (it->decorate_it_set) _decorate_item_set(it);
 
    edje_object_message_signal_process(VIEW(it));
+
+   if (sd->focus_on_realization == it)
+     {
+        _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
+        _elm_widget_highlight_in_theme_update(WIDGET(it));
+        _elm_widget_focus_highlight_start(WIDGET(it));
+        efl_ui_focus_manager_focus_set(WIDGET(it), EO_OBJ(it));
+        sd->focus_on_realization = NULL;
+     }
 }
 
 static void
@@ -3401,7 +3410,8 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
                elm_object_item_focus_set(eo_it, EINA_TRUE);
             _elm_widget_focus_highlight_start(obj);
             //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
-            efl_ui_focus_manager_focus_set(obj, eo_it);
+            if (efl_ui_focus_manager_request_subchild(obj, eo_it))
+              efl_ui_focus_manager_focus_set(obj, eo_it);
           }
      }
 }
@@ -6149,16 +6159,19 @@ _elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
                _elm_genlist_item_unfocused(sd->focused_item);
              _elm_genlist_item_focused(eo_it);
 
-             efl_ui_focus_manager_focus_set(it->base->widget, eo_it);
-
              /* If item is not realized state, widget couldn't get focus_highlight data. */
              if (it->realized)
                {
                   _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
                   _elm_widget_highlight_in_theme_update(obj);
                   _elm_widget_focus_highlight_start(obj);
+                  efl_ui_focus_manager_focus_set(it->base->widget, eo_it);
+                  sd->focus_on_realization = NULL;
                }
-             efl_ui_focus_manager_focus_set(it->base->widget, eo_it);
+             else
+               {
+                  sd->focus_on_realization = it;
+               }
           }
      }
    else

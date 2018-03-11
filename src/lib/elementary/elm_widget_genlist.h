@@ -151,6 +151,7 @@ struct _Elm_Genlist_Data
 
    Eina_Hash                            *content_item_map;
    Eo                                   *provider;
+   Elm_Gen_Item                         *focus_on_realization;
 
    Eina_Bool                             filter;
    Eina_Bool                             focus_on_selection_enabled : 1;
