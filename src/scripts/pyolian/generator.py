@@ -112,6 +112,7 @@ class Template(pyratemp.Template):
             #  'eolian_version': eolian.__version__,
             #  'eolian_version_info': eolian.__version_info__,
             # Eolian Classes
+            'Object': eolian.Object,
             'Class': eolian.Class,
             'Part': eolian.Part,
             'Constructor': eolian.Constructor,
@@ -125,11 +126,9 @@ class Template(pyratemp.Template):
             'Struct_Type_Field': eolian.Struct_Type_Field,
             'Expression': eolian.Expression,
             'Variable': eolian.Variable,
-            'Declaration': eolian.Declaration,
             'Documentation': eolian.Documentation,
             'Documentation_Token': eolian.Documentation_Token,
             # Eolian Enums
-            'Eolian_Object_Type': eolian.Eolian_Object_Type,
             'Eolian_Function_Type': eolian.Eolian_Function_Type,
             'Eolian_Parameter_Dir': eolian.Eolian_Parameter_Dir,
             'Eolian_Class_Type': eolian.Eolian_Class_Type,
