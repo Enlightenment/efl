@@ -275,11 +275,6 @@ class TestEolianObject(unittest.TestCase):
         obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
         self.assertEqual(obj.name, 'Efl.Ui.Frame')
 
-    @unittest.expectedFailure  # Object.type clash with Class.type
-    def test_type(self):
-        obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
-        self.assertIs(obj.type, eolian.Eolian_Object_Type.CLASS)
-
     def test_file(self):
         obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
         self.assertEqual(obj.file, 'efl_ui_frame.eo')

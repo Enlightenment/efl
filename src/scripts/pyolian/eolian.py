@@ -37,23 +37,6 @@ _already_halted = False
 
 ###  Eolian Enums  ############################################################
 
-class Eolian_Object_Type(IntEnum):
-    UNKNOWN = 0
-    CLASS = 1
-    TYPEDECL = 2
-    STRUCT_FIELD = 3
-    ENUM_FIELD = 4
-    TYPE = 5
-    VARIABLE = 6
-    EXPRESSION = 7
-    FUNCTION = 8
-    FUNCTION_PARAMETER = 9
-    EVENT = 10
-    PART = 11
-    IMPLEMENT = 12
-    CONSTRUCTOR = 13
-    DOCUMENTATION = 14
-
 class Eolian_Function_Type(IntEnum):
     UNRESOLVED = 0
     PROPERTY = 1
@@ -660,10 +643,6 @@ class Object(EolianBaseObject):
     @cached_property
     def column(self):
         return int(lib.eolian_object_column_get(self._obj))
-
-    @cached_property
-    def type(self):
-        return Eolian_Object_Type(lib.eolian_object_type_get(self._obj))
 
 
 class Class(Object):
@@ -1556,24 +1535,41 @@ def _str_to_py(s):
     print('WARNING !!!!!!!!! Unknown type: %s' % type(s))
 
 
-###  internal Object type -> class mapping  ###################################
+###  internal Object type -> Class mapping  ###################################
+
+class _Eolian_Object_Type(IntEnum):
+    UNKNOWN = 0
+    CLASS = 1
+    TYPEDECL = 2
+    STRUCT_FIELD = 3
+    ENUM_FIELD = 4
+    TYPE = 5
+    VARIABLE = 6
+    EXPRESSION = 7
+    FUNCTION = 8
+    FUNCTION_PARAMETER = 9
+    EVENT = 10
+    PART = 11
+    IMPLEMENT = 12
+    CONSTRUCTOR = 13
+    DOCUMENTATION = 14
 
 _eolian_type_class_mapping = {
-    Eolian_Object_Type.UNKNOWN: Object,
-    Eolian_Object_Type.CLASS: Class,
-    Eolian_Object_Type.TYPEDECL: Typedecl,
-    Eolian_Object_Type.STRUCT_FIELD: Struct_Type_Field,
-    Eolian_Object_Type.ENUM_FIELD: Enum_Type_Field,
-    Eolian_Object_Type.TYPE: Type,
-    Eolian_Object_Type.VARIABLE: Variable,
-    Eolian_Object_Type.EXPRESSION: Expression,
-    Eolian_Object_Type.FUNCTION: Function,
-    Eolian_Object_Type.FUNCTION_PARAMETER: Function_Parameter,
-    Eolian_Object_Type.EVENT: Event,
-    Eolian_Object_Type.PART: Part,
-    Eolian_Object_Type.IMPLEMENT: Implement,
-    Eolian_Object_Type.CONSTRUCTOR: Constructor,
-    Eolian_Object_Type.DOCUMENTATION: Documentation,
+    _Eolian_Object_Type.UNKNOWN: Object,
+    _Eolian_Object_Type.CLASS: Class,
+    _Eolian_Object_Type.TYPEDECL: Typedecl,
+    _Eolian_Object_Type.STRUCT_FIELD: Struct_Type_Field,
+    _Eolian_Object_Type.ENUM_FIELD: Enum_Type_Field,
+    _Eolian_Object_Type.TYPE: Type,
+    _Eolian_Object_Type.VARIABLE: Variable,
+    _Eolian_Object_Type.EXPRESSION: Expression,
+    _Eolian_Object_Type.FUNCTION: Function,
+    _Eolian_Object_Type.FUNCTION_PARAMETER: Function_Parameter,
+    _Eolian_Object_Type.EVENT: Event,
+    _Eolian_Object_Type.PART: Part,
+    _Eolian_Object_Type.IMPLEMENT: Implement,
+    _Eolian_Object_Type.CONSTRUCTOR: Constructor,
+    _Eolian_Object_Type.DOCUMENTATION: Documentation,
 }
 
 ###  module init/shutdown  ####################################################
