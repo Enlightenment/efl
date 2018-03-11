@@ -3366,12 +3366,50 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    return eo_it;
 }
 
+EOLIAN static void
+_elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data *sd, Efl_Ui_Focus_Direction direction EINA_UNUSED, Efl_Ui_Focus_Object *entry EINA_UNUSED)
+{
+   Elm_Object_Item *eo_it = NULL;
+   Eina_Bool is_sel = EINA_FALSE;
+
+   if (sd->last_focused_item)
+     eo_it = sd->last_focused_item;
+   else if (sd->last_selected_item)
+     eo_it = sd->last_selected_item;
+   else if (_elm_config->first_item_focus_on_first_focus_in || !eo_it)
+     {
+        eo_it = elm_genlist_first_item_get(obj);
+        is_sel = EINA_TRUE;
+     }
+
+   while (eo_it)
+     {
+        ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
+        if ((!_is_no_select(it)) && (!elm_object_item_disabled_get(eo_it)))
+          break;
+        eo_it = EO_OBJ(ELM_GEN_ITEM_NEXT(it));
+     }
+
+   if (eo_it)
+     {
+        eo_it = _elm_genlist_nearest_visible_item_get(obj, eo_it);
+        if (eo_it)
+          {
+             if (!_elm_config->item_select_on_focus_disable && is_sel)
+               elm_genlist_item_selected_set(eo_it, EINA_TRUE);
+             else
+               elm_object_item_focus_set(eo_it, EINA_TRUE);
+            _elm_widget_focus_highlight_start(obj);
+            //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
+            efl_ui_focus_manager_focus_set(obj, eo_it);
+          }
+     }
+}
+
 EOLIAN static Eina_Bool
 _elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   Elm_Object_Item *eo_it = NULL;
-   Eina_Bool is_sel = EINA_FALSE;
 
    int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
@@ -3380,48 +3418,6 @@ _elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
        (!sd->last_selected_item))
      {
         sd->last_selected_item = eina_list_data_get(sd->selected);
-     }
-
-   if (efl_ui_focus_object_focus_get(obj) && !sd->mouse_down)
-     {
-        if (sd->last_focused_item)
-          eo_it = sd->last_focused_item;
-        else if (sd->last_selected_item)
-          eo_it = sd->last_selected_item;
-        else if (_elm_config->first_item_focus_on_first_focus_in)
-          {
-             eo_it = elm_genlist_first_item_get(obj);
-             is_sel = EINA_TRUE;
-          }
-
-        while (eo_it)
-          {
-             ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
-             if ((!_is_no_select(it)) && (!elm_object_item_disabled_get(eo_it)))
-               break;
-             eo_it = EO_OBJ(ELM_GEN_ITEM_NEXT(it));
-          }
-
-        if (eo_it)
-          {
-             eo_it = _elm_genlist_nearest_visible_item_get(obj, eo_it);
-             if (eo_it)
-               {
-                  if (!_elm_config->item_select_on_focus_disable && is_sel)
-                    elm_genlist_item_selected_set(eo_it, EINA_TRUE);
-                  else
-                    elm_object_item_focus_set(eo_it, EINA_TRUE);
-                  _elm_widget_focus_highlight_start(obj);
-               }
-          }
-     }
-   else
-     {
-        if (sd->focused_item)
-          {
-             sd->last_focused_item = sd->focused_item;
-             _elm_genlist_item_unfocused(sd->focused_item);
-          }
      }
 
    return EINA_TRUE;
