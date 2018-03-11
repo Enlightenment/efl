@@ -15,14 +15,13 @@ eolian_class_full_name_get(const Eolian_Class *cl)
 EAPI Eina_Stringshare *
 eolian_class_name_get(const Eolian_Class *cl)
 {
-   return cl ? cl->name : NULL;
+   return database_object_short_name_get((const Eolian_Object *)cl);
 }
 
 EAPI Eina_Iterator *
 eolian_class_namespaces_get(const Eolian_Class *cl)
 {
-   return ((cl && cl->namespaces) ? eina_list_iterator_new(cl->namespaces)
-                                  : NULL);
+   return database_object_namespaces_get((const Eolian_Object *)cl);
 }
 
 EAPI Eolian_Class_Type
@@ -114,7 +113,8 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
           }
      }
 
-   _eolian_log("function '%s' not found in class '%s'", func_name, cl->name);
+   _eolian_log("function '%s' not found in class '%s'", func_name,
+               database_object_short_name_get(&cl->base));
    return NULL;
 }
 

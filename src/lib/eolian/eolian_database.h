@@ -111,8 +111,6 @@ struct _Eolian_Documentation
 struct _Eolian_Class
 {
    Eolian_Object base;
-   Eina_List *namespaces; /* List Eina_Stringshare * */
-   Eina_Stringshare *name;
    Eolian_Class_Type type;
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy_prefix;
@@ -199,8 +197,6 @@ struct _Eolian_Type
    Eolian_Type_Builtin_Type btype;
    Eolian_Type *base_type;
    Eolian_Type *next_type;
-   Eina_Stringshare *name;
-   Eina_List        *namespaces;
    Eina_Stringshare *freefunc;
    union
    {
@@ -218,8 +214,6 @@ struct _Eolian_Typedecl
    Eolian_Object base;
    Eolian_Typedecl_Type type;
    Eolian_Type      *base_type;
-   Eina_Stringshare *name;
-   Eina_List        *namespaces;
    Eina_Hash        *fields;
    Eina_List        *field_list;
    Eolian_Function *function_pointer;
@@ -312,8 +306,6 @@ struct _Eolian_Variable
 {
    Eolian_Object         base;
    Eolian_Variable_Type  type;
-   Eina_Stringshare     *name;
-   Eina_List            *namespaces;
    Eolian_Type          *base_type;
    Eolian_Expression    *value;
    Eolian_Documentation *doc;
@@ -324,6 +316,9 @@ char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(Eolian_State *state, const Eolian_Unit *src);
 
 void database_object_add(Eolian_Unit *unit, const Eolian_Object *obj);
+
+Eina_Iterator *database_object_namespaces_get(const Eolian_Object *obj);
+const char *database_object_short_name_get(const Eolian_Object *obj);
 
 void database_doc_del(Eolian_Documentation *doc);
 

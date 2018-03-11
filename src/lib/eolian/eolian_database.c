@@ -18,6 +18,65 @@ database_object_add(Eolian_Unit *unit, const Eolian_Object *obj)
                  ((Eina_List *)eina_hash_find(unit->state->objects_f, obj->file), obj));
 }
 
+typedef struct _Eolian_Namespace_List
+{
+   Eina_Iterator itr;
+   char *curp;
+} Eolian_Namespace_List;
+
+static Eina_Bool
+_nmsp_iterator_next(Eolian_Namespace_List *it, void **data)
+{
+   if (!it || !it->curp)
+     return EINA_FALSE;
+
+   char *ndot = strchr(it->curp, '.');
+   if (!ndot)
+     return EINA_FALSE;
+
+   *ndot = '\0';
+   if (data) *data = it->curp;
+   it->curp = ndot + 1;
+   return EINA_TRUE;
+}
+
+static void *
+_nmsp_container_get(Eina_Iterator *it EINA_UNUSED)
+{
+   return NULL;
+}
+
+Eina_Iterator *
+database_object_namespaces_get(const Eolian_Object *obj)
+{
+   if (!obj || !obj->name || !strchr(obj->name, '.')) return NULL;
+
+   size_t nstrl = strlen(obj->name) + 1;
+   size_t anstrl = nstrl - 1 - (nstrl - 1) % sizeof(void *) + sizeof(void *);
+
+   Eolian_Namespace_List *it = malloc(sizeof(Eolian_Namespace_List) + anstrl);
+   memset(&it->itr, 0, sizeof(Eina_Iterator));
+   it->curp = (char *)(it + 1);
+   memcpy(it->curp, obj->name, nstrl);
+
+   EINA_MAGIC_SET(&it->itr, EINA_MAGIC_ITERATOR);
+   it->itr.version = EINA_ITERATOR_VERSION;
+   it->itr.next = FUNC_ITERATOR_NEXT(_nmsp_iterator_next);
+   it->itr.get_container = _nmsp_container_get;
+   it->itr.free = FUNC_ITERATOR_FREE(free);
+   return &it->itr;
+}
+
+const char *
+database_object_short_name_get(const Eolian_Object *obj)
+{
+   if (!obj || !obj->name) return NULL;
+   const char *ldot = strrchr(obj->name, '.');
+   if (ldot)
+     return ldot + 1;
+   return obj->name;
+}
+
 void database_doc_del(Eolian_Documentation *doc)
 {
    if (!doc) return;

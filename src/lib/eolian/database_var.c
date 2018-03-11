@@ -9,14 +9,10 @@ void
 database_var_del(Eolian_Variable *var)
 {
    if (!var || eolian_object_unref(&var->base)) return;
-   const char *sp;
    eina_stringshare_del(var->base.file);
    eina_stringshare_del(var->base.name);
    if (var->base_type)
      database_type_del(var->base_type);
-   if (var->name) eina_stringshare_del(var->name);
-   if (var->namespaces) EINA_LIST_FREE(var->namespaces, sp)
-      eina_stringshare_del(sp);
    if (var->value) database_expr_del(var->value);
    database_doc_del(var->doc);
    free(var);

@@ -600,7 +600,7 @@ database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr,
           {
               if (database_type_is_ownable(unit, type))
                  return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
-              int  kw = eo_lexer_keyword_str_to_id(type->name);
+              int  kw = eo_lexer_keyword_str_to_id(type->base.name);
               if (!kw || kw < KW_byte || kw >= KW_void)
                  {
                      const Eolian_Typedecl *base = database_type_decl_find(unit, type);
