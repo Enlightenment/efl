@@ -98,8 +98,8 @@ lib.eolian_state_object_by_name_get.argtypes = [c_void_p, c_char_p]
 lib.eolian_state_object_by_name_get.restype = c_void_p
 
 # EAPI Eina_Iterator *eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_name);
-lib.eolian_state_object_by_file_get.argtypes = [c_void_p, c_char_p]
-lib.eolian_state_object_by_file_get.restype = c_void_p
+lib.eolian_state_objects_by_file_get.argtypes = [c_void_p, c_char_p]
+lib.eolian_state_objects_by_file_get.restype = c_void_p
 
 # EAPI Eina_Iterator *eolian_state_objects_get(const Eolian_State *state);
 lib.eolian_state_objects_get.argtypes = [c_void_p]
