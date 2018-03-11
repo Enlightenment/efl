@@ -412,6 +412,7 @@ class Eolian_Unit(EolianBaseObject):
     def namespace_get_by_name(self, name):
         return Namespace(self, name)
 
+
 class Eolian_State(Eolian_Unit):
     def __init__(self):
         self._obj = lib.eolian_state_new()  # Eolian_State *
@@ -635,6 +636,12 @@ class Namespace(object):
 ###  Eolian Classes  ##########################################################
 
 class Object(EolianBaseObject):
+    def __new__(cls, c_obj_pointer):
+        if cls is Object:
+            c_type = lib.eolian_object_type_get(c_obj_pointer)
+            cls = _eolian_type_class_mapping[c_type]
+        return super().__new__(cls)
+
     def __repr__(self):
         return "<eolian.Object '{0.name}', {0.type!s}>".format(self)
 
@@ -657,6 +664,7 @@ class Object(EolianBaseObject):
     @cached_property
     def type(self):
         return Eolian_Object_Type(lib.eolian_object_type_get(self._obj))
+
 
 class Class(Object):
     def __repr__(self):
@@ -1547,6 +1555,26 @@ def _str_to_py(s):
         return cast(s, c_char_p).value.decode('utf-8')
     print('WARNING !!!!!!!!! Unknown type: %s' % type(s))
 
+
+###  internal Object type -> class mapping  ###################################
+
+_eolian_type_class_mapping = {
+    Eolian_Object_Type.UNKNOWN: Object,
+    Eolian_Object_Type.CLASS: Class,
+    Eolian_Object_Type.TYPEDECL: Typedecl,
+    Eolian_Object_Type.STRUCT_FIELD: Struct_Type_Field,
+    Eolian_Object_Type.ENUM_FIELD: Enum_Type_Field,
+    Eolian_Object_Type.TYPE: Type,
+    Eolian_Object_Type.VARIABLE: Variable,
+    Eolian_Object_Type.EXPRESSION: Expression,
+    Eolian_Object_Type.FUNCTION: Function,
+    Eolian_Object_Type.FUNCTION_PARAMETER: Function_Parameter,
+    Eolian_Object_Type.EVENT: Event,
+    Eolian_Object_Type.PART: Part,
+    Eolian_Object_Type.IMPLEMENT: Implement,
+    Eolian_Object_Type.CONSTRUCTOR: Constructor,
+    Eolian_Object_Type.DOCUMENTATION: Documentation,
+}
 
 ###  module init/shutdown  ####################################################
 def _cleanup():
