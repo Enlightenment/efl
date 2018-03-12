@@ -663,9 +663,15 @@ _dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *dead_ptr EINA_UNUSED)
 static Eina_Future_Scheduler *
 _scheduler_get(Eina_Future *f)
 {
-   for (; f->prev != NULL; f = f->prev);
-   assert(f->promise != NULL);
-   return f->promise->scheduler;
+   do
+     {
+        if (f->promise) return f->promise->scheduler;
+        else if (f->scheduled_entry) return f->scheduled_entry->scheduler;
+	f = f->prev;
+     }
+   while (f);
+   assert(EINA_FALSE && "no scheduler for future!");
+   return NULL;
 }
 
 EAPI Eina_Value
