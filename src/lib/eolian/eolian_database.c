@@ -817,7 +817,7 @@ static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key
      unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_TRUE);
    pd->ret = !!unit;
    if (pd->ret) pd->ret = _parse_deferred(unit);
-   _merge_units(unit);
+   if (pd->ret) _merge_units(unit);
    return pd->ret;
 }
 
@@ -846,7 +846,7 @@ static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key 
      unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_FALSE);
    pd->ret = !!unit;
    if (pd->ret) pd->ret = _parse_deferred(unit);
-   _merge_units(unit);
+   if (pd->ret) _merge_units(unit);
    return pd->ret;
 }
 
