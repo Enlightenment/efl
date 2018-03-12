@@ -38,6 +38,16 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_move(Ecore_Evas *ee, int x, int y)
+{
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+
+   if (bdata->image) return;
+   ee->x = ee->req.x = x;
+   ee->y = ee->req.y = y;
+}
+
+static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    Evas_Engine_Info_Buffer *einfo;
@@ -637,7 +647,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL,
+     _ecore_evas_move,
      NULL,
      _ecore_evas_resize,
      _ecore_evas_move_resize,
