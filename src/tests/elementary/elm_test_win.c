@@ -36,7 +36,7 @@ _timer_delete_request_cb(void *data)
 {
    Eo *win = (Eo*) data;
    _do_delete_request(win);
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -44,14 +44,14 @@ _timer_hide_window_cb(void *data)
 {
    Eo *win = (Eo*) data;
    efl_gfx_visible_set(win, EINA_FALSE);
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 _timer_exit_cb(void *data EINA_UNUSED)
 {
    elm_exit();
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -60,7 +60,7 @@ _timer_fail_flag_cb(void *data)
    Eina_Bool *fail_flag = (Eina_Bool*) data;
    *fail_flag = EINA_TRUE;
    elm_exit();
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
 START_TEST (elm_win_legacy_type_check)
