@@ -2264,35 +2264,43 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get the name of the given type declaration. Keep in mind that the
- * name doesn't include namespaces.
+ * @brief A helper function to get the full name of a typedecl.
  *
- * @param[in] tp the type declaration.
- * @return the name.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_name_get(const Eolian_Typedecl *tp);
+static inline const char *
+eolian_typedecl_name_get(const Eolian_Typedecl *tp)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(tp));
+}
 
 /*
- * @brief Get the full (namespaced) name of a type declaration.
+ * @brief A helper function to get the short name of a typedecl.
  *
- * @param[in] tp the type declaration.
- * @return the name.
+ * @see eolian_object_short_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_full_name_get(const Eolian_Typedecl *tp);
+static inline const char *
+eolian_typedecl_short_name_get(const Eolian_Typedecl *tp)
+{
+   return eolian_object_short_name_get(EOLIAN_OBJECT(tp));
+}
 
 /*
- * @brief Get an iterator to the list of namespaces of the given type decl.
+ * @brief A helper function to get the namespaces of a typedecl.
  *
- * @param[in] tp the type declaration.
- * @return the iterator.
+ * @see eolian_object_namespaces_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
+static inline Eina_Iterator *
+eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp)
+{
+   return eolian_object_namespaces_get(EOLIAN_OBJECT(tp));
+}
 
 /*
  * @brief Get the name of the function used to free this type declaration.
@@ -2451,36 +2459,43 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
 
 /*
- * @brief Get the name of the given type. For regular types, this is for
- * example "int". For EOLIAN_TYPE_CLASS, this can be "Button". Keep in
- * mind that the name doesn't include namespaces.
+ * @brief A helper function to get the full name of a type.
  *
- * @param[in] tp the type.
- * @return the name.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);
+static inline const char *
+eolian_type_name_get(const Eolian_Type *tp)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(tp));
+}
 
 /*
- * @brief Get the full (namespaced) name of a type.
+ * @brief A helper function to get the short name of a type.
  *
- * @param[in] tp the type.
- * @return the name.
+ * @see eolian_object_short_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
+static inline const char *
+eolian_type_short_name_get(const Eolian_Type *tp)
+{
+   return eolian_object_short_name_get(EOLIAN_OBJECT(tp));
+}
 
 /*
- * @brief Get an iterator to the list of namespaces of the given type.
+ * @brief A helper function to get the namespaces of a type.
  *
- * @param[in] tp the type.
- * @return the iterator.
+ * @see eolian_object_namespaces_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
+static inline Eina_Iterator *
+eolian_type_namespaces_get(const Eolian_Type *tp)
+{
+   return eolian_object_namespaces_get(EOLIAN_OBJECT(tp));
+}
 
 /*
  * @brief Get the name of the function used to free this type.
@@ -2687,34 +2702,43 @@ EAPI const Eolian_Type *eolian_variable_base_type_get(const Eolian_Variable *var
 EAPI const Eolian_Expression *eolian_variable_value_get(const Eolian_Variable *var);
 
 /*
- * @brief Get the name of the given variable (without namespaces).
+ * @brief A helper function to get the full name of a variable.
  *
- * @param[in] var the variable.
- * @return the name.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_variable_name_get(const Eolian_Variable *var);
+static inline const char *
+eolian_variable_name_get(const Eolian_Variable *tp)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(tp));
+}
 
 /*
- * @brief Get the name of the given variable (with namespaces).
+ * @brief A helper function to get the short name of a variable.
  *
- * @param[in] var the variable.
- * @return the name.
+ * @see eolian_object_short_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_variable_full_name_get(const Eolian_Variable *var);
+static inline const char *
+eolian_variable_short_name_get(const Eolian_Variable *tp)
+{
+   return eolian_object_short_name_get(EOLIAN_OBJECT(tp));
+}
 
 /*
- * @brief Get an iterator to the list of namespaces of the given variable.
+ * @brief A helper function to get the namespaces of a variable.
  *
- * @param[in] var the variable.
- * @return the iterator.
+ * @see eolian_object_namespaces_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
+static inline Eina_Iterator *
+eolian_variable_namespaces_get(const Eolian_Variable *tp)
+{
+   return eolian_object_namespaces_get(EOLIAN_OBJECT(tp));
+}
 
 /*
  * @brief Check if a variable is extern.

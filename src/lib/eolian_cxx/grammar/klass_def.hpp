@@ -369,12 +369,12 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
            for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                  , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
              namespaces.push_back(&*namespace_iterator);
-           original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, type_type, is_undefined}};
+           original_type = {regular_type_def{ ::eolian_type_short_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, type_type, is_undefined}};
          }
        else
          {
            complex_type_def complex
-            {{::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}}, {}};
+            {{::eolian_type_short_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}}, {}};
            while (stp)
              {
                 complex.subtypes.push_back({stp, unit, EOLIAN_C_TYPE_DEFAULT});
@@ -1097,7 +1097,7 @@ struct enum_def
        {
           this->namespaces.push_back((&*namespace_iterator));
        }
-     cxx_name = eolian_name = eolian_typedecl_name_get(enum_obj);
+     cxx_name = eolian_name = eolian_typedecl_short_name_get(enum_obj);
 
      for (efl::eina::iterator<const Eolian_Enum_Type_Field> field_iterator(::eolian_typedecl_enum_fields_get(enum_obj))
              , field_last; field_iterator != field_last; ++field_iterator)
@@ -1143,7 +1143,7 @@ struct struct_def
        {
           this->namespaces.push_back((&*namespace_iterator));
        }
-     cxx_name = eolian_name = eolian_typedecl_name_get(struct_obj);
+     cxx_name = eolian_name = eolian_typedecl_short_name_get(struct_obj);
 
      for(efl::eina::iterator<const Eolian_Struct_Type_Field> field_iterator(::eolian_typedecl_struct_fields_get(struct_obj))
              , field_last; field_iterator != field_last; ++field_iterator)

@@ -131,7 +131,7 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
    const Eolian_Typedecl *tdcl = eolian_type_typedecl_get(btp);
    if (tdcl && (eolian_typedecl_type_get(tdcl) == EOLIAN_TYPEDECL_STRUCT))
      {
-        char *sn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tdcl));
+        char *sn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tdcl));
         if (eina_streq(sn, "Eina_Rect"))
           eina_strbuf_append(buf, "(EINA_RECT_EMPTY())");
         else
@@ -156,7 +156,7 @@ _generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Str
    const char *free_func = eolian_type_free_func_get(type);
    if (!free_func)
      {
-        printf("No free type %s\n", eolian_type_name_get(type));
+        printf("No free type %s\n", eolian_type_short_name_get(type));
         return;
      }
 

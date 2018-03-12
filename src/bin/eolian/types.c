@@ -6,7 +6,7 @@ static Eina_Strbuf *
 _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
                Eina_Bool full, Eina_Bool legacy)
 {
-   char *grp = strdup(eolian_typedecl_full_name_get(tp));
+   char *grp = strdup(eolian_typedecl_name_get(tp));
    char *p = strrchr(grp, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(src, eolian_typedecl_documentation_get(tp),
@@ -28,7 +28,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
         {
            const Eolian_Struct_Type_Field *memb;
-           char *fn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tp));
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tp));
            if (tpt == EOLIAN_TYPEDECL_STRUCT_OPAQUE || !full)
              {
                 eina_strbuf_append_printf(buf, "typedef struct _%s %s", fn, fn);
@@ -118,7 +118,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
                 eina_strbuf_append(buf, "\n");
              }
            eina_iterator_free(membs);
-           char *fn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tp));
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tp));
            eina_strbuf_append_printf(buf, "} %s", fn);
            free(fn);
            break;
@@ -140,7 +140,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
              }
 
            /* Function name */
-           char *fn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tp));
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tp));
            eina_strbuf_append_printf(buf, "(*%s)", fn);
            free(fn);
 
@@ -162,7 +162,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
 static Eina_Strbuf *
 _var_generate(const Eolian_Unit *src, const Eolian_Variable *vr, Eina_Bool legacy)
 {
-   char *fn = strdup(eolian_variable_full_name_get(vr));
+   char *fn = strdup(eolian_variable_name_get(vr));
    char *p = strrchr(fn, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(src, eolian_variable_documentation_get(vr),
@@ -280,7 +280,7 @@ void eo_gen_types_source_gen(Eina_Iterator *itr, Eina_Strbuf *buf)
         if (!vv)
           continue;
 
-        char *fn = strdup(eolian_variable_full_name_get(vr));
+        char *fn = strdup(eolian_variable_name_get(vr));
         for (char *p = strchr(fn, '.'); p; p = strchr(p, '.'))
           *p = '_';
         eina_str_toupper(&fn);

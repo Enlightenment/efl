@@ -252,44 +252,6 @@ eolian_typedecl_c_type_get(const Eolian_Typedecl *tp)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_name_get(const Eolian_Type *tp)
-{
-   return eolian_object_short_name_get((const Eolian_Object *)tp);
-}
-
-EAPI Eina_Stringshare *
-eolian_typedecl_name_get(const Eolian_Typedecl *tp)
-{
-   return eolian_object_short_name_get((const Eolian_Object *)tp);
-}
-
-EAPI Eina_Stringshare *
-eolian_type_full_name_get(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->base.name;
-}
-
-EAPI Eina_Stringshare *
-eolian_typedecl_full_name_get(const Eolian_Typedecl *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->base.name;
-}
-
-EAPI Eina_Iterator *
-eolian_type_namespaces_get(const Eolian_Type *tp)
-{
-   return eolian_object_namespaces_get((const Eolian_Object *)tp);
-}
-
-EAPI Eina_Iterator *
-eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp)
-{
-   return eolian_object_namespaces_get((const Eolian_Object *)tp);
-}
-
-EAPI Eina_Stringshare *
 eolian_type_free_func_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);

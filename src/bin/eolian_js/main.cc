@@ -73,8 +73,8 @@ _final_type_and_type_type_get(Eolian_Type const* tp_in, Eolian_Type const*& tp_o
            !eolian_typedecl_is_extern(tpd))
          {
             auto btp = eolian_typedecl_aliased_base_get(tpd);
-            if (btp && eolian_type_full_name_get(btp) &&
-                strcmp(eolian_type_full_name_get(btp), "__undefined_type") != 0)
+            if (btp && eolian_type_name_get(btp) &&
+                strcmp(eolian_type_name_get(btp), "__undefined_type") != 0)
               {
                  _final_type_and_type_type_get(btp, tp_out, tpt_out);
               }
@@ -200,7 +200,7 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
 
         };
 
-        std::string type_name = eolian_type_name_get(tp);
+        std::string type_name = eolian_type_short_name_get(tp);
         auto it = type_map.find(type_name);
         if (it != end(type_map))
           type_name = it->second;
@@ -690,8 +690,8 @@ int main(int argc, char** argv)
         if (!tpd || ::eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
           continue;
 
-        auto struct_name = ::eolian_typedecl_name_get(tpd);
-        auto struct_type_full_name = ::eolian_typedecl_full_name_get(tpd);
+        auto struct_name = ::eolian_typedecl_short_name_get(tpd);
+        auto struct_type_full_name = ::eolian_typedecl_name_get(tpd);
         if (!struct_name || !struct_type_full_name)
           {
              EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get struct type name";
@@ -1157,7 +1157,7 @@ int main(int argc, char** argv)
         auto tpd = &*first;
         if (::eolian_typedecl_is_extern(tpd))
           continue;
-        std::string enum_name = ::eolian_typedecl_name_get(tpd);
+        std::string enum_name = ::eolian_typedecl_short_name_get(tpd);
         os << "  {\n";
         os << "    auto to_export = ::efl::eo::js::get_namespace({";
         bool comma = false;

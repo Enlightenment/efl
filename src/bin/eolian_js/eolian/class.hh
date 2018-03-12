@@ -59,7 +59,7 @@ inline std::string type_class_name(Eolian_Type const* tp)
                   auto tpd = eolian_type_typedecl_get(tp);
                   if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT)
                     {
-                       auto struct_type_full_name = ::eolian_type_full_name_get(tp);
+                       auto struct_type_full_name = ::eolian_type_name_get(tp);
                        if (!struct_type_full_name)
                          throw std::runtime_error("Could not get struct name");
                        return struct_type_full_name;
