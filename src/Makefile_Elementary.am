@@ -119,7 +119,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_page_transition_scroll.eo \
 	lib/elementary/efl_page_indicator.eo \
 	lib/elementary/efl_page_indicator_icon.eo \
-	lib/elementary/efl_ui_model_state.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -152,6 +151,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
 	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
+	lib/elementary/efl_ui_model_state.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_selection_manager.eo \
