@@ -2078,7 +2078,6 @@ composite_obj_back:
    if (pd->parent) goto err_parent;
 err_parent_back:
 
-   _efl_pending_futures_clear(pd);
    _wref_destruct(pd);
 
    // this isn't 100% correct, as the object is still "slightly" alive at this
@@ -2166,6 +2165,7 @@ _efl_object_finalize(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 static void
 _efl_object_invalidate(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
+   _efl_pending_futures_clear(pd);
    pd->invalidate = EINA_TRUE;
 }
 
