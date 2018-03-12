@@ -37,13 +37,6 @@ eolian_function_type_get(const Eolian_Function *fid)
    return fid->type;
 }
 
-EAPI Eina_Stringshare *
-eolian_function_name_get(const Eolian_Function *fid)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   return fid->base.name;
-}
-
 static const char *
 _get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
 {

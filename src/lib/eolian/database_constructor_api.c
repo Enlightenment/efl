@@ -5,13 +5,6 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eina_Stringshare *
-eolian_constructor_full_name_get(const Eolian_Constructor *ctor)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, NULL);
-   return ctor->base.name;
-}
-
 EAPI const Eolian_Class *
 eolian_constructor_class_get(const Eolian_Constructor *ctor)
 {

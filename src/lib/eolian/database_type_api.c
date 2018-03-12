@@ -49,13 +49,6 @@ eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field)
    return sf;
 }
 
-EAPI Eina_Stringshare *
-eolian_typedecl_struct_field_name_get(const Eolian_Struct_Type_Field *fl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
-   return fl->base.name;
-}
-
 EAPI const Eolian_Documentation *
 eolian_typedecl_struct_field_documentation_get(const Eolian_Struct_Type_Field *fl)
 {
@@ -90,13 +83,6 @@ eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field)
    ef = eina_hash_find(tp->fields, field);
    if (!ef) return NULL;
    return ef;
-}
-
-EAPI Eina_Stringshare *
-eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *fl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
-   return fl->base.name;
 }
 
 EAPI Eina_Stringshare *

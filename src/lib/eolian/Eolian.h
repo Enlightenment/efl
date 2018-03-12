@@ -1180,13 +1180,9 @@ EAPI Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
 EAPI Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
 
 /*
- * @brief Returns the full name of the given class.
+ * @brief A helper function to get the full name of a class.
  *
- * @param[in] class the class.
- * @return the full name of the class on success or NULL otherwise.
- *
- * The full name and the name of a class will be different if namespaces
- * are used.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
@@ -1197,10 +1193,9 @@ eolian_class_name_get(const Eolian_Class *klass)
 }
 
 /*
- * @brief Returns the name of the given class.
+ * @brief A helper function to get the short name of a class.
  *
- * @param[in] class the class.
- * @return the name of the class on success or NULL otherwise.
+ * @see eolian_object_short_name_get
  *
  * @ingroup Eolian
  */
@@ -1211,10 +1206,9 @@ eolian_class_short_name_get(const Eolian_Class *klass)
 }
 
 /*
- * @brief Returns an iterator to the namespaces of the given class.
+ * @brief A helper function to get the namespaces of a class.
  *
- * @param[in] class the class.
- * @return the iterator on success or NULL otherwise.
+ * @see eolian_object_namespaces_get
  *
  * @ingroup Eolian
  */
@@ -1331,14 +1325,17 @@ EAPI Eolian_Function_Type eolian_function_type_get(const Eolian_Function *functi
 EAPI Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
- * @brief Returns the name of a function
+ * @brief A helper function to get the name of a function.
  *
- * @param[in] function_id Id of the function
- * @return the function name
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_id);
+static inline const char *
+eolian_function_name_get(const Eolian_Function *fid)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(fid));
+}
 
 /*
  * @brief Returns the full C name of a function.
@@ -1522,14 +1519,17 @@ EAPI const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Paramete
 EAPI const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Function_Parameter *param);
 
 /*
- * @brief Get name of a parameter
+ * @brief A helper function to get the name of a function parameter.
  *
- * @param[in] param_desc parameter handle
- * @return the name of the parameter
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
+static inline const char *
+eolian_parameter_name_get(const Eolian_Function_Parameter *param)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(param));
+}
 
 /*
  * @brief Get documentation of a parameter
@@ -1658,14 +1658,17 @@ EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_i
 EAPI const Eolian_Class *eolian_function_class_get(const Eolian_Function *function_id);
 
 /*
- * @brief Get full string of an overriding function (implement).
+ * @brief A helper function to get the full name of an implement.
  *
- * @param[in] impl the handle of the implement
- * @return the full string.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_implement_full_name_get(const Eolian_Implement *impl);
+static inline const char *
+eolian_implement_name_get(const Eolian_Implement *impl)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(impl));
+}
 
 /*
  * @brief Get the class of an overriding function (implement).
@@ -1776,14 +1779,17 @@ EAPI Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
 EAPI Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
 
 /*
- * @brief Get full string of a constructing function.
+ * @brief A helper function to get the full name of a constructor.
  *
- * @param[in] ctor the handle of the constructor
- * @return the full string.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_constructor_full_name_get(const Eolian_Constructor *ctor);
+static inline const char *
+eolian_constructor_name_get(const Eolian_Constructor *ctor)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(ctor));
+}
 
 /*
  * @brief Get the class of a constructing function.
@@ -1836,14 +1842,17 @@ EAPI Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
 EAPI Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
 
 /*
- * @brief Get the name of an event.
+ * @brief A helper function to get the name of an event.
  *
- * @param[in] event the event handle
- * @return the name or NULL
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_event_name_get(const Eolian_Event *event);
+static inline const char *
+eolian_event_name_get(const Eolian_Event *event)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(event));
+}
 
 /*
  * @brief Get the type of an event.
@@ -1920,14 +1929,29 @@ EAPI Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
 EAPI Eina_Iterator *eolian_class_parts_get(const Eolian_Class *klass);
 
 /*
- * @brief Get the name of a part.
+ * @brief Returns the C name of an event
  *
- * @param[in] part the part handle
- * @return the name or NULL
+ * @param[in] event the event handle
+ * @return the event C name
+ *
+ * You're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_part_name_get(const Eolian_Part *part);
+EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
+
+/*
+ * @brief A helper function to get the name of a part.
+ *
+ * @see eolian_object_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_part_name_get(const Eolian_Part *part)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(part));
+}
 
 /*
  * @brief Get the type of a part.
@@ -1948,18 +1972,6 @@ EAPI const Eolian_Class *eolian_part_class_get(const Eolian_Part *part);
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_part_documentation_get(const Eolian_Part *part);
-
-/*
- * @brief Returns the C name of an event
- *
- * @param[in] event the event handle
- * @return the event C name
- *
- * You're responsible for deleting the stringshare.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
 
 /*
  * @brief Get an event in a class by its name
@@ -2075,14 +2087,17 @@ EAPI Eina_Iterator *eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp)
 EAPI const Eolian_Struct_Type_Field *eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field);
 
 /*
- * @brief Get the name of a field of a struct type.
+ * @brief A helper function to get the name of a struct field.
  *
- * @param[in] fl the field.
- * @return the name.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_struct_field_name_get(const Eolian_Struct_Type_Field *fl);
+static inline const char *
+eolian_typedecl_struct_field_name_get(const Eolian_Struct_Type_Field *field)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(field));
+}
 
 /*
  * @brief Get the documentation of a field of a struct type.
@@ -2130,14 +2145,17 @@ EAPI Eina_Iterator *eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp);
 EAPI const Eolian_Enum_Type_Field *eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field);
 
 /*
- * @brief Get the name of a field of an enum type.
+ * @brief A helper function to get the name of an enum field.
  *
- * @param[in] fl the field.
- * @return the name.
+ * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *fl);
+static inline const char *
+eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *field)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(field));
+}
 
 /*
  * @brief Get the C name of a field of an enum type.

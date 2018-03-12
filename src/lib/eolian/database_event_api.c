@@ -5,13 +5,6 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eina_Stringshare *
-eolian_event_name_get(const Eolian_Event *event)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
-   return event->base.name;
-}
-
 EAPI const Eolian_Type *
 eolian_event_type_get(const Eolian_Event *event)
 {
