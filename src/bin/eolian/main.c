@@ -282,7 +282,7 @@ void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
                             char **cnameu, char **cnamel)
 {
    char *cn = NULL, *cnu = NULL, *cnl = NULL;
-   cn = eo_gen_c_full_name_get(eolian_class_full_name_get(cl));
+   cn = eo_gen_c_full_name_get(eolian_class_name_get(cl));
    if (!cn)
      abort();
    if (cname)

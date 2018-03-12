@@ -325,7 +325,7 @@ bool
 _function_belongs_to(const Eolian_Function *function, std::string klass)
 {
    const Eolian_Class *cl = eolian_function_class_get(function);
-   const std::string name = cl ? eolian_class_full_name_get(cl) : "";
+   const std::string name = cl ? eolian_class_name_get(cl) : "";
    return name.find(klass) == 0;
 }
 
@@ -1015,7 +1015,7 @@ int main(int argc, char** argv)
                else
                  {
                         EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Duplicate member function found in class: " <<
-                            eolian_class_full_name_get(klass) << ": '" << member_name << "'";
+                            eolian_class_name_get(klass) << ": '" << member_name << "'";
                  }
              }
            catch(eolian::js::incomplete_complex_type_error const& e)

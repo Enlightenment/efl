@@ -115,7 +115,7 @@ struct klass_name
      : namespaces(namespaces), eolian_name(eolian_name), base_qualifier(base_qualifier)
      , type(type) {}
    klass_name(Eolian_Class const* klass, qualifier_def base_qualifier)
-     : eolian_name( ::eolian_class_name_get(klass))
+     : eolian_name( ::eolian_class_short_name_get(klass))
               , base_qualifier(base_qualifier)
    {
      for(efl::eina::iterator<const char> namespace_iterator ( ::eolian_class_namespaces_get(klass))
@@ -940,7 +940,7 @@ struct klass_def
        {
           this->namespaces.push_back(&*namespace_iterator);
        }
-     cxx_name = eolian_name = eolian_class_name_get(klass);
+     cxx_name = eolian_name = eolian_class_short_name_get(klass);
      filename = eolian_object_file_get((const Eolian_Object *)klass);
      for(efl::eina::iterator<Eolian_Function const> eolian_functions ( ::eolian_class_functions_get(klass, EOLIAN_PROPERTY))
        , functions_last; eolian_functions != functions_last; ++eolian_functions)

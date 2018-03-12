@@ -35,14 +35,14 @@ START_TEST(eolian_namespaces)
    fail_if(!(class_no = eolian_unit_class_by_name_get(unit, "no_nmsp")));
 
    /* Check names and namespaces*/
-   fail_if(strcmp(eolian_class_name_get(class11), "class1"));
+   fail_if(strcmp(eolian_class_short_name_get(class11), "class1"));
    fail_if(!(iter = eolian_class_namespaces_get(class11)));
    fail_if(!(eina_iterator_next(iter, (void**)&val1)));
    fail_if(eina_iterator_next(iter, &dummy));
    fail_if(strcmp(val1, "nmsp1"));
    eina_iterator_free(iter);
 
-   fail_if(strcmp(eolian_class_name_get(class112), "class2"));
+   fail_if(strcmp(eolian_class_short_name_get(class112), "class2"));
    fail_if(!(iter = eolian_class_namespaces_get(class112)));
    fail_if(!(eina_iterator_next(iter, (void**)&val1)));
    fail_if(!(eina_iterator_next(iter, (void**)&val2)));
@@ -51,14 +51,14 @@ START_TEST(eolian_namespaces)
    fail_if(strcmp(val2, "nmsp11"));
    eina_iterator_free(iter);
 
-   fail_if(strcmp(eolian_class_name_get(class21), "class1"));
+   fail_if(strcmp(eolian_class_short_name_get(class21), "class1"));
    fail_if(!(iter = eolian_class_namespaces_get(class21)));
    fail_if(!(eina_iterator_next(iter, (void**)&val1)));
    fail_if(eina_iterator_next(iter, &dummy));
    fail_if(strcmp(val1, "nmsp2"));
    eina_iterator_free(iter);
 
-   fail_if(strcmp(eolian_class_name_get(class_no), "no_nmsp"));
+   fail_if(strcmp(eolian_class_short_name_get(class_no), "no_nmsp"));
    fail_if(eolian_class_namespaces_get(class_no));
 
    /* Inherits */
@@ -1634,7 +1634,7 @@ START_TEST(eolian_parts)
         ck_assert_str_eq(pattern, eolian_documentation_summary_get(doc));
 
         fail_if(!(klass = eolian_part_class_get(part)));
-        ck_assert_str_eq(part_classes[i], eolian_class_name_get(klass));
+        ck_assert_str_eq(part_classes[i], eolian_class_short_name_get(klass));
         i++;
      }
    eina_iterator_free(iter);

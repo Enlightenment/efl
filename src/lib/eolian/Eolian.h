@@ -191,6 +191,14 @@ typedef struct _Eolian_Documentation Eolian_Documentation;
  */
 typedef struct _Eolian_Unit Eolian_Unit;
 
+#ifdef __cplusplus
+#define EOLIAN_CAST(type, expr) reinterpret_cast<const type *>(expr)
+#else
+#define EOLIAN_CAST(type, expr) ((const type *)expr)
+#endif
+
+#define EOLIAN_OBJECT(expr) EOLIAN_CAST(Eolian_Object, expr)
+
 typedef enum
 {
    EOLIAN_OBJECT_UNKNOWN = 0,
@@ -1182,7 +1190,11 @@ EAPI Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_class_full_name_get(const Eolian_Class *klass);
+static inline const char *
+eolian_class_name_get(const Eolian_Class *klass)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(klass));
+}
 
 /*
  * @brief Returns the name of the given class.
@@ -1192,7 +1204,11 @@ EAPI Eina_Stringshare *eolian_class_full_name_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_class_name_get(const Eolian_Class *klass);
+static inline const char *
+eolian_class_short_name_get(const Eolian_Class *klass)
+{
+   return eolian_object_short_name_get(EOLIAN_OBJECT(klass));
+}
 
 /*
  * @brief Returns an iterator to the namespaces of the given class.
@@ -1202,7 +1218,11 @@ EAPI Eina_Stringshare *eolian_class_name_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_namespaces_get(const Eolian_Class *klass);
+static inline Eina_Iterator *
+eolian_class_namespaces_get(const Eolian_Class *klass)
+{
+   return eolian_object_namespaces_get(EOLIAN_OBJECT(klass));
+}
 
 /*
  * @brief Returns the class type of the given class

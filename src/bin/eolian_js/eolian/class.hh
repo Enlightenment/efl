@@ -10,12 +10,12 @@
 
 inline std::string name(Eolian_Class const* klass)
 {
-  return ::eolian_class_name_get(klass);
+  return ::eolian_class_short_name_get(klass);
 }
 
 inline std::string full_name(Eolian_Class const* klass)
 {
-  return ::eolian_class_full_name_get(klass);
+  return ::eolian_class_name_get(klass);
 }
 
 inline std::string full_name_transformed(Eolian_Class const* klass)
@@ -47,7 +47,7 @@ inline std::string type_class_name(Eolian_Type const* tp)
                   Eolian_Class const* klass = ::eolian_type_class_get(tp);
                   if (klass)
                     {
-                       Eina_Stringshare* klass_name = ::eolian_class_full_name_get(klass);
+                       Eina_Stringshare* klass_name = ::eolian_class_name_get(klass);
                        if (!klass_name)
                          throw std::runtime_error("Could not get Eo class name");
 

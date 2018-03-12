@@ -937,7 +937,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_append(buf, cnamel);
    eina_strbuf_append(buf, "_class_desc = {\n"
                            "   EO_VERSION,\n");
-   eina_strbuf_append_printf(buf, "   \"%s\",\n", eolian_class_full_name_get(cl));
+   eina_strbuf_append_printf(buf, "   \"%s\",\n", eolian_class_name_get(cl));
 
    switch (eolian_class_type_get(cl))
      {

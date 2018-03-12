@@ -288,7 +288,7 @@ run(options_type const& opts)
                !generate(klass, opts, cpp_types_header))
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-                 << "Error generating: " << ::eolian_class_name_get(klass)
+                 << "Error generating: " << ::eolian_class_short_name_get(klass)
                  << std::endl;
                assert(false && "error generating class");
              }

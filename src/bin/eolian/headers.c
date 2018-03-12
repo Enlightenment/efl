@@ -198,7 +198,7 @@ eo_gen_header_gen(const Eolian_Unit *src, const Eolian_Class *cl,
         if (doc)
           {
              Eina_Strbuf *cdoc = eo_gen_docs_full_gen(src, doc,
-                eolian_class_full_name_get(cl), 0, EINA_FALSE);
+                eolian_class_name_get(cl), 0, EINA_FALSE);
              if (cdoc)
                {
                   eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));
@@ -283,7 +283,7 @@ events:
                                        "Efl_Event_Description _%s;\n\n", evn);
 
              Eina_Strbuf *evdbuf = eo_gen_docs_event_gen(src, ev,
-                eolian_class_full_name_get(cl));
+                eolian_class_name_get(cl));
              eina_strbuf_append(buf, eina_strbuf_string_get(evdbuf));
              eina_strbuf_append_char(buf, '\n');
              eina_strbuf_free(evdbuf);
