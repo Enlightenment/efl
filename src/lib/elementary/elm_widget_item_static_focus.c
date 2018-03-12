@@ -67,7 +67,6 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_W
           {
              // parent has to stay the object, since this is used to get the item of a adapter
              pd->adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, obj);
-             efl_ui_focus_composition_adapter_canvas_object_set(pd->adapter,  wpd->view);
              efl_wref_add(pd->adapter, &pd->adapter);
              efl_ui_focus_manager_calc_register(wpd->widget, pd->adapter, obj, NULL);
           }
@@ -78,6 +77,10 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_W
         efl_del(pd->adapter);
         pd->adapter = NULL;
      }
+
+   //genlist sometimes changes views when doing quick scrolls so reset the view in every possible call
+   if (pd->adapter)
+     efl_ui_focus_composition_adapter_canvas_object_set(pd->adapter,  wpd->view);
 }
 
 EOLIAN static Efl_Object*
