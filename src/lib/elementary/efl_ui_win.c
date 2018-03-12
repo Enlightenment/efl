@@ -176,6 +176,8 @@ struct _Efl_Ui_Win_Data
    Eina_Stringshare *name;
    Eina_Stringshare *accel_pref;
 
+   Eina_Future *finalize_future;
+
    Evas_Object *main_menu;
 
    Efl_Ui_Focus_Manager *manager;
@@ -4752,8 +4754,10 @@ _indicator_del(Efl_Ui_Win_Data *sd)
 static Eina_Value
 _win_finalize_job_cb(void *data, const Eina_Value value)
 {
-   Evas *eo_e = evas_object_evas_get(data);
-   if (eo_e) evas_render_pending_objects_flush(eo_e);
+   Efl_Ui_Win_Data *sd = data;
+   sd->finalize_future = NULL;
+   if (!efl_invalidated_get(sd->obj))
+     evas_render_pending_objects_flush(sd->evas);
    return value;
 }
 
@@ -5445,8 +5449,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      }
    else
      {
-        eina_future_then_easy(efl_loop_job(efl_loop_get(obj)),
-                              .success = _win_finalize_job_cb, .data = obj);
+        sd->finalize_future = eina_future_then_easy(efl_loop_job(efl_loop_get(obj)),
+                              .success = _win_finalize_job_cb, .data = sd);
      }
 
    // All normal windows are "standard" windows with EO API
@@ -5507,6 +5511,8 @@ _efl_ui_win_efl_object_destructor(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
           ecore_wl2_window_free(pd->wl.win);
      }
 #endif
+   if (pd->finalize_future)
+     eina_future_cancel(pd->finalize_future);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
