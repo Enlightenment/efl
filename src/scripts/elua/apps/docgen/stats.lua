@@ -119,7 +119,7 @@ M.check_class = function(cl)
         return
     end
     if not cl:doc_get():exists() then
-        print_missing(cl:full_name_get(), ct)
+        print_missing(cl:name_get(), ct)
         stat_incr(ct, true)
     else
         stat_incr(ct, false)
@@ -127,7 +127,7 @@ M.check_class = function(cl)
 
     for i, ev in ipairs(cl:events_get()) do
         if not ev:doc_get():exists() then
-            print_missing(cl:full_name_get() .. "." .. ev:name_get(), "event")
+            print_missing(cl:name_get() .. "." .. ev:name_get(), "event")
             stat_incr("event", true)
         else
             stat_incr("event", false)
@@ -136,7 +136,7 @@ M.check_class = function(cl)
 end
 
 M.check_method = function(fn, cl)
-    local fulln = cl:full_name_get() .. "." .. fn:name_get()
+    local fulln = cl:name_get() .. "." .. fn:name_get()
     if fn:return_type_get(fn.METHOD) then
         if not fn:return_doc_get(fn.METHOD):exists() then
             print_missing(fulln, "method return")
@@ -168,7 +168,7 @@ M.check_property = function(fn, cl, ft)
     }
     local pfx = pfxs[ft]
 
-    local fulln = cl:full_name_get() .. "." .. fn:name_get()
+    local fulln = cl:name_get() .. "." .. fn:name_get()
     if fn:return_type_get(ft) then
         if not fn:return_doc_get(ft):exists() then
             print_missing(fulln, pfx .. "etter return")
@@ -208,7 +208,7 @@ end
 
 M.check_alias = function(v)
     if not v:doc_get():exists() then
-        print_missing(v:full_name_get(), "alias")
+        print_missing(v:name_get(), "alias")
         stat_incr("alias", true)
     else
         stat_incr("alias", false)
@@ -217,14 +217,14 @@ end
 
 M.check_struct = function(v)
     if not v:doc_get():exists() then
-        print_missing(v:full_name_get(), "struct")
+        print_missing(v:name_get(), "struct")
         stat_incr("struct", true)
     else
         stat_incr("struct", false)
     end
     for i, fl in ipairs(v:struct_fields_get()) do
         if not fl:doc_get():exists() then
-            print_missing(v:full_name_get() .. "." .. fl:name_get(), "struct field")
+            print_missing(v:name_get() .. "." .. fl:name_get(), "struct field")
             stat_incr("sfield", true)
         else
             stat_incr("sfield", false)
@@ -234,14 +234,14 @@ end
 
 M.check_enum = function(v)
     if not v:doc_get():exists() then
-        print_missing(v:full_name_get(), "enum")
+        print_missing(v:name_get(), "enum")
         stat_incr("enum", true)
     else
         stat_incr("enum", false)
     end
     for i, fl in ipairs(v:enum_fields_get()) do
         if not fl:doc_get():exists() then
-            print_missing(v:full_name_get() .. "." .. fl:name_get(), "enum field")
+            print_missing(v:name_get() .. "." .. fl:name_get(), "enum field")
             stat_incr("efield", true)
         else
             stat_incr("efield", false)
@@ -251,7 +251,7 @@ end
 
 M.check_constant = function(v)
     if not v:doc_get():exists() then
-        print_missing(v:full_name_get(), "constant")
+        print_missing(v:name_get(), "constant")
         stat_incr("constant", true)
     else
         stat_incr("constant", false)
@@ -260,7 +260,7 @@ end
 
 M.check_global = function(v)
     if not v:doc_get():exists() then
-        print_missing(v:full_name_get(), "global")
+        print_missing(v:name_get(), "global")
         stat_incr("global", true)
     else
         stat_incr("global", false)
