@@ -292,18 +292,18 @@ class EolianBaseObject(object):
         if isinstance(other, EolianBaseObject):
             return self._obj.value == other._obj.value
         elif isinstance(other, str):
-            if hasattr(self, 'full_name'):
-                return self.full_name == other
-            elif hasattr(self, 'name'):
+            if hasattr(self, 'name'):
                 return self.name == other
+            elif hasattr(self, 'short_name'):
+                return self.short_name == other
         return False
 
     def __gt__(self, other):
         if isinstance(other, EolianBaseObject):
-            if hasattr(self, 'full_name'):
-                return self.full_name > other.full_name
-            elif hasattr(self, 'name'):
+            if hasattr(self, 'name'):
                 return self.name > other.name
+            elif hasattr(self, 'short_name'):
+                return self.short_name > other.short_name
 
     def __hash__(self):
         return self._obj.value
@@ -633,6 +633,18 @@ class Object(EolianBaseObject):
         return _str_to_py(lib.eolian_object_name_get(self._obj))
 
     @cached_property
+    def short_name(self):
+        return _str_to_py(lib.eolian_object_short_name_get(self._obj))
+
+    @property
+    def namespaces(self):
+        return Iterator(_str_to_py, lib.eolian_object_namespaces_get(self._obj))
+
+    @cached_property
+    def namespace(self):
+        return '.'.join(self.namespaces)
+
+    @cached_property
     def file(self):
         return _str_to_py(lib.eolian_object_file_get(self._obj))
 
@@ -647,15 +659,7 @@ class Object(EolianBaseObject):
 
 class Class(Object):
     def __repr__(self):
-        return "<eolian.Class '{0.full_name}', {0.type!s}>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_class_name_get(self._obj))
-
-    @cached_property
-    def full_name(self):
-        return _str_to_py(lib.eolian_class_full_name_get(self._obj))
+        return "<eolian.Class '{0.name}', {0.type!s}>".format(self)
 
     @cached_property
     def c_name(self):
@@ -747,14 +751,6 @@ class Class(Object):
         if len(inherits) > 0:
             return inherits[0]
 
-    @property
-    def namespaces(self):
-        return Iterator(_str_to_py, lib.eolian_class_namespaces_get(self._obj))
-
-    @cached_property
-    def namespace(self):
-        return '.'.join(self.namespaces)
-
     @cached_property
     def ctor_enable(self):
         return bool(lib.eolian_class_ctor_enable_get(self._obj))
@@ -795,10 +791,6 @@ class Part(Object):
         return "<eolian.Part '{0.name}'>".format(self)
 
     @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_part_name_get(self._obj))
-
-    @cached_property
     def class_(self):
         return Class(lib.eolian_part_class_get(self._obj))
 
@@ -810,11 +802,7 @@ class Part(Object):
 
 class Constructor(Object):
     def __repr__(self):
-        return "<eolian.Constructor '{0.full_name}', optional={0.is_optional}>".format(self)
-
-    @cached_property
-    def full_name(self):
-        return _str_to_py(lib.eolian_constructor_full_name_get(self._obj))
+        return "<eolian.Constructor '{0.name}', optional={0.is_optional}>".format(self)
 
     @cached_property
     def function(self):
@@ -832,10 +820,6 @@ class Constructor(Object):
 class Event(Object):
     def __repr__(self):
         return "<eolian.Event '{0.name}', c_name='{0.c_name}'>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_event_name_get(self._obj))
 
     @cached_property
     def c_name(self):
@@ -874,10 +858,6 @@ class Event(Object):
 class Function(Object):
     def __repr__(self):
         return "<eolian.Function '{0.name}'>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_function_name_get(self._obj))
 
     def full_c_name_get(self, ftype, use_legacy=False):
         s = lib.eolian_function_full_c_name_get(self._obj, ftype, use_legacy)
@@ -1040,10 +1020,6 @@ class Function_Parameter(Object):
                " optional={0.is_optional}, nullable={0.is_nullable}>".format(self)
 
     @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_parameter_name_get(self._obj))
-
-    @cached_property
     def direction(self):
         return Eolian_Parameter_Dir(lib.eolian_parameter_direction_get(self._obj))
 
@@ -1077,11 +1053,7 @@ class Function_Parameter(Object):
 
 class Implement(Object):
     def __repr__(self):
-        return "<eolian.Implement '{0.full_name}'>".format(self)
-
-    @cached_property
-    def full_name(self):
-        return _str_to_py(lib.eolian_implement_full_name_get(self._obj))
+        return "<eolian.Implement '{0.name}'>".format(self)
 
     @cached_property
     def class_(self):
@@ -1130,24 +1102,8 @@ class Implement(Object):
 
 class Type(Object):
     def __repr__(self):
-        #  return "<eolian.Type '{0.full_name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
-        return "<eolian.Type '{0.full_name}', type={0.type!s}>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_type_name_get(self._obj))
-
-    @cached_property
-    def full_name(self):
-        return _str_to_py(lib.eolian_type_full_name_get(self._obj))
-
-    @property
-    def namespaces(self):
-        return Iterator(_str_to_py, lib.eolian_type_namespaces_get(self._obj))
-
-    @cached_property
-    def namespace(self):
-        return '.'.join(self.namespaces)
+        #  return "<eolian.Type '{0.name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
+        return "<eolian.Type '{0.name}', type={0.type!s}>".format(self)
 
     @cached_property
     def free_func(self):
@@ -1219,15 +1175,7 @@ class Type(Object):
 
 class Typedecl(Object):
     def __repr__(self):
-        return "<eolian.Typedecl '{0.full_name}', type={0.type!s}>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_typedecl_name_get(self._obj))
-
-    @cached_property
-    def full_name(self):
-        return _str_to_py(lib.eolian_typedecl_full_name_get(self._obj))
+        return "<eolian.Typedecl '{0.name}', type={0.type!s}>".format(self)
 
     @cached_property
     def type(self):
@@ -1239,14 +1187,6 @@ class Typedecl(Object):
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret
-
-    @property
-    def namespaces(self):
-        return Iterator(_str_to_py, lib.eolian_typedecl_namespaces_get(self._obj))
-
-    @cached_property
-    def namespace(self):
-        return '.'.join(self.namespaces)
 
     @cached_property
     def free_func(self):
@@ -1304,10 +1244,6 @@ class Enum_Type_Field(Object):
         return "<eolian.Enum_Type_Field '{0.name}', c_name='{0.c_name}'>".format(self)
 
     @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_typedecl_enum_field_name_get(self._obj))
-
-    @cached_property
     def c_name(self):
         s = lib.eolian_typedecl_enum_field_c_name_get(self._obj)
         ret = _str_to_py(s)
@@ -1328,10 +1264,6 @@ class Enum_Type_Field(Object):
 class Struct_Type_Field(Object):
     def __repr__(self):
         return "<eolian.Struct_Type_Field '{0.name}', type={0.type!s}>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_typedecl_struct_field_name_get(self._obj))
 
     @cached_property
     def type(self):
@@ -1389,23 +1321,7 @@ class Expression(Object):
 
 class Variable(Object):
     def __repr__(self):
-        return "<eolian.Variable '{0.full_name}', type={0.type!s}, file={0.file}>".format(self)
-
-    @cached_property
-    def name(self):
-        return _str_to_py(lib.eolian_variable_name_get(self._obj))
-
-    @cached_property
-    def full_name(self):
-        return _str_to_py(lib.eolian_variable_full_name_get(self._obj))
-
-    @property
-    def namespaces(self):
-        return Iterator(_str_to_py, lib.eolian_variable_namespaces_get(self._obj))
-
-    @cached_property
-    def namespace(self):
-        return '.'.join(self.namespaces)
+        return "<eolian.Variable '{0.name}', type={0.type!s}, file={0.file}>".format(self)
 
     @cached_property
     def type(self):
