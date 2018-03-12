@@ -36,7 +36,7 @@ eolian_variable_value_get(const Eolian_Variable *var)
 EAPI Eina_Stringshare *
 eolian_variable_name_get(const Eolian_Variable *var)
 {
-   return database_object_short_name_get((const Eolian_Object *)var);
+   return eolian_object_short_name_get((const Eolian_Object *)var);
 }
 
 EAPI Eina_Stringshare *
@@ -49,7 +49,7 @@ eolian_variable_full_name_get(const Eolian_Variable *var)
 EAPI Eina_Iterator *
 eolian_variable_namespaces_get(const Eolian_Variable *var)
 {
-   return database_object_namespaces_get((const Eolian_Object *)var);
+   return eolian_object_namespaces_get((const Eolian_Object *)var);
 }
 
 EAPI Eina_Bool

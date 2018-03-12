@@ -569,10 +569,40 @@ EAPI int eolian_object_column_get(const Eolian_Object *obj);
  * @see eolian_object_file_get
  * @see eolian_object_line_get
  * @see eolian_object_column_get
+ * @see eolian_object_short_name_get
+ * @see eolian_object_namespaces_get
  *
  * @ingroup Eolian
  */
 EAPI const char *eolian_object_name_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get the short name of an object.
+ *
+ * This means a name without namespaces. If the object's name is not
+ * namespaced in the first place, this is equivalent to getting the full name.
+ * So for `Foo.Bar.baz` this is `baz`, for `foo` it's again just `foo`.
+ *
+ * @see eolian_object_name_get
+ * @see eolian_object_namespaces_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_object_short_name_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get a list of namespaces for the object.
+ *
+ * Each item of the iterator is the next more inner namespace. So for
+ * example if the full name is `Foo.Bar.baz`, the iterator will first
+ * give you `Foo` and then `Bar`.
+ *
+ * @see eolian_object_name_get
+ * @see eolian_object_short_name_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_object_namespaces_get(const Eolian_Object *obj);
 
 /*
  * @brief Scan the given directory for .eo and .eot files.

@@ -18,6 +18,41 @@ database_object_add(Eolian_Unit *unit, const Eolian_Object *obj)
                  ((Eina_List *)eina_hash_find(unit->state->objects_f, obj->file), obj));
 }
 
+EAPI Eolian_Object_Type
+eolian_object_type_get(const Eolian_Object *obj)
+{
+   if (!obj) return EOLIAN_OBJECT_UNKNOWN;
+   return obj->type;
+}
+
+EAPI const char *
+eolian_object_file_get(const Eolian_Object *obj)
+{
+   if (!obj) return NULL;
+   return obj->file;
+}
+
+EAPI int
+eolian_object_line_get(const Eolian_Object *obj)
+{
+   if (!obj) return 0;
+   return obj->line;
+}
+
+EAPI int
+eolian_object_column_get(const Eolian_Object *obj)
+{
+   if (!obj) return 0;
+   return obj->column;
+}
+
+EAPI const char *
+eolian_object_name_get(const Eolian_Object *obj)
+{
+   if (!obj) return NULL;
+   return obj->name;
+}
+
 typedef struct _Eolian_Namespace_List
 {
    Eina_Iterator itr;
@@ -46,8 +81,18 @@ _nmsp_container_get(Eina_Iterator *it EINA_UNUSED)
    return NULL;
 }
 
-Eina_Iterator *
-database_object_namespaces_get(const Eolian_Object *obj)
+EAPI const char *
+eolian_object_short_name_get(const Eolian_Object *obj)
+{
+   if (!obj || !obj->name) return NULL;
+   const char *ldot = strrchr(obj->name, '.');
+   if (ldot)
+     return ldot + 1;
+   return obj->name;
+}
+
+EAPI Eina_Iterator *
+eolian_object_namespaces_get(const Eolian_Object *obj)
 {
    if (!obj || !obj->name || !strchr(obj->name, '.')) return NULL;
 
@@ -65,16 +110,6 @@ database_object_namespaces_get(const Eolian_Object *obj)
    it->itr.get_container = _nmsp_container_get;
    it->itr.free = FUNC_ITERATOR_FREE(free);
    return &it->itr;
-}
-
-const char *
-database_object_short_name_get(const Eolian_Object *obj)
-{
-   if (!obj || !obj->name) return NULL;
-   const char *ldot = strrchr(obj->name, '.');
-   if (ldot)
-     return ldot + 1;
-   return obj->name;
 }
 
 void database_doc_del(Eolian_Documentation *doc)
@@ -570,41 +605,6 @@ eolian_state_free(Eolian_State *state)
    eina_hash_free(state->objects_f);
 
    free(state);
-}
-
-EAPI Eolian_Object_Type
-eolian_object_type_get(const Eolian_Object *obj)
-{
-   if (!obj) return EOLIAN_OBJECT_UNKNOWN;
-   return obj->type;
-}
-
-EAPI const char *
-eolian_object_file_get(const Eolian_Object *obj)
-{
-   if (!obj) return NULL;
-   return obj->file;
-}
-
-EAPI int
-eolian_object_line_get(const Eolian_Object *obj)
-{
-   if (!obj) return 0;
-   return obj->line;
-}
-
-EAPI int
-eolian_object_column_get(const Eolian_Object *obj)
-{
-   if (!obj) return 0;
-   return obj->column;
-}
-
-EAPI const char *
-eolian_object_name_get(const Eolian_Object *obj)
-{
-   if (!obj) return NULL;
-   return obj->name;
 }
 
 #define EO_SUFFIX ".eo"

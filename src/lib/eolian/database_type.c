@@ -97,14 +97,14 @@ _buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
 static void
 _append_name(const Eolian_Object *obj, Eina_Strbuf *buf)
 {
-   Eina_Iterator *itr = database_object_namespaces_get(obj);
+   Eina_Iterator *itr = eolian_object_namespaces_get(obj);
    const char *sp;
    EINA_ITERATOR_FOREACH(itr, sp)
      {
         eina_strbuf_append(buf, sp);
         eina_strbuf_append_char(buf, '_');
      }
-   eina_strbuf_append(buf, database_object_short_name_get(obj));
+   eina_strbuf_append(buf, eolian_object_short_name_get(obj));
 }
 
 void

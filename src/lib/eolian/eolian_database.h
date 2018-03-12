@@ -317,9 +317,6 @@ Eina_Bool database_validate(Eolian_State *state, const Eolian_Unit *src);
 
 void database_object_add(Eolian_Unit *unit, const Eolian_Object *obj);
 
-Eina_Iterator *database_object_namespaces_get(const Eolian_Object *obj);
-const char *database_object_short_name_get(const Eolian_Object *obj);
-
 void database_doc_del(Eolian_Documentation *doc);
 
 void database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file);

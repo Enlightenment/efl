@@ -1353,7 +1353,7 @@ parse_function_pointer(Eo_Lexer *ls)
    meth->klass = NULL;
    meth->type = EOLIAN_FUNCTION_POINTER;
    meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
-   meth->base.name = eina_stringshare_add(database_object_short_name_get(&def->base));
+   meth->base.name = eina_stringshare_add(eolian_object_short_name_get(&def->base));
 
    def->function_pointer = meth;
    eolian_object_ref(&meth->base);
