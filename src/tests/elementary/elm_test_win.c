@@ -130,19 +130,21 @@ START_TEST (elm_win_autohide)
    elm_init(1, args);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   elm_win_autohide_set(win, EINA_TRUE);
-   efl_gfx_visible_set(win, EINA_TRUE);
+   if (elm_win_xwindow_get(win))
+     {
+        elm_win_autohide_set(win, EINA_TRUE);
+        efl_gfx_visible_set(win, EINA_TRUE);
 
-   Eina_Bool fail_flag = EINA_FALSE;
-   ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
-   ecore_timer_add(_timeout2, _timer_exit_cb, &fail_flag);
+        Eina_Bool fail_flag = EINA_FALSE;
+        ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
+        ecore_timer_add(_timeout2, _timer_exit_cb, &fail_flag);
 
-   elm_run();
+        elm_run();
 
-   Eina_Bool visible;
-   visible = efl_gfx_visible_get(win);
-   ck_assert(visible == EINA_FALSE);
-
+        Eina_Bool visible;
+        visible = efl_gfx_visible_get(win);
+        ck_assert(visible == EINA_FALSE);
+     }
    elm_shutdown();
 }
 END_TEST
@@ -182,22 +184,24 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   elm_win_autohide_set(win, EINA_TRUE);
-   efl_gfx_visible_set(win, EINA_TRUE);
+   if (elm_win_xwindow_get(win))
+     {
+        elm_win_autohide_set(win, EINA_TRUE);
+        efl_gfx_visible_set(win, EINA_TRUE);
 
-   Eina_Bool fail_flag = EINA_FALSE;
-   ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
-   ecore_timer_add(_timeout_fail, _timer_fail_flag_cb, &fail_flag);
+        Eina_Bool fail_flag = EINA_FALSE;
+        ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
+        ecore_timer_add(_timeout_fail, _timer_fail_flag_cb, &fail_flag);
 
-   elm_run();
+        elm_run();
 
-   Eina_Bool visible;
-   visible = efl_gfx_visible_get(win);
+        Eina_Bool visible;
+        visible = efl_gfx_visible_get(win);
 
-   ck_assert(fail_flag == EINA_FALSE);
-   ck_assert(efl_ref_count(win) >= 1);
-   ck_assert(visible == EINA_FALSE);
-
+        ck_assert(fail_flag == EINA_FALSE);
+        ck_assert(efl_ref_count(win) >= 1);
+        ck_assert(visible == EINA_FALSE);
+     }
    elm_shutdown();
 }
 END_TEST
