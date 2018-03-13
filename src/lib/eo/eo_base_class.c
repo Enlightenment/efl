@@ -2050,6 +2050,12 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 
    DBG("%p - %s.", obj, efl_class_name_get(obj));
 
+   // If the object has been invalidated yet, time to do it
+   // This can happen when the object has no parent and get
+   // deleted by efl_unref.
+   if (!pd->invalidate)
+     efl_invalidate(obj);
+
    // special removal - remove from children list by hand after getting
    // child handle in case unparent method is overridden and does
    // extra things like removes other children too later on in the list
