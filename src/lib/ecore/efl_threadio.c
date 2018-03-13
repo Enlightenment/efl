@@ -51,6 +51,7 @@ _efl_threadio_call(Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd EINA_UNUSED, void 
 EOLIAN static void *
 _efl_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd EINA_UNUSED, void *func_data EINA_UNUSED, EFlThreadIOCallSync func EINA_UNUSED, Eina_Free_Cb func_free_cb EINA_UNUSED)
 {
+   return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
