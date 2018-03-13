@@ -74,8 +74,6 @@ START_TEST(elm_layout_swallows)
    bt2 = efl_add(EFL_UI_BUTTON_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "element1"), bt2));
    ck_assert_ptr_eq(efl_parent_get(bt2), ly);
-   /* bt is deleted at this point. */
-   ck_assert_ptr_eq(efl_parent_get(bt), evas_object_evas_get(bt));
 
    elm_shutdown();
 }
