@@ -584,12 +584,6 @@ _elm_win_state_eval(void *data EINA_UNUSED)
 static Eina_Bool
 _elm_win_policy_quit_triggered(Eo* triggering_obj)
 {
-   if ((!_elm_win_list) &&
-       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
-     {
-        return EINA_TRUE;
-     }
-
    if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN)
      {
         Eina_List *l;
@@ -2915,7 +2909,8 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
-   if (_elm_win_policy_quit_triggered(obj))
+   if ((!_elm_win_list) &&
+       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
      {
         _elm_win_flush_cache_and_exit(obj);
      }
