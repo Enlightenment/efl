@@ -708,6 +708,9 @@ _efl_promise_efl_object_parent_set(Eo *obj, Efl_Promise_Data *pd, Efl_Object *pa
 {
    if (!parent) _efl_promise_loop_clear(obj, pd);
    efl_parent_set(efl_super(obj, EFL_PROMISE_CLASS), parent);
+   pd->loop = NULL;
+   pd->loop_data = NULL;
+   if (!parent) return;
    pd->loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    pd->loop_data = efl_data_scope_get(pd->loop, EFL_LOOP_CLASS);
 }
