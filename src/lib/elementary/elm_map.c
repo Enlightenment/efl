@@ -4231,8 +4231,7 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
       char buf[4096];
 
       snprintf(buf, sizeof(buf), "%s" CACHE_ROOT, efreet_cache_home_get());
-      if (!ecore_file_recursive_rm(buf))
-        ERR("Deletion of %s failed", buf);
+      ecore_file_recursive_rm(buf);
    }
 
    ecore_timer_del(sd->loaded_timer);
