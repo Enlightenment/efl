@@ -1,6 +1,10 @@
 class Efl.Page.Transition (Efl.Object)
 {
-   [[Efl ui pagescroller transition effect class]]
+   [[Page transition for @Efl.Ui.Pager
+
+     A page transition is essential to @Efl.Ui.Pager object and invoked whenever
+     pages are rearranged or scrolled (see @Efl.Ui.Pager).
+   ]]
    methods {
       bind {
          [[set object]]

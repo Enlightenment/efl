@@ -1,6 +1,11 @@
 class Efl.Page.Indicator (Efl.Object)
 {
-   [[Efl ui pager indicator class]]
+   [[Page indicator
+
+     Page indicator is used with @Efl.Ui.Pager.
+     It is located on the top layer of pager widget and helps users to know
+     the number of pages and the current page's index without scrolling.
+   ]]
    implements {
       Efl.Object.constructor;
    }

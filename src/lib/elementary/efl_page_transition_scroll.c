@@ -62,7 +62,9 @@ _content_show(Efl_Page_Transition_Scroll_Data *pd,
    curr_page = efl_ui_pager_current_page_get(spd->pager.obj);
    cnt = efl_content_count(spd->pager.obj);
 
-   //FIXME make logic efficient: don't have to empty all and fill all the time
+   // at this point, the number of visible pages might have been changed,
+   // so empty all boxes and refill them with the right contents.
+   // FIXME make logic efficient: don't have to empty all and fill all the time
    EINA_LIST_FOREACH(pd->page_infos, list, pi)
      {
         if (pi->content)
@@ -133,6 +135,8 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
 
    efl_gfx_geometry_set(pd->foreclip, (Eina_Rect) pd->viewport);
 
+   // this loop resets the geometry of each page based on the geometry of
+   // the pager object, the page size, and the padding size.
    EINA_LIST_FOREACH(pd->page_infos, list, pi)
      {
         EINA_RECTANGLE_SET(&pi->geometry,
@@ -274,11 +278,15 @@ _efl_page_transition_scroll_update(Eo *obj,
    curr_page = efl_ui_pager_current_page_get(spd->pager.obj);
    cnt = efl_content_count(spd->pager.obj);
 
+   // while pages are scrolled,
+   // 1. the geometry of each page needs to be changed
+   // 2. if a page gets out of the viewport, it needs to be hidden
+   // 3. if a page gets into the viewport, it needs to be shown
    EINA_LIST_FOREACH(pd->page_infos, list, pi)
      {
-        if (pos < 0)
+        if (pos < 0) // if scrolled right, each page takes next page's position
           tpi = pi->next;
-        else
+        else // else if scrolled left, each page takes prev page's position
           tpi = pi->prev;
 
 
@@ -352,6 +360,8 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
    Eina_List *list;
    Page_Info *pi, *target;
 
+   // after the current page is changed, page infos need to be updated
+   // with a new id based on the new geometry of the boxes.
    EINA_LIST_FOREACH(pd->page_infos, list, pi)
      {
         if (EINA_DBL_EQ(pos, 1.0))
@@ -455,6 +465,7 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
 
    if (delta > 0)
      {
+        // side_page_num is increased, so add boxes at both ends by the diff
         for (i = 0; i < delta; i++)
           {
              pi = calloc(1, sizeof(*pi));
@@ -490,6 +501,7 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
      }
    else
      {
+        // side_page_num is decreased, so remove boxes at both ends by the diff
         for (i = 0; i > delta; i--)
           {
              pi = pd->head;
