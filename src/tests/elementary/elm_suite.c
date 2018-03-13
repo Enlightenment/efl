@@ -101,6 +101,8 @@ main(int argc, char **argv)
 #endif
    if (!getenv("ELM_ENGINE"))
      putenv("ELM_ENGINE=buffer");
+   if (eina_streq(getenv("ELM_ENGINE"), "buffer"))
+     putenv("TESTS_GL_DISABLED=1");
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Elementary", etc);

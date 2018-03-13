@@ -56,6 +56,11 @@ END_TEST
 
 void elm_test_glview(TCase *tc)
 {
+   if (getenv("TESTS_GL_DISABLED"))
+     {
+        fprintf(stdout, "glview tests disabled in buffer engine\n");
+        return;
+     }
    tcase_add_test(tc, elm_glview_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
 }
