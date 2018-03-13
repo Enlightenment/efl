@@ -14,9 +14,69 @@ static int counter;
 static Efl_Access_Event_Children_Changed_Data ev_data;
 Evas_Object *content;
 
+static void
+verify_group_api(Elm_Object_Item *git)
+{
+   Elm_Object_Item *it;
+   int i;
+
+   /* the last item is the group item
+    * this is not consistent with the visual layout but this is consistent with behavior since 1.0
+    */
+   it = elm_genlist_last_item_get(genlist);
+   ck_assert_ptr_ne(it, NULL);
+   ck_assert_ptr_eq(it, git);
+
+   /* assert that the last item is actually the last item */
+   it = elm_genlist_item_next_get(git);
+   ck_assert_ptr_eq(it, NULL);
+
+   /* assert that the other items added to the list exist */
+   it = elm_genlist_item_prev_get(git);
+   ck_assert_ptr_ne(it, NULL);
+
+   /* assert that the parent of this item is the group item */
+   ck_assert_ptr_eq(elm_genlist_item_parent_get(it), git);
+
+   /* check that the first item in the list is a normal item */
+   it = elm_genlist_first_item_get(genlist);
+   ck_assert_ptr_eq(elm_genlist_item_parent_get(it), git);
+
+   /* verify list consistency */
+   for (i = 0; i < 9; i++)
+     {
+        it = elm_genlist_item_next_get(it);
+        ck_assert_ptr_eq(elm_genlist_item_parent_get(it), git);
+     }
+   it = elm_genlist_item_next_get(it);
+   /* verify once again that we have arrived at the group item */
+   ck_assert_ptr_eq(it, git);
+}
+
+START_TEST (elm_genlist_group)
+{
+   const char *type;
+   Elm_Object_Item *git;
+   int i;
+
+   char *args[] = { "exe" };
+   elm_init(1, args);
+   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+
+   genlist = elm_genlist_add(win);
+
+   git = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+   for (i = 0; i < 10; i++)
+     elm_genlist_item_append(genlist, &itc, NULL, git, 0, NULL, NULL);
+
+   verify_group_api(git);
+
+   elm_shutdown();
+}
+END_TEST
+
 START_TEST (elm_genlist_legacy_type_check)
 {
-   Evas_Object *win, *genlist;
    const char *type;
 
    char *args[] = { "exe" };
@@ -204,6 +264,7 @@ END_TEST
 void elm_test_genlist(TCase *tc)
 {
    tcase_add_test(tc, elm_genlist_legacy_type_check);
+   tcase_add_test(tc, elm_genlist_group);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_atspi_children_get1);
    tcase_add_test(tc, elm_atspi_children_get2);
