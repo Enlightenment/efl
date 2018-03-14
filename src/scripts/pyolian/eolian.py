@@ -444,85 +444,29 @@ class Eolian_State(Eolian_Unit):
     def units(self):
         return Iterator(Eolian_Unit, lib.eolian_state_units_get(self._obj))
 
-    @property
-    def objects(self):
-        return Iterator(Object, lib.eolian_state_objects_get(self._obj))
-
-    def object_by_name_get(self, name):
-        c_obj = lib.eolian_state_object_by_name_get(self._obj, _str_to_bytes(name))
-        return Object(c_obj) if c_obj else None
-
     def objects_by_file_get(self, file_name):
         return Iterator(Object,
             lib.eolian_state_objects_by_file_get(self._obj, _str_to_bytes(file_name)))
-
-    @property
-    def classes(self):
-        return Iterator(Class, lib.eolian_state_classes_get(self._obj))
-
-    def class_by_name_get(self, class_name):
-        c_cls = lib.eolian_state_class_by_name_get(self._obj, _str_to_bytes(class_name))
-        return Class(c_cls) if c_cls else None
 
     def class_by_file_get(self, file_name):
         c_cls = lib.eolian_state_class_by_file_get(self._obj, _str_to_bytes(file_name))
         return Class(c_cls) if c_cls else None
 
-    @property
-    def constants(self):
-        return Iterator(Variable, lib.eolian_state_constants_get(self._obj))
-
-    def constant_by_name_get(self, name):
-        c_var = lib.eolian_state_constant_by_name_get(self._obj, _str_to_bytes(name))
-        return Variable(c_var) if c_var else None
-
     def constants_by_file_get(self, file_name):
         return Iterator(Variable,
             lib.eolian_state_constants_by_file_get(self._obj, _str_to_bytes(file_name)))
-
-    @property
-    def globals(self):
-        return Iterator(Variable, lib.eolian_state_globals_get(self._obj))
-
-    def global_by_name_get(self, name):
-        c_var = lib.eolian_state_global_by_name_get(self._obj, _str_to_bytes(name))
-        return Variable(c_var) if c_var else None
 
     def globals_by_file_get(self, file_name):
         return Iterator(Variable,
             lib.eolian_state_globals_by_file_get(self._obj, _str_to_bytes(file_name)))
 
-    @property
-    def aliases(self):
-        return Iterator(Typedecl, lib.eolian_state_aliases_get(self._obj))
-
-    def alias_by_name_get(self, name):
-        c_tdecl = lib.eolian_state_alias_by_name_get(self._obj, _str_to_bytes(name))
-        return Typedecl(c_tdecl) if c_tdecl else None
-
     def aliases_by_file_get(self, file_name):
         return Iterator(Typedecl,
             lib.eolian_state_aliases_by_file_get(self._obj, _str_to_bytes(file_name)))
 
-    @property
-    def structs(self):
-        return Iterator(Typedecl, lib.eolian_state_structs_get(self._obj))
-
-    def struct_by_name_get(self, name):
-        c_tdecl = lib.eolian_state_struct_by_name_get(self._obj, _str_to_bytes(name))
-        return Typedecl(c_tdecl) if c_tdecl else None
-
     def structs_by_file_get(self, file_name):
         return Iterator(Typedecl,
             lib.eolian_state_structs_by_file_get(self._obj, _str_to_bytes(file_name)))
-
-    @property
-    def enums(self):
-        return Iterator(Typedecl, lib.eolian_state_enums_get(self._obj))
-
-    def enum_by_name_get(self, name):
-        c_tdecl = lib.eolian_state_enum_by_name_get(self._obj, _str_to_bytes(name))
-        return Typedecl(c_tdecl) if c_tdecl else None
 
     def enums_by_file_get(self, file_name):
         return Iterator(Typedecl,
