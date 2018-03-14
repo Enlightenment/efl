@@ -68,6 +68,14 @@ _eldbus_model_proxy_efl_object_constructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 }
 
 static void
+_eldbus_model_proxy_object_del(void *data, Eldbus_Object *object EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eldbus_Model_Proxy_Data *pd = data;
+
+   pd->object = NULL;
+}
+
+static void
 _eldbus_model_proxy_custom_constructor(Eo *obj EINA_UNUSED,
                                 Eldbus_Model_Proxy_Data *pd,
                                 Eldbus_Object *object,
@@ -77,6 +85,7 @@ _eldbus_model_proxy_custom_constructor(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(interface);
 
    pd->object = eldbus_object_ref(object);
+   eldbus_object_event_callback_add(object, ELDBUS_OBJECT_EVENT_DEL, _eldbus_model_proxy_object_del, pd);
    pd->name = eina_stringshare_add(interface->name);
    pd->interface = interface;
 }
@@ -89,7 +98,11 @@ _eldbus_model_proxy_efl_object_destructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
    eina_hash_free(pd->properties_hash);
 
    eina_stringshare_del(pd->name);
-   eldbus_object_unref(pd->object);
+   if (pd->object)
+     {
+        eldbus_object_event_callback_del(pd->object, ELDBUS_OBJECT_EVENT_DEL, _eldbus_model_proxy_object_del, pd);
+        eldbus_object_unref(pd->object);
+     }
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
