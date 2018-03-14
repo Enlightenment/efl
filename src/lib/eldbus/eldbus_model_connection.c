@@ -272,7 +272,7 @@ _eldbus_model_connection_clear(Eldbus_Model_Connection_Data *pd)
    pd->unique_name = NULL;
 
    EINA_LIST_FREE(pd->children_list, child)
-     efl_unref(child);
+     efl_del(child);
 
    EINA_LIST_FREE(pd->pending_list, pending)
      eldbus_pending_cancel(pending);
