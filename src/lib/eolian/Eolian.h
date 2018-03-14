@@ -2866,13 +2866,13 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  * and the second data is the event, when it's a struct field or enum field
  * the first data is is the struct/enum and the second data is the field.
  *
- * @param[in] unit the unit to look in
  * @param[in] tok the token
+ * @param[in] unit the unit to look in
  * @param[out] data the primary data
  * @param[out] data2 the secondary data
  * @return the kind of reference this is
  */
-EAPI Eolian_Object_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const Eolian_Object **data, const Eolian_Object **data2);
+EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *unit, const Eolian_Object **data, const Eolian_Object **data2);
 
 #endif
 

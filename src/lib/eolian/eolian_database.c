@@ -410,8 +410,8 @@ _resolve_event(const Eolian_Unit *src, char *name, const Eolian_Object **data,
 }
 
 EAPI Eolian_Object_Type
-eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
-                         const Eolian_Object **data, const Eolian_Object **data2)
+eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *unit,
+                             const Eolian_Object **data, const Eolian_Object **data2)
 {
    if (tok->type != EOLIAN_DOC_TOKEN_REF)
      return EOLIAN_OBJECT_UNKNOWN;

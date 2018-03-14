@@ -670,8 +670,7 @@ M.Type = Node:clone {
     end,
 
     class_get = function(self)
-        -- FIXME: unit
-        return self._obj:class_get(eos:unit_get())
+        return self._obj:class_get()
     end,
 
     is_owned = function(self)
@@ -1347,9 +1346,9 @@ M.DocTokenizer = util.Object:clone {
         return self.tok:type_get()
     end,
 
-    ref_get = function(self, root)
+    ref_resolve = function(self, root)
         -- FIXME: unit
-        local tp, d1, d2 = self.tok:ref_get(eos:unit_get())
+        local tp, d1, d2 = self.tok:ref_resolve(eos:unit_get())
         local reft = eolian.doc_ref_type
         local ret = {}
         if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then

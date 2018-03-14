@@ -345,7 +345,7 @@ writers["dokuwiki"] = util.Object:clone {
                     hasraw = true
                 end
                 if tp == tokp.REF then
-                    local reft = tokp:ref_get(true)
+                    local reft = tokp:ref_resolve(true)
                     local str = tokp:text_get()
                     if str:sub(1, 1) == "[" then
                         str = str:sub(2, #str - 1)

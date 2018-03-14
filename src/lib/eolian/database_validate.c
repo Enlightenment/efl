@@ -35,7 +35,7 @@ _validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str, const Eolian_Obj
         eolian_doc_token_init(&tok);
         while (ret && (doc = eolian_documentation_tokenize(doc, &tok)))
           if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
-            if (eolian_doc_token_ref_get(src, &tok, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
+            if (eolian_doc_token_ref_resolve(&tok, src, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
               {
                  char *refn = eolian_doc_token_text_get(&tok);
                  _eolian_log_line(info->file, info->line, info->column,
