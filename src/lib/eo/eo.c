@@ -858,7 +858,7 @@ err_klass:
 }
 
 EAPI Eo *
-_efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref EINA_UNUSED, Eina_Bool is_fallback)
+_efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
 {
    const char *func_name = __FUNCTION__;
    _Eo_Object *obj;
@@ -867,6 +867,11 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    if (is_fallback) fptr = _efl_add_fallback_stack_push(NULL);
 
    EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, err_klass);
+
+   // Check that in the case of efl_add we do pass a parent.
+   if (!ref && !parent_id)
+     ERR("Creation of '%s' object at line %i in '%s' is done without parent. This should use efl_add_ref.",
+	 klass->desc->name, line, file);
 
    if (parent_id)
      {
