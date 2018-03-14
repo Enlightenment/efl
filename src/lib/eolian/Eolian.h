@@ -198,6 +198,7 @@ typedef struct _Eolian_Unit Eolian_Unit;
 #endif
 
 #define EOLIAN_OBJECT(expr) EOLIAN_CAST(Eolian_Object, expr)
+#define EOLIAN_UNIT(expr) EOLIAN_CAST(Eolian_Unit, expr)
 
 typedef enum
 {
@@ -772,241 +773,6 @@ EAPI const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state,
 EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
 
 /*
- * @brief Get an object in a state by name.
- *
- * Only objects declared directly within the file can be retrieved, i.e.
- * classes, typedecls and variables.
- *
- * @param[in] state The state.
- * @param[in] name The fully namespaced object name.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Object *eolian_state_object_by_name_get(const Eolian_State *state, const char *name);
-
-/*
- * @brief Get a list of objects from a file.
- *
- * The list follows declaration order in the file. Only objects declared
- * directly within the file can be retrieved, i.e. classes, typedecls and
- * variables.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get all objects in the state.
- *
- * The order is not necessarily the declaration order. Only objects declared
- * directly within the file can be retrieved, i.e. classes, typedecls and
- * variables.
- *
- * @param[in] state The state.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_objects_get(const Eolian_State *state);
-
-/*
- * @brief Get a class within a state by name.
- *
- * @param[in] state The state.
- * @param[in] class_name The full name of the class.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Class *eolian_state_class_by_name_get(const Eolian_State *state, const char *class_name);
-
-/*
- * @brief Get a class within a state by file name (class_name.eo).
- *
- * @param[in] state The state.
- * @param[in] file_name The full name of the class.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Class *eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all the classes stored into a state.
- *
- * @param[in] state The Eolian state.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_classes_get(const Eolian_State *state);
-
-/*
- * @brief Get a global variable in a state by name.
- *
- * @param[in] state The state.
- * @param[in] name the name of the variable
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Variable *eolian_state_global_by_name_get(const Eolian_State *state, const char *name);
-
-/*
- * @brief Get a constant variable in a state by name.
- *
- * @param[in] state The state.
- * @param[in] name the name of the variable
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Variable *eolian_state_constant_by_name_get(const Eolian_State *state, const char *name);
-
-/*
- * @brief Get an iterator to all global variables contained in a file.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_globals_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all constant variables contained in a file.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all constant variables in the Eolian database.
- *
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_constants_get(const Eolian_State *state);
-
-/*
- * @brief Get an iterator to all global variables in the Eolian database.
- *
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_globals_get(const Eolian_State *state);
-
-/*
- * @brief Get an alias type declaration within a state by name.
- *
- * @param[in] state The state.
- * @param[in] name The name of the alias.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_state_alias_by_name_get(const Eolian_State *state, const char *name);
-
-/*
- * @brief Get a struct declaration within a state by name.
- *
- * @param[in] state The state.
- * @param[in] name The name of the alias.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_state_struct_by_name_get(const Eolian_State *state, const char *name);
-
-/*
- * @brief Get an enum declaration within a state by name.
- *
- * @param[in] state The state.
- * @param[in] name The name of the alias.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Typedecl *eolian_state_enum_by_name_get(const Eolian_State *state, const char *name);
-
-/*
- * @brief Get an iterator to all aliases contained in a file.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all named structs contained in a file.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_structs_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all enums contained in a file.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all aliases in the Eolian database.
- *
- * @param[in] state The state.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_aliases_get(const Eolian_State *state);
-
-/*
- * @brief Get an iterator to all structs in the Eolian database.
- *
- * @param[in] state The state.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_structs_get(const Eolian_State *state);
-
-/*
- * @brief Get an iterator to all enums in the Eolian database.
- *
- * @param[in] state The state.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_enums_get(const Eolian_State *state);
-
-/*
  * @brief Get the children (dependencies) of a unit.
  *
  * The iterator is obviously again to `const Eolian_Unit *`.
@@ -1178,6 +944,273 @@ EAPI Eina_Iterator *eolian_unit_structs_get(const Eolian_Unit *unit);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_unit_enums_get(const Eolian_Unit *unit);
+
+/*
+ * @brief A helper function to get an object in a state by name.
+ *
+ * @see eolian_unit_object_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Object *
+eolian_state_object_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_object_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
+ * @brief Get a list of objects from a file.
+ *
+ * The list follows declaration order in the file. Only objects declared
+ * directly within the file can be retrieved, i.e. classes, typedecls and
+ * variables.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief A helper function to get all objects in a state.
+ *
+ * @see eolian_unit_objects_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_objects_get(const Eolian_State *state)
+{
+   return eolian_unit_objects_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get a class in a state by name.
+ *
+ * @see eolian_unit_class_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Class *
+eolian_state_class_by_name_get(const Eolian_State *state, const char *class_name)
+{
+   return eolian_unit_class_by_name_get(EOLIAN_UNIT(state), class_name);
+}
+
+/*
+ * @brief Get a class within a state by file name (class_name.eo).
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The full name of the class.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief A helper function to get all classes in a state.
+ *
+ * @see eolian_unit_classes_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_classes_get(const Eolian_State *state)
+{
+   return eolian_unit_classes_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get a global in a state by name.
+ *
+ * @see eolian_unit_global_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Variable *
+eolian_state_global_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_global_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
+ * @brief A helper function to get a constant in a state by name.
+ *
+ * @see eolian_unit_constant_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Variable *
+eolian_state_constant_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_constant_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
+ * @brief Get an iterator to all global variables contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_globals_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all constant variables contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief A helper function to get all globals in a state.
+ *
+ * @see eolian_unit_globals_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_globals_get(const Eolian_State *state)
+{
+   return eolian_unit_globals_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get all constants in a state.
+ *
+ * @see eolian_unit_constants_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_constants_get(const Eolian_State *state)
+{
+   return eolian_unit_constants_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get an alias in a state by name.
+ *
+ * @see eolian_unit_alias_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Typedecl *
+eolian_state_alias_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_alias_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
+ * @brief A helper function to get a struct in a state by name.
+ *
+ * @see eolian_unit_struct_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Typedecl *
+eolian_state_struct_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_struct_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
+ * @brief A helper function to get an enum in a state by name.
+ *
+ * @see eolian_unit_enum_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Typedecl *
+eolian_state_enum_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_enum_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
+ * @brief Get an iterator to all aliases contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all named structs contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_structs_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief Get an iterator to all enums contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
+ * @brief A helper function to get all aliases in a state.
+ *
+ * @see eolian_unit_aliases_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_aliases_get(const Eolian_State *state)
+{
+   return eolian_unit_aliases_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get all structs in a state.
+ *
+ * @see eolian_unit_structs_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_structs_get(const Eolian_State *state)
+{
+   return eolian_unit_structs_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get all enums in a state.
+ *
+ * @see eolian_unit_enums_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_enums_get(const Eolian_State *state)
+{
+   return eolian_unit_enums_get(EOLIAN_UNIT(state));
+}
 
 /*
  * @brief A helper function to get the full name of a class.
