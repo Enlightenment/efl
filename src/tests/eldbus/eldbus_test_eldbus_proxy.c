@@ -242,7 +242,6 @@ START_TEST(utc_eldbus_proxy_send_call_p)
 
    ck_assert_msg(is_success, "Method GetId is not call");
 
-   eldbus_message_unref(msg);
    eldbus_proxy_unref(proxy);
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
@@ -326,7 +325,6 @@ START_TEST(utc_eldbus_proxy_send_and_block_p)
    ck_assert_str_ne(text_reply, empty_string);
 
    eldbus_message_unref(message_reply);
-   eldbus_message_unref(msg);
    eldbus_proxy_unref(proxy);
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
