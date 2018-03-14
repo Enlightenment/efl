@@ -2091,6 +2091,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
         wdata->defer_show = EINA_TRUE;
         return;
      }
+   ee->visible = 1;
 
    if (wdata->win)
      {
@@ -2142,8 +2143,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 
-   if (ee->visible) return;
-   ee->visible = 1;
    ee->should_be_visible = 1;
    ee->draw_ok = EINA_TRUE;
    if (ee->func.fn_show) ee->func.fn_show(ee);
