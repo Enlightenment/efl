@@ -1632,7 +1632,8 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
      }
    if (!window->pending.configure)
      {
-        window->commit_pending = EINA_TRUE;
+        if (window->has_buffer)
+          window->commit_pending = EINA_TRUE;
         window->callback = wl_surface_frame(window->surface);
         wl_callback_add_listener(window->callback, &_frame_listener, window);
         /* Dispatch any state we've been saving along the way */
@@ -1707,7 +1708,8 @@ ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
    wl_callback_add_listener(window->callback, &_frame_listener, window);
    wl_surface_commit(window->surface);
    ecore_wl2_display_flush(window->display);
-   window->commit_pending = EINA_TRUE;
+   if (window->has_buffer)
+     window->commit_pending = EINA_TRUE;
 }
 
 EAPI Eina_Bool
