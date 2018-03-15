@@ -417,7 +417,7 @@ _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
      return EINA_FALSE;
 
    /* switch the class name for class */
-   Eolian_Class *pcl = eina_hash_find(src->state->unit.classes, part->klass_name);
+   Eolian_Class *pcl = eina_hash_find(src->classes, part->klass_name);
    if (!pcl)
      {
         char buf[PATH_MAX];
@@ -677,7 +677,7 @@ _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
              eina_stringshare_del(inn);
              continue;
           }
-        Eolian_Class *icl = eina_hash_find(src->state->unit.classes, inn);
+        Eolian_Class *icl = eina_hash_find(src->classes, inn);
         if (!icl)
           {
              succ = EINA_FALSE;
@@ -846,7 +846,7 @@ _var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 }
 
 Eina_Bool
-database_validate(Eolian_State *state, const Eolian_Unit *src)
+database_validate(const Eolian_Unit *src)
 {
    Eolian_Class *cl;
 
@@ -888,23 +888,23 @@ database_validate(Eolian_State *state, const Eolian_Unit *src)
 
    Cb_Ret rt = { src, &vals, EINA_TRUE };
 
-   eina_hash_foreach(state->unit.aliases, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(src->aliases, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(state->unit.structs, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(src->structs, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(state->unit.enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(src->enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(state->unit.globals, (Eina_Hash_Foreach)_var_map_cb, &rt);
+   eina_hash_foreach(src->globals, (Eina_Hash_Foreach)_var_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(state->unit.constants, (Eina_Hash_Foreach)_var_map_cb, &rt);
+   eina_hash_foreach(src->constants, (Eina_Hash_Foreach)_var_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 

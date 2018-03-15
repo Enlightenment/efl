@@ -806,7 +806,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    if (!_parse_deferred(ret))
      return NULL;
    _merge_units(ret);
-   if (!database_validate(state, ret))
+   if (!database_validate(ret))
      return NULL;
    return &state->unit;
 }
@@ -839,7 +839,7 @@ eolian_state_all_eot_files_parse(Eolian_State *state)
 
    eina_hash_foreach(state->filenames_eot, _tfile_parse, &pd);
 
-   if (pd.ret && !database_validate(state, &state->unit))
+   if (pd.ret && !database_validate(&state->unit))
      return EINA_FALSE;
 
    return pd.ret;
@@ -867,7 +867,7 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
 
    eina_hash_foreach(state->filenames_eo, _file_parse, &pd);
 
-   if (pd.ret && !database_validate(state, &state->unit))
+   if (pd.ret && !database_validate(&state->unit))
      return EINA_FALSE;
 
    return pd.ret;

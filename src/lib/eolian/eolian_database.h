@@ -314,7 +314,7 @@ struct _Eolian_Variable
 };
 
 char *database_class_to_filename(const char *cname);
-Eina_Bool database_validate(Eolian_State *state, const Eolian_Unit *src);
+Eina_Bool database_validate(const Eolian_Unit *src);
 
 void database_object_add(Eolian_Unit *unit, const Eolian_Object *obj);
 
