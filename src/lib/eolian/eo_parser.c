@@ -834,9 +834,8 @@ parse_typedef(Eo_Lexer *ls)
 static Eolian_Variable *
 parse_variable(Eo_Lexer *ls, Eina_Bool global)
 {
-   Eolian_Variable *def = calloc(1, sizeof(Eolian_Variable));
+   Eolian_Variable *def = eo_lexer_variable_new(ls);
    Eina_Strbuf *buf;
-   ls->tmp.var = def;
    eo_lexer_get(ls);
    if (ls->t.kw == KW_at_extern)
      {
@@ -2016,7 +2015,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    int line, col;
    Eina_Strbuf *buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
-   ls->klass = (ls->tmp.kls = calloc(1, sizeof(Eolian_Class)));
+   ls->klass = (Eolian_Class *)eo_lexer_node_new(ls, sizeof(Eolian_Class));
    FILL_BASE(ls->klass->base, ls, ls->line_number, ls->column, CLASS);
    eo_lexer_get(ls);
    ls->klass->type = type;
@@ -2128,9 +2127,9 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_const:
       case KW_var:
         {
-           database_var_add(ls->unit, parse_variable(ls, ls->t.kw == KW_var));
-           eolian_object_ref(&ls->tmp.var->base);
-           ls->tmp.var = NULL;
+           Eolian_Variable *var = parse_variable(ls, ls->t.kw == KW_var);
+           database_var_add(ls->unit, eo_lexer_variable_release(ls, var));
+           eolian_object_ref(&var->base);
            break;
         }
       case KW_struct:
@@ -2248,10 +2247,10 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
         _eolian_log("eolian: no class for file '%s'", filename);
         goto error;
      }
-   ls->klass = ls->tmp.kls = NULL;
-
+   ls->klass = NULL;
    EOLIAN_OBJECT_ADD(ls->unit, cl->base.name, cl, classes);
    eina_hash_set(ls->state->classes_f, cl->base.file, cl);
+   eo_lexer_node_release(ls, &cl->base);
 
 done:
    ret = ls->unit;

@@ -122,8 +122,6 @@ typedef struct _Lexer_Ctx
 typedef struct _Eo_Lexer_Temps
 {
    Eolian_Class *kls;
-   Eolian_Variable *var;
-   Eina_List *type_defs;
    Eina_List *type_decls;
    Eina_List *expr_defs;
 } Eo_Lexer_Temps;
@@ -239,6 +237,42 @@ static inline Eolian_Type *
 eo_lexer_type_release(Eo_Lexer *ls, Eolian_Type *tp)
 {
    return (Eolian_Type *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
+}
+
+static inline Eolian_Typedecl *
+eo_lexer_typedecl_new(Eo_Lexer *ls)
+{
+   return (Eolian_Typedecl *)eo_lexer_node_new(ls, sizeof(Eolian_Typedecl));
+}
+
+static inline Eolian_Typedecl *
+eo_lexer_typedecl_release(Eo_Lexer *ls, Eolian_Typedecl *tp)
+{
+   return (Eolian_Typedecl *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
+}
+
+static inline Eolian_Variable *
+eo_lexer_variable_new(Eo_Lexer *ls)
+{
+   return (Eolian_Variable *)eo_lexer_node_new(ls, sizeof(Eolian_Variable));
+}
+
+static inline Eolian_Variable *
+eo_lexer_variable_release(Eo_Lexer *ls, Eolian_Variable *var)
+{
+   return (Eolian_Variable *)eo_lexer_node_release(ls, (Eolian_Object *)var);
+}
+
+static inline Eolian_Expression *
+eo_lexer_expr_new(Eo_Lexer *ls)
+{
+   return (Eolian_Expression *)eo_lexer_node_new(ls, sizeof(Eolian_Expression));
+}
+
+static inline Eolian_Expression *
+eo_lexer_expr_release(Eo_Lexer *ls, Eolian_Expression *expr)
+{
+   return (Eolian_Expression *)eo_lexer_node_release(ls, (Eolian_Object *)expr);
 }
 
 /* "stack" management, only to protect against errors (jumps) in parsing */

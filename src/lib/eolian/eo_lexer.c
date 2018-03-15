@@ -1111,17 +1111,7 @@ eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj)
 static void
 _temps_free(Eo_Lexer_Temps *tmp)
 {
-   Eolian_Type *tp;
    Eolian_Typedecl *tpd;
-
-   if (tmp->kls)
-     database_class_del(tmp->kls);
-
-   if (tmp->var)
-     database_var_del(tmp->var);
-
-   EINA_LIST_FREE(tmp->type_defs, tp)
-     database_type_del(tp);
 
    EINA_LIST_FREE(tmp->type_decls, tpd)
      database_typedecl_del(tpd);
