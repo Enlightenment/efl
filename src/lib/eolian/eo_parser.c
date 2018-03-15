@@ -97,20 +97,6 @@ check_match(Eo_Lexer *ls, int what, int who, int where, int col)
      }
 }
 
-static Eolian_Typedecl *
-push_typedecl(Eo_Lexer *ls)
-{
-   Eolian_Typedecl *def = calloc(1, sizeof(Eolian_Typedecl));
-   ls->tmp.type_decls = eina_list_prepend(ls->tmp.type_decls, def);
-   return def;
-}
-
-static void
-pop_typedecl(Eo_Lexer *ls)
-{
-   ls->tmp.type_decls = eina_list_remove_list(ls->tmp.type_decls, ls->tmp.type_decls);
-}
-
 static Eina_Bool
 compare_class_file(const char *fn1, const char *fn2)
 {
@@ -460,7 +446,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              int line, int column, const char *freefunc)
 {
    int bline = ls->line_number, bcolumn = ls->column;
-   Eolian_Typedecl *def = push_typedecl(ls);
+   Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    def->is_extern = is_extern;
    def->base.name = name;
    def->type = EOLIAN_TYPEDECL_STRUCT;
@@ -496,7 +482,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column, TYPEDECL);
-   if (name) database_struct_add(ls->unit, def);
+   database_struct_add(ls->unit, eo_lexer_typedecl_release(ls, def));
    return def;
 }
 
@@ -515,7 +501,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
            int line, int column)
 {
    int bline = ls->line_number, bcolumn = ls->column;
-   Eolian_Typedecl *def = push_typedecl(ls);
+   Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    def->is_extern = is_extern;
    def->base.name = name;
    def->type = EOLIAN_TYPEDECL_ENUM;
@@ -608,7 +594,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column, TYPEDECL);
-   if (name) database_enum_add(ls->unit, def);
+   database_enum_add(ls->unit, eo_lexer_typedecl_release(ls, def));
    return def;
 }
 
@@ -800,7 +786,7 @@ parse_type_void(Eo_Lexer *ls)
 static Eolian_Typedecl *
 parse_typedef(Eo_Lexer *ls)
 {
-   Eolian_Typedecl *def = push_typedecl(ls);
+   Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    Eina_Bool has_extern;
    const char *freefunc;
    Eina_Strbuf *buf;
@@ -1285,7 +1271,7 @@ parse_function_pointer(Eo_Lexer *ls)
    int bline, bcol;
    int line = ls->line_number, col = ls->column;
 
-   Eolian_Typedecl *def = push_typedecl(ls);
+   Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    Eina_Strbuf *buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
    Eolian_Function *meth = NULL;
@@ -2114,22 +2100,21 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         }
       case KW_type:
         {
-           database_type_add(ls->unit, parse_typedef(ls));
-           pop_typedecl(ls);
+           database_type_add(ls->unit,
+             eo_lexer_typedecl_release(ls, parse_typedef(ls)));
            break;
         }
       case KW_function:
         {
-           database_type_add(ls->unit, parse_function_pointer(ls));
-           pop_typedecl(ls);
+           database_type_add(ls->unit,
+             eo_lexer_typedecl_release(ls, parse_function_pointer(ls)));
            break;
         }
       case KW_const:
       case KW_var:
         {
-           Eolian_Variable *var = parse_variable(ls, ls->t.kw == KW_var);
-           database_var_add(ls->unit, eo_lexer_variable_release(ls, var));
-           eolian_object_ref(&var->base);
+           database_var_add(ls->unit, eo_lexer_variable_release(ls,
+             parse_variable(ls, ls->t.kw == KW_var)));
            break;
         }
       case KW_struct:
@@ -2164,7 +2149,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            eo_lexer_dtor_pop(ls);
            if (!is_enum && ls->t.token == ';')
              {
-                Eolian_Typedecl *def = push_typedecl(ls);
+                Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
                 def->is_extern = has_extern;
                 def->type = EOLIAN_TYPEDECL_STRUCT_OPAQUE;
                 def->freefunc = freefunc;
@@ -2173,15 +2158,13 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 eo_lexer_get(ls);
                 FILL_DOC(ls, def, doc);
                 FILL_BASE(def->base, ls, line, col, TYPEDECL);
-                database_struct_add(ls->unit, def);
-                pop_typedecl(ls);
+                database_struct_add(ls->unit, eo_lexer_typedecl_release(ls, def));
                 break;
              }
            if (is_enum)
              parse_enum(ls, name, has_extern, line, col);
            else
              parse_struct(ls, name, has_extern, line, col, freefunc);
-           pop_typedecl(ls);
            break;
         }
       def:
