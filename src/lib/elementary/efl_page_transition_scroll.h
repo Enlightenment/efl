@@ -12,8 +12,8 @@ typedef struct _Page_Info
    Eo                      *obj;
    Eo                      *content;
 
-   Eina_Rectangle          *geometry;
-   Eina_Rectangle          *temp;
+   Eina_Rectangle           geometry;
+   Eina_Rectangle           temp;
 
    struct _Page_Info       *prev, *next;
 
@@ -35,7 +35,7 @@ struct _Efl_Page_Transition_Scroll_Data
 
    Eo                      *foreclip;
    Eo                      *backclip;
-   Eina_Rectangle          *viewport;
+   Eina_Rectangle           viewport;
 };
 
 #define EFL_PAGE_TRANSITION_SCROLL_DATA_GET(o, pd) \
