@@ -534,13 +534,11 @@ database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
    unit->objects    = eina_hash_stringshared_new(NULL);
 }
 
-void
-database_unit_del(Eolian_Unit *unit)
+static void
+_unit_contents_del(Eolian_Unit *unit)
 {
-   if (!unit)
-     return;
-
    eina_stringshare_del(unit->file);
+   eina_hash_free(unit->children);
    eina_hash_free(unit->classes);
    eina_hash_free(unit->globals);
    eina_hash_free(unit->constants);
@@ -548,6 +546,16 @@ database_unit_del(Eolian_Unit *unit)
    eina_hash_free(unit->structs);
    eina_hash_free(unit->enums);
    eina_hash_free(unit->objects);
+}
+
+void
+database_unit_del(Eolian_Unit *unit)
+{
+   if (!unit)
+     return;
+
+   _unit_contents_del(unit);
+   free(unit);
 }
 
 static void
@@ -588,7 +596,7 @@ eolian_state_free(Eolian_State *state)
    if (!state)
      return;
 
-   database_unit_del(&state->unit);
+   _unit_contents_del(&state->unit);
 
    eina_hash_free(state->filenames_eo);
    eina_hash_free(state->filenames_eot);

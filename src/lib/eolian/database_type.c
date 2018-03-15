@@ -105,6 +105,7 @@ _append_name(const Eolian_Object *obj, Eina_Strbuf *buf)
         eina_strbuf_append_char(buf, '_');
      }
    eina_strbuf_append(buf, eolian_object_short_name_get(obj));
+   eina_iterator_free(itr);
 }
 
 void
