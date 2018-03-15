@@ -119,13 +119,6 @@ typedef struct _Lexer_Ctx
    Eo_Token token;
 } Lexer_Ctx;
 
-typedef struct _Eo_Lexer_Temps
-{
-   Eolian_Class *kls;
-   Eina_List *type_decls;
-   Eina_List *expr_defs;
-} Eo_Lexer_Temps;
-
 typedef struct _Eo_Lexer_Dtor
 {
    Eina_Free_Cb free_cb;
@@ -178,14 +171,19 @@ typedef struct _Eo_Lexer
    /* saved context info */
    Eina_List *saved_ctxs;
 
-   /* represents the temporaries, every object that is allocated by the
-    * parser is temporarily put here so the resources can be reclaimed in
-    * case of error - and it's nulled when it's written into a more permanent
-    * position (e.g. as part of another struct, or into nodes */
-   Eo_Lexer_Temps tmp;
-
    Eolian_Class *klass;
+   /* a dtor list; dtors can be pushed and popped during
+    * parser execution to simulate scoped resource management
+    *
+    * unpopped dtors (e.g. on error) are run when the state is freed
+    */
    Eina_List *dtors;
+   /* a node hash; eolian objects can be allocated through this and
+    * they are stored here (with 1 reference) until they're released
+    * into the environment (they also get deref'd)
+    *
+    * if the release never happens, everything is just freed when the state is
+    */
    Eina_Hash *nodes;
 
    /* whether we allow lexing expression related tokens */

@@ -1109,15 +1109,6 @@ eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj)
 }
 
 static void
-_temps_free(Eo_Lexer_Temps *tmp)
-{
-   Eolian_Typedecl *tpd;
-
-   EINA_LIST_FREE(tmp->type_decls, tpd)
-     database_typedecl_del(tpd);
-}
-
-static void
 _free_tok(Eo_Token *tok)
 {
    if (tok->token < START_CUSTOM || tok->token == TOK_NUMBER ||
@@ -1165,7 +1156,6 @@ eo_lexer_free(Eo_Lexer *ls)
 
    _free_tok(&ls->t);
    eo_lexer_context_clear(ls);
-   _temps_free(&ls->tmp);
 
    Eo_Lexer_Dtor *dtor;
    EINA_LIST_FREE(ls->dtors, dtor)
