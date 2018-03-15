@@ -658,6 +658,7 @@ end:
    return ret;
 }
 
+/* FIXME: need much better error handling here */
 static Eina_Bool
 _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
 {
@@ -688,7 +689,7 @@ _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
           {
              cl->inherits = eina_list_append(cl->inherits, icl);
              /* recursively fill so the tree is valid */
-             if (!icl->base.validated && !_db_fill_inherits(src, icl, fhash))
+             if (!icl->valid_impls && !_db_fill_inherits(src, icl, fhash))
                succ = EINA_FALSE;
           }
         eina_stringshare_del(inn);
@@ -703,6 +704,7 @@ _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
    if (!_db_fill_ctors(cl))
      return EINA_FALSE;
 
+   cl->valid_impls = EINA_TRUE;
    return succ;
 }
 
@@ -724,7 +726,7 @@ _validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
 
 static Eina_Bool
 _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
-                Eina_Hash *nhash, Eina_Bool ipass)
+                Eina_Hash *nhash, Eina_Hash *chash)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -736,19 +738,11 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
    if (!cl)
      return EINA_FALSE; /* if this happens something is very wrong though */
 
-   Eina_Bool valid = cl->base.validated;
+   /* we've gone through this part */
+   if (eina_hash_find(chash, cl->base.name))
+     return EINA_TRUE;
 
-   /* refill inherits in the current inheritance tree first */
-   if (!valid && !ipass)
-     {
-        Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
-        if (!_db_fill_inherits(src, cl, fhash))
-          {
-             eina_hash_free(fhash);
-             return EINA_FALSE;
-          }
-        eina_hash_free(fhash);
-     }
+   Eina_Bool valid = cl->base.validated;
 
    EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
@@ -778,7 +772,7 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_validate_class(vals, src, icl, nhash, EINA_TRUE))
+        if (!_validate_class(vals, src, icl, nhash, chash))
           return EINA_FALSE;
      }
 
@@ -804,10 +798,17 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
 
    /* all the checks that need to be done every time are performed now */
    if (valid)
-     return EINA_TRUE;
+     {
+        /* no need to go through this next time */
+        eina_hash_add(chash, cl->base.name, cl);
+        return EINA_TRUE;
+     }
 
    if (!_validate_doc(src, cl->doc))
      return EINA_FALSE;
+
+   /* also done */
+   eina_hash_add(chash, cl->base.name, cl);
 
    return _validate(&cl->base);
 }
@@ -851,18 +852,37 @@ database_validate(Eolian_State *state, const Eolian_Unit *src)
 
    Validate_State vals = { EINA_FALSE };
 
+   /* do an initial pass to refill inherits */
    Eina_Iterator *iter = eolian_unit_classes_get(src);
-   Eina_Hash *nhash = eina_hash_string_small_new(NULL);
+   EINA_ITERATOR_FOREACH(iter, cl)
+     {
+        if (cl->valid_impls)
+          continue;
+        Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
+        if (!_db_fill_inherits(src, cl, fhash))
+          {
+             eina_hash_free(fhash);
+             return EINA_FALSE;
+          }
+        eina_hash_free(fhash);
+     }
+   eina_iterator_free(iter);
+
+   iter = eolian_unit_classes_get(src);
+   Eina_Hash *nhash = eina_hash_stringshared_new(NULL);
+   Eina_Hash *chash = eina_hash_stringshared_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
-        if (!_validate_class(&vals, src, cl, nhash, EINA_FALSE))
+        if (!_validate_class(&vals, src, cl, nhash, chash))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);
+             eina_hash_free(chash);
              return EINA_FALSE;
           }
      }
+   eina_hash_free(chash);
    eina_hash_free(nhash);
    eina_iterator_free(iter);
 

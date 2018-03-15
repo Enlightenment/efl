@@ -126,6 +126,7 @@ struct _Eolian_Class
    Eina_List *parts; /* Eolian_Part */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
+   Eina_Bool valid_impls:1;
 };
 
 struct _Eolian_Function
