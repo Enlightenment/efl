@@ -110,11 +110,9 @@ public static class PrimitiveConversion
 
    public static IntPtr ManagedToPointerAlloc<T>(T man)
    {
-       GCHandle pinnedData = GCHandle.Alloc(man, GCHandleType.Pinned);
-       IntPtr ptr = pinnedData.AddrOfPinnedObject();
-       IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<T>());
-       pinnedData.Free();
-       return nat;
+       IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
+       Marshal.StructureToPtr(man, ptr, false);
+       return ptr;
    }
 }
 
