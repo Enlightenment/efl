@@ -1026,7 +1026,7 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    eina_hash_del_by_key(pd->node_hash, &child);
 
-   if (refocus)
+   if (refocus && !efl_invalidated_get(pd->root->focusable))
      {
         Node *n = eina_list_last_data_get(pd->focus_stack);
         if (!n)
