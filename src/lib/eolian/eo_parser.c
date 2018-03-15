@@ -2197,12 +2197,12 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
      fname = eina_stringshare_add(filename);
 
    Eolian_Unit *ret = eina_hash_find(parent->state->units, fname);
-   eina_stringshare_del(fname);
 
    if (ret)
      {
-        if ((parent != ret) && !eina_hash_find(parent->children, filename))
-          eina_hash_add(parent->children, filename, ret);
+        if ((parent != ret) && !eina_hash_find(parent->children, fname))
+          eina_hash_add(parent->children, fname, ret);
+        eina_stringshare_del(fname);
         return ret;
      }
 
@@ -2235,12 +2235,14 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
 
 done:
    ret = ls->unit;
-   eina_hash_add(parent->children, filename, ret);
+   eina_hash_add(parent->children, fname, ret);
+   eina_stringshare_del(fname);
 
    eo_lexer_free(ls);
    return ret;
 
 error:
+   eina_stringshare_del(fname);
    eo_lexer_free(ls);
    return NULL;
 }
