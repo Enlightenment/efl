@@ -275,6 +275,13 @@ eo_lexer_expr_release(Eo_Lexer *ls, Eolian_Expression *expr)
    return (Eolian_Expression *)eo_lexer_node_release(ls, (Eolian_Object *)expr);
 }
 
+static inline Eolian_Expression *
+eo_lexer_expr_release_ref(Eo_Lexer *ls, Eolian_Expression *expr)
+{
+   eolian_object_ref(&expr->base);
+   return eo_lexer_expr_release(ls, expr);
+}
+
 /* "stack" management, only to protect against errors (jumps) in parsing */
 void eo_lexer_dtor_push(Eo_Lexer *ls, Eina_Free_Cb free_cb, void *data);
 void eo_lexer_dtor_pop(Eo_Lexer *ls);

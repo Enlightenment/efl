@@ -185,21 +185,6 @@ parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
    return buf;
 }
 
-static Eolian_Expression *
-push_expr(Eo_Lexer *ls)
-{
-   Eolian_Expression *def = calloc(1, sizeof(Eolian_Expression));
-   ls->tmp.expr_defs = eina_list_prepend(ls->tmp.expr_defs, def);
-   return def;
-}
-
-static void
-pop_expr(Eo_Lexer *ls)
-{
-   eolian_object_ref((Eolian_Object *)eina_list_data_get(ls->tmp.expr_defs));
-   ls->tmp.expr_defs = eina_list_remove_list(ls->tmp.expr_defs, ls->tmp.expr_defs);
-}
-
 static Eolian_Binary_Operator
 get_binop_id(int tok)
 {
@@ -287,12 +272,12 @@ parse_expr_simple(Eo_Lexer *ls)
         int line = ls->line_number, col = ls->column;
         eo_lexer_get(ls);
         Eolian_Expression *exp = parse_expr_bin(ls, UNARY_PRECEDENCE);
-        pop_expr(ls);
-        expr = push_expr(ls);
+        expr = eo_lexer_expr_new(ls);
         FILL_BASE(expr->base, ls, line, col, EXPRESSION);
         expr->unop = unop;
         expr->type = EOLIAN_EXPR_UNARY;
         expr->expr = exp;
+        eo_lexer_expr_release_ref(ls, exp);
         return expr;
      }
    switch (ls->t.token)
@@ -300,7 +285,7 @@ parse_expr_simple(Eo_Lexer *ls)
       case TOK_NUMBER:
         {
            int line = ls->line_number, col = ls->column;
-           expr = push_expr(ls);
+           expr = eo_lexer_expr_new(ls);
            FILL_BASE(expr->base, ls, line, col, EXPRESSION);
            expr->type = ls->t.kw + 1; /* map Numbers from lexer to expr type */
            memcpy(&expr->value, &ls->t.value, sizeof(expr->value));
@@ -310,7 +295,7 @@ parse_expr_simple(Eo_Lexer *ls)
       case TOK_STRING:
         {
            int line = ls->line_number, col = ls->column;
-           expr = push_expr(ls);
+           expr = eo_lexer_expr_new(ls);
            FILL_BASE(expr->base, ls, line, col, EXPRESSION);
            expr->type = EOLIAN_EXPR_STRING;
            expr->value.s = eina_stringshare_ref(ls->t.value.s);
@@ -320,7 +305,7 @@ parse_expr_simple(Eo_Lexer *ls)
       case TOK_CHAR:
         {
            int line = ls->line_number, col = ls->column;
-           expr = push_expr(ls);
+           expr = eo_lexer_expr_new(ls);
            FILL_BASE(expr->base, ls, line, col, EXPRESSION);
            expr->type = EOLIAN_EXPR_CHAR;
            expr->value.c = ls->t.value.c;
@@ -335,7 +320,7 @@ parse_expr_simple(Eo_Lexer *ls)
               case KW_true:
               case KW_false:
                 {
-                   expr = push_expr(ls);
+                   expr = eo_lexer_expr_new(ls);
                    expr->type = EOLIAN_EXPR_BOOL;
                    expr->value.b = (ls->t.kw == KW_true);
                    eo_lexer_get(ls);
@@ -343,7 +328,7 @@ parse_expr_simple(Eo_Lexer *ls)
                 }
               case KW_null:
                 {
-                   expr = push_expr(ls);
+                   expr = eo_lexer_expr_new(ls);
                    expr->type = EOLIAN_EXPR_NULL;
                    eo_lexer_get(ls);
                    break;
@@ -352,7 +337,7 @@ parse_expr_simple(Eo_Lexer *ls)
                 {
                    Eina_Strbuf *buf = eina_strbuf_new();
                    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
-                   expr = push_expr(ls);
+                   expr = eo_lexer_expr_new(ls);
                    expr->type = EOLIAN_EXPR_NAME;
                    parse_name(ls, buf);
                    expr->value.s = eina_stringshare_add(eina_strbuf_string_get
@@ -395,14 +380,14 @@ parse_expr_bin(Eo_Lexer *ls, int min_prec)
           break;
         eo_lexer_get(ls);
         rhs = parse_expr_bin(ls, prec + 1);
-        pop_expr(ls);
-        pop_expr(ls);
-        bin = push_expr(ls);
+        bin = eo_lexer_expr_new(ls);
         FILL_BASE(bin->base, ls, line, col, EXPRESSION);
         bin->binop = op;
         bin->type = EOLIAN_EXPR_BINARY;
         bin->lhs = lhs;
+        eo_lexer_expr_release_ref(ls, lhs);
         bin->rhs = rhs;
+        eo_lexer_expr_release_ref(ls, rhs);
         lhs = bin;
      }
    return lhs;
@@ -545,20 +530,20 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
           {
              if (!prev_fl)
                {
-                  Eolian_Expression *eexp = push_expr(ls);
+                  Eolian_Expression *eexp = eo_lexer_expr_new(ls);
                   FILL_BASE(eexp->base, ls, -1, -1, EXPRESSION);
                   eexp->type = EOLIAN_EXPR_INT;
                   eexp->value.i = 0;
                   fdef->value = eexp;
                   fdef->is_public_value = EINA_TRUE;
-                  pop_expr(ls);
+                  eo_lexer_expr_release_ref(ls, eexp);
                   prev_fl = fdef;
                   fl_nadd = 0;
                }
              else
                {
-                  Eolian_Expression *rhs = push_expr(ls),
-                                    *bin = push_expr(ls);
+                  Eolian_Expression *rhs = eo_lexer_expr_new(ls),
+                                    *bin = eo_lexer_expr_new(ls);
                   FILL_BASE(rhs->base, ls, -1, -1, EXPRESSION);
                   FILL_BASE(bin->base, ls, -1, -1, EXPRESSION);
 
@@ -570,8 +555,10 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
                   bin->lhs = prev_fl->value;
                   bin->rhs = rhs;
                   bin->weak_lhs = EINA_TRUE;
+                  eo_lexer_expr_release_ref(ls, rhs);
 
                   fdef->value = bin;
+                  eo_lexer_expr_release_ref(ls, bin);
                }
           }
         else
@@ -583,7 +570,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              ls->expr_mode = EINA_FALSE;
              prev_fl = fdef;
              fl_nadd = 0;
-             pop_expr(ls);
+             eo_lexer_expr_release_ref(ls, fdef->value);
           }
         Eina_Bool want_next = (ls->t.token == ',');
         if (want_next)
@@ -854,7 +841,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
         eo_lexer_get(ls);
         def->value = parse_expr(ls);
         ls->expr_mode = EINA_FALSE;
-        pop_expr(ls);
+        eo_lexer_expr_release_ref(ls, def->value);
      }
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
@@ -958,7 +945,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         eo_lexer_get(ls);
         par->value = parse_expr(ls);
         ls->expr_mode = EINA_FALSE;
-        pop_expr(ls);
+        eo_lexer_expr_release_ref(ls, par->value);
         check_match(ls, ')', '(', line, col);
      }
    if (cref)
@@ -1097,7 +1084,8 @@ parse_accessor:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
         parse_return(ls, &ret, is_get, EINA_TRUE, EINA_FALSE);
-        if (ret.default_ret_val) pop_expr(ls);
+        if (ret.default_ret_val)
+          eo_lexer_expr_release_ref(ls, ret.default_ret_val);
         if (is_get)
           {
              prop->get_ret_type = eo_lexer_type_release(ls, ret.type);
@@ -1407,7 +1395,8 @@ body:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
         parse_return(ls, &ret, EINA_FALSE, EINA_TRUE, EINA_FALSE);
-        if (ret.default_ret_val) pop_expr(ls);
+        if (ret.default_ret_val)
+          eo_lexer_expr_release_ref(ls, ret.default_ret_val);
         meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
