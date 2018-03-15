@@ -58,7 +58,8 @@ _ecore_evas_wl_common_animator_register(Ecore_Evas *ee)
 
    edata->frame = ecore_wl2_window_frame_callback_add(edata->win,
                                                       _anim_cb_tick, ee);
-   if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render)
+   if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render &&
+       !ee->animator_ticked && !ee->animator_ran)
      ecore_wl2_window_false_commit(edata->win);
    edata->ticking = EINA_TRUE;
 }
