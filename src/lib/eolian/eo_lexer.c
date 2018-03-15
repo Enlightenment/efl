@@ -1102,11 +1102,9 @@ _node_free(Eolian_Object *obj)
 static void
 _temps_free(Eo_Lexer_Temps *tmp)
 {
-   Eina_Strbuf *buf;
    Eolian_Type *tp;
    Eolian_Typedecl *tpd;
    Eolian_Object *obj;
-   const char *s;
 
    if (tmp->kls)
      database_class_del(tmp->kls);
@@ -1114,17 +1112,11 @@ _temps_free(Eo_Lexer_Temps *tmp)
    if (tmp->var)
      database_var_del(tmp->var);
 
-   EINA_LIST_FREE(tmp->str_bufs, buf)
-     eina_strbuf_free(buf);
-
    EINA_LIST_FREE(tmp->type_defs, tp)
      database_type_del(tp);
 
    EINA_LIST_FREE(tmp->type_decls, tpd)
      database_typedecl_del(tpd);
-
-   EINA_LIST_FREE(tmp->strs, s)
-     if (s) eina_stringshare_del(s);
 
    EINA_LIST_FREE(tmp->nodes, obj)
      _node_free(obj);
@@ -1151,6 +1143,23 @@ _free_tok(Eo_Token *tok)
 }
 
 void
+eo_lexer_dtor_push(Eo_Lexer *ls, Eina_Free_Cb free_cb, void *data)
+{
+   Eo_Lexer_Dtor *dt = malloc(sizeof(Eo_Lexer_Dtor));
+   dt->free_cb = free_cb;
+   dt->data = data;
+   ls->dtors = eina_list_prepend(ls->dtors, dt);
+}
+
+void
+eo_lexer_dtor_pop(Eo_Lexer *ls)
+{
+   Eo_Lexer_Dtor *dt = eina_list_data_get(ls->dtors);
+   ls->dtors = eina_list_remove_list(ls->dtors, ls->dtors);
+   free(dt);
+}
+
+void
 eo_lexer_free(Eo_Lexer *ls)
 {
    if (!ls) return;
@@ -1162,6 +1171,11 @@ eo_lexer_free(Eo_Lexer *ls)
    _free_tok(&ls->t);
    eo_lexer_context_clear(ls);
    _temps_free(&ls->tmp);
+
+   Eo_Lexer_Dtor *dtor;
+   EINA_LIST_FREE(ls->dtors, dtor)
+     dtor->free_cb(dtor->data);
+
    free(ls);
 }
 
