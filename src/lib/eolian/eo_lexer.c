@@ -397,11 +397,11 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
         /* in-class references */
-        if (ls->tmp.kls && ls->current == '.')
+        if (ls->klass && ls->current == '.')
           {
              next_char(ls);
              if (isalpha(ls->current) || ls->current == '_')
-               eina_strbuf_append(ls->buff, ls->tmp.kls->base.name);
+               eina_strbuf_append(ls->buff, ls->klass->base.name);
              eina_strbuf_append_char(ls->buff, '.');
           }
         continue;
@@ -504,8 +504,8 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
    if (!doc->summary)
      doc->summary = eina_stringshare_add("No description supplied.");
-   if (!doc->since && ls->tmp.kls && ls->tmp.kls->doc)
-     doc->since = eina_stringshare_ref(ls->tmp.kls->doc->since);
+   if (!doc->since && ls->klass && ls->klass->doc)
+     doc->since = eina_stringshare_ref(ls->klass->doc->since);
    eina_strbuf_free(rbuf);
    tok->value.doc = doc;
 }

@@ -182,6 +182,8 @@ typedef struct _Eo_Lexer
     * position (e.g. as part of another struct, or into nodes */
    Eo_Lexer_Temps tmp;
 
+   Eolian_Class *klass;
+
    /* whether we allow lexing expression related tokens */
    Eina_Bool expr_mode;
 
