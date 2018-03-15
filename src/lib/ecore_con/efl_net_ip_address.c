@@ -300,7 +300,7 @@ _efl_net_ip_address_create(Eo *cls, void *pd EINA_UNUSED, uint16_t port, const E
    else
      family = AF_INET;
 
-   return efl_add(cls, NULL,
+   return efl_add_ref(cls, NULL,
                   efl_net_ip_address_family_set(efl_added, family),
                   efl_net_ip_address_port_set(efl_added, port),
                   efl_net_ip_address_set(efl_added, address));
@@ -314,7 +314,7 @@ _efl_net_ip_address_create_sockaddr(Eo *cls, void *pd EINA_UNUSED, const void *p
    EINA_SAFETY_ON_NULL_RETURN_VAL(sockaddr, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((sockaddr->sa_family != AF_INET) && (sockaddr->sa_family != AF_INET6), NULL);
 
-   return efl_add(cls, NULL,
+   return efl_add_ref(cls, NULL,
                   efl_net_ip_address_sockaddr_set(efl_added, sockaddr));
 }
 
@@ -357,7 +357,7 @@ _efl_net_ip_address_parse(Eo *cls, void *pd EINA_UNUSED, const char *numeric_add
         return NULL;
      }
 
-   return efl_add(cls, NULL,
+   return efl_add_ref(cls, NULL,
                   efl_net_ip_address_sockaddr_set(efl_added, &ss));
 }
 
@@ -498,7 +498,7 @@ _efl_net_ip_address_resolve_done(void *data, const char *host, const char *port,
         if (o)
           {
              if (!eina_array_push(r->results, o))
-               efl_del(o);
+               efl_unref(o);
           }
      }
    freeaddrinfo(result);

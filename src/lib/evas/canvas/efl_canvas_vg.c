@@ -505,7 +505,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
                                    root,
                                    buffer,
                                    do_async);
-        efl_del(dupe_root);
+        efl_unref(dupe_root);
      }
    else
      {

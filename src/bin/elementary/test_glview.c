@@ -644,7 +644,7 @@ _test_glview_do(Evas_GL_Context_Version version)
    elm_config_accel_preference_set(accel);
    eina_stringshare_del(accel);
 #else
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                 efl_ui_win_name_set(efl_added, "glview"),
                 efl_text_set(efl_added, "GLView"),
                 efl_ui_win_accel_preference_set(efl_added, "gl:depth"));

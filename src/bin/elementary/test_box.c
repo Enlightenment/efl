@@ -889,7 +889,7 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Evas_Object *win, *bx, *o;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Efl.Ui.Box_Stack"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

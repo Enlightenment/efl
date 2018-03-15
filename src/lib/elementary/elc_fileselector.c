@@ -1297,7 +1297,7 @@ _home(void *data, const Efl_Event *event EINA_UNUSED)
    // FIXME: maybe use vpath
    if (!sd->model || efl_isa(sd->model, EIO_MODEL_CLASS))
      {
-        Eio_Model *model = efl_add(EIO_MODEL_CLASS, NULL,
+        Eio_Model *model = efl_add_ref(EIO_MODEL_CLASS, NULL,
                                   eio_model_path_set(efl_added, eina_environment_home_get()));
         _populate(fs, model, NULL, NULL);
         efl_unref(model);
@@ -2103,7 +2103,7 @@ _from_legacy_event_call(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, const E
    else
      model_cls = efl_class_get(sd->model);
 
-   Efl_Model *model = efl_add(model_cls, NULL);
+   Efl_Model *model = efl_add_ref(model_cls, NULL);
    _model_str_property_set(model, "path", path);
 
    // Call Eo event with model
@@ -2312,7 +2312,7 @@ elm_fileselector_path_set(Evas_Object *obj,
 void
 _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
 {
-   Eio_Model *model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, _path));
+   Eio_Model *model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, _path));
    if (!model)
      {
         ERR("Efl.Model allocation error");
@@ -2570,7 +2570,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *_path)
 
    if (ecore_file_is_dir(path))
      {
-         model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
+         model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
          if (!model)
            {
               ERR("Efl.Model allocation error");
@@ -2588,7 +2588,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *_path)
              goto clean_up;
           }
 
-        model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
+        model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
         if (!model)
           {
              ERR("Efl.Model allocation error");
@@ -2596,7 +2596,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *_path)
           }
 
         dir = ecore_file_dir_get(path);
-        parent = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dir));
+        parent = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dir));
         if (parent)
           {
              _schedule_populate(obj, sd, parent, model);

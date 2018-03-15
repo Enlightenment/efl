@@ -262,7 +262,7 @@ _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
        (svr->client_count >= (unsigned int)svr->client_limit))
      return ECORE_CALLBACK_CANCEL;
 
-   Ecore_Con_Client *cl_obj = efl_add(EFL_NETWORK_CLIENT_CLASS, NULL);
+   Ecore_Con_Client *cl_obj = efl_add_ref(EFL_NETWORK_CLIENT_CLASS, NULL);
    Efl_Network_Client_Data *cl = efl_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
      {
@@ -332,7 +332,7 @@ del_handler_read:
 close_event_read:
    CloseHandle(svr->event_read);
 free_cl:
-   efl_del(cl_obj);
+   efl_unref(cl_obj);
 
    return ECORE_CALLBACK_CANCEL;
 }

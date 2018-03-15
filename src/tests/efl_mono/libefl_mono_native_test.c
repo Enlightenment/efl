@@ -85,7 +85,7 @@ char **_new_str_ref(const char* str)
 static
 Test_Numberwrapper *_new_obj(int n)
 {
-   return efl_add(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
+   return efl_add_ref(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
 }
 
 static

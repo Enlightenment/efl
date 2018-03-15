@@ -31,7 +31,7 @@ START_TEST (test_efl_access_app_obj_name_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    ck_assert(root != NULL);
 
@@ -106,7 +106,7 @@ START_TEST (test_efl_access_role_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    Efl_Access_Role role;
 
@@ -147,7 +147,7 @@ START_TEST (test_efl_access_role_name_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    const char *ret = NULL;
 
@@ -165,7 +165,7 @@ START_TEST (test_efl_access_localized_role_name_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    const char *ret = NULL;
 
@@ -183,7 +183,7 @@ START_TEST (test_efl_access_description_set)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    const char *ret = NULL;
 
@@ -231,7 +231,7 @@ START_TEST (test_efl_access_children_and_parent)
    elm_init(1, args);
 
    generate_app();
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    Eina_List *child_list = NULL;
 
@@ -259,7 +259,7 @@ START_TEST (test_efl_access_children_and_parent2)
    elm_init(1, args);
 
    generate_app();
-   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    Eo *win = NULL;
 

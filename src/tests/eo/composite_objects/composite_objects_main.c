@@ -26,7 +26,7 @@ main(int argc, char *argv[])
    (void) argv;
    efl_object_init();
 
-   Eo *obj = efl_add(COMP_CLASS, NULL);
+   Eo *obj = efl_add_ref(COMP_CLASS, NULL);
    efl_event_callback_add(obj, EV_A_CHANGED, _a_changed_cb, NULL);
 
    fail_if(!efl_isa(obj, COMP_CLASS));

@@ -201,11 +201,11 @@ _ector_software_surface_ector_surface_renderer_factory_new(Eo *obj,
                                                            const Efl_Class *type)
 {
    if (type == ECTOR_RENDERER_SHAPE_MIXIN)
-     return efl_add(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
+     return efl_add_ref(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN)
-     return efl_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
+     return efl_add_ref(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN)
-     return efl_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
+     return efl_add_ref(ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
 
    ERR("Couldn't find class for type: %s", efl_class_name_get(type));
    return NULL;

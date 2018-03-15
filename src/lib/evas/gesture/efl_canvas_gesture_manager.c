@@ -47,6 +47,12 @@ _cleanup_object(Eina_List *list)
 }
 
 static void
+_hash_unref_cb(Eo *obj)
+{
+   efl_unref(obj);
+}
+
+static void
 _hash_free_cb(Eo *obj)
 {
    efl_del(obj);
@@ -59,7 +65,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
 
    pd->m_recognizers = eina_hash_pointer_new(EINA_FREE_CB(_hash_free_cb));
    pd->m_gesture_contex = eina_hash_pointer_new(NULL);
-   pd->m_object_events = eina_hash_pointer_new(EINA_FREE_CB(_hash_free_cb));
+   pd->m_object_events = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
    pd->m_object_gestures = NULL;
    pd->m_gestures_to_delete = NULL;
 
@@ -144,7 +150,7 @@ _efl_canvas_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
         touch_event = eina_hash_find(pd->m_object_events, &target);
         if (!touch_event)
           {
-             touch_event = efl_add(EFL_CANVAS_GESTURE_TOUCH_CLASS, NULL);
+             touch_event = efl_add_ref(EFL_CANVAS_GESTURE_TOUCH_CLASS, NULL);
              eina_hash_add(pd->m_object_events, &target, touch_event);
           }
 

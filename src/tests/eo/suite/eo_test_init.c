@@ -24,7 +24,7 @@ START_TEST(eo_test_init_shutdown)
    ck_assert_str_eq("Efl.Object", efl_class_name_get(EFL_OBJECT_CLASS));
 
    /* XXX-1: Essential for the next test to assign the wrong op. */
-   obj = efl_add(SIMPLE_CLASS, NULL);
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
    simple_a_set(obj, 1);
    ck_assert_int_eq(1, simple_a_get(obj));
 

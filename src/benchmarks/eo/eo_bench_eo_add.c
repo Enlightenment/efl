@@ -12,7 +12,7 @@ bench_efl_add_linear(int request)
    int i;
    Eo **objs = calloc(request, sizeof(Eo *));
    for (i = 0 ; i < request ; i++)
-      objs[i] = efl_add(SIMPLE_CLASS, NULL);
+      objs[i] = efl_add_ref(SIMPLE_CLASS, NULL);
 
    for (i = 0 ; i < request ; i++)
       efl_unref(objs[i]);
@@ -25,13 +25,13 @@ bench_efl_add_jump_by_2(int request)
    int i;
    Eo **objs = calloc(request, sizeof(Eo *));
    for (i = 0 ; i < request ; i++)
-      objs[i] = efl_add(SIMPLE_CLASS, NULL);
+      objs[i] = efl_add_ref(SIMPLE_CLASS, NULL);
 
    for (i = 0 ; i < request ; i += 2)
       efl_unref(objs[i]);
 
    for (i = 0 ; i < request ; i += 2)
-      objs[i] = efl_add(SIMPLE_CLASS, NULL);
+      objs[i] = efl_add_ref(SIMPLE_CLASS, NULL);
 
    for (i = 0 ; i < request ; i++)
       efl_unref(objs[i]);

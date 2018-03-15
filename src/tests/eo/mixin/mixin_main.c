@@ -18,7 +18,7 @@ main(int argc, char *argv[])
    (void) argv;
    efl_object_init();
 
-   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
 
    simple_a_set(obj, 1);
    simple_b_set(obj, 2);
@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 
    efl_unref(obj);
 
-   obj = efl_add(INHERIT_CLASS, NULL);
+   obj = efl_add_ref(INHERIT_CLASS, NULL);
    simple_a_set(obj, 5);
    a = simple_a_get(obj);
    printf("%d\n", a);

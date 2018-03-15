@@ -229,7 +229,7 @@ _efl_thread_main(void *data, Eina_Thread t)
    if (thdat->name) eina_thread_name_set(t, thdat->name);
    else eina_thread_name_set(t, "Eflthread");
 
-   obj = efl_add(APPTHREAD_CLASS, NULL);
+   obj = efl_add_ref(APPTHREAD_CLASS, NULL);
    ad = efl_data_scope_get(obj, APPTHREAD_CLASS);
    efl_threadio_indata_set(obj, thdat->indata);
    efl_threadio_outdata_set(obj, thdat->outdata);
@@ -294,7 +294,7 @@ _efl_thread_main(void *data, Eina_Thread t)
    cmd.d.data = real;
    write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
 
-   efl_del(obj);
+   efl_unref(obj);
 
    thdat->fd.in_handler = NULL;
    thdat->fd.out_handler = NULL;

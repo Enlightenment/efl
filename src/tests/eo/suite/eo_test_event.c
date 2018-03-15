@@ -63,7 +63,7 @@ START_TEST(eo_event)
    efl_object_init();
    Eo *obj;
 
-   obj = efl_add(efl_test_event_class_get(), NULL);
+   obj = efl_add_ref(efl_test_event_class_get(), NULL);
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _cb2, &data);
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _cb1, &data);
 
@@ -123,7 +123,7 @@ START_TEST(eo_event_call_in_call)
    efl_object_init();
    Eo *obj;
 
-   obj = efl_add(efl_test_event_class_get(), NULL);
+   obj = efl_add_ref(efl_test_event_class_get(), NULL);
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _cb_rec_1, &data);
 
    memset(&data, 0, sizeof(Test_Data));
@@ -179,7 +179,7 @@ START_TEST(eo_event_generation_bug)
 
    Eo *obj;
 
-   obj = efl_add(efl_test_event_class_get(), NULL);
+   obj = efl_add_ref(efl_test_event_class_get(), NULL);
    emitted = 0;
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER, EFL_CALLBACK_PRIORITY_BEFORE, _generation_clamp_step1, NULL);
    efl_event_callback_priority_add(obj, EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE, EFL_CALLBACK_PRIORITY_BEFORE, _generation_clamp_subscribe, NULL);

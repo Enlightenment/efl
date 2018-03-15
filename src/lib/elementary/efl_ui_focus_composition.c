@@ -77,7 +77,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
    //get rid of all adapter objects
    EINA_LIST_FREE(pd->adapters, adapter)
      {
-        efl_del(adapter);
+        efl_unref(adapter);
      }
 
    //now build a composition_elements list
@@ -95,7 +95,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
                }
              else if (efl_isa(elem, EFL_GFX_INTERFACE))
                {
-                  o = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, NULL, efl_ui_focus_composition_adapter_canvas_object_set(efl_added, elem));
+                  o = efl_add_ref(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, NULL, efl_ui_focus_composition_adapter_canvas_object_set(efl_added, elem));
 
                   pd->adapters = eina_list_append(pd->adapters, o);
                   pd->register_target = eina_list_append(pd->register_target , o);

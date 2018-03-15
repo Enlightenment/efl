@@ -201,7 +201,7 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj EINA_UNUS
 static Eo* _construct_children(void* pdata, Eo* child)
 {
   Efl_Model_Composite_Selection_Data* pd = pdata;
-  Eo* new_child = efl_add(EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS, NULL);
+  Eo* new_child = efl_add_ref(EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS, NULL);
   Efl_Model_Composite_Selection_Children_Data* data = efl_data_scope_get
     (new_child, EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS);
   data->pd = pd;

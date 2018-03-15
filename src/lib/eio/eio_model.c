@@ -807,7 +807,7 @@ _eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
         char *path = ecore_file_dir_get(priv->path);
         if (path != NULL && strcmp(priv->path, "/") != 0)
           {
-             model = efl_add(MY_CLASS, NULL, eio_model_path_set(efl_added, path));
+             model = efl_add_ref(MY_CLASS, NULL, eio_model_path_set(efl_added, path));
           }
         else
           model = NULL;

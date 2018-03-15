@@ -32,7 +32,7 @@ _a_get(Eo *obj EINA_UNUSED, void *class_data)
    return pd->a;
 }
 
-//return obj = efl_add(DOMAIN_CLASS, NULL);
+//return obj = efl_add_ref(DOMAIN_CLASS, NULL);
 
 EFL_VOID_FUNC_BODYV(domain_recursive, EFL_FUNC_CALL(n), int n);
 

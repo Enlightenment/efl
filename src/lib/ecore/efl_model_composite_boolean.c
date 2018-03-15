@@ -313,7 +313,7 @@ efl_model_acessor_slice_get_at(Efl_Model_Accessor_Slice *acc, unsigned int idx, 
         if (child)
           {
              Efl_Model_Composite_Boolean_Children_Data *cpd;
-             child_bool = efl_add(EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS, NULL);
+             child_bool = efl_add_ref(EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS, NULL);
              cpd = efl_data_scope_get(child_bool, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS);
 
              cpd->parent_pd = acc->parent_pd;

@@ -2513,16 +2513,16 @@ eng_ector_create(void *engine EINA_UNUSED)
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = efl_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
      }
    else if (ector_backend && !strcasecmp(ector_backend, "experimental"))
      {
-        ector = efl_add(ECTOR_GL_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_GL_SURFACE_CLASS, NULL);
         use_gl = EINA_TRUE;
      }
    else
      {
-        ector = efl_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    efl_domain_current_pop();
@@ -2532,7 +2532,7 @@ eng_ector_create(void *engine EINA_UNUSED)
 static void
 eng_ector_destroy(void *engine EINA_UNUSED, Ector_Surface *ector)
 {
-   if (ector) efl_del(ector);
+   if (ector) efl_unref(ector);
 }
 
 static Ector_Buffer *

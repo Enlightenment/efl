@@ -18,7 +18,7 @@ main(int argc, char *argv[])
    efl_object_init();
 
    Eina_Bool called = EINA_FALSE;
-   Eo *obj = efl_add(INHERIT2_CLASS, NULL);
+   Eo *obj = efl_add_ref(INHERIT2_CLASS, NULL);
 
    simple_a_set(obj, 1);
    Simple_Public_Data *pd = efl_data_scope_get(obj, SIMPLE_CLASS);
@@ -26,7 +26,7 @@ main(int argc, char *argv[])
 
    efl_unref(obj);
 
-   obj = efl_add(INHERIT3_CLASS, NULL);
+   obj = efl_add_ref(INHERIT3_CLASS, NULL);
 
    simple_a_set(obj, 1);
    pd = efl_data_scope_get(obj, SIMPLE_CLASS);
@@ -34,7 +34,7 @@ main(int argc, char *argv[])
 
    efl_unref(obj);
 
-   obj = efl_add(INHERIT2_CLASS, NULL);
+   obj = efl_add_ref(INHERIT2_CLASS, NULL);
    called = inherit2_print(obj);
    fail_if(!called);
    called = inherit2_print(obj);
@@ -42,7 +42,7 @@ main(int argc, char *argv[])
    fail_if(!called);
    efl_unref(obj);
 
-   obj = efl_add(SIMPLE_CLASS, NULL);
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
    called = inherit2_print(obj);
    fail_if(called);
 

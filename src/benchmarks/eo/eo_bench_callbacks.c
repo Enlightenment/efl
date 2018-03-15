@@ -16,7 +16,7 @@ static void
 bench_eo_callbacks_add(int request)
 {
    int i;
-   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
 
    for (i = 0 ; i < request ; i++)
      {
@@ -52,7 +52,7 @@ bench_eo_callbacks_call(int request)
    Eo *obj[len];
    for (i = 0 ; i < len ; i++)
      {
-        obj[i] = efl_add(SIMPLE_CLASS, NULL);
+        obj[i] = efl_add_ref(SIMPLE_CLASS, NULL);
 
         for (j = 0 ; j < i ; j++)
           {

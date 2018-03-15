@@ -307,29 +307,29 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
 
    addr.sin_port = htons(12345);
    addr.sin_addr.s_addr = htonl(0xabcdefafU);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin_port)),
                efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin_port = htons(8081);
    addr.sin_addr.s_addr = htonl(0);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin_port)),
                efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin_port = htons(0);
    addr.sin_addr.s_addr = htonl(0x12345678);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_set(efl_added, slice));
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -348,46 +348,46 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
    ecore_con_init();
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: pd->addr.sa_family == 0 is true");
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL);
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL);
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(1);
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, NULL);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, 12345));
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(2);
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: pd->addr.sa_family == 0 is true");
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_set(efl_added, wrong_slice));
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(2);
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: pd->addr.sa_family == 0 is true");
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_port_set(efl_added, 1234));
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(2);
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: pd->addr.sa_family == 0 is true");
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_port_set(efl_added, 1234),
                efl_net_ip_address_set(efl_added, wrong_slice));
    ck_assert_ptr_eq(o, NULL);
    TRAP_ERRORS_FINISH(3);
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address.len is true");
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_set(efl_added, wrong_slice));
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
    TRAP_ERRORS_FINISH(1);
 
    addr.sin_port = htons(12345);
    addr.sin_addr.s_addr = htonl(0xabcdefafU);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin_port)),
                efl_net_ip_address_set(efl_added, slice));
@@ -417,7 +417,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
    efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(1);
 
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -439,7 +439,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_ok)
                                  ntohs(addr.sin_port),
                                  slice);
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin_port = htons(8081);
    addr.sin_addr.s_addr = htonl(0);
@@ -447,7 +447,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_ok)
                                  ntohs(addr.sin_port),
                                  slice);
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin_port = htons(0);
    addr.sin_addr.s_addr = htonl(0x12345678);
@@ -455,7 +455,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_ok)
                                  ntohs(addr.sin_port),
                                  slice);
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -494,14 +494,14 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_ok)
    o = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, &addr);
    ck_assert_ptr_ne(&addr, efl_net_ip_address_sockaddr_get(o));
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin_port = htons(0);
    addr.sin_addr.s_addr = htonl(0);
    o = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, &addr);
    ck_assert_ptr_ne(&addr, efl_net_ip_address_sockaddr_get(o));
    _ipv4_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -539,22 +539,22 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_ok)
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "127.0.0.1:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "127.0.0.1:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "127.0.0.1:0");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "127.0.0.1");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "127.0.0.1");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "127.0.0.1");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "192.168.0.123:80");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "192.168.0.123:80");
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -716,7 +716,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_checks)
         ck_assert_int_eq(efl_net_ip_address_ipv6_local_link_check(o), EINA_FALSE);
         ck_assert_int_eq(efl_net_ip_address_ipv6_local_site_check(o), EINA_FALSE);
 
-        efl_del(o);
+        efl_unref(o);
      }
 
    ecore_con_shutdown();
@@ -773,21 +773,21 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_ok)
 
    addr.sin6_port = htons(12345);
    _ipv6_set(&addr, 1, 2, 3, 4, 5, 6, 7, 8);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin6_port)),
                efl_net_ip_address_set(efl_added, slice));
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin6_port = htons(8081);
    _ipv6_set(&addr, 0, 0, 0, 0, 0, 0, 0, 0);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin6_port)),
                efl_net_ip_address_set(efl_added, slice));
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -808,16 +808,16 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
    /* generic errors checked at ecore_test_efl_net_ip_address_ipv4_manual_fail */
 
    TRAP_ERRORS_BEGIN(eina_safety, ERR, "safety check failed: rw_slice.len != address.len is true");
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_set(efl_added, wrong_slice));
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
    TRAP_ERRORS_FINISH(1);
 
    addr.sin6_port = htons(12345);
    _ipv6_set(&addr, 0, 0, 0, 0, 0, 0, 0, 1);
-   o = efl_add(EFL_NET_IP_ADDRESS_CLASS, NULL,
+   o = efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, NULL,
                efl_net_ip_address_family_set(efl_added, AF_INET6),
                efl_net_ip_address_port_set(efl_added, ntohs(addr.sin6_port)),
                efl_net_ip_address_set(efl_added, slice));
@@ -847,7 +847,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
    efl_net_ip_address_set(o, slice);
    TRAP_ERRORS_FINISH(1);
 
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -869,7 +869,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_create_ok)
                                  ntohs(addr.sin6_port),
                                  slice);
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin6_port = htons(8081);
    _ipv6_set(&addr, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -877,7 +877,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_create_ok)
                                  ntohs(addr.sin6_port),
                                  slice);
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin6_port = htons(0);
    _ipv6_set(&addr, 0, 0, 0, 0, 0, 0, 0, 1);
@@ -885,7 +885,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_create_ok)
                                  ntohs(addr.sin6_port),
                                  slice);
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -905,14 +905,14 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_create_sockaddr_ok)
    o = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, &addr);
    ck_assert_ptr_ne(&addr, efl_net_ip_address_sockaddr_get(o));
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    addr.sin6_port = htons(0);
    _ipv6_set(&addr, 0, 0, 0, 0, 0, 0, 0, 0);
    o = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, &addr);
    ck_assert_ptr_ne(&addr, efl_net_ip_address_sockaddr_get(o));
    _ipv6_check(o, &addr);
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -927,86 +927,86 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_ok)
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::1]:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::1]:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::1]:0");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::1]");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::1]");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::1]");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "::1");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::1]");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::]:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::]:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::]:0");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::]");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::]");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::]");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "::");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::]");
-   efl_del(o);
+   efl_unref(o);
 
    /* IPv4 Mapped */
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::ffff:192.168.0.1]:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::ffff:192.168.0.1]:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::ffff:192.168.0.1]");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::ffff:192.168.0.1]");
-   efl_del(o);
+   efl_unref(o);
 
    /* IPv4 Compatible */
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::192.168.0.1]:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::192.168.0.1]:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[::192.168.0.1]");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[::192.168.0.1]");
-   efl_del(o);
+   efl_unref(o);
 
    /* Link Local */
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[fe80::1]:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[fe80::1]:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[fe80::1]");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[fe80::1]");
-   efl_del(o);
+   efl_unref(o);
 
    /* Site Local */
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[fc00::1]:12345");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[fc00::1]:12345");
-   efl_del(o);
+   efl_unref(o);
 
    o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, "[fc00::1]");
    ck_assert_ptr_ne(o, NULL);
    ck_assert_str_eq(efl_net_ip_address_string_get(o), "[fc00::1]");
-   efl_del(o);
+   efl_unref(o);
 
    ecore_con_shutdown();
 }
@@ -1253,7 +1253,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_checks)
         ck_assert_int_eq(efl_net_ip_address_ipv6_local_link_check(o), IN6_IS_ADDR_LINKLOCAL(ia));
         ck_assert_int_eq(efl_net_ip_address_ipv6_local_site_check(o), IN6_IS_ADDR_SITELOCAL(ia));
 
-        efl_del(o);
+        efl_unref(o);
      }
 
    ecore_con_shutdown();

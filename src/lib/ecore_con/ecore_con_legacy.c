@@ -1590,7 +1590,7 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
 
    /* legacy compatibility: server never verified peer, only dialer did */
 
-   return efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+   return efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                   efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                   efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
                   efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
@@ -1645,7 +1645,7 @@ _ecore_con_server_server_ssl_job(void *data, const Eina_Value v,
  error_server:
    efl_del(inner_server);
  error_inner_server:
-   efl_del(ssl_ctx);
+   efl_unref(ssl_ctx);
  error_ssl_ctx:
    if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
      _ecore_con_post_event_server_del(svr);
@@ -1969,7 +1969,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    if (svr->ssl.verify)
      verify_mode = EFL_NET_SSL_VERIFY_MODE_REQUIRED;
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
@@ -2024,7 +2024,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
  error_dialer:
    efl_del(inner_dialer);
  error_inner_dialer:
-   efl_del(ssl_ctx);
+   efl_unref(ssl_ctx);
  error_ssl_ctx:
    if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
      _ecore_con_post_event_server_del(svr);
@@ -2063,7 +2063,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    if (svr->ssl.verify)
      verify_mode = EFL_NET_SSL_VERIFY_MODE_REQUIRED;
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
@@ -2110,7 +2110,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    efl_del(inner_dialer);
  error_inner_dialer:
    svr->dialer = tcp_dialer; /* put it back */
-   efl_del(ssl_ctx);
+   efl_unref(ssl_ctx);
  error_ssl_ctx:
    if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
      _ecore_con_post_event_server_del(svr);
