@@ -761,6 +761,7 @@ _merge_unit(Eolian_Unit *dest, Eolian_Unit *src)
    eina_hash_foreach(src->aliases, _merge_unit_cb, dest->aliases);
    eina_hash_foreach(src->structs, _merge_unit_cb, dest->structs);
    eina_hash_foreach(src->enums, _merge_unit_cb, dest->enums);
+   eina_hash_foreach(src->objects, _merge_unit_cb, dest->objects);
 }
 
 typedef struct _Merge_Data
