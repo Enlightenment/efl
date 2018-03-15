@@ -4669,7 +4669,7 @@ _elm_interface_scrollable_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED
 {
    Efl_Ui_Focus_Manager *manager;
 
-   manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
+   manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
 
