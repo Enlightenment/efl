@@ -1142,6 +1142,7 @@ eo_lexer_dtor_pop(Eo_Lexer *ls)
 {
    Eo_Lexer_Dtor *dt = eina_list_data_get(ls->dtors);
    ls->dtors = eina_list_remove_list(ls->dtors, ls->dtors);
+   dt->free_cb(dt->data);
    free(dt);
 }
 

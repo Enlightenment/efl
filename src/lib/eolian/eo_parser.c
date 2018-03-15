@@ -436,8 +436,11 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->base.name = name;
    def->type = EOLIAN_TYPEDECL_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
-   def->freefunc = freefunc;
-   eo_lexer_dtor_pop(ls);
+   if (freefunc)
+     {
+        def->freefunc = eina_stringshare_ref(freefunc);
+        eo_lexer_dtor_pop(ls);
+     }
    check_next(ls, '{');
    FILL_DOC(ls, def, doc);
    while (ls->t.token != '}')
@@ -779,8 +782,11 @@ parse_typedef(Eo_Lexer *ls)
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
    parse_struct_attrs(ls, EINA_FALSE, &has_extern, &freefunc);
-   def->freefunc = freefunc;
-   eo_lexer_dtor_pop(ls);
+   if (freefunc)
+     {
+        def->freefunc = eina_stringshare_ref(freefunc);
+        eo_lexer_dtor_pop(ls);
+     }
    def->type = EOLIAN_TYPEDECL_ALIAS;
    def->is_extern = has_extern;
    buf = eina_strbuf_new();
@@ -2141,8 +2147,11 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
                 def->is_extern = has_extern;
                 def->type = EOLIAN_TYPEDECL_STRUCT_OPAQUE;
-                def->freefunc = freefunc;
-                eo_lexer_dtor_pop(ls);
+                if (freefunc)
+                  {
+                     def->freefunc = eina_stringshare_ref(freefunc);
+                     eo_lexer_dtor_pop(ls);
+                  }
                 def->base.name = name;
                 eo_lexer_get(ls);
                 FILL_DOC(ls, def, doc);
