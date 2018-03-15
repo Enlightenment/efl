@@ -1605,7 +1605,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           }
      }
 
-
+   //now check if this is also a listener object
+   if (redirect_manager)
+     {
+        //set the redirect
+        efl_ui_focus_manager_redirect_set(obj, redirect_manager);
+     }
 
    /*
      Only emit those signals if we are already at the top of the focus stack.
@@ -1619,13 +1624,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
         if (new_focusable)
           efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
-     }
-
-   //now check if this is also a listener object
-   if (redirect_manager)
-     {
-        //set the redirect
-        efl_ui_focus_manager_redirect_set(obj, redirect_manager);
      }
 }
 
