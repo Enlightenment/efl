@@ -128,6 +128,7 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *type_decls;
    Eina_List *expr_defs;
    Eina_List *strs;
+   Eina_List *nodes;
 } Eo_Lexer_Temps;
 
 /* keeps all lexer state */
@@ -218,5 +219,8 @@ void eo_lexer_context_push   (Eo_Lexer *ls);
 void eo_lexer_context_pop    (Eo_Lexer *ls);
 void eo_lexer_context_restore(Eo_Lexer *ls);
 void eo_lexer_context_clear  (Eo_Lexer *ls);
+
+Eolian_Object *eo_lexer_node_new(Eo_Lexer *ls, size_t objsize);
+
 
 #endif /* __EO_LEXER_H__ */

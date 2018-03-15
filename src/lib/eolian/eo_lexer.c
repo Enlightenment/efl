@@ -1052,12 +1052,60 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
    next_char(ls);
 }
 
+Eolian_Object *
+eo_lexer_node_new(Eo_Lexer *ls, size_t objsize)
+{
+   Eolian_Object *obj = calloc(1, objsize);
+   ls->tmp.nodes = eina_list_prepend(ls->tmp.nodes, obj);
+   eolian_object_ref(obj);
+   return obj;
+}
+
+int
+_node_free(Eolian_Object *obj)
+{
+   int rc = obj->refcount;
+#if 0
+   /* for when we have a proper node allocator and collect on shutdown */
+   if (rc > 1)
+     {
+        _eolian_log("node %p (type %d, name %s at %s:%d:%d)"
+                    " dangling ref (count: %d)", obj, obj->type, obj->name,
+                    obj->file, obj->line, obj->column);
+     }
+#endif
+   switch (obj->type)
+     {
+      case EOLIAN_OBJECT_CLASS:
+        database_class_del((Eolian_Class *)obj);
+        break;
+      case EOLIAN_OBJECT_TYPEDECL:
+        database_typedecl_del((Eolian_Typedecl *)obj);
+        break;
+      case EOLIAN_OBJECT_TYPE:
+        database_type_del((Eolian_Type *)obj);
+        break;
+      case EOLIAN_OBJECT_VARIABLE:
+        database_var_del((Eolian_Variable *)obj);
+        break;
+      case EOLIAN_OBJECT_EXPRESSION:
+        database_expr_del((Eolian_Expression *)obj);
+        break;
+      default:
+        /* normally unreachable, just for debug */
+        assert(0);
+        break;
+     }
+   return rc;
+}
+
 static void
 _temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
    Eolian_Type *tp;
    Eolian_Typedecl *tpd;
+   Eolian_Object *obj;
    const char *s;
 
    if (tmp->kls)
@@ -1077,6 +1125,9 @@ _temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);
+
+   EINA_LIST_FREE(tmp->nodes, obj)
+     _node_free(obj);
 }
 
 static void
