@@ -149,8 +149,10 @@ struct marshall_type_visitor_generate
                }}
         };
 
-        if (!is_ptr && regular.is_struct() && !is_struct_blacklisted(regular))
+        if (regular.is_struct() && !is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
           {
+             if ((is_out || is_return) && is_ptr)
+                 return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
              return as_generator(*(lower_case[string] << ".") << string << "_StructInternal")
                     .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
           }

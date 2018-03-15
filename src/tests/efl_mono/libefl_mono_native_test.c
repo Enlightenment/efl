@@ -44,7 +44,8 @@ typedef struct Test_Testing_Data
   Eina_Free_Cb free_cb;
   Eina_Error error_code;
   Eina_Value *stored_value;
-
+  Test_StructSimple stored_struct;
+  int stored_int;
 } Test_Testing_Data;
 
 typedef struct Test_Numberwrapper_Data
@@ -98,6 +99,17 @@ Test_Numberwrapper **_new_obj_ref(int n)
 Efl_Object *_test_testing_return_object(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return obj;
+}
+
+void _test_testing_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, int x, int *y)
+{
+    *y = -x;
+}
+
+void _test_testing_int_ptr_out(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, int x, int **y)
+{
+    pd->stored_int = x * 2;
+    *y = &pd->stored_int;
 }
 
 const char *_test_testing_in_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char *str)
@@ -3342,20 +3354,34 @@ Eina_Bool _test_testing_struct_simple_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_T
    return check_and_modify_struct_simple(&simple);
 }
 
-EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+static void _reverse_string(char *str)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   int len = strlen(str);
+   if (len > 0) {
+       for (int i=0, k=len-1; i < len/2; i++, k--) {
+           char tmp = str[k];
+           str[k] = str[i];
+           str[i] = tmp;
+       }
+   }
 }
 
 EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+Eina_Bool _test_testing_struct_simple_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   simple->fint = -simple->fint;
+   _reverse_string(simple->fstring);
+   return EINA_TRUE;
+}
+
+EOLIAN
+Test_StructSimple _test_testing_struct_simple_ptr_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+   Test_StructSimple ret = *simple;
+   free(simple);
+   ret.fint = -ret.fint;
+   _reverse_string(ret.fstring);
+   return ret;
 }
 
 EOLIAN
@@ -3373,19 +3399,20 @@ Eina_Bool _test_testing_struct_simple_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_
 }
 
 EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+Test_StructSimple _test_testing_struct_simple_ptr_out(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Test_StructSimple **simple)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   struct_simple_with_values(&pd->stored_struct);
+   *simple = &pd->stored_struct;
+   return **simple;
 }
 
 EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+Test_StructSimple _test_testing_struct_simple_ptr_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   *simple = malloc(sizeof(Test_StructSimple));
+   struct_simple_with_values(*simple);
+   (*simple)->fstring = "Ptr Out Own";
+   return **simple;
 }
 
 EOLIAN
@@ -3399,15 +3426,72 @@ Test_StructSimple _test_testing_struct_simple_return(EINA_UNUSED Eo *obj, EINA_U
 EOLIAN
 Test_StructSimple *_test_testing_struct_simple_ptr_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
-   EINA_LOG_ERR("Not implemented!");
-   return NULL;
+   struct_simple_with_values(&pd->stored_struct);
+   pd->stored_struct.fstring = "Ret Ptr";
+   return &pd->stored_struct;
 }
 
 EOLIAN
 Test_StructSimple *_test_testing_struct_simple_ptr_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
-   EINA_LOG_ERR("Not implemented!");
-   return NULL;
+   Test_StructSimple *ret = malloc(sizeof(Test_StructSimple));
+   struct_simple_with_values(ret);
+   ret->fstring = "Ret Ptr Own";
+   return ret;
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_in(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple simple)
+{
+    test_testing_struct_simple_in(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_in(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+    test_testing_struct_simple_ptr_in(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_in_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+    test_testing_struct_simple_ptr_in_own(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_out(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+    test_testing_struct_simple_out(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_out(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+{
+    test_testing_struct_simple_ptr_out(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_out_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+{
+    test_testing_struct_simple_ptr_out_own(obj, simple);
+}
+
+EOLIAN
+Test_StructSimple _test_testing_call_struct_simple_return(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    return test_testing_struct_simple_return(obj);
+}
+
+EOLIAN
+Test_StructSimple *_test_testing_call_struct_simple_ptr_return(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    return test_testing_struct_simple_ptr_return(obj);
+}
+
+EOLIAN
+Test_StructSimple *_test_testing_call_struct_simple_ptr_return_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    return test_testing_struct_simple_ptr_return_own(obj);
 }
 
 // with complex types

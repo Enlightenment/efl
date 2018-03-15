@@ -53,6 +53,30 @@ inline bool need_struct_conversion(attributes::regular_type_def const* regular)
    return regular && regular->is_struct() && !is_struct_blacklisted(*regular);
 }
 
+inline bool need_struct_conversion(attributes::parameter_def const& param, attributes::regular_type_def const* regular)
+{
+   if (param.direction == attributes::parameter_direction::in && param.type.has_own)
+     return false;
+
+   return need_struct_conversion(regular);
+}
+
+inline bool need_struct_conversion_in_return(attributes::type_def const& ret_type, attributes::parameter_direction const& direction)
+{
+   auto regular = efl::eina::get<attributes::regular_type_def>(&ret_type.original_type);
+
+   if (!regular->is_struct())
+     return false;
+
+   if (regular->is_struct() && (direction == attributes::parameter_direction::out || direction == attributes::parameter_direction::unknown))
+     return false;
+
+   if (ret_type.has_own)
+     return false;
+
+   return true;
+}
+
 inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
 {
    if (!regular)

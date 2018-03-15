@@ -94,10 +94,11 @@ struct struct_internal_definition_generator
   {
      if (!as_generator
          (
+          "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
           "[StructLayout(LayoutKind.Sequential)]\n"
-          "internal struct " << string << "\n{\n"
+          "public struct " << string << "\n{\n"
          )
-         .generate(sink, binding_struct_internal_name(struct_), context))
+         .generate(sink, std::make_tuple<>(binding_struct_name(struct_), binding_struct_internal_name(struct_)), context))
        return false;
 
      // iterate struct fields
@@ -131,6 +132,24 @@ struct struct_internal_definition_generator
            if (!as_generator("internal IntPtr field;\n").generate(sink, nullptr, context))
              return false;
        }
+
+     auto external_name = binding_struct_name(struct_);
+     auto internal_name = binding_struct_internal_name(struct_);
+
+     if(!as_generator(
+                 scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
+                 << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConvertion.ToExternal(struct_);\n"
+                 << scope_tab << "}\n"
+                 << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
+                 << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConvertion.ToInternal(struct_);\n"
+                 << scope_tab << "}\n"
+                 ).generate(sink, std::make_tuple(external_name, internal_name, external_name,
+                                                  internal_name, external_name, external_name), context))
+         return false;
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
@@ -172,7 +191,7 @@ struct to_internal_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
-      else if (field.type.is_ptr && need_pointer_conversion(regular))
+      else if (field.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_internal_struct." << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
@@ -282,7 +301,7 @@ struct to_external_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
-      else if (field.type.is_ptr && need_pointer_conversion(regular))
+      else if (field.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_external_struct." << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")

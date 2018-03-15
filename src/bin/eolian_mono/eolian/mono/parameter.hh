@@ -22,6 +22,8 @@ namespace eolian_mono {
     struct native_convert_out_variable_generator;
     struct convert_out_variable_generator;
     struct convert_out_assign_generator;
+    struct native_convert_in_ptr_assign_generator;
+    struct convert_in_ptr_assign_generator;
     struct native_convert_out_assign_parameterized;
     struct native_convert_out_assign_generator;
     struct convert_return_generator;
@@ -133,6 +135,26 @@ struct is_generator< ::eolian_mono::convert_out_assign_generator> : std::true_ty
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::convert_out_assign_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_in_ptr_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_in_ptr_assign_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_in_ptr_assign_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_in_ptr_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_in_ptr_assign_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_in_ptr_assign_generator> : std::integral_constant<int, 1> {};
 }
 
 template <>
@@ -341,14 +363,29 @@ inline std::string direction_modifier(attributes::parameter_def const& param)
      }
    else if (param.direction != attributes::parameter_direction::in)
      {
-        auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-        if (param.type.c_type == "Eina_Slice" || param.type.c_type == "Eina_Rw_Slice"
-            || need_struct_conversion(regular))
+        if (param.type.c_type == "Eina_Slice" || param.type.c_type == "Eina_Rw_Slice")
            return " ref ";
         else
            return " out ";
      }
+   else if (param.direction == attributes::parameter_direction::in && param.type.is_ptr)
+     {
+        auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+        if (need_struct_conversion(regular))
+           return " ref "; // Don't add ref on Marshal if it is ptr
+     }
    return " ";
+}
+
+std::string marshall_direction_modifier(attributes::parameter_def const& param)
+{
+   if (param.direction == attributes::parameter_direction::in && param.type.is_ptr)
+     {
+        auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+        if (need_struct_conversion(regular) && param.type.has_own)
+           return " "; // Don't add ref on Marshal if it is ptr
+     }
+   return direction_modifier(param);
 }
 
 struct is_fp_visitor
@@ -412,7 +449,7 @@ struct marshall_parameter_generator
 
       if (!param.type.original_type.visit(is_fp_visitor{}))
          return as_generator(
-                 direction_modifier(param) << marshall_type << " " << string
+                 marshall_direction_modifier(param) << marshall_type << " " << string
             ).generate(sink, std::make_tuple(param, param_name), context);
 
       return as_generator(
@@ -421,14 +458,15 @@ struct marshall_parameter_generator
            ).generate(sink, param, context);
    }
 } const marshall_parameter {};
-  
+
+// FIXME This seems to be used only in the else branch of the native function definition. Is it really needed?
 struct argument_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
      std::string param_name = escape_keyword(param.param_name);
-     std::string direction = direction_modifier(param);
+     std::string direction = marshall_direction_modifier(param);
 
      if (!param.type.original_type.visit(is_fp_visitor{}))
        return as_generator(
@@ -475,7 +513,7 @@ struct argument_invocation_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     std::string arg = direction_modifier(param);
+     std::string arg = marshall_direction_modifier(param);
 
      if (use_conversion_vars && param_should_use_out_var(param, false))
        arg += out_variable_name(param.param_name);
@@ -507,7 +545,7 @@ struct native_convert_in_variable_generator
         return true;
 
       auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-      if (param.type.is_ptr && need_pointer_conversion(regular))
+      if (param.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(param, regular))
         {
            return as_generator(
                 "var " << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << escape_keyword(param.param_name) << ");\n"
@@ -575,7 +613,7 @@ struct convert_in_variable_generator
         return true;
 
       auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-      if (param.type.is_ptr && need_pointer_conversion(regular))
+      if (param.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(param, regular))
         {
            return as_generator(
                 "var " << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(" << escape_keyword(param.param_name) << ");\n"
@@ -659,7 +697,8 @@ struct convert_in_variable_generator
    }
 
 } const convert_in_variable {};
-  
+
+/* Some types require an intermediate variable to be filled as out parameter in the marshalled function */
 struct convert_out_variable_generator
 {
    template <typename OutputIterator, typename Context>
@@ -669,7 +708,7 @@ struct convert_out_variable_generator
         return true;
 
       auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-      if (param.type.is_ptr && need_pointer_conversion(regular))
+      if (param.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(regular))
         {
            return as_generator(
                "System.IntPtr " << string << " = System.IntPtr.Zero;\n"
@@ -679,7 +718,7 @@ struct convert_out_variable_generator
         {
            return as_generator(
                "var " << string << " = new " << marshall_type << "();\n"
-             ).generate(sink, std::make_tuple(out_variable_name(param.param_name), param.type), context);
+             ).generate(sink, std::make_tuple(out_variable_name(param.param_name), param), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
@@ -742,7 +781,7 @@ struct native_convert_out_variable_generator
         return true;
 
       auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-      if (param.type.is_ptr && need_pointer_conversion(regular))
+      if (param.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(regular))
         {
            return as_generator(
                   type << " " << string << " = default(" << type << ");\n"
@@ -819,6 +858,7 @@ struct native_convert_out_variable_generator
 
 } const native_convert_out_variable {};
 
+/* Assign the Managed out variables from the marshalled intermediate ones if needed. */
 struct convert_out_assign_generator
 {
    template <typename OutputIterator, typename Context>
@@ -828,11 +868,17 @@ struct convert_out_assign_generator
         return true;
 
       auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-      if (param.type.is_ptr && need_pointer_conversion(regular))
+      if (param.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion_in_return(param.type, param.direction))
         {
-           return as_generator(
+           bool ret = as_generator(
                 string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << out_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+
+           if (param.type.has_own)
+             ret = ret && as_generator(scope_tab << scope_tab << "Marshal.FreeHGlobal(" << out_variable_name(param.param_name) << ");\n"
+                     ).generate(sink, attributes::unused, context);
+
+           return ret;
         }
       else if (need_struct_conversion(regular))
         {
@@ -911,6 +957,40 @@ struct convert_out_assign_generator
 
 } const convert_out_assign {};
 
+struct native_convert_in_ptr_assign_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && need_struct_conversion(regular))
+        {
+           return as_generator(
+                 string << " = " << type << "_StructConvertion.ToInternal(" << in_variable_name(param.param_name) << ");\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+        }
+
+      return true;
+   }
+} const native_convert_in_ptr_assign {};
+
+struct convert_in_ptr_assign_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && need_struct_conversion(regular))
+        {
+           return as_generator(
+                 string << " = " << type << "_StructConvertion.ToExternal(" << in_variable_name(param.param_name) << ");\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+        }
+
+      return true;
+   }
+} const convert_in_ptr_assign {};
+
 struct convert_return_variable_generator
 {
    template <typename OutputIterator, typename Context>
@@ -923,17 +1003,19 @@ struct convert_return_variable_generator
 
 } const convert_return_variable {};
 
-
+/* Converts the intermediate return variable to the proper API type */
 struct convert_return_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
      auto regular = efl::eina::get<attributes::regular_type_def>(&ret_type.original_type);
-     if (ret_type.is_ptr && need_pointer_conversion(regular))
+     if (ret_type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion_in_return(ret_type, attributes::parameter_direction::unknown))
        {
           return as_generator(
-               "return eina.PrimitiveConversion.PointerToManaged<" << type << ">(_ret_var);\n"
+               "var __ret_tmp = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_ret_var);\n"
+               << scope_tab << scope_tab << (ret_type.has_own ? ("Marshal.FreeHGlobal(_ret_var);\n"): "\n")
+               << scope_tab << scope_tab << "return __ret_tmp;\n"
             ).generate(sink, ret_type, context);
        }
      else if (need_struct_conversion(regular))
@@ -998,7 +1080,7 @@ struct native_convert_out_assign_generator
         return true;
 
       auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-      if (param.type.is_ptr && need_pointer_conversion(regular))
+      if (param.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion_in_return(param.type, param.direction))
         {
            return as_generator(
                 string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(" << string << ");\n"
@@ -1131,7 +1213,7 @@ struct native_convert_return_generator
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
      auto regular = efl::eina::get<attributes::regular_type_def>(&ret_type.original_type);
-     if (ret_type.is_ptr && need_pointer_conversion(regular))
+     if (ret_type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion_in_return(ret_type, attributes::parameter_direction::unknown) )
        {
           return as_generator(
                "return eina.PrimitiveConversion.ManagedToPointerAlloc(_ret_var);\n"

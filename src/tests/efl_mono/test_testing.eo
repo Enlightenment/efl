@@ -87,6 +87,20 @@ class Test.Testing (Efl.Object) {
          return: Test.Testing;
       }
 
+      int_out {
+         params {
+            @in x: int;
+            @out y: int;
+         }
+      }
+
+      int_ptr_out {
+         params {
+            @in x: int;
+            @out y: ptr(int);
+         }
+      }
+
       in_stringshare {
          params {
             @in v: stringshare;
@@ -1355,19 +1369,19 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
-      // struct_simple_ptr_in {
-      //    params {
-      //       @in simple: ptr(Test.StructSimple);
-      //    }
-      //    return: bool;
-      // }
-      //
-      // struct_simple_ptr_in_own {
-      //    params {
-      //       @in simple: ptr(Test.StructSimple) @owned;
-      //    }
-      //    return: bool;
-      // }
+      struct_simple_ptr_in {
+         params {
+            @in simple: ptr(Test.StructSimple);
+         }
+         return: bool;
+      }
+
+      struct_simple_ptr_in_own {
+         params {
+            @in simple: ptr(Test.StructSimple) @owned;
+         }
+         return: Test.StructSimple;
+      }
 
       struct_simple_out {
          params {
@@ -1376,31 +1390,79 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
-      // struct_simple_ptr_out {
-      //    params {
-      //       @out simple: ptr(Test.StructSimple);
-      //    }
-      //    return: bool;
-      // }
-      //
-      // struct_simple_ptr_out_own {
-      //    params {
-      //       @out simple: ptr(Test.StructSimple) @owned;
-      //    }
-      //    return: bool;
-      // }
+      struct_simple_ptr_out {
+         params {
+            @out simple: ptr(Test.StructSimple);
+         }
+         return: Test.StructSimple;
+      }
+
+      struct_simple_ptr_out_own {
+         params {
+            @out simple: ptr(Test.StructSimple) @owned;
+         }
+         return: Test.StructSimple;
+      }
 
       struct_simple_return {
          return: Test.StructSimple;
       }
 
-      // struct_simple_ptr_return {
-      //    return: ptr(Test.StructSimple);
-      // }
-      //
-      // struct_simple_ptr_return_own {
-      //    return: ptr(Test.StructSimple) @owned;
-      // }
+      struct_simple_ptr_return {
+         return: ptr(Test.StructSimple);
+      }
+
+      struct_simple_ptr_return_own {
+         return: ptr(Test.StructSimple) @owned;
+      }
+
+      call_struct_simple_in {
+         params {
+            @in simple: Test.StructSimple;
+         }
+      }
+
+      call_struct_simple_ptr_in {
+         params {
+            @in simple: ptr(Test.StructSimple);
+         }
+      }
+
+      call_struct_simple_ptr_in_own {
+         params {
+            @in simple: ptr(Test.StructSimple) @owned;
+         }
+      }
+
+      call_struct_simple_out {
+         params {
+            @out simple: Test.StructSimple;
+         }
+      }
+
+      call_struct_simple_ptr_out {
+         params {
+            @out simple: ptr(Test.StructSimple);
+         }
+      }
+
+      call_struct_simple_ptr_out_own {
+         params {
+            @out simple: ptr(Test.StructSimple) @owned;
+         }
+      }
+
+      call_struct_simple_return {
+         return: Test.StructSimple;
+      }
+
+      call_struct_simple_ptr_return {
+         return: ptr(Test.StructSimple);
+      }
+
+      call_struct_simple_ptr_return_own {
+         return: ptr(Test.StructSimple) @owned;
+      }
 
       struct_complex_in {
          params {
@@ -1409,19 +1471,19 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
-      // struct_complex_ptr_in {
-      //    params {
-      //       @in complex: ptr(Test.StructComplex);
-      //    }
-      //    return: bool;
-      // }
-      //
-      // struct_complex_ptr_in_own {
-      //    params {
-      //       @in complex: ptr(Test.StructComplex) @owned;
-      //    }
-      //    return: bool;
-      // }
+      struct_complex_ptr_in {
+         params {
+            @in complex: ptr(Test.StructComplex);
+         }
+         return: bool;
+      }
+
+      struct_complex_ptr_in_own {
+         params {
+            @in complex: ptr(Test.StructComplex) @owned;
+         }
+         return: bool;
+      }
 
       struct_complex_out {
          params {
