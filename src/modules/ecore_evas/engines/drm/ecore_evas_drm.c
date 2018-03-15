@@ -809,6 +809,12 @@ _drm_animator_register(Ecore_Evas *ee)
           }
      }
 
+   if (ee->animator_ticked || ee->animator_ran)
+     {
+        edata->ticking = EINA_TRUE;
+        return;
+     }
+
    if (edata->tick_job) ERR("Double animator register");
    else
    if (!edata->ticking &&
