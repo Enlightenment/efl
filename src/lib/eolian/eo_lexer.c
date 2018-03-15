@@ -1014,64 +1014,15 @@ get_filename(Eo_Lexer *ls)
 }
 
 static void
-eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
-{
-   Eina_File *f = eina_file_open(source, EINA_FALSE);
-   if (!f)
-     {
-        _eolian_log("%s", strerror(errno));
-        longjmp(ls->err_jmp, EINA_TRUE);
-     }
-   ls->lookahead.token = -1;
-   ls->state           = state;
-   ls->buff            = eina_strbuf_new();
-   ls->handle          = f;
-   ls->stream          = eina_file_map_all(f, EINA_FILE_RANDOM);
-   ls->stream_end      = ls->stream + eina_file_size_get(f);
-   ls->stream_line     = ls->stream;
-   ls->source          = eina_stringshare_add(source);
-   ls->filename        = get_filename(ls);
-   ls->iline_number    = ls->line_number = 1;
-   ls->icolumn         = ls->column = -1;
-   ls->decpoint        = '.';
-   next_char(ls);
-
-   Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
-   ls->unit = ncunit;
-   database_unit_init(state, ncunit, ls->filename);
-   eina_hash_add(state->units, ls->filename, ncunit);
-
-   if (ls->current != 0xEF)
-     return;
-   next_char(ls);
-   if (ls->current != 0xBB)
-     return;
-   next_char(ls);
-   if (ls->current != 0xBF)
-     return;
-   next_char(ls);
-}
-
-Eolian_Object *
-eo_lexer_node_new(Eo_Lexer *ls, size_t objsize)
-{
-   Eolian_Object *obj = calloc(1, objsize);
-   ls->tmp.nodes = eina_list_prepend(ls->tmp.nodes, obj);
-   eolian_object_ref(obj);
-   return obj;
-}
-
-int
 _node_free(Eolian_Object *obj)
 {
-   int rc = obj->refcount;
 #if 0
    /* for when we have a proper node allocator and collect on shutdown */
-   if (rc > 1)
+   if (obj->refcount > 1)
      {
         _eolian_log("node %p (type %d, name %s at %s:%d:%d)"
                     " dangling ref (count: %d)", obj, obj->type, obj->name,
-                    obj->file, obj->line, obj->column);
+                    obj->file, obj->line, obj->column, obj->refcount);
      }
 #endif
    switch (obj->type)
@@ -1096,7 +1047,65 @@ _node_free(Eolian_Object *obj)
         assert(0);
         break;
      }
-   return rc;
+}
+
+static void
+eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
+{
+   Eina_File *f = eina_file_open(source, EINA_FALSE);
+   if (!f)
+     {
+        _eolian_log("%s", strerror(errno));
+        longjmp(ls->err_jmp, EINA_TRUE);
+     }
+   ls->lookahead.token = -1;
+   ls->state           = state;
+   ls->buff            = eina_strbuf_new();
+   ls->handle          = f;
+   ls->stream          = eina_file_map_all(f, EINA_FILE_RANDOM);
+   ls->stream_end      = ls->stream + eina_file_size_get(f);
+   ls->stream_line     = ls->stream;
+   ls->source          = eina_stringshare_add(source);
+   ls->filename        = get_filename(ls);
+   ls->iline_number    = ls->line_number = 1;
+   ls->icolumn         = ls->column = -1;
+   ls->decpoint        = '.';
+   ls->nodes           = eina_hash_pointer_new(EINA_FREE_CB(_node_free));
+   next_char(ls);
+
+   Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
+   ls->unit = ncunit;
+   database_unit_init(state, ncunit, ls->filename);
+   eina_hash_add(state->units, ls->filename, ncunit);
+
+   if (ls->current != 0xEF)
+     return;
+   next_char(ls);
+   if (ls->current != 0xBB)
+     return;
+   next_char(ls);
+   if (ls->current != 0xBF)
+     return;
+   next_char(ls);
+}
+
+Eolian_Object *
+eo_lexer_node_new(Eo_Lexer *ls, size_t objsize)
+{
+   Eolian_Object *obj = calloc(1, objsize);
+   eina_hash_add(ls->nodes, &obj, obj);
+   eolian_object_ref(obj);
+   return obj;
+}
+
+Eolian_Object *
+eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj)
+{
+   /* just for debug */
+   assert(eina_hash_find(ls->nodes, &obj) && (obj->refcount >= 1));
+   eolian_object_unref(obj);
+   eina_hash_set(ls->nodes, &obj, NULL);
+   return obj;
 }
 
 static void
@@ -1104,7 +1113,6 @@ _temps_free(Eo_Lexer_Temps *tmp)
 {
    Eolian_Type *tp;
    Eolian_Typedecl *tpd;
-   Eolian_Object *obj;
 
    if (tmp->kls)
      database_class_del(tmp->kls);
@@ -1117,9 +1125,6 @@ _temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->type_decls, tpd)
      database_typedecl_del(tpd);
-
-   EINA_LIST_FREE(tmp->nodes, obj)
-     _node_free(obj);
 }
 
 static void
@@ -1175,6 +1180,8 @@ eo_lexer_free(Eo_Lexer *ls)
    Eo_Lexer_Dtor *dtor;
    EINA_LIST_FREE(ls->dtors, dtor)
      dtor->free_cb(dtor->data);
+
+   eina_hash_free(ls->nodes);
 
    free(ls);
 }

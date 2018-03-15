@@ -126,7 +126,6 @@ typedef struct _Eo_Lexer_Temps
    Eina_List *type_defs;
    Eina_List *type_decls;
    Eina_List *expr_defs;
-   Eina_List *nodes;
 } Eo_Lexer_Temps;
 
 typedef struct _Eo_Lexer_Dtor
@@ -189,6 +188,7 @@ typedef struct _Eo_Lexer
 
    Eolian_Class *klass;
    Eina_List *dtors;
+   Eina_Hash *nodes;
 
    /* whether we allow lexing expression related tokens */
    Eina_Bool expr_mode;
@@ -227,6 +227,19 @@ void eo_lexer_context_clear  (Eo_Lexer *ls);
 
 /* node ("heap") management */
 Eolian_Object *eo_lexer_node_new(Eo_Lexer *ls, size_t objsize);
+Eolian_Object *eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj);
+
+static inline Eolian_Type *
+eo_lexer_type_new(Eo_Lexer *ls)
+{
+   return (Eolian_Type *)eo_lexer_node_new(ls, sizeof(Eolian_Type));
+}
+
+static inline Eolian_Type *
+eo_lexer_type_release(Eo_Lexer *ls, Eolian_Type *tp)
+{
+   return (Eolian_Type *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
+}
 
 /* "stack" management, only to protect against errors (jumps) in parsing */
 void eo_lexer_dtor_push(Eo_Lexer *ls, Eina_Free_Cb free_cb, void *data);

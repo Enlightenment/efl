@@ -97,26 +97,12 @@ check_match(Eo_Lexer *ls, int what, int who, int where, int col)
      }
 }
 
-static Eolian_Type *
-push_type(Eo_Lexer *ls)
-{
-   Eolian_Type *def = calloc(1, sizeof(Eolian_Type));
-   ls->tmp.type_defs = eina_list_prepend(ls->tmp.type_defs, def);
-   return def;
-}
-
 static Eolian_Typedecl *
 push_typedecl(Eo_Lexer *ls)
 {
    Eolian_Typedecl *def = calloc(1, sizeof(Eolian_Typedecl));
    ls->tmp.type_decls = eina_list_prepend(ls->tmp.type_decls, def);
    return def;
-}
-
-static void
-pop_type(Eo_Lexer *ls)
-{
-   ls->tmp.type_defs = eina_list_remove_list(ls->tmp.type_defs, ls->tmp.type_defs);
 }
 
 static void
@@ -501,9 +487,8 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         check_next(ls, ':');
         tp = parse_type(ls);
         FILL_BASE(fdef->base, ls, fline, fcol, STRUCT_FIELD);
-        fdef->type = tp;
+        fdef->type = eo_lexer_type_release(ls, tp);
         fdef->base.name = eina_stringshare_ref(fname);
-        pop_type(ls);
         if ((fdef->type->owned = (ls->t.kw == KW_at_owned)))
           eo_lexer_get(ls);
         check_next(ls, ';');
@@ -727,7 +712,7 @@ parse_type_void(Eo_Lexer *ls)
       default:
         break;
      }
-   def = push_type(ls);
+   def = eo_lexer_type_new(ls);
    FILL_BASE(def->base, ls, line, col, TYPE);
    if (ls->t.kw == KW_void)
      {
@@ -755,24 +740,23 @@ parse_type_void(Eo_Lexer *ls)
                   int bline = ls->line_number, bcol = ls->column;
                   check_next(ls, '<');
                   if (tpid == KW_future)
-                    def->base_type = parse_type_void(ls);
+                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls));
                   else
-                    def->base_type = parse_type(ls);
-                  pop_type(ls);
+                    def->base_type = eo_lexer_type_release(ls, parse_type(ls));
                   if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
                     eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
-                       def->base_type->next_type = parse_type(ls);
-                       pop_type(ls);
+                       def->base_type->next_type =
+                         eo_lexer_type_release(ls, parse_type(ls));
                        if ((def->base_type->next_type->owned = (ls->t.kw == KW_at_owned)))
                          eo_lexer_get(ls);
                     }
                   else if((tpid == KW_future) && test_next(ls, ','))
                     {
-                       def->base_type->next_type = parse_type_void(ls);
-                       pop_type(ls);
+                       def->base_type->next_type =
+                         eo_lexer_type_release(ls, parse_type_void(ls));
                     }
                   check_match(ls, '>', '<', bline, bcol);
                }
@@ -840,8 +824,7 @@ parse_typedef(Eo_Lexer *ls)
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = parse_type(ls);
-   pop_type(ls);
+   def->base_type = eo_lexer_type_release(ls, parse_type(ls));
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
    eo_lexer_dtor_pop(ls);
@@ -875,8 +858,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = parse_type(ls);
-   pop_type(ls);
+   def->base_type = eo_lexer_type_release(ls, parse_type(ls));
    /* constants are required to have a value */
    if (!global)
      check(ls, '=');
@@ -981,10 +963,9 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
    eo_lexer_get(ls);
    check_next(ls, ':');
    if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
-     par->type = parse_type_void(ls);
+     par->type = eo_lexer_type_release(ls, parse_type_void(ls));
    else
-     par->type = parse_type(ls);
-   pop_type(ls);
+     par->type = eo_lexer_type_release(ls, parse_type(ls));
    if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
@@ -1131,11 +1112,10 @@ parse_accessor:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
         parse_return(ls, &ret, is_get, EINA_TRUE, EINA_FALSE);
-        pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
         if (is_get)
           {
-             prop->get_ret_type = ret.type;
+             prop->get_ret_type = eo_lexer_type_release(ls, ret.type);
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_warn_unused = ret.warn_unused;
@@ -1143,7 +1123,7 @@ parse_accessor:
           }
         else
           {
-             prop->set_ret_type = ret.type;
+             prop->set_ret_type = eo_lexer_type_release(ls, ret.type);
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_warn_unused = ret.warn_unused;
@@ -1348,8 +1328,7 @@ parse_function_pointer(Eo_Lexer *ls)
         CASE_LOCK(ls, return, "return");
         Eo_Ret_Def ret;
         parse_return(ls, &ret, EINA_FALSE, EINA_FALSE, EINA_TRUE);
-        pop_type(ls);
-        meth->get_ret_type = ret.type;
+        meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = NULL;
         meth->get_return_warn_unused = EINA_FALSE;
@@ -1443,9 +1422,8 @@ body:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
         parse_return(ls, &ret, EINA_FALSE, EINA_TRUE, EINA_FALSE);
-        pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
-        meth->get_ret_type = ret.type;
+        meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;
@@ -1790,9 +1768,8 @@ end:
    if (ls->t.token == ':')
      {
         eo_lexer_get(ls);
-        ev->type = parse_type(ls);
+        ev->type = eo_lexer_type_release(ls, parse_type(ls));
         ev->type->owned = has_owned;
-        pop_type(ls);
      }
    check(ls, ';');
    eo_lexer_get(ls);
