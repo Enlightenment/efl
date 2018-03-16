@@ -580,6 +580,7 @@ EAPI void *eolian_state_error_data_set(Eolian_State *state, void *data);
  * them to Eolian_Object, store or manipulate them and then use this function
  * to check their type in order to for example cast it back.
  *
+ * @see eolian_object_unit_get
  * @see eolian_object_file_get
  * @see eolian_object_line_get
  * @see eolian_object_column_get
@@ -590,11 +591,27 @@ EAPI void *eolian_state_error_data_set(Eolian_State *state, void *data);
 EAPI Eolian_Object_Type eolian_object_type_get(const Eolian_Object *obj);
 
 /*
+ * @brief Get the unit the object comes from.
+ *
+ * This returns the unit the object is located in.
+ *
+ * @see eolian_object_file_get
+ * @see eolian_object_type_get
+ * @see eolian_object_line_get
+ * @see eolian_object_column_get
+ * @see eolian_object_name_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Unit *eolian_object_unit_get(const Eolian_Object *obj);
+
+/*
  * @brief Get the name of the file the object comes from.
  *
  * This returns the name of the file the object was declared in. It's not
  * a full path, just the file name.
  *
+ * @see eolian_object_unit_get
  * @see eolian_object_type_get
  * @see eolian_object_line_get
  * @see eolian_object_column_get
@@ -609,6 +626,7 @@ EAPI const char *eolian_object_file_get(const Eolian_Object *obj);
  *
  * This returns the line number in the file the object was declared at.
  *
+ * @see eolian_object_unit_get
  * @see eolian_object_type_get
  * @see eolian_object_file_get
  * @see eolian_object_column_get
@@ -626,6 +644,7 @@ EAPI int eolian_object_line_get(const Eolian_Object *obj);
  * assumes all input files are encoded in UTF-8, so this is really the
  * code point number, not the byte number.
  *
+ * @see eolian_object_unit_get
  * @see eolian_object_type_get
  * @see eolian_object_file_get
  * @see eolian_object_line_get
@@ -642,6 +661,7 @@ EAPI int eolian_object_column_get(const Eolian_Object *obj);
  * For toplevel file declarations, this will be the fully namespaced
  * name, for things like params this will be just the name itself.
  *
+ * @see eolian_object_unit_get
  * @see eolian_object_type_get
  * @see eolian_object_file_get
  * @see eolian_object_line_get
@@ -839,6 +859,20 @@ EAPI const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state,
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
+
+/*
+ * @brief Get the state associated with the unit.
+ *
+ * Technically you can cast away the const to make the state mutable
+ * again, it's the same pointer after all. But this is considered a
+ * bad practice, because you're only supposed to use mutable objects
+ * at the very beginning and then just read.
+ *
+ * @param[in] unit The unit.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_State *eolian_unit_state_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the children (dependencies) of a unit.

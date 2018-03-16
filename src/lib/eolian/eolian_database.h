@@ -75,6 +75,7 @@ struct _Eolian_State
 
 struct _Eolian_Object
 {
+   Eolian_Unit *unit;
    Eina_Stringshare *file;
    Eina_Stringshare *name;
    int line;

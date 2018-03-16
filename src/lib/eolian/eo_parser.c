@@ -13,6 +13,7 @@
    has_##var = EINA_TRUE;
 
 #define FILL_BASE(exp, ls, l, c, tp) \
+   (exp).unit = ls->unit; \
    (exp).file = eina_stringshare_ref(ls->filename); \
    (exp).line = l; \
    (exp).column = c; \

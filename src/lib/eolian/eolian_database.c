@@ -25,6 +25,13 @@ eolian_object_type_get(const Eolian_Object *obj)
    return obj->type;
 }
 
+EAPI const Eolian_Unit *
+eolian_object_unit_get(const Eolian_Object *obj)
+{
+   if (!obj) return NULL;
+   return obj->unit;
+}
+
 EAPI const char *
 eolian_object_file_get(const Eolian_Object *obj)
 {
@@ -1011,6 +1018,13 @@ eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name)
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
+}
+
+EAPI const Eolian_State *
+eolian_unit_state_get(const Eolian_Unit *unit)
+{
+   if (!unit) return NULL;
+   return unit->state;
 }
 
 EAPI Eina_Iterator *
