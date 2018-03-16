@@ -35,10 +35,6 @@ def cleanup_db():
     del eolian_db
 atexit.register(cleanup_db)
 
-
-def zeronull_parameters_get(parameters, cparam=[]):
-    return [ cparams[i] if i < len(cparams) else 'NULL' if param.type.is_ptr else "0" for i, param in enumerate(parameters) ]
-
 def load_file(filename):
     if os.path.isfile(filename):
         with open(filename, "r") as f:
@@ -48,32 +44,6 @@ def load_file(filename):
 """
 It will find methods and functions with owned return and without other params
 """
-def custom_loads(cls, filedir):
-    cls.custom = load_file(os.path.join(filedir, "custom.c")) or ''
-    cls.init = load_file(os.path.join(filedir, "init.c"))
-    cls.shutdown = load_file(os.path.join(filedir, "shutdown.c"))
-
-    for func in cls.methods:
-        cls.custom += load_file(os.path.join(filedir, func.name, "custom.c")) or ''
-        func.init = load_file(os.path.join(filedir, func.name, "init.c"))
-        func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown.c"))
-        func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init.c")) or "/* Zero/NULL args init */"
-        func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown.c")) or "/* Zero/NULL args shutdown */"
-
-    for func in cls.properties:
-        if func.getter_scope:
-            cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom.c")) or ""
-            func.init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init.c"))
-            func.shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown.c"))
-            func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init.c")) or "/* Zero/NULL args getter init */"
-            func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args getter shutdown */"
-
-        if func.setter_scope:
-            cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom.c")) or ""
-            func.init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init.c"))
-            func.shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown.c"))
-            func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init.c")) or "/* Zero/NULL args setter init */"
-            func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args setter shutdown */"
 
 class Template(pyratemp.Template):
 
@@ -98,55 +68,106 @@ class Template(pyratemp.Template):
                                    renderer_class=renderer_class,
                                    eval_class=eval_class)
 
-    def render(self, cls, filename=None, verbose=True):
+    def render(self, suite, verbose=True):
+        #if verbose and filename:
+        #    print("rendering: {} => {}".format(self.template_filename, filename))
+
         # Build the context for the template
         ctx = {}
-        ctx['cls'] = cls
-
-        if verbose and filename:
-            print("rendering: {} => {}".format(
-                  self.template_filename, filename))
+        ctx['suite'] = suite
 
         # render with the augmented context
         output = self(**ctx)
 
-        if filename is not None:
+        if suite.filename is not None:
             # write to file
-            with open(filename, "w") as f:
+            with open(suite.filename, "w") as f:
                 f.write(output)
         else:
             # or print to stdout
-            print(output)
+            print("FILENAME IS NONE", output)
+
+
+class SuiteCase():
+    def __init__(self, name, testname, filename):
+        self.name = name
+        self.testname = testname
+        self.fullname = "{}_{}".format(name, testname)
+        self.filename = filename
+        self.template = os.path.join(script_path, "testgenerator_suite.template")
+        self.clslist = []
+
+    def __del__(self):
+        for cls in self.clslist:
+            cls.myname = None
+            cls.custom = None
+            cls.init = None
+            cls.mlist = None
+            cls.plist = None
+
+        self.clslist = None
+
+    def load(self, testdir, eofiles):
+        self.clslist = []
+        for eofile in eofiles:
+            cls = eolian_db.class_by_file_get(os.path.basename(eofile))
+            if not cls or cls.type != cls.type.REGULAR:
+                continue
+
+            if cls.file == "efl_promise.eo":
+                continue
+
+            self.clslist.append(cls)
+            cls.myname = os.path.splitext(cls.file)[0]
+            cls.myfullname = "{}_{}".format(self.fullname, cls.myname)
+            filedir = os.path.join(testdir, cls.myname)
+            cls.custom = load_file(os.path.join(filedir, "custom.c")) or ''
+            cls.init = load_file(os.path.join(filedir, "init.c"))
+            cls.shutdown = load_file(os.path.join(filedir, "shutdown.c"))
+
+            cls.mlist = list(cls.methods)
+            for func in cls.mlist:
+                cls.custom += load_file(os.path.join(filedir, func.name, "custom.c")) or ''
+                func.init = load_file(os.path.join(filedir, func.name, "init.c"))
+                func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown.c"))
+                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init.c")) or "/* Zero/NULL args init */"
+                func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown.c")) or "/* Zero/NULL args shutdown */"
+
+            cls.plist = [ p for p in cls.properties if p.getter_scope or p.setter_scope ]
+            for func in cls.plist:
+                if func.getter_scope:
+                    cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom.c")) or ""
+                    func.get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init.c"))
+                    func.get_shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown.c"))
+                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init.c")) or "/* Zero/NULL args getter init */"
+                    func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args getter shutdown */"
+
+                if func.setter_scope:
+                    cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom.c")) or ""
+                    func.set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init.c"))
+                    func.set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown.c"))
+                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init.c")) or "/* Zero/NULL args setter init */"
+                    func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args setter shutdown */"
 
 
 if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Pyolian search owned functions.')
-    parser.add_argument('testcase', help='The TestCase Name to use. (REQUIRED)')
-    parser.add_argument('-c', '--classname', help='The Class Name to use.')
-    parser.add_argument('-e', '--eofiles', nargs='*', help='The Class Name to use.')
+    parser.add_argument('testname', help='The Test Name to use. (REQUIRED)')
+    parser.add_argument('suitename', help='The Suite Name to use. (REQUIRED)')
+    parser.add_argument('filename', help='Build file dest. (REQUIRED)')
+    parser.add_argument('eofiles', nargs='*', help='The Eolian File to use.')
 
     args = parser.parse_args()
 
-    testdir = os.path.join(root_path, 'src', 'tests', args.testcase)
-    template = os.path.join(testdir, "{}.template".format(args.testcase))
-    if not os.path.isfile(template):
-        template = os.path.join(testdir, "automated.template")
+    testdir = os.path.join(root_path, 'src', 'tests', args.testname)
 
-    cls_list = [ eolian_db.class_by_file_get(os.path.basename(eofile)) for eofile in args.eofiles or [] ]
+    suite = SuiteCase(args.suitename, args.testname, args.filename)
+    suite.load(testdir, args.eofiles)
 
-    if args.classname:
-        cls = eolian_db.class_by_name_get(args.classname)
-        if cls: cls_list.append(cls)
-
-    print(cls_list)
-
-    for cls in filter(None, cls_list):
-        custom_loads(cls, os.path.join(testdir, cls.c_name.lower()))
-        filename = os.path.join(testdir, "{}_test.c".format(cls.c_name.lower()))
-
-        t = Template(template)
-        t.render(cls, filename)
-
-
+    t = Template(suite.template)
+    try:
+        t.render(suite)
+    except:
+        print("ERROR RENDERING - Cannot create file: {}".format(suite.filename))

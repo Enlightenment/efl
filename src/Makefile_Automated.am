@@ -1,0 +1,49 @@
+if EFL_ENABLE_TESTS
+TEST_GEN=$(top_srcdir)/src/scripts/pyolian/testgenerator.py
+
+ecore_automated_suite = $(top_builddir)/src/tests/automated/ecore_suite_automated.c
+
+tests/automated/ecore_suite_automated.c:
+	$(TEST_GEN) automated ecore $(ecore_automated_suite) $(ecore_eolian_files)
+
+check_PROGRAMS += tests/automated/ecore_suite_automated
+TESTS += tests/automated/ecore_suite_automated
+
+tests_automated_ecore_suite_automated_SOURCE = tests/automated/ecore_suite_automated.c
+tests_automated_ecore_suite_automated_CPPFLAGS = $(tests_ecore_ecore_suite_CPPFLAGS)
+tests_automated_ecore_suite_automated_LDADD = tests_ecore_ecore_suite_LDADD
+
+endif
+
+#	$(AUTOMATED_GEN) automated ecore_audio $(top_builddir) $(ecore_audio_eolian_files)
+#	$(AUTOMATED_GEN) automated ecore_con $(top_builddir) $(ecore_con_eolian_files)
+#	$(AUTOMATED_GEN) automated ector $(top_builddir) $(ector_eolian_files)
+#	$(AUTOMATED_GEN) automated edje $(top_builddir) $(edje_eolian_files)
+#	$(AUTOMATED_GEN) automated efl $(top_builddir) $(efl_eolian_files)
+#	$(AUTOMATED_GEN) automated eio $(top_builddir) $(eio_eolian_files)
+#	$(AUTOMATED_GEN) automated eldbus $(top_builddir) $(eldbus_eolian_files)
+#	$(AUTOMATED_GEN) automated emotion $(top_builddir) $(emotion_eolian_files)
+#	$(AUTOMATED_GEN) automated eo $(top_builddir) $(eo_eolian_files)
+#	$(AUTOMATED_GEN) automated evas $(top_builddir) $(evas_eolian_files)
+#clean:
+#	@echo "Cleaning up built objects..."
+#
+#
+#lib/tests/automated/ecore: $(ecore_eolian_pub_files) 
+#
+### Tests for XXX
+#check_PROGRAMS += tests/automated/XXX_test
+#TESTS += tests/automated/XXX_test
+#
+#tests_automated_XXX_test_SOURCES = tests/automated/XXX_test.cc
+#tests_automated_XXX_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+# -I$(top_builddir)/src/lib/efl/interfaces/ \
+# -I$(top_builddir)/src/lib/evas/canvas/ \
+# -I$(top_builddir)/src/lib/evas/gesture/ \
+# -I$(top_builddir)/src/lib/evas/include/ \
+# -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/automated\" \
+# -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/automated\" \
+# @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+# @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @EO_CFLAGS@
+#tests_automated_XXX_test_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@
+#tests_automated_XXX_test_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
