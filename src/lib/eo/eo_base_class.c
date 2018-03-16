@@ -2169,9 +2169,11 @@ _efl_object_finalize(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 }
 
 static void
-_efl_object_invalidate(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_invalidate(Eo *obj, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
+   if (efl_parent_get(obj))
+     efl_parent_set(obj, NULL);
    pd->invalidate = EINA_TRUE;
 }
 
