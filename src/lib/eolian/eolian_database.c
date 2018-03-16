@@ -400,7 +400,7 @@ _resolve_event(const Eolian_Unit *src, char *name, const Eolian_Object **data,
    if (!cl)
      return EOLIAN_OBJECT_UNKNOWN;
 
-   const Eolian_Event *ev = eolian_class_event_get_by_name(cl, evname);
+   const Eolian_Event *ev = eolian_class_event_by_name_get(cl, evname);
    if (!ev)
      return EOLIAN_OBJECT_UNKNOWN;
 
@@ -508,7 +508,7 @@ eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *uni
    if (!cl)
      return EOLIAN_OBJECT_UNKNOWN;
 
-   const Eolian_Function *fid = eolian_class_function_get_by_name(cl, suffix, ftype);
+   const Eolian_Function *fid = eolian_class_function_by_name_get(cl, suffix, ftype);
    if (!fid)
      return EOLIAN_OBJECT_UNKNOWN;
 

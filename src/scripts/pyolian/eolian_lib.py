@@ -251,9 +251,9 @@ lib.eolian_class_inherits_get.restype = c_void_p
 lib.eolian_class_functions_get.argtypes = [c_void_p, c_int]
 lib.eolian_class_functions_get.restype = c_void_p
 
-# EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
-lib.eolian_class_function_get_by_name.argtypes = [c_void_p, c_char_p, c_int]
-lib.eolian_class_function_get_by_name.restype = c_void_p
+# EAPI const Eolian_Function *eolian_class_function_by_name_get(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
+lib.eolian_class_function_by_name_get.argtypes = [c_void_p, c_char_p, c_int]
+lib.eolian_class_function_by_name_get.restype = c_void_p
 
 # EAPI Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
 lib.eolian_class_implements_get.argtypes = [c_void_p,]
@@ -271,9 +271,9 @@ lib.eolian_class_events_get.restype = c_void_p
 lib.eolian_class_parts_get.argtypes = [c_void_p,]
 lib.eolian_class_parts_get.restype = c_void_p
 
-# EAPI const Eolian_Event *eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name);
-lib.eolian_class_event_get_by_name.argtypes = [c_void_p, c_char_p]
-lib.eolian_class_event_get_by_name.restype = c_void_p
+# EAPI const Eolian_Event *eolian_class_event_by_name_get(const Eolian_Class *klass, const char *event_name);
+lib.eolian_class_event_by_name_get.argtypes = [c_void_p, c_char_p]
+lib.eolian_class_event_by_name_get.restype = c_void_p
 
 # EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
 lib.eolian_class_ctor_enable_get.argtypes = [c_void_p,]

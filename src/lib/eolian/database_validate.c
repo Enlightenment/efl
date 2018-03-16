@@ -503,7 +503,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 
    impl->klass = tcl;
 
-   const Eolian_Function *fid = eolian_class_function_get_by_name(tcl, fnname, EOLIAN_UNRESOLVED);
+   const Eolian_Function *fid = eolian_class_function_by_name_get(tcl, fnname, EOLIAN_UNRESOLVED);
    if (!fid)
      {
         _eo_parser_log(&impl->base, "function '%s' not known in class '%s'", fnname, clname);

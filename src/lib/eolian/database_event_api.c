@@ -62,7 +62,7 @@ eolian_event_c_name_get(const Eolian_Event *event)
 }
 
 EAPI const Eolian_Event *
-eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name)
+eolian_class_event_by_name_get(const Eolian_Class *klass, const char *event_name)
 {
    Eina_List *itr;
    Eolian_Event *event = NULL;

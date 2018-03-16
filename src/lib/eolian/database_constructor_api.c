@@ -19,7 +19,7 @@ eolian_constructor_function_get(const Eolian_Constructor *ctor)
    const Eolian_Class *klass = eolian_constructor_class_get(ctor);
    if (!klass)
      return NULL;
-   return eolian_class_function_get_by_name(klass,
+   return eolian_class_function_by_name_get(klass,
        ctor->base.name + strlen(klass->base.name) + 1, EOLIAN_UNRESOLVED);
 }
 

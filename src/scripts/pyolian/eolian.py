@@ -659,8 +659,8 @@ class Class(Object):
     def events(self):
         return Iterator(Event, lib.eolian_class_events_get(self._obj))
 
-    def event_get_by_name(self, event_name):
-        c_event = lib.eolian_class_event_get_by_name(self._obj,
+    def event_by_name_get(self, event_name):
+        c_event = lib.eolian_class_event_by_name_get(self._obj,
                                                      _str_to_bytes(event_name))
         return Event(c_event) if c_event else None
 
@@ -703,9 +703,9 @@ class Class(Object):
     def dtor_enable(self):
         return bool(lib.eolian_class_dtor_enable_get(self._obj))
 
-    def function_get_by_name(self, func_name,
+    def function_by_name_get(self, func_name,
                              ftype=Eolian_Function_Type.UNRESOLVED):
-        f = lib.eolian_class_function_get_by_name(self._obj,
+        f = lib.eolian_class_function_by_name_get(self._obj,
                                                   _str_to_bytes(func_name),
                                                   ftype)
         return Function(f) if f else None

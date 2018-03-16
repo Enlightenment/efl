@@ -253,12 +253,12 @@ M.Class = Node:clone {
         return ret
     end,
 
-    function_get_by_name = function(self, fn, ft)
+    function_by_name_get = function(self, fn, ft)
         local fun = self._cache_func
         if fun then
             return fun
         end
-        fun = M.Function(self._obj:function_get_by_name(fn, ft))
+        fun = M.Function(self._obj:function_by_name_get(fn, ft))
         self._cache_func = fun
         return fun
     end,

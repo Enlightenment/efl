@@ -1406,7 +1406,7 @@ EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *fu
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
+EAPI const Eolian_Function *eolian_class_function_by_name_get(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a legacy name for a function.
@@ -2015,7 +2015,7 @@ EAPI const Eolian_Documentation *eolian_part_documentation_get(const Eolian_Part
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Event *eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name);
+EAPI const Eolian_Event *eolian_class_event_by_name_get(const Eolian_Class *klass, const char *event_name);
 
 /*
  * @brief Indicates if the class constructor has to invoke

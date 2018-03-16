@@ -70,7 +70,7 @@ eolian_class_constructors_get(const Eolian_Class *cl)
 }
 
 EAPI const Eolian_Function *
-eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
+eolian_class_function_by_name_get(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
 {
    Eina_List *itr;
    Eolian_Function *fid;

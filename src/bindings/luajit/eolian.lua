@@ -338,7 +338,7 @@ ffi.cdef [[
     Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
     Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
-    const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
+    const Eolian_Function *eolian_class_function_by_name_get(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
@@ -1325,8 +1325,8 @@ M.Class = ffi.metatype("Eolian_Class", {
                 eolian.eolian_class_functions_get(self, func_type))
         end,
 
-        function_get_by_name = function(self, fname, ftype)
-            local v = eolian.eolian_class_function_get_by_name(self, fname,
+        function_by_name_get = function(self, fname, ftype)
+            local v = eolian.eolian_class_function_by_name_get(self, fname,
                 ftype)
             if v == nil then return nil end
             return v

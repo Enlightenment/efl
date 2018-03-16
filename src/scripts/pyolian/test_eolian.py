@@ -326,7 +326,7 @@ class TestEolianClass(unittest.TestCase):
 class TestEolianFunction(unittest.TestCase):
     def test_function(self):
         cls = eolian_db.class_by_name_get('Efl.Loop.Timer')
-        f = cls.function_get_by_name('delay')
+        f = cls.function_by_name_get('delay')
         self.assertIsInstance(f, eolian.Function)
         self.assertEqual(f.name, 'delay')
         self.assertEqual(f.type, eolian.Eolian_Function_Type.METHOD)
@@ -357,7 +357,7 @@ class TestEolianFunction(unittest.TestCase):
 
     def test_function_parameter(self):
         cls = eolian_db.class_by_name_get('Efl.Loop.Timer')
-        f = cls.function_get_by_name('delay')
+        f = cls.function_by_name_get('delay')
         p = list(f.parameters)[0]
         self.assertEqual(p.direction, eolian.Eolian_Parameter_Dir.IN)
         self.assertEqual(p.name, 'add')
@@ -372,7 +372,7 @@ class TestEolianFunction(unittest.TestCase):
 class TestEolianImplement(unittest.TestCase):
     def test_implement(self):
         cls = eolian_db.class_by_name_get('Efl.Loop.Timer')
-        f = cls.function_get_by_name('delay')
+        f = cls.function_by_name_get('delay')
         im = f.implement
         self.assertIsInstance(im, eolian.Implement)
         self.assertEqual(im.full_name, 'Efl.Loop.Timer.delay')
@@ -392,7 +392,7 @@ class TestEolianEvent(unittest.TestCase):
     def test_event(self):
         cls = eolian_db.class_by_name_get('Efl.Loop.Timer')
         self.assertEqual([e.name for e in cls.events], ['tick'])
-        ev = cls.event_get_by_name('tick')
+        ev = cls.event_by_name_get('tick')
         self.assertIsInstance(ev, eolian.Event)
         self.assertEqual(ev.name, 'tick')
         self.assertEqual(ev.c_name, 'EFL_LOOP_TIMER_EVENT_TICK')
@@ -535,7 +535,7 @@ class TestEolianTypedecl(unittest.TestCase):
 class TestEolianType(unittest.TestCase):
     def test_type_regular_builtin(self):
         cls = eolian_db.class_by_name_get('Efl.Loop.Timer')
-        func = cls.function_get_by_name('delay')
+        func = cls.function_by_name_get('delay')
         param = list(func.parameters)[0]
         t = param.type  # type: double
         self.assertIsInstance(t, eolian.Type)
@@ -560,7 +560,7 @@ class TestEolianType(unittest.TestCase):
 
     def test_type_regular(self):
         cls = eolian_db.class_by_name_get('Efl.Gfx')
-        func = cls.function_get_by_name('geometry')
+        func = cls.function_by_name_get('geometry')
         param = list(func.setter_values)[0]
         t = param.type  # type: Eina.Rect
         self.assertIsInstance(t, eolian.Type)
@@ -584,7 +584,7 @@ class TestEolianType(unittest.TestCase):
 
     def test_type_class(self):
         cls = eolian_db.class_by_name_get('Efl.Content')
-        func = cls.function_get_by_name('content')
+        func = cls.function_by_name_get('content')
         param = list(func.setter_values)[0]
         t = param.type  # type: Efl.Gfx (class interface)
         self.assertIsInstance(t, eolian.Type)
