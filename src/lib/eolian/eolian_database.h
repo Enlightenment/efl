@@ -55,6 +55,9 @@ struct _Eolian_State
    Eina_Stringshare *panic_msg;
    jmp_buf jmp_env;
 
+   Eolian_Error_Cb error;
+   void *error_data;
+
    Eina_Hash *filenames_eo; /* filename to full path mapping */
    Eina_Hash *filenames_eot;
 

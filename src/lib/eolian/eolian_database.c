@@ -570,6 +570,12 @@ _default_panic_cb(const Eolian_State *state EINA_UNUSED, const char *msg)
    _eolian_log(msg);
 }
 
+static void
+_default_error_cb(const Eolian_Object *obj, const char *msg, void *data EINA_UNUSED)
+{
+   _eolian_log_line(obj->file, obj->line, obj->column, msg);
+}
+
 EAPI Eolian_State *
 eolian_state_new(void)
 {
@@ -585,6 +591,8 @@ eolian_state_new(void)
         eina_stringshare_del(state->panic_msg);
         exit(EXIT_FAILURE);
      }
+
+   state->error = _default_error_cb;
 
    database_unit_init(state, &state->unit, NULL);
 
@@ -628,6 +636,30 @@ eolian_state_free(Eolian_State *state)
    eina_hash_free(state->objects_f);
 
    free(state);
+}
+
+EAPI Eolian_Panic_Cb
+eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb)
+{
+   Eolian_Panic_Cb old_cb = state->panic;
+   state->panic = cb;
+   return old_cb;
+}
+
+EAPI Eolian_Error_Cb
+eolian_state_error_cb_set(Eolian_State *state, Eolian_Error_Cb cb)
+{
+   Eolian_Error_Cb old_cb = state->error;
+   state->error = cb;
+   return old_cb;
+}
+
+EAPI void *
+eolian_state_error_data_set(Eolian_State *state, void *data)
+{
+   void *old_data = state->error_data;
+   state->error_data = data;
+   return old_data;
 }
 
 #define EO_SUFFIX ".eo"

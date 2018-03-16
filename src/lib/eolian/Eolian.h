@@ -201,6 +201,7 @@ typedef struct _Eolian_Unit Eolian_Unit;
 #define EOLIAN_UNIT(expr) EOLIAN_CAST(Eolian_Unit, expr)
 
 typedef void (*Eolian_Panic_Cb)(const Eolian_State *state, Eina_Stringshare *msg);
+typedef void (*Eolian_Error_Cb)(const Eolian_Object *obj, const char *msg, void *data);
 
 typedef enum
 {
@@ -492,13 +493,25 @@ EAPI int eolian_shutdown(void);
  * This will assign a default panic function, which printers the error
  * message passed to it into the standard Eolian log.
  *
- * @see eolian_panic_cb_set
+ * @see eolian_state_panic_cb_set
  *
  * @return A new state (or NULL on failure).
  *
  * @ingroup Eolian
  */
 EAPI Eolian_State *eolian_state_new(void);
+
+/*
+ * @brief Free an Eolian state.
+ *
+ * You can use this to free an Eolian state.
+ *
+ * If the input is NULL, this function has no effect.
+ *
+ * @param[in] state the state to free
+ *
+ */
+EAPI void eolian_state_free(Eolian_State *state);
 
 /*
  * @brief Set the panic function for the state.
@@ -520,20 +533,45 @@ EAPI Eolian_State *eolian_state_new(void);
  *
  * If you set a panic function and jump, you're responsible for the error
  * message and have to delete it with eina_stringshare_del.
+ *
+ * If you want to catch error messages that are standard (such as parse
+ * errors), there is another, separate mechanism in place.
+ *
+ * @return The old panic callback.
+ *
+ * @see eolian_state_error_cb_set
  */
-EAPI Eolian_Panic_Cb eolian_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb);
+EAPI Eolian_Panic_Cb eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb);
 
 /*
- * @brief Free an Eolian state.
+ * @brief Set the error function for the state.
  *
- * You can use this to free an Eolian state.
+ * When a regular error (such as parse error) happens, you can use this
+ * callback to catch the error. There is no jump involved and the outer
+ * function will fail normally and safely. You are provided with the
+ * object the error happened on (for line/column/file/other information)
+ * as well as the error message. Additionally, a data pointer is passed
+ * in so you can pass some of the information into local memory somewhere.
  *
- * If the input is NULL, this function has no effect.
+ * @return The old error callback.
  *
- * @param[in] state the state to free
- *
+ * @see eolian_state_panic_cb_set
+ * @see eolian_state_error_data_set
  */
-EAPI void eolian_state_free(Eolian_State *state);
+EAPI Eolian_Error_Cb eolian_state_error_cb_set(Eolian_State *state, Eolian_Error_Cb cb);
+
+/*
+ * @brief Set a data pointer to be passed to the error function.
+ *
+ * By default, the data is `NULL`. You can use this to set a data pointer
+ * to be passed. This is useful to e.g. expose some local memory so you can
+ * write back from the callback without using globals.
+ *
+ * @return The old data pointer.
+ *
+ * @see eolian_state_error_cb_set
+ */
+EAPI void *eolian_state_error_data_set(Eolian_State *state, void *data);
 
 /*
  * @brief Get the type of an Eolian object.
