@@ -1,6 +1,8 @@
 #ifndef __EOLIAN_DATABASE_H
 #define __EOLIAN_DATABASE_H
 
+#include <setjmp.h>
+
 #include <Eolian.h>
 
 extern int _eolian_log_dom;
@@ -48,6 +50,10 @@ struct _Eolian_Unit
 struct _Eolian_State
 {
    Eolian_Unit unit;
+
+   Eolian_Panic_Cb panic;
+   Eina_Stringshare *panic_msg;
+   jmp_buf jmp_env;
 
    Eina_Hash *filenames_eo; /* filename to full path mapping */
    Eina_Hash *filenames_eot;

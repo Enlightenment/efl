@@ -200,6 +200,8 @@ typedef struct _Eolian_Unit Eolian_Unit;
 #define EOLIAN_OBJECT(expr) EOLIAN_CAST(Eolian_Object, expr)
 #define EOLIAN_UNIT(expr) EOLIAN_CAST(Eolian_Unit, expr)
 
+typedef void (*Eolian_Panic_Cb)(const Eolian_State *state, Eina_Stringshare *msg);
+
 typedef enum
 {
    EOLIAN_OBJECT_UNKNOWN = 0,
@@ -487,11 +489,39 @@ EAPI int eolian_shutdown(void);
  *
  * You need to free this with eolian_free once you're done.
  *
+ * This will assign a default panic function, which printers the error
+ * message passed to it into the standard Eolian log.
+ *
+ * @see eolian_panic_cb_set
+ *
  * @return A new state (or NULL on failure).
  *
  * @ingroup Eolian
  */
 EAPI Eolian_State *eolian_state_new(void);
+
+/*
+ * @brief Set the panic function for the state.
+ *
+ * When an unrecoverable error happens in an Eolian API call, the panic
+ * function is called. The default panic function for a state just prints
+ * the error message into the standard Eolian log. After the panic function
+ * is called, Eolian forcibly exits (`exit(EXIT_FAILURE)`). If you don't
+ * want this, you can override the panic function and never return from
+ * it (by doing a long jump, or throwing an exception in C++).
+ *
+ * Unrecoverable errors include cases such as internal errors and memory
+ * allocation failures. Standard parse errors etc. are not considered
+ * unrecoverable, so they are not handled using the panic mechanism.
+ *
+ * After a panic, the Eolian state is left valid; the library does its
+ * best at trying to provide it back to you in the same condition as it
+ * was before the failing call.
+ *
+ * If you set a panic function and jump, you're responsible for the error
+ * message and have to delete it with eina_stringshare_del.
+ */
+EAPI Eolian_Panic_Cb eolian_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb);
 
 /*
  * @brief Free an Eolian state.

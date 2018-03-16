@@ -564,12 +564,27 @@ _hashlist_free(void *data)
    eina_list_free((Eina_List*)data);
 }
 
+static void
+_default_panic_cb(const Eolian_State *state EINA_UNUSED, const char *msg)
+{
+   _eolian_log(msg);
+}
+
 EAPI Eolian_State *
 eolian_state_new(void)
 {
    Eolian_State *state = calloc(1, sizeof(Eolian_State));
    if (!state)
      return NULL;
+
+   state->panic = _default_panic_cb;
+
+   if (setjmp(state->jmp_env))
+     {
+        state->panic(state, state->panic_msg);
+        eina_stringshare_del(state->panic_msg);
+        exit(EXIT_FAILURE);
+     }
 
    database_unit_init(state, &state->unit, NULL);
 
