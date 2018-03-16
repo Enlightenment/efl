@@ -193,8 +193,8 @@ typedef struct _Eo_Lexer
    char decpoint;
 } Eo_Lexer;
 
-int         eo_lexer_init           (void);
-int         eo_lexer_shutdown       (void);
+void        eo_lexer_init           (void);
+void        eo_lexer_shutdown       (void);
 Eo_Lexer   *eo_lexer_new            (Eolian_State *state, const char *source);
 void        eo_lexer_free           (Eo_Lexer *ls);
 /* gets a regular token, singlechar or one of TOK_something */

@@ -114,8 +114,8 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    longjmp(ls->err_jmp, EINA_TRUE);
 }
 
-static void
-init_hash(void)
+void
+eo_lexer_init(void)
 {
    unsigned int i;
    if (keyword_map) return;
@@ -124,8 +124,8 @@ init_hash(void)
      eina_hash_add(keyword_map, keywords[i], (void *)(size_t)(i + 1));
 }
 
-static void
-destroy_hash(void)
+void
+eo_lexer_shutdown(void)
 {
    if (keyword_map)
      {
@@ -1277,32 +1277,6 @@ eo_lexer_get_c_type(int kw)
 {
    if (!eo_lexer_is_type_keyword(kw)) return NULL;
    return ctypes[kw - KW_byte];
-}
-
-static int _init_counter = 0;
-
-int
-eo_lexer_init()
-{
-   if (!_init_counter)
-     {
-        eina_init();
-        init_hash();
-     }
-   return _init_counter++;
-}
-
-int
-eo_lexer_shutdown()
-{
-   if (_init_counter <= 0) return 0;
-   _init_counter--;
-   if (!_init_counter)
-     {
-        destroy_hash();
-        eina_shutdown();
-     }
-   return _init_counter;
 }
 
 static Eina_Bool
