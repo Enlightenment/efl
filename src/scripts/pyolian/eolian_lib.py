@@ -11,10 +11,13 @@ import os
 script_path = os.path.dirname(os.path.realpath(__file__))
 root_path = os.path.abspath(os.path.join(script_path, '..', '..', '..'))
 
-search_in = (
+search_in = [
     os.path.join(root_path, 'src', 'lib', 'eolian', '.libs'),
     os.path.join(root_path, 'build', 'src', 'lib', 'eolian'),
-)
+]
+
+if 'EOLIAN_SO_DIR' in os.environ:
+    search_in.insert(0, os.environ['EOLIAN_SO_DIR'])
 
 search_names = ('libeolian.so', 'eolian.dll')
 

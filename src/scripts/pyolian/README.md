@@ -25,6 +25,10 @@ tree, usually at efl compilation time (before the install step).
 The only requirement is that **the source tree must be already built** (not
 installed) because pyolian search the eolian .so/.dll inside the source tree.
 
+If you built the efl tree in a custom location (fe, you build out-of-tree) you
+can tell pyolian where to find the built eolian .so files using the
+`EOLIAN_SO_DIR` environment variable.
+
 
 Command line usage
 ==================
