@@ -70,12 +70,25 @@ EFL_START_TEST(elm_layout_swallows)
 }
 EFL_END_TEST
 
+static Eina_Value
+_propagated_cb(void *data EINA_UNUSED,
+               const Eina_Value v,
+               const Eina_Future *dead_future EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+
+   fprintf(stderr, "delivered '%s'\n", eina_value_to_string(&v));
+
+   return v;
+}
+
 EFL_START_TEST(elm_layout_model_connect)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly;
    Efl_Model_Item *model;
    Eina_Value v;
+   Eina_Future *f;
    const char *part_text;
    const char text_value[] = "A random string for elm_layout_model_connect test";
 
@@ -89,12 +102,13 @@ EFL_START_TEST(elm_layout_model_connect)
    model = efl_add(EFL_MODEL_ITEM_CLASS, win);
    ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
    ck_assert(!!eina_value_set(&v, text_value));
-   efl_model_property_set(model, "text_property", &v);
+   f = efl_model_property_set(model, "text_property", &v);
+   eina_future_then(f, _propagated_cb, NULL);
 
    efl_ui_model_connect(ly, "text", "text_property");
    efl_ui_view_model_set(ly, model);
 
-   ecore_main_loop_iterate_may_block(EINA_TRUE);
+   ecore_main_loop_begin();
 
    part_text = elm_layout_text_get(ly, "text");
 
