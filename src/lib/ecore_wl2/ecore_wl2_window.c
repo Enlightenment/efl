@@ -633,6 +633,19 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_unmap(subsurf);
 
+   if (window->commit_pending)
+     {
+        /* We've probably been hidden while an animator
+         * is ticking.  Cancel the callback.
+         */
+        window->commit_pending = EINA_FALSE;
+        if (window->callback)
+          {
+             wl_callback_destroy(window->callback);
+             window->callback = NULL;
+          }
+     }
+
    if (window->surface)
      {
         wl_surface_attach(window->surface, NULL, 0, 0);
@@ -640,6 +653,7 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
         window->commit_pending = EINA_FALSE;
      }
 
+   /* The commit added a callback, disconnect it */
    if (window->callback)
      {
         wl_callback_destroy(window->callback);
