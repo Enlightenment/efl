@@ -1320,8 +1320,9 @@ class _Eolian_Doc_Token_Struct(ctypes.Structure):
 
 
 class Documentation(Object):  # OK (1 TODO Unit*)
-    # def __repr__(self):
-        # return "<eolian.Documentation '{0.name}'>".format(self)
+    def __repr__(self):
+        t = self.summary if len(self.summary) < 40 else self.summary[:40] + '...'
+        return "<eolian.Documentation summary='{}'>".format(t)
 
     # this is too much for py, just use string.split('\n\n') instead
     # def string_split(self, string):
