@@ -41,7 +41,7 @@ _choices = ['start', 'classes', 'enums', 'structs', 'aliases']
 parser.add_argument('--step', '-s', metavar='STEP', default=None,
                     choices=_choices,
                     help='A single step to run (default to all), '
-                         'valid choises: '+ ', '.join(_choices))
+                         'valid choices: '+ ', '.join(_choices))
 args = parser.parse_args()
 
 
@@ -72,7 +72,7 @@ def page_path_for_object(obj):
     path = ['data', 'pages', 'develop', 'api']
     for ns in obj.namespaces:
         path.append(ns.lower())
-    output_file = obj.name.lower() + '.txt'
+    output_file = obj.short_name.lower() + '.txt'
     return os.path.join(args.root_path, *path, output_file)
 
 
@@ -132,30 +132,30 @@ if args.step in ('start', None):
 if args.step in ('classes', None):
     t = Template('doc_class.template')
     for cls in eolian_db.classes:
-        if cls.full_name.startswith(args.namespace):
+        if cls.name.startswith(args.namespace):
             output_file = page_path_for_object(cls)
-            t.render(output_file, args.verbose, cls=cls.full_name)
+            t.render(output_file, args.verbose, cls=cls.name)
 
 # render a page for each Enum
 if args.step in ('enums', None):
     t = Template('doc_enum.template')
     for enum in eolian_db.enums:
-        if enum.full_name.startswith(args.namespace):
+        if enum.name.startswith(args.namespace):
             output_file = page_path_for_object(enum)
-            t.render(output_file, args.verbose, enum=enum.full_name)
+            t.render(output_file, args.verbose, enum=enum.name)
 
 # render a page for each Struct
 if args.step in ('structs', None):
     t = Template('doc_struct.template')
     for struct in eolian_db.structs:
-        if struct.full_name.startswith(args.namespace):
+        if struct.name.startswith(args.namespace):
             output_file = page_path_for_object(struct)
-            t.render(output_file, args.verbose, struct=struct.full_name)
+            t.render(output_file, args.verbose, struct=struct.name)
 
 # render a page for each Alias
 if args.step in ('aliases', None):
     t = Template('doc_alias.template')
     for alias in eolian_db.aliases:
-        if alias.full_name.startswith(args.namespace):
+        if alias.name.startswith(args.namespace):
             output_file = page_path_for_object(alias)
-            t.render(output_file, args.verbose, alias=alias.full_name)
+            t.render(output_file, args.verbose, alias=alias.name)

@@ -8,7 +8,7 @@
    <!--(for n in cls.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${cls.name.lower()}$|${cls.name}$]]
+:${cls.short_name.lower()}$|${cls.short_name}$]]
 <!--(end)-->
 
 #!##############################################################################
@@ -19,7 +19,7 @@
    <!--(for n in typedecl.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${typedecl.name.lower()}$|${typedecl.name}$]]
+:${typedecl.short_name.lower()}$|${typedecl.short_name}$]]
 <!--(end)-->
 
 #!##############################################################################

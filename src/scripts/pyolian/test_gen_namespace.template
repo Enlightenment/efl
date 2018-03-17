@@ -6,7 +6,7 @@ Namespace:    ${namespace.name}$  ${namespace.namespaces}$
 Regular Classes:
 ================
 <!--(for cls in namespace.regulars)-->
- * ${cls.full_name}$
+ * ${cls.name}$
 <!--(else)-->
  no classes available
 <!--(end)-->
@@ -14,7 +14,7 @@ Regular Classes:
 Abstract Classes:
 ================
 <!--(for cls in namespace.abstracts)-->
- * ${cls.full_name}$
+ * ${cls.name}$
 <!--(else)-->
  no classes available
 <!--(end)-->
@@ -22,7 +22,7 @@ Abstract Classes:
 Mixins:
 =======
 <!--(for cls in namespace.mixins)-->
- * ${cls.full_name}$
+ * ${cls.name}$
 <!--(else)-->
  no classes available
 <!--(end)-->
@@ -30,7 +30,7 @@ Mixins:
 Interfaces:
 ===========
 <!--(for cls in namespace.interfaces)-->
- * ${cls.full_name}$
+ * ${cls.name}$
 <!--(else)-->
  no classes available
 <!--(end)-->
@@ -38,7 +38,7 @@ Interfaces:
 Aliases:
 ========
 <!--(for typedecl in namespace.aliases)-->
- * ${typedecl.full_name}$
+ * ${typedecl.name}$
 <!--(else)-->
  no alias available
 <!--(end)-->
@@ -46,7 +46,7 @@ Aliases:
 Structs:
 ========
 <!--(for typedecl in namespace.structs)-->
- * ${typedecl.full_name}$
+ * ${typedecl.name}$
     <!--(for field in typedecl.struct_fields)-->
     ${field.type.name}$ ${field.name}$
     <!--(end)-->
@@ -57,7 +57,7 @@ Structs:
 Enums:
 ======
 <!--(for typedecl in namespace.enums)-->
- * ${typedecl.full_name}$
+ * ${typedecl.name}$
     <!--(for field in typedecl.enum_fields)-->
     ${field.c_name}$ = ${field.value.serialize}$
     <!--(end)-->

@@ -1,6 +1,6 @@
 <!--(include)-->doc_macros.include<!--(end)-->#!
-~~Title: ${cls.full_name}$~~
-====== ${cls.full_name}$ (${CLS_TYPE}$) ======
+~~Title: ${cls.name}$~~
+====== ${cls.name}$ (${CLS_TYPE}$) ======
 
 ${BEST_SUMMARY(obj=cls)}$
 

@@ -1,6 +1,6 @@
 <!--(include)-->doc_macros.include<!--(end)-->#!
-~~Title: ${enum.full_name}$~~
-====== ${enum.full_name}$ (enum) ======
+~~Title: ${enum.name}$~~
+====== ${enum.name}$ (enum) ======
 
 ${BEST_SUMMARY(obj=enum)}$
 
@@ -23,7 +23,7 @@ ${OBJECT_STATIC_CONTENT(obj=enum, section='fields')}$
 <code>
 enum {
 <!--(for field in enum.enum_fields)-->
-    ${field.name}$: ${field.value.serialize}$,
+    ${field.name}$: ${field.value.serialize}$
 <!--(end)-->
 }
 </code>
@@ -35,5 +35,5 @@ typedef enum {
 <!--(for field in enum.enum_fields)-->
     ${field.c_name}$ = ${field.value.serialize}$,
 <!--(end)-->
-} ${enum.full_name.replace('.', '_')}$;
+} ${enum.name.replace('.', '_')}$;
 </code>

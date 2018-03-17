@@ -1,6 +1,6 @@
 <!--(include)-->doc_macros.include<!--(end)-->#!
-~~Title: ${struct.full_name}$~~
-====== ${struct.full_name}$ (struct) ======
+~~Title: ${struct.name}$~~
+====== ${struct.name}$ (struct) ======
 
 ${BEST_SUMMARY(obj=struct)}$
 
@@ -21,7 +21,7 @@ ${OBJECT_STATIC_CONTENT(obj=struct, section='fields')}$
 ===== Signature =====
 
 <code>
-struct ${struct.full_name}$ {
+struct ${struct.name}$ {
 <!--(for field in struct.struct_fields)-->
     ${field.name}$: ${field.type.name}$,
 <!--(end)-->
@@ -31,9 +31,9 @@ struct ${struct.full_name}$ {
 ===== C Signature =====
 
 <code>
-typedef struct _${struct.full_name.replace('.', '_')}$ {
+typedef struct _${struct.name.replace('.', '_')}$ {
 <!--(for field in struct.struct_fields)-->
     ${field.name}$: **TODO (issue with Typedecl.c_type need Unit)**,
 <!--(end)-->
-} ${struct.full_name.replace('.', '_')}$;
+} ${struct.name.replace('.', '_')}$;
 </code>
