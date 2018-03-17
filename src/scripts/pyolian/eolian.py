@@ -319,9 +319,14 @@ class Eolian_Unit(EolianBaseObject):
     def children(self):
         return Iterator(Eolian_Unit, lib.eolian_unit_children_get(self._obj))
 
-    @property
+    @cached_property
     def file(self):
         return _str_to_py(lib.eolian_unit_file_get(self._obj))
+
+    @cached_property
+    def state(self):
+        c_state = lib.eolian_unit_state_get(self._obj)
+        return Eolian_State(c_state) if c_state else None
 
     @property
     def objects(self):
@@ -399,8 +404,10 @@ class Eolian_Unit(EolianBaseObject):
 
 
 class Eolian_State(Eolian_Unit):
-    def __init__(self):
-        self._obj = lib.eolian_state_new()  # Eolian_State *
+    def __init__(self, c_state=None):
+        if c_state is None:
+            c_state = lib.eolian_state_new()  # Eolian_State *
+        EolianBaseObject.__init__(self, c_state)
 
     def __del__(self):
         if not _already_halted:  # do not free after eolian_shutdown

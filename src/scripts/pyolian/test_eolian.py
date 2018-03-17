@@ -87,6 +87,11 @@ class TestEolianState(unittest.TestCase):
 
 
 class TestEolianUnit(unittest.TestCase):
+    def test_unit_get(self):
+        unit = eolian_db.unit_by_file_get('efl_ui_win.eo')
+        self.assertIsInstance(unit.state, eolian.Eolian_State)
+        self.assertEqual(unit.state, eolian_db)
+
     def test_file_get(self):
         unit = eolian_db.unit_by_file_get('efl_ui_win.eo')
         self.assertIsInstance(unit, eolian.Eolian_Unit)

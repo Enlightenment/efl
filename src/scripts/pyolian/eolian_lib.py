@@ -130,6 +130,10 @@ lib.eolian_state_enums_by_file_get.restype = c_void_p
 lib.eolian_unit_children_get.argtypes = [c_void_p,]
 lib.eolian_unit_children_get.restype = c_void_p
 
+# EAPI const Eolian_State *eolian_unit_state_get(const Eolian_Unit *unit);
+lib.eolian_unit_state_get.argtypes = [c_void_p,]
+lib.eolian_unit_state_get.restype = c_void_p
+
 # EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
 lib.eolian_unit_file_get.argtypes = [c_void_p,]
 lib.eolian_unit_file_get.restype = c_char_p
