@@ -196,6 +196,10 @@ lib.eolian_unit_globals_get.restype = c_void_p
 lib.eolian_object_type_get.argtypes = [c_void_p]
 lib.eolian_object_type_get.restype = c_int
 
+# EAPI const Eolian_Unit *eolian_object_unit_get(const Eolian_Object *obj);
+lib.eolian_object_unit_get.argtypes = [c_void_p,]
+lib.eolian_object_unit_get.restype = c_void_p
+
 # EAPI const char *eolian_object_file_get(const Eolian_Object *obj);
 lib.eolian_object_file_get.argtypes = [c_void_p]
 lib.eolian_object_file_get.restype = c_char_p

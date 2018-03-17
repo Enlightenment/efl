@@ -270,6 +270,11 @@ class TestEolianObject(unittest.TestCase):
         self.assertIsInstance(obj, eolian.Class)
         self.assertEqual(obj.name, 'Efl.Ui.Frame')
 
+    def test_unit(self):
+        obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
+        self.assertIsInstance(obj.unit, eolian.Eolian_Unit)
+        self.assertEqual(obj.unit.file, 'efl_ui_frame.eo')
+
     def test_name(self):
         obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
         self.assertEqual(obj.name, 'Efl.Ui.Frame')

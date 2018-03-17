@@ -312,6 +312,8 @@ class EolianBaseObject(object):
 ###  Main Eolian Unit  ########################################################
 
 class Eolian_Unit(EolianBaseObject):
+    def __repr__(self):
+        return "<eolian.Eolian_Unit '{0.file}'>".format(self)
 
     @property
     def children(self):
@@ -403,6 +405,9 @@ class Eolian_State(Eolian_Unit):
     def __del__(self):
         if not _already_halted:  # do not free after eolian_shutdown
             lib.eolian_state_free(self._obj)
+
+    def __repr__(self):
+        return "<eolian.Eolian_State, %d units loaded>" % len(list(self.units))
 
     def file_parse(self, filepath):
         c_unit = lib.eolian_state_file_parse(self._obj, _str_to_bytes(filepath))
@@ -571,6 +576,11 @@ class Object(EolianBaseObject):
 
     def __repr__(self):
         return "<eolian.Object '{0.name}', {0.type!s}>".format(self)
+
+    @cached_property
+    def unit(self):
+        c_unit = lib.eolian_object_unit_get(self._obj)
+        return Eolian_Unit(c_unit) if c_unit else None
 
     @cached_property
     def name(self):
