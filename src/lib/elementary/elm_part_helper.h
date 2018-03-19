@@ -68,7 +68,7 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
 static inline Eo *
 ELM_PART_IMPLEMENT(const Efl_Class *part_klass, const Eo *obj, const char *part)
 {
-   return efl_add(part_klass, NULL,
+   return efl_add(part_klass, (Eo *) obj,
                   _elm_part_initialize(efl_added, (Eo *) obj, part));
 }
 

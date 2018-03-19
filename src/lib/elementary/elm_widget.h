@@ -823,7 +823,7 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
 }
 
 #define elm_legacy_add(k, p, ...) ({ \
-   efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
+       efl_add(k, p ? p : efl_main_loop_get(), efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
 
 static inline Eo *
 elm_widget_resize_object_get(const Eo *obj)

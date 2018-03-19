@@ -8259,6 +8259,7 @@ elm_win_window_id_get(const Evas_Object *obj)
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        if (!ee) return NULL;
         return ecore_evas_window_get(ee);
      }
 
@@ -8654,7 +8655,7 @@ elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
       default: break;
      }
 
-   return elm_legacy_add(klass, parent, 
+   return elm_legacy_add(klass, parent,
                          efl_ui_win_name_set(efl_added, name),
                          efl_ui_win_type_set(efl_added, type));
 }
