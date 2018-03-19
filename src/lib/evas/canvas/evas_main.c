@@ -198,7 +198,7 @@ evas_shutdown(void)
 EAPI Evas *
 evas_new(void)
 {
-   Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, NULL);
+   Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, efl_main_loop_get());
    return eo_obj;
 }
 
