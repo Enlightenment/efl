@@ -2173,8 +2173,7 @@ static void
 _efl_object_invalidate(Eo *obj, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
-   if (efl_parent_get(obj))
-     efl_parent_set(obj, NULL);
+   efl_parent_set(obj, NULL);
    pd->invalidate = EINA_TRUE;
 }
 
