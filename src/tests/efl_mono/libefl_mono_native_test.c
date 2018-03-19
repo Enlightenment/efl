@@ -34,6 +34,8 @@
 #include "test_numberwrapper.eo.h"
 #include "test_testing.eo.h"
 
+#include <interfaces/efl_part.eo.h>
+
 #define EQUAL(a, b) ((a) == (b) ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s)", __FILE__, __LINE__, __FUNCTION__), fflush(stderr), 0))
 #define STR_EQUAL(a, b) (strcmp((a), (b)) == 0 ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s) '%s' != '%s'", __FILE__, __LINE__, __FUNCTION__, (a), (b)), fflush(stderr), 0))
 
@@ -46,6 +48,8 @@ typedef struct Test_Testing_Data
   Eina_Value *stored_value;
   Test_StructSimple stored_struct;
   int stored_int;
+  Eo *part1;
+  Eo *part2;
 } Test_Testing_Data;
 
 typedef struct Test_Numberwrapper_Data
@@ -3712,6 +3716,28 @@ void _test_testing_emit_event_with_float(Eo *obj, EINA_UNUSED Test_Testing_Data 
 void _test_testing_emit_event_with_obj(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eo *data)
 {
     efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_OBJ, data);
+}
+
+Efl_Object *_test_testing_efl_part_part(const Eo *obj, Test_Testing_Data *pd, const char *name)
+{
+    if (!strcmp(name, "part1"))
+      {
+         if (pd->part1 == NULL)
+           {
+              pd->part1 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part1"));
+           }
+         return pd->part1;
+      }
+    else if (!strcmp(name, "part2"))
+      {
+         if (pd->part2 == NULL)
+           {
+              pd->part2 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part2"));
+           }
+         return pd->part2;
+      }
+    else
+      return NULL;
 }
 
 #include "test_testing.eo.c"

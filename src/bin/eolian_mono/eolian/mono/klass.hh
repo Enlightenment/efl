@@ -15,6 +15,7 @@
 #include "function_registration.hh"
 #include "function_declaration.hh"
 #include "documentation.hh"
+#include "part_definition.hh"
 #include "grammar/string.hpp"
 #include "grammar/attribute_replace.hpp"
 #include "grammar/integral.hpp"
@@ -239,6 +240,10 @@ struct klass
              return false;
        }
 
+     for (auto &&p : cls.parts)
+       if (!as_generator( klass_name_to_csharp(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n").generate(sink, attributes::unused, iface_cxt))
+         return false;
+
      // End of interface declaration
      if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
@@ -330,6 +335,10 @@ struct klass
 
          if (!generate_events_registration(sink, cls, concrete_cxt))
              return false;
+
+         // Parts
+         if(!as_generator(*(part_definition))
+            .generate(sink, cls.get_all_parts(), concrete_cxt)) return false;
 
          // Concrete function definitions
          if(!as_generator(*(function_definition))
@@ -430,6 +439,10 @@ struct klass
 
          if (!generate_events_registration(sink, cls, inherit_cxt))
              return false;
+
+         // Parts
+         if(!as_generator(*(part_definition))
+            .generate(sink, cls.get_all_parts(), inherit_cxt)) return false;
 
          // Inherit function definitions
          if(!as_generator(*(function_definition(true)))

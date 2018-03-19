@@ -2,6 +2,13 @@
 #define EOLIAN_MONO_HELPERS_HH
 
 #include "grammar/klass_def.hpp"
+#include "utils.hh"
+
+/* General helper functions for the main generators.
+ *
+ * These range from blacklisting structures to 'nano-generators' (functions that receive
+ * a binding-specifict structure and returns a string).
+ */
 
 namespace eolian_mono {
 
@@ -102,9 +109,19 @@ inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
 
 inline std::string to_field_name(std::string const& in)
 {
-  std::string field_name = in;
-  field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
-  return field_name;
+  return utils::capitalize(in);
+}
+
+inline std::string klass_name_to_csharp(attributes::klass_name const& clsname)
+{
+  std::ostringstream output;
+
+  for (auto namesp : clsname.namespaces)
+    output << utils::to_lowercase(namesp) << ".";
+
+  output << clsname.eolian_name;
+
+  return output.str();
 }
 
 }

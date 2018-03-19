@@ -81,7 +81,12 @@ function Test.SimpleCb {
    return: int;
 };
 
-class Test.Testing (Efl.Object) {
+class Test.Testing (Efl.Object, Efl.Part) {
+
+   parts {
+      part1: Test.Testing; [[ Part number one. ]]
+      part2: Test.Testing; [[ Part number two. ]]
+   }
    methods {
       return_object {
          return: Test.Testing;
@@ -1547,6 +1552,7 @@ class Test.Testing (Efl.Object) {
    implements {
       class.constructor;
       class.destructor;
+      Efl.Part.part;
    }
    events {
       evt,with,string @hot: string;
