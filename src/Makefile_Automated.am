@@ -4,14 +4,16 @@ TEST_GEN=$(top_srcdir)/src/scripts/pyolian/testgenerator.py
 ecore_automated_suite = $(top_builddir)/src/tests/automated/ecore_suite_automated.c
 
 tests/automated/ecore_suite_automated.c:
-	$(TEST_GEN) automated ecore $(ecore_automated_suite) $(ecore_eolian_files)
+	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(ecore_eolian_files)
 
 check_PROGRAMS += tests/automated/ecore_suite_automated
 TESTS += tests/automated/ecore_suite_automated
 
 tests_automated_ecore_suite_automated_SOURCE = tests/automated/ecore_suite_automated.c
-tests_automated_ecore_suite_automated_CPPFLAGS = $(tests_ecore_ecore_suite_CPPFLAGS)
-tests_automated_ecore_suite_automated_LDADD = tests_ecore_ecore_suite_LDADD
+tests_automated_ecore_suite_automated_CPPFLAGS = $(tests_ecore_ecore_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_ecore_suite_automated_LDADD = $(tests_ecore_ecore_suite_LDADD)
 
 endif
 

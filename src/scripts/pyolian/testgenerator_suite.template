@@ -3,7 +3,6 @@
    fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
    fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
-   fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
   <!--(if exists("mfunc") and mfunc!= None)-->
    ${mfunc}$
@@ -22,20 +21,26 @@
    ${mcls}$
   <!--(end)-->
    efl_unref(obj);
-   eio_shutdown();
    ecore_shutdown();
    eina_shutdown();
 <!--(end)-->
 <!--(macro args_declaration)-->
   <!--(for arg in args)-->
-   ${arg.type.c_type_return}$ arg_${arg.name}$ = <!--(if arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(else)-->0<!--(end)-->;
+   ${arg.type.c_type_return}$ arg_${arg.name}$ = <!--(if arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(elif arg.type.name == 'Eina.Slice')-->{}<!--(else)-->0<!--(end)-->;
   <!--(end)-->
 <!--(end)-->
+<!--(macro print_arg)-->
+ <!--(if arg.direction == arg.direction.OUT)-->&<!--(end)-->arg_${arg.name}$
+<!--(end)-->
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
 #include <check.h>
+
+#include "efl_check.h"
+#include <Elementary.h>
 
 <!--(for cls in suite.clslist)-->
 void ${cls.myfullname}$_test(TCase *tc);
@@ -67,7 +72,8 @@ START_TEST(${cls.myfullname}$_${func.full_c_method_name}$)
 {
 ${args_declaration(args=func.parameters)}$${init(mcls=cls.init,mfunc=func.init)}$
 ${func.arg_init}$
-   <!--(if func.method_return_type)-->${func.method_return_type.c_type_return}$ r = <!--(end)-->${func.full_c_method_name}$(obj<!--(for arg in func.parameters)-->, arg_${arg.name}$<!--(end)-->);
+   <!--(if func.method_return_type)-->${func.method_return_type.c_type_return}$ r = <!--(end)-->${func.full_c_method_name}$(obj<!--(for arg in func.parameters)-->,${print_arg(arg=arg)}$<!--(end)-->);
+   <!--(if func.method_return_type)-->(void)r;<!--(end)-->
 ${func.arg_shutdown}$
 ${shutdown(mcls=cls.shutdown,mfunc=func.shutdown)}$
 }
@@ -76,7 +82,7 @@ END_TEST
  <!--(end)-->
 
  <!--(for func in cls.plist)-->
-  <!--(if func.getter_scope)-->
+  <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
 START_TEST(${cls.myfullname}$_${func.full_c_getter_name}$)
 {
     <!--(if len(list(func.getter_values)) > 1)-->
@@ -85,7 +91,8 @@ ${args_declaration(args=func.getter_values)}$
 ${args_declaration(args=func.getter_keys)}$${init(mcls=cls.init,mfunc=func.get_init)}$
 ${func.arg_get_init}$
    <!--(if len(list(func.getter_values)) == 1)-->
-   ${list(func.getter_values)[0].type.c_type_return}$ r = ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_keys)-->arg_${arg.name}$<!--(end)-->);
+   ${list(func.getter_values)[0].type.c_type_return}$ r = ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
+   (void)r;
    <!--(else)-->
    ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_values)-->, &arg_${arg.name}$<!--(end)--><!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
    <!--(end)-->
@@ -95,12 +102,12 @@ ${shutdown(mcustom=cls.shutdown,mfunc=func.get_shutdown)}$
 END_TEST
 
   <!--(end)-->
-  <!--(if func.setter_scope)-->
+  <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
 START_TEST(${cls.myfullname}$_${func.full_c_setter_name}$)
 {
 ${args_declaration(args=func.setter_keys)}$${args_declaration(args=func.setter_values)}$${init(mcls=cls.init,mfunc=func.set_init)}$
 ${func.arg_set_init}$
-   ${func.full_c_getter_name}$(obj<!--(for arg in func.setter_values)-->, &arg_${arg.name}$<!--(end)--><!--(for arg in func.setter_keys)-->, arg_${arg.name}$<!--(end)-->);
+   ${func.full_c_setter_name}$(obj<!--(for arg in func.setter_keys)-->, arg_${arg.name}$<!--(end)--><!--(for arg in func.setter_values)-->, arg_${arg.name}$<!--(end)-->);
 ${func.arg_set_shutdown}$
 ${shutdown(mcls=cls.shutdown,mfunc=func.set_shutdown)}$
 }
@@ -116,10 +123,10 @@ void ${cls.myfullname}$_test(TCase *tc)
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_method_name}$);
    <!--(end)-->
    <!--(for func in cls.properties)-->
-    <!--(if func.getter_scope)-->
+    <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_getter_name}$);
     <!--(end)-->
-    <!--(if func.setter_scope)-->
+    <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_setter_name}$);
     <!--(end)-->
    <!--(end)-->
