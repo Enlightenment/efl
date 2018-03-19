@@ -602,6 +602,7 @@ _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
      }
    else
      {
+        ERR("Calling efl_del on an object with no parent is not advised any more.");
         efl_unref(obj);
      }
 }
