@@ -321,7 +321,7 @@ _efl_canvas_vg_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
 
    efl_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
 
-   efl_del(pd->root);
+   efl_unref(pd->root);
    pd->root = NULL;
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
@@ -339,7 +339,7 @@ _efl_canvas_vg_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
    obj->type = o_type;
 
    /* root node */
-   pd->root = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
+   pd->root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
