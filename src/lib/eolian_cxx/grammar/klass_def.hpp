@@ -1047,6 +1047,22 @@ struct klass_def
 
       return ret;
   }
+
+  std::vector<part_def> get_all_parts() const
+  {
+      std::vector<part_def> ret;
+
+      std::copy(parts.cbegin(), parts.cend(), std::back_inserter(ret));
+
+      for (auto inherit : inherits)
+        {
+           klass_def klass(get_klass(inherit, unit), unit);
+           std::copy(klass.parts.cbegin(), klass.parts.cend(),
+                     std::back_inserter(ret));
+        }
+
+      return ret;
+  }
 };
 
 struct value_def
