@@ -300,11 +300,7 @@ WIN_ADD_TEST_PATHS = $(abs_top_builddir)/src/lib/evil/.libs:$(abs_top_builddir)/
 
 ### Rules for generating the .cs files
 
-if HAVE_WIN32
 ALL_EO_REFS = -r $(top_builddir)/src/bindings/mono/efl_mono/efl_libs.csv
-else
-ALL_EO_REFS=
-endif
 
 lib/eo/%.eo.cs: lib/eo/%.eo $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
@@ -399,6 +395,7 @@ tests/efl_mono/efl_mono$(EXEEXT).config:
 	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
 	echo "  <dllmap dll=\"ecore\" target=\"$(abs_top_builddir)/src/lib/ecore/.libs/libecore.so\"/>" >> $@
 	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
+	echo "  <dllmap dll=\"efl\" target=\"$(abs_top_builddir)/src/lib/efl/.libs/libefl.so\"/>" >> $@
 	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
 	echo "  <dllmap dll=\"eldbus\" target=\"$(abs_top_builddir)/src/lib/eldbus/.libs/libeldbus.so\"/>" >> $@
 	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
