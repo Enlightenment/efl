@@ -1079,7 +1079,7 @@ _ecore_main_loop_shutdown(void)
    if (!ML_OBJ) return;
    _ecore_main_loop_clear(ML_OBJ, ML_DAT);
 // XXX: this seemingly closes fd's it shouldn't.... :( fd 0?
-   efl_del(ML_OBJ);
+   efl_unref(ML_OBJ);
 }
 
 void

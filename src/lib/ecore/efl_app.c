@@ -111,7 +111,7 @@ EOLIAN static Efl_Loop *
 _efl_app_loop_main_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (_mainloop_singleton) return _mainloop_singleton;
-   _mainloop_singleton = efl_add(EFL_APP_CLASS, NULL);
+   _mainloop_singleton = efl_add_ref(EFL_APP_CLASS, NULL);
    _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
    return _mainloop_singleton;
 }
