@@ -203,7 +203,7 @@ _elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
                               void *sd  EINA_UNUSED)
 {
    if (!_singleton)
-     _singleton = efl_add(MY_CLASS, NULL);
+     _singleton = efl_add(MY_CLASS, efl_main_loop_get());
    return _singleton;
 }
 
