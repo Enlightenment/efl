@@ -1983,6 +1983,7 @@ efl_future_cb_from_desc(Eo *o, const Efl_Future_Cb_Desc desc)
    EINA_SAFETY_ON_NULL_GOTO(o, end);
    pd = efl_data_scope_get(o, EFL_OBJECT_CLASS);
    EINA_SAFETY_ON_NULL_GOTO(pd, end);
+   if (pd->invalidate) goto end;
    pending = _efl_pending_future_new();
    EINA_SAFETY_ON_NULL_GOTO(pending, end);
    memcpy(&pending->desc, &desc, sizeof(Efl_Future_Cb_Desc));
