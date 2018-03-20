@@ -580,7 +580,10 @@ _default_panic_cb(const Eolian_State *state EINA_UNUSED, const char *msg)
 static void
 _default_error_cb(const Eolian_Object *obj, const char *msg, void *data EINA_UNUSED)
 {
-   _eolian_log_line(obj->file, obj->line, obj->column, msg);
+   if (obj)
+     _eolian_log_line(obj->file, obj->line, obj->column, msg);
+   else
+     _eolian_log(msg);
 }
 
 EAPI Eolian_State *
@@ -649,7 +652,7 @@ EAPI Eolian_Panic_Cb
 eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb)
 {
    Eolian_Panic_Cb old_cb = state->panic;
-   state->panic = cb;
+   state->panic = cb ? cb : _default_panic_cb;
    return old_cb;
 }
 
@@ -657,7 +660,7 @@ EAPI Eolian_Error_Cb
 eolian_state_error_cb_set(Eolian_State *state, Eolian_Error_Cb cb)
 {
    Eolian_Error_Cb old_cb = state->error;
-   state->error = cb;
+   state->error = cb ? cb : _default_error_cb;
    return old_cb;
 }
 
@@ -754,7 +757,9 @@ _eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
    is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
      {
-        _eolian_log("file '%s' doesn't have a correct extension", filepath);
+        eolian_state_log(parent->state,
+                         "file '%s' doesn't have a correct extension",
+                         filepath);
         return NULL;
      }
    if (!(eopath = eina_hash_find(is_eo ? parent->state->filenames_eo : parent->state->filenames_eot, filepath)))

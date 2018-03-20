@@ -12,7 +12,7 @@
 static Eina_Bool
 node_error(const Eolian_Object *obj, const char *msg)
 {
-   _eolian_log_line(obj->file, obj->line, obj->column, "%s", msg);
+   eolian_state_log_obj(obj->unit->state, obj, "%s", msg);
    return EINA_FALSE;
 }
 

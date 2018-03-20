@@ -108,8 +108,13 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    for (i = 0; i < ls->column; ++i)
      eina_strbuf_append_char(buf, ' ');
    eina_strbuf_append(buf, "^\n");
-   _eolian_log_line(ls->source, ls->line_number, ls->column,
-                    "%s", eina_strbuf_string_get(buf));
+   Eolian_Object tmp;
+   memset(&tmp, 0, sizeof(Eolian_Object));
+   tmp.unit = ls->unit;
+   tmp.file = ls->source;
+   tmp.line = ls->line_number;
+   tmp.column = ls->column;
+   eolian_state_log_obj(ls->state, &tmp, "%s", eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    longjmp(ls->err_jmp, EINA_TRUE);
 }
@@ -1020,9 +1025,9 @@ _node_free(Eolian_Object *obj)
    /* for when we have a proper node allocator and collect on shutdown */
    if (obj->refcount > 1)
      {
-        _eolian_log("node %p (type %d, name %s at %s:%d:%d)"
-                    " dangling ref (count: %d)", obj, obj->type, obj->name,
-                    obj->file, obj->line, obj->column, obj->refcount);
+        eolian_state_log(obj->state, "node %p (type %d, name %s at %s:%d:%d)"
+                         " dangling ref (count: %d)", obj, obj->type, obj->name,
+                         obj->file, obj->line, obj->column, obj->refcount);
      }
 #endif
    switch (obj->type)
@@ -1055,7 +1060,7 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
      {
-        _eolian_log("%s", strerror(errno));
+        eolian_state_log(ls->state, "%s", strerror(errno));
         longjmp(ls->err_jmp, EINA_TRUE);
      }
    ls->lookahead.token = -1;
@@ -1290,6 +1295,7 @@ eo_lexer_context_push(Eo_Lexer *ls)
    Lexer_Ctx *ctx = malloc(sizeof(Lexer_Ctx));
    if (!ctx)
      {
+        /* FIXME unrecoverable */
         _eolian_log("out of memory pushing context");
         longjmp(ls->err_jmp, EINA_TRUE);
      }

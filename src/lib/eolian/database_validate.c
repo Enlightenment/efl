@@ -38,8 +38,8 @@ _validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str, const Eolian_Obj
             if (eolian_doc_token_ref_resolve(&tok, src, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
               {
                  char *refn = eolian_doc_token_text_get(&tok);
-                 _eolian_log_line(info->file, info->line, info->column,
-                                  "failed validating reference '%s'", refn);
+                 eolian_state_log_obj(info->unit->state, info,
+                                      "failed validating reference '%s'", refn);
                  free(refn);
                  ret = EINA_FALSE;
                  break;
@@ -116,7 +116,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 static Eina_Bool
 _obj_error(const Eolian_Object *o, const char *msg)
 {
-   _eolian_log_line(o->file, o->line, o->column, "%s", msg);
+   eolian_state_log_obj(o->unit->state, o, "%s", msg);
    return EINA_FALSE;
 }
 
@@ -467,7 +467,7 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
 }
 
 #define _eo_parser_log(_base, ...) \
-   _eolian_log_line((_base)->file, (_base)->line, (_base)->column, __VA_ARGS__)
+   eolian_state_log_obj((_base)->unit->state, (_base), __VA_ARGS__)
 
 static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)

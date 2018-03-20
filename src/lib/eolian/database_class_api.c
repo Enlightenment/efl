@@ -95,8 +95,8 @@ eolian_class_function_by_name_get(const Eolian_Class *cl, const char *func_name,
           }
      }
 
-   _eolian_log("function '%s' not found in class '%s'", func_name,
-               eolian_object_short_name_get(&cl->base));
+   eolian_state_log(cl->base.unit->state, "function '%s' not found in class '%s'",
+                    func_name, eolian_object_short_name_get(&cl->base));
    return NULL;
 }
 

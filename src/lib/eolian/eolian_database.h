@@ -110,6 +110,41 @@ eolian_object_add(Eolian_Object *obj, Eina_Stringshare *name, Eina_Hash *hash)
    eolian_object_add(&obj->base, name, tunit->memb); \
 }
 
+static inline void eolian_state_vlog(const Eolian_State *state, const Eolian_Object *obj, const char *fmt, va_list args) EINA_ARG_NONNULL(1, 3);
+static inline void eolian_state_log(const Eolian_State *state, const char *fmt, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 3);
+static inline void eolian_state_log_obj(const Eolian_State *state, const Eolian_Object *obj, const char *fmt, ...) EINA_ARG_NONNULL(1, 2, 3) EINA_PRINTF(3, 4);
+
+
+static inline void
+eolian_state_vlog(const Eolian_State *state, const Eolian_Object *obj,
+                 const char *fmt, va_list args)
+{
+   Eina_Strbuf *sb = eina_strbuf_new();
+   eina_strbuf_append_vprintf(sb, fmt, args);
+   state->error(obj, eina_strbuf_string_get(sb), state->error_data);
+   eina_strbuf_free(sb);
+}
+
+static inline void
+eolian_state_log(const Eolian_State *state, const char *fmt, ...)
+{
+   va_list args;
+   va_start(args, fmt);
+   eolian_state_vlog(state, NULL, fmt, args);
+   va_end(args);
+}
+
+static inline void
+eolian_state_log_obj(const Eolian_State *state, const Eolian_Object *obj,
+                     const char *fmt, ...)
+{
+   va_list args;
+   va_start(args, fmt);
+   eolian_state_vlog(state, obj, fmt, args);
+   va_end(args);
+}
+
+
 struct _Eolian_Documentation
 {
    Eolian_Object base;

@@ -1071,10 +1071,16 @@ parse_accessor:
      {
         if (getenv("EOLIAN_PROPERTY_DOC_WARN"))
           {
-             _eolian_log_line(prop->base.file, line, col,
-                              "%s doc without property doc for '%s.%s'",
-                              is_get ? "getter" : "setter",
-                              ls->klass->base.name, prop->base.name);
+             Eolian_Object tmp;
+             memset(&tmp, 0, sizeof(Eolian_Object));
+             tmp.file = prop->base.file;
+             tmp.line = line;
+             tmp.column = col;
+             tmp.unit = ls->unit;
+             eolian_state_log_obj(ls->state, &tmp,
+                                  "%s doc without property doc for '%s.%s'",
+                                  is_get ? "getter" : "setter",
+                                  ls->klass->base.name, prop->base.name);
           }
      }
    if (is_get)
@@ -2210,7 +2216,8 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    Eo_Lexer *ls = eo_lexer_new(parent->state, filename);
    if (!ls)
      {
-        _eolian_log("unable to create lexer for file '%s'", filename);
+        eolian_state_log(parent->state, "unable to create lexer for file '%s'",
+                         filename);
         goto error;
      }
 
@@ -2226,7 +2233,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    Eolian_Class *cl;
    if (!(cl = ls->klass))
      {
-        _eolian_log("eolian: no class for file '%s'", filename);
+        eolian_state_log(ls->state, "no class for file '%s'", filename);
         goto error;
      }
    ls->klass = NULL;
