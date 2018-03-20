@@ -43,6 +43,7 @@
   EINA_ITERATOR_FOREACH(it, file)                                       \
     {                                                                   \
        int set_ok, save_ok;                                             \
+       Eina_File *f; \
        mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
        mesh2 = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
        fail_if(mesh == NULL);                                           \
@@ -56,11 +57,17 @@
        fail_if(!set_ok);                                                \
        res = _compare_meshes(mesh, mesh2);                              \
        fail_if(res == 1);                                               \
-       set_ok = efl_file_mmap_set(mesh, eina_file_open(file->path, 0), NULL); \
+       f = eina_file_open(file->path, 0); \
+       fail_if(!f); \
+       set_ok = efl_file_mmap_set(mesh, f, NULL); \
+       eina_file_close(f); \
        save_ok = efl_file_save(mesh, buffer, NULL, NULL);              \
        fail_if(!set_ok);                                                \
        fail_if(!save_ok);                                               \
-       set_ok = efl_file_mmap_set(mesh2, eina_file_open(buffer, 0), NULL); \
+       f = eina_file_open(buffer, 0); \
+       fail_if(!f); \
+       set_ok = efl_file_mmap_set(mesh2, f, NULL); \
+       eina_file_close(f); \
        fail_if(!set_ok);                                                \
        res = _compare_meshes(mesh, mesh2);                              \
        fail_if(res == 1);                                               \
