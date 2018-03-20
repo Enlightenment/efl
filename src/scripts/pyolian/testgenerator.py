@@ -109,12 +109,12 @@ class SuiteCase():
 
     def load(self, testdir, eofiles):
         self.clslist = []
+        self.custom = load_file(os.path.join(testdir, "{}_custom.c".format(self.name))) or ''
+        self.init = load_file(os.path.join(testdir, "{}_init.c".format(self.name))) or ''
+        self.shutdown = load_file(os.path.join(testdir, "{}_shutdown.c".format(self.name))) or ''
         for eofile in eofiles:
             cls = eolian_db.class_by_file_get(os.path.basename(eofile))
             if not cls or cls.type != cls.type.REGULAR:
-                continue
-
-            if cls.file == "efl_promise.eo":
                 continue
 
             self.clslist.append(cls)

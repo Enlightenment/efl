@@ -1,19 +1,37 @@
 if EFL_ENABLE_TESTS
-TEST_GEN=$(top_srcdir)/src/scripts/pyolian/testgenerator.py
 
-ecore_automated_suite = $(top_builddir)/src/tests/automated/ecore_suite_automated.c
+AM_TESTS_ENVIRONMENT += EOLIAN_SO_DIR='$(top_builddir)/src/lib/eolian/.libs/'
+TEST_GEN = $(top_srcdir)/src/scripts/pyolian/testgenerator.py
 
-tests/automated/ecore_suite_automated.c:
+ecore_automated_source = tests/automated/ecore_suite_automated.c
+ecore_automated_suite = $(top_builddir)/src/$(ecore_automated_source)
+$(ecore_automated_source):
 	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(ecore_eolian_files)
 
 check_PROGRAMS += tests/automated/ecore_suite_automated
 TESTS += tests/automated/ecore_suite_automated
 
-tests_automated_ecore_suite_automated_SOURCE = tests/automated/ecore_suite_automated.c
+tests_automated_ecore_suite_automated_SOURCE = $(ecore_automated_source)
 tests_automated_ecore_suite_automated_CPPFLAGS = $(tests_ecore_ecore_suite_CPPFLAGS) \
 -I$(top_srcdir)/src/tests \
 @ELEMENTARY_CFLAGS@
-tests_automated_ecore_suite_automated_LDADD = $(tests_ecore_ecore_suite_LDADD)
+tests_automated_ecore_suite_automated_LDADD = $(tests_ecore_ecore_suite_LDADD) @USE_ELEMENTARY_LIBS@
+
+
+ector_automated_source = tests/automated/ector_suite_automated.c
+ector_automated_suite = $(top_builddir)/src/$(ector_automated_source)
+$(ector_automated_source):
+	$(TEST_GEN) automated ector $(top_builddir)/src/$@ $(ector_eolian_files)
+
+check_PROGRAMS += tests/automated/ector_suite_automated
+TESTS += tests/automated/ector_suite_automated
+
+tests_automated_ector_suite_automated_SOURCE = $(ector_automated_source)
+tests_automated_ector_suite_automated_CPPFLAGS = $(tests_ector_suite_ector_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_ector_suite_automated_LDADD = $(tests_ector_suite_ector_suite_LDADD) @USE_ECORE_LIBS@
+tests_automated_ector_suite_automated_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
 
 endif
 
