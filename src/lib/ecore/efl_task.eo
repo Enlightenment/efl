@@ -142,7 +142,7 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
       }
       run {
          [[ Actually run the task ]]
-         return: bool; [[ True if ir started to run, false otherwise ]]
+         return: ptr(Eina.Future) @owned; [[ A future triggered when task exits and is passed int exit code ]]
       }
       end {
          [[ Request the task end (may send a signal or interrupt
@@ -151,7 +151,6 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
       }
    }
    events {
-     exit; [[ When the task exits and there is an exit code to get and all IO is finished and can't work anymore ]]
    }
    implements {
       Efl.Object.constructor;

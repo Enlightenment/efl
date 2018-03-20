@@ -50,6 +50,7 @@ struct _Efl_Exe_Data
       Eina_Bool can_write : 1;
    } fd;
 #else
+   Eina_Promise *promise;
    Eo *exit_handler;
    pid_t pid;
    struct {
@@ -180,30 +181,20 @@ _foreach_env(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, voi
    return EINA_TRUE;
 }
 
-static Eina_Value
-_efl_loop_task_exit(void *data, const Eina_Value v,
-                    const Eina_Future *dead EINA_UNUSED)
-{
-   Eo *obj = data;
-
-   efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
-   efl_unref(obj);
-   return v;
-}
-
 static void
 _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
 {
    if ((pd->fd.out == -1) && /*(pd->fd.in == -1) &&*/
        (pd->fd.exited_read == -1) && (!pd->exit_called))
      {
-        Eina_Future *job;
-        Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-
         pd->exit_called = EINA_TRUE;
-        efl_ref(obj);
-        job = eina_future_then(efl_loop_job(loop), _efl_loop_task_exit, obj);
-        efl_future_Eina_FutureXXX_then(obj, job);
+        if (pd->promise)
+          {
+             int exit_code = efl_task_exit_code_get(obj);
+             if (exit_code != 0) eina_promise_reject(pd->promise, exit_code + 1000000);
+             else eina_promise_resolve(pd->promise, eina_value_int_init(0));
+             pd->promise = NULL;
+          }
      }
 }
 
@@ -252,6 +243,15 @@ _cb_exe_in(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
    efl_io_writer_can_write_set(obj, EINA_TRUE);
+}
+
+static void
+_run_cancel_cb(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
+{
+   Eo *obj = data;
+   Efl_Exe_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   pd->promise = NULL;
+   efl_task_end(obj);
 }
 #endif
 
@@ -347,7 +347,7 @@ _efl_exe_efl_task_priority_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    return pri;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Future *
 _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
@@ -362,20 +362,20 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    int pipe_exited[2];
    int ret;
 
-   if (pd->run) return EINA_FALSE;
-   if (pd->pid != -1) return EINA_FALSE;
-   if (!td) return EINA_FALSE;
+   if (pd->run) return NULL;
+   if (pd->pid != -1) return NULL;
+   if (!td) return NULL;
 
    // get a cmdline to run
    cmd = efl_task_command_get(obj);
-   if (!cmd) return EINA_FALSE;
+   if (!cmd) return NULL;
 
    ret = pipe(pipe_exited);
    if (EINA_UNLIKELY(ret != 0))
      {
         const int error = errno;
         ERR("pipe() failed: %s", strerror(error));
-        return EINA_FALSE;
+        return NULL;
      }
 
    pd->fd.exited_read = pipe_exited[0];
@@ -390,7 +390,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
           {
              const int error = errno;
              ERR("pipe() failed: %s", strerror(error));
-             return EINA_FALSE;
+             return NULL;
           }
         pd->fd.in = pipe_stdin[1];
         fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
@@ -408,7 +408,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
           {
              const int error = errno;
              ERR("pipe() failed: %s", strerror(error));
-             return EINA_FALSE;
+             return NULL;
           }
         pd->fd.out = pipe_stdout[0];
         fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
@@ -434,7 +434,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
           {
              _close_fds(pd);
              _ecore_signal_pid_unlock();
-             return EINA_FALSE;
+             return NULL;
           }
         // register this pid in the core sigchild/pid exit code watcher
         _ecore_signal_pid_register(pd->pid, pd->fd.exited_write);
@@ -448,7 +448,9 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
                                               EFL_LOOP_HANDLER_FLAGS_READ));
         _ecore_signal_pid_unlock();
         pd->run = EINA_TRUE;
-        return EINA_TRUE;
+        pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
+        Eina_Future *f = eina_future_new(pd->promise);
+        return efl_future_Eina_FutureXXX_then(obj, f);
      }
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.
@@ -531,7 +533,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    _exec(cmd, pd->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
    exit(-122);
-   return EINA_FALSE;
+   return NULL;
 #endif
 }
 

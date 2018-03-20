@@ -68,6 +68,7 @@ struct _Efl_Thread_Data
       Eina_Bool can_write : 1;
    } fd, ctrl;
    int read_listeners;
+   Eina_Promise *promise;
    Eo *loop;
    Thread_Data *thdat;
    Efl_Callback_Array_Item_Full *event_cb;
@@ -109,7 +110,7 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
      {
         if (cmd.d.command == CMD_EXIT)
           {
-             efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
+             efl_event_callback_call(obj, EFL_LOOP_EVENT_QUIT, NULL);
              efl_loop_quit(obj, eina_value_int_init(0));
           }
         else if (cmd.d.command == CMD_CALL)
@@ -309,32 +310,21 @@ _efl_thread_main(void *data, Eina_Thread t)
 
 //////////////////////////////////////////////////////////////////////////
 
-static Eina_Value
-_efl_loop_task_exit(void *data, const Eina_Value v,
-                    const Eina_Future *dead EINA_UNUSED)
-
-{
-   Eo *obj = data;
-
-   efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
-   efl_unref(obj);
-   return v;
-}
-
 static void
 _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
 {
    if ((pd->fd.out == -1) && /*(pd->fd.in == -1) &&*/
        (pd->exit_read) && (!pd->exit_called))
      {
-        Eina_Future *job;
-        Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-
         pd->exit_called = EINA_TRUE;
-        efl_ref(obj);
         if (pd->thdat) efl_threadio_outdata_set(obj, pd->thdat->outdata);
-        job = eina_future_then(efl_loop_job(loop), _efl_loop_task_exit, obj);
-        efl_future_Eina_FutureXXX_then(loop, job);
+        if (pd->promise)
+          {
+             int exit_code = efl_task_exit_code_get(obj);
+             if (exit_code != 0) eina_promise_reject(pd->promise, exit_code + 1000000);
+             else eina_promise_resolve(pd->promise, eina_value_int_init(0));
+             pd->promise = NULL;
+          }
      }
 }
 
@@ -399,6 +389,15 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+static void
+_run_cancel_cb(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
+{
+   Eo *obj = data;
+   Efl_Thread_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   pd->promise = NULL;
+   efl_task_end(obj);
+}
 
 static void
 _thread_parent_read_listeners_modify(Efl_Thread_Data *pd, int mod)
@@ -571,7 +570,7 @@ _efl_thread_efl_object_parent_set(Eo *obj, Efl_Thread_Data *pd, Efl_Object *pare
    pd->loop = efl_provider_find(parent, EFL_LOOP_CLASS);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Future *
 _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
 {
    Eina_Thread_Priority pri;
@@ -583,10 +582,10 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    Efl_Callback_Array_Item_Full *it;
    Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
-   if (pd->run) return EINA_FALSE;
-   if (!td) return EINA_FALSE;
+   if (pd->run) return NULL;
+   if (!td) return NULL;
    thdat = calloc(1, sizeof(Thread_Data));
-   if (!thdat) return EINA_FALSE;
+   if (!thdat) return NULL;
    thdat->fd.in = -1;
    thdat->fd.out = -1;
    thdat->ctrl.in = -1;
@@ -602,7 +601,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
           {
              ERR("Can't create to_thread pipe");
              free(thdat);
-             return EINA_FALSE;
+             return NULL;
           }
      }
    if (td->flags & EFL_TASK_FLAGS_USE_STDOUT)
@@ -613,7 +612,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
              close(pipe_to_thread[0]);
              close(pipe_to_thread[1]);
              free(thdat);
-             return EINA_FALSE;
+             return NULL;
           }
      }
    if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
@@ -662,7 +661,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         pd->fd.in = -1;
         pd->fd.out = -1;
         free(thdat);
-        return EINA_FALSE;
+        return NULL;
      }
    if (pipe(pipe_from_thread) != 0)
      {
@@ -680,7 +679,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         pd->fd.in = -1;
         pd->fd.out = -1;
         free(thdat);
-        return EINA_FALSE;
+        return NULL;
      }
    thdat->ctrl.in  = pipe_from_thread[1]; // write - input to parent
    thdat->ctrl.out = pipe_to_thread  [0]; // read - output from parent
@@ -782,11 +781,13 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         pd->fd.out = -1;
         pd->ctrl.in = -1;
         pd->ctrl.out = -1;
-        return EINA_FALSE;
+        return NULL;
      }
    pd->thdat = thdat;
    pd->run = EINA_TRUE;
-   return EINA_TRUE;
+   pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
+   Eina_Future *f = eina_future_new(pd->promise);
+   return efl_future_Eina_FutureXXX_then(obj, f);
 }
 
 EOLIAN static void

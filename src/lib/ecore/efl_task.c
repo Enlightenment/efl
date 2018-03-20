@@ -380,11 +380,11 @@ _efl_task_flags_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
    return pd->flags;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Future *
 _efl_task_run(Eo *obj EINA_UNUSED, Efl_Task_Data *pd EINA_UNUSED)
 {
    // NOP
-   return EINA_FALSE;
+   return NULL;
 }
 
 EOLIAN static void

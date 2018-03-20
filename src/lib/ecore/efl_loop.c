@@ -893,7 +893,7 @@ _efl_loop_efl_task_env_reset(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
    eina_lock_release(&_environ_lock);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Future *
 _efl_loop_efl_task_run(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    Eina_Value *ret;
@@ -901,8 +901,13 @@ _efl_loop_efl_task_run(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 
    ret = efl_loop_begin(obj);
    real = efl_loop_exit_code_process(ret);
-   if (real == 0) return EINA_TRUE;
-   return EINA_FALSE;
+   if (real == 0)
+     {
+        // we never return a valid future here because there is no loop
+        // any more to process the future callback as we would have quit
+        return NULL;
+     }
+   return NULL;
 }
 
 EOLIAN static void

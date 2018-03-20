@@ -114,7 +114,7 @@ _ecore_signal_pipe_read(Eo *obj)
                }
              Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
              if (loop)
-               efl_event_callback_call(loop, EFL_TASK_EVENT_EXIT, NULL);
+               efl_event_callback_call(loop, EFL_LOOP_EVENT_QUIT, NULL);
           }
         break;
 #ifdef SIGPWR
