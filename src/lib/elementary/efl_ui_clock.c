@@ -698,7 +698,7 @@ _field_format_get(Evas_Object *obj,
 {
    Clock_Field *field;
 
-   if (field_type > EFL_UI_CLOCK_TYPE_DAY) return NULL;
+   if (field_type > EFL_UI_CLOCK_TYPE_AMPM) return NULL;
 
    EFL_UI_CLOCK_DATA_GET(obj, sd);
 
@@ -963,7 +963,7 @@ _efl_ui_clock_field_visible_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_
 {
    Clock_Field *field;
 
-   if (fieldtype > EFL_UI_CLOCK_TYPE_DAY) return EINA_FALSE;
+   if (fieldtype > EFL_UI_CLOCK_TYPE_AMPM) return EINA_FALSE;
 
    field = sd->field_list + fieldtype;
 
@@ -976,7 +976,7 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
    char buf[BUFFER_SIZE];
    Clock_Field *field;
 
-   if (fieldtype > EFL_UI_CLOCK_TYPE_DAY) return;
+   if (fieldtype > EFL_UI_CLOCK_TYPE_AMPM) return;
 
    field = sd->field_list + fieldtype;
    visible = !!visible;
@@ -1035,7 +1035,7 @@ _efl_ui_clock_field_limit_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_Ui
 {
    Clock_Field *field;
 
-   if (fieldtype >= EFL_UI_CLOCK_TYPE_DAY) return;
+   if (fieldtype >= EFL_UI_CLOCK_TYPE_AMPM) return;
 
    field = sd->field_list + fieldtype;
    if (min) *min = field->min;
@@ -1048,7 +1048,7 @@ _efl_ui_clock_field_limit_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type 
    Clock_Field *field;
    struct tm old_time;
 
-   if (fieldtype >= EFL_UI_CLOCK_TYPE_DAY) return;
+   if (fieldtype >= EFL_UI_CLOCK_TYPE_AMPM) return;
 
    if (min > max) return;
 
