@@ -4695,7 +4695,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }

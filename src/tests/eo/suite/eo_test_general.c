@@ -656,7 +656,7 @@ START_TEST(efl_refs)
    fail_if(!efl_invalidated_get(obj3));
 
    efl_unref(obj);
-   efl_del(obj2);
+   efl_unref(obj2);
    efl_unref(obj3);
 
    /* Setting and removing parents for add_ref */
@@ -681,7 +681,7 @@ START_TEST(efl_refs)
    fail_if(!efl_invalidated_get(obj3));
 
    efl_unref(obj);
-   efl_del(obj2);
+   efl_unref(obj2);
    efl_unref(obj3);
 
    /* Just check it doesn't seg atm. */

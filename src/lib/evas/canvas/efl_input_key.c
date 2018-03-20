@@ -31,7 +31,7 @@ _del_hook(Eo *evt)
    else
      {
         efl_del_intercept_set(evt, NULL);
-        efl_del(evt);
+        efl_unref(evt);
      }
 }
 
@@ -75,7 +75,10 @@ _efl_input_key_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
    // this is a strange situation...
    efl_del_intercept_set(s_cached_event, NULL);
-   efl_del(s_cached_event);
+   if (efl_parent_get(s_cached_event))
+     efl_del(s_cached_event);
+   else
+     efl_unref(s_cached_event);
    s_cached_event = NULL;
 }
 

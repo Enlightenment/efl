@@ -277,12 +277,13 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 
    if (cl->socket)
      {
-        Eo *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
+        Eo *parent, *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
         efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
         if (efl_isa(inner_socket, EFL_NET_SOCKET_SSL_CLASS))
           efl_event_callback_array_del(inner_socket, _ecore_con_client_socket_ssl_cbs(), cl);
 
-        if (efl_parent_get(cl->socket) != cl->svr->server)
+        parent = efl_parent_get(cl->socket);
+        if (parent && (parent != cl->svr->server))
           efl_del(cl->socket); /* we own it */
         else
           efl_unref(cl->socket);

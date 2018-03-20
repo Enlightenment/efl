@@ -52,7 +52,7 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
    do { if (PROXY_STATIC_VAR(type)) \
      { \
         efl_del_intercept_set(PROXY_STATIC_VAR(type), NULL); \
-        efl_del(PROXY_STATIC_VAR(type)); \
+        efl_unref(PROXY_STATIC_VAR(type)); \
         PROXY_STATIC_VAR(type) = NULL; \
      } } while (0)
 
