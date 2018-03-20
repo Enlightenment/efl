@@ -751,6 +751,8 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    if (!input)
      input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
+   window->resizing = EINA_TRUE;
+
    if (window->xdg_toplevel)
      xdg_toplevel_resize(window->xdg_toplevel, input->wl.seat,
                              window->display->serial, location);

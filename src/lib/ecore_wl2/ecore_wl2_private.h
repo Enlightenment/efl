@@ -231,6 +231,7 @@ struct _Ecore_Wl2_Window
    Ecore_Wl2_Window_Configure_State def_config;
 
    Eina_Bool moving : 1;
+   Eina_Bool resizing : 1;
    Eina_Bool alpha : 1;
    Eina_Bool transparent : 1;
 
