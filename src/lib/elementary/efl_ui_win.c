@@ -8259,7 +8259,7 @@ elm_win_window_id_get(const Evas_Object *obj)
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        if (!ee) return NULL;
+        if (!ee) return 0;
         return ecore_evas_window_get(ee);
      }
 
