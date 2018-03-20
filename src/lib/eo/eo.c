@@ -927,7 +927,8 @@ ok_nomatch:
         EO_OBJ_POINTER_GOTO_PROXY(eo_id, new_obj, err_newid);
         /* We have two refs at this point. */
         _efl_unref(obj);
-        efl_del((Eo *)obj->header.id);
+        if (parent_id) efl_del((Eo *) obj->header.id);
+        else _efl_unref(obj);
         _efl_ref(new_obj);
         EO_OBJ_DONE(eo_id);
      }
@@ -938,7 +939,8 @@ err_noid:
        file, line, klass->desc->name);
    /* We have two refs at this point. */
    _efl_unref(obj);
-   efl_del((Eo *) obj->header.id);
+   if (parent_id) efl_del((Eo *) obj->header.id);
+   else _efl_unref(obj);
 err_newid:
    if (parent_id) EO_OBJ_DONE(parent_id);
    return NULL;
@@ -989,7 +991,8 @@ err_condtor:
      }
 cleanup:
    _efl_unref(obj);
-   efl_del((Eo *) obj->header.id);
+   if (efl_parent_get(eo_id)) efl_del((Eo *) obj->header.id);
+   else _efl_unref(obj);
    EO_OBJ_DONE(eo_id);
    return NULL;
 }
