@@ -193,6 +193,13 @@ typedef struct _Eo_Lexer
    char decpoint;
 } Eo_Lexer;
 
+typedef enum _Eo_Lexer_Error
+{
+   EO_LEXER_ERROR_UNKNOWN = 0,
+   EO_LEXER_ERROR_NORMAL,
+   EO_LEXER_ERROR_OOM
+} Eo_Lexer_Error;
+
 void        eo_lexer_init           (void);
 void        eo_lexer_shutdown       (void);
 Eo_Lexer   *eo_lexer_new            (Eolian_State *state, const char *source);

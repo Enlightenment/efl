@@ -116,7 +116,7 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    tmp.column = ls->column;
    eolian_state_log_obj(ls->state, &tmp, "%s", eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
-   longjmp(ls->err_jmp, EINA_TRUE);
+   longjmp(ls->err_jmp, EO_LEXER_ERROR_NORMAL);
 }
 
 void
@@ -462,6 +462,9 @@ static void
 read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 {
    Eolian_Documentation *doc = calloc(1, sizeof(Eolian_Documentation));
+   if (!doc)
+     longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
+
    doc->base.file = ls->filename;
    doc->base.line = line;
    doc->base.column = column;
@@ -1061,7 +1064,7 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
    if (!f)
      {
         eolian_state_log(ls->state, "%s", strerror(errno));
-        longjmp(ls->err_jmp, EINA_TRUE);
+        longjmp(ls->err_jmp, EO_LEXER_ERROR_NORMAL);
      }
    ls->lookahead.token = -1;
    ls->state           = state;
@@ -1079,6 +1082,11 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
    next_char(ls);
 
    Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
+   if (!ncunit)
+     {
+        eo_lexer_free(ls);
+        eolian_state_panic(state, "out of memory");
+     }
    ls->unit = ncunit;
    database_unit_init(state, ncunit, ls->filename);
    eina_hash_add(state->units, ls->filename, ncunit);
@@ -1098,6 +1106,8 @@ Eolian_Object *
 eo_lexer_node_new(Eo_Lexer *ls, size_t objsize)
 {
    Eolian_Object *obj = calloc(1, objsize);
+   if (!obj)
+     longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
    eina_hash_add(ls->nodes, &obj, obj);
    eolian_object_ref(obj);
    return obj;
@@ -1137,6 +1147,11 @@ void
 eo_lexer_dtor_push(Eo_Lexer *ls, Eina_Free_Cb free_cb, void *data)
 {
    Eo_Lexer_Dtor *dt = malloc(sizeof(Eo_Lexer_Dtor));
+   if (!dt)
+     {
+        free_cb(data);
+        longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
+     }
    dt->free_cb = free_cb;
    dt->data = data;
    ls->dtors = eina_list_prepend(ls->dtors, dt);
@@ -1176,6 +1191,8 @@ Eo_Lexer *
 eo_lexer_new(Eolian_State *state, const char *source)
 {
    volatile Eo_Lexer *ls = calloc(1, sizeof(Eo_Lexer));
+   if (!ls)
+     eolian_state_panic(state, "out of memory");
 
    if (!setjmp(((Eo_Lexer *)(ls))->err_jmp))
      {
@@ -1294,11 +1311,7 @@ eo_lexer_context_push(Eo_Lexer *ls)
 {
    Lexer_Ctx *ctx = malloc(sizeof(Lexer_Ctx));
    if (!ctx)
-     {
-        /* FIXME unrecoverable */
-        _eolian_log("out of memory pushing context");
-        longjmp(ls->err_jmp, EINA_TRUE);
-     }
+     longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
    ctx->line = ls->line_number;
    ctx->column = ls->column;
    ctx->linestr = ls->stream_line;

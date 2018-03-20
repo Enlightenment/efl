@@ -2195,6 +2195,7 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 Eolian_Unit *
 eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot)
 {
+   int status = 0;
    const char *fsl = strrchr(filename, '/');
    const char *bsl = strrchr(filename, '\\');
    const char *fname = NULL;
@@ -2224,7 +2225,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    /* read first token */
    eo_lexer_get(ls);
 
-   if (setjmp(ls->err_jmp))
+   if ((status = setjmp(ls->err_jmp)))
      goto error;
 
    parse_chunk(ls, eot);
@@ -2252,5 +2253,13 @@ done:
 error:
    eina_stringshare_del(fname);
    eo_lexer_free(ls);
+   switch (status)
+     {
+      case EO_LEXER_ERROR_OOM:
+        eolian_state_panic(parent->state, "out of memory");
+        break;
+      default:
+        break;
+     }
    return NULL;
 }

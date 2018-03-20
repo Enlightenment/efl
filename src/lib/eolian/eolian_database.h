@@ -114,6 +114,7 @@ static inline void eolian_state_vlog(const Eolian_State *state, const Eolian_Obj
 static inline void eolian_state_log(const Eolian_State *state, const char *fmt, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 3);
 static inline void eolian_state_log_obj(const Eolian_State *state, const Eolian_Object *obj, const char *fmt, ...) EINA_ARG_NONNULL(1, 2, 3) EINA_PRINTF(3, 4);
 
+static inline void eolian_state_panic(Eolian_State *state, const char *fmt, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 3);
 
 static inline void
 eolian_state_vlog(const Eolian_State *state, const Eolian_Object *obj,
@@ -144,6 +145,15 @@ eolian_state_log_obj(const Eolian_State *state, const Eolian_Object *obj,
    va_end(args);
 }
 
+static inline void
+eolian_state_panic(Eolian_State *state, const char *fmt, ...)
+{
+   va_list args;
+   va_start(args, fmt);
+   state->panic_msg = eina_stringshare_vprintf(fmt, args);
+   va_end(args);
+   longjmp(state->jmp_env, 1);
+}
 
 struct _Eolian_Documentation
 {
