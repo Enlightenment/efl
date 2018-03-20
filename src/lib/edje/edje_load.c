@@ -1841,7 +1841,8 @@ _edje_file_del(Edje *ed)
    Edje_User_Defined *eud;
    Evas *tev = NULL;
 
-   if (ed->obj) tev = evas_object_evas_get(ed->obj);
+   if (ed->obj && (!efl_invalidated_get(ed->obj)))
+     tev = evas_object_evas_get(ed->obj);
 
    ed->groups = eina_list_free(ed->groups);
 
