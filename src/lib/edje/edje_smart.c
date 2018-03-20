@@ -48,6 +48,12 @@ _efl_canvas_layout_efl_object_constructor(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
+_efl_canvas_layout_efl_object_invalidate(Eo *obj EINA_UNUSED, Edje *ed)
+{
+   _edje_file_callbacks_del(ed, NULL);
+}
+
+EOLIAN static void
 _efl_canvas_layout_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
 {
    efl_debug_name_override(efl_super(obj, MY_CLASS), sb);

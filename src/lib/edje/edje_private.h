@@ -2497,6 +2497,7 @@ EAPI void _edje_edd_shutdown(void);
 
 int _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
+void  _edje_file_callbacks_del(Edje *ed, Evas *e);
 void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
 void  _edje_file_cache_shutdown(void);
