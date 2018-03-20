@@ -848,6 +848,7 @@ struct part_def
 {
    klass_name klass;
    std::string name;
+   documentation_def documentation;
    //bool beta, protect; // can it be applied??
 
    friend inline bool operator==(part_def const& lhs, part_def const& rhs)
@@ -867,7 +868,8 @@ struct part_def
 
    part_def(Eolian_Part const* part, Eolian_Unit const*)
       : klass(klass_name(::eolian_part_class_get(part), {attributes::qualifier_info::is_none, std::string()}))
-      , name(::eolian_part_name_get(part)) {}
+      , name(::eolian_part_name_get(part))
+      , documentation(::eolian_part_documentation_get(part)) {}
 };
 
 inline Eolian_Class const* get_klass(klass_name const& klass_name_, Eolian_Unit const* unit);
