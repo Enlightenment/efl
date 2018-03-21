@@ -827,10 +827,9 @@ _drm_animator_register(Ecore_Evas *ee)
                                        + ((double)usec / 1000000);
              edata->tick_job = ecore_job_add(_tick_job, ee);
           }
+        else
+          ecore_drm2_fb_flip(NULL, edata->output);
      }
-
-   if (!ecore_drm2_output_pending_get(edata->output) && !ee->in_async_render)
-     ecore_drm2_fb_flip(NULL, edata->output);
 
    edata->ticking = EINA_TRUE;
 }
