@@ -1,5 +1,6 @@
 int argc = 2;
 char *argv[] = { "efl_ui_suite", "test" };
+(void)parent;
 
 _EFL_APP_VERSION_SET();
 obj = efl_app_get();
