@@ -27,6 +27,12 @@ struct _Efl_Model_Children_Event
     * positions through listings.
     */
    unsigned int index;
+   /**
+    * If an object has been build for this index and
+    * is currently tracked by the parent, it wild be
+    * available here.
+    */
+   Eo *child;
 };
 
 /**
