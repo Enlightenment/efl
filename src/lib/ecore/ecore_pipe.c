@@ -496,7 +496,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
    int64_t timerfdbuf;
    struct epoll_event pollincoming[2];
    double timeout;
-   int ret;
+   int ret = 0;
    int total = 0;
    int time_exit = -1;
    Eina_Bool fd_read_found;
@@ -533,7 +533,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
           }
      }
 
-   while ((ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit)) > 0)
+   while ((p->pollfd != PIPE_FD_INVALID) && (ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit)) > 0)
      {
         fd_read_found  = EINA_FALSE;
         fd_timer_found = EINA_FALSE;
