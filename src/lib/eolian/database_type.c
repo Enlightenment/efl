@@ -36,8 +36,8 @@ void
 database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, aliases);
-   eina_hash_set(unit->state->main.aliases_f, tp->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(unit->state->main.aliases_f, tp->base.file),
+   eina_hash_set(unit->state->staging.aliases_f, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(unit->state->staging.aliases_f, tp->base.file),
                 tp));
    database_object_add(unit, &tp->base);
 }
@@ -46,8 +46,8 @@ void
 database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
-   eina_hash_set(unit->state->main.structs_f, tp->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(unit->state->main.structs_f, tp->base.file), tp));
+   eina_hash_set(unit->state->staging.structs_f, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(unit->state->staging.structs_f, tp->base.file), tp));
    database_object_add(unit, &tp->base);
 }
 
@@ -55,8 +55,8 @@ void
 database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, enums);
-   eina_hash_set(unit->state->main.enums_f, tp->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(unit->state->main.enums_f, tp->base.file), tp));
+   eina_hash_set(unit->state->staging.enums_f, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(unit->state->staging.enums_f, tp->base.file), tp));
    database_object_add(unit, &tp->base);
 }
 

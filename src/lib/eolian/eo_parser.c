@@ -2207,6 +2207,8 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
      fname = eina_stringshare_add(filename);
 
    Eolian_Unit *ret = eina_hash_find(parent->state->main.units, fname);
+   if (!ret)
+     ret = eina_hash_find(parent->state->staging.units, fname);
 
    if (ret)
      {
@@ -2241,7 +2243,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
      }
    ls->klass = NULL;
    EOLIAN_OBJECT_ADD(ls->unit, cl->base.name, cl, classes);
-   eina_hash_set(ls->state->main.classes_f, cl->base.file, cl);
+   eina_hash_set(ls->state->staging.classes_f, cl->base.file, cl);
    eo_lexer_node_release(ls, &cl->base);
 
 done:

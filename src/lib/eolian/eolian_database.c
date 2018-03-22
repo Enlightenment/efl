@@ -14,8 +14,8 @@ database_object_add(Eolian_Unit *unit, const Eolian_Object *obj)
    /* object storage */
    eina_hash_add(unit->objects, obj->name, obj);
    eina_hash_add(unit->state->staging.unit.objects, obj->name, obj);
-   eina_hash_set(unit->state->main.objects_f, obj->file, eina_list_append
-                 ((Eina_List *)eina_hash_find(unit->state->main.objects_f, obj->file), obj));
+   eina_hash_set(unit->state->staging.objects_f, obj->file, eina_list_append
+                 ((Eina_List *)eina_hash_find(unit->state->staging.objects_f, obj->file), obj));
 }
 
 EAPI Eolian_Object_Type
