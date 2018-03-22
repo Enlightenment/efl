@@ -776,7 +776,7 @@ static Eina_Bool
 _parse_deferred(Eolian_Unit *parent)
 {
    Eina_Hash *defer = parent->state->defer;
-   if (!defer || !eina_hash_population(defer))
+   if (!eina_hash_population(defer))
      return EINA_TRUE;
    /* clean room for more deps for later parsing */
    parent->state->defer = eina_hash_string_small_new(NULL);
@@ -859,6 +859,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    if (!state)
      return NULL;
 
+   eina_hash_free_buckets(state->defer);
    Eolian_Unit *ret = _eolian_file_parse_nodep((Eolian_Unit *)state, filepath);
    if (!ret)
      return NULL;
@@ -896,6 +897,7 @@ eolian_state_all_eot_files_parse(Eolian_State *state)
    if (!state)
      return EINA_FALSE;
 
+   eina_hash_free_buckets(state->defer);
    eina_hash_foreach(state->filenames_eot, _tfile_parse, &pd);
 
    if (pd.ret && !database_validate(&state->unit))
@@ -924,6 +926,7 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
    if (!state)
      return EINA_FALSE;
 
+   eina_hash_free_buckets(state->defer);
    eina_hash_foreach(state->filenames_eo, _file_parse, &pd);
 
    if (pd.ret && !database_validate(&state->unit))
