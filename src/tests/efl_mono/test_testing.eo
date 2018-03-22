@@ -81,6 +81,13 @@ function Test.SimpleCb {
    return: int;
 };
 
+function Test.FormatCb {
+   params {
+      @in str: strbuf;
+      @in value: const(any_value);
+   }
+};
+
 class Test.Testing (Efl.Object, Efl.Part) {
 
    parts {
@@ -1569,6 +1576,13 @@ class Test.Testing (Efl.Object, Efl.Part) {
          }
       }
 
+      call_format_cb {
+         params {
+            @in str: strbuf;
+            @in value: const(any_value);
+            @in func: Test.FormatCb;
+         }
+      }
    }
    implements {
       class.constructor;

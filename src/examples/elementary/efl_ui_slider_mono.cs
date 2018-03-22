@@ -15,6 +15,16 @@ public class Example
         return button;
     }
 
+    public static void Formatter(eina.Strbuf buf, eina.Value val){
+        double ratio;
+        if (val.Get(out ratio)) {
+            buf.Append($"{(int)(ratio*100)}%");
+        } else {
+            buf.Append("Error");
+        }
+    }
+
+
 #if WIN32 // Passed to the C# compiler with -define:WIN32
     // Mono on Windows by default uses multi-thread apartments for COM stuff while
     // OLE - used by ecore win32 DnD requires single threading for COM.
@@ -41,6 +51,7 @@ public class Example
 
         efl.ui.Progressbar bar = new efl.ui.ProgressbarConcrete(box);
         bar.SetSize(new eina.Size2D(W, H));
+        bar.SetFormatCb(Formatter);
 
         efl.ui.Slider slider = new efl.ui.SliderConcrete(box);
         slider.SetSize(new eina.Size2D(W, H));

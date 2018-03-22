@@ -429,6 +429,7 @@ TESTS += tests/efl_mono/mono_test_driver.sh
 
 tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Main.cs \
+     tests/efl_mono/TestUtils.cs \
      tests/efl_mono/BasicDirection.cs \
      tests/efl_mono/Eina.cs \
      tests/efl_mono/Eldbus.cs \
@@ -437,11 +438,11 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Evas.cs \
      tests/efl_mono/Events.cs \
      tests/efl_mono/FunctionPointers.cs \
+     tests/efl_mono/FunctionPointerMarshalling.cs \
      tests/efl_mono/Parts.cs \
      tests/efl_mono/Strbuf.cs \
      tests/efl_mono/Strings.cs \
      tests/efl_mono/Structs.cs \
-     tests/efl_mono/TestUtils.cs \
      tests/efl_mono/Value.cs \
      tests/efl_mono/ValueEolian.cs
 

@@ -27,7 +27,6 @@ inline bool is_function_blacklisted(std::string const& c_name)
     || c_name == "efl_ui_focus_user_parent_get"
     || c_name == "efl_canvas_object_scale_get" // duplicated signature
     || c_name == "efl_canvas_object_scale_set" // duplicated signature
-    || c_name == "efl_ui_format_cb_set"
     || c_name == "efl_access_parent_get"
     || c_name == "efl_access_name_get"
     || c_name == "efl_access_name_set"

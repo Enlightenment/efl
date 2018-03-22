@@ -10,13 +10,7 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
-/* #include "type.hh" */
-/* #include "marshall_type.hh" */
 #include "parameter.hh"
-#include "function_pointer.hh"
-/* #include "keyword.hh" */
-/* #include "using_decl.hh" */
-/* #include "generation_contexts.hh" */
 
 namespace eolian_mono {
 
@@ -163,6 +157,10 @@ struct native_function_definition_epilogue_parameterized
   native_function_definition_epilogue_generator const operator()(attributes::klass_def const& klass) const
   {
     return {&klass};
+  }
+  native_function_definition_epilogue_generator const operator()(attributes::klass_def const* klass=nullptr) const
+  {
+    return {klass};
   }
 } const native_function_definition_epilogue;
 

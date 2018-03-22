@@ -3756,6 +3756,13 @@ void _test_testing_call_append_to_strbuf(Eo * obj, EINA_UNUSED Test_Testing_Data
     test_testing_append_to_strbuf(obj, buf, str);
 }
 
+void _test_testing_call_format_cb(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Strbuf *buf, const Eina_Value value,
+                               void *func_data, Test_FormatCb func, Eina_Free_Cb func_free_cb)
+{
+    func(func_data, buf, value);
+    func_free_cb(func_data);
+}
+
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
 
