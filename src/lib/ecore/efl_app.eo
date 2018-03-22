@@ -44,7 +44,7 @@ class Efl.App (Efl.Loop)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Io.Closer.close;
       Efl.Io.Closer.closed { get; }
       Efl.Io.Reader.read;

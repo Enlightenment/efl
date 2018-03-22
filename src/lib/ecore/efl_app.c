@@ -148,26 +148,23 @@ _efl_app_efl_object_constructor(Eo *obj, Efl_App_Data *pd)
    pd->fd.in_handler =
      efl_add(EFL_LOOP_HANDLER_CLASS, obj,
              efl_loop_handler_fd_set(efl_added, pd->fd.in),
-             efl_event_callback_add
-               (efl_added, EFL_LOOP_HANDLER_EVENT_WRITE, _cb_in, obj));
+             efl_event_callback_add(efl_added, EFL_LOOP_HANDLER_EVENT_WRITE, _cb_in, obj));
    pd->fd.out_handler =
      efl_add(EFL_LOOP_HANDLER_CLASS, obj,
              efl_loop_handler_fd_set(efl_added, pd->fd.out),
-             efl_event_callback_add
-               (efl_added, EFL_LOOP_HANDLER_EVENT_READ, _cb_out, obj));
+             efl_event_callback_add(efl_added, EFL_LOOP_HANDLER_EVENT_READ, _cb_out, obj));
    return obj;
 }
 
 EOLIAN static void
-_efl_app_efl_object_destructor(Eo *obj, Efl_App_Data *pd)
+_efl_app_efl_object_invalidate(Eo *obj, Efl_App_Data *pd)
 {
-   efl_del(pd->fd.in_handler);
-   efl_del(pd->fd.out_handler);
    pd->fd.in_handler = NULL;
    pd->fd.out_handler = NULL;
    pd->fd.in = -1;
    pd->fd.out = -1;
-   efl_destructor(efl_super(obj, MY_CLASS));
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Error
