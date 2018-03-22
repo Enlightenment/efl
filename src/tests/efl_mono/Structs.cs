@@ -270,22 +270,22 @@ class TestStructs
     {
         var simple = structSimpleWithValues();
         int original = simple.Fint;
-        simple.Fstring = "Struct Ptr In";
+        simple.Fmstring = "Struct Ptr In";
         test.Testing t = new test.TestingConcrete();
         Test.Assert(t.StructSimplePtrIn(ref simple));
         Test.AssertEquals(-original, simple.Fint);
-        Test.AssertEquals("nI rtP tcurtS", simple.Fstring);
+        Test.AssertEquals("nI rtP tcurtS", simple.Fmstring);
     }
 
     public static void simple_ptr_in_own()
     {
         var simple = structSimpleWithValues();
         int original = simple.Fint;
-        simple.Fstring = "Struct Ptr In Own";
+        simple.Fmstring = "Struct Ptr In Own";
         test.Testing t = new test.TestingConcrete();
         test.StructSimple result = t.StructSimplePtrInOwn(ref simple);
         Test.AssertEquals(-original, result.Fint);
-        Test.AssertEquals("nwO nI rtP tcurtS", result.Fstring);
+        Test.AssertEquals("nwO nI rtP tcurtS", result.Fmstring);
     }
 
     public static void simple_out()

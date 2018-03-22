@@ -3375,7 +3375,7 @@ EOLIAN
 Eina_Bool _test_testing_struct_simple_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
 {
    simple->fint = -simple->fint;
-   _reverse_string(simple->fstring);
+   _reverse_string(simple->fmstring);
    return EINA_TRUE;
 }
 
@@ -3385,7 +3385,7 @@ Test_StructSimple _test_testing_struct_simple_ptr_in_own(EINA_UNUSED Eo *obj, EI
    Test_StructSimple ret = *simple;
    free(simple);
    ret.fint = -ret.fint;
-   _reverse_string(ret.fstring);
+   _reverse_string(ret.fmstring);
    return ret;
 }
 
