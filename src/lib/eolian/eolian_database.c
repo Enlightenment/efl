@@ -565,21 +565,52 @@ database_unit_del(Eolian_Unit *unit)
    free(unit);
 }
 
+static Eina_Bool
+_hashlist_free_cb(const Eina_Hash *hash EINA_UNUSED,
+                  const void *key EINA_UNUSED,
+                  void *data, void *fdata EINA_UNUSED)
+{
+   eina_list_free((Eina_List *)data);
+   return EINA_TRUE;
+}
+
 static void
-_state_area_init(Eolian_State *state, Eolian_State_Area *a, Eina_Bool owned)
+_hashlist_free(Eina_Hash *h)
+{
+   eina_hash_foreach(h, _hashlist_free_cb, NULL);
+   eina_hash_free(h);
+}
+
+static void
+_hashlist_free_buckets(Eina_Hash *h)
+{
+   eina_hash_foreach(h, _hashlist_free_cb, NULL);
+   eina_hash_free_buckets(h);
+}
+
+static void
+_state_area_init(Eolian_State *state, Eolian_State_Area *a)
 {
    database_unit_init(state, &a->unit, NULL);
 
-   a->units = eina_hash_stringshared_new(
-     owned ? EINA_FREE_CB(database_unit_del) : NULL);
+   a->units = eina_hash_stringshared_new(NULL);
 
    a->classes_f   = eina_hash_stringshared_new(NULL);
-   a->aliases_f   = eina_hash_stringshared_new(EINA_FREE_CB(eina_list_free));
-   a->structs_f   = eina_hash_stringshared_new(EINA_FREE_CB(eina_list_free));
-   a->enums_f     = eina_hash_stringshared_new(EINA_FREE_CB(eina_list_free));
-   a->globals_f   = eina_hash_stringshared_new(EINA_FREE_CB(eina_list_free));
-   a->constants_f = eina_hash_stringshared_new(EINA_FREE_CB(eina_list_free));
-   a->objects_f   = eina_hash_stringshared_new(EINA_FREE_CB(eina_list_free));
+   a->aliases_f   = eina_hash_stringshared_new(NULL);
+   a->structs_f   = eina_hash_stringshared_new(NULL);
+   a->enums_f     = eina_hash_stringshared_new(NULL);
+   a->globals_f   = eina_hash_stringshared_new(NULL);
+   a->constants_f = eina_hash_stringshared_new(NULL);
+   a->objects_f   = eina_hash_stringshared_new(NULL);
+}
+
+static Eina_Bool
+_ulist_free_cb(const Eina_Hash *hash EINA_UNUSED,
+               const void *key EINA_UNUSED,
+               void *data, void *fdata EINA_UNUSED)
+{
+   database_unit_del((Eolian_Unit *)data);
+   return EINA_TRUE;
 }
 
 static void
@@ -587,15 +618,16 @@ _state_area_contents_del(Eolian_State_Area *a)
 {
    _unit_contents_del(&a->unit);
 
+   eina_hash_foreach(a->units, _ulist_free_cb, NULL);
    eina_hash_free(a->units);
 
    eina_hash_free(a->classes_f);
-   eina_hash_free(a->aliases_f);
-   eina_hash_free(a->structs_f);
-   eina_hash_free(a->enums_f);
-   eina_hash_free(a->globals_f);
-   eina_hash_free(a->constants_f);
-   eina_hash_free(a->objects_f);
+   _hashlist_free(a->aliases_f);
+   _hashlist_free(a->structs_f);
+   _hashlist_free(a->enums_f);
+   _hashlist_free(a->globals_f);
+   _hashlist_free(a->constants_f);
+   _hashlist_free(a->objects_f);
 }
 
 static void
@@ -631,8 +663,8 @@ eolian_state_new(void)
 
    state->error = _default_error_cb;
 
-   _state_area_init(state, &state->main, EINA_TRUE);
-   _state_area_init(state, &state->staging, EINA_FALSE);
+   _state_area_init(state, &state->main);
+   _state_area_init(state, &state->staging);
 
    state->filenames_eo  = eina_hash_string_small_new(free);
    state->filenames_eot = eina_hash_string_small_new(free);
@@ -786,16 +818,30 @@ _eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
 static void
 _state_clean(Eolian_State *state)
 {
-    eina_hash_free_buckets(state->defer);
+   eina_hash_free_buckets(state->defer);
 
-    Eolian_Unit *st = &state->staging.unit;
-    eina_hash_free_buckets(st->classes);
-    eina_hash_free_buckets(st->globals);
-    eina_hash_free_buckets(st->constants);
-    eina_hash_free_buckets(st->aliases);
-    eina_hash_free_buckets(st->structs);
-    eina_hash_free_buckets(st->enums);
-    eina_hash_free_buckets(st->objects);
+   Eolian_State_Area *st = &state->staging;
+
+   Eolian_Unit *stu = &st->unit;
+   eina_hash_free_buckets(stu->classes);
+   eina_hash_free_buckets(stu->globals);
+   eina_hash_free_buckets(stu->constants);
+   eina_hash_free_buckets(stu->aliases);
+   eina_hash_free_buckets(stu->structs);
+   eina_hash_free_buckets(stu->enums);
+   eina_hash_free_buckets(stu->objects);
+
+   eina_hash_foreach(st->units, _ulist_free_cb, NULL);
+   eina_hash_free_buckets(st->units);
+
+   eina_hash_free_buckets(st->classes_f);
+
+   _hashlist_free_buckets(st->aliases_f);
+   _hashlist_free_buckets(st->structs_f);
+   _hashlist_free_buckets(st->enums_f);
+   _hashlist_free_buckets(st->globals_f);
+   _hashlist_free_buckets(st->constants_f);
+   _hashlist_free_buckets(st->objects_f);
 }
 
 static Eina_Bool
@@ -889,6 +935,40 @@ _merge_units(Eolian_Unit *unit)
    eina_hash_free(mdata.cycles);
 }
 
+static Eina_Bool
+_merge_staging_cb(const Eina_Hash *hash EINA_UNUSED,
+                  const void *key, void *data, void *fdata)
+{
+   eina_hash_add((Eina_Hash *)fdata, key, data);
+   return EINA_TRUE;
+}
+
+static void
+_merge_staging(Eolian_State *state)
+{
+   Eolian_State_Area *amain = &state->main, *staging = &state->staging;
+   _merge_unit(&amain->unit, &staging->unit);
+
+   eina_hash_foreach(staging->units, _merge_staging_cb, amain->units);
+   eina_hash_free_buckets(staging->units);
+
+#define EOLIAN_STAGING_MERGE_LIST(name) \
+   eina_hash_foreach(staging->name##_f, _merge_staging_cb, amain->name##_f); \
+   eina_hash_free_buckets(staging->name##_f);
+
+   EOLIAN_STAGING_MERGE_LIST(classes);
+   EOLIAN_STAGING_MERGE_LIST(aliases);
+   EOLIAN_STAGING_MERGE_LIST(structs);
+   EOLIAN_STAGING_MERGE_LIST(enums);
+   EOLIAN_STAGING_MERGE_LIST(globals);
+   EOLIAN_STAGING_MERGE_LIST(constants);
+   EOLIAN_STAGING_MERGE_LIST(objects);
+
+#undef EOLIAN_STAGING_MERGE_LIST
+
+   _state_clean(state);
+}
+
 EAPI const Eolian_Unit *
 eolian_state_file_parse(Eolian_State *state, const char *filepath)
 {
@@ -904,8 +984,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    _merge_units(ret);
    if (!database_validate(ret))
      return NULL;
-   _merge_unit(&state->main.unit, &state->staging.unit);
-   _state_clean(state);
+   _merge_staging(state);
    return ret;
 }
 
@@ -941,8 +1020,7 @@ eolian_state_all_eot_files_parse(Eolian_State *state)
    if (pd.ret && !database_validate(&state->staging.unit))
      return EINA_FALSE;
 
-   _merge_unit(&state->main.unit, &state->staging.unit);
-   _state_clean(state);
+   _merge_staging(state);
 
    return pd.ret;
 }
@@ -973,8 +1051,7 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
    if (pd.ret && !database_validate(&state->staging.unit))
      return EINA_FALSE;
 
-   _merge_unit(&state->main.unit, &state->staging.unit);
-   _state_clean(state);
+   _merge_staging(state);
 
    return pd.ret;
 }
