@@ -800,6 +800,16 @@ public static class TestEinaValue {
         }
     }
 
+    public static void TestStringThroughValue() {
+        // Check if Value_Native->Value doesn't try to free the pointed string.
+        using(eina.Value value_ptr = new eina.Value(eina.ValueType.String)) {
+            string payload = "Something";
+            value_ptr.Set(payload);
+            eina.Value_Native byvalue = value_ptr;
+            eina.Value another_value_ptr = byvalue;
+        }
+    }
+
 
     // FIXME Add remaining list tests
 

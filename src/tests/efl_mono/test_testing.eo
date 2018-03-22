@@ -1327,6 +1327,12 @@ class Test.Testing (Efl.Object, Efl.Part) {
          }
       }
 
+      call_set_value {
+         params {
+            value: const(any_value);
+         }
+      }
+
       get_value_ptr_own {
          return: any_value_ptr @owned;
       }

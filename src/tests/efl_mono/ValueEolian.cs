@@ -109,6 +109,30 @@ public static class TestEinaValueEolian {
             Test.AssertEquals(eina.Ownership.Managed, v_out.Ownership);
         }
     }
+
+    private class ValueHandler : test.TestingInherit
+    {
+        public eina.Value value;
+
+        public ValueHandler() : base(null)
+        {
+            value = null;
+        }
+
+        public override void SetValue(eina.Value value)
+        {
+            this.value = value;
+        }
+    }
+
+    public static void TestEolianEinaValueByValueConst()
+    {
+        ValueHandler obj = new ValueHandler();
+        using (eina.Value val = new eina.Value(eina.ValueType.String)) {
+            obj.CallSetValue(val);
+            Test.AssertEquals(val, obj.value);
+        }
+    }
 }
 #pragma warning restore 1591
 }

@@ -325,6 +325,10 @@ static internal class UnsafeNativeMethods {
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref eina.EinaNative.Value_List ptr);
 
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_copy(IntPtr src, IntPtr dest);
+
     // Supported types
 
     // 8 bits byte
@@ -707,12 +711,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public Value(Value_Native value)
     {
         this.Handle = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+        IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
         try {
-            Marshal.StructureToPtr(value, this.Handle, false);
+            Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
+            if (!eina_value_copy(tmp, this.Handle))
+                throw new System.InvalidOperationException("Failed to copy value to managed memory.");
         } catch {
             MemoryNative.Free(this.Handle);
             throw;
+        } finally {
+            MemoryNative.Free(tmp);
         }
+
         this.Ownership = Ownership.Managed;
     }
 

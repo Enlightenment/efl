@@ -3648,6 +3648,11 @@ void _test_testing_set_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Eina_Va
     eina_value_copy(&value, pd->stored_value);
 }
 
+void _test_testing_call_set_value(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const Eina_Value v)
+{
+    test_testing_set_value(obj, v);
+}
+
 Eina_Value *_test_testing_get_value_ptr_own(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
     Eina_Value *val = pd->stored_value;
