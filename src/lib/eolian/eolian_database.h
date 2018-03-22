@@ -47,10 +47,25 @@ struct _Eolian_Unit
    Eina_Hash     *objects;
 };
 
-struct _Eolian_State
+typedef struct _Eolian_State_Area
 {
    Eolian_Unit unit;
-   Eolian_Unit staging;
+
+   Eina_Hash *units;
+
+   Eina_Hash *classes_f;
+   Eina_Hash *aliases_f;
+   Eina_Hash *structs_f;
+   Eina_Hash *enums_f;
+   Eina_Hash *globals_f;
+   Eina_Hash *constants_f;
+   Eina_Hash *objects_f;
+} Eolian_State_Area;
+
+struct _Eolian_State
+{
+   Eolian_State_Area main;
+   Eolian_State_Area staging;
 
    Eolian_Panic_Cb panic;
    Eina_Stringshare *panic_msg;
@@ -63,15 +78,6 @@ struct _Eolian_State
    Eina_Hash *filenames_eot;
 
    Eina_Hash *defer;
-   Eina_Hash *units;
-
-   Eina_Hash *classes_f;
-   Eina_Hash *aliases_f;
-   Eina_Hash *structs_f;
-   Eina_Hash *enums_f;
-   Eina_Hash *globals_f;
-   Eina_Hash *constants_f;
-   Eina_Hash *objects_f;
 };
 
 struct _Eolian_Object
@@ -107,7 +113,7 @@ eolian_object_add(Eolian_Object *obj, Eina_Stringshare *name, Eina_Hash *hash)
 
 #define EOLIAN_OBJECT_ADD(tunit, name, obj, memb) \
 { \
-   eolian_object_add(&obj->base, name, tunit->state->staging.memb); \
+   eolian_object_add(&obj->base, name, tunit->state->staging.unit.memb); \
    eolian_object_add(&obj->base, name, tunit->memb); \
 }
 

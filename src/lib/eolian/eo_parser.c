@@ -108,9 +108,9 @@ compare_class_file(const char *fn1, const char *fn2)
 static Eolian_Object *
 _eolian_decl_get(Eo_Lexer *ls, const char *name)
 {
-   Eolian_Object *obj = eina_hash_find(ls->state->unit.objects, name);
+   Eolian_Object *obj = eina_hash_find(ls->state->main.unit.objects, name);
    if (!obj)
-     obj = eina_hash_find(ls->state->staging.objects, name);
+     obj = eina_hash_find(ls->state->staging.unit.objects, name);
    if (obj && ((obj->type == EOLIAN_OBJECT_CLASS) ||
                (obj->type == EOLIAN_OBJECT_TYPEDECL) ||
                (obj->type == EOLIAN_OBJECT_VARIABLE)))
@@ -2206,7 +2206,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    else
      fname = eina_stringshare_add(filename);
 
-   Eolian_Unit *ret = eina_hash_find(parent->state->units, fname);
+   Eolian_Unit *ret = eina_hash_find(parent->state->main.units, fname);
 
    if (ret)
      {
@@ -2241,7 +2241,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
      }
    ls->klass = NULL;
    EOLIAN_OBJECT_ADD(ls->unit, cl->base.name, cl, classes);
-   eina_hash_set(ls->state->classes_f, cl->base.file, cl);
+   eina_hash_set(ls->state->main.classes_f, cl->base.file, cl);
    eo_lexer_node_release(ls, &cl->base);
 
 done:
