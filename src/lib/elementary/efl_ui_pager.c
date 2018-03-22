@@ -347,7 +347,7 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
 
    if (pd->indicator)
      {
-        efl_page_indicator_pack_begin(pd->indicator);
+        efl_page_indicator_pack(pd->indicator, 0);
         efl_page_indicator_update(pd->indicator, pd->curr.pos);
      }
 
@@ -370,7 +370,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
 
    if (pd->indicator)
      {
-        efl_page_indicator_pack_end(pd->indicator);
+        efl_page_indicator_pack(pd->indicator, (pd->cnt - 1));
         efl_page_indicator_update(pd->indicator, pd->curr.pos);
      }
 
@@ -398,7 +398,7 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
 
    if (pd->indicator)
      {
-        efl_page_indicator_pack_before(pd->indicator, index);
+        efl_page_indicator_pack(pd->indicator, index);
         efl_page_indicator_update(pd->indicator, pd->curr.pos);
      }
 
@@ -426,7 +426,7 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
 
    if (pd->indicator)
      {
-        efl_page_indicator_pack_after(pd->indicator, index);
+        efl_page_indicator_pack(pd->indicator, (index + 1));
         efl_page_indicator_update(pd->indicator, pd->curr.pos);
      }
 
@@ -454,7 +454,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
 
    if (pd->indicator)
      {
-        efl_page_indicator_pack_before(pd->indicator, index);
+        efl_page_indicator_pack(pd->indicator, index);
         efl_page_indicator_update(pd->indicator, pd->curr.pos);
      }
 

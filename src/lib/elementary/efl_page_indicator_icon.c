@@ -21,119 +21,60 @@ _efl_page_indicator_icon_update(Eo *obj,
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
    Eo *item;
    int page = efl_ui_pager_current_page_get(spd->pager.obj);
+   double delta = fabs(pos);
+
+   item = eina_list_nth(pd->items, page);
+   eina_value_set(pd->v, (1.0 - delta));
+   efl_layout_signal_message_send(item, 1, *(pd->v));
 
    if (pos < 0)
-     {
-        item = eina_list_nth(pd->items, page);
-        eina_value_set(pd->v, (1.0 + pos));
-        efl_layout_signal_message_send(item, 1, *(pd->v));
+     item = eina_list_nth(pd->items, (page - 1 + spd->cnt) % spd->cnt);
+   else
+     item = eina_list_nth(pd->items, (page + 1 + spd->cnt) % spd->cnt);
 
-        item = eina_list_nth(pd->items,
-                             (page - 1 + spd->cnt) % spd->cnt);
-        eina_value_set(pd->v, (pos * -1.0));
-        efl_layout_signal_message_send(item, 1, *(pd->v));
+   eina_value_set(pd->v, delta);
+   efl_layout_signal_message_send(item, 1, *(pd->v));
+}
+
+EOLIAN static void
+_efl_page_indicator_icon_pack(Eo *obj,
+                              Efl_Page_Indicator_Icon_Data *pd,
+                              int index)
+{
+   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
+   Eo *item, *existing;
+
+   efl_page_indicator_pack(efl_super(obj, MY_CLASS), index);
+
+   item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
+   elm_widget_theme_object_set(spd->idbox, item,
+                               "pager", "indicator", "default");
+   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
+   efl_gfx_size_hint_weight_set(item, 0, 0);
+
+   if (index == 0)
+     {
+        pd->items = eina_list_prepend(pd->items, item);
+        efl_pack_begin(spd->idbox, item);
+     }
+   else if (index == (spd->cnt - 1))
+     {
+        pd->items = eina_list_append(pd->items, item);
+        efl_pack_end(spd->idbox, item);
      }
    else
      {
-        item = eina_list_nth(pd->items, page);
-        eina_value_set(pd->v, (1.0 - pos));
-        efl_layout_signal_message_send(item, 1, *(pd->v));
-
-        item = eina_list_nth(pd->items,
-                             (page + 1 + spd->cnt) % spd->cnt);
-        eina_value_set(pd->v, pos);
-        efl_layout_signal_message_send(item, 1, *(pd->v));
+        existing = eina_list_nth(pd->items, index);
+        pd->items = eina_list_prepend_relative(pd->items, item, existing);
+        efl_pack_before(spd->idbox, item, existing);
      }
-}
-
-EOLIAN static void
-_efl_page_indicator_icon_pack_begin(Eo *obj,
-                                    Efl_Page_Indicator_Icon_Data *pd)
-{
-   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
-   Eo *item;
-
-   efl_page_indicator_pack_begin(efl_super(obj, MY_CLASS));
-
-   item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
-   pd->items = eina_list_prepend(pd->items, item);
-
-   elm_widget_theme_object_set(spd->idbox, item,
-                               "pager", "indicator", "default");
-   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-   efl_gfx_size_hint_weight_set(item, 0, 0);
-   efl_pack_begin(spd->idbox, item);
-}
-
-EOLIAN static void
-_efl_page_indicator_icon_pack_end(Eo *obj,
-                                  Efl_Page_Indicator_Icon_Data *pd)
-{
-   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
-   Eo *item;
-
-   efl_page_indicator_pack_end(efl_super(obj, MY_CLASS));
-
-   item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
-   pd->items = eina_list_append(pd->items, item);
-
-   elm_widget_theme_object_set(spd->idbox, item,
-                               "pager", "indicator", "default");
-   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-   efl_gfx_size_hint_weight_set(item, 0, 0);
-   efl_pack_end(spd->idbox, item);
-}
-
-EOLIAN static void
-_efl_page_indicator_icon_pack_before(Eo *obj,
-                                     Efl_Page_Indicator_Icon_Data *pd,
-                                     int index)
-{
-   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
-   Eo *item, *existing;
-
-   efl_page_indicator_pack_before(efl_super(obj, MY_CLASS), index);
-
-   existing = eina_list_nth(pd->items, index);
-
-   item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
-   pd->items = eina_list_prepend_relative(pd->items, item, existing);
-
-   elm_widget_theme_object_set(spd->idbox, item,
-                               "pager", "indicator", "default");
-   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-   efl_gfx_size_hint_weight_set(item, 0, 0);
-
-   efl_pack_before(spd->idbox, item, existing);
-}
-
-EOLIAN static void
-_efl_page_indicator_icon_pack_after(Eo *obj,
-                                    Efl_Page_Indicator_Icon_Data *pd,
-                                    int index)
-{
-   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
-   Eo *item, *existing;
-
-   efl_page_indicator_pack_after(efl_super(obj, MY_CLASS), index);
-
-   existing = eina_list_nth(pd->items, index);
-
-   item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
-   pd->items = eina_list_append_relative(pd->items, item, existing);
-
-   elm_widget_theme_object_set(spd->idbox, item,
-                               "pager", "indicator", "default");
-   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-   efl_gfx_size_hint_weight_set(item, 0, 0);
-
-   efl_pack_after(spd->idbox, item, existing);
 }
 
 EOLIAN static Eo *
 _efl_page_indicator_icon_efl_object_constructor(Eo *obj,
                                                 Efl_Page_Indicator_Icon_Data *pd)
 {
+   ERR("call");
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
    Eo *item;
    int i, page;
@@ -174,23 +115,17 @@ _efl_page_indicator_icon_efl_object_destructor(Eo *obj,
 {
    Eo *item;
 
-   efl_destructor(efl_super(obj, MY_CLASS));
-
    EINA_LIST_FREE(pd->items, item)
       efl_del(item);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 
 #define EFL_PAGE_INDICATOR_ICON_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_update, \
                       _efl_page_indicator_icon_update), \
-   EFL_OBJECT_OP_FUNC(efl_page_indicator_pack_begin, \
-                      _efl_page_indicator_icon_pack_begin), \
-   EFL_OBJECT_OP_FUNC(efl_page_indicator_pack_end, \
-                      _efl_page_indicator_icon_pack_end), \
-   EFL_OBJECT_OP_FUNC(efl_page_indicator_pack_before, \
-                      _efl_page_indicator_icon_pack_before), \
-   EFL_OBJECT_OP_FUNC(efl_page_indicator_pack_after, \
-                      _efl_page_indicator_icon_pack_after)
+   EFL_OBJECT_OP_FUNC(efl_page_indicator_pack, \
+                      _efl_page_indicator_icon_pack)
 
 #include "efl_page_indicator_icon.eo.c"
