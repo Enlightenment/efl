@@ -554,7 +554,7 @@ struct native_convert_in_variable_generator
       else if (need_struct_conversion(regular))
         {
            return as_generator(
-                "var " << string << " = " << type << "_StructConvertion.ToExternal(" << escape_keyword(param.param_name) << ");\n"
+                "var " << string << " = " << type << "_StructConversion.ToExternal(" << escape_keyword(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
         }
       else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
@@ -622,7 +622,7 @@ struct convert_in_variable_generator
       else if (need_struct_conversion(regular))
         {
            return as_generator(
-                "var " << string << " = " << type << "_StructConvertion.ToInternal(" << escape_keyword(param.param_name) << ");\n"
+                "var " << string << " = " << type << "_StructConversion.ToInternal(" << escape_keyword(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
         }
       else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
@@ -883,7 +883,7 @@ struct convert_out_assign_generator
       else if (need_struct_conversion(regular))
         {
            return as_generator(
-                string << " = " << type << "_StructConvertion.ToExternal(" << out_variable_name(param.param_name) << ");\n"
+                string << " = " << type << "_StructConversion.ToExternal(" << out_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
@@ -966,7 +966,7 @@ struct native_convert_in_ptr_assign_generator
       if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && need_struct_conversion(regular))
         {
            return as_generator(
-                 string << " = " << type << "_StructConvertion.ToInternal(" << in_variable_name(param.param_name) << ");\n"
+                 string << " = " << type << "_StructConversion.ToInternal(" << in_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
         }
 
@@ -983,7 +983,7 @@ struct convert_in_ptr_assign_generator
       if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && need_struct_conversion(regular))
         {
            return as_generator(
-                 string << " = " << type << "_StructConvertion.ToExternal(" << in_variable_name(param.param_name) << ");\n"
+                 string << " = " << type << "_StructConversion.ToExternal(" << in_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
         }
 
@@ -1021,7 +1021,7 @@ struct convert_return_generator
      else if (need_struct_conversion(regular))
        {
           return as_generator(
-               "return " << type << "_StructConvertion.ToExternal(_ret_var);\n"
+               "return " << type << "_StructConversion.ToExternal(_ret_var);\n"
             ).generate(sink, ret_type, context);
        }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
@@ -1089,7 +1089,7 @@ struct native_convert_out_assign_generator
       else if (need_struct_conversion(regular))
         {
            return as_generator(
-                string << " = " << type << "_StructConvertion.ToInternal(" << string << ");\n"
+                string << " = " << type << "_StructConversion.ToInternal(" << string << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
@@ -1222,7 +1222,7 @@ struct native_convert_return_generator
      else if (need_struct_conversion(regular))
        {
           return as_generator(
-               "return " << type << "_StructConvertion.ToInternal(_ret_var);\n"
+               "return " << type << "_StructConversion.ToInternal(_ret_var);\n"
             ).generate(sink, ret_type, context);
        }
      else if (ret_type.c_type == "const char *")

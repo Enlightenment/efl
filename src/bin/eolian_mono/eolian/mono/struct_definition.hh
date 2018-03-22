@@ -140,12 +140,12 @@ struct struct_internal_definition_generator
                  scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
                  << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
                  << scope_tab << "{\n"
-                 << scope_tab << scope_tab << "return " << string << "_StructConvertion.ToExternal(struct_);\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToExternal(struct_);\n"
                  << scope_tab << "}\n"
                  << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
                  << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
                  << scope_tab << "{\n"
-                 << scope_tab << scope_tab << "return " << string << "_StructConvertion.ToInternal(struct_);\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToInternal(struct_);\n"
                  << scope_tab << "}\n"
                  ).generate(sink, std::make_tuple(external_name, internal_name, external_name,
                                                   internal_name, external_name, external_name), context))
@@ -201,7 +201,7 @@ struct to_internal_field_convert_generator
       else if (need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = " << type << "_StructConvertion.ToInternal(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = " << type << "_StructConversion.ToInternal(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
@@ -311,7 +311,7 @@ struct to_external_field_convert_generator
       else if (need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConvertion.ToExternal(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToExternal(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
@@ -365,7 +365,7 @@ struct struct_binding_conversion_functions_generator
      // Open conversion class
      if (!as_generator
          (
-          "internal static class " << string << "_StructConvertion\n{\n"
+          "internal static class " << string << "_StructConversion\n{\n"
          )
          .generate(sink, struct_.cxx_name, context))
        return false;
