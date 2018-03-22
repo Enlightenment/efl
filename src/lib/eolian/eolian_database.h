@@ -107,7 +107,7 @@ eolian_object_add(Eolian_Object *obj, Eina_Stringshare *name, Eina_Hash *hash)
 
 #define EOLIAN_OBJECT_ADD(tunit, name, obj, memb) \
 { \
-   eolian_object_add(&obj->base, name, tunit->state->unit.memb); \
+   eolian_object_add(&obj->base, name, tunit->state->staging.memb); \
    eolian_object_add(&obj->base, name, tunit->memb); \
 }
 

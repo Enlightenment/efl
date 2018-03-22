@@ -13,7 +13,7 @@ database_object_add(Eolian_Unit *unit, const Eolian_Object *obj)
 {
    /* object storage */
    eina_hash_add(unit->objects, obj->name, obj);
-   eina_hash_add(unit->state->unit.objects, obj->name, obj);
+   eina_hash_add(unit->state->staging.objects, obj->name, obj);
    eina_hash_set(unit->state->objects_f, obj->file, eina_list_append
                  ((Eina_List *)eina_hash_find(unit->state->objects_f, obj->file), obj));
 }
@@ -828,6 +828,16 @@ _merge_unit_cb(const Eina_Hash *hash EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_merge_unit_cb_noref(const Eina_Hash *hash EINA_UNUSED,
+               const void *key, void *data, void *fdata)
+{
+   Eina_Hash *dest = fdata;
+   if (!eina_hash_find(dest, key))
+     eina_hash_add(dest, key, data);
+   return EINA_TRUE;
+}
+
 static void
 _merge_unit(Eolian_Unit *dest, Eolian_Unit *src)
 {
@@ -837,7 +847,7 @@ _merge_unit(Eolian_Unit *dest, Eolian_Unit *src)
    eina_hash_foreach(src->aliases, _merge_unit_cb, dest->aliases);
    eina_hash_foreach(src->structs, _merge_unit_cb, dest->structs);
    eina_hash_foreach(src->enums, _merge_unit_cb, dest->enums);
-   eina_hash_foreach(src->objects, _merge_unit_cb, dest->objects);
+   eina_hash_foreach(src->objects, _merge_unit_cb_noref, dest->objects);
 }
 
 typedef struct _Merge_Data
@@ -885,6 +895,8 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    _merge_units(ret);
    if (!database_validate(ret))
      return NULL;
+   _merge_unit(&state->unit, &state->staging);
+   _state_clean(state);
    return &state->unit;
 }
 
@@ -920,6 +932,9 @@ eolian_state_all_eot_files_parse(Eolian_State *state)
    if (pd.ret && !database_validate(&state->unit))
      return EINA_FALSE;
 
+   _merge_unit(&state->unit, &state->staging);
+   _state_clean(state);
+
    return pd.ret;
 }
 
@@ -948,6 +963,9 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
 
    if (pd.ret && !database_validate(&state->unit))
      return EINA_FALSE;
+
+   _merge_unit(&state->unit, &state->staging);
+   _state_clean(state);
 
    return pd.ret;
 }

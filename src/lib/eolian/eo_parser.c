@@ -109,6 +109,8 @@ static Eolian_Object *
 _eolian_decl_get(Eo_Lexer *ls, const char *name)
 {
    Eolian_Object *obj = eina_hash_find(ls->state->unit.objects, name);
+   if (!obj)
+     obj = eina_hash_find(ls->state->staging.objects, name);
    if (obj && ((obj->type == EOLIAN_OBJECT_CLASS) ||
                (obj->type == EOLIAN_OBJECT_TYPEDECL) ||
                (obj->type == EOLIAN_OBJECT_VARIABLE)))
