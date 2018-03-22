@@ -50,6 +50,7 @@ struct _Eolian_Unit
 struct _Eolian_State
 {
    Eolian_Unit unit;
+   Eolian_Unit staging;
 
    Eolian_Panic_Cb panic;
    Eina_Stringshare *panic_msg;

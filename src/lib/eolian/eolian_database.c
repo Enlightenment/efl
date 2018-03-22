@@ -605,6 +605,7 @@ eolian_state_new(void)
    state->error = _default_error_cb;
 
    database_unit_init(state, &state->unit, NULL);
+   database_unit_init(state, &state->staging, NULL);
 
    state->filenames_eo  = eina_hash_string_small_new(free);
    state->filenames_eot = eina_hash_string_small_new(free);
@@ -630,6 +631,7 @@ eolian_state_free(Eolian_State *state)
      return;
 
    _unit_contents_del(&state->unit);
+   _unit_contents_del(&state->staging);
 
    eina_hash_free(state->filenames_eo);
    eina_hash_free(state->filenames_eot);
@@ -772,6 +774,21 @@ _eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
    return eo_parser_database_fill(parent, eopath, !is_eo);
 }
 
+static void
+_state_clean(Eolian_State *state)
+{
+    eina_hash_free_buckets(state->defer);
+
+    Eolian_Unit *st = &state->staging;
+    eina_hash_free_buckets(st->classes);
+    eina_hash_free_buckets(st->globals);
+    eina_hash_free_buckets(st->constants);
+    eina_hash_free_buckets(st->aliases);
+    eina_hash_free_buckets(st->structs);
+    eina_hash_free_buckets(st->enums);
+    eina_hash_free_buckets(st->objects);
+}
+
 static Eina_Bool
 _parse_deferred(Eolian_Unit *parent)
 {
@@ -859,7 +876,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    if (!state)
      return NULL;
 
-   eina_hash_free_buckets(state->defer);
+   _state_clean(state);
    Eolian_Unit *ret = _eolian_file_parse_nodep((Eolian_Unit *)state, filepath);
    if (!ret)
      return NULL;
@@ -897,7 +914,7 @@ eolian_state_all_eot_files_parse(Eolian_State *state)
    if (!state)
      return EINA_FALSE;
 
-   eina_hash_free_buckets(state->defer);
+   _state_clean(state);
    eina_hash_foreach(state->filenames_eot, _tfile_parse, &pd);
 
    if (pd.ret && !database_validate(&state->unit))
@@ -926,7 +943,7 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
    if (!state)
      return EINA_FALSE;
 
-   eina_hash_free_buckets(state->defer);
+   _state_clean(state);
    eina_hash_foreach(state->filenames_eo, _file_parse, &pd);
 
    if (pd.ret && !database_validate(&state->unit))
