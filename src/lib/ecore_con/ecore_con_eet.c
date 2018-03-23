@@ -535,17 +535,25 @@ _ecore_con_eet_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore
 }
 
 EOLIAN static void
-_ecore_con_eet_base_raw_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
+_ecore_con_eet_base_raw_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *protocol_name, const char *section, Eina_Binbuf *section_data)
 {
    unsigned int protocol[4];
    unsigned int protocol_length;
    unsigned int section_length;
    unsigned int size;
+   unsigned int length = 0;
+   const void *value = NULL;
    char *tmp;
 
    if (!reply) return;
    if (!protocol_name) return;
    if (!section) return;
+
+   if (section_data)
+     {
+        length = eina_binbuf_length_get(section_data);
+        value = eina_binbuf_string_get(section_data);
+     }
 
    protocol_length = strlen(protocol_name) + 1;
    if (protocol_length == 1) return;
@@ -946,7 +954,9 @@ ecore_con_eet_send(Ecore_Con_Reply *reply, const char *name, void *value)
 EAPI void
 ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
 {
-   ecore_con_eet_base_raw_send(reply->ece, reply, protocol_name, section, value, length);
+   Eina_Binbuf *buf = eina_binbuf_manage_new(value, length, 1);
+   ecore_con_eet_base_raw_send(reply->ece, reply, protocol_name, section, buf);
+   eina_binbuf_free(buf);
 }
 
 #include "ecore_con_eet_base.eo.c"
