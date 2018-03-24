@@ -67,6 +67,7 @@ extern "C" {
 struct _Elm_Code_Config
 {
    Eina_Bool trim_whitespace;
+   Eina_Bool indent_style_efl;
 };
 
 struct _Elm_Code

@@ -332,6 +332,7 @@ void test_colorclass(void *data, Evas_Object *obj, void *event_info);
 void test_code_welcome(void *data, Evas_Object *obj, void *event_info);
 void test_code_editor(void *data, Evas_Object *obj, void *event_info);
 void test_code_syntax(void *data, Evas_Object *obj, void *event_info);
+void test_code_syntax_tabbed(void *data, Evas_Object *obj, void *event_info);
 void test_code_mirror(void *data, Evas_Object *obj, void *event_info);
 void test_code_log(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff(void *data, Evas_Object *obj, void *event_info);
@@ -848,9 +849,10 @@ add_tests:
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Tags", test_ui_tags);
 
    //------------------------------//
+   ADD_TEST(NULL, "Advanced Entries", "Code Entry Markup", test_code_welcome);
+   ADD_TEST(NULL, "Advanced Entries", "Code Editor", test_code_editor);
    ADD_TEST(NULL, "Advanced Entries", "Code Syntax", test_code_syntax);
-   ADD_TEST(NULL, "Advanced Entries", "Entry Markup", test_code_welcome);
-   ADD_TEST(NULL, "Advanced Entries", "Text Editor", test_code_editor);
+   ADD_TEST(NULL, "Advanced Entries", "Code Syntax (Tabbed)", test_code_syntax_tabbed);
    ADD_TEST(NULL, "Advanced Entries", "Mirrored Editor", test_code_mirror);
    ADD_TEST(NULL, "Advanced Entries", "Logger", test_code_log);
    ADD_TEST(NULL, "Advanced Entries", "Diff Comparison", test_code_diff);

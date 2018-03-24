@@ -2231,6 +2231,8 @@ _elm_code_widget_tab_inserts_spaces_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Dat
                                         Eina_Bool spaces)
 {
    pd->tab_inserts_spaces = spaces;
+   if (!spaces)
+     elm_code_widget_code_get(obj)->config.indent_style_efl = EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
