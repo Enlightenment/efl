@@ -21,6 +21,7 @@ elm_code_create(void)
    Elm_Code *ret;
 
    ret = calloc(1, sizeof(Elm_Code));
+   ret->config.indent_style_efl = EINA_TRUE;
 
    // create an in-memory backing for this elm_code by default
    elm_code_file_new(ret);
