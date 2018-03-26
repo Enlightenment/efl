@@ -511,9 +511,9 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
         close(devnull);
      }
 
-   if (!(loop = efl_provider_find(obj, EFL_LOOP_CLASS))) exit(-120);
+   if (!(loop = efl_provider_find(obj, EFL_LOOP_CLASS))) exit(1);
 
-   if (!(tdl = efl_data_scope_get(loop, EFL_TASK_CLASS))) exit(-121);
+   if (!(tdl = efl_data_scope_get(loop, EFL_TASK_CLASS))) exit(1);
 
    // clear systemd notify socket... only relevant for systemd world,
    // otherwise shouldn't be trouble
@@ -533,7 +533,10 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    // actually execute!
    _exec(cmd, pd->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
-   exit(-122);
+   if ((errno == EACCES)  || (errno == EINVAL) || (errno == ELOOP) ||
+       (errno == ENOEXEC) || (errno == ENOMEM))
+     exit(126);
+   exit(127);
    return NULL;
 #endif
 }
