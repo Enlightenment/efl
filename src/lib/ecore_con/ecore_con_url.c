@@ -1221,6 +1221,34 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
    url_con->ftp_use_epsv = use_epsv;
 }
 
+EAPI void
+ecore_con_url_limit_upload_speed(Ecore_Con_Url *url_con, off_t max_speed)
+{
+   CURL *curl_easy;
+
+   ECORE_CON_URL_CHECK_RETURN(url_con);
+   EINA_SAFETY_ON_NULL_RETURN(_c);
+
+   curl_easy = efl_net_dialer_http_curl_get(url_con->dialer);
+   EINA_SAFETY_ON_NULL_RETURN(curl_easy);
+
+   _c->curl_easy_setopt(curl_easy, CURLOPT_MAX_SEND_SPEED_LARGE, max_speed);
+}
+
+EAPI void
+ecore_con_url_limit_download_speed(Ecore_Con_Url *url_con, off_t max_speed)
+{
+   CURL *curl_easy;
+
+   ECORE_CON_URL_CHECK_RETURN(url_con);
+   EINA_SAFETY_ON_NULL_RETURN(_c);
+
+   curl_easy = efl_net_dialer_http_curl_get(url_con->dialer);
+   EINA_SAFETY_ON_NULL_RETURN(curl_easy);
+
+   _c->curl_easy_setopt(curl_easy, CURLOPT_MAX_RECV_SPEED_LARGE, max_speed);
+}
+
 /* LEGACY: proxy */
 EAPI Eina_Bool
 ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password)
