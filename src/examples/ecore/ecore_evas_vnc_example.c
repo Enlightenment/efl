@@ -188,7 +188,7 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
           efl_name_get(dev),
           _device_type_to_string(efl_input_device_type_get(dev)),
           efl_comment_get(dev),
-          event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
+          event->desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED ? "added" : "removed");
 
    if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
      _seat_children_print(dev);
@@ -301,9 +301,9 @@ main(int argc, char *argv[])
                                         _mouse_wheel, NULL);
 
    _seat_children_print(evas_default_device_get(evas, EFL_INPUT_DEVICE_TYPE_SEAT));
-   efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _dev_added_or_removed, NULL);
-   efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_add(evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _dev_added_or_removed, NULL);
    ecore_main_loop_begin();
 

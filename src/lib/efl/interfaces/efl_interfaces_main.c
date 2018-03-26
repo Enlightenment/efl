@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#define EFL_CANVAS_BETA
+#define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_SCROLLBAR_PROTECTED
 #define EFL_UI_SCROLLBAR_BETA
 
@@ -43,7 +43,7 @@
 #include "interfaces/efl_gfx_blur.eo.c"
 
 #include "interfaces/efl_gfx_size_hint.eo.c"
-#include "interfaces/efl_canvas.eo.c"
+#include "interfaces/efl_canvas_scene.eo.c"
 #include "interfaces/efl_canvas_pointer.eo.c"
 
 #include "interfaces/efl_screen.eo.c"

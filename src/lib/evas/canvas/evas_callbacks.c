@@ -59,17 +59,17 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_EVENT_HOLD,
                       EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
                       EFL_IMAGE_EVENT_PRELOAD,
-                      EFL_CANVAS_EVENT_FOCUS_IN,
-                      EFL_CANVAS_EVENT_FOCUS_OUT,
+                      EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
+                      EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
                       EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
                       EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
-                      EFL_CANVAS_EVENT_OBJECT_FOCUS_IN,
-                      EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT,
+                      EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
+                      EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
                       EFL_IMAGE_EVENT_UNLOAD,
-                      EFL_CANVAS_EVENT_RENDER_PRE,
-                      EFL_CANVAS_EVENT_RENDER_POST,
+                      EFL_CANVAS_SCENE_EVENT_RENDER_PRE,
+                      EFL_CANVAS_SCENE_EVENT_RENDER_POST,
                       EFL_IMAGE_EVENT_RESIZE,
-                      EFL_CANVAS_EVENT_DEVICE_CHANGED,
+                      EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                       EFL_EVENT_POINTER_AXIS,
                       EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );
 
@@ -209,8 +209,8 @@ _eo_evas_cb(void *data, const Efl_Event *event)
 
    if (!info->func.evas_cb) return;
 
-   if (event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN ||
-       event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
+   if (event->desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN ||
+       event->desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
      {
         event_info = efl_input_focus_object_get(efl_event_info);
         goto emit;

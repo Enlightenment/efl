@@ -123,9 +123,9 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
         if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           _device_rename(dev);
      }
-   efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _device_added, NULL);
-   efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+   efl_event_callback_add(evas, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                           _device_changed, NULL);
 
    printf("Running example on evas engine %s\n",

@@ -5285,8 +5285,8 @@ comp_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(comp_device_cbs,
-  { EFL_CANVAS_EVENT_DEVICE_ADDED, comp_device_add },
-  { EFL_CANVAS_EVENT_DEVICE_REMOVED, comp_device_del });
+  { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, comp_device_add },
+  { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, comp_device_del });
 
 static void
 hints_set_aspect(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, uint32_t width, uint32_t height, uint32_t aspect)

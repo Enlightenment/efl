@@ -319,7 +319,7 @@ _efl_canvas_vg_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
 {
    Evas *e = evas_object_evas_get(eo_obj);
 
-   efl_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
+   efl_event_callback_del(e, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _cleanup_reference, pd);
 
    efl_unref(pd->root);
    pd->root = NULL;
@@ -355,7 +355,7 @@ _efl_canvas_vg_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Data *pd)
 
    // TODO: If we start to have to many Evas_Object_VG per canvas, it may be nice
    // to actually have one event per canvas and one array per canvas to.
-   efl_event_callback_add(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
+   efl_event_callback_add(e, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _cleanup_reference, pd);
 
    return obj;
 }

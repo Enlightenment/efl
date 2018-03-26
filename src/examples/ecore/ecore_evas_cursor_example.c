@@ -202,7 +202,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
      }
 
    t = ecore_timer_add(TIMEOUT, _mouse_pos_print, ee);
-   efl_event_callback_add(e, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(e, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _device_added, ee);
    ecore_evas_callback_resize_set(ee, _resize_cb);
    ecore_evas_callback_delete_request_set(ee, _delete_request_cb);

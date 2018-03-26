@@ -727,13 +727,13 @@ static void
 _edje_device_canvas_del(void *data, const Efl_Event *event)
 {
    Edje *ed = data;
-   efl_event_callback_del(event->object, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _edje_device_added_cb, ed);
-   efl_event_callback_del(event->object, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _edje_device_removed_cb, ed);
 
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_del(event->object, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+     efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                             _edje_device_changed_cb, ed);
 }
 
@@ -751,13 +751,13 @@ _edje_devices_add(Edje *ed, Evas *tev)
      }
    efl_event_callback_add(tev, EFL_EVENT_DEL, _edje_device_canvas_del, ed);
 
-   efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _edje_device_added_cb, ed);
-   efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _edje_device_removed_cb, ed);
 
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+     efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                             _edje_device_changed_cb, ed);
 }
 
@@ -1857,12 +1857,12 @@ _edje_file_callbacks_del(Edje *ed, Evas *e)
 
    if (!tev) tev = evas_object_evas_get(ed->obj);
    efl_event_callback_del(tev, EFL_EVENT_DEL, _edje_device_canvas_del, ed);
-   efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _edje_device_added_cb, ed);
-   efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _edje_device_removed_cb, ed);
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+     efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                             _edje_device_changed_cb, ed);
 }
 

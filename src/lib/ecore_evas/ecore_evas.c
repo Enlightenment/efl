@@ -372,7 +372,7 @@ _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
 {
    Ecore_Evas *ee = data;
 
-   if (event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED)
+   if (event->desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
      {
         if (_is_pointer(event->info))
           _ecore_evas_cursor_add(ee, event->info);
@@ -402,8 +402,8 @@ _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_evas_device_cbs,
-                           { EFL_CANVAS_EVENT_DEVICE_ADDED, _ecore_evas_dev_added_or_removed },
-                           { EFL_CANVAS_EVENT_DEVICE_REMOVED, _ecore_evas_dev_added_or_removed });
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _ecore_evas_dev_added_or_removed },
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _ecore_evas_dev_added_or_removed });
 Eina_Bool
 _ecore_evas_cursors_init(Ecore_Evas *ee)
 {

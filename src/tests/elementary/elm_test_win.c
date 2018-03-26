@@ -5,7 +5,7 @@
 #define EFL_ACCESS_BETA
 #define EFL_ACCESS_COMPONENT_BETA
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define EFL_CANVAS_BETA
+#define EFL_CANVAS_SCENE_BETA
 
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_X
@@ -246,7 +246,7 @@ _inputs_timer2_cb(void *data)
    size_t cnt = 0;
    int i = 0;
 
-   it = efl_canvas_pointer_iterate(win, 0);
+   it = efl_canvas_scene_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
      {
         double x, y;
@@ -309,7 +309,7 @@ _inputs_timer3_cb(void *data)
    size_t cnt = 0;
    int i = 0;
 
-   it = efl_canvas_pointer_iterate(win, 0);
+   it = efl_canvas_scene_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
      {
         int tool, ok = 0;
@@ -340,7 +340,7 @@ _inputs_timer3_cb(void *data)
    fail_if(cnt != 2); // 2 moves (in the list), 2 ups (gone)
 
    fail_if(!efl_canvas_pointer_inside_get(win, NULL));
-   pos = efl_canvas_pointer_position_get(win);
+   pos = efl_canvas_scene_pointer_position_get(win);
    ck_assert_int_eq(pos.x, points[1][0].x);
    ck_assert_int_eq(pos.y, points[1][0].y);
 

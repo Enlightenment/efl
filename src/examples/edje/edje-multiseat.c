@@ -255,7 +255,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
           efl_canvas_object_seat_focus_add(edje_obj, dev);
 
      }
-   efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _device_added, edje_obj);
    evas_object_event_callback_add(edje_obj, EVAS_CALLBACK_KEY_DOWN,
                                   _on_key_down, evas);

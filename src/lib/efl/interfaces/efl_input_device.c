@@ -80,7 +80,7 @@ _efl_input_device_efl_object_parent_set(Eo *obj, Efl_Input_Device_Data *pd EINA_
                   _seat_pointers_update(p, pd);
                }
           }
-        else if(!efl_isa(parent, EFL_CANVAS_INTERFACE))
+        else if(!efl_isa(parent, EFL_CANVAS_SCENE_INTERFACE))
           {
              EINA_SAFETY_ERROR("The parent of a device must be a seat or the canvas");
              return;

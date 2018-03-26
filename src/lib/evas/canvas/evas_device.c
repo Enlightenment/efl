@@ -111,12 +111,12 @@ _del_cb(void *data, const Efl_Event *ev)
    _evas_pointer_data_remove(e, ev->object);
    eina_hash_del_by_key(e->locks.masks, &ev->object);
    eina_hash_del_by_key(e->modifiers.masks, &ev->object);
-   efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_call(e->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                            ev->object);
 }
 
 EOLIAN Efl_Input_Device *
-_evas_canvas_efl_canvas_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
+_evas_canvas_efl_canvas_scene_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
 {
    const char *dev_name;
    Evas_Device *dev;
@@ -138,11 +138,11 @@ _evas_canvas_efl_canvas_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, 
 EAPI Evas_Device *
 evas_device_get(Evas *eo_e, const char *name)
 {
-   return efl_canvas_device_get(eo_e, name);
+   return efl_canvas_scene_device_get(eo_e, name);
 }
 
 EOLIAN Efl_Input_Device *
-_evas_canvas_efl_canvas_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
+_evas_canvas_efl_canvas_scene_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
 {
    Evas_Device *dev;
    Eina_List *l;
@@ -162,7 +162,7 @@ _evas_canvas_efl_canvas_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, un
 EAPI Evas_Device *
 evas_device_get_by_seat_id(Evas *eo_e, unsigned int id)
 {
-   return efl_canvas_seat_get(eo_e, id);
+   return efl_canvas_scene_seat_get(eo_e, id);
 }
 
 EAPI Evas_Device *
@@ -247,7 +247,7 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
-   efl_event_callback_call(eo_e, EFL_CANVAS_EVENT_DEVICE_ADDED, dev);
+   efl_event_callback_call(eo_e, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, dev);
    // Keeping this event to do not break things...
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
    if (e->pending_default_focus_obj && (e->default_seat == dev))
@@ -500,7 +500,7 @@ again:
    */
    EINA_LIST_FREE(e->devices, dev)
      {
-        efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED, dev);
+        efl_event_callback_call(e->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, dev);
         efl_event_callback_del(dev, EFL_EVENT_DEL, _del_cb, e);
      }
 }

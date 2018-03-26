@@ -16,7 +16,7 @@ efl_eolian_legacy_files = \
 	$(NULL)
 
 efl_eolian_files = \
-      lib/efl/interfaces/efl_canvas.eo \
+      lib/efl/interfaces/efl_canvas_scene.eo \
       lib/efl/interfaces/efl_canvas_pointer.eo \
       lib/efl/interfaces/efl_config.eo \
       lib/efl/interfaces/efl_control.eo \

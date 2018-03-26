@@ -742,7 +742,7 @@ _gfx_map_op_add(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Gfx_Map_Op_Type type,
                        pivot->is_evas = EINA_TRUE;
                        pivot->is_canvas = EINA_TRUE;
                     }
-                  else if (efl_isa(eo_pivot, EFL_CANVAS_INTERFACE))
+                  else if (efl_isa(eo_pivot, EFL_CANVAS_SCENE_INTERFACE))
                     pivot->is_canvas = EINA_TRUE;
                   pivot->map_obj = obj;
                   EINA_INLIST_APPEND(mcow->pivots, pivot);

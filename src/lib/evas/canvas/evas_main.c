@@ -1055,7 +1055,7 @@ _evas_canvas_image_cache_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_efl_canvas_image_max_size_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
+_evas_canvas_efl_canvas_scene_image_max_size_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
 {
    int w = 0, h = 0;
 
@@ -1452,7 +1452,7 @@ efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *lis
 }
 
 EOLIAN static Evas_Object*
-_evas_canvas_efl_canvas_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_scene_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy;
@@ -1490,7 +1490,7 @@ EAPI Evas_Object*
 evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_Position2D pos = {x, y};
-   return efl_canvas_object_top_at_xy_get(eo_e, pos, include_pass_events_objects, include_hidden_objects);
+   return efl_canvas_scene_object_top_at_xy_get(eo_e, pos, include_pass_events_objects, include_hidden_objects);
 }
 
 EAPI Evas_Object *
@@ -1502,11 +1502,11 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
 
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
-   return efl_canvas_object_top_at_xy_get((Eo *)eo_e, EINA_POSITION2D(pdata->seat->x, pdata->seat->y), EINA_TRUE, EINA_TRUE);
+   return efl_canvas_scene_object_top_at_xy_get((Eo *)eo_e, EINA_POSITION2D(pdata->seat->x, pdata->seat->y), EINA_TRUE, EINA_TRUE);
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_efl_canvas_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_scene_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Evas_Layer *lay;
    int xx, yy, ww, hh;
@@ -1548,7 +1548,7 @@ _evas_canvas_efl_canvas_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, 
 EAPI Evas_Object *
 evas_object_top_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   return efl_canvas_object_top_in_rectangle_get(obj, EINA_RECT(x, y, w, h), include_pass_events_objects, include_hidden_objects);
+   return efl_canvas_scene_object_top_in_rectangle_get(obj, EINA_RECT(x, y, w, h), include_pass_events_objects, include_hidden_objects);
 }
 
 static Eina_List *
@@ -1596,7 +1596,7 @@ _efl_canvas_evas_canvas_objects_at_xy_get_helper(Eo *eo_e EINA_UNUSED, Evas_Publ
 }
 
 EOLIAN static Eina_Iterator *
-_evas_canvas_efl_canvas_objects_at_xy_get(Eo *eo_e, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_scene_objects_at_xy_get(Eo *eo_e, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *l = _efl_canvas_evas_canvas_objects_at_xy_get_helper(eo_e, e, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
    if (l) return efl_canvas_iterator_create(eo_e, eina_list_iterator_new(l), l);
@@ -1665,7 +1665,7 @@ _efl_canvas_objects_in_rectangle_get_helper(const Eo *eo_e EINA_UNUSED, Evas_Pub
 
 
 EOLIAN static Eina_Iterator*
-_evas_canvas_efl_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_evas_canvas_efl_canvas_scene_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *l = _efl_canvas_objects_in_rectangle_get_helper(eo_e, e, rect.x, rect.y, rect.w, rect.h, include_pass_events_objects, include_hidden_objects);
    if (!l) return NULL;
@@ -1812,7 +1812,7 @@ evas_font_available_list_free(Evas *eo_e, Eina_List *available)
 
 
 EOLIAN static void
-_evas_canvas_efl_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
+_evas_canvas_efl_canvas_scene_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
 {
    evas_call_smarts_calculate(eo_e);
 }
@@ -1824,7 +1824,7 @@ evas_smart_objects_calculate(Eo *eo_e)
 }
 
 EOLIAN Eina_Bool
-_evas_canvas_efl_canvas_smart_objects_calculating_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_efl_canvas_scene_smart_objects_calculating_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return !!e->in_smart_calc;
 }
@@ -1832,7 +1832,7 @@ _evas_canvas_efl_canvas_smart_objects_calculating_get(const Eo *eo_e EINA_UNUSED
 EAPI Eina_Bool
 evas_smart_objects_calculating_get(const Eo *obj)
 {
-   return efl_canvas_smart_objects_calculating_get(obj);
+   return efl_canvas_scene_smart_objects_calculating_get(obj);
 }
 
 EOLIAN int

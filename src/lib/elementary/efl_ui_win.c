@@ -13,7 +13,7 @@
 #define EFL_UI_WIN_INLINED_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIN_BETA
-#define EFL_CANVAS_BETA
+#define EFL_CANVAS_SCENE_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -1792,7 +1792,7 @@ _elm_win_evas_render_post(void *data,
    Efl_Gfx_Event_Render_Post *ev = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_POST, ev);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_POST, ev);
 }
 
 static void
@@ -1803,7 +1803,7 @@ _elm_win_evas_render_pre(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_PRE, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, NULL);
 }
 
 static void
@@ -1814,7 +1814,7 @@ _elm_win_evas_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_IN, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_FOCUS_IN, NULL);
 }
 
 static void
@@ -1824,7 +1824,7 @@ _elm_win_evas_focus_out(void *data,
 {
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_OUT, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT, NULL);
 }
 
 static void
@@ -1836,7 +1836,7 @@ _elm_win_evas_object_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_IN, object);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN, object);
 }
 
 static void
@@ -1847,7 +1847,7 @@ _elm_win_evas_object_focus_out(void *data,
    Eo *object = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT, object);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT, object);
 }
 
 static void
@@ -1858,7 +1858,7 @@ _elm_win_evas_device_changed(void *data,
    Eo *device = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_DEVICE_CHANGED, device);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED, device);
 }
 
 static void
@@ -1947,43 +1947,43 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
                efl_event_callback_add(sd->evas, array[i].desc,
                                      _evas_event_key_cb, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_RENDER_POST)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_POST)
           {
              if (!(sd->event_forward.render_post++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_POST,
                                        _elm_win_evas_render_post, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_RENDER_PRE)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_PRE)
           {
              if (!(sd->event_forward.render_pre++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE,
                                        _elm_win_evas_render_pre, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_FOCUS_IN)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_IN)
           {
              if (!(sd->event_forward.focus_in++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_IN,
                                        _elm_win_evas_focus_in, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_FOCUS_OUT)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_OUT)
           {
              if (!(sd->event_forward.focus_out++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
                                        _elm_win_evas_focus_out, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
           {
              if (!(sd->event_forward.object_focus_in++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
                                        _elm_win_evas_object_focus_in, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
           {
              if (!(sd->event_forward.object_focus_out++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
                                        _elm_win_evas_object_focus_out, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_DEVICE_CHANGED)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED)
           {
              if (!(sd->event_forward.device_changed++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_DEVICE_CHANGED,
@@ -2078,43 +2078,43 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
                efl_event_callback_del(sd->evas, array[i].desc,
                                      _evas_event_key_cb, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_RENDER_POST)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_POST)
           {
              if (!(--sd->event_forward.render_post))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_POST,
                                             _elm_win_evas_render_post, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_RENDER_PRE)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_PRE)
           {
              if (!(--sd->event_forward.render_pre))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE,
                                             _elm_win_evas_render_pre, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_FOCUS_IN)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_IN)
           {
              if (!(--sd->event_forward.focus_in))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_IN,
                                             _elm_win_evas_focus_in, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_FOCUS_OUT)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_OUT)
           {
              if (!(--sd->event_forward.focus_out))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
                                             _elm_win_evas_focus_out, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
           {
              if (!(--sd->event_forward.object_focus_in))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
                                             _elm_win_evas_object_focus_in, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
           {
              if (!(--sd->event_forward.object_focus_out))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
                                             _elm_win_evas_object_focus_out, win);
           }
-        else if (array[i].desc == EFL_CANVAS_EVENT_DEVICE_CHANGED)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED)
           {
              if (!(--sd->event_forward.device_changed))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_DEVICE_CHANGED,
@@ -2172,7 +2172,7 @@ _elm_win_resume(void *data, const Efl_Event *ev)
 
 EFL_CALLBACKS_ARRAY_DEFINE(_elm_evas_tracking,
                            { EFL_EVENT_POINTER_UP, _elm_win_cb_mouse_up },
-                           { EFL_CANVAS_EVENT_RENDER_PRE, _elm_win_resume })
+                           { EFL_CANVAS_SCENE_EVENT_RENDER_PRE, _elm_win_resume })
 
 static void
 _deferred_ecore_evas_free(void *data)
@@ -2346,7 +2346,7 @@ _efl_ui_win_efl_gfx_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_win_efl_canvas_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_canvas_scene_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Position2D pos;
    evas_pointer_canvas_xy_get(sd->evas, &pos.x, &pos.y);
@@ -2390,7 +2390,7 @@ _input_pointer_iterator_free(Input_Pointer_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
+_efl_ui_win_efl_canvas_scene_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
                                        Eina_Bool hover EINA_UNUSED)
 {
    Input_Pointer_Iterator *it;
@@ -2458,19 +2458,19 @@ _efl_ui_win_efl_canvas_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_canvas_image_max_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D *max)
+_efl_ui_win_efl_canvas_scene_image_max_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D *max)
 {
-   return efl_canvas_image_max_size_get(sd->evas, max);
+   return efl_canvas_scene_image_max_size_get(sd->evas, max);
 }
 
 EOLIAN static void
-_efl_ui_win_efl_canvas_smart_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_canvas_scene_smart_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    evas_smart_objects_calculate(sd->evas);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_objects_at_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_scene_objects_at_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *objs = NULL;
    objs = evas_objects_at_xy_get(sd->evas, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
@@ -2478,13 +2478,13 @@ _efl_ui_win_efl_canvas_objects_at_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *s
 }
 
 EOLIAN static Efl_Gfx *
-_efl_ui_win_efl_canvas_object_top_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_scene_object_top_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    return evas_object_top_at_xy_get(sd->evas, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_objects_in_rectangle_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_scene_objects_in_rectangle_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *objs = NULL;
    objs = evas_objects_in_rectangle_get(sd->evas, r.x, r.y, r.w, r.h, include_pass_events_objects, include_hidden_objects);
@@ -2492,21 +2492,21 @@ _efl_ui_win_efl_canvas_objects_in_rectangle_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_
 }
 
 EOLIAN static Efl_Gfx *
-_efl_ui_win_efl_canvas_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_scene_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    return evas_object_top_in_rectangle_get(sd->evas, r.x, r.y, r.w, r.h, include_pass_events_objects, include_hidden_objects);
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_ui_win_efl_canvas_device_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *name)
+_efl_ui_win_efl_canvas_scene_device_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *name)
 {
-   return efl_canvas_device_get(sd->evas, name);
+   return efl_canvas_scene_device_get(sd->evas, name);
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_ui_win_efl_canvas_seat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int id)
+_efl_ui_win_efl_canvas_scene_seat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int id)
 {
-   return efl_canvas_seat_get(sd->evas, id);
+   return efl_canvas_scene_seat_get(sd->evas, id);
 }
 
 static void

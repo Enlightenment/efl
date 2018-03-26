@@ -1,6 +1,6 @@
 import efl_input_device;
 
-interface Efl.Canvas ()
+interface Efl.Canvas.Scene ()
 {
    [[Common interface for window and some internal classes in EFL.]]
    methods {

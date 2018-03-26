@@ -1220,7 +1220,7 @@ evas_image_max_size_get(Eo *eo_e, int *w, int *h)
    Eina_Size2D size;
    Eina_Bool ret;
 
-   ret = efl_canvas_image_max_size_get(eo_e, &size);
+   ret = efl_canvas_scene_image_max_size_get(eo_e, &size);
    if (ret)
      {
         if (w) *w = size.w;

@@ -154,7 +154,7 @@ enum Efl.Ui.Win.Move_Resize_Mode
    right = (1 << 4)    [[Start resizing window to the right]]
 }
 
-class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
+class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Access.Window,
                   Efl.Access.Component, Efl.Access.Widget.Action,
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                   Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
@@ -803,18 +803,18 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       Efl.Gfx.Size.Hint.hint_weight { set; }
       Efl.Gfx.Size.Hint.hint_max { set; }
       Efl.Text.text { get; set; }
-      Efl.Canvas.pointer_position { get; }
+      Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
-      Efl.Canvas.pointer_iterate;
-      Efl.Canvas.image_max_size { get; }
-      Efl.Canvas.smart_objects_calculate;
-      Efl.Canvas.objects_at_xy_get;
-      Efl.Canvas.object_top_at_xy_get;
-      Efl.Canvas.objects_in_rectangle_get;
-      Efl.Canvas.object_top_in_rectangle_get;
+      Efl.Canvas.Scene.pointer_iterate;
+      Efl.Canvas.Scene.image_max_size { get; }
+      Efl.Canvas.Scene.smart_objects_calculate;
+      Efl.Canvas.Scene.objects_at_xy_get;
+      Efl.Canvas.Scene.object_top_at_xy_get;
+      Efl.Canvas.Scene.objects_in_rectangle_get;
+      Efl.Canvas.Scene.object_top_in_rectangle_get;
       //Efl.Canvas.seats;
-      Efl.Canvas.device { get; }
-      Efl.Canvas.seat { get; }
+      Efl.Canvas.Scene.device { get; }
+      Efl.Canvas.Scene.seat { get; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part;
