@@ -99,7 +99,7 @@ _eina_test_log_safety(const Eina_Log_Domain *d, Eina_Log_Level level, const char
 #endif
 }
 
-START_TEST(eina_log_macro)
+EFL_START_TEST(eina_log_macro)
 {
    struct log_ctx ctx;
    int oldlevel;
@@ -166,9 +166,9 @@ START_TEST(eina_log_macro)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_log_domains_macros)
+EFL_START_TEST(eina_log_domains_macros)
 {
    struct log_ctx ctx;
    int oldlevel;
@@ -243,9 +243,9 @@ START_TEST(eina_log_domains_macros)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_log_domains_registry)
+EFL_START_TEST(eina_log_domains_registry)
 {
         fail_if(!eina_init());
 
@@ -263,9 +263,9 @@ START_TEST(eina_log_domains_registry)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_log_domains_slot_reuse)
+EFL_START_TEST(eina_log_domains_slot_reuse)
 {
         fail_if(!eina_init());
         fail_if(!eina_threads_init());
@@ -300,9 +300,9 @@ START_TEST(eina_log_domains_slot_reuse)
    eina_threads_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_log_level_indexes)
+EFL_START_TEST(eina_log_level_indexes)
 {
    struct log_ctx ctx;
    int maxlevel;
@@ -372,9 +372,9 @@ START_TEST(eina_log_level_indexes)
    eina_threads_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_log_customize)
+EFL_START_TEST(eina_log_customize)
 {
    struct log_ctx ctx;
    int d;
@@ -446,9 +446,9 @@ START_TEST(eina_log_customize)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_log_level_name)
+EFL_START_TEST(eina_log_level_name)
 {
    char name[4];
 
@@ -473,7 +473,7 @@ START_TEST(eina_log_level_name)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_log(TCase *tc)

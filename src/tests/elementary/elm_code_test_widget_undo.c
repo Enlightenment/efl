@@ -8,7 +8,7 @@
 #include "Elementary.h"
 #include "elm_code_widget_private.h"
 
-START_TEST (elm_code_test_widget_undo_text_insert)
+EFL_START_TEST (elm_code_test_widget_undo_text_insert)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -57,9 +57,9 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_undo_text_insert_multiple)
+EFL_START_TEST (elm_code_test_widget_undo_text_insert_multiple)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -95,7 +95,7 @@ START_TEST (elm_code_test_widget_undo_text_insert_multiple)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_widget_undo(TCase *tc)
 {

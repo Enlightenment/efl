@@ -39,7 +39,7 @@ _eina_benchmark_specimens(int request)
    global_test = a;
 }
 
-START_TEST(eina_benchmark_simple)
+EFL_START_TEST(eina_benchmark_simple)
 {
    Eina_Benchmark *eb;
    Eina_Array_Iterator it;
@@ -67,7 +67,7 @@ START_TEST(eina_benchmark_simple)
 
    eina_benchmark_free(eb);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_benchmark(TCase *tc)

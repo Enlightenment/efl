@@ -298,7 +298,7 @@ _eina_rbtree_int_new(int value)
    return it;
 }
 
-START_TEST(eina_rbtree_insertion)
+EFL_START_TEST(eina_rbtree_insertion)
 {
    Eina_Rbtree_Int *root = NULL;
    Eina_Rbtree_Int *item;
@@ -320,9 +320,9 @@ START_TEST(eina_rbtree_insertion)
                              EINA_RBTREE_CMP_NODE_CB(
                                 eina_rbtree_int_cmp));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rbtree_lookup)
+EFL_START_TEST(eina_rbtree_lookup)
 {
    Eina_Rbtree_Int *root = NULL;
    Eina_Rbtree_Int *item;
@@ -358,9 +358,9 @@ START_TEST(eina_rbtree_lookup)
                                                    NULL);
    fail_if(item);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rbtree_remove)
+EFL_START_TEST(eina_rbtree_remove)
 {
    Eina_Rbtree_Int *root = NULL;
    Eina_Rbtree_Int *item;
@@ -405,9 +405,9 @@ START_TEST(eina_rbtree_remove)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rbtree_simple_remove)
+EFL_START_TEST(eina_rbtree_simple_remove)
 {
    Eina_Rbtree *root = NULL;
    Eina_Rbtree *lookup;
@@ -454,9 +454,9 @@ START_TEST(eina_rbtree_simple_remove)
 
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rbtree_simple_remove2)
+EFL_START_TEST(eina_rbtree_simple_remove2)
 {
    Eina_Rbtree *root = NULL;
    Eina_Rbtree *lookup;
@@ -518,9 +518,9 @@ START_TEST(eina_rbtree_simple_remove2)
 
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rbtree_simple_remove3)
+EFL_START_TEST(eina_rbtree_simple_remove3)
 {
    Eina_Rbtree *root = NULL;
    Eina_Rbtree *lookup;
@@ -612,9 +612,9 @@ START_TEST(eina_rbtree_simple_remove3)
 
    _eina_rbtree_black_height(root, EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rbtree_fuzzy)
+EFL_START_TEST(eina_rbtree_fuzzy)
 {
    Eina_Rbtree_Int *child;
    Eina_Rbtree *root = NULL;
@@ -674,7 +674,7 @@ START_TEST(eina_rbtree_fuzzy)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_rbtree(TCase *tc)

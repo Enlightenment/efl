@@ -30,7 +30,7 @@ static int test_array[1024] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 static int test_array2[64] = { 8, 9, 10, 11, 12, 13, 14 };
 static const void *pointers[1088] = { NULL };
 
-START_TEST(eina_test_reusable)
+EFL_START_TEST(eina_test_reusable)
 {
    unsigned int i;
 
@@ -70,7 +70,7 @@ START_TEST(eina_test_reusable)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Barrier b;
 
@@ -111,7 +111,7 @@ _thread2(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eina_test_threading)
+EFL_START_TEST(eina_test_threading)
 {
    Eina_Thread t1, t2;
    unsigned int i;
@@ -149,9 +149,9 @@ START_TEST(eina_test_threading)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_lowestbit)
+EFL_START_TEST(eina_test_lowestbit)
 {
    unsigned int i;
 
@@ -177,7 +177,7 @@ START_TEST(eina_test_lowestbit)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_safepointer(TCase *tc)

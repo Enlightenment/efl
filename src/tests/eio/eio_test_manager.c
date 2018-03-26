@@ -183,7 +183,7 @@ _test_ls(Efl_Future *(*func)(Eo *obj, const char *path, Eina_Bool recursive),
    efl_del(job);
 }
 
-START_TEST(efl_io_manager_test_stat)
+EFL_START_TEST(efl_io_manager_test_stat)
 {
    Eina_Tmpstr *test_dirname;
    Eina_Tmpstr *nested_dirname;
@@ -231,9 +231,9 @@ START_TEST(efl_io_manager_test_stat)
    eio_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_io_manager_test_ls)
+EFL_START_TEST(efl_io_manager_test_ls)
 {
    Eina_Tmpstr *test_dirname;
    Eina_Tmpstr *nested_dirname;
@@ -286,9 +286,9 @@ START_TEST(efl_io_manager_test_ls)
    eio_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_io_manager_test_open)
+EFL_START_TEST(efl_io_manager_test_open)
 {
    Eina_Tmpstr *test_dirname;
    Eina_Tmpstr *nested_dirname;
@@ -332,9 +332,9 @@ START_TEST(efl_io_manager_test_open)
    eina_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_io_instantiated)
+EFL_START_TEST(efl_io_instantiated)
 {
    Efl_Io_Manager *manager;
 
@@ -352,7 +352,7 @@ START_TEST(efl_io_instantiated)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eio_test_job(TCase *tc)

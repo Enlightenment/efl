@@ -49,7 +49,7 @@ _teardown(void)
    check_shutdown();
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = efl_model_properties_get(fake_server_proxy);
    ck_assert_ptr_ne(NULL, properties);
@@ -60,9 +60,9 @@ START_TEST(properties_get)
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
    check_efl_model_property_int_eq(fake_server_proxy, FAKE_SERVER_READONLY_PROPERTY, FAKE_SERVER_READONLY_PROPERTY_VALUE);
    check_efl_model_property_int_eq(fake_server_proxy, FAKE_SERVER_READWRITE_PROPERTY, FAKE_SERVER_READWRITE_PROPERTY_VALUE);
@@ -75,7 +75,7 @@ START_TEST(property_get)
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _check_property_set(const char *property_name, int expected_property_value, int *actual_property_value)
@@ -91,7 +91,7 @@ _check_property_set(const char *property_name, int expected_property_value, int 
    ck_assert_int_eq(expected_property_value, *actual_property_value);
 }
 
-START_TEST(property_set)
+EFL_START_TEST(property_set)
 {
    _check_property_set(FAKE_SERVER_WRITEONLY_PROPERTY, 0x12345678, &fake_server_data.writeonly_property);
    _check_property_set(FAKE_SERVER_READWRITE_PROPERTY, 0x76543210, &fake_server_data.readwrite_property);
@@ -104,7 +104,7 @@ START_TEST(property_set)
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_fake_server_proxy_children_count(Eo *efl_model)
@@ -113,15 +113,15 @@ _test_fake_server_proxy_children_count(Eo *efl_model)
    check_efl_model_children_count_eq(efl_model, 3);
 }
 
-START_TEST(children_count)
+EFL_START_TEST(children_count)
 {
    _test_fake_server_proxy_children_count(fake_server_proxy);
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
    Eldbus_Model_Arguments *method1 = efl_model_nth_child_get(fake_server_proxy, 0);
    Eldbus_Model_Arguments *method2 = efl_model_nth_child_get(fake_server_proxy, 1);
@@ -145,18 +145,18 @@ START_TEST(children_slice_get)
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child = efl_model_child_add(fake_server_proxy);
    ck_assert_ptr_eq(NULL, child);
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+EFL_START_TEST(child_del)
 {
    // Tests that it is not possible to delete children
    Efl_Future *future;
@@ -177,7 +177,7 @@ START_TEST(child_del)
 
    _teardown();
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_fake_server_eldbus_model_proxy(TCase *tc)
 {

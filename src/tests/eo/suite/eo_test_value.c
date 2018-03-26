@@ -9,7 +9,7 @@
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 
-START_TEST(eo_value)
+EFL_START_TEST(eo_value)
 {
    efl_object_init();
    char *str, *str2;
@@ -47,7 +47,7 @@ START_TEST(eo_value)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_value(TCase *tc)
 {

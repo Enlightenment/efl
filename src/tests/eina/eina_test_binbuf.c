@@ -25,7 +25,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(binbuf_simple)
+EFL_START_TEST(binbuf_simple)
 {
    Eina_Binbuf *buf, *test_buf;
    unsigned char *txt;
@@ -83,9 +83,9 @@ START_TEST(binbuf_simple)
    eina_shutdown();
 #undef TEXT
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_remove)
+EFL_START_TEST(binbuf_remove)
 {
    Eina_Binbuf *buf;
    const unsigned char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
@@ -115,13 +115,13 @@ START_TEST(binbuf_remove)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* eina_binbuf_manage_new_length and eina_binbuf_manage_read_only_new_length
  * are deprecated */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-START_TEST(binbuf_manage_simple)
+EFL_START_TEST(binbuf_manage_simple)
 {
    Eina_Binbuf *buf;
    const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
@@ -146,9 +146,9 @@ START_TEST(binbuf_manage_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_manage_read_only_simple)
+EFL_START_TEST(binbuf_manage_read_only_simple)
 {
    Eina_Binbuf *buf;
    const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
@@ -176,10 +176,10 @@ START_TEST(binbuf_manage_read_only_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #pragma GCC diagnostic pop
 
-START_TEST(binbuf_insert)
+EFL_START_TEST(binbuf_insert)
 {
 #if 0
    Eina_Binbuf *buf;
@@ -230,9 +230,9 @@ START_TEST(binbuf_insert)
    eina_shutdown();
 #endif
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_realloc)
+EFL_START_TEST(binbuf_realloc)
 {
    Eina_Binbuf *buf;
    unsigned char pattern[1024 * 16];
@@ -304,9 +304,9 @@ START_TEST(binbuf_realloc)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_expand)
+EFL_START_TEST(binbuf_expand)
 {
    Eina_Binbuf *buf;
    Eina_Rw_Slice rw_slice;
@@ -371,7 +371,7 @@ START_TEST(binbuf_expand)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 void

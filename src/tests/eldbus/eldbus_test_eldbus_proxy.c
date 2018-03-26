@@ -134,7 +134,7 @@ _proxy_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_info_get_call_p)
+EFL_START_TEST(utc_eldbus_proxy_info_get_call_p)
 {
    is_success = EINA_FALSE;
 
@@ -173,7 +173,7 @@ START_TEST(utc_eldbus_proxy_info_get_call_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_proxy
@@ -216,7 +216,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_send_call_p)
+EFL_START_TEST(utc_eldbus_proxy_send_call_p)
 {
    is_success = EINA_FALSE;
 
@@ -246,7 +246,7 @@ START_TEST(utc_eldbus_proxy_send_call_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_proxy
@@ -286,7 +286,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_send_and_block_p)
+EFL_START_TEST(utc_eldbus_proxy_send_and_block_p)
 {
    const int timeout = 1000;
    is_success = EINA_FALSE;
@@ -329,7 +329,7 @@ START_TEST(utc_eldbus_proxy_send_and_block_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_proxy
@@ -371,7 +371,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_data_p)
+EFL_START_TEST(utc_eldbus_proxy_data_p)
 {
    is_success = EINA_FALSE;
 
@@ -401,7 +401,7 @@ START_TEST(utc_eldbus_proxy_data_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  *@}

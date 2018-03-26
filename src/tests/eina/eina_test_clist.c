@@ -102,7 +102,7 @@ static void iterating_two_phase_with_add_head(unsigned int n, const char *str, i
   };
 }
 
-START_TEST(eina_clist_basic)
+EFL_START_TEST(eina_clist_basic)
 {
   unsigned int n = 0;
 
@@ -175,7 +175,7 @@ START_TEST(eina_clist_basic)
 
   fail_if(eina_clist_count(&string_list) != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_clist(TCase *tc)

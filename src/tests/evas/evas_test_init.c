@@ -8,10 +8,10 @@
 
 #include "evas_suite.h"
 
-START_TEST(evas_simple)
+EFL_START_TEST(evas_simple)
 {
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_init(TCase *tc)
 {

@@ -69,7 +69,7 @@ th2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      }
 }
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
 {
    int val = 99;
 
@@ -104,7 +104,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -137,7 +137,7 @@ thspeed2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      }
 }
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
 {
    Msg2 *msg;
    void *ref;
@@ -169,7 +169,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -216,7 +216,7 @@ th32_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      }
 }
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
 {
    int val1 = 99, val2 = 99, cnt = 0;
    Eina_Thread_Queue *parent;
@@ -285,7 +285,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -331,7 +331,7 @@ th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 }
 
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
 {
    int cnt = 0;
    int val1 = 99, val2 = 9999;
@@ -375,7 +375,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -435,7 +435,7 @@ th52_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 }
 
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
 {
    int val = 99;
 
@@ -484,7 +484,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -579,7 +579,7 @@ th63_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
    if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
 }
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
 {
    Ecore_Thread *t1, *t2, *t3;
    int do_break = 0;
@@ -631,7 +631,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /////////////////////////////////////////////////////////////////////////////
 typedef struct
@@ -656,7 +656,7 @@ thspeed7_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      }
 }
 
-START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
 {
    Msg7 *msg;
    void *ref;
@@ -697,7 +697,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_thread_eina_thread_queue(TCase *tc EINA_UNUSED)
 {

@@ -84,7 +84,7 @@ _eina_test_inlist_build(int i)
    return tmp;
 }
 
-START_TEST(eina_inlist_simple)
+EFL_START_TEST(eina_inlist_simple)
 {
    Eina_Inlist *lst = NULL;
    Eina_Inlist *tmpl = NULL;
@@ -298,7 +298,7 @@ START_TEST(eina_inlist_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Eina_Test_Inlist_Sorted Eina_Test_Inlist_Sorted;
 struct _Eina_Test_Inlist_Sorted
@@ -330,7 +330,7 @@ _eina_test_inlist_check(const Eina_Inlist *list)
      }
 }
 
-START_TEST(eina_inlist_sorted)
+EFL_START_TEST(eina_inlist_sorted)
 {
    Eina_Test_Inlist_Sorted *tmp;
    Eina_Inlist *list = NULL;
@@ -373,9 +373,9 @@ START_TEST(eina_inlist_sorted)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_inlist_sorted_state)
+EFL_START_TEST(eina_inlist_sorted_state)
 {
    Eina_Test_Inlist_Sorted *tmp;
    Eina_Inlist_Sorted_State *state;
@@ -404,7 +404,7 @@ START_TEST(eina_inlist_sorted_state)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_inlist(TCase *tc)

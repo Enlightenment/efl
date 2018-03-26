@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_array_simple)
+EFL_START_TEST(eina_array_simple)
 {
    Eina_Array *ea;
    char *tmp;
@@ -68,9 +68,9 @@ START_TEST(eina_array_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_array_static)
+EFL_START_TEST(eina_array_static)
 {
    Eina_Array sea;
    char *tmp;
@@ -106,7 +106,7 @@ START_TEST(eina_array_static)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 Eina_Bool
 keep_int(void *data, void *gdata)
@@ -122,7 +122,7 @@ keep_int(void *data, void *gdata)
    return EINA_TRUE;
 }
 
-START_TEST(eina_array_remove_stuff)
+EFL_START_TEST(eina_array_remove_stuff)
 {
    Eina_Array *ea;
    int *tmp;
@@ -181,7 +181,7 @@ START_TEST(eina_array_remove_stuff)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_array(TCase *tc)

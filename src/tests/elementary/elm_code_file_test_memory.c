@@ -7,7 +7,7 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-START_TEST (elm_code_file_memory_lines)
+EFL_START_TEST (elm_code_file_memory_lines)
 {
    Elm_Code *code;
 
@@ -22,9 +22,9 @@ START_TEST (elm_code_file_memory_lines)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_file_memory_tokens)
+EFL_START_TEST (elm_code_file_memory_tokens)
 {
    Elm_Code_File *file;
    Elm_Code_Line *line;
@@ -42,7 +42,7 @@ START_TEST (elm_code_file_memory_tokens)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_file_test_memory(TCase *tc)
 {

@@ -10,7 +10,7 @@
 
 #include "eolian_suite.h"
 
-START_TEST(eolian_namespaces)
+EFL_START_TEST(eolian_namespaces)
 {
    const Eolian_Class *class11, *class112, *class21, *class_no, *impl_class,
                       *iclass;
@@ -93,9 +93,9 @@ START_TEST(eolian_namespaces)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_events)
+EFL_START_TEST(eolian_events)
 {
    const Eolian_Class *class;
    Eina_Iterator *iter;
@@ -169,9 +169,9 @@ START_TEST(eolian_events)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_override)
+EFL_START_TEST(eolian_override)
 {
    Eina_Iterator *iter;
    const Eolian_Class *impl_class = NULL;
@@ -229,9 +229,9 @@ START_TEST(eolian_override)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_consts)
+EFL_START_TEST(eolian_consts)
 {
    const Eolian_Function *fid = NULL;
    const Eolian_Class *class;
@@ -251,9 +251,9 @@ START_TEST(eolian_consts)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_ctor_dtor)
+EFL_START_TEST(eolian_ctor_dtor)
 {
    Eina_Iterator *iter;
    const Eolian_Class *impl_class = NULL;
@@ -321,9 +321,9 @@ START_TEST(eolian_ctor_dtor)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_typedef)
+EFL_START_TEST(eolian_typedef)
 {
    const Eolian_Type *type = NULL;
    const Eolian_Typedecl *tdl = NULL;
@@ -405,9 +405,9 @@ START_TEST(eolian_typedef)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_complex_type)
+EFL_START_TEST(eolian_complex_type)
 {
    const Eolian_Function *fid = NULL;
    const Eolian_Function_Parameter *param = NULL;
@@ -494,9 +494,9 @@ START_TEST(eolian_complex_type)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_scope)
+EFL_START_TEST(eolian_scope)
 {
    const Eolian_Function *fid = NULL;
    const Eolian_Class *class;
@@ -530,9 +530,9 @@ START_TEST(eolian_scope)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_simple_parsing)
+EFL_START_TEST(eolian_simple_parsing)
 {
    const Eolian_Function *fid = NULL;
    const char *string = NULL, *ptype = NULL;
@@ -669,9 +669,9 @@ START_TEST(eolian_simple_parsing)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_struct)
+EFL_START_TEST(eolian_struct)
 {
    const Eolian_Struct_Type_Field *field = NULL;
    const Eolian_Type *type = NULL, *ftype = NULL;
@@ -742,9 +742,9 @@ START_TEST(eolian_struct)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_extern)
+EFL_START_TEST(eolian_extern)
 {
    const Eolian_Typedecl *tdl = NULL;
    const Eolian_Class *class;
@@ -780,9 +780,9 @@ START_TEST(eolian_extern)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_var)
+EFL_START_TEST(eolian_var)
 {
    const Eolian_Variable *var = NULL;
    const Eolian_Expression *exp = NULL;
@@ -848,9 +848,9 @@ START_TEST(eolian_var)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_enum)
+EFL_START_TEST(eolian_enum)
 {
    const Eolian_Enum_Type_Field *field = NULL;
    const Eolian_Variable *var = NULL;
@@ -952,9 +952,9 @@ START_TEST(eolian_enum)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_class_funcs)
+EFL_START_TEST(eolian_class_funcs)
 {
    const Eolian_Function *fid = NULL;
    const Eolian_Class *class;
@@ -991,9 +991,9 @@ START_TEST(eolian_class_funcs)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_free_func)
+EFL_START_TEST(eolian_free_func)
 {
    const Eolian_Class *class;
    const Eolian_Typedecl *tdl;
@@ -1040,9 +1040,9 @@ START_TEST(eolian_free_func)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_null)
+EFL_START_TEST(eolian_null)
 {
    const Eolian_Class *class;
    const Eolian_Function *func;
@@ -1092,9 +1092,9 @@ START_TEST(eolian_null)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_import)
+EFL_START_TEST(eolian_import)
 {
    const Eolian_Class *class;
    const Eolian_Typedecl *tdl;
@@ -1117,9 +1117,9 @@ START_TEST(eolian_import)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_decl)
+EFL_START_TEST(eolian_decl)
 {
    const Eolian_Object *decl;
    const Eolian_Typedecl *tdl;
@@ -1179,9 +1179,9 @@ START_TEST(eolian_decl)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_docs)
+EFL_START_TEST(eolian_docs)
 {
    const Eolian_Typedecl *tdl;
    const Eolian_Class *class;
@@ -1425,9 +1425,9 @@ START_TEST(eolian_docs)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_function_types)
+EFL_START_TEST(eolian_function_types)
 {
    const Eolian_Typedecl *decl = NULL;
    const Eolian_Typedecl *arg_decl = NULL;
@@ -1553,9 +1553,9 @@ START_TEST(eolian_function_types)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_function_as_arguments)
+EFL_START_TEST(eolian_function_as_arguments)
 {
    const Eolian_Class *cls = NULL;
    const Eolian_Function *fid = NULL;
@@ -1595,9 +1595,9 @@ START_TEST(eolian_function_as_arguments)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_parts)
+EFL_START_TEST(eolian_parts)
 {
    const Eolian_Unit *unit;
    const Eolian_Class *cls;
@@ -1642,7 +1642,7 @@ START_TEST(eolian_parts)
    eolian_state_free(eos);
    eolian_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eolian_parsing_test(TCase *tc)
 {

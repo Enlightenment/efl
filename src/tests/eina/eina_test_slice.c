@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_test_slice_init)
+EFL_START_TEST(eina_test_slice_init)
 {
    Eina_Rw_Slice a = EINA_SLICE_STR_LITERAL("hello world");
    char buf[1024] = "";
@@ -48,9 +48,9 @@ START_TEST(eina_test_slice_init)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_slice_ro)
+EFL_START_TEST(eina_test_slice_ro)
 {
    Eina_Slice slice = EINA_SLICE_STR_LITERAL("hi there");
    Eina_Slice a, needle;
@@ -132,9 +132,9 @@ START_TEST(eina_test_slice_ro)
    r = eina_slice_endswith(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
    fail_unless(r == EINA_FALSE);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_slice_rw)
+EFL_START_TEST(eina_test_slice_rw)
 {
    uint8_t buf[] = "hi there";
    Eina_Rw_Slice rw_slice = EINA_SLICE_ARRAY(buf);
@@ -230,9 +230,9 @@ START_TEST(eina_test_slice_rw)
    r = eina_rw_slice_endswith(rw_slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
    fail_unless(r == EINA_FALSE);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_slice_print)
+EFL_START_TEST(eina_test_slice_print)
 {
    char buf[] = "Hello World";
    Eina_Slice slice = {.len = strlen("Hello"), .mem = buf};
@@ -245,9 +245,9 @@ START_TEST(eina_test_slice_print)
    snprintf(a, sizeof(a), EINA_SLICE_STR_FMT, EINA_SLICE_STR_PRINT(slice));
    fail_unless(strcmp(a, "Hello") == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_slice_find)
+EFL_START_TEST(eina_test_slice_find)
 {
     Eina_Slice slice = EINA_SLICE_STR_LITERAL("abcdef");
     const char *p;
@@ -298,7 +298,7 @@ START_TEST(eina_test_slice_find)
     p = eina_slice_find(slice, (Eina_Slice)EINA_SLICE_STR_LITERAL(""));
     fail_unless(p == NULL);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_slice(TCase *tc)

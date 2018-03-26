@@ -92,7 +92,7 @@ eina_quaternion_f16p16_cmp(const Eina_Quaternion_F16p16 *a, const Eina_Quaternio
    return EINA_FALSE;
 }
 
-START_TEST(eina_test_quaternion_norm)
+EFL_START_TEST(eina_test_quaternion_norm)
 {
    static const Eina_Quaternion q = { 1, 3, 4, 5 };
    double result = eina_quaternion_norm(&q);
@@ -103,9 +103,9 @@ START_TEST(eina_test_quaternion_norm)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_conjugate)
+EFL_START_TEST(eina_test_quaternion_conjugate)
 {
    static const Eina_Quaternion q1 = { 1, -1, -1, 3 }, q2 = { 1, 3, 4, 3 };
    static const Eina_Quaternion r1 = { -1, 1, 1, 3 }, r2 = { -1, -3, -4, 3 };
@@ -121,9 +121,9 @@ START_TEST(eina_test_quaternion_conjugate)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_matrix)
+EFL_START_TEST(eina_test_quaternion_matrix)
 {
    Eina_Quaternion q = { 7, 9, 5, 1 };
    Eina_Quaternion q1 = {7, 9, 5, -1 };
@@ -145,9 +145,9 @@ START_TEST(eina_test_quaternion_matrix)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_op)
+EFL_START_TEST(eina_test_quaternion_op)
 {
    Eina_Quaternion q = { 7, 9, 5, 1 };
    Eina_Quaternion z = { 0, 0, 0, 0 };
@@ -162,9 +162,9 @@ START_TEST(eina_test_quaternion_op)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_f16p16)
+EFL_START_TEST(eina_test_quaternion_f16p16)
 {
    Eina_F16p16 x = 65536, y = 65536;
    Eina_F16p16 z = 65536, w = 65536;
@@ -219,9 +219,9 @@ START_TEST(eina_test_quaternion_f16p16)
            t.z != 131072 ||
            t.w != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_dot)
+EFL_START_TEST(eina_test_quaternion_dot)
 {
    Eina_Quaternion q = {1, 3, 4, 5};
    Eina_Quaternion r = {7, 9, 5, 1};
@@ -234,9 +234,9 @@ START_TEST(eina_test_quaternion_dot)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_scale)
+EFL_START_TEST(eina_test_quaternion_scale)
 {
    Eina_Quaternion q = {1, 3, 4, 5};
    double scale = 2;
@@ -249,9 +249,9 @@ START_TEST(eina_test_quaternion_scale)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_set)
+EFL_START_TEST(eina_test_quaternion_set)
 {
    Eina_Quaternion q, r = {1, 3, 4, 5};
 
@@ -263,9 +263,9 @@ START_TEST(eina_test_quaternion_set)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_mul)
+EFL_START_TEST(eina_test_quaternion_mul)
 {
    Eina_Quaternion p = {1, 3, 4, 5};
    Eina_Quaternion q = {7, 9, 5, 1};
@@ -278,9 +278,9 @@ START_TEST(eina_test_quaternion_mul)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_matrix_recompose)
+EFL_START_TEST(eina_test_matrix_recompose)
 {
    const Eina_Point_3D translation = { 0, 0, 0 };
    const Eina_Point_3D scale = { 1, 1, 1 };
@@ -302,9 +302,9 @@ START_TEST(eina_test_matrix_recompose)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_normalized)
+EFL_START_TEST(eina_test_quaternion_normalized)
 {
    Eina_Quaternion p = {1, 1, 1, 1};
    Eina_Quaternion res, q = {0.5, 0.5, 0.5, 0.5};
@@ -316,10 +316,10 @@ START_TEST(eina_test_quaternion_normalized)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #if 0
-START_TEST(eina_test_matrix_quaternion)
+EFL_START_TEST(eina_test_matrix_quaternion)
 {
    const Eina_Point_3D rt = { -2, -3, 0 };
    const Eina_Point_3D rsc = { 4, 5, 1 };
@@ -364,10 +364,10 @@ START_TEST(eina_test_matrix_quaternion)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(eina_test_quaternion_f16p16_lerp)
+EFL_START_TEST(eina_test_quaternion_f16p16_lerp)
 {
    Eina_Quaternion_F16p16 r, p = {0, 0, 0, 0};
    Eina_Quaternion_F16p16 q = {65536, 65536, 65536, 0};
@@ -393,9 +393,9 @@ START_TEST(eina_test_quaternion_f16p16_lerp)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_lerp)
+EFL_START_TEST(eina_test_quaternion_lerp)
 {
    Eina_Quaternion rp = {0, 0, 1, 0};
    Eina_Quaternion rq = {1, 0, 0, 0};
@@ -429,9 +429,9 @@ START_TEST(eina_test_quaternion_lerp)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_f16p16_rotate_matrix)
+EFL_START_TEST(eina_test_quaternion_f16p16_rotate_matrix)
 {
    Eina_Quaternion_F16p16 q = {65536, 65536, 65536, 0};
    Eina_Point_3D_F16p16 r = { 65536, 65536, 65536 };
@@ -452,9 +452,9 @@ START_TEST(eina_test_quaternion_f16p16_rotate_matrix)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_rotate)
+EFL_START_TEST(eina_test_quaternion_rotate)
 {
    Eina_Point_3D r = { 3, 3, 3 };
    Eina_Point_3D c = { 0, 0, 0}, res = {3.0, 3.0, 3.0};
@@ -472,9 +472,9 @@ START_TEST(eina_test_quaternion_rotate)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_quaternion_operations)
+EFL_START_TEST(eina_test_quaternion_operations)
 {
    Eina_Quaternion in = {2, 2, 1, 1};
    Eina_Quaternion in2 = {5, 5, 5, 5};
@@ -537,7 +537,7 @@ START_TEST(eina_test_quaternion_operations)
           );
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_quaternion(TCase *tc)

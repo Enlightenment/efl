@@ -10,7 +10,7 @@
 #include <Efl.h>
 #include <stdio.h>
 
-#include <check.h>
+#include "eio_suite.h"
 
 Eina_Tmpstr* temp_filename = NULL;
 const char* tmpdir = NULL;
@@ -101,7 +101,7 @@ _create_file_error(void *data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
-START_TEST(eio_model_test_test_monitor_add)
+EFL_START_TEST(eio_model_test_test_monitor_add)
 {
    Eo *filemodel = NULL;
 
@@ -133,7 +133,7 @@ START_TEST(eio_model_test_test_monitor_add)
 
    fail_if(!children_deleted);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eio_model_test_monitor_add(TCase *tc)

@@ -295,7 +295,7 @@ _ipv4_check(Eo *o, const struct sockaddr_in *addr)
    ck_assert_str_eq(efl_net_ip_address_string_get(o), buf);
 }
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
 {
    struct sockaddr_in addr = {
      .sin_family = AF_INET,
@@ -333,9 +333,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
 {
    uint8_t c = 123;
    Eina_Slice wrong_slice = { .mem = &c, .len = 1 };
@@ -421,9 +421,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_manual_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_create_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_create_ok)
 {
    struct sockaddr_in addr = {
      .sin_family = AF_INET,
@@ -459,9 +459,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_create_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_create_fail)
 {
    uint8_t c = 123;
    Eina_Slice wrong_slice = { .mem = &c, .len = 1 };
@@ -478,9 +478,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_ok)
 {
    struct sockaddr_in addr = {
      .sin_family = AF_INET,
@@ -505,9 +505,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_fail)
 {
    struct sockaddr_in addr = {
      .sin_family = AF_UNSPEC,
@@ -528,9 +528,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_ok)
 {
    Eo *o;
 
@@ -558,9 +558,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_fail)
 {
    Eo *o;
 
@@ -596,9 +596,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_parse_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_ok)
 {
    struct resolve_ctx ctx = { };
 
@@ -634,9 +634,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_fail)
 {
    struct resolve_ctx ctx = { };
 
@@ -664,9 +664,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_resolve_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv4_checks)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv4_checks)
 {
    const struct test {
       uint32_t addr;
@@ -721,7 +721,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv4_checks)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* IPv6 *****************************************************************/
 
@@ -761,7 +761,7 @@ _ipv6_set(struct sockaddr_in6 *addr, uint16_t s1, uint16_t s2, uint16_t s3, uint
    memcpy(&addr->sin6_addr, s, 16);
 }
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_ok)
 {
    struct sockaddr_in6 addr = {
      .sin6_family = AF_INET6,
@@ -791,9 +791,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
 {
    uint8_t c = 123;
    Eina_Slice wrong_slice = { .mem = &c, .len = 1 };
@@ -851,9 +851,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_manual_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_create_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_create_ok)
 {
    struct sockaddr_in6 addr = {
      .sin6_family = AF_INET6,
@@ -889,9 +889,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_create_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_create_sockaddr_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_create_sockaddr_ok)
 {
    struct sockaddr_in6 addr = {
      .sin6_family = AF_INET6,
@@ -916,9 +916,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_create_sockaddr_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_ok)
 {
    Eo *o;
 
@@ -1010,9 +1010,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_fail)
 {
    Eo *o;
 
@@ -1039,7 +1039,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_parse_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static const char *
 _ipv6_localhost_check(void)
@@ -1130,7 +1130,7 @@ _ipv6_localhost_check(void)
    return found;
 }
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_ok)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_ok)
 {
    struct resolve_ctx ctx = { };
    char buf[4096];
@@ -1185,9 +1185,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_ok)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_fail)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_fail)
 {
    struct resolve_ctx ctx = { };
 
@@ -1203,9 +1203,9 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_resolve_fail)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_efl_net_ip_address_ipv6_checks)
+EFL_START_TEST(ecore_test_efl_net_ip_address_ipv6_checks)
 {
    const struct test {
       const char *str;
@@ -1258,7 +1258,7 @@ START_TEST(ecore_test_efl_net_ip_address_ipv6_checks)
 
    ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_con_test_efl_net_ip_address(TCase *tc)
 {

@@ -2,7 +2,7 @@
 #define _EVAS_SUITE_H
 
 #include <check.h>
-
+#include "../efl_check.h"
 void evas_test_init(TCase *tc);
 void evas_test_object(TCase *tc);
 void evas_test_textblock(TCase *tc);

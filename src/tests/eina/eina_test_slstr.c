@@ -15,7 +15,7 @@ _slstr_copy(void)
    return eina_slstr_copy_new(local);
 }
 
-START_TEST(slstr_copy)
+EFL_START_TEST(slstr_copy)
 {
    Eina_Slstr *str;
 
@@ -26,7 +26,7 @@ START_TEST(slstr_copy)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Slstr *
 _slstr_steal(void)
@@ -36,7 +36,7 @@ _slstr_steal(void)
    return eina_slstr_copy_new(local);
 }
 
-START_TEST(slstr_steal)
+EFL_START_TEST(slstr_steal)
 {
    Eina_Slstr *str;
 
@@ -47,7 +47,7 @@ START_TEST(slstr_steal)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Slstr *
 _slstr_stringshare(void)
@@ -57,7 +57,7 @@ _slstr_stringshare(void)
    return eina_slstr_stringshare_new(str);
 }
 
-START_TEST(slstr_stringshare)
+EFL_START_TEST(slstr_stringshare)
 {
    Eina_Stringshare *ss;
    Eina_Slstr *str;
@@ -70,7 +70,7 @@ START_TEST(slstr_stringshare)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Slstr *
 _slstr_tmpstr(void)
@@ -80,7 +80,7 @@ _slstr_tmpstr(void)
    return eina_slstr_tmpstr_new(str);
 }
 
-START_TEST(slstr_tmpstr)
+EFL_START_TEST(slstr_tmpstr)
 {
    Eina_Slstr *str;
 
@@ -91,7 +91,7 @@ START_TEST(slstr_tmpstr)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Slstr *
 _slstr_strbuf(void)
@@ -105,7 +105,7 @@ _slstr_strbuf(void)
    return eina_slstr_strbuf_new(str);
 }
 
-START_TEST(slstr_strbuf)
+EFL_START_TEST(slstr_strbuf)
 {
    Eina_Slstr *str;
 
@@ -116,7 +116,7 @@ START_TEST(slstr_strbuf)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Slstr *
 _slstr_printf(int val)
@@ -124,7 +124,7 @@ _slstr_printf(int val)
    return eina_slstr_printf("Hello %s %d", "world", val);
 }
 
-START_TEST(slstr_slstr_printf)
+EFL_START_TEST(slstr_slstr_printf)
 {
    Eina_Slstr *str;
 
@@ -135,7 +135,7 @@ START_TEST(slstr_slstr_printf)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _many_do(void)
@@ -154,7 +154,7 @@ _many_do(void)
      }
 }
 
-START_TEST(slstr_many)
+EFL_START_TEST(slstr_many)
 {
    eina_init();
 
@@ -164,7 +164,7 @@ START_TEST(slstr_many)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void *
 _thread_cb(void *data EINA_UNUSED, Eina_Thread th EINA_UNUSED)
@@ -174,7 +174,7 @@ _thread_cb(void *data EINA_UNUSED, Eina_Thread th EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(slstr_thread)
+EFL_START_TEST(slstr_thread)
 {
    const int threads = 8;
    Eina_Thread th[threads];
@@ -192,7 +192,7 @@ START_TEST(slstr_thread)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_slstr(TCase *tc)

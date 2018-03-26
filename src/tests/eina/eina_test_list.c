@@ -56,7 +56,7 @@ static int eina_int_cmp(const void *a, const void *b)
    return *ia - *ib;
 }
 
-START_TEST(eina_test_simple)
+EFL_START_TEST(eina_test_simple)
 {
    Eina_List *list = NULL;
    Eina_List *tmp;
@@ -217,9 +217,9 @@ START_TEST(eina_test_simple)
 
         eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_merge)
+EFL_START_TEST(eina_test_merge)
 {
    Eina_List *l1;
    Eina_List *l2;
@@ -302,9 +302,9 @@ START_TEST(eina_test_merge)
 
       eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_sorted_insert)
+EFL_START_TEST(eina_test_sorted_insert)
 {
    const int data[] = {6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008};
    const int data2[] = {5, 0, 3, 2, 1, 0, 1, 2, 3, 4, 5};
@@ -358,9 +358,9 @@ START_TEST(eina_test_sorted_insert)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_list_split)
+EFL_START_TEST(eina_test_list_split)
 {
    Eina_List *left = NULL, *right = NULL ;
    Eina_List *list = NULL;
@@ -395,7 +395,7 @@ START_TEST(eina_test_list_split)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static int uicmp(const void *d1, const void *d2)
 {
@@ -410,7 +410,7 @@ static int uicmp(const void *d1, const void *d2)
 
 #define SHUFFLE_SZ 100
 #define SHUFFLE_N 100000
-START_TEST(eina_test_shuffle)
+EFL_START_TEST(eina_test_shuffle)
 {
    double d;
    unsigned int *p;
@@ -455,10 +455,10 @@ START_TEST(eina_test_shuffle)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #define DATA_SIZE 100
-START_TEST(eina_test_clone)
+EFL_START_TEST(eina_test_clone)
 {
    unsigned int i;
    unsigned int *d, *rd;
@@ -504,9 +504,9 @@ START_TEST(eina_test_clone)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_move)
+EFL_START_TEST(eina_test_move)
 {
    Eina_List *list1 = NULL, *list2 = NULL;
    Eina_Bool ret;
@@ -544,7 +544,7 @@ START_TEST(eina_test_move)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_list(TCase *tc)

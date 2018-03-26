@@ -42,7 +42,7 @@ _eina_test_log(const Eina_Log_Domain *d EINA_UNUSED,
    *bol = EINA_TRUE;
 }
 
-START_TEST(eina_cow_bad)
+EFL_START_TEST(eina_cow_bad)
 {
    const Eina_Cow_Test *cur;
    Eina_Cow_Test *write;
@@ -86,9 +86,9 @@ START_TEST(eina_cow_bad)
 
    eina_cow_del(cow);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cow)
+EFL_START_TEST(eina_cow)
 {
    const Eina_Cow_Test *prev;
    const Eina_Cow_Test *cur;
@@ -143,7 +143,7 @@ START_TEST(eina_cow)
 
    eina_cow_del(cow);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_cow(TCase *tc)

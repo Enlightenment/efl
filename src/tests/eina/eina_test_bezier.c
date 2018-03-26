@@ -27,7 +27,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_bezier_test_values)
+EFL_START_TEST(eina_bezier_test_values)
 {
    Eina_Bezier b;
    double sx, sy, cx1, cy1, cx2, cy2, ex, ey;
@@ -53,9 +53,9 @@ START_TEST(eina_bezier_test_values)
            ey != 8);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_angle)
+EFL_START_TEST(eina_bezier_test_angle)
 {
    Eina_Bezier b;
    double angle;
@@ -80,9 +80,9 @@ START_TEST(eina_bezier_test_angle)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_length)
+EFL_START_TEST(eina_bezier_test_length)
 {
    Eina_Bezier b;
    double length;
@@ -106,9 +106,9 @@ START_TEST(eina_bezier_test_length)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_t_at)
+EFL_START_TEST(eina_bezier_test_t_at)
 {
    Eina_Bezier b;
    double length, t;
@@ -128,9 +128,9 @@ START_TEST(eina_bezier_test_t_at)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_point_at)
+EFL_START_TEST(eina_bezier_test_point_at)
 {
    Eina_Bezier b;
    double x, y;
@@ -152,9 +152,9 @@ START_TEST(eina_bezier_test_point_at)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_split_at_length)
+EFL_START_TEST(eina_bezier_test_split_at_length)
 {
    Eina_Bezier b, l , r;
    double len, len1, len2;
@@ -174,9 +174,9 @@ START_TEST(eina_bezier_test_split_at_length)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_bounds_get)
+EFL_START_TEST(eina_bezier_test_bounds_get)
 {
    Eina_Bezier b;
    double x, y, w, h;
@@ -194,9 +194,9 @@ START_TEST(eina_bezier_test_bounds_get)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_bezier_test_on_interval)
+EFL_START_TEST(eina_bezier_test_on_interval)
 {
    Eina_Bezier b, res;
    double px1, px2, py1, py2;
@@ -215,7 +215,7 @@ START_TEST(eina_bezier_test_on_interval)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_bezier(TCase *tc)

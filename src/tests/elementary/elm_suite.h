@@ -3,7 +3,7 @@
 
 #include <check.h>
 #include "elm_test_helper.h"
-
+#include "../efl_check.h"
 void elm_test_init(TCase *tc);
 void elm_test_config(TCase *tc);
 void elm_test_check(TCase *tc);

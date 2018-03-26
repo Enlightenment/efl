@@ -9,7 +9,7 @@
 #include <stdbool.h>
 typedef unsigned int uint;
 
-START_TEST (elm_config_eoapi)
+EFL_START_TEST (elm_config_eoapi)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -145,9 +145,9 @@ START_TEST (elm_config_eoapi)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_config_win)
+EFL_START_TEST (elm_config_win)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -165,7 +165,7 @@ START_TEST (elm_config_win)
    efl_del(win);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static inline Eina_Bool
 _eina_list_string_has(const Eina_List *list, const char *str)
@@ -180,7 +180,7 @@ _eina_list_string_has(const Eina_List *list, const char *str)
    return EINA_FALSE;
 }
 
-START_TEST (elm_config_profiles)
+EFL_START_TEST (elm_config_profiles)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -230,7 +230,7 @@ START_TEST (elm_config_profiles)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_config(TCase *tc)
 {

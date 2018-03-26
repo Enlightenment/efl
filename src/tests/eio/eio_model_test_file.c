@@ -10,8 +10,7 @@
 #include <Efl.h>
 #include <stdio.h>
 
-#include <check.h>
-
+#include "eio_suite.h"
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
 #define EFL_MODEL_MAX_TEST_CHILDS 16
 
@@ -103,7 +102,7 @@ error_promise_then(void* data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
   ecore_main_loop_quit();
 }
 
-START_TEST(eio_model_test_test_file)
+EFL_START_TEST(eio_model_test_test_file)
 {
    Eo *filemodel = NULL;
 
@@ -147,7 +146,7 @@ START_TEST(eio_model_test_test_file)
    ecore_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eio_model_test_file(TCase *tc)

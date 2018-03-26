@@ -63,7 +63,7 @@ _timer_fail_flag_cb(void *data)
    return EINA_FALSE;
 }
 
-START_TEST (elm_win_legacy_type_check)
+EFL_START_TEST (elm_win_legacy_type_check)
 {
    Evas_Object *win;
    const char *type;
@@ -82,9 +82,9 @@ START_TEST (elm_win_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win;
    Efl_Access_Role role;
@@ -99,9 +99,9 @@ START_TEST (elm_atspi_role_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_component_screen_position)
+EFL_START_TEST (elm_atspi_component_screen_position)
 {
    Eina_Bool ret;
    int x, y;
@@ -122,9 +122,9 @@ START_TEST (elm_atspi_component_screen_position)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_win_autohide)
+EFL_START_TEST (elm_win_autohide)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -147,9 +147,9 @@ START_TEST (elm_win_autohide)
      }
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_win_policy_quit_last_window_hidden)
+EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -174,9 +174,9 @@ START_TEST (elm_win_policy_quit_last_window_hidden)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
+EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -204,7 +204,7 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
      }
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* a very lax definition of == for doubles */
 #define VALEQ(a, b) ((fabs((a) - (b))) <= 0.001)
@@ -371,7 +371,7 @@ _inputs_timer3_cb(void *data)
    return ECORE_CALLBACK_DONE;
 }
 
-START_TEST (efl_ui_win_multi_touch_inputs)
+EFL_START_TEST (efl_ui_win_multi_touch_inputs)
 {
    Eina_Bool fail_flag = EINA_FALSE;
    Eo *win;
@@ -404,7 +404,7 @@ START_TEST (efl_ui_win_multi_touch_inputs)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_win(TCase *tc)
 {

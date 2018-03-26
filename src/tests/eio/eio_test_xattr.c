@@ -130,7 +130,7 @@ _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
    ecore_main_loop_quit();
 }
 
-START_TEST(eio_test_xattr_set)
+EFL_START_TEST(eio_test_xattr_set)
 {
    char *filename = "eio-tmpfile";
    Eina_Tmpstr *test_file_path;
@@ -186,9 +186,9 @@ START_TEST(eio_test_xattr_set)
    eina_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_xattr_types_set)
+EFL_START_TEST(eio_test_xattr_types_set)
 {
    char *filename = "eio-tmpfile";
 
@@ -257,7 +257,7 @@ START_TEST(eio_test_xattr_types_set)
    eina_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void eio_test_xattr(TCase *tc)

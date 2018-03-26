@@ -18,7 +18,7 @@ _quit_cb(void *data EINA_UNUSED)
    return EINA_FALSE;
 }
 
-START_TEST(eldbus_test_eldbus)
+EFL_START_TEST(eldbus_test_eldbus)
 {
    int ret;
 
@@ -30,9 +30,9 @@ START_TEST(eldbus_test_eldbus)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eldbus_test_eldbus_main_loop)
+EFL_START_TEST(eldbus_test_eldbus_main_loop)
 {
    Ecore_Timer *timer;
    int ret;
@@ -51,7 +51,7 @@ START_TEST(eldbus_test_eldbus_main_loop)
    ecore_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
 #if 0
 /* TODO: This test assumes an existing dbus-daemon running. It
@@ -60,7 +60,7 @@ END_TEST
  * afterwards.
  */
 
-START_TEST(eldbus_test_eldbus_conn)
+EFL_START_TEST(eldbus_test_eldbus_conn)
 {
    Eldbus_Connection *conn;
    int ret;
@@ -85,9 +85,9 @@ START_TEST(eldbus_test_eldbus_conn)
    ecore_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eldbus_test_eldbus_conn_object)
+EFL_START_TEST(eldbus_test_eldbus_conn_object)
 {
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
@@ -118,7 +118,7 @@ START_TEST(eldbus_test_eldbus_conn_object)
    ecore_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
 void name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *old_id EINA_UNUSED, const char *new_id)
 {
@@ -126,7 +126,7 @@ void name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
    *id = new_id;
 }
 
-START_TEST(eldbus_test_eldbus_name_owner_changed)
+EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
 {
    Eldbus_Connection *conn;
    const char *id = NULL;
@@ -150,7 +150,7 @@ START_TEST(eldbus_test_eldbus_name_owner_changed)
    eldbus_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void eldbus_test_eldbus_init(TCase *tc)

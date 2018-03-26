@@ -47,7 +47,7 @@ _teardown(void)
    check_shutdown();
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = NULL;
    properties = efl_model_properties_get(pong_signal);
@@ -57,9 +57,9 @@ START_TEST(properties_get)
    const unsigned int actual_properties_count = eina_array_count(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
    // Signal properties always have output direction
    Efl_Future *future;
@@ -70,9 +70,9 @@ START_TEST(property_get)
    future = efl_model_property_get(pong_signal, "nonexistent");
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_set)
+EFL_START_TEST(property_set)
 {
    // Signals have output arguments only. All returns error
    Efl_Future *future;
@@ -80,7 +80,7 @@ START_TEST(property_set)
    future = efl_model_property_set(pong_signal, ARGUMENT_A, &dummy);
    check_efl_model_future_error(future, NULL);
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_signal_children_count(Eo *efl_model)
@@ -88,37 +88,37 @@ _test_signal_children_count(Eo *efl_model)
    check_efl_model_children_count_eq(efl_model, 0);
 }
 
-START_TEST(children_count)
+EFL_START_TEST(children_count)
 {
    _test_signal_children_count(pong_signal);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
    Efl_Future *future;
    future = efl_model_children_slice_get(pong_signal, 1, 1);
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child;
    child = efl_model_child_add(pong_signal);
    ck_assert_ptr_eq(NULL, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+EFL_START_TEST(child_del)
 {
    // efl_model_child_del always returns ERROR FIXME catch error
    Eo *child = NULL;
    efl_model_child_del(pong_signal, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(signals)
+EFL_START_TEST(signals)
 {
    Eldbus_Model_Method *ping_method = eldbus_model_method_from_proxy_get(fake_server_proxy, FAKE_SERVER_PING_METHOD_NAME);
    ck_assert_ptr_ne(NULL, ping_method);
@@ -131,7 +131,7 @@ START_TEST(signals)
 
    check_efl_model_property_int_eq(pong_signal, ARGUMENT_A, 100);
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_model_signal(TCase *tc)
 {

@@ -111,7 +111,7 @@ _eet_raw_data_cb(void *data, Ecore_Con_Reply *reply, const char *protocol_name E
    ecore_con_server_del(cl);
 }
 
-START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
+EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
 {
    Ecore_Con_Eet *ece_svr, *ece_cl;
    Ecore_Con_Server *svr, *cl;
@@ -169,7 +169,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
    eet_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _eet_svr_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, Ecore_Con_Server *conn EINA_UNUSED)
@@ -193,7 +193,7 @@ _eet_svr_raw_data_cb(void *data, Ecore_Con_Reply *reply, const char *protocol_na
    ecore_con_server_del(svr);
 }
 
-START_TEST(ecore_con_test_ecore_con_eet_svr_del)
+EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 {
    Ecore_Con_Eet *ece_svr, *ece_cl;
    Ecore_Con_Server *svr, *cl;
@@ -239,7 +239,7 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
    eet_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_con_test_ecore_con_eet(TCase *tc)
 {

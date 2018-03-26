@@ -57,7 +57,7 @@ _cb1(void *data, const Efl_Event *event)
    efl_event_callback_add(event->object, EFL_TEST_EVENT_EVENT_TESTER, _cb3, data);
 }
 
-START_TEST(eo_event)
+EFL_START_TEST(eo_event)
 {
    Test_Data data;
    efl_object_init();
@@ -81,7 +81,7 @@ START_TEST(eo_event)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _cb_rec_3(void *data EINA_UNUSED, const Efl_Event *event)
@@ -117,7 +117,7 @@ _cb_rec_1(void *data, const Efl_Event *event)
      }
 }
 
-START_TEST(eo_event_call_in_call)
+EFL_START_TEST(eo_event_call_in_call)
 {
    Test_Data data;
    efl_object_init();
@@ -134,7 +134,7 @@ START_TEST(eo_event_call_in_call)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool emitted = 0;
 
@@ -162,7 +162,7 @@ _generation_clamp_step1(void *data EINA_UNUSED, const Efl_Event *e)
 }
 
 
-START_TEST(eo_event_generation_bug)
+EFL_START_TEST(eo_event_generation_bug)
 {
    efl_object_init();
 
@@ -189,7 +189,7 @@ START_TEST(eo_event_generation_bug)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 void eo_test_event(TCase *tc)

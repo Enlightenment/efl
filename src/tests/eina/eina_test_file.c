@@ -88,7 +88,7 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
 #endif
 
 
-START_TEST(eina_file_split_simple)
+EFL_START_TEST(eina_file_split_simple)
 {
    Eina_Array *ea;
 
@@ -153,7 +153,7 @@ START_TEST(eina_file_split_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 Eina_Tmpstr*
 get_full_path(const char* tmpdirname, const char* filename)
@@ -178,7 +178,7 @@ get_eina_test_file_tmp_dir()
    return tmp_dir;
 }
 
-START_TEST(eina_file_direct_ls_simple)
+EFL_START_TEST(eina_file_direct_ls_simple)
 {
    eina_init();
 
@@ -240,9 +240,9 @@ START_TEST(eina_file_direct_ls_simple)
    eina_tmpstr_del(test_dirname);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_file_ls_simple)
+EFL_START_TEST(eina_file_ls_simple)
 {
    eina_init();
 
@@ -302,9 +302,9 @@ START_TEST(eina_file_ls_simple)
    eina_tmpstr_del(test_dirname);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_file_map_new_test)
+EFL_START_TEST(eina_file_map_new_test)
 {
    const char *eina_map_test_string = "Hello. I'm the eina map test string."; 
    const char *test_file_name_part = "/example.txt";
@@ -442,7 +442,7 @@ START_TEST(eina_file_map_new_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static const char *virtual_file_data = "this\n"
   "is a test for the sake of testing\r\n"
@@ -452,7 +452,7 @@ static const char *virtual_file_data = "this\n"
   "file !\n"
   "without any issue !";
 
-START_TEST(eina_test_file_virtualize)
+EFL_START_TEST(eina_test_file_virtualize)
 {
    Eina_File *f;
    Eina_File *tmp;
@@ -496,7 +496,7 @@ START_TEST(eina_test_file_virtualize)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void *
 _eina_test_file_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
@@ -514,7 +514,7 @@ _eina_test_file_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eina_test_file_thread)
+EFL_START_TEST(eina_test_file_thread)
 {
    Eina_Thread th[4];
    unsigned int i;
@@ -529,7 +529,7 @@ START_TEST(eina_test_file_thread)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static const struct {
    const char *test;
@@ -538,7 +538,7 @@ static const struct {
   { "/home/mydir/../myfile", "/home/myfile" }
 };
 
-START_TEST(eina_test_file_path)
+EFL_START_TEST(eina_test_file_path)
 {
    unsigned int i;
    char *path;
@@ -553,10 +553,10 @@ START_TEST(eina_test_file_path)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef XATTR_TEST_DIR
-START_TEST(eina_test_file_xattr)
+EFL_START_TEST(eina_test_file_xattr)
 {
    Eina_File *ef;
    char *filename = "tmpfile";
@@ -629,10 +629,10 @@ START_TEST(eina_test_file_xattr)
    eina_file_close(ef);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(eina_test_file_copy)
+EFL_START_TEST(eina_test_file_copy)
 {
    const char *test_file1_name = "EinaCopyFromXXXXXX.txt";
    const char *test_file2_name = "EinaCopyToXXXXXX.txt";
@@ -696,9 +696,9 @@ START_TEST(eina_test_file_copy)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_file_statat)
+EFL_START_TEST(eina_test_file_statat)
 {
    Eina_Tmpstr *test_file1_path, *test_file2_path;
    Eina_Iterator *it;
@@ -745,9 +745,9 @@ START_TEST(eina_test_file_statat)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_file_mktemp)
+EFL_START_TEST(eina_test_file_mktemp)
 {
    Eina_Tmpstr *tmpfile, *tmpdir = NULL;
    char buf[PATH_MAX], fmt[256];
@@ -843,7 +843,7 @@ START_TEST(eina_test_file_mktemp)
    unlink(tmpfile);
    remove(tmpdir);
 }
-END_TEST
+EFL_END_TEST
 
 int  create_file_not_empty(const char *file_name, Eina_Tmpstr **test_file_path, Eina_Bool close_file)
 {
@@ -862,7 +862,7 @@ int  create_file_not_empty(const char *file_name, Eina_Tmpstr **test_file_path, 
    return fd;
 }
 
-START_TEST(eina_test_file_unlink)
+EFL_START_TEST(eina_test_file_unlink)
 {
    int fd;
    Eina_Tmpstr *test_file_path;
@@ -883,7 +883,7 @@ START_TEST(eina_test_file_unlink)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_file(TCase *tc)

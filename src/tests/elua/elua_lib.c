@@ -10,7 +10,7 @@
 
 #include "elua_suite.h"
 
-START_TEST(elua_api)
+EFL_START_TEST(elua_api)
 {
     Elua_State *st;
     lua_State *lst;
@@ -130,7 +130,7 @@ START_TEST(elua_api)
 
     elua_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elua_lib_test(TCase *tc)
 {

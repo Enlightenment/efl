@@ -10,7 +10,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_crc_simple)
+EFL_START_TEST(eina_crc_simple)
 {
    unsigned int seed = 0xffffffff, i, ret;
    const char *data[] =
@@ -43,7 +43,7 @@ START_TEST(eina_crc_simple)
    ret = eina_crc(s2, strlen(s2), ret, EINA_FALSE);
    fail_if(ret != result[0]);
 }
-END_TEST
+EFL_END_TEST
 
 void eina_test_crc(TCase *tc)
 {

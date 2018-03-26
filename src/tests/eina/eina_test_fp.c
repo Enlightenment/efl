@@ -27,7 +27,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_fp_cos)
+EFL_START_TEST(eina_fp_cos)
 {
    Eina_F32p32 fc;
    Eina_F32p32 fl;
@@ -54,9 +54,9 @@ START_TEST(eina_fp_cos)
 
         eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_fp_sin)
+EFL_START_TEST(eina_fp_sin)
 {
    Eina_F32p32 fc;
    Eina_F32p32 fl;
@@ -84,9 +84,9 @@ START_TEST(eina_fp_sin)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_fp_mul)
+EFL_START_TEST(eina_fp_mul)
 {
    Eina_F32p32 fc1, fc2;
    Eina_F32p32 fresult;
@@ -137,9 +137,9 @@ START_TEST(eina_fp_mul)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_fp_div)
+EFL_START_TEST(eina_fp_div)
 {
    Eina_F32p32 fc1, fc2;
    Eina_F32p32 fresult;
@@ -189,7 +189,7 @@ START_TEST(eina_fp_div)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_fp(TCase *tc)

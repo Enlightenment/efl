@@ -11,7 +11,7 @@
 
 #define MAX_ITER 10
 
-START_TEST(ecore_test_ecore_input_init)
+EFL_START_TEST(ecore_test_ecore_input_init)
 {
    int ret, i, j;
 
@@ -29,7 +29,7 @@ START_TEST(ecore_test_ecore_input_init)
         fail_if(ret != j);
      }
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_input(TCase *tc)
 {

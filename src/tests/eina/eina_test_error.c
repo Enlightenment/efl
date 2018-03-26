@@ -69,7 +69,7 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
 #endif
 }
 
-START_TEST(eina_error_errno)
+EFL_START_TEST(eina_error_errno)
 {
    int test;
 
@@ -90,9 +90,9 @@ START_TEST(eina_error_errno)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_error_test_find)
+EFL_START_TEST(eina_error_test_find)
 {
    int test, r;
    const char *str;
@@ -118,9 +118,9 @@ START_TEST(eina_error_test_find)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_error_test_modify)
+EFL_START_TEST(eina_error_test_modify)
 {
    int test, r;
    const char *str, smsg[] = "Do not copy this string";
@@ -155,9 +155,9 @@ START_TEST(eina_error_test_modify)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_error_test_lots)
+EFL_START_TEST(eina_error_test_lots)
 {
    char buf[64];
    int codes[512];
@@ -184,10 +184,10 @@ START_TEST(eina_error_test_lots)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef EINA_SAFETY_CHECKS
-START_TEST(eina_error_test_failures)
+EFL_START_TEST(eina_error_test_failures)
 {
    struct log_ctx ctx;
    Eina_Error local_error;
@@ -251,7 +251,7 @@ START_TEST(eina_error_test_failures)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

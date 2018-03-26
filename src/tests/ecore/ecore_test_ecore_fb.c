@@ -11,7 +11,7 @@
 
 #define MAX_ITER 10
 
-START_TEST(ecore_test_ecore_fb_init)
+EFL_START_TEST(ecore_test_ecore_fb_init)
 {
 // SKIP fb test as all it tests is init and shutdown and nothing else
 // and these require basically a linux box with root or special
@@ -36,7 +36,7 @@ START_TEST(ecore_test_ecore_fb_init)
      }
  */
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_fb(TCase *tc)
 {

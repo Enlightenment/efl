@@ -180,7 +180,7 @@ _pending_connection_get()
  * @}
  */
 
-START_TEST(utc_eldbus_pending_info_get_cancel_p)
+EFL_START_TEST(utc_eldbus_pending_info_get_cancel_p)
 {
    Eldbus_Pending *pending = _pending_connection_get();
    ck_assert_ptr_ne(NULL, pending);
@@ -198,7 +198,7 @@ START_TEST(utc_eldbus_pending_info_get_cancel_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eldbus_test_eldbus_pending_cancel(TCase *tc)

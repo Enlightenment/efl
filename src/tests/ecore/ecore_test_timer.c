@@ -152,7 +152,7 @@ _timer5_cb(void *data)
   Timer 5 finishes testing.
 */
 
-START_TEST(ecore_test_timers)
+EFL_START_TEST(ecore_test_timers)
 {
    struct _timers timer = \
    {
@@ -189,7 +189,7 @@ START_TEST(ecore_test_timers)
    ecore_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Test_Inside_Call
 {
@@ -212,7 +212,7 @@ _timeri_cb(void *data)
    return it != 0;
 }
 
-START_TEST(ecore_test_timer_inside_call)
+EFL_START_TEST(ecore_test_timer_inside_call)
 {
    Test_Inside_Call c;
 
@@ -228,7 +228,7 @@ START_TEST(ecore_test_timer_inside_call)
    ecore_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _test_time_cb(void *data)
@@ -254,7 +254,7 @@ _test_run_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    _test_time_cb(data);
 }
 
-START_TEST(ecore_test_timer_lifecycle)
+EFL_START_TEST(ecore_test_timer_lifecycle)
 {
    Eina_Bool rl = EINA_FALSE, re = EINA_FALSE;
    Eina_Bool dl = EINA_FALSE, de = EINA_FALSE;
@@ -284,17 +284,17 @@ START_TEST(ecore_test_timer_lifecycle)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(ecore_test_timer_valid_callbackfunc)
+EFL_START_TEST(ecore_test_timer_valid_callbackfunc)
 {
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
    Ecore_Timer *t = NULL;
    fail_if((t = ecore_timer_add(0.5, NULL, NULL)), "ERROR: Invalid callback func!\n");
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_timer(TCase *tc)
 {

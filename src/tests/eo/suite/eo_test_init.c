@@ -7,16 +7,16 @@
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 
-START_TEST(eo_test_simple)
+EFL_START_TEST(eo_test_simple)
 {
    fail_if(!efl_object_init()); /* one init by test suite */
    fail_if(!efl_object_init());
    fail_if(!efl_object_shutdown());
    fail_if(efl_object_shutdown());
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eo_test_init_shutdown)
+EFL_START_TEST(eo_test_init_shutdown)
 {
    Eo *obj;
 
@@ -40,7 +40,7 @@ START_TEST(eo_test_init_shutdown)
    ck_assert_int_eq(0xBEEF, simple2_class_beef_get(SIMPLE2_CLASS));
    fail_if(efl_object_shutdown());
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_init(TCase *tc)
 {

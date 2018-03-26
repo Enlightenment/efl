@@ -29,7 +29,7 @@ _teardown(void)
    check_shutdown();
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = NULL;
    properties = efl_model_properties_get(object);
@@ -39,9 +39,9 @@ START_TEST(properties_get)
    unsigned int actual_properties_count = eina_array_count(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
    Efl_Future *future;
    future = efl_model_property_get(object, UNIQUE_NAME_PROPERTY);
@@ -52,9 +52,9 @@ START_TEST(property_get)
    future = efl_model_property_get(object, "nonexistent");
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_set)
+EFL_START_TEST(property_set)
 {
    Eina_Value value;
    Efl_Future *future;
@@ -71,7 +71,7 @@ START_TEST(property_set)
 
    eina_value_flush(&value);
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_children_count(Eo *efl_model)
@@ -80,27 +80,27 @@ _test_children_count(Eo *efl_model)
    check_efl_model_children_count_ge(efl_model, 2);
 }
 
-START_TEST(children_count)
+EFL_START_TEST(children_count)
 {
    _test_children_count(object);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
    check_efl_model_children_slice_get(object);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child;
    child = efl_model_child_add(object);
    ck_assert_ptr_eq(NULL, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+EFL_START_TEST(child_del)
 {
    unsigned int expected_children_count = 0;
    Efl_Future *future;
@@ -119,7 +119,7 @@ START_TEST(child_del)
    actual_children_count = efl_model_future_then_u(future);
    ck_assert_int_le(expected_children_count, actual_children_count);
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_model_object(TCase *tc)
 {

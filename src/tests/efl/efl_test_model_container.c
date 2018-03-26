@@ -109,7 +109,7 @@ _children_slice_future_then(void *data, Efl_Event const *event)
 }
 
 
-START_TEST(efl_test_model_container_values)
+EFL_START_TEST(efl_test_model_container_values)
 {
    Efl_Model_Container* model;
    Efl_Future *future;
@@ -161,7 +161,7 @@ START_TEST(efl_test_model_container_values)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 void

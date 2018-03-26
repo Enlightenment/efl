@@ -105,7 +105,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
    *r = root;
 }
 
-START_TEST(correct_register)
+EFL_START_TEST(correct_register)
 {
    Eina_List *set1 = NULL;
    Efl_Ui_Focus_Object *root;
@@ -144,9 +144,9 @@ START_TEST(correct_register)
    efl_del(manager);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(correct_unregister)
+EFL_START_TEST(correct_unregister)
 {
    Eina_List *set = NULL;
    Efl_Ui_Focus_Object *root;
@@ -188,9 +188,9 @@ START_TEST(correct_unregister)
    efl_del(child3);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(correct_un_register)
+EFL_START_TEST(correct_un_register)
 {
    Eina_List *set_add = NULL, *set_del = NULL;
    Efl_Ui_Focus_Object *root;
@@ -230,7 +230,7 @@ START_TEST(correct_un_register)
    efl_del(child3);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_focus_sub(TCase *tc)
 {

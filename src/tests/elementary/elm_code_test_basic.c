@@ -9,7 +9,7 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-START_TEST (elm_code_create_test)
+EFL_START_TEST (elm_code_create_test)
 {
    Elm_Code *code;
 
@@ -22,9 +22,9 @@ START_TEST (elm_code_create_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_open_test)
+EFL_START_TEST (elm_code_open_test)
 {
    char *path = TESTS_SRC_DIR "/testfile.txt";
    char realpath1[PATH_MAX], realpath2[PATH_MAX];
@@ -42,7 +42,7 @@ START_TEST (elm_code_open_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 void elm_code_test_basic(TCase *tc)

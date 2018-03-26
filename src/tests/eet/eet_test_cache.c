@@ -44,7 +44,7 @@ _open_close_worker(void *path, Eina_Thread tid EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eet_test_cache_concurrency)
+EFL_START_TEST(eet_test_cache_concurrency)
 {
    char *file;
    const char *buffer = "test data";
@@ -97,7 +97,7 @@ START_TEST(eet_test_cache_concurrency)
    eina_threads_shutdown();
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_cache(TCase *tc)
 {

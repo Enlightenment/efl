@@ -9,7 +9,7 @@
 #define WINDOW_HEIGHT 200
 #define WINDOW_WIDTH 200
 
-START_TEST(ecore_test_ecore_evas_associate)
+EFL_START_TEST(ecore_test_ecore_evas_associate)
 {
    Ecore_Evas *ee;
    Evas *canvas;
@@ -34,9 +34,9 @@ START_TEST(ecore_test_ecore_evas_associate)
    ret = ecore_evas_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_evas_cocoa)
+EFL_START_TEST(ecore_test_ecore_evas_cocoa)
 {
    int ret;
    Ecore_Evas *ee;
@@ -68,7 +68,7 @@ START_TEST(ecore_test_ecore_evas_cocoa)
    ret = ecore_evas_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_evas(TCase *tc)
 {

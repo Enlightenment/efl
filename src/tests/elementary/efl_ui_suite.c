@@ -21,7 +21,7 @@ efl_main(void *data EINA_UNUSED,
    efl_loop_quit(ev->object, eina_value_string_init("success"));
 }
 
-START_TEST(efl_ui_test_init)
+EFL_START_TEST(efl_ui_test_init)
 {
    /* EFL_MAIN */
    Eina_Value *ret__;
@@ -41,7 +41,7 @@ START_TEST(efl_ui_test_init)
    ecore_shutdown_ex();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void efl_ui_test(TCase *tc)
 {

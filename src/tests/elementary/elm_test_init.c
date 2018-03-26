@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-START_TEST (elm_main)
+EFL_START_TEST (elm_main)
 {
    char *args[] = { "exe" };
    ck_assert(elm_init(1, args) == 1);
@@ -13,7 +13,7 @@ START_TEST (elm_main)
    ck_assert(ecore_init() == 1);
    ck_assert(ecore_shutdown() == 0);
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_init(TCase *tc)
 {

@@ -6,7 +6,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(freeq_simple)
+EFL_START_TEST(freeq_simple)
 {
    Eina_FreeQ *fq;
    int *p;
@@ -30,7 +30,7 @@ START_TEST(freeq_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static int _n = 0;
 
@@ -40,7 +40,7 @@ static void freefn(void *data)
    _n--;
 }
 
-START_TEST(freeq_tune)
+EFL_START_TEST(freeq_tune)
 {
    void *p;
 
@@ -74,9 +74,9 @@ START_TEST(freeq_tune)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(freeq_reduce)
+EFL_START_TEST(freeq_reduce)
 {
    void *p;
 
@@ -114,7 +114,7 @@ START_TEST(freeq_reduce)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 postponed_free(void *data)
@@ -136,7 +136,7 @@ new_uint(int val)
    return p;
 }
 
-START_TEST(freeq_postponed)
+EFL_START_TEST(freeq_postponed)
 {
    Eina_FreeQ *fq;
    unsigned int *values[20];
@@ -194,7 +194,7 @@ START_TEST(freeq_postponed)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_freeq(TCase *tc)

@@ -26,7 +26,7 @@ void generate_app(void)
    evas_object_show(g_win);
 }
 
-START_TEST (test_efl_access_app_obj_name_get)
+EFL_START_TEST (test_efl_access_app_obj_name_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -46,9 +46,9 @@ START_TEST (test_efl_access_app_obj_name_get)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_i18n_name_get)
+EFL_START_TEST (test_efl_access_i18n_name_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -73,9 +73,9 @@ START_TEST (test_efl_access_i18n_name_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_i18n_name_set)
+EFL_START_TEST (test_efl_access_i18n_name_set)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -99,9 +99,9 @@ START_TEST (test_efl_access_i18n_name_set)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_role_get)
+EFL_START_TEST (test_efl_access_role_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -117,9 +117,9 @@ START_TEST (test_efl_access_role_get)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_role_set)
+EFL_START_TEST (test_efl_access_role_set)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -140,9 +140,9 @@ START_TEST (test_efl_access_role_set)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_role_name_get)
+EFL_START_TEST (test_efl_access_role_name_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -158,9 +158,9 @@ START_TEST (test_efl_access_role_name_get)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_localized_role_name_get)
+EFL_START_TEST (test_efl_access_localized_role_name_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -176,9 +176,9 @@ START_TEST (test_efl_access_localized_role_name_get)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_description_set)
+EFL_START_TEST (test_efl_access_description_set)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -207,10 +207,10 @@ START_TEST (test_efl_access_description_set)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Test if initial description value is NULL */
-START_TEST (test_efl_access_description_get)
+EFL_START_TEST (test_efl_access_description_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -223,9 +223,9 @@ START_TEST (test_efl_access_description_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_children_and_parent)
+EFL_START_TEST (test_efl_access_children_and_parent)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -251,9 +251,9 @@ START_TEST (test_efl_access_children_and_parent)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_children_and_parent2)
+EFL_START_TEST (test_efl_access_children_and_parent2)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -281,10 +281,10 @@ START_TEST (test_efl_access_children_and_parent2)
    efl_del(root);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Initial value of translation domain should be NULL */
-START_TEST (test_efl_access_translation_domain_get)
+EFL_START_TEST (test_efl_access_translation_domain_get)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -298,9 +298,9 @@ START_TEST (test_efl_access_translation_domain_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_translation_domain_set)
+EFL_START_TEST (test_efl_access_translation_domain_set)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -321,9 +321,9 @@ START_TEST (test_efl_access_translation_domain_set)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_relationship_append)
+EFL_START_TEST (test_efl_access_relationship_append)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -385,9 +385,9 @@ START_TEST (test_efl_access_relationship_append)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_relationship_remove)
+EFL_START_TEST (test_efl_access_relationship_remove)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -463,9 +463,9 @@ START_TEST (test_efl_access_relationship_remove)
    efl_access_relation_set_free(set);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (test_efl_access_relationships_clear)
+EFL_START_TEST (test_efl_access_relationships_clear)
 {
    Efl_Access_Relation_Set set;
    Efl_Access_Relation *rel;
@@ -494,7 +494,7 @@ START_TEST (test_efl_access_relationships_clear)
    efl_access_relation_set_free(set);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_atspi(TCase *tc)
 {

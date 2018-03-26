@@ -94,7 +94,7 @@ do \
 } \
 while (0)
 
-START_TEST(evas_object_smart_paragraph_direction)
+EFL_START_TEST(evas_object_smart_paragraph_direction)
 {
    START_EVAS_OBJECT_SMART_TEST();
 
@@ -174,7 +174,7 @@ START_TEST(evas_object_smart_paragraph_direction)
    DELETE_EVAS_TEXT();
    END_EVAS_OBJECT_SMART_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_object_smart(TCase *tc)
 {

@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(str_simple)
+EFL_START_TEST(str_simple)
 {
    size_t i;
    char *str, *ret;
@@ -117,9 +117,9 @@ START_TEST(str_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_split)
+EFL_START_TEST(str_split)
 {
    char **result;
    unsigned int elements;
@@ -250,9 +250,9 @@ START_TEST(str_split)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_lcat_lcpy)
+EFL_START_TEST(str_lcat_lcpy)
 {
    char dst[9];
    size_t ret;
@@ -292,9 +292,9 @@ START_TEST(str_lcat_lcpy)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_join_len)
+EFL_START_TEST(str_join_len)
 {
    char dst[9];
    size_t ret;
@@ -322,9 +322,9 @@ START_TEST(str_join_len)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_memdup)
+EFL_START_TEST(str_memdup)
 {
    struct temp {
       int i;
@@ -353,9 +353,9 @@ START_TEST(str_memdup)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_strftime)
+EFL_START_TEST(str_strftime)
 {
    time_t curr_time;
    struct tm *info;
@@ -371,10 +371,10 @@ START_TEST(str_strftime)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef HAVE_ICONV
-START_TEST(str_convert)
+EFL_START_TEST(str_convert)
 {
    char *utf8 = "\xc3\xa9\xc3\xa1\xc3\xba\xc3\xad\xc3\xa8\xc3\xa0\xc3\xb9\xc3\xac\xc3\xab\xc3\xa4\xc3\xbc\xc3\xaf";
    char *utf16 = "\xe9\x0\xe1\x0\xfa\x0\xed\x0\xe8\x0\xe0\x0\xf9\x0\xec\x0\xeb\x0\xe4\x0\xfc\x0\xef\x0";
@@ -400,7 +400,7 @@ START_TEST(str_convert)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

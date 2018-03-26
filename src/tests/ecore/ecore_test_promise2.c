@@ -484,7 +484,7 @@ _promise_empty_done(void *data, const Eina_Value value, const Eina_Future *dead_
    return value;
 }
 
-START_TEST(efl_test_timeout)
+EFL_START_TEST(efl_test_timeout)
 {
    Eina_Future *f;
    Eina_Bool done = EINA_FALSE;
@@ -498,9 +498,9 @@ START_TEST(efl_test_timeout)
 
    fail_unless(done);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_job)
+EFL_START_TEST(efl_test_job)
 {
    Eina_Future *f;
    Eina_Bool done = EINA_FALSE;
@@ -514,9 +514,9 @@ START_TEST(efl_test_job)
 
    fail_unless(done);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_idle)
+EFL_START_TEST(efl_test_idle)
 {
    Eina_Future *f;
    Eina_Bool done = EINA_FALSE;
@@ -530,10 +530,10 @@ START_TEST(efl_test_idle)
 
    fail_unless(done);
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(efl_test_promise_future_success)
+EFL_START_TEST(efl_test_promise_future_success)
 {
    Eina_Future *f;
    fail_if(!ecore_init());
@@ -543,9 +543,9 @@ START_TEST(efl_test_promise_future_success)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_failure)
+EFL_START_TEST(efl_test_promise_future_failure)
 {
    Eina_Future *f;
    fail_if(!ecore_init());
@@ -555,9 +555,9 @@ START_TEST(efl_test_promise_future_failure)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_chain_no_error)
+EFL_START_TEST(efl_test_promise_future_chain_no_error)
 {
    Eina_Future *f;
    static int i = 0;
@@ -572,9 +572,9 @@ START_TEST(efl_test_promise_future_chain_no_error)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_chain_error)
+EFL_START_TEST(efl_test_promise_future_chain_error)
 {
    Eina_Future *f;
    static int i = 0;
@@ -589,9 +589,9 @@ START_TEST(efl_test_promise_future_chain_error)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_cancel)
+EFL_START_TEST(efl_test_promise_future_cancel)
 {
    fail_if(!ecore_init());
    int i;
@@ -638,9 +638,9 @@ START_TEST(efl_test_promise_future_cancel)
      }
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_inner_promise)
+EFL_START_TEST(efl_test_promise_future_inner_promise)
 {
    Eina_Future *f;
 
@@ -652,9 +652,9 @@ START_TEST(efl_test_promise_future_inner_promise)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_inner_promise_fail)
+EFL_START_TEST(efl_test_promise_future_inner_promise_fail)
 {
    Eina_Future *f;
    void *data =(void *) 0x01;
@@ -667,9 +667,9 @@ START_TEST(efl_test_promise_future_inner_promise_fail)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_implicit_cancel)
+EFL_START_TEST(efl_test_promise_future_implicit_cancel)
 {
    Eina_Promise *p;
    Eina_Future *f;
@@ -699,9 +699,9 @@ START_TEST(efl_test_promise_future_implicit_cancel)
    //Cancel should not be called, since we called eina_promise_resolve()
    fail_if(cancel_called);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_convert)
+EFL_START_TEST(efl_test_promise_future_convert)
 {
    Eina_Future *f;
 
@@ -714,9 +714,9 @@ START_TEST(efl_test_promise_future_convert)
    ecore_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_easy)
+EFL_START_TEST(efl_test_promise_future_easy)
 {
    Eina_Future *f;
    Easy_Ctx easy1 = { 0 };
@@ -744,9 +744,9 @@ START_TEST(efl_test_promise_future_easy)
    fail_if(!(easy2.success_called && !easy2.error_called && easy2.free_called));
    fail_if(!(!easy3.success_called && easy3.error_called && easy3.free_called));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_all)
+EFL_START_TEST(efl_test_promise_future_all)
 {
    Eina_Future *futures[11];
    unsigned int i, futures_called = 0, len = EINA_C_ARRAY_LENGTH(futures);
@@ -770,9 +770,9 @@ START_TEST(efl_test_promise_future_all)
    ecore_shutdown();
    fail_if(futures_called != len);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_race)
+EFL_START_TEST(efl_test_promise_future_race)
 {
    Race_Ctx ctx = { 0 };
    Eina_Future *futures[11];
@@ -804,7 +804,7 @@ START_TEST(efl_test_promise_future_race)
    fail_if(ctx.success != 1);
    fail_if(ctx.failed != (len - 1));
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Value
 _eo_future1_ok(Eo *eo EINA_UNUSED, const Eina_Value v)
@@ -861,7 +861,7 @@ _eo_chain_stop(void *data EINA_UNUSED, const Eina_Value v, const Eina_Future *de
    return v;
 }
 
-START_TEST(efl_test_promise_eo)
+EFL_START_TEST(efl_test_promise_eo)
 {
    Eina_Future *f;
    Eo *obj;
@@ -886,7 +886,7 @@ START_TEST(efl_test_promise_eo)
    efl_object_shutdown();
    ck_assert_int_eq(free_called, 2);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Value
 _eo_future_link_success(Eo *eo EINA_UNUSED, const Eina_Value v)
@@ -920,7 +920,7 @@ _eo_link_chain_end(void *data EINA_UNUSED, const Eina_Value v, const Eina_Future
    return v;
 }
 
-START_TEST(efl_test_promise_eo_link)
+EFL_START_TEST(efl_test_promise_eo_link)
 {
    Eina_Future *f;
    Eo *obj;
@@ -952,7 +952,7 @@ START_TEST(efl_test_promise_eo_link)
    efl_object_shutdown();
    ck_assert_int_eq(err_called, 6);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Value
 _err_ignored(void *data EINA_UNUSED, const Eina_Value v, const Eina_Future *f EINA_UNUSED)
@@ -963,7 +963,7 @@ _err_ignored(void *data EINA_UNUSED, const Eina_Value v, const Eina_Future *f EI
    return v;
 }
 
-START_TEST(efl_test_promise_future_ignore_error)
+EFL_START_TEST(efl_test_promise_future_ignore_error)
 {
    Eina_Future *f;
 
@@ -975,7 +975,7 @@ START_TEST(efl_test_promise_future_ignore_error)
    ecore_main_loop_begin();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #define PROMISE_LOG_DOMAIN_STR ("promise_test_domain")
 
@@ -1059,7 +1059,7 @@ _log_test(const Eina_Log_Domain *d,
    *log_ok = EINA_TRUE;
 }
 
-START_TEST(efl_test_promise_log)
+EFL_START_TEST(efl_test_promise_log)
 {
    Promise_Log_Ctx ctx = { 0 };
    Eina_Future *f;
@@ -1103,7 +1103,7 @@ START_TEST(efl_test_promise_log)
    fail_if(!ctx.err_log_ok);
    fail_if(!ctx.info_log_ok);
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef EINA_SAFETY_CHECKS
 
@@ -1112,7 +1112,7 @@ _dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *dead EINA_UNUSED)
 {
 }
 
-START_TEST(efl_test_promise_null)
+EFL_START_TEST(efl_test_promise_null)
 {
    Log_Ctx ctx = { 0 };
    Eina_Promise *p;
@@ -1132,9 +1132,9 @@ START_TEST(efl_test_promise_null)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_reject_resolve_null)
+EFL_START_TEST(efl_test_promise_reject_resolve_null)
 {
    Log_Ctx ctx = { 0 };
    Eina_Value v;
@@ -1153,7 +1153,7 @@ START_TEST(efl_test_promise_reject_resolve_null)
    fail_unless(ctx.did);
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Value
 _future_null_cb(void *data, const Eina_Value v, const Eina_Future *dead)
@@ -1194,7 +1194,7 @@ _future_easy_null_free(void *data, const Eina_Future *dead)
    (*cb_called)++;
 }
 
-START_TEST(efl_test_future_null)
+EFL_START_TEST(efl_test_future_null)
 {
    Eina_Future *f;
    Log_Ctx ctx = { 0 };
@@ -1237,7 +1237,7 @@ START_TEST(efl_test_future_null)
    ck_assert_int_eq(easy_cb_calls, 2);
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Value
 _future_race_all_null_cb(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
@@ -1252,7 +1252,7 @@ _future_race_all_null_cb(void *data, const Eina_Value v, const Eina_Future *dead
    return v;
 }
 
-START_TEST(efl_test_future_all_null)
+EFL_START_TEST(efl_test_future_all_null)
 {
    Log_Ctx ctx = { 0 };
    unsigned i, len;
@@ -1281,9 +1281,9 @@ START_TEST(efl_test_future_all_null)
    ecore_shutdown();
    ck_assert_int_eq(cb_called, len);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_future_race_null)
+EFL_START_TEST(efl_test_future_race_null)
 {
    Log_Ctx ctx = { 0 };
    unsigned i, len;
@@ -1312,7 +1312,7 @@ START_TEST(efl_test_future_race_null)
    ecore_shutdown();
    ck_assert_int_eq(cb_called, len);
 }
-END_TEST
+EFL_END_TEST
 
 #endif
 

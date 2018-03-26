@@ -53,7 +53,7 @@ verify_group_api(Elm_Object_Item *git)
    ck_assert_ptr_eq(it, git);
 }
 
-START_TEST (elm_genlist_group)
+EFL_START_TEST (elm_genlist_group)
 {
    const char *type;
    Elm_Object_Item *git;
@@ -73,9 +73,9 @@ START_TEST (elm_genlist_group)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_genlist_legacy_type_check)
+EFL_START_TEST (elm_genlist_legacy_type_check)
 {
    const char *type;
 
@@ -95,7 +95,7 @@ START_TEST (elm_genlist_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void test_init(void)
 {
@@ -106,7 +106,7 @@ void test_init(void)
    genlist = elm_genlist_add(win);
 }
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
    test_init();
 
@@ -118,9 +118,9 @@ START_TEST (elm_atspi_role_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_atspi_children_get1)
+EFL_START_TEST(elm_atspi_children_get1)
 {
    test_init();
    Eina_List *children;
@@ -143,9 +143,9 @@ START_TEST(elm_atspi_children_get1)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_atspi_children_get2)
+EFL_START_TEST(elm_atspi_children_get2)
 {
    test_init();
    Eina_List *children;
@@ -162,7 +162,7 @@ START_TEST(elm_atspi_children_get2)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _children_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
@@ -175,7 +175,7 @@ _children_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
    counter++;
 }
 
-START_TEST(elm_atspi_children_events_add)
+EFL_START_TEST(elm_atspi_children_events_add)
 {
    test_init();
 
@@ -206,9 +206,9 @@ START_TEST(elm_atspi_children_events_add)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_atspi_children_events_del1)
+EFL_START_TEST(elm_atspi_children_events_del1)
 {
    test_init();
 
@@ -237,9 +237,9 @@ START_TEST(elm_atspi_children_events_del1)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_atspi_children_events_del2)
+EFL_START_TEST(elm_atspi_children_events_del2)
 {
    test_init();
 
@@ -259,7 +259,7 @@ START_TEST(elm_atspi_children_events_del2)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_genlist(TCase *tc)
 {

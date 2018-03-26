@@ -51,7 +51,7 @@ _seek_vol(void *data)
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_audio_obj_pulse)
+EFL_START_TEST(ecore_test_ecore_audio_obj_pulse)
 {
    Eo *in, *out;
    Eina_Bool ret = EINA_FALSE;
@@ -81,7 +81,7 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    efl_del(out);
    efl_del(in);
 }
-END_TEST
+EFL_END_TEST
 #endif
 #endif
 
@@ -102,7 +102,7 @@ _idle_del(void *data)
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_audio_cleanup)
+EFL_START_TEST(ecore_test_ecore_audio_cleanup)
 {
    Eo *in, *out;
    int freq = 1000;
@@ -130,9 +130,9 @@ START_TEST(ecore_test_ecore_audio_cleanup)
 
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.ogg");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj_tone)
+EFL_START_TEST(ecore_test_ecore_audio_obj_tone)
 {
    Eo *in, *out;
    double len;
@@ -221,9 +221,9 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    //TODO: Compare and fail
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj_sndfile)
+EFL_START_TEST(ecore_test_ecore_audio_obj_sndfile)
 {
    Eo *in, *out;
    double len, rem;
@@ -311,9 +311,9 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    //TODO: Compare and fail
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj_in_out)
+EFL_START_TEST(ecore_test_ecore_audio_obj_in_out)
 {
   Eo *out2;
   Eina_List *in3;
@@ -373,7 +373,7 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
 
   efl_del(in);
 }
-END_TEST
+EFL_END_TEST
 
 static int read_cb(void *data EINA_UNUSED, Eo *eo_obj EINA_UNUSED, void *buffer, int len)
 {
@@ -413,7 +413,7 @@ Ecore_Audio_Vio out_vio = {
     .write = write_cb,
 };
 
-START_TEST(ecore_test_ecore_audio_obj_vio)
+EFL_START_TEST(ecore_test_ecore_audio_obj_vio)
 {
   Eo *in, *out;
 
@@ -433,7 +433,7 @@ START_TEST(ecore_test_ecore_audio_obj_vio)
   efl_del(out);
   efl_del(in);
 }
-END_TEST
+EFL_END_TEST
 
 static void _myfree(void *data)
 {
@@ -442,7 +442,7 @@ static void _myfree(void *data)
   *freed = EINA_TRUE;
 }
 
-START_TEST(ecore_test_ecore_audio_obj_in)
+EFL_START_TEST(ecore_test_ecore_audio_obj_in)
 {
   int i;
   double speed, length;
@@ -532,9 +532,9 @@ START_TEST(ecore_test_ecore_audio_obj_in)
 
   efl_del(in);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj)
+EFL_START_TEST(ecore_test_ecore_audio_obj)
 {
   int i;
   const char *name;
@@ -582,9 +582,9 @@ START_TEST(ecore_test_ecore_audio_obj)
   }
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_init)
+EFL_START_TEST(ecore_test_ecore_audio_init)
 {
    int ret;
 
@@ -595,7 +595,7 @@ START_TEST(ecore_test_ecore_audio_init)
    ck_assert_int_eq(ret, 1);
 
 }
-END_TEST
+EFL_END_TEST
 
 void setup(void)
 {

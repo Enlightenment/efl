@@ -16,7 +16,7 @@ catch_events(const char *device EINA_UNUSED, Eeze_Udev_Event  event EINA_UNUSED,
 
 #if 0
 // FIXME split udev tests into pieces here
-START_TEST(eeze_test_udev_types)
+EFL_START_TEST(eeze_test_udev_types)
 {
    Eina_List *type;
 
@@ -56,10 +56,10 @@ START_TEST(eeze_test_udev_types)
 
    eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(eeze_test_udev_watch)
+EFL_START_TEST(eeze_test_udev_watch)
 {
    Eeze_Udev_Watch *watch;
 
@@ -81,9 +81,9 @@ START_TEST(eeze_test_udev_watch)
    eeze_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_udev_syspath)
+EFL_START_TEST(eeze_test_udev_syspath)
 {
    Eina_List *type, *l;
    const char *name;
@@ -150,9 +150,9 @@ START_TEST(eeze_test_udev_syspath)
 
    eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_udev_attr)
+EFL_START_TEST(eeze_test_udev_attr)
 {
    Eina_List *type;
    const char *name, *check, *check2;
@@ -206,10 +206,10 @@ START_TEST(eeze_test_udev_attr)
 
    eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /*
-START_TEST(eeze_test_udev_device)
+EFL_START_TEST(eeze_test_udev_device)
 {
    Eina_List *type, *l;
    _udev_device *device, *device2;
@@ -239,7 +239,7 @@ START_TEST(eeze_test_udev_device)
 
    eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 */
 
 void eeze_test_udev(TCase *tc)

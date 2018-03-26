@@ -2,7 +2,7 @@
 #define _EOLIAN_SUITE_H
 
 #include <check.h>
-
+#include "../efl_check.h"
 void eolian_parsing_test(TCase *tc);
 void eolian_generation_test(TCase *tc);
 

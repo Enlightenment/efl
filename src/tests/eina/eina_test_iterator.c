@@ -39,7 +39,7 @@ _filter(const void *it EINA_UNUSED, void *data, void *fdata)
    return numb->number % 2;
 }
 
-START_TEST(eina_iterator_filter_simple)
+EFL_START_TEST(eina_iterator_filter_simple)
 {
    Eina_Iterator *it, *filtered;
    Eina_Array *ea;
@@ -87,7 +87,7 @@ START_TEST(eina_iterator_filter_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 struct Free_test {
    Eina_Bool got_freed;
@@ -106,7 +106,7 @@ _free(void *data)
    test->got_freed = EINA_TRUE;
 }
 
-START_TEST(eina_iterator_filter_free)
+EFL_START_TEST(eina_iterator_filter_free)
 {
    Eina_Iterator *it, *filtered;
    Eina_Array *ea;
@@ -129,7 +129,7 @@ START_TEST(eina_iterator_filter_free)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 static Eina_Bool
 eina_iterator_array_check(EINA_UNUSED const Eina_Array *array,
                           int *data,  int *fdata)
@@ -140,7 +140,7 @@ eina_iterator_array_check(EINA_UNUSED const Eina_Array *array,
    return EINA_TRUE;
 }
 
-START_TEST(eina_iterator_array_simple)
+EFL_START_TEST(eina_iterator_array_simple)
 {
    Eina_Iterator *it;
    Eina_Array *ea;
@@ -177,7 +177,7 @@ START_TEST(eina_iterator_array_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 eina_iterator_hash_key_check(const Eina_Hash *hash,
@@ -210,7 +210,7 @@ eina_iterator_hash_tuple_check(EINA_UNUSED const Eina_Hash *hash,
    return EINA_TRUE;
 }
 
-START_TEST(eina_iterator_hash_simple)
+EFL_START_TEST(eina_iterator_hash_simple)
 {
    Eina_Iterator *it;
    Eina_Hash *hash;
@@ -243,7 +243,7 @@ START_TEST(eina_iterator_hash_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
@@ -287,7 +287,7 @@ eina_iterator_inlist_data_check(EINA_UNUSED const Eina_Inlist *in_list,
    return EINA_TRUE;
 }
 
-START_TEST(eina_iterator_inlist_simple)
+EFL_START_TEST(eina_iterator_inlist_simple)
 {
    Eina_Inlist *lst = NULL;
    Eina_Test_Inlist *tmp;
@@ -325,7 +325,7 @@ START_TEST(eina_iterator_inlist_simple)
 
    fail_if(i != 5);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 eina_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
@@ -354,7 +354,7 @@ eina_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
    return EINA_TRUE;
 }
 
-START_TEST(eina_iterator_list_simple)
+EFL_START_TEST(eina_iterator_list_simple)
 {
    Eina_List *list = NULL;
    Eina_Iterator *it;
@@ -390,7 +390,7 @@ START_TEST(eina_iterator_list_simple)
    eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_list_data_check), &i);
    eina_iterator_free(it);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 eina_reverse_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
@@ -419,7 +419,7 @@ eina_reverse_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
    return EINA_TRUE;
 }
 
-START_TEST(eina_reverse_iterator_list_simple)
+EFL_START_TEST(eina_reverse_iterator_list_simple)
 {
    Eina_List *list = NULL;
    Eina_Iterator *it;
@@ -455,7 +455,7 @@ START_TEST(eina_reverse_iterator_list_simple)
    eina_iterator_foreach(it, EINA_EACH_CB(eina_reverse_iterator_list_data_check), &i);
    eina_iterator_free(it);
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Eina_Rbtree_Int Eina_Rbtree_Int;
 struct _Eina_Rbtree_Int
@@ -558,7 +558,7 @@ eina_iterator_rbtree_data_check_postfix(EINA_UNUSED const Eina_List *list,
    return EINA_TRUE;
 }
 
-START_TEST(eina_iterator_rbtree_simple)
+EFL_START_TEST(eina_iterator_rbtree_simple)
 {
    Eina_Rbtree *root = NULL;
    Eina_Iterator *it;
@@ -622,7 +622,7 @@ START_TEST(eina_iterator_rbtree_simple)
 			 &i);
    eina_iterator_free(it);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_iterator(TCase *tc)

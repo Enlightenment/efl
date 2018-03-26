@@ -69,7 +69,7 @@ eina_foreach_check(EINA_UNUSED const Eina_Hash *hash,
    return EINA_TRUE;
 }
 
-START_TEST(eina_hash_simple)
+EFL_START_TEST(eina_hash_simple)
 {
    Eina_Hash *hash = NULL;
    int *test;
@@ -125,9 +125,9 @@ START_TEST(eina_hash_simple)
    /* Same comment as eina_init */
         fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_hash_crc)
+EFL_START_TEST(eina_test_hash_crc)
 {
    Eina_Hash *hash = NULL;
    int *test;
@@ -186,9 +186,9 @@ START_TEST(eina_test_hash_crc)
    /* Same comment as eina_init */
         fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_extended)
+EFL_START_TEST(eina_hash_extended)
 {
    Eina_Hash *hash = NULL;
    int i;
@@ -214,9 +214,9 @@ START_TEST(eina_hash_extended)
 
    fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_double_item)
+EFL_START_TEST(eina_hash_double_item)
 {
    Eina_Hash *hash = NULL;
    int i[] = { 7, 7 };
@@ -238,9 +238,9 @@ START_TEST(eina_hash_double_item)
 
       fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_all_int)
+EFL_START_TEST(eina_hash_all_int)
 {
    Eina_Hash *hash;
    int64_t j[] = { 4321312301243122, 6, 7, 128 };
@@ -280,9 +280,9 @@ START_TEST(eina_hash_all_int)
 
    fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_int32_fuzze)
+EFL_START_TEST(eina_hash_int32_fuzze)
 {
    Eina_Hash *hash;
    Eina_List *added = NULL;
@@ -343,9 +343,9 @@ START_TEST(eina_hash_int32_fuzze)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_string_fuzze)
+EFL_START_TEST(eina_hash_string_fuzze)
 {
    Eina_Hash *hash;
    Eina_List *added = NULL;
@@ -407,9 +407,9 @@ START_TEST(eina_hash_string_fuzze)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_seed)
+EFL_START_TEST(eina_hash_seed)
 {
    eina_init();
 
@@ -417,9 +417,9 @@ START_TEST(eina_hash_seed)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_add_del_by_hash)
+EFL_START_TEST(eina_hash_add_del_by_hash)
 {
    Eina_Hash *hash = NULL;
    int array[] = { 1, 42, 4, 5, 6 };
@@ -451,7 +451,7 @@ START_TEST(eina_hash_add_del_by_hash)
 
    fail_if(eina_hash_population(hash) != 3);
 }
-END_TEST
+EFL_END_TEST
 
 void eina_test_hash(TCase *tc)
 {

@@ -277,7 +277,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
    efl_unref(future);
 }
 
-START_TEST(smoke)
+EFL_START_TEST(smoke)
 {
    check_init();
 
@@ -286,9 +286,9 @@ START_TEST(smoke)
 
    check_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(object)
+EFL_START_TEST(object)
 {
    check_init();
 
@@ -298,9 +298,9 @@ START_TEST(object)
 
    check_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(proxy)
+EFL_START_TEST(proxy)
 {
    check_init();
 
@@ -328,7 +328,7 @@ START_TEST(proxy)
 
    check_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eldbus_test_eldbus_model(TCase *tc)

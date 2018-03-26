@@ -4,9 +4,9 @@
 
 #include <Eina.h>
 #include <check.h>
+#include "eina_suite.h"
 
-
-START_TEST(eina_test_vpath_valid)
+EFL_START_TEST(eina_test_vpath_valid)
 {
    int ret;
    char test[PATH_MAX];
@@ -27,9 +27,9 @@ START_TEST(eina_test_vpath_valid)
 
    ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_vpath_invalid)
+EFL_START_TEST(eina_test_vpath_invalid)
 {
    int ret;
 
@@ -44,7 +44,7 @@ START_TEST(eina_test_vpath_invalid)
 
    ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eina_test_vpath(TCase *tc)
 {

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-START_TEST (elm_bg_legacy_type_check)
+EFL_START_TEST (elm_bg_legacy_type_check)
 {
    Evas_Object *win, *bg;
    const char *type;
@@ -26,9 +26,9 @@ START_TEST (elm_bg_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_bg_legacy_file_set_get_check)
+EFL_START_TEST (elm_bg_legacy_file_set_get_check)
 {
    Evas_Object *win, *bg;
    const char *file = NULL, *key = NULL;
@@ -53,7 +53,7 @@ START_TEST (elm_bg_legacy_file_set_get_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_bg(TCase *tc EINA_UNUSED)
 {

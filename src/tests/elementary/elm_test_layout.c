@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-START_TEST (elm_layout_legacy_type_check)
+EFL_START_TEST (elm_layout_legacy_type_check)
 {
    Evas_Object *win, *layout;
    const char *type;
@@ -27,9 +27,9 @@ START_TEST (elm_layout_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *layout;
    Efl_Access_Role role;
@@ -45,9 +45,9 @@ START_TEST(elm_atspi_role_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_layout_swallows)
+EFL_START_TEST(elm_layout_swallows)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly, *bt, *bt2;
@@ -77,9 +77,9 @@ START_TEST(elm_layout_swallows)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(elm_layout_model_connect)
+EFL_START_TEST(elm_layout_model_connect)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly;
@@ -113,7 +113,7 @@ START_TEST(elm_layout_model_connect)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_layout(TCase *tc)
 {

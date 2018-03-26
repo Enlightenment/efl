@@ -5,7 +5,7 @@
 #include <algorithm>
 
 #include <check.h>
-
+#include "../efl_check.h"
 void eldbus_test_connection(TCase* tc);
 void eldbus_test_client(TCase* tc);
 

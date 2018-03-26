@@ -28,7 +28,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_test_vector2_operations)
+EFL_START_TEST(eina_test_vector2_operations)
 {
    Eina_Vector2 v1;
    Eina_Vector2 v2;
@@ -109,9 +109,9 @@ START_TEST(eina_test_vector2_operations)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_vector3_operations)
+EFL_START_TEST(eina_test_vector3_operations)
 {
    Eina_Vector3 v1;
    Eina_Vector3 v2;
@@ -240,7 +240,7 @@ START_TEST(eina_test_vector3_operations)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_vector(TCase *tc)

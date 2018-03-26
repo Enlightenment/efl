@@ -58,7 +58,7 @@ static void matrixsparse_check(Eina_Matrixsparse *matrix,
         }
 }
 
-START_TEST(eina_test_simple)
+EFL_START_TEST(eina_test_simple)
 {
    Eina_Matrixsparse *matrix = NULL;
    Eina_Matrixsparse_Cell *cell = NULL;
@@ -268,9 +268,9 @@ START_TEST(eina_test_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_resize)
+EFL_START_TEST(eina_test_resize)
 {
    Eina_Matrixsparse *matrix = NULL;
    Eina_Bool r;
@@ -380,9 +380,9 @@ START_TEST(eina_test_resize)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_iterators)
+EFL_START_TEST(eina_test_iterators)
 {
    Eina_Matrixsparse *matrix = NULL;
    Eina_Matrixsparse_Cell *cell = NULL;
@@ -479,7 +479,7 @@ START_TEST(eina_test_iterators)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_matrixsparse(TCase *tc)

@@ -29,7 +29,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_matrix2)
+EFL_START_TEST(eina_matrix2)
 {
    Eina_Matrix2 m;
    Eina_Matrix2 n;
@@ -56,9 +56,9 @@ START_TEST(eina_matrix2)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix2_operation)
+EFL_START_TEST(eina_matrix2_operation)
 {
    Eina_Matrix2 m1, m2, m3;
    double xx, xy, yx, yy;
@@ -119,9 +119,9 @@ START_TEST(eina_matrix2_operation)
            !EINA_DBL_EQ(xy, 5));
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix4)
+EFL_START_TEST(eina_matrix4)
 {
    Eina_Matrix4 m;
    Eina_Matrix4 n;
@@ -194,9 +194,9 @@ START_TEST(eina_matrix4)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix4_operation)
+EFL_START_TEST(eina_matrix4_operation)
 {
    double det;
    double l=5, r=4, b=4, t=3, dn=3, df=2;
@@ -316,9 +316,9 @@ START_TEST(eina_matrix4_operation)
             !EINA_DBL_EQ(wz, 5) ||
             !EINA_DBL_EQ(ww, 1));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix4_2_3)
+EFL_START_TEST(eina_matrix4_2_3)
 {
    Eina_Matrix4 m4;
    Eina_Matrix3 m3, m3b;
@@ -337,9 +337,9 @@ START_TEST(eina_matrix4_2_3)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix3)
+EFL_START_TEST(eina_matrix3)
 {
    Eina_Bool ret;
    Eina_Matrix3 m, m1, m2;
@@ -387,7 +387,7 @@ START_TEST(eina_matrix3)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #define MATRIX3_CMP(XX, XY, XZ, YX, YY, YZ, ZX, ZY, ZZ, AXX, AXY, AXZ, AYX, AYY, AYZ, AZX, AZY, AZZ) \
   (EINA_DBL_EQ(XX, AXX) && \
@@ -400,7 +400,7 @@ END_TEST
    EINA_DBL_EQ(ZY, AZY) && \
    EINA_DBL_EQ(ZZ, AZZ))
 
-START_TEST(eina_matrix3_operations)
+EFL_START_TEST(eina_matrix3_operations)
 {
    Eina_Matrix3 m1, m2, m3;
    double xx, xy, xz,
@@ -653,9 +653,9 @@ START_TEST(eina_matrix3_operations)
    fail_if (!EINA_DBL_EQ(xx, 6) ||
             !EINA_DBL_EQ(yy, 7));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix3_f16p16)
+EFL_START_TEST(eina_matrix3_f16p16)
 {
    Eina_Matrix3_F16p16 m1;
    Eina_Matrix3 m2;
@@ -717,9 +717,9 @@ START_TEST(eina_matrix3_f16p16)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_matrix3_map_transform)
+EFL_START_TEST(eina_matrix3_map_transform)
 {
    double x = 2, y = 3, x1, y1;
    Eina_Matrix3 m;
@@ -781,9 +781,9 @@ START_TEST(eina_matrix3_map_transform)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_normal3_test)
+EFL_START_TEST(eina_normal3_test)
 {
    Eina_Matrix3 out;
    Eina_Matrix4 m;
@@ -828,7 +828,7 @@ START_TEST(eina_normal3_test)
           );
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_matrix(TCase *tc)

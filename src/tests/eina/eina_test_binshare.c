@@ -34,7 +34,7 @@
 #define TEST1 "te\0st/11"
 #define TEST1_SIZE 8
 
-START_TEST(eina_binshare_simple)
+EFL_START_TEST(eina_binshare_simple)
 {
    const char *t0;
    const char *t1;
@@ -59,9 +59,9 @@ START_TEST(eina_binshare_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_binshare_small)
+EFL_START_TEST(eina_binshare_small)
 {
    char buf[4];
    int i;
@@ -93,10 +93,10 @@ START_TEST(eina_binshare_small)
      }
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_binshare_test_share)
+EFL_START_TEST(eina_binshare_test_share)
 {
    const char *t0;
    const char *t1;
@@ -117,9 +117,9 @@ START_TEST(eina_binshare_test_share)
    eina_binshare_del(t1);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_binshare_putstuff)
+EFL_START_TEST(eina_binshare_putstuff)
 {
    const char *tmp;
    int i;
@@ -137,9 +137,9 @@ START_TEST(eina_binshare_putstuff)
      }
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_binshare_collision)
+EFL_START_TEST(eina_binshare_collision)
 {
    Eina_Array *ea;
    char buffer[50];
@@ -187,7 +187,7 @@ START_TEST(eina_binshare_collision)
 
    eina_array_free(ea);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_binshare(TCase *tc)

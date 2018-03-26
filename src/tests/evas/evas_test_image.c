@@ -51,7 +51,7 @@ static const char *exts[] = {
 #endif
 };
 
-START_TEST(evas_object_image_loader)
+EFL_START_TEST(evas_object_image_loader)
 {
    Evas *e = _setup_evas();
    Evas_Object *o;
@@ -89,7 +89,7 @@ START_TEST(evas_object_image_loader)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Orientation_Test_Res Orientation_Test_Res;
 struct _Orientation_Test_Res {
@@ -236,7 +236,7 @@ static int _compare_img_transverse(const uint32_t *d1, const uint32_t *d2, int w
    return 0;
 }
 
-START_TEST(evas_object_image_loader_orientation)
+EFL_START_TEST(evas_object_image_loader_orientation)
 {
    Evas *e = _setup_evas();
    Evas_Object *orig, *rot;
@@ -284,9 +284,9 @@ START_TEST(evas_object_image_loader_orientation)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_object_image_orient)
+EFL_START_TEST(evas_object_image_orient)
 {
    Evas *e = _setup_evas();
    Evas_Object *orig;
@@ -334,10 +334,10 @@ START_TEST(evas_object_image_orient)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef BUILD_LOADER_TGV
-START_TEST(evas_object_image_tgv_loader_data)
+EFL_START_TEST(evas_object_image_tgv_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -392,10 +392,10 @@ START_TEST(evas_object_image_tgv_loader_data)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(evas_object_image_all_loader_data)
+EFL_START_TEST(evas_object_image_all_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -462,13 +462,13 @@ START_TEST(evas_object_image_all_loader_data)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 const char *buggy[] = {
   "BMP301K"
 };
 
-START_TEST(evas_object_image_buggy)
+EFL_START_TEST(evas_object_image_buggy)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -523,7 +523,7 @@ START_TEST(evas_object_image_buggy)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void check_rotate_region(Evas_Image_Orient orientation, int *r_x, int *r_y, int *r_w, int *r_h, int w, int h)
 {
@@ -579,7 +579,7 @@ static void check_rotate_region(Evas_Image_Orient orientation, int *r_x, int *r_
 }
 
 
-START_TEST(evas_object_image_partially_load_orientation)
+EFL_START_TEST(evas_object_image_partially_load_orientation)
 {
    static const Orientation_Test_Res res[] = {
      { TESTS_IMG_DIR"/Light_exif.jpg", "Original", EVAS_IMAGE_ORIENT_NONE, _compare_img },
@@ -634,9 +634,9 @@ START_TEST(evas_object_image_partially_load_orientation)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_object_image_defaults)
+EFL_START_TEST(evas_object_image_defaults)
 {
    Evas *e = _setup_evas();
    Evas_Object *o;
@@ -661,10 +661,10 @@ START_TEST(evas_object_image_defaults)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // FIXME: belongs to another file
-START_TEST(evas_object_image_map_unmap)
+EFL_START_TEST(evas_object_image_map_unmap)
 {
    Evas *e = _setup_evas();
    Evas_Object *o, *o2;
@@ -825,10 +825,10 @@ START_TEST(evas_object_image_map_unmap)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #if BUILD_LOADER_JP2K
-START_TEST(evas_object_image_jp2k_loader_data)
+EFL_START_TEST(evas_object_image_jp2k_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -877,7 +877,7 @@ START_TEST(evas_object_image_jp2k_loader_data)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void evas_test_image_object(TCase *tc)

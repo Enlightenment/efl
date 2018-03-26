@@ -55,7 +55,7 @@ _death(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 // Test value set after then
-START_TEST(efl_test_promise_future_success)
+EFL_START_TEST(efl_test_promise_future_success)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -93,10 +93,10 @@ START_TEST(efl_test_promise_future_success)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Test value set before future_get
-START_TEST(efl_test_promise_future_success_before_get)
+EFL_START_TEST(efl_test_promise_future_success_before_get)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -133,9 +133,9 @@ START_TEST(efl_test_promise_future_success_before_get)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_cancel)
+EFL_START_TEST(efl_test_promise_future_cancel)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -177,10 +177,10 @@ START_TEST(efl_test_promise_future_cancel)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Test value set before then
-START_TEST(efl_test_promise_before_future_success)
+EFL_START_TEST(efl_test_promise_before_future_success)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -216,9 +216,9 @@ START_TEST(efl_test_promise_before_future_success)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_before_future_cancel)
+EFL_START_TEST(efl_test_promise_before_future_cancel)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -259,7 +259,7 @@ START_TEST(efl_test_promise_before_future_cancel)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _chain_then(void *data, const Efl_Event *ev)
@@ -298,7 +298,7 @@ _chain_progress(void *data, const Efl_Event *ev)
 }
 
 // Test chained then
-START_TEST(efl_test_promise_future_chain_success)
+EFL_START_TEST(efl_test_promise_future_chain_success)
 {
    Efl_Promise *p;
    Efl_Future *f1, *f2;
@@ -343,9 +343,9 @@ START_TEST(efl_test_promise_future_chain_success)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_chain_cancel)
+EFL_START_TEST(efl_test_promise_future_chain_cancel)
 {
    Efl_Promise *p;
    Efl_Future *f1, *f2;
@@ -394,10 +394,10 @@ START_TEST(efl_test_promise_future_chain_cancel)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Test value set after multi then
-START_TEST(efl_test_promise_future_multi_success)
+EFL_START_TEST(efl_test_promise_future_multi_success)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -440,9 +440,9 @@ START_TEST(efl_test_promise_future_multi_success)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_multi_success_noref)
+EFL_START_TEST(efl_test_promise_future_multi_success_noref)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -483,9 +483,9 @@ START_TEST(efl_test_promise_future_multi_success_noref)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_multi_cancel)
+EFL_START_TEST(efl_test_promise_future_multi_cancel)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -530,10 +530,10 @@ START_TEST(efl_test_promise_future_multi_cancel)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Test value set before multi then
-START_TEST(efl_test_promise_before_future_multi_success)
+EFL_START_TEST(efl_test_promise_before_future_multi_success)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -574,9 +574,9 @@ START_TEST(efl_test_promise_before_future_multi_success)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_before_future_multi_success_noref)
+EFL_START_TEST(efl_test_promise_before_future_multi_success_noref)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -615,9 +615,9 @@ START_TEST(efl_test_promise_before_future_multi_success_noref)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_before_future_multi_cancel)
+EFL_START_TEST(efl_test_promise_before_future_multi_cancel)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -667,9 +667,9 @@ START_TEST(efl_test_promise_before_future_multi_cancel)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_before_future_multi_cancel_noref)
+EFL_START_TEST(efl_test_promise_before_future_multi_cancel_noref)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -719,7 +719,7 @@ START_TEST(efl_test_promise_before_future_multi_cancel_noref)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool cleanup = EINA_FALSE;
 
@@ -730,7 +730,7 @@ _cleanup_called(void *s EINA_UNUSED)
 }
 
 // Test optional value set without then
-START_TEST(efl_test_promise_future_optional_success)
+EFL_START_TEST(efl_test_promise_future_optional_success)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -768,9 +768,9 @@ START_TEST(efl_test_promise_future_optional_success)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_future_optional_cancel)
+EFL_START_TEST(efl_test_promise_future_optional_cancel)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -812,7 +812,7 @@ START_TEST(efl_test_promise_future_optional_cancel)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static int value[] = { 42, 7, 3 };
 
@@ -834,7 +834,7 @@ _then_all(void *data, const Efl_Event *ev)
    fo->then = EINA_TRUE;
 }
 
-START_TEST(efl_test_promise_all)
+EFL_START_TEST(efl_test_promise_all)
 {
    Efl_Promise *p1, *p2, *p3;
    Efl_Future *all = NULL, *f1;
@@ -883,9 +883,9 @@ START_TEST(efl_test_promise_all)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_promise_all_after_value_set)
+EFL_START_TEST(efl_test_promise_all_after_value_set)
 {
    Efl_Promise *p1, *p2, *p3;
    Efl_Future *all = NULL, *f1, *f2, *f3;
@@ -927,7 +927,7 @@ START_TEST(efl_test_promise_all_after_value_set)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _then_race(void *data, const Efl_Event *ev)
@@ -942,7 +942,7 @@ _then_race(void *data, const Efl_Event *ev)
    fo->then = EINA_TRUE;
 }
 
-START_TEST(efl_test_promise_race)
+EFL_START_TEST(efl_test_promise_race)
 {
    Efl_Promise *p1, *p2, *p3;
    Efl_Future *race = NULL, *f1;
@@ -979,9 +979,9 @@ START_TEST(efl_test_promise_race)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_future_link)
+EFL_START_TEST(efl_test_future_link)
 {
    Efl_Promise *p;
    Efl_Future *f;
@@ -1009,7 +1009,7 @@ START_TEST(efl_test_future_link)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Efl_Future *recursive_future = NULL;
 
@@ -1019,7 +1019,7 @@ _then_cleanup(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_future_cancel(recursive_future);
 }
 
-START_TEST(efl_test_recursive_mess)
+EFL_START_TEST(efl_test_recursive_mess)
 {
    Efl_Promise *p;
    Future_Ok done = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
@@ -1038,7 +1038,7 @@ START_TEST(efl_test_recursive_mess)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_promise(TCase *tc)
 {

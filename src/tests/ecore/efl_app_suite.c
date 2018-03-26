@@ -10,7 +10,7 @@
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
-START_TEST(efl_app_test_efl_loop_register)
+EFL_START_TEST(efl_app_test_efl_loop_register)
 {
    Efl_Object *t, *n;
 
@@ -41,9 +41,9 @@ START_TEST(efl_app_test_efl_loop_register)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_app_test_efl_build_version)
+EFL_START_TEST(efl_app_test_efl_build_version)
 {
    const Efl_Version *ver;
    Eo *app;
@@ -70,7 +70,7 @@ START_TEST(efl_app_test_efl_build_version)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void efl_test_efl_app(TCase *tc)
 {

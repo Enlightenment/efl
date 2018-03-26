@@ -7,7 +7,7 @@
 #include "efreet_suite.h"
 
 
-START_TEST(efreet_test_efreet_cache_init)
+EFL_START_TEST(efreet_test_efreet_cache_init)
 {
    int ret;
 
@@ -17,7 +17,7 @@ START_TEST(efreet_test_efreet_cache_init)
    ret = efreet_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void efreet_test_efreet_cache(TCase *tc)
 {

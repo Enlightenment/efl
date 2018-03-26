@@ -15,7 +15,7 @@
 
 #include <Ecore_X.h>
 
-START_TEST(ecore_test_ecore_x_init)
+EFL_START_TEST(ecore_test_ecore_x_init)
 {
    int ret;
 
@@ -25,9 +25,9 @@ START_TEST(ecore_test_ecore_x_init)
    ret = ecore_x_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_x_bell)
+EFL_START_TEST(ecore_test_ecore_x_bell)
 {
    int i;
    int ret;
@@ -46,7 +46,7 @@ START_TEST(ecore_test_ecore_x_bell)
 
    ecore_x_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #endif
 

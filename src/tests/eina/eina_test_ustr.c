@@ -72,7 +72,7 @@ static const Eina_Unicode STR3[] = {'P', 'a', 'n', 't', 's',' ', 'O', 'n', 0};
 static const Eina_Unicode STR4[] = {'A', 0};
 static const Eina_Unicode EMPTYSTR[] = {0};
 
-START_TEST(eina_unicode_strcmp_test)
+EFL_START_TEST(eina_unicode_strcmp_test)
 {
    eina_init();
 
@@ -99,9 +99,9 @@ START_TEST(eina_unicode_strcmp_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strcpy_test)
+EFL_START_TEST(eina_unicode_strcpy_test)
 {
    Eina_Unicode buf[10] = { 0 };
    Eina_Unicode *rv;
@@ -135,9 +135,9 @@ START_TEST(eina_unicode_strcpy_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strncpy_test)
+EFL_START_TEST(eina_unicode_strncpy_test)
 {
    Eina_Unicode buf[10] = { 0 };
    Eina_Unicode *rv;
@@ -203,11 +203,11 @@ START_TEST(eina_unicode_strncpy_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 
-START_TEST(eina_ustr_strlen_test)
+EFL_START_TEST(eina_ustr_strlen_test)
 {
 
    eina_init();
@@ -244,9 +244,9 @@ START_TEST(eina_ustr_strlen_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strnlen_test)
+EFL_START_TEST(eina_unicode_strnlen_test)
 {
    eina_init();
 
@@ -289,9 +289,9 @@ START_TEST(eina_unicode_strnlen_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strdup_test)
+EFL_START_TEST(eina_unicode_strdup_test)
 {
    Eina_Unicode *buf;
 
@@ -309,9 +309,9 @@ START_TEST(eina_unicode_strdup_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strstr_test)
+EFL_START_TEST(eina_unicode_strstr_test)
 {
    Eina_Unicode *buf;
    Eina_Unicode on[] = { 'O', 'n', 0 };
@@ -335,9 +335,9 @@ START_TEST(eina_unicode_strstr_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_escape_test)
+EFL_START_TEST(eina_unicode_escape_test)
 {
    Eina_Unicode str[][10] = {{'P', 'a', ' ', 'O', 'n', 0},
                              {'P', 'a', ' ', '\\', '\'',0},
@@ -361,9 +361,9 @@ START_TEST(eina_unicode_escape_test)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_utf8)
+EFL_START_TEST(eina_unicode_utf8)
 {
    int ind;
    unsigned char ch;
@@ -576,9 +576,9 @@ START_TEST(eina_unicode_utf8)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_utf8_conversion)
+EFL_START_TEST(eina_unicode_utf8_conversion)
 {
    Eina_Unicode uni_in[] = {0x5D0, 0xFDF6, 0xDC80, 0x1F459, 0x3FFFFFF,
         0x7FFFFFFF, 'a', 'b', 'c', 0};
@@ -617,7 +617,7 @@ START_TEST(eina_unicode_utf8_conversion)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_ustr(TCase *tc)

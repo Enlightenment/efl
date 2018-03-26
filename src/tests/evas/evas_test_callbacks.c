@@ -43,7 +43,7 @@ _obj_event_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    counter++;
 }
 
-START_TEST(evas_object_event_callbacks_priority)
+EFL_START_TEST(evas_object_event_callbacks_priority)
 {
    START_CALLBACK_TEST();
    counter = 1;
@@ -93,7 +93,7 @@ START_TEST(evas_object_event_callbacks_priority)
 
    END_CALLBACK_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _event_cb(void *data, Evas *e, void *event_info)
@@ -106,7 +106,7 @@ _event_cb(void *data, Evas *e, void *event_info)
    counter++;
 }
 
-START_TEST(evas_event_callbacks_priority)
+EFL_START_TEST(evas_event_callbacks_priority)
 {
    START_CALLBACK_TEST();
    evas_object_focus_set(rect, EINA_FALSE);
@@ -144,7 +144,7 @@ START_TEST(evas_event_callbacks_priority)
 
    END_CALLBACK_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_callbacks(TCase *tc)
 {

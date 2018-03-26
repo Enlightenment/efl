@@ -20,7 +20,7 @@
 #define EFL_SUITE_H_
 
 #include <check.h>
-
+#include "../efl_check.h"
 void efl_test_case_model_container(TCase *tc);
 void efl_test_case_model_composite_boolean(TCase *tc);
 

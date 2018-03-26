@@ -81,7 +81,7 @@ _eina_test_lock_thread(void *data, Eina_Thread t)
    return data;
 }
 
-START_TEST(eina_test_spinlock)
+EFL_START_TEST(eina_test_spinlock)
 {
    unsigned int i;
 
@@ -110,7 +110,7 @@ START_TEST(eina_test_spinlock)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_TLS key;
 static int _eina_tls_free_count = 0;
@@ -148,7 +148,7 @@ _eina_test_tls_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eina_test_tls)
+EFL_START_TEST(eina_test_tls)
 {
    fail_if(!eina_init());
 
@@ -169,7 +169,7 @@ START_TEST(eina_test_tls)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Barrier barrier;
 static Eina_Lock mtcond;
@@ -197,7 +197,7 @@ _eina_test_rwlock_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eina_test_rwlock)
+EFL_START_TEST(eina_test_rwlock)
 {
    struct timespec ts, ts2;
    long delay;
@@ -253,7 +253,7 @@ START_TEST(eina_test_rwlock)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_locking(TCase *tc)

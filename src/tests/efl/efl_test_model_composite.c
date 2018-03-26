@@ -169,7 +169,7 @@ _selection_children_slice_get_then(void *data, Efl_Event const* event)
      }
 }
 
-START_TEST(efl_test_model_composite_boolean)
+EFL_START_TEST(efl_test_model_composite_boolean)
 {
    Efl_Model_Item *base_model, *child;
    int i;
@@ -210,9 +210,9 @@ START_TEST(efl_test_model_composite_boolean)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_model_composite_selection)
+EFL_START_TEST(efl_test_model_composite_selection)
 {
    Efl_Model_Item *base_model, *child;
    int i;
@@ -252,7 +252,7 @@ START_TEST(efl_test_model_composite_selection)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 efl_test_case_model_composite_boolean(TCase *tc)

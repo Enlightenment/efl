@@ -16,7 +16,7 @@
 
 #define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
 
-START_TEST(edje_test_edje_init)
+EFL_START_TEST(edje_test_edje_init)
 {
    int ret;
 
@@ -26,9 +26,9 @@ START_TEST(edje_test_edje_init)
    ret = edje_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_edje_load)
+EFL_START_TEST(edje_test_edje_load)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Edje_Load_Error error;
@@ -41,7 +41,7 @@ START_TEST(edje_test_edje_load)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 static const char *
 test_layout_get(const char *name)
@@ -53,7 +53,7 @@ test_layout_get(const char *name)
    return filename;
 }
 
-START_TEST(edje_test_load_simple_layout)
+EFL_START_TEST(edje_test_load_simple_layout)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *obj;
@@ -67,9 +67,9 @@ START_TEST(edje_test_load_simple_layout)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_simple_layout_geometry)
+EFL_START_TEST(edje_test_simple_layout_geometry)
 {
    int x, y, w, h;
    int r, g, b, a;
@@ -96,9 +96,9 @@ START_TEST(edje_test_simple_layout_geometry)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_complex_layout)
+EFL_START_TEST(edje_test_complex_layout)
 {
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -144,9 +144,9 @@ START_TEST(edje_test_complex_layout)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_calculate_parens)
+EFL_START_TEST(edje_test_calculate_parens)
 {
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -167,9 +167,9 @@ START_TEST(edje_test_calculate_parens)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_masking)
+EFL_START_TEST(edje_test_masking)
 {
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -201,9 +201,9 @@ START_TEST(edje_test_masking)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_filters)
+EFL_START_TEST(edje_test_filters)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *text, *sub;
@@ -242,9 +242,9 @@ START_TEST(edje_test_filters)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_snapshot)
+EFL_START_TEST(edje_test_snapshot)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub;
@@ -266,9 +266,9 @@ START_TEST(edje_test_snapshot)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_size_class)
+EFL_START_TEST(edje_test_size_class)
 {
    int minw, minh, minw2, minh2;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -320,9 +320,9 @@ START_TEST(edje_test_size_class)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_color_class)
+EFL_START_TEST(edje_test_color_class)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
 
@@ -355,9 +355,9 @@ START_TEST(edje_test_color_class)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_swallows)
+EFL_START_TEST(edje_test_swallows)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *ly, *o1, *o2;
@@ -386,9 +386,9 @@ START_TEST(edje_test_swallows)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_swallows_eoapi)
+EFL_START_TEST(edje_test_swallows_eoapi)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *ly, *o1, *o2;
@@ -417,9 +417,9 @@ START_TEST(edje_test_swallows_eoapi)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_access)
+EFL_START_TEST(edje_test_access)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const char *name;
@@ -460,9 +460,9 @@ START_TEST(edje_test_access)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_box)
+EFL_START_TEST(edje_test_box)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[5];
@@ -499,9 +499,9 @@ START_TEST(edje_test_box)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_box_eoapi)
+EFL_START_TEST(edje_test_box_eoapi)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[5];
@@ -559,9 +559,9 @@ START_TEST(edje_test_box_eoapi)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_table)
+EFL_START_TEST(edje_test_table)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[4];
@@ -634,9 +634,9 @@ START_TEST(edje_test_table)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_table_eoapi)
+EFL_START_TEST(edje_test_table_eoapi)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[4], *proxy;
@@ -716,9 +716,9 @@ START_TEST(edje_test_table_eoapi)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_combine_keywords)
+EFL_START_TEST(edje_test_combine_keywords)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -730,7 +730,7 @@ START_TEST(edje_test_combine_keywords)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _message_signal_reply_cb(void *data, Evas_Object *obj EINA_UNUSED,
@@ -760,7 +760,7 @@ _message_signal_reply_cb(void *data, Evas_Object *obj EINA_UNUSED,
    (*id)++;
 }
 
-START_TEST(edje_test_message_send_legacy)
+EFL_START_TEST(edje_test_message_send_legacy)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -814,9 +814,9 @@ START_TEST(edje_test_message_send_legacy)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_message_send_eo)
+EFL_START_TEST(edje_test_message_send_eo)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -872,9 +872,9 @@ START_TEST(edje_test_message_send_eo)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_signals)
+EFL_START_TEST(edje_test_signals)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -905,7 +905,7 @@ START_TEST(edje_test_signals)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 static int _signal_count;
 
@@ -917,7 +917,7 @@ _signal_callback_count_cb(void *data, Evas_Object *obj EINA_UNUSED,
    _signal_count += *_data;
 }
 
-START_TEST(edje_test_signal_callback_del_full)
+EFL_START_TEST(edje_test_signal_callback_del_full)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -948,7 +948,7 @@ START_TEST(edje_test_signal_callback_del_full)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 void edje_test_edje(TCase *tc)
 {

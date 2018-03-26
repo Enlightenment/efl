@@ -24,7 +24,7 @@
 #undef DBG
 #define DBG(...) do { } while (0);
 
-START_TEST (elm_code_widget_construct)
+EFL_START_TEST (elm_code_widget_construct)
 {
    Elm_Code *code;
    Elm_Code_Widget *widget;
@@ -41,9 +41,9 @@ START_TEST (elm_code_widget_construct)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_widget_construct_nocode)
+EFL_START_TEST (elm_code_widget_construct_nocode)
 {
    Elm_Code_Widget *widget;
    Evas_Object *win;
@@ -57,9 +57,9 @@ START_TEST (elm_code_widget_construct_nocode)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_widget_position)
+EFL_START_TEST (elm_code_widget_position)
 {
    Elm_Code *code;
    Elm_Code_Widget *widget;
@@ -93,7 +93,7 @@ START_TEST (elm_code_widget_position)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_widget(TCase *tc)
 {

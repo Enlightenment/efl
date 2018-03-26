@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-START_TEST (elm_check_legacy_type_check)
+EFL_START_TEST (elm_check_legacy_type_check)
 {
    Evas_Object *win, *check;
    const char *type;
@@ -27,9 +27,9 @@ START_TEST (elm_check_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_check_onoff_text)
+EFL_START_TEST (elm_check_onoff_text)
 {
    Evas_Object *win, *check;
 
@@ -51,9 +51,9 @@ START_TEST (elm_check_onoff_text)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_check_state)
+EFL_START_TEST (elm_check_state)
 {
    Evas_Object *win, *check;
    Eina_Bool state = EINA_TRUE;
@@ -73,9 +73,9 @@ START_TEST (elm_check_state)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *check;
    Efl_Access_Role role;
@@ -91,7 +91,7 @@ START_TEST (elm_atspi_role_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_check(TCase *tc)
 {

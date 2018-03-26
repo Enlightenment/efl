@@ -39,7 +39,7 @@ typedef uint32_t Eina_Unicode;
 EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex);
 EAPI unsigned int eina_mempool_alignof(unsigned int size);
 
-START_TEST(eina_unicode_utf8)
+EFL_START_TEST(eina_unicode_utf8)
 {
    int ind;
    unsigned char ch;
@@ -243,9 +243,9 @@ START_TEST(eina_unicode_utf8)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_alignof)
+EFL_START_TEST(eina_alignof)
 {
    eina_init();
 
@@ -254,7 +254,7 @@ START_TEST(eina_alignof)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_abi(TCase *tc)

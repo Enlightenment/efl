@@ -201,7 +201,7 @@ _machine_id_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
  * @}
  */
 
-START_TEST(utc_eldbus_object_send_info_get_p)
+EFL_START_TEST(utc_eldbus_object_send_info_get_p)
 {
    is_success = EINA_FALSE;
 
@@ -242,7 +242,7 @@ START_TEST(utc_eldbus_object_send_info_get_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_object
@@ -275,7 +275,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_introspect_p)
+EFL_START_TEST(utc_eldbus_introspect_p)
 {
    is_success = EINA_FALSE;
 
@@ -298,7 +298,7 @@ START_TEST(utc_eldbus_introspect_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_object
@@ -349,7 +349,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_object_peer_p)
+EFL_START_TEST(utc_eldbus_object_peer_p)
 {
    const char *dbus_path = "/org/freedesktop/Test";
    const char *bus_session = "org.freedesktop.Test";
@@ -394,7 +394,7 @@ START_TEST(utc_eldbus_object_peer_p)
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  *@}

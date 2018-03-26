@@ -52,7 +52,7 @@ _thread_run(void *arg EINA_UNUSED, Eina_Thread tid EINA_UNUSED)
     return NULL;
 }
 
-START_TEST(eina_test_sched_prio_drop)
+EFL_START_TEST(eina_test_sched_prio_drop)
 {
     int niceval = getpriority(PRIO_PROCESS, 0);
     int niceval2;
@@ -74,13 +74,13 @@ START_TEST(eina_test_sched_prio_drop)
 
     eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #else
-START_TEST(eina_test_sched_prio_drop)
+EFL_START_TEST(eina_test_sched_prio_drop)
 {
    fprintf(stderr, "scheduler priority is not supported by your configuration.\n");
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

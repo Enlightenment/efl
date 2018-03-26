@@ -9,7 +9,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_quad_simple)
+EFL_START_TEST(eina_quad_simple)
 {
    Eina_Rectangle r1;
    Eina_Quad r2;
@@ -68,7 +68,7 @@ START_TEST(eina_quad_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_quad(TCase *tc)

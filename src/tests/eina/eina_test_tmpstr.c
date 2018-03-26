@@ -25,7 +25,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(tmpstr_simple)
+EFL_START_TEST(tmpstr_simple)
 {
    eina_init();
 
@@ -59,9 +59,9 @@ START_TEST(tmpstr_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_simple_len)
+EFL_START_TEST(tmpstr_simple_len)
 {
    eina_init();
 
@@ -95,9 +95,9 @@ START_TEST(tmpstr_simple_len)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_manage)
+EFL_START_TEST(tmpstr_manage)
 {
    eina_init();
 
@@ -109,9 +109,9 @@ START_TEST(tmpstr_manage)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_manage_len)
+EFL_START_TEST(tmpstr_manage_len)
 {
    eina_init();
 
@@ -123,9 +123,9 @@ START_TEST(tmpstr_manage_len)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_len)
+EFL_START_TEST(tmpstr_len)
 {
    eina_init();
 
@@ -145,7 +145,7 @@ START_TEST(tmpstr_len)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_tmpstr(TCase *tc)

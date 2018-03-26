@@ -26,7 +26,7 @@
 
 #include "evil_suite.h"
 
-START_TEST(evil_stdlib_setenv_NULL)
+EFL_START_TEST(evil_stdlib_setenv_NULL)
 {
    char *val;
    int   res;
@@ -37,30 +37,9 @@ START_TEST(evil_stdlib_setenv_NULL)
    val = getenv("EVIL_TEST_ENV");
    fail_if(val != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_setenv_NULL_after_set)
-{
-   char *val;
-   int   res;
-
-   res = setenv("EVIL_TEST_ENV", "val", 1);
-   fail_if(res < 0);
-
-   val = getenv("EVIL_TEST_ENV");
-   fail_if(val == 0);
-
-   fail_if(strcmp(val, "val") != 0);
-
-   res = setenv("EVIL_TEST_ENV", NULL, 1);
-   fail_if(res < 0);
-
-   val = getenv("EVIL_TEST_ENV");
-   fail_if(val != 0);
-}
-END_TEST
-
-START_TEST(evil_stdlib_getenv_one)
+EFL_START_TEST(evil_stdlib_setenv_NULL_after_set)
 {
    char *val;
    int   res;
@@ -79,9 +58,30 @@ START_TEST(evil_stdlib_getenv_one)
    val = getenv("EVIL_TEST_ENV");
    fail_if(val != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_getenv_two)
+EFL_START_TEST(evil_stdlib_getenv_one)
+{
+   char *val;
+   int   res;
+
+   res = setenv("EVIL_TEST_ENV", "val", 1);
+   fail_if(res < 0);
+
+   val = getenv("EVIL_TEST_ENV");
+   fail_if(val == 0);
+
+   fail_if(strcmp(val, "val") != 0);
+
+   res = setenv("EVIL_TEST_ENV", NULL, 1);
+   fail_if(res < 0);
+
+   val = getenv("EVIL_TEST_ENV");
+   fail_if(val != 0);
+}
+EFL_END_TEST
+
+EFL_START_TEST(evil_stdlib_getenv_two)
 {
    char *val;
    int   res;
@@ -114,9 +114,9 @@ START_TEST(evil_stdlib_getenv_two)
    val = getenv("EVIL_TEST_ENV2");
    fail_if(val != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_getenv_two_swapped)
+EFL_START_TEST(evil_stdlib_getenv_two_swapped)
 {
    char *val;
    int   res;
@@ -149,9 +149,9 @@ START_TEST(evil_stdlib_getenv_two_swapped)
    val = getenv("EVIL_TEST_ENV2");
    fail_if(val != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_unsetenv)
+EFL_START_TEST(evil_stdlib_unsetenv)
 {
    char *val;
    int   res;
@@ -167,9 +167,9 @@ START_TEST(evil_stdlib_unsetenv)
    val = getenv("EVIL_TEST_ENV");
    fail_if(val != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkdtemp)
+EFL_START_TEST(evil_stdlib_mkdtemp)
 {
    char template[] = "file_XXXXXX";
    char *res;
@@ -179,9 +179,9 @@ START_TEST(evil_stdlib_mkdtemp)
 
    fail_if(rmdir(res) < 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkdtemp_fail)
+EFL_START_TEST(evil_stdlib_mkdtemp_fail)
 {
    char template[] = "file_XXX";
    char *res;
@@ -189,9 +189,9 @@ START_TEST(evil_stdlib_mkdtemp_fail)
    res = mkdtemp(template);
    fail_if(res != NULL);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkstemp)
+EFL_START_TEST(evil_stdlib_mkstemp)
 {
    char template[] = "file_XXXXXX";
    int fd;
@@ -203,9 +203,9 @@ START_TEST(evil_stdlib_mkstemp)
 
    fail_if(unlink(template) == -1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkstemp_fail)
+EFL_START_TEST(evil_stdlib_mkstemp_fail)
 {
    char template[] = "file_XXX";
    int fd;
@@ -213,9 +213,9 @@ START_TEST(evil_stdlib_mkstemp_fail)
    fd = mkstemp(template);
    fail_if(fd >= 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkstemps)
+EFL_START_TEST(evil_stdlib_mkstemps)
 {
    char template[] = "file_XXXXXX.ext";
    int fd;
@@ -227,9 +227,9 @@ START_TEST(evil_stdlib_mkstemps)
 
    fail_if(unlink(template) == -1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkstemps_fail_1)
+EFL_START_TEST(evil_stdlib_mkstemps_fail_1)
 {
    char template[] = "file_XXX.ext";
    int fd;
@@ -237,9 +237,9 @@ START_TEST(evil_stdlib_mkstemps_fail_1)
    fd = mkstemps(template, 4);
    fail_if(fd >= 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_mkstemps_fail_2)
+EFL_START_TEST(evil_stdlib_mkstemps_fail_2)
 {
    char template[] = "file_XXX";
    int fd;
@@ -247,9 +247,9 @@ START_TEST(evil_stdlib_mkstemps_fail_2)
    fd = mkstemps(template, 4);
    fail_if(fd >= 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_realpath_1)
+EFL_START_TEST(evil_stdlib_realpath_1)
 {
    char buf[PATH_MAX];
    char *filename = "C:\\Windows\\System32\\kernel32.dll";
@@ -258,9 +258,9 @@ START_TEST(evil_stdlib_realpath_1)
    res = realpath(filename, buf);
    fail_if(res == NULL);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_realpath_2)
+EFL_START_TEST(evil_stdlib_realpath_2)
 {
    char buf[PATH_MAX];
    char *filename = "C:\\Windows\\System32\\.\\kernel32.dll";
@@ -269,9 +269,9 @@ START_TEST(evil_stdlib_realpath_2)
    res = realpath(filename, buf);
    fail_if(res == NULL);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_realpath_3)
+EFL_START_TEST(evil_stdlib_realpath_3)
 {
    char buf[PATH_MAX];
    char *filename = "C:\\Windows\\System32\\..\\System32\\kernel32.dll";
@@ -280,9 +280,9 @@ START_TEST(evil_stdlib_realpath_3)
    res = realpath(filename, buf);
    fail_if(res == NULL);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdlib_realpath_fail)
+EFL_START_TEST(evil_stdlib_realpath_fail)
 {
    char buf[PATH_MAX];
    char *filename = "C:\\Windows\\System32\\System32\\kernel.dll";
@@ -291,7 +291,7 @@ START_TEST(evil_stdlib_realpath_fail)
    res = realpath(filename, buf);
    fail_if(res != NULL);
 }
-END_TEST
+EFL_END_TEST
 
 void evil_test_stdlib(TCase *tc)
 {

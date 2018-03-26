@@ -7,7 +7,7 @@
 
 #include "eeze_suite.h"
 
-START_TEST(eeze_test_net_list)
+EFL_START_TEST(eeze_test_net_list)
 {
    int ret;
    Eina_List *list = NULL;
@@ -21,9 +21,9 @@ START_TEST(eeze_test_net_list)
    ret = eeze_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_net_attr)
+EFL_START_TEST(eeze_test_net_attr)
 {
    int ret;
    int idx = 0;
@@ -69,11 +69,11 @@ START_TEST(eeze_test_net_attr)
    ret = eeze_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 
 #ifdef HAVE_IPV6
-START_TEST(eeze_test_net_attr_ipv6)
+EFL_START_TEST(eeze_test_net_attr_ipv6)
 {
    int ret;
    Eeze_Net *net = NULL;
@@ -108,7 +108,7 @@ cleanup:
    ret = eeze_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 

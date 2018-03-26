@@ -60,7 +60,7 @@ wk3_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
     return NULL;
 }
 
-START_TEST(eina_barrier_test_simple)
+EFL_START_TEST(eina_barrier_test_simple)
 {
     Eina_Bool r;
     int i;
@@ -106,7 +106,7 @@ START_TEST(eina_barrier_test_simple)
     eina_threads_shutdown();
     eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_barrier(TCase *tc)

@@ -7,7 +7,7 @@
 #include "elm_suite.h"
 #include "elm_test_helper.h"
 
-START_TEST (elm_gengrid_legacy_type_check)
+EFL_START_TEST (elm_gengrid_legacy_type_check)
 {
    Evas_Object *win, *gengrid;
    const char *type;
@@ -28,9 +28,9 @@ START_TEST (elm_gengrid_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *gengrid;
    Efl_Access_Role role;
@@ -46,7 +46,7 @@ START_TEST (elm_atspi_role_get)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Temporary commnted since gengrid fields_update function do not call content callbacks
 // (different behaviour then genlist - which calls)
@@ -65,7 +65,7 @@ gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_U
  * Validate if gengrid implementation properly reset AT-SPI parent to Elm_Gengrid_Item
  * from Elm_Gengrid
  */
-START_TEST(elm_atspi_children_parent)
+EFL_START_TEST(elm_atspi_children_parent)
 {
    char *args[] = { "exe" };
    elm_init(1, args);
@@ -95,7 +95,7 @@ START_TEST(elm_atspi_children_parent)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void elm_test_gengrid(TCase *tc)

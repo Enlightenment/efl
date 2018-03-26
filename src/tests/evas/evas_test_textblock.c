@@ -62,7 +62,7 @@ do \
 } \
 while (0)
 
-START_TEST(evas_textblock_simple)
+EFL_START_TEST(evas_textblock_simple)
 {
    START_TB_TEST();
    const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
@@ -78,7 +78,7 @@ START_TEST(evas_textblock_simple)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 #define _CHECK_CURSOR_COORDS() \
 do \
@@ -101,7 +101,7 @@ do \
         fail_if(ret == -1); \
 } \
 while (0)
-START_TEST(evas_textblock_cursor)
+EFL_START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
    Evas_Coord x, y, w, h;
@@ -974,10 +974,10 @@ START_TEST(evas_textblock_cursor)
      }
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef HAVE_FRIBIDI
-START_TEST(evas_textblock_split_cursor)
+EFL_START_TEST(evas_textblock_split_cursor)
 {
    START_TB_TEST();
    Evas_Coord x, w, x2, w2;
@@ -1292,10 +1292,10 @@ START_TEST(evas_textblock_split_cursor)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(evas_textblock_format_removal)
+EFL_START_TEST(evas_textblock_format_removal)
 {
    START_TB_TEST();
    int i;
@@ -1721,10 +1721,10 @@ START_TEST(evas_textblock_format_removal)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Testing items */
-START_TEST(evas_textblock_items)
+EFL_START_TEST(evas_textblock_items)
 {
    Evas_Coord x, y, w, h, w2, h2, nw, nh, ih;
    START_TB_TEST();
@@ -1854,10 +1854,10 @@ START_TEST(evas_textblock_items)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Wrapping tests */
-START_TEST(evas_textblock_wrapping)
+EFL_START_TEST(evas_textblock_wrapping)
 {
    Evas_Coord bw, bh, w, h, nw, nh;
    int i;
@@ -2293,10 +2293,10 @@ START_TEST(evas_textblock_wrapping)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Various textblock stuff */
-START_TEST(evas_textblock_various)
+EFL_START_TEST(evas_textblock_various)
 {
    Evas_Coord w, h, bw, bh;
    START_TB_TEST();
@@ -2408,10 +2408,10 @@ START_TEST(evas_textblock_various)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Various geometries. e.g. range geometry. */
-START_TEST(evas_textblock_geometries)
+EFL_START_TEST(evas_textblock_geometries)
 {
    START_TB_TEST();
    const char *buf = "This is a <br/> test.";
@@ -2891,10 +2891,10 @@ START_TEST(evas_textblock_geometries)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Should handle all the text editing. */
-START_TEST(evas_textblock_editing)
+EFL_START_TEST(evas_textblock_editing)
 {
    START_TB_TEST();
    const char *buf = "First par.<ps/>Second par.";
@@ -3019,10 +3019,10 @@ START_TEST(evas_textblock_editing)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Text getters */
-START_TEST(evas_textblock_text_getters)
+EFL_START_TEST(evas_textblock_text_getters)
 {
    START_TB_TEST();
    const char *buf = "This is a <br/> test.<ps/>"
@@ -3247,10 +3247,10 @@ START_TEST(evas_textblock_text_getters)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Formats */
-START_TEST(evas_textblock_formats)
+EFL_START_TEST(evas_textblock_formats)
 {
    START_TB_TEST();
    const char *buf = "Th<b>i<font_size=15 wrap=none>s i</font_size=13>s</> a <br/> te<ps/>st<item></>.";
@@ -3552,10 +3552,10 @@ START_TEST(evas_textblock_formats)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Different text styles, for example, shadow. */
-START_TEST(evas_textblock_style)
+EFL_START_TEST(evas_textblock_style)
 {
    Evas_Coord w, h, nw, nh;
    Evas_Coord l, r, t, b;
@@ -3704,10 +3704,10 @@ START_TEST(evas_textblock_style)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Various setters and getters */
-START_TEST(evas_textblock_set_get)
+EFL_START_TEST(evas_textblock_set_get)
 {
    START_TB_TEST();
    const char *buf = "";
@@ -3748,10 +3748,10 @@ START_TEST(evas_textblock_set_get)
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_BYTECODE);
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Aux evas stuff, such as scale. */
-START_TEST(evas_textblock_evas)
+EFL_START_TEST(evas_textblock_evas)
 {
    Evas_Coord w, h, sw, sh;
    START_TB_TEST();
@@ -3768,10 +3768,10 @@ START_TEST(evas_textblock_evas)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* All the string escaping stuff */
-START_TEST(evas_textblock_escaping)
+EFL_START_TEST(evas_textblock_escaping)
 {
    int len;
    START_TB_TEST();
@@ -3807,9 +3807,9 @@ START_TEST(evas_textblock_escaping)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_textblock_size)
+EFL_START_TEST(evas_textblock_size)
 {
    START_TB_TEST();
    Evas_Coord w, h, h2, nw, nh;
@@ -3923,9 +3923,9 @@ START_TEST(evas_textblock_size)
    /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_textblock_delete)
+EFL_START_TEST(evas_textblock_delete)
 {
    START_TB_TEST();
    const Evas_Object_Textblock_Node_Format *fmt;
@@ -3959,7 +3959,7 @@ START_TEST(evas_textblock_delete)
 
    END_TB_TEST();
 }
-END_TEST;
+EFL_END_TEST;
 
 /* Runs x,y in [from,to] range */
 static void
@@ -3984,7 +3984,7 @@ _obstacle_run(Evas_Object *tb, Evas_Object *obj,
      }
 }
 
-START_TEST(evas_textblock_obstacle)
+EFL_START_TEST(evas_textblock_obstacle)
 {
    START_TB_TEST();
    Evas_Coord fw, fh;
@@ -4043,7 +4043,7 @@ START_TEST(evas_textblock_obstacle)
    _obstacle_run(tb, rect3, 0, fw, 0, 0, fh);
    END_TB_TEST();
 }
-END_TEST;
+EFL_END_TEST;
 
 #ifdef HAVE_HYPHEN
 static void
@@ -4067,7 +4067,7 @@ _hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
    ck_assert_int_eq(w, bw);
 }
 
-START_TEST(evas_textblock_hyphenation)
+EFL_START_TEST(evas_textblock_hyphenation)
 {
    START_TB_TEST();
    Evas_Coord w, fw;
@@ -4129,10 +4129,10 @@ START_TEST(evas_textblock_hyphenation)
 
    END_TB_TEST();
 }
-END_TEST;
+EFL_END_TEST;
 #endif
 
-START_TEST(evas_textblock_text_iface)
+EFL_START_TEST(evas_textblock_text_iface)
 {
    START_TB_TEST();
    Evas_Coord nw, nh;
@@ -4202,7 +4202,7 @@ START_TEST(evas_textblock_text_iface)
 
    END_TB_TEST();
 }
-END_TEST;
+EFL_END_TEST;
 
 static void
 _test_check_annotation(Evas_Object *tb,
@@ -4246,7 +4246,7 @@ _test_check_annotation(Evas_Object *tb,
 #define _CREATE_PARAMS(X) (sizeof(X) / sizeof(X[0])), (X)
 #define _COMP_PARAMS(...) _CREATE_PARAMS(_COMP_STR(__VA_ARGS__))
 
-START_TEST(evas_textblock_annotation)
+EFL_START_TEST(evas_textblock_annotation)
 {
    START_TB_TEST();
    Efl_Text_Annotate_Annotation *an, *an2;
@@ -4428,9 +4428,9 @@ START_TEST(evas_textblock_annotation)
 
    END_TB_TEST();
 }
-END_TEST;
+EFL_END_TEST;
 
-START_TEST(efl_canvas_text_cursor)
+EFL_START_TEST(efl_canvas_text_cursor)
 {
    START_TB_TEST();
 
@@ -4461,7 +4461,7 @@ START_TEST(efl_canvas_text_cursor)
 
    END_TB_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_textblock(TCase *tc)
 {

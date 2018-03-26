@@ -115,7 +115,7 @@ progress_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED,
    return ECORE_FILE_PROGRESS_CONTINUE;
 }
 
-START_TEST(ecore_test_ecore_file_init)
+EFL_START_TEST(ecore_test_ecore_file_init)
 {
    int ret;
 
@@ -125,9 +125,9 @@ START_TEST(ecore_test_ecore_file_init)
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_operations)
+EFL_START_TEST(ecore_test_ecore_file_operations)
 {
    const char* dirs[] = {"b", "b/c", "b/c/d", "d", 0};
    char *dirs2[] = {"a2", "b2", "c2", 0};
@@ -355,9 +355,9 @@ START_TEST(ecore_test_ecore_file_operations)
    fail_if(ret != 0);
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_path)
+EFL_START_TEST(ecore_test_ecore_file_path)
 {
    const char *src_dir, *src_file, *dest_file;
    char *dup_dir, *path;
@@ -418,9 +418,9 @@ START_TEST(ecore_test_ecore_file_path)
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_monitor)
+EFL_START_TEST(ecore_test_ecore_file_monitor)
 {
    Ecore_File_Monitor *mon;
    const char *src_dir;
@@ -473,9 +473,9 @@ START_TEST(ecore_test_ecore_file_monitor)
    fail_if(ret != 0);
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_download)
+EFL_START_TEST(ecore_test_ecore_file_download)
 {
    const char *download_dir;
    const char *download_file;
@@ -538,7 +538,7 @@ START_TEST(ecore_test_ecore_file_download)
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_file(TCase *tc)
 {

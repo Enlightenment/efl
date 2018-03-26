@@ -2,7 +2,7 @@
 #define _ECORE_SUITE_H
 
 #include <check.h>
-
+#include "../efl_check.h"
 void ecore_test_ecore(TCase *tc);
 void ecore_test_ecore_x(TCase *tc);
 void ecore_test_ecore_imf(TCase *tc);

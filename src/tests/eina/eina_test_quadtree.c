@@ -55,7 +55,7 @@ _eina_quadtree_rectangle_hort(const void *object, size_t middle)
    return EINA_QUAD_BOTH;
 }
 
-START_TEST(eina_quadtree_collision)
+EFL_START_TEST(eina_quadtree_collision)
 {
    struct
    {
@@ -187,7 +187,7 @@ START_TEST(eina_quadtree_collision)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_quadtree(TCase *tc)

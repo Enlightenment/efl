@@ -90,7 +90,7 @@ _eolian_gen_execute(const char *eo_filename, const char *options, const char *ou
    return system(command);
 }
 
-START_TEST(eolian_dev_impl_code)
+EFL_START_TEST(eolian_dev_impl_code)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_object_impl",
@@ -104,9 +104,9 @@ START_TEST(eolian_dev_impl_code)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/object_impl_add.eo", "-gi", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/object_impl_add_ref.c", output_filepath, "c"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_types_generation)
+EFL_START_TEST(eolian_types_generation)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_typedef",
@@ -123,9 +123,9 @@ START_TEST(eolian_types_generation)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/struct.eo", "-gs", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/struct_ref_stub.h", output_filepath, "eo.stub.h"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_default_values_generation)
+EFL_START_TEST(eolian_default_values_generation)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_class_simple",
@@ -134,9 +134,9 @@ START_TEST(eolian_default_values_generation)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gc", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref.c", output_filepath, "eo.c"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_override_generation)
+EFL_START_TEST(eolian_override_generation)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_override",
@@ -145,9 +145,9 @@ START_TEST(eolian_override_generation)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/override.eo", "-gc", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/override_ref.c", output_filepath, "eo.c"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_functions_descriptions)
+EFL_START_TEST(eolian_functions_descriptions)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_class_simple",
@@ -159,9 +159,9 @@ START_TEST(eolian_functions_descriptions)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gl", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref_legacy.h", output_filepath, "eo.legacy.h"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_import)
+EFL_START_TEST(eolian_import)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_import_types",
@@ -170,9 +170,9 @@ START_TEST(eolian_import)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/import_types.eot", "-gh", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/import_types_ref.h", output_filepath, "eot.h"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_docs)
+EFL_START_TEST(eolian_docs)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_docs",
@@ -184,9 +184,9 @@ START_TEST(eolian_docs)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gl", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref_legacy.h", output_filepath, "eo.legacy.h"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_function_pointers)
+EFL_START_TEST(eolian_function_pointers)
 {
 
    // .eot
@@ -215,9 +215,9 @@ START_TEST(eolian_function_pointers)
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(owning)
+EFL_START_TEST(owning)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_owning",
@@ -227,7 +227,7 @@ START_TEST(owning)
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/owning.eo.c", output_filepath, "eo.c"));
 
 }
-END_TEST
+EFL_END_TEST
 
 void eolian_generation_test(TCase *tc)
 {

@@ -12,7 +12,7 @@
 #include "eet_suite.h"
 #include "eet_test_common.h"
 
-START_TEST(eet_test_cipher_decipher_simple)
+EFL_START_TEST(eet_test_cipher_decipher_simple)
 {
    const char *buffer = "Here is a string of data to save !";
    const char *key = "This is a crypto key";
@@ -64,7 +64,7 @@ START_TEST(eet_test_cipher_decipher_simple)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_cipher(TCase *tc)
 {

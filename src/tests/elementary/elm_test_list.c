@@ -8,7 +8,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-START_TEST (elm_list_legacy_type_check)
+EFL_START_TEST (elm_list_legacy_type_check)
 {
    Evas_Object *win, *list;
    const char *type;
@@ -29,13 +29,13 @@ START_TEST (elm_list_legacy_type_check)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #if 0
 // Skip following tests until Elm_Widget_Item will migrate to Eo infrastructure
 // and following features can be implemented
 
-START_TEST (elm_list_atspi_selection_selected_children_count_get)
+EFL_START_TEST (elm_list_atspi_selection_selected_children_count_get)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -61,9 +61,9 @@ START_TEST (elm_list_atspi_selection_selected_children_count_get)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_child_select)
+EFL_START_TEST (elm_list_atspi_selection_child_select)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -82,9 +82,9 @@ START_TEST (elm_list_atspi_selection_child_select)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_selected_child_deselect)
+EFL_START_TEST (elm_list_atspi_selection_selected_child_deselect)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -106,9 +106,9 @@ START_TEST (elm_list_atspi_selection_selected_child_deselect)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_is_child_selected)
+EFL_START_TEST (elm_list_atspi_selection_is_child_selected)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -130,9 +130,9 @@ START_TEST (elm_list_atspi_selection_is_child_selected)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_all_children_select)
+EFL_START_TEST (elm_list_atspi_selection_all_children_select)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
@@ -158,10 +158,10 @@ START_TEST (elm_list_atspi_selection_all_children_select)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST (elm_list_atspi_selection_clear)
+EFL_START_TEST (elm_list_atspi_selection_clear)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
@@ -186,9 +186,9 @@ START_TEST (elm_list_atspi_selection_clear)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_child_deselect)
+EFL_START_TEST (elm_list_atspi_selection_child_deselect)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -210,11 +210,11 @@ START_TEST (elm_list_atspi_selection_child_deselect)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #endif
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
  Evas_Object *win, *list;
  Efl_Access_Role role;
@@ -230,14 +230,14 @@ START_TEST (elm_atspi_role_get)
 
  elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 /**
  * Validate if genlist implementation properly reset parent to Elm_Genlist_Item
  * from Elm_Genlist
  */
-START_TEST(elm_atspi_children_parent)
+EFL_START_TEST(elm_atspi_children_parent)
 {
    Efl_Access *parent;
    Elm_Object_Item *it;
@@ -262,7 +262,7 @@ START_TEST(elm_atspi_children_parent)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_list(TCase *tc)
 {

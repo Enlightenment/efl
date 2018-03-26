@@ -56,7 +56,7 @@ thread(void *param)
    return 0;
 }
 
-START_TEST(evil_unistd_pipe)
+EFL_START_TEST(evil_unistd_pipe)
 {
    int            sockets[2];
    struct timeval t;
@@ -112,7 +112,7 @@ START_TEST(evil_unistd_pipe)
 
    evil_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void evil_test_unistd(TCase *tc)
 {

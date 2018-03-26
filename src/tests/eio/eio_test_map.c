@@ -53,7 +53,7 @@ _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
    ecore_main_loop_quit();
 }
 
-START_TEST(eio_test_map_simple)
+EFL_START_TEST(eio_test_map_simple)
 {
    int fd;
    const char *file = "eio_map_exampleXXXXXX.txt";
@@ -93,7 +93,7 @@ START_TEST(eio_test_map_simple)
    eina_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eio_test_map(TCase *tc)

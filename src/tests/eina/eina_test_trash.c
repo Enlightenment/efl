@@ -23,7 +23,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(trash_simple)
+EFL_START_TEST(trash_simple)
 {
    Eina_Trash *trash;
    unsigned int i;
@@ -70,7 +70,7 @@ START_TEST(trash_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_trash(TCase *tc)

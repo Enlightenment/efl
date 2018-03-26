@@ -9,7 +9,7 @@
 #include "elm_code_widget_private.h"
 #include "elm_code_widget_selection.h"
 
-START_TEST (elm_code_test_widget_selection_set)
+EFL_START_TEST (elm_code_test_widget_selection_set)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -32,9 +32,9 @@ START_TEST (elm_code_test_widget_selection_set)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_normalized_get)
+EFL_START_TEST (elm_code_test_widget_selection_normalized_get)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -75,9 +75,9 @@ START_TEST (elm_code_test_widget_selection_normalized_get)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_text_get)
+EFL_START_TEST (elm_code_test_widget_selection_text_get)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -109,9 +109,9 @@ START_TEST (elm_code_test_widget_selection_text_get)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_text_get)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -143,9 +143,9 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_text_get_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_text_get_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -173,9 +173,9 @@ START_TEST (elm_code_test_widget_selection_text_get_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -203,9 +203,9 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_text_get_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_text_get_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -234,9 +234,9 @@ START_TEST (elm_code_test_widget_selection_text_get_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -265,9 +265,9 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_delete)
+EFL_START_TEST (elm_code_test_widget_selection_delete)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -302,9 +302,9 @@ START_TEST (elm_code_test_widget_selection_delete)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_delete)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_delete)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -339,9 +339,9 @@ START_TEST (elm_code_test_widget_selection_reverse_delete)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_delete_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_delete_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -387,9 +387,9 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -435,9 +435,9 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_delete_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_delete_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -485,9 +485,9 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -535,9 +535,9 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_line)
+EFL_START_TEST (elm_code_test_widget_selection_select_line)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -573,9 +573,9 @@ START_TEST (elm_code_test_widget_selection_select_line)
 
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_word)
+EFL_START_TEST (elm_code_test_widget_selection_select_word)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -615,9 +615,9 @@ START_TEST (elm_code_test_widget_selection_select_word)
    free(selection);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_word_punctuation)
+EFL_START_TEST (elm_code_test_widget_selection_select_word_punctuation)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -655,9 +655,9 @@ START_TEST (elm_code_test_widget_selection_select_word_punctuation)
    free(selection);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_word_symbols)
+EFL_START_TEST (elm_code_test_widget_selection_select_word_symbols)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -695,7 +695,7 @@ START_TEST (elm_code_test_widget_selection_select_word_symbols)
    free(selection);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_widget_selection(TCase *tc)
 {

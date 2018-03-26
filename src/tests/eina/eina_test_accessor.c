@@ -36,7 +36,7 @@ eina_accessor_check(EINA_UNUSED const Eina_Array *array,
    return EINA_TRUE;
 }
 
-START_TEST(eina_accessor_array_simple)
+EFL_START_TEST(eina_accessor_array_simple)
 {
    Eina_Accessor *it;
    Eina_Array *ea;
@@ -76,7 +76,7 @@ START_TEST(eina_accessor_array_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
@@ -114,7 +114,7 @@ eina_accessor_inlist_data_check(EINA_UNUSED const Eina_Inlist *in_list,
    return EINA_TRUE;
 }
 
-START_TEST(eina_accessor_inlist_simple)
+EFL_START_TEST(eina_accessor_inlist_simple)
 {
    Eina_Inlist *lst = NULL;
    Eina_Test_Inlist *tmp;
@@ -165,7 +165,7 @@ START_TEST(eina_accessor_inlist_simple)
 
    fail_if(i != 2);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 eina_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
@@ -184,7 +184,7 @@ eina_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
    return EINA_TRUE;
 }
 
-START_TEST(eina_accessor_list_simple)
+EFL_START_TEST(eina_accessor_list_simple)
 {
    Eina_List *list = NULL;
    Eina_Accessor *it;
@@ -233,7 +233,7 @@ START_TEST(eina_accessor_list_simple)
 
    eina_accessor_free(it);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_accessor(TCase *tc)

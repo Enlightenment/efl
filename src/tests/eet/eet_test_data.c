@@ -279,7 +279,7 @@ _eet_st3_cmp(Eet_St3 *st3,
    fail_if(st3->boby != EET_TEST_INT + i);
 } /* _eet_st3_cmp */
 
-START_TEST(eet_test_data_basic_type_encoding_decoding)
+EFL_START_TEST(eet_test_data_basic_type_encoding_decoding)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Basic_Type *result;
@@ -316,9 +316,9 @@ START_TEST(eet_test_data_basic_type_encoding_decoding)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_type_encoding_decoding)
+EFL_START_TEST(eet_test_data_type_encoding_decoding)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
@@ -382,9 +382,9 @@ START_TEST(eet_test_data_type_encoding_decoding)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_type_dump_undump)
+EFL_START_TEST(eet_test_data_type_dump_undump)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
@@ -472,9 +472,9 @@ START_TEST(eet_test_data_type_dump_undump)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_type_escape_dump_undump)
+EFL_START_TEST(eet_test_data_type_escape_dump_undump)
 {
    void *blob;
    int blob_len;
@@ -506,9 +506,9 @@ START_TEST(eet_test_data_type_escape_dump_undump)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_fp)
+EFL_START_TEST(eet_test_data_fp)
 {
    Eet_Data_Descriptor_Class eddc;
    Eet_Data_Descriptor *edd_5FP;
@@ -568,9 +568,9 @@ START_TEST(eet_test_data_fp)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_union)
+EFL_START_TEST(eet_test_data_union)
 {
    Eet_Union_Test *eut;
    Eet_List *l;
@@ -646,9 +646,9 @@ START_TEST(eet_test_data_union)
    eet_shutdown();
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_variant)
+EFL_START_TEST(eet_test_data_variant)
 {
    Eet_Variant_Test *evt;
    Eet_List *l;
@@ -755,10 +755,10 @@ START_TEST(eet_test_data_variant)
 
    eet_shutdown();
    eina_shutdown();
-} /* START_TEST */
-END_TEST
+} /* EFL_START_TEST */
+EFL_END_TEST
 
-START_TEST(eet_test_data_hash_value)
+EFL_START_TEST(eet_test_data_hash_value)
 {
    Eet_Hash *h;
    Eina_Value *val;
@@ -813,8 +813,8 @@ START_TEST(eet_test_data_hash_value)
 
    eet_shutdown();
    eina_shutdown();
-} /* START_TEST */
-END_TEST
+} /* EFL_START_TEST */
+EFL_END_TEST
 
 void eet_test_data(TCase *tc)
 {

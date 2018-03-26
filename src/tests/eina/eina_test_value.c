@@ -31,7 +31,7 @@
 #define FP_ERR (1)
 #define CHECK_FP(a, b) ((a - b) <= FP_ERR)
 
-START_TEST(eina_value_test_simple)
+EFL_START_TEST(eina_value_test_simple)
 {
    Eina_Value *value;
    char c;
@@ -128,9 +128,9 @@ START_TEST(eina_value_test_simple)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_compare)
+EFL_START_TEST(eina_value_test_compare)
 {
    Eina_Value *a, *b;
 
@@ -432,9 +432,9 @@ START_TEST(eina_value_test_compare)
    eina_value_free(b);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_string)
+EFL_START_TEST(eina_value_test_string)
 {
    Eina_Value *value;
    const char *s;
@@ -461,9 +461,9 @@ START_TEST(eina_value_test_string)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_pvariant)
+EFL_START_TEST(eina_value_test_pvariant)
 {
    Eina_Value *value;
    char c, in_c;
@@ -592,9 +592,9 @@ START_TEST(eina_value_test_pvariant)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_to_string)
+EFL_START_TEST(eina_value_test_to_string)
 {
    Eina_Value *value;
    char c, in_c;
@@ -797,9 +797,9 @@ START_TEST(eina_value_test_to_string)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_to_binbuf)
+EFL_START_TEST(eina_value_test_to_binbuf)
 {
    Eina_Value *value;
    char c, in_c;
@@ -861,9 +861,9 @@ START_TEST(eina_value_test_to_binbuf)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_char)
+EFL_START_TEST(eina_value_test_convert_char)
 {
    Eina_Value *value, conv;
    char c;
@@ -992,9 +992,9 @@ START_TEST(eina_value_test_convert_char)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_uchar)
+EFL_START_TEST(eina_value_test_convert_uchar)
 {
    Eina_Value *value, conv;
    char c;
@@ -1107,9 +1107,9 @@ START_TEST(eina_value_test_convert_uchar)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_short)
+EFL_START_TEST(eina_value_test_convert_short)
 {
    Eina_Value *value, conv;
    short s;
@@ -1240,9 +1240,9 @@ START_TEST(eina_value_test_convert_short)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_ushort)
+EFL_START_TEST(eina_value_test_convert_ushort)
 {
    Eina_Value *value, conv;
    int i;
@@ -1343,9 +1343,9 @@ START_TEST(eina_value_test_convert_ushort)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_int)
+EFL_START_TEST(eina_value_test_convert_int)
 {
    Eina_Value *value, conv;
    int i;
@@ -1474,9 +1474,9 @@ START_TEST(eina_value_test_convert_int)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_uint)
+EFL_START_TEST(eina_value_test_convert_uint)
 {
    Eina_Value *value, conv;
    unsigned int ui;
@@ -1561,9 +1561,9 @@ START_TEST(eina_value_test_convert_uint)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_long)
+EFL_START_TEST(eina_value_test_convert_long)
 {
    Eina_Value *value, conv;
    char c;
@@ -1712,9 +1712,9 @@ START_TEST(eina_value_test_convert_long)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_ulong)
+EFL_START_TEST(eina_value_test_convert_ulong)
 {
    Eina_Value *value, conv;
    char c;
@@ -1841,9 +1841,9 @@ START_TEST(eina_value_test_convert_ulong)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_convert_float)
+EFL_START_TEST(eina_value_test_convert_float)
 {
    Eina_Value *value, conv;
    char c;
@@ -2016,9 +2016,9 @@ START_TEST(eina_value_test_convert_float)
    eina_shutdown();
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_array)
+EFL_START_TEST(eina_value_test_array)
 {
    Eina_Value *value, other;
    Eina_Value_Array desc;
@@ -2128,9 +2128,9 @@ START_TEST(eina_value_test_array)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_list)
+EFL_START_TEST(eina_value_test_list)
 {
    Eina_Value *value, other;
    Eina_Value_List desc;
@@ -2238,9 +2238,9 @@ START_TEST(eina_value_test_list)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_hash)
+EFL_START_TEST(eina_value_test_hash)
 {
    Eina_Value *value, other;
    Eina_Value_Hash desc;
@@ -2358,10 +2358,10 @@ START_TEST(eina_value_test_hash)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_value_test_timeval)
+EFL_START_TEST(eina_value_test_timeval)
 {
    Eina_Value *value, other;
    struct timeval itv, otv;
@@ -2442,10 +2442,10 @@ START_TEST(eina_value_test_timeval)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_value_test_blob)
+EFL_START_TEST(eina_value_test_blob)
 {
    Eina_Value *value, other;
    Eina_Value_Blob in, out;
@@ -2531,10 +2531,10 @@ START_TEST(eina_value_test_blob)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_value_test_struct)
+EFL_START_TEST(eina_value_test_struct)
 {
    struct mybigst {
       int a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, x;
@@ -2717,10 +2717,10 @@ START_TEST(eina_value_test_struct)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_value_test_array_of_struct)
+EFL_START_TEST(eina_value_test_array_of_struct)
 {
    struct myst {
       int a, b, c;
@@ -2794,9 +2794,9 @@ START_TEST(eina_value_test_array_of_struct)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_optional_int)
+EFL_START_TEST(eina_value_test_optional_int)
 {
    eina_init();
 
@@ -2834,9 +2834,9 @@ START_TEST(eina_value_test_optional_int)
    /* eina_value_free(value); */
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_optional_string)
+EFL_START_TEST(eina_value_test_optional_string)
 {
    eina_init();
 
@@ -2875,9 +2875,9 @@ START_TEST(eina_value_test_optional_string)
    eina_value_free(value);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_optional_struct_members)
+EFL_START_TEST(eina_value_test_optional_struct_members)
 {
    eina_init();
 
@@ -2935,9 +2935,9 @@ START_TEST(eina_value_test_optional_struct_members)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_value)
+EFL_START_TEST(eina_value_test_value)
 {
    Eina_Value composed, v;
    const int ivalue = 3500;
@@ -2969,9 +2969,9 @@ START_TEST(eina_value_test_value)
    eina_value_flush(&composed);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_value_test_value_string)
+EFL_START_TEST(eina_value_test_value_string)
 {
    Eina_Value composed, v, str_v;
    const char *msg = "A string", *str;
@@ -3002,7 +3002,7 @@ START_TEST(eina_value_test_value_string)
    eina_value_flush(&v);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_value(TCase *tc)

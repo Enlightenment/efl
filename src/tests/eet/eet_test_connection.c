@@ -87,7 +87,7 @@ _eet_connection_write(const void *data,
    return EINA_TRUE;
 }
 
-START_TEST(eet_test_connection_check)
+EFL_START_TEST(eet_test_connection_check)
 {
    Eet_Data_Descriptor *edd;
    Eet_Data_Descriptor_Class eddc;
@@ -142,7 +142,7 @@ START_TEST(eet_test_connection_check)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_connection(TCase *tc)
 {

@@ -49,7 +49,7 @@ _teardown(void)
    check_shutdown();
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = NULL;
    properties = efl_model_properties_get(method);
@@ -59,9 +59,9 @@ START_TEST(properties_get)
    const unsigned int actual_properties_count = eina_array_count(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
    // Input only property returns error
    Efl_Future *future;
@@ -75,9 +75,9 @@ START_TEST(property_get)
    future = efl_model_property_get(method, "nonexistent");
    check_efl_model_future_error(future, NULL);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_set)
+EFL_START_TEST(property_set)
 {
    // Output argument returns error
    Efl_Future *future;
@@ -85,7 +85,7 @@ START_TEST(property_set)
    future = efl_model_property_set(method, ARGUMENT_RESULT, &dummy);
    check_efl_model_future_error(future, NULL);
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_method_children_count(Eo *efl_model)
@@ -93,38 +93,38 @@ _test_method_children_count(Eo *efl_model)
    check_efl_model_children_count_eq(efl_model, 0);
 }
 
-START_TEST(children_count)
+EFL_START_TEST(children_count)
 {
    _test_method_children_count(method);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
    Efl_Future *future;
    future = efl_model_children_slice_get(method, 1, 1);
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child;
    child = efl_model_child_add(method);
    ck_assert_ptr_eq(NULL, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+EFL_START_TEST(child_del)
 {
    // efl_model_child_del always returns ERROR
    Eo *child = NULL;
    efl_model_child_del(method, child);
    //ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(call)
+EFL_START_TEST(call)
 {
    check_efl_model_property_int_set(method, ARGUMENT_A, 12345678);
    check_efl_model_property_int_set(method, ARGUMENT_B, 87654321);
@@ -134,7 +134,7 @@ START_TEST(call)
    efl_model_wait_for_event(method, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL);
    check_efl_model_property_int_eq(method, ARGUMENT_RESULT, 99999999);
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_model_method(TCase *tc)
 {

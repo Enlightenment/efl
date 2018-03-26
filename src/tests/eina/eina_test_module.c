@@ -45,7 +45,7 @@ static Eina_Bool list_cb(Eina_Module *m, void *data EINA_UNUSED)
 }
 
 
-START_TEST(eina_module_load_unload)
+EFL_START_TEST(eina_module_load_unload)
 {
    Eina_Array *_modules;
    unsigned int i;
@@ -67,9 +67,9 @@ START_TEST(eina_module_load_unload)
    eina_array_free(_modules);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_module_find_test)
+EFL_START_TEST(eina_module_find_test)
 {
    Eina_Array *_modules;
 
@@ -83,7 +83,7 @@ START_TEST(eina_module_find_test)
    fail_if(eina_module_find(_modules, NULL) != NULL);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_module(TCase *tc)

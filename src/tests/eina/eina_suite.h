@@ -20,6 +20,7 @@
 #define EINA_SUITE_H_
 
 #include <check.h>
+#include "../efl_check.h"
 
 void eina_test_ustringshare(TCase *tc);
 void eina_test_binshare(TCase *tc);

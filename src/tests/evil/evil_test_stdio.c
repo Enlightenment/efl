@@ -66,7 +66,7 @@ _evil_test_stdio_file_new_and_opened(const char *n, const char *t)
   return f;
 }
 
-START_TEST(evil_stdio_rename_src_file_none)
+EFL_START_TEST(evil_stdio_rename_src_file_none)
 {
    int res;
 
@@ -76,9 +76,9 @@ START_TEST(evil_stdio_rename_src_file_none)
    res = rename("evil_foo.txt", NULL);
    fail_if(res != -1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdio_rename_dst_file_none)
+EFL_START_TEST(evil_stdio_rename_dst_file_none)
 {
    int res1;
    int res2;
@@ -98,9 +98,9 @@ START_TEST(evil_stdio_rename_dst_file_none)
    fail_if(res3 == -1);
    fail_if(res4 == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdio_rename_dst_file_exists)
+EFL_START_TEST(evil_stdio_rename_dst_file_exists)
 {
    int res1;
    int res2;
@@ -123,9 +123,9 @@ START_TEST(evil_stdio_rename_dst_file_exists)
    fail_if(res2 == -1);
    fail_if(res3 == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdio_rename_dst_file_used)
+EFL_START_TEST(evil_stdio_rename_dst_file_used)
 {
    FILE *f;
    int res1;
@@ -153,9 +153,9 @@ START_TEST(evil_stdio_rename_dst_file_used)
    fail_if(res2 == -1);
    fail_if(res3 == -1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdio_rename_dst_file_move_to_dir)
+EFL_START_TEST(evil_stdio_rename_dst_file_move_to_dir)
 {
    int res1;
    int res2;
@@ -178,9 +178,9 @@ START_TEST(evil_stdio_rename_dst_file_move_to_dir)
    fail_if(res3 == -1);
    fail_if(res4 == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdio_rename_dst_dir_none)
+EFL_START_TEST(evil_stdio_rename_dst_dir_none)
 {
    int res1;
    int res2;
@@ -197,9 +197,9 @@ START_TEST(evil_stdio_rename_dst_dir_none)
    fail_if(res2 == -1);
    fail_if(res3 == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_stdio_rename_dst_dir_exists)
+EFL_START_TEST(evil_stdio_rename_dst_dir_exists)
 {
    int res1;
    int res2;
@@ -222,7 +222,7 @@ START_TEST(evil_stdio_rename_dst_dir_exists)
    fail_if(res2 == -1);
    fail_if(res3 == 0);
 }
-END_TEST
+EFL_END_TEST
 
 void evil_test_stdio(TCase *tc)
 {

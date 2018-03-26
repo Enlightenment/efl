@@ -31,7 +31,7 @@ _teardown(void)
    check_shutdown();
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = NULL;
    // ELDBUS_FDO_INTERFACE have no properties
@@ -43,18 +43,18 @@ START_TEST(properties_get)
    // properties contains 2 properties, "Interfaces" and "Features".
    //ck_assert_int_eq(0, eina_array_count(properties));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
    // Nonexistent property must return ERROR
    Efl_Future *future;
    future = efl_model_property_get(dbus_proxy, "nonexistent");
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_set)
+EFL_START_TEST(property_set)
 {
    Eina_Value value;
    Efl_Future *future;
@@ -66,7 +66,7 @@ START_TEST(property_set)
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
    eina_value_flush(&value);
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_dbus_proxy_children_count(Eo *efl_model)
@@ -75,27 +75,27 @@ _test_dbus_proxy_children_count(Eo *efl_model)
    check_efl_model_children_count_ge(efl_model, 2);
 }
 
-START_TEST(children_count)
+EFL_START_TEST(children_count)
 {
    _test_dbus_proxy_children_count(dbus_proxy);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
    check_efl_model_children_slice_get(dbus_proxy);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child;
    child = efl_model_child_add(dbus_proxy);
    ck_assert_ptr_eq(NULL, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+EFL_START_TEST(child_del)
 {
    unsigned int expected_children_count = 0;
    Efl_Future *future;
@@ -112,7 +112,7 @@ START_TEST(child_del)
 
    ck_assert_int_le(expected_children_count, actual_children_count);
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_model_proxy(TCase *tc)
 {

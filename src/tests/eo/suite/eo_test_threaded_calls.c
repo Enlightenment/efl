@@ -111,7 +111,7 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
    return (void *) (uintptr_t) v;
 }
 
-START_TEST(eo_threaded_calls_test)
+EFL_START_TEST(eo_threaded_calls_test)
 {
    Eina_Thread threads[2];
 
@@ -135,7 +135,7 @@ START_TEST(eo_threaded_calls_test)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_threaded_calls(TCase *tc)
 {

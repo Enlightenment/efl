@@ -6,12 +6,12 @@
 
 #include "ecore_suite.h"
 
-START_TEST(ecore_test_ecore_imf_init)
+EFL_START_TEST(ecore_test_ecore_imf_init)
 {
    ecore_imf_init();
    ecore_imf_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static const char *built_modules[] = {
 #ifdef ENABLE_XIM
@@ -42,7 +42,7 @@ _find_list(const Eina_List *lst, const char *item)
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_imf_modules)
+EFL_START_TEST(ecore_test_ecore_imf_modules)
 {
    Eina_List *modules;
    const char **itr;
@@ -61,9 +61,9 @@ START_TEST(ecore_test_ecore_imf_modules)
    eina_list_free(modules);
    ecore_imf_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_imf_modules_load)
+EFL_START_TEST(ecore_test_ecore_imf_modules_load)
 {
    const char **itr;
 
@@ -78,7 +78,7 @@ START_TEST(ecore_test_ecore_imf_modules_load)
 
    ecore_imf_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_imf(TCase *tc)
 {

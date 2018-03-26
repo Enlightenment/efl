@@ -49,7 +49,7 @@ static const char *get_file_full_path(const char *filename)
    return NULL;
 }
 
-START_TEST(eina_simple_xml_parser_node_dump)
+EFL_START_TEST(eina_simple_xml_parser_node_dump)
 {
    FILE *f;
 
@@ -88,9 +88,9 @@ START_TEST(eina_simple_xml_parser_node_dump)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_simple_xml_parser_null_node_dump)
+EFL_START_TEST(eina_simple_xml_parser_null_node_dump)
 {
    eina_init();
    
@@ -99,9 +99,9 @@ START_TEST(eina_simple_xml_parser_null_node_dump)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_simple_xml_parser_childs_count)
+EFL_START_TEST(eina_simple_xml_parser_childs_count)
 {
     eina_init();
 
@@ -116,7 +116,7 @@ START_TEST(eina_simple_xml_parser_childs_count)
 
     eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 enum simple_xml_parser_current_state
 {
@@ -221,7 +221,7 @@ eina_simple_xml_parser_parse_with_custom_callback_tag_cb(void *data,
     return EINA_TRUE;
 }
 
-START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
+EFL_START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
 {
     FILE *f;
 
@@ -263,7 +263,7 @@ START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
 
     eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_simple_xml_parser(TCase *tc)

@@ -37,7 +37,7 @@ do \
 } \
 while (0)
 
-START_TEST(evas_text_simple)
+EFL_START_TEST(evas_text_simple)
 {
    START_TEXT_TEST();
    const char *buf = "Test - בדיקה";
@@ -45,10 +45,10 @@ START_TEST(evas_text_simple)
    fail_if(strcmp(evas_object_text_text_get(to), buf));
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Various text related geometries */
-START_TEST(evas_text_geometries)
+EFL_START_TEST(evas_text_geometries)
 {
    START_TEXT_TEST();
    const char *buf = "Tests";
@@ -162,10 +162,10 @@ START_TEST(evas_text_geometries)
 
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Various evas stuff, such as scale */
-START_TEST(evas_text_evas)
+EFL_START_TEST(evas_text_evas)
 {
    Evas_Coord w, h, bw, bh;
    START_TEXT_TEST();
@@ -186,7 +186,7 @@ START_TEST(evas_text_evas)
 
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_ellipsis(Evas_Object *to, const char *buf, const char *font, Evas_Font_Size size, double ellipsis)
@@ -223,7 +223,7 @@ _test_ellipsis(Evas_Object *to, const char *buf, const char *font, Evas_Font_Siz
    fail_if(w < 100);
 }
 
-START_TEST(evas_text_ellipsis)
+EFL_START_TEST(evas_text_ellipsis)
 {
    START_TEXT_TEST();
    const char *buf = "נסיון בלה בלה בלה בלה";
@@ -270,11 +270,11 @@ START_TEST(evas_text_ellipsis)
 
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* Tests for functions that are in evas_object_text.c but
  * don't really have anything to do with it. */
-START_TEST(evas_text_unrelated)
+EFL_START_TEST(evas_text_unrelated)
 {
    START_TEXT_TEST();
    const char *buf = "נסיון";
@@ -293,7 +293,7 @@ START_TEST(evas_text_unrelated)
 
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 #define _CHECK_SET_GET(x) \
 do \
@@ -309,7 +309,7 @@ do \
 } \
 while (0)
 
-START_TEST(evas_text_set_get)
+EFL_START_TEST(evas_text_set_get)
 {
    START_TEXT_TEST();
    const char *buf = "Test - בדיקה";
@@ -413,9 +413,9 @@ START_TEST(evas_text_set_get)
 
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_text_style)
+EFL_START_TEST(evas_text_style)
 {
    Evas_Coord l, r, t, b;
    START_TEXT_TEST();
@@ -464,10 +464,10 @@ START_TEST(evas_text_style)
    fail_if(strcmp(evas_object_text_text_get(to), buf));
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef HAVE_FRIBIDI
-START_TEST(evas_text_bidi)
+EFL_START_TEST(evas_text_bidi)
 {
    START_TEXT_TEST();
    const char *buf = "Test - בדיקה";
@@ -625,10 +625,10 @@ START_TEST(evas_text_bidi)
 
    END_TEXT_TEST();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(evas_text_render)
+EFL_START_TEST(evas_text_render)
 {
    Ecore_Evas *ee = ecore_evas_buffer_new(500, 500);
    Evas *evas = ecore_evas_get(ee);
@@ -654,9 +654,9 @@ START_TEST(evas_text_render)
 
    ecore_evas_free(ee);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_text_font_load)
+EFL_START_TEST(evas_text_font_load)
 {
    Ecore_Evas *ee = ecore_evas_buffer_new(500, 500);
    Evas *evas = ecore_evas_get(ee);
@@ -680,7 +680,7 @@ START_TEST(evas_text_font_load)
 
    ecore_evas_free(ee);
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_text(TCase *tc)
 {

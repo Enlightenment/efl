@@ -2,7 +2,7 @@
 #define _ELDBUS_SUITE_H
 
 #include <check.h>
-
+#include "../efl_check.h"
 void eldbus_test_eldbus_init(TCase *tc);
 void eldbus_test_eldbus_model(TCase *tc);
 void eldbus_test_eldbus_model_connection(TCase *tc);

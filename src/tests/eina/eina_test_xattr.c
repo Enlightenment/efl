@@ -38,7 +38,7 @@ get_file_path(const char* tmpdirname, const char* filename)
 }
 
 #ifdef XATTR_TEST_DIR
-START_TEST(eina_test_xattr_set)
+EFL_START_TEST(eina_test_xattr_set)
 {
    char *filename = "tmpfile";
    char *attribute1 = "user.comment1";
@@ -95,9 +95,9 @@ START_TEST(eina_test_xattr_set)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_xattr_list)
+EFL_START_TEST(eina_test_xattr_list)
 {
    char *filename = "tmpfile";
    char *filename_cp = "tmpfile_cp";
@@ -245,9 +245,9 @@ START_TEST(eina_test_xattr_list)
    eina_tmpstr_del(cp_file_path);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_xattr_types)
+EFL_START_TEST(eina_test_xattr_types)
 {
    char *filename = "tmpfile";
    char *str_attr = "user.name", *ret_str;
@@ -291,7 +291,7 @@ START_TEST(eina_test_xattr_types)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

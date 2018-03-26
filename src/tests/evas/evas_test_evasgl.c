@@ -479,12 +479,12 @@ _test_evasgl_formats(const char *engine)
 }
 
 #define TEST_ADD_OPT(name, opt) \
-   START_TEST(evas ## name ## _opengl_x11) \
+   EFL_START_TEST(evas ## name ## _opengl_x11) \
    { name("opengl_x11"); } \
-   END_TEST \
-   START_TEST(evas ## name ## _buffer) \
+   EFL_END_TEST \
+   EFL_START_TEST(evas ## name ## _buffer) \
    { name("buffer"); } \
-   END_TEST
+   EFL_END_TEST
 #define TEST_ADD(name) TEST_ADD_OPT(name, NULL)
 
 TEST_ADD(_test_evasgl_init)

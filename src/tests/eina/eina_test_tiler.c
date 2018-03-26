@@ -53,7 +53,7 @@ check_iterator(Eina_Iterator *it, struct test_rect *cur_test)
    fail_if(i == 0);
 }
 
-START_TEST(eina_test_tile_grid_slicer_iterator)
+EFL_START_TEST(eina_test_tile_grid_slicer_iterator)
 {
    Eina_Iterator *it;
    struct test_rect *cur_test;
@@ -126,9 +126,9 @@ START_TEST(eina_test_tile_grid_slicer_iterator)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_all)
+EFL_START_TEST(eina_test_tiler_all)
 {
    Eina_Tiler *tl;
    Eina_Iterator *it;
@@ -185,9 +185,9 @@ START_TEST(eina_test_tiler_all)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_stable)
+EFL_START_TEST(eina_test_tiler_stable)
 {
    Eina_Tiler *tl;
    Eina_Rectangle *rp;
@@ -235,9 +235,9 @@ START_TEST(eina_test_tiler_stable)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_calculation)
+EFL_START_TEST(eina_test_tiler_calculation)
 {
    Eina_Tiler *t1, *t2, *t;
    Eina_Iterator *itr;
@@ -351,9 +351,9 @@ START_TEST(eina_test_tiler_calculation)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_size)
+EFL_START_TEST(eina_test_tiler_size)
 {
    Eina_Rectangle *r;
    Eina_Iterator *it;
@@ -381,7 +381,7 @@ START_TEST(eina_test_tiler_size)
    eina_tiler_free(t);
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_tiler(TCase *tc)

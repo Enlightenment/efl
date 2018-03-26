@@ -128,7 +128,7 @@ static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
    return 0;
 }
 
-START_TEST(evas_object_mesh_loader_saver)
+EFL_START_TEST(evas_object_mesh_loader_saver)
 {
    char buffer[PATH_MAX];
    Evas *e = _setup_evas();
@@ -155,7 +155,7 @@ START_TEST(evas_object_mesh_loader_saver)
    evas_free(e);
    ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_mesh(TCase *tc)
 {

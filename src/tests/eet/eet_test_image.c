@@ -69,7 +69,7 @@ static const Eet_Test_Image test_alpha = {
    }
 };
 
-START_TEST(eet_test_image_normal)
+EFL_START_TEST(eet_test_image_normal)
 {
    Eet_File *ef;
    char *file;
@@ -430,9 +430,9 @@ START_TEST(eet_test_image_normal)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_image_small)
+EFL_START_TEST(eet_test_image_small)
 {
    char *file;
    unsigned int image[4];
@@ -493,7 +493,7 @@ START_TEST(eet_test_image_small)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_image(TCase *tc)
 {

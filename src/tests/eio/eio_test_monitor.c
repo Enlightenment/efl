@@ -133,7 +133,7 @@ static void _common_shutdown(Eina_Tmpstr *dirname)
 
 /////// tests monitoring a directory
 
-START_TEST(eio_test_monitor_add_and_remove)
+EFL_START_TEST(eio_test_monitor_add_and_remove)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -154,9 +154,9 @@ START_TEST(eio_test_monitor_add_and_remove)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_monitor_add_remove_add)
+EFL_START_TEST(eio_test_monitor_add_remove_add)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -180,9 +180,9 @@ START_TEST(eio_test_monitor_add_remove_add)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_monitor_add_add_remove_remove)
+EFL_START_TEST(eio_test_monitor_add_add_remove_remove)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename1;
@@ -207,7 +207,7 @@ START_TEST(eio_test_monitor_add_add_remove_remove)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _file_created_cb(void *data, int type, void *event)
 {
@@ -220,7 +220,7 @@ static void _file_created_cb(void *data, int type, void *event)
 }
 
 
-START_TEST(eio_test_monitor_directory_file_created_notify)
+EFL_START_TEST(eio_test_monitor_directory_file_created_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -240,7 +240,7 @@ START_TEST(eio_test_monitor_directory_file_created_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 struct {
    Eina_Stringshare *s;
@@ -276,7 +276,7 @@ _multi_file_created_cb(void *data EINA_UNUSED, int type, void *event)
    ecore_main_loop_quit();
 }
 
-START_TEST(eio_test_monitor_directory_multi_file_created_notify)
+EFL_START_TEST(eio_test_monitor_directory_multi_file_created_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
 
@@ -299,7 +299,7 @@ START_TEST(eio_test_monitor_directory_multi_file_created_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _file_deleted_cb(void *data, int type, void *event)
 {
@@ -311,7 +311,7 @@ static void _file_deleted_cb(void *data, int type, void *event)
      }
 }
 
-START_TEST(eio_test_monitor_directory_file_deleted_notify)
+EFL_START_TEST(eio_test_monitor_directory_file_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -332,7 +332,7 @@ START_TEST(eio_test_monitor_directory_file_deleted_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _file_modified_cb(void *data, int type, void *event)
 {
@@ -344,7 +344,7 @@ static void _file_modified_cb(void *data, int type, void *event)
      }
 }
 
-START_TEST(eio_test_monitor_directory_file_modified_notify)
+EFL_START_TEST(eio_test_monitor_directory_file_modified_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -366,7 +366,7 @@ START_TEST(eio_test_monitor_directory_file_modified_notify)
    //cleanup
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _file_closed_cb(void *data, int type, void *event)
 {
@@ -378,7 +378,7 @@ static void _file_closed_cb(void *data, int type, void *event)
      }
 }
 
-START_TEST(eio_test_monitor_directory_file_closed_notify)
+EFL_START_TEST(eio_test_monitor_directory_file_closed_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -398,7 +398,7 @@ START_TEST(eio_test_monitor_directory_file_closed_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _directory_created_cb(void *data, int type, void *event)
 {
@@ -410,7 +410,7 @@ static void _directory_created_cb(void *data, int type, void *event)
      }
 }
 
-START_TEST(eio_test_monitor_directory_directory_created_notify)
+EFL_START_TEST(eio_test_monitor_directory_directory_created_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -430,7 +430,7 @@ START_TEST(eio_test_monitor_directory_directory_created_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _directory_deleted_cb(void *data, int type, void *event)
 {
@@ -442,7 +442,7 @@ static void _directory_deleted_cb(void *data, int type, void *event)
      }
 }
 
-START_TEST(eio_test_monitor_directory_directory_deleted_notify)
+EFL_START_TEST(eio_test_monitor_directory_directory_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -463,7 +463,7 @@ START_TEST(eio_test_monitor_directory_directory_deleted_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _directory_modified_cb(void *data, int type, void *event)
 {
@@ -476,7 +476,7 @@ static void _directory_modified_cb(void *data, int type, void *event)
 }
 
 
-START_TEST(eio_test_monitor_directory_directory_modified_notify)
+EFL_START_TEST(eio_test_monitor_directory_directory_modified_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -497,7 +497,7 @@ START_TEST(eio_test_monitor_directory_directory_modified_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 
 static void _directory_self_deleted_cb(void *data, int type, void *event)
@@ -511,7 +511,7 @@ static void _directory_self_deleted_cb(void *data, int type, void *event)
 }
 
 
-START_TEST(eio_test_monitor_directory_directory_self_deleted_notify)
+EFL_START_TEST(eio_test_monitor_directory_directory_self_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
 
@@ -528,11 +528,11 @@ START_TEST(eio_test_monitor_directory_directory_self_deleted_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 //////// test monitoring a single file
 
-START_TEST(eio_test_monitor_file_file_modified_notify)
+EFL_START_TEST(eio_test_monitor_file_file_modified_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -554,9 +554,9 @@ START_TEST(eio_test_monitor_file_file_modified_notify)
    //cleanup
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_monitor_file_file_attrib_modified_notify)
+EFL_START_TEST(eio_test_monitor_file_file_attrib_modified_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -577,10 +577,10 @@ START_TEST(eio_test_monitor_file_file_attrib_modified_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eio_test_monitor_file_file_closed_notify)
+EFL_START_TEST(eio_test_monitor_file_file_closed_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -600,9 +600,9 @@ START_TEST(eio_test_monitor_file_file_closed_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_monitor_file_file_self_deleted_notify)
+EFL_START_TEST(eio_test_monitor_file_file_self_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -623,9 +623,9 @@ START_TEST(eio_test_monitor_file_file_self_deleted_notify)
 
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_monitor_two_monitors_one_event)
+EFL_START_TEST(eio_test_monitor_two_monitors_one_event)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Tmpstr *dirname2;
@@ -650,10 +650,10 @@ START_TEST(eio_test_monitor_two_monitors_one_event)
    _delete_directory((void*)dirname2);
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eio_test_monitor_two_monitors_one_removed_one_event)
+EFL_START_TEST(eio_test_monitor_two_monitors_one_removed_one_event)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Tmpstr *dirname2;
@@ -681,14 +681,14 @@ START_TEST(eio_test_monitor_two_monitors_one_removed_one_event)
    _delete_directory((void*)dirname2);
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 static void _unexpected_event_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    ck_abort_msg("unexpected event");
 }
 
-START_TEST(eio_test_monitor_two_monitors_one_removed_no_event)
+EFL_START_TEST(eio_test_monitor_two_monitors_one_removed_no_event)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Tmpstr *dirname2;
@@ -717,9 +717,9 @@ START_TEST(eio_test_monitor_two_monitors_one_removed_no_event)
    _delete_directory((void*)dirname2);
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_test_monitor_two_files_in_same_directory)
+EFL_START_TEST(eio_test_monitor_two_files_in_same_directory)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -745,10 +745,10 @@ START_TEST(eio_test_monitor_two_files_in_same_directory)
    //cleanup
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eio_test_monitor_two_files_in_same_directory_one_removed)
+EFL_START_TEST(eio_test_monitor_two_files_in_same_directory_one_removed)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
@@ -778,7 +778,7 @@ START_TEST(eio_test_monitor_two_files_in_same_directory_one_removed)
    //cleanup
    _common_shutdown(dirname);
 }
-END_TEST
+EFL_END_TEST
 
 
 void eio_test_monitor(TCase *tc)

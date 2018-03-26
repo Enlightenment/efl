@@ -98,7 +98,7 @@ _eina_mempool_test(Eina_Mempool *mp,
 }
 
 #ifdef EINA_BUILD_CHAINED_POOL
-START_TEST(eina_mempool_chained_mempool)
+EFL_START_TEST(eina_mempool_chained_mempool)
 {
    Eina_Mempool *mp;
 
@@ -109,11 +109,11 @@ START_TEST(eina_mempool_chained_mempool)
 
    _mempool_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 #ifdef EINA_BUILD_PASS_THROUGH
-START_TEST(eina_mempool_pass_through)
+EFL_START_TEST(eina_mempool_pass_through)
 {
    Eina_Mempool *mp;
 
@@ -124,7 +124,7 @@ START_TEST(eina_mempool_pass_through)
 
    _mempool_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

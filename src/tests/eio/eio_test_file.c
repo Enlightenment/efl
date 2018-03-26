@@ -115,7 +115,7 @@ _open_done_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
    ecore_main_loop_quit();
 }
 
-START_TEST(eio_file_test_ls)
+EFL_START_TEST(eio_file_test_ls)
 {
    int number_of_listed_files = 0, ret;
    const char *new_dir = "new_dir";
@@ -192,9 +192,9 @@ START_TEST(eio_file_test_ls)
    eio_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_file_test_file)
+EFL_START_TEST(eio_file_test_file)
 {
    int number_of_listed_files = 0, ret;
    Eina_Bool is_dir;
@@ -307,9 +307,9 @@ START_TEST(eio_file_test_file)
    eio_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eio_file_test_open)
+EFL_START_TEST(eio_file_test_open)
 {
    Eina_Bool opened_file;
    int ret;
@@ -344,7 +344,7 @@ START_TEST(eio_file_test_open)
    eio_shutdown();
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eio_test_file(TCase *tc)

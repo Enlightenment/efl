@@ -118,7 +118,7 @@ _response_message_cb(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUS
  * @}
  */
 
-START_TEST(utc_eldbus_pending_data_p)
+EFL_START_TEST(utc_eldbus_pending_data_p)
 {
    const char *bus = "org.freedesktop.DBus";
    const char *path = "/org/freedesktop/DBus";
@@ -151,7 +151,7 @@ START_TEST(utc_eldbus_pending_data_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eldbus_test_eldbus_pending_data(TCase *tc)

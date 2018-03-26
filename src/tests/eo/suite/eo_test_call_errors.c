@@ -12,7 +12,7 @@
 
 static struct log_ctx ctx;
 
-START_TEST(eo_pure_virtual_fct_call)
+EFL_START_TEST(eo_pure_virtual_fct_call)
 {
    efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
@@ -28,9 +28,9 @@ START_TEST(eo_pure_virtual_fct_call)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eo_api_not_implemented_call)
+EFL_START_TEST(eo_api_not_implemented_call)
 {
    efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
@@ -46,9 +46,9 @@ START_TEST(eo_api_not_implemented_call)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eo_op_not_found_in_super)
+EFL_START_TEST(eo_op_not_found_in_super)
 {
    efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
@@ -64,7 +64,7 @@ START_TEST(eo_op_not_found_in_super)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 //the fallback code that will be called
 
@@ -110,7 +110,7 @@ static const Efl_Class_Description errorcase_class_desc = {
 
 EFL_DEFINE_CLASS(simple_errorcase_class_get, &errorcase_class_desc, EO_CLASS, NULL)
 
-START_TEST(eo_fallbackcall_execute)
+EFL_START_TEST(eo_fallbackcall_execute)
 {
    efl_object_init();
 
@@ -126,7 +126,7 @@ START_TEST(eo_fallbackcall_execute)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_call_errors(TCase *tc)
 {

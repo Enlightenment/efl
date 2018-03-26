@@ -20,7 +20,7 @@
 #define EVIL_SUITE_H_
 
 #include <check.h>
-
+#include "../efl_check.h"
 void evil_test_dlfcn(TCase *tc);
 /* void evil_test_fcntl(TCase *tc); */
 /* void evil_test_fnmatch(TCase *tc); */

@@ -689,11 +689,11 @@ _activable_list_get(Eldbus_Message_Cb message_cb)
  * @}
  */
 
-START_TEST(utc_eldbus_message_iterator_activatable_list_p)
+EFL_START_TEST(utc_eldbus_message_iterator_activatable_list_p)
 {
    _activable_list_get(_response_message_cb);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -738,7 +738,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_info_data_get_p)
+EFL_START_TEST(utc_eldbus_message_info_data_get_p)
 {
    const int timeout_send_ms = 1000;
 
@@ -772,7 +772,7 @@ START_TEST(utc_eldbus_message_info_data_get_p)
    eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -806,7 +806,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_signal_new_p)
+EFL_START_TEST(utc_eldbus_message_signal_new_p)
 {
    const int timeout_send_ms = 1000;
 
@@ -837,7 +837,7 @@ START_TEST(utc_eldbus_message_signal_new_p)
    eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -872,7 +872,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_ref_unref_p)
+EFL_START_TEST(utc_eldbus_message_ref_unref_p)
 {
    Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    ck_assert_ptr_ne(NULL, conn);
@@ -893,7 +893,7 @@ START_TEST(utc_eldbus_message_ref_unref_p)
 
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -925,7 +925,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_basic_eina_value_p)
+EFL_START_TEST(utc_eldbus_message_basic_eina_value_p)
 {
    is_success = EINA_FALSE;
 
@@ -944,7 +944,7 @@ START_TEST(utc_eldbus_message_basic_eina_value_p)
 
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -975,11 +975,11 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_iter_next_p)
+EFL_START_TEST(utc_eldbus_message_iter_next_p)
 {
    _activable_list_get(_activatable_list_response_cb);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1012,7 +1012,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_arguments_vappend_p)
+EFL_START_TEST(utc_eldbus_message_arguments_vappend_p)
 {
    is_success = EINA_FALSE;
    Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
@@ -1036,7 +1036,7 @@ START_TEST(utc_eldbus_message_arguments_vappend_p)
    eldbus_message_unref(message_vparam);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1072,7 +1072,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_arguments_vget_p)
+EFL_START_TEST(utc_eldbus_message_arguments_vget_p)
 {
    is_success = EINA_FALSE;
    Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
@@ -1097,7 +1097,7 @@ START_TEST(utc_eldbus_message_arguments_vget_p)
    eldbus_message_unref(message);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1159,7 +1159,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_eina_p)
+EFL_START_TEST(utc_eldbus_message_eina_p)
 {
    is_success = EINA_FALSE;
    is_register_service = EINA_FALSE;
@@ -1210,7 +1210,7 @@ START_TEST(utc_eldbus_message_eina_p)
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1271,7 +1271,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_container_p)
+EFL_START_TEST(utc_eldbus_message_container_p)
 {
    int i;
 
@@ -1331,7 +1331,7 @@ START_TEST(utc_eldbus_message_container_p)
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1376,7 +1376,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_error_new_p)
+EFL_START_TEST(utc_eldbus_message_error_new_p)
 {
    is_success = EINA_FALSE;
 
@@ -1414,7 +1414,7 @@ START_TEST(utc_eldbus_message_error_new_p)
 
    ck_assert_msg(is_success, "Can't get response");
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1451,7 +1451,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_iter_del_p)
+EFL_START_TEST(utc_eldbus_message_iter_del_p)
 {
    Eldbus_Connection *conn_server = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn_server);
@@ -1485,7 +1485,7 @@ START_TEST(utc_eldbus_message_iter_del_p)
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1530,7 +1530,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
+EFL_START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
 {
    is_success = EINA_FALSE;
 
@@ -1570,7 +1570,7 @@ START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
    ck_assert_msg(is_success, "Can't get response");
 
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1599,7 +1599,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_hello_p)
+EFL_START_TEST(utc_eldbus_hello_p)
 {
    is_success = EINA_FALSE;
 
@@ -1617,7 +1617,7 @@ START_TEST(utc_eldbus_hello_p)
 
    ck_assert_msg(is_success, "Can't get response");
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_message(TCase *tc)
 {

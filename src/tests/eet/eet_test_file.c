@@ -11,7 +11,7 @@
 #include "eet_suite.h"
 #include "eet_test_common.h"
 
-START_TEST(eet_test_file_simple_write)
+EFL_START_TEST(eet_test_file_simple_write)
 {
    const char *buffer = "Here is a string of data to save !";
    Eina_Iterator *it;
@@ -122,9 +122,9 @@ START_TEST(eet_test_file_simple_write)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_file_data)
+EFL_START_TEST(eet_test_file_data)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
@@ -282,9 +282,9 @@ START_TEST(eet_test_file_data)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_file_data_dump)
+EFL_START_TEST(eet_test_file_data_dump)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
@@ -384,9 +384,9 @@ START_TEST(eet_test_file_data_dump)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_file_fp)
+EFL_START_TEST(eet_test_file_fp)
 {
    char *file;
    Eet_Data_Descriptor_Class eddc;
@@ -458,7 +458,7 @@ START_TEST(eet_test_file_fp)
 
    eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_file(TCase *tc)
 {

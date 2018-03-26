@@ -33,7 +33,7 @@ event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_DONE;
 }
 
-START_TEST(eeze_test_sensor_read)
+EFL_START_TEST(eeze_test_sensor_read)
 {
    Eeze_Sensor_Obj *sens = NULL;
    int ret = 0;
@@ -166,9 +166,9 @@ START_TEST(eeze_test_sensor_read)
    ret = eeze_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_sensor_async_read)
+EFL_START_TEST(eeze_test_sensor_async_read)
 {
    Ecore_Event_Handler *handler;
 
@@ -242,9 +242,9 @@ START_TEST(eeze_test_sensor_async_read)
    ret = eeze_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_sensor_obj_get)
+EFL_START_TEST(eeze_test_sensor_obj_get)
 {
    Eeze_Sensor_Obj *obj = NULL, *obj_tmp = NULL;
    int ret = 0;
@@ -270,7 +270,7 @@ START_TEST(eeze_test_sensor_obj_get)
    ret = eeze_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void eeze_test_sensor(TCase *tc)
 {

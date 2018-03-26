@@ -154,7 +154,7 @@ _signal_handler_get(Eldbus_Connection *conn)
  * @}
  * @}
  */
-START_TEST(utc_eldbus_signal_handler_add_p)
+EFL_START_TEST(utc_eldbus_signal_handler_add_p)
 {
    is_success_cb = EINA_FALSE;
 
@@ -183,7 +183,7 @@ START_TEST(utc_eldbus_signal_handler_add_p)
    eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -221,7 +221,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_signal_handler_del_p)
+EFL_START_TEST(utc_eldbus_signal_handler_del_p)
 {
    is_success_cb = EINA_FALSE;
 
@@ -252,7 +252,7 @@ START_TEST(utc_eldbus_signal_handler_del_p)
    eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -290,7 +290,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_signal_handler_get_p)
+EFL_START_TEST(utc_eldbus_signal_handler_get_p)
 {
    Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    ck_assert_ptr_ne(NULL, conn);
@@ -321,7 +321,7 @@ START_TEST(utc_eldbus_signal_handler_get_p)
    eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -362,7 +362,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_signal_handler_ref_unref_p)
+EFL_START_TEST(utc_eldbus_signal_handler_ref_unref_p)
 {
    is_success_cb = EINA_FALSE;
 
@@ -395,7 +395,7 @@ START_TEST(utc_eldbus_signal_handler_ref_unref_p)
    eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -436,7 +436,7 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
+EFL_START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
 {
    Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    ck_assert_ptr_ne(NULL, conn);
@@ -466,7 +466,7 @@ START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
 
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  *@}

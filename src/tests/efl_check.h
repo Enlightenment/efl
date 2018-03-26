@@ -1,11 +1,31 @@
 #ifndef EFL_CHECK_H
 #define EFL_CHECK_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h> /* getenv */
 #include <stdio.h> /* fprintf, fputs */
 #include <string.h> /* strcmp */
 #include <unistd.h> /* execvp */
 #include <errno.h> /* errno */
+#include <sys/time.h>
+
+#ifndef EINA_UNUSED
+
+#ifdef __GNUC__
+
+# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+#  define EINA_UNUSED __attribute__ ((__unused__))
+# else
+#  define EINA_UNUSED
+# endif
+#else
+#  define EINA_UNUSED
+#endif
+
+#endif
 
 typedef struct _Efl_Test_Case Efl_Test_Case;
 struct _Efl_Test_Case
@@ -23,7 +43,7 @@ _efl_tests_list(const Efl_Test_Case *etc)
       fprintf(stderr, "\t%s\n", itr->test_case);
 }
 
-static int
+EINA_UNUSED static int
 _efl_test_option_disp(int argc, char **argv, const Efl_Test_Case *etc)
 {
    int i;
@@ -103,14 +123,72 @@ _efl_test_fork_has(SRunner *sr)
    return 0;
 }
 
+#ifdef HAVE_GETTIMEOFDAY
+EINA_UNUSED static double _timing_start_time;
+
 static int
+_timing_enabled(void)
+{
+   const char *lc = getenv("TIMING_ENABLED");
+   return !!lc;
+}
+
+static double
+_timing_time_get(void)
+{
+   struct timeval timev;
+
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+
+EINA_UNUSED static void
+_timing_start(void)
+{
+   if (_timing_enabled())
+     _timing_start_time = _timing_time_get();
+}
+
+EINA_UNUSED static void
+_timing_end(void)
+{
+   double diff;
+
+   if (!_timing_enabled()) return;
+   diff = _timing_time_get() - _timing_start_time;
+
+   if (diff > 0.0001)
+     printf("TIME %s: %.5g\n", tcase_name(), diff);
+}
+
+# define EFL_START_TEST(TEST_NAME) \
+  START_TEST(TEST_NAME) \
+  _timing_start();
+
+# define EFL_END_TEST \
+  _timing_end(); \
+  END_TEST
+
+#else
+# define EFL_START_TEST(TEST_NAME) START_TEST(TEST_NAME)
+# define EFL_END_TEST END_TEST
+
+#endif
+
+EINA_UNUSED static int
 _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc)
 {
    Suite *s;
    SRunner *sr;
    TCase *tc;
    int i, failed_count;
+#ifdef HAVE_GETTIMEOFDAY
+   double tstart;
+   int timing = _timing_enabled();
 
+   if (timing)
+     tstart = _timing_time_get();
+#endif
    s = suite_create(suite_name);
    sr = srunner_create(s);
 
@@ -132,7 +210,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
-
+#ifdef HAVE_GETTIMEOFDAY
+   if (timing)
+     printf("SUITE TIME %s: %.5g\n", suite_name, _timing_time_get() - tstart);
+#endif
    return failed_count;
 }
 

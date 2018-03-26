@@ -32,7 +32,7 @@
 static const Eina_Unicode TEST0[] = {'t', 'e', 's', 't', '/', '0', 0};
 static const Eina_Unicode TEST1[] = {'t', 'e', 's', 't', '/', '1', 0};
 
-START_TEST(eina_ustringshare_simple)
+EFL_START_TEST(eina_ustringshare_simple)
 {
    const Eina_Unicode *t0;
    const Eina_Unicode *t1;
@@ -59,10 +59,10 @@ START_TEST(eina_ustringshare_simple)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_ustringshare_test_share)
+EFL_START_TEST(eina_ustringshare_test_share)
 {
    const Eina_Unicode *t0;
    const Eina_Unicode *t1;
@@ -85,9 +85,9 @@ START_TEST(eina_ustringshare_test_share)
 
    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_ustringshare_putstuff)
+EFL_START_TEST(eina_ustringshare_putstuff)
 {
    const Eina_Unicode *tmp;
    int i;
@@ -109,7 +109,7 @@ START_TEST(eina_ustringshare_putstuff)
 
         eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_ustringshare(TCase *tc)

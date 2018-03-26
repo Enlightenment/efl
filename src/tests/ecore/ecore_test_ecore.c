@@ -31,7 +31,7 @@ _dummy_cb(void *data)
    return !!data;
 }
 
-START_TEST(ecore_test_ecore_init)
+EFL_START_TEST(ecore_test_ecore_init)
 {
    int ret;
 
@@ -41,9 +41,9 @@ START_TEST(ecore_test_ecore_init)
    ret = ecore_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop)
+EFL_START_TEST(ecore_test_ecore_main_loop)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Timer *timer;
@@ -61,9 +61,9 @@ START_TEST(ecore_test_ecore_main_loop)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_idler)
+EFL_START_TEST(ecore_test_ecore_main_loop_idler)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Idler *idler;
@@ -81,9 +81,9 @@ START_TEST(ecore_test_ecore_main_loop_idler)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_idle_enterer)
+EFL_START_TEST(ecore_test_ecore_main_loop_idle_enterer)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Idle_Enterer *idle_enterer;
@@ -101,9 +101,9 @@ START_TEST(ecore_test_ecore_main_loop_idle_enterer)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_idle_before_enterer)
+EFL_START_TEST(ecore_test_ecore_main_loop_idle_before_enterer)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Idle_Enterer *idle_enterer;
@@ -121,9 +121,9 @@ START_TEST(ecore_test_ecore_main_loop_idle_before_enterer)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_idle_exiter)
+EFL_START_TEST(ecore_test_ecore_main_loop_idle_exiter)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Timer *timer;
@@ -146,9 +146,9 @@ START_TEST(ecore_test_ecore_main_loop_idle_exiter)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_timer)
+EFL_START_TEST(ecore_test_ecore_main_loop_timer)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Timer *timer;
@@ -172,7 +172,7 @@ START_TEST(ecore_test_ecore_main_loop_timer)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Disabled tests: inner main loops are not supposed to work!
 #if 0
@@ -204,7 +204,7 @@ static Eina_Bool _timer1(void *data)
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_main_loop_timer_inner)
+EFL_START_TEST(ecore_test_ecore_main_loop_timer_inner)
 {
    Ecore_Timer *timer;
    int ret;
@@ -224,7 +224,7 @@ START_TEST(ecore_test_ecore_main_loop_timer_inner)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 static Eina_Bool
@@ -238,7 +238,7 @@ _fd_handler_cb(void *data, Ecore_Fd_Handler *handler EINA_UNUSED)
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_main_loop_fd_handler)
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Fd_Handler *fd_handler;
@@ -267,9 +267,9 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
 {
    Ecore_Fd_Handler *fd_handler;
    int comm[2];
@@ -293,7 +293,7 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
 
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _eo_read_cb(void *data, const Efl_Event *info EINA_UNUSED)
@@ -304,7 +304,7 @@ _eo_read_cb(void *data, const Efl_Event *info EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
-START_TEST(ecore_test_efl_loop_fd)
+EFL_START_TEST(ecore_test_efl_loop_fd)
 {
    Eina_Bool did = EINA_FALSE;
    Eo *fd;
@@ -334,7 +334,7 @@ START_TEST(ecore_test_efl_loop_fd)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _efl_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
@@ -344,7 +344,7 @@ _efl_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    *dead = EINA_TRUE;
 }
 
-START_TEST(ecore_test_efl_loop_fd_lifecycle)
+EFL_START_TEST(ecore_test_efl_loop_fd_lifecycle)
 {
    Eina_Bool did = EINA_FALSE;
    Eina_Bool dead = EINA_FALSE;
@@ -385,9 +385,9 @@ START_TEST(ecore_test_efl_loop_fd_lifecycle)
 
    efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Fd_Handler *fd_handler;
@@ -418,7 +418,7 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _event_handler_cb(void *data, int type, void *event)
@@ -526,7 +526,7 @@ _filter_end(void *user_data, void *func_data EINA_UNUSED)
    (*fdid)++;
 }
 
-START_TEST(ecore_test_ecore_main_loop_event)
+EFL_START_TEST(ecore_test_ecore_main_loop_event)
 {
    Ecore_Event_Handler *handler, *handler2, *handler3;
    Ecore_Event_Filter *filter_handler;
@@ -630,7 +630,7 @@ START_TEST(ecore_test_ecore_main_loop_event)
 
    res_counter = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #if 0
 static int _log_dom;
@@ -670,7 +670,7 @@ _event_recursive_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EI
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_main_loop_event_recursive)
+EFL_START_TEST(ecore_test_ecore_main_loop_event_recursive)
 {
    /* This test tests if the event handlers are really called only once when
     * recursive main loops are used and any number of events may have occurred
@@ -698,10 +698,10 @@ START_TEST(ecore_test_ecore_main_loop_event_recursive)
    INF("main: end");
    ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(ecore_test_ecore_app)
+EFL_START_TEST(ecore_test_ecore_app)
 {
    int ret;
 
@@ -726,7 +726,7 @@ START_TEST(ecore_test_ecore_app)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 Eina_Bool _poller_cb(void *data)
 {
@@ -735,7 +735,7 @@ Eina_Bool _poller_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-START_TEST(ecore_test_ecore_main_loop_poller)
+EFL_START_TEST(ecore_test_ecore_main_loop_poller)
 {
    int ret;
 
@@ -791,7 +791,7 @@ START_TEST(ecore_test_ecore_main_loop_poller)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 Eina_Bool _poller_handler(void *data)
 {
@@ -826,7 +826,7 @@ Eina_Bool _poller_loop(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-START_TEST(ecore_test_ecore_main_loop_poller_add_del)
+EFL_START_TEST(ecore_test_ecore_main_loop_poller_add_del)
 {
    int ret, count_res = 0;
 
@@ -855,7 +855,7 @@ START_TEST(ecore_test_ecore_main_loop_poller_add_del)
 
    ret = ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore(TCase *tc)
 {

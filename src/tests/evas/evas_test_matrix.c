@@ -13,7 +13,7 @@
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
 
-START_TEST(evas_matrix)
+EFL_START_TEST(evas_matrix)
 {
    Eina_Vector3 position;
    Eina_Quaternion orientation;
@@ -33,7 +33,7 @@ START_TEST(evas_matrix)
    fail_if((mat.xx - 0.99 < DBL_EPSILON) || (mat.xy - 0.0 < DBL_EPSILON) ||
            (mat.yx -0.0 < DBL_EPSILON) || (mat.yy -0.49 < DBL_EPSILON));
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_matrix(TCase *tc)
 {

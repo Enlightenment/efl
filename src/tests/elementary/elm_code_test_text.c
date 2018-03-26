@@ -8,7 +8,7 @@
 #include "Elementary.h"
 #include "elm_code_text.h"
 
-START_TEST (elm_code_text_get_test)
+EFL_START_TEST (elm_code_text_get_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -29,9 +29,9 @@ START_TEST (elm_code_text_get_test)
    ck_assert_strn_eq("test", str, len);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_text_insert_test)
+EFL_START_TEST (elm_code_text_insert_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -52,9 +52,9 @@ START_TEST (elm_code_text_insert_test)
    ck_assert_strn_eq("testing", text, length);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_text_contains_test)
+EFL_START_TEST (elm_code_text_contains_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -75,9 +75,9 @@ START_TEST (elm_code_text_contains_test)
    ck_assert_int_eq(EINA_TRUE, elm_code_line_text_contains(line, "..."));
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_text_strpos_test)
+EFL_START_TEST (elm_code_text_strpos_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -102,9 +102,9 @@ START_TEST (elm_code_text_strpos_test)
    ck_assert_int_eq(13, elm_code_line_text_strpos(line, "...", 0));
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_text_newline_position_test)
+EFL_START_TEST (elm_code_text_newline_position_test)
 {
    short nllen;
    const char *unixtext = "a test\nwith newline";
@@ -118,9 +118,9 @@ START_TEST (elm_code_text_newline_position_test)
    ck_assert_int_eq(2, nllen);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_text_is_whitespace_test)
+EFL_START_TEST (elm_code_text_is_whitespace_test)
 {
    const char *text;
 
@@ -136,7 +136,7 @@ START_TEST (elm_code_text_is_whitespace_test)
    ck_assert_int_eq(0, elm_code_text_is_whitespace(text, strlen(text)));
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_text(TCase *tc)
 {

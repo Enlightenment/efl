@@ -37,7 +37,7 @@ _assert_line_token_types(Elm_Code_File *file, unsigned int number,unsigned int c
      }
 }
 
-START_TEST (elm_code_syntax_lookup)
+EFL_START_TEST (elm_code_syntax_lookup)
 {
    Elm_Code_Syntax *syntax;
 
@@ -48,9 +48,9 @@ START_TEST (elm_code_syntax_lookup)
    syntax = elm_code_syntax_for_mime_get("text/unknown");
    ck_assert(!syntax);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_syntax_c)
+EFL_START_TEST (elm_code_syntax_c)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -115,9 +115,9 @@ START_TEST (elm_code_syntax_c)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_syntax_scope_change_braces_test)
+EFL_START_TEST (elm_code_syntax_scope_change_braces_test)
 {
    Elm_Code_File *file;
    Elm_Code_Line *line;
@@ -146,7 +146,7 @@ START_TEST (elm_code_syntax_scope_change_braces_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_syntax(TCase *tc)
 {
