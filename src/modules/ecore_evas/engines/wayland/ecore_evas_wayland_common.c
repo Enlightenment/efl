@@ -55,6 +55,7 @@ _ecore_evas_wl_common_animator_register(Ecore_Evas *ee)
    edata = (Ecore_Evas_Engine_Wl_Data *)ee->engine.data;
 
    EINA_SAFETY_ON_TRUE_RETURN(edata->ticking);
+   EINA_SAFETY_ON_TRUE_RETURN(edata->frame != NULL);
 
    edata->frame = ecore_wl2_window_frame_callback_add(edata->win,
                                                       _anim_cb_tick, ee);
@@ -71,7 +72,8 @@ _ecore_evas_wl_common_animator_unregister(Ecore_Evas *ee)
 
    edata = ee->engine.data;
    edata->ticking = EINA_FALSE;
-   ecore_wl2_window_frame_callback_del(edata->frame);
+   if (edata->frame)
+     ecore_wl2_window_frame_callback_del(edata->frame);
    edata->frame = NULL;
 }
 
