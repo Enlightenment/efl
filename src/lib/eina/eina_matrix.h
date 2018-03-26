@@ -183,7 +183,7 @@ EAPI void eina_matrix3_f16p16_identity(Eina_Matrix3_F16p16 *m);
  *
  * In matrix multiplication, AB, the resultant matrix is created from
  * the rows of A multiplied against the columns of B and summed.  This
- * is not a cummutative; i.e.  AB != BA, so the ordering of arguments
+ * is not a commutative; i.e.  AB != BA, so the ordering of arguments
  * @p m1 and @p m2 matters.
  *
  * @param[in] m1 The first matrix.  Must be non-NULL.
@@ -254,7 +254,7 @@ EAPI Eina_Matrix_Type eina_matrix3_type_get(const Eina_Matrix3 *m);
  * @param[in] yz The sixth coefficient value.
  * @param[in] zx The seventh coefficient value.
  * @param[in] zy The eighth coefficient value.
- * @param[in] zz The nineth coefficient value.
+ * @param[in] zz The ninth coefficient value.
  *
  * This function sets the values of the coefficients of the matrix
  * @p m. No check is done on @p m.
@@ -357,7 +357,7 @@ EAPI Eina_Bool eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2
  *
  * In matrix multiplication, AB, the resultant matrix is created from
  * the rows of A multiplied against the columns of B and summed.  This
- * is not a cummutative; i.e.  AB != BA, so the ordering of arguments
+ * is not a commutative; i.e.  AB != BA, so the ordering of arguments
  * @p m1 and @p m2 matters.
  *
  * @param[in] m1 The first matrix.  Must be non-NULL.
@@ -653,7 +653,7 @@ EAPI void eina_matrix3_position_transform_set(Eina_Matrix3 *out, const double p_
 /**
  * @brief Sets normal of the given matrix.
  *
- * @param[out] out The result mtrix of normal
+ * @param[out] out The result matrix of normal
  * @param[in] m The matrix
  *
  * @since 1.17
@@ -713,7 +713,7 @@ EAPI Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
  * @param[in] wx The thirteenth coefficient value.
  * @param[in] wy The fourteenth coefficient value.
  * @param[in] wz The fifteenth coefficient value.
- * @param[in] ww The sizteenth coefficient value.
+ * @param[in] ww The sixteenth coefficient value.
  *
  * This function sets the values of the coefficients of the matrix
  * @p m. No check is done on @p m.
@@ -748,7 +748,7 @@ EAPI void eina_matrix4_values_set(Eina_Matrix4 *m,
  * @param[out] wx The thirteenth coefficient value.
  * @param[out] wy The fourteenth coefficient value.
  * @param[out] wz The fifteenth coefficient value.
- * @param[out] ww The sizteenth coefficient value.
+ * @param[out] ww The sixteenth coefficient value.
  *
  * This function gets the values of the coefficients of the matrix
  * @p m. No check is done on @p m.

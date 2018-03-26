@@ -167,7 +167,7 @@ EAPI void eina_quaternion_inverse(Eina_Quaternion *out, const Eina_Quaternion *q
 EAPI void eina_quaternion_array_set(Eina_Quaternion *dst, const double *v);
 
 /**
- * @brief Copy quternion.
+ * @brief Copy quaternion.
  *
  * @param dst The quaternion copy
  * @param src The quaternion for copy.
