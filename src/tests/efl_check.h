@@ -76,7 +76,7 @@ _efl_test_use(int argc, const char **argv, const char *test_case)
      return 1;
 
    for (; argc > 0; argc--, argv++)
-     if (strcmp(test_case, *argv) == 0)
+     if (strcasecmp(test_case, *argv) == 0)
        return 1;
    return 0;
 }
