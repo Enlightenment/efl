@@ -114,7 +114,7 @@ struct _Eina_Clist
 /**
  * @brief Adds an element after the specified one.
  *
- * @param[in] elem An element in the list
+ * @param[in,out] elem An element in the list
  * @param[in] to_add The element to add to the list
  * @pre The list head must be initialized once before adding anything.
  * @pre The element is not in any list.
@@ -128,7 +128,7 @@ static inline void eina_clist_add_after(Eina_Clist *elem, Eina_Clist *to_add);
 /**
  * @brief Adds an element before the specified one.
  *
- * @param[in] elem An element in the list
+ * @param[in,out] elem An element in the list
  * @param[in] to_add The element to add to the list
  * @pre The list head must be initialized once before adding anything.
  * @pre The element is not in any list.
@@ -142,7 +142,7 @@ static inline void eina_clist_add_before(Eina_Clist *elem, Eina_Clist *to_add);
 /**
  * @brief Adds an element to the head of the list.
  *
- * @param[in] list The list
+ * @param[in,out] list The list
  * @param[in] elem An element
  * @pre The list head must be initialized once before adding anything.
  * @pre The element is not in any list.
@@ -156,7 +156,7 @@ static inline void eina_clist_add_head(Eina_Clist *list, Eina_Clist *elem);
 /**
  * @brief Adds an element at the tail of the list.
  *
- * @param[in] list The list
+ * @param[in,out] list The list
  * @param[in] elem An element
  * @pre The list head must be initialized once before adding anything.
  * @pre The element is not in any list.
@@ -172,7 +172,7 @@ static inline void eina_clist_add_tail(Eina_Clist *list, Eina_Clist *elem);
  * @details This function is called on elements that have not been added to the list
  *          so that eina_clist_element_init() works correctly.
  *
- * @param[in] elem An element
+ * @param[in,out] elem An element
  * @pre The element is not in any list.
  * @post The element is marked as not being in any list.
  *
@@ -197,7 +197,7 @@ static inline int eina_clist_element_is_linked(Eina_Clist *elem);
 /**
  * @brief Removes an element from its list.
  *
- * @param[in] elem An element
+ * @param[in,out] elem An element
  * @pre The element is already in a list.
  * @post The element is marked as not being in any list.
  *
@@ -262,7 +262,7 @@ static inline int eina_clist_empty(const Eina_Clist *list);
 /**
  * @brief Initializes a list.
  *
- * @param[in] list The list
+ * @param[in,out] list The list
  * @pre The list is uninitialized
  * @post The list contains no items
  *
@@ -287,7 +287,7 @@ static inline unsigned int eina_clist_count(const Eina_Clist *list);
 /**
  * @brief Moves all elements from @p src to the tail of @p dst.
  *
- * @param[in] dst The list to be appended to
+ * @param[in,out] dst The list to be appended to
  * @param[in] src The list to append
  *
  * @post @p src is initialized, but is empty after this operation.
@@ -299,7 +299,7 @@ static inline void eina_clist_move_tail(Eina_Clist *dst, Eina_Clist *src);
 /**
  * @brief Moves all elements from @p src to the head of @p dst.
  *
- * @param[in] dst The list to be prepended to
+ * @param[in,out] dst The list to be prepended to
  * @param[in] src The list to prepend
  *
  * @post @p src is initialized, but is empty after this operation.
@@ -312,8 +312,8 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH
  * @brief Iterates through the list.
  *
- * @param cursor The pointer to be used during the interaction
- * @param list The list to be interacted with
+ * @param[out] cursor The pointer to be used during the interaction
+ * @param[in] list The list to be interacted with
  */
 #define EINA_CLIST_FOR_EACH(cursor,list) \
     for ((cursor) = (list)->next; (cursor) != (list); (cursor) = (cursor)->next)
@@ -322,9 +322,9 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH_SAFE
  * @brief Iterates through the list, with safety against removal.
  *
- * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliary pointer to be used during the interaction
- * @param list The list to be interacted with
+ * @param[out] cursor The pointer to be used during the interaction
+ * @param[out] cursor2 The auxiliary pointer to be used during the interaction
+ * @param[in] list The list to be interacted with
  */
 #define EINA_CLIST_FOR_EACH_SAFE(cursor, cursor2, list) \
     for ((cursor) = (list)->next, (cursor2) = (cursor)->next; \
@@ -335,10 +335,10 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH_ENTRY
  * @brief Iterates through the list using a list entry.
  *
- * @param elem The element to be used
- * @param list The list to be iterated
- * @param type The type of the list
- * @param field The field of the element
+ * @param[out] elem The element to be used
+ * @param[in] list The list to be iterated
+ * @param[in] type The type of the list
+ * @param[in] field The field of the element
  */
 #define EINA_CLIST_FOR_EACH_ENTRY(elem, list, type, field) \
     for ((elem) = EINA_CLIST_ENTRY((list)->next, type, field); \
@@ -349,11 +349,11 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH_ENTRY_SAFE
  * @brief Iterates through the list using a list entry, with safety against removal.
  *
- * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliary pointer to be used during the interaction
- * @param list The list to be interacted with
- * @param type The type of the list
- * @param field The field of the element
+ * @param[out] cursor The pointer to be used during the interaction
+ * @param[out] cursor2 The auxiliary pointer to be used during the interaction
+ * @param[in] list The list to be interacted with
+ * @param[in] type The type of the list
+ * @param[in] field The field of the element
 */
 #define EINA_CLIST_FOR_EACH_ENTRY_SAFE(cursor, cursor2, list, type, field) \
     for ((cursor) = EINA_CLIST_ENTRY((list)->next, type, field), \
@@ -366,8 +366,8 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH_REV
  * @brief Iterates through the list in the reverse order.
  *
- * @param cursor The pointer to be used during the interaction
- * @param list The list to be interacted with
+ * @param[out] cursor The pointer to be used during the interaction
+ * @param[in] list The list to be interacted with
  */
 #define EINA_CLIST_FOR_EACH_REV(cursor,list) \
     for ((cursor) = (list)->prev; (cursor) != (list); (cursor) = (cursor)->prev)
@@ -376,9 +376,9 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH_SAFE_REV
  * @brief Iterates through the list in the reverse order, with safety against removal.
  *
- * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliary pointer to be used during the interaction
- * @param list The list to be interacted with
+ * @param[out] cursor The pointer to be used during the interaction
+ * @param[out] cursor2 The auxiliary pointer to be used during the interaction
+ * @param[in] list The list to be interacted with
  */
 #define EINA_CLIST_FOR_EACH_SAFE_REV(cursor, cursor2, list) \
     for ((cursor) = (list)->prev, (cursor2) = (cursor)->prev; \
@@ -389,10 +389,10 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_FOR_EACH_ENTRY_REV
  * @brief Iterates through the list in the reverse order using a list entry.
  *
- * @param elem The element to be used
- * @param list The list to be iterated
- * @param type The type of the list
- * @param field The field of the element
+ * @param[out] elem The element to be used
+ * @param[in] list The list to be iterated
+ * @param[in] type The type of the list
+ * @param[in] field The field of the element
  */
 #define EINA_CLIST_FOR_EACH_ENTRY_REV(elem, list, type, field) \
     for ((elem) = EINA_CLIST_ENTRY((list)->prev, type, field); \
@@ -404,11 +404,11 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @brief Iterates through the list in the reverse order using a list entry, with safety against
  *        removal.
  *
- * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliary pointer to be used during the interaction
- * @param list The list to be interacted with
- * @param type The type of the list
- * @param field The field of the element
+ * @param[out] cursor The pointer to be used during the interaction
+ * @param[out] cursor2 The auxiliary pointer to be used during the interaction
+ * @param[in] list The list to be interacted with
+ * @param[in] type The type of the list
+ * @param[in] field The field of the element
  */
 #define EINA_CLIST_FOR_EACH_ENTRY_SAFE_REV(cursor, cursor2, list, type, field) \
     for ((cursor) = EINA_CLIST_ENTRY((list)->prev, type, field), \
@@ -421,7 +421,7 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_INIT
  * @brief Macros for statically initialized lists.
  *
- * @param list The list to be used
+ * @param[in,out] list The list to be used
  */
 #undef EINA_CLIST_INIT
 #define EINA_CLIST_INIT(list)  { &(list), &(list) }
@@ -430,9 +430,9 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @def EINA_CLIST_ENTRY
  * @brief Gets a pointer to the object containing the list element.
  *
- * @param elem The element to be used
- * @param type The type of the element
- * @param field The field of the element
+ * @param[out] elem The element to be used
+ * @param[in] type The type of the element
+ * @param[in] field The field of the element
  */
 #undef EINA_CLIST_ENTRY
 #define EINA_CLIST_ENTRY(elem, type, field) \

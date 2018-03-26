@@ -244,7 +244,7 @@ struct _Eina_Array
 /**
  * @brief Creates a new array.
  *
- * @param step The count of pointers to add when increasing the array size.
+ * @param[in] step The count of pointers to add when increasing the array size.
  * @return @c NULL on failure, non @c NULL otherwise.
  *
  * This function creates a new array. When adding an element, the array
@@ -259,7 +259,7 @@ EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_
 /**
  * @brief Frees an array.
  *
- * @param array The array to free.
+ * @param[in] array The array to free.
  *
  * This function frees @p array. It calls first eina_array_flush() then
  * frees the memory of the pointer. It does not free the memory
@@ -271,9 +271,9 @@ EAPI void        eina_array_free(Eina_Array *array);
 /**
  * @brief Sets the step of an array.
  *
- * @param array The array.
- * @param sizeof_eina_array Should be the value returned by sizeof(Eina_Array).
- * @param step The count of pointers to add when increasing the array size.
+ * @param[in,out] array The array.
+ * @param[in] sizeof_eina_array Should be the value returned by sizeof(Eina_Array).
+ * @param[in] step The count of pointers to add when increasing the array size.
  *
  * This function sets the step of @p array to @p step. For performance
  * reasons, there is no check of @p array. If it is @c NULL or
@@ -287,7 +287,7 @@ EAPI void        eina_array_step_set(Eina_Array  *array,
 /**
  * @brief Cleans an array.
  *
- * @param array The array to clean.
+ * @param[in,out] array The array to clean.
  *
  * This function sets the count member of @p array to 0, however it doesn't free
  * any space. This is particularly useful if you need to empty the array and
@@ -299,7 +299,7 @@ static inline void eina_array_clean(Eina_Array *array) EINA_ARG_NONNULL(1);
 /**
  * @brief Flushes an array.
  *
- * @param array The array to flush.
+ * @param[in,out] array The array to flush.
  *
  * This function sets the count and total members of @p array to 0,
  * frees and set to NULL its data member. For performance reasons,
@@ -311,9 +311,9 @@ EAPI void eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
 /**
  * @brief Rebuilds an array by specifying the data to keep.
  *
- * @param array The array.
- * @param keep The functions which selects the data to keep.
- * @param gdata The data to pass to the function keep.
+ * @param[in,out] array The array.
+ * @param[in] keep The functions which selects the data to keep.
+ * @param[in] gdata The data to pass to the function keep.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function rebuilds @p array by specifying the elements to keep with the
@@ -331,8 +331,8 @@ EAPI Eina_Bool eina_array_remove(Eina_Array * array,
 /**
  * @brief Appends a data to an array.
  *
- * @param array The array.
- * @param data The data to add.
+ * @param[in,out] array The array.
+ * @param[in] data The data to add.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function appends @p data to @p array. For performance
@@ -347,7 +347,7 @@ static inline Eina_Bool eina_array_push(Eina_Array *array,
 /**
  * @brief Removes the last data of an array.
  *
- * @param array The array.
+ * @param[in,out] array The array.
  * @return The retrieved data.
  *
  * This function removes the last data of @p array, decreases the count
@@ -361,8 +361,8 @@ static inline void     *eina_array_pop(Eina_Array *array) EINA_ARG_NONNULL(1);
 /**
  * @brief Returns the data at a given position in an array.
  *
- * @param array The array.
- * @param idx The position of the data to retrieve.
+ * @param[in] array The array.
+ * @param[in] idx The position of the data to retrieve.
  * @return The retrieved data.
  *
  * This function returns the data at the position @p idx in @p
@@ -374,9 +374,9 @@ static inline void     *eina_array_data_get(const Eina_Array *array,
 /**
  * @brief Sets the data at a given position in an array.
  *
- * @param array The array.
- * @param idx The position of the data to set.
- * @param data The data to set.
+ * @param[in] array The array.
+ * @param[in] idx The position of the data to set.
+ * @param[in] data The data to set.
  *
  * This function sets the data at the position @p idx in @p
  * array to @p data, this effectively replaces the previously held data, you
@@ -391,7 +391,7 @@ static inline void      eina_array_data_set(const Eina_Array *array,
  * @deprecated use eina_array_count()
  * @brief Returns the number of elements in an array.
  *
- * @param array The array.
+ * @param[in] array The array.
  * @return The number of elements.
  *
  * This function returns the number of elements in @p array (array->count). For
@@ -404,7 +404,7 @@ static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_AR
 /**
  * @brief Returns the number of elements in an array.
  *
- * @param array The array.
+ * @param[in] array The array.
  * @return The number of elements.
  *
  * This function returns the number of elements in @p array (array->count). For
@@ -416,7 +416,7 @@ static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NO
 /**
  * @brief Gets a new iterator associated with an array.
  *
- * @param array The array.
+ * @param[in] array The array.
  * @return A new iterator.
  *
  * This function returns a newly allocated iterator associated to
@@ -429,7 +429,7 @@ EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA
 /**
  * @brief Gets a new accessor associated with an array.
  *
- * @param array The array.
+ * @param[in] array The array.
  * @return A new accessor.
  *
  * This function returns a newly allocated accessor associated to
@@ -439,12 +439,13 @@ EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA
  * returned.
  */
 EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Provides a safe way to iterate over an array.
  *
- * @param array The array to iterate over.
- * @param cb The callback to call for each item.
- * @param fdata The user data to pass to the callback.
+ * @param[in] array The array to iterate over.
+ * @param[in] cb The callback to call for each item.
+ * @param[in] fdata The user data to pass to the callback.
  * @return #EINA_TRUE if it successfully iterated all items of the array.
  *
  * This function provides a safe way to iterate over an array. @p cb should
@@ -459,10 +460,10 @@ static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
  * @def EINA_ARRAY_ITER_NEXT
  * @brief Definition for the macro to iterate over an array easily.
  *
- * @param array The array to iterate over.
- * @param index The integer number that is increased while iterating.
- * @param item The data
- * @param iterator The iterator
+ * @param[in] array The array to iterate over.
+ * @param[out] index The integer number that is increased while iterating.
+ * @param[out] item The data
+ * @param[in,out] iterator The iterator
  *
  * This macro allows the iteration over @p array in an easy way. It
  * iterates from the first element to the last one. @p index is an
