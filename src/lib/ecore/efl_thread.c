@@ -320,10 +320,11 @@ _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
         if (pd->thdat) efl_threadio_outdata_set(obj, pd->thdat->outdata);
         if (pd->promise)
           {
+             Eina_Promise *p = pd->promise;
              int exit_code = efl_task_exit_code_get(obj);
-             if (exit_code != 0) eina_promise_reject(pd->promise, exit_code + 1000000);
-             else eina_promise_resolve(pd->promise, eina_value_int_init(0));
              pd->promise = NULL;
+             if (exit_code != 0) eina_promise_reject(p, exit_code + 1000000);
+             else eina_promise_resolve(p, eina_value_int_init(0));
           }
      }
 }
@@ -506,39 +507,10 @@ _efl_thread_efl_object_constructor(Eo *obj, Efl_Thread_Data *pd)
 EOLIAN static void
 _efl_thread_efl_object_destructor(Eo *obj, Efl_Thread_Data *pd)
 {
+   if (pd->promise)
+     ERR("Thread being destroyed while real worker has  not exited yet.");
    if (pd->thdat)
      {
-/* we probably shouldn't do this... this simply has to orphan threads if they
- * lose their parent. this stops shutdown from blocking.
-        // if exit response not read yet, read until fetched
-        if (!pd->exit_read)
-          {
-             Control_Data cmd;
-             ssize_t ret;
-
-             // if it hasn't been asked to exit... ask it
-             if (!pd->end_sent) efl_task_end(obj);
-             memset(&cmd, 0, sizeof(cmd));
-             ret = read(pd->ctrl.out, &cmd, sizeof(Control_Data));
-             while (ret == sizeof(Control_Data))
-               {
-                  if (cmd.d.command == CMD_EXITED)
-                    {
-                       if (!pd->exit_read)
-                         {
-                            Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
-
-                            if (td) td->exit_code = cmd.d.data;
-                            pd->exit_read = EINA_TRUE;
-                            efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
-                            break;
-                         }
-                    }
-                  ret = read(pd->ctrl.out, &cmd, sizeof(Control_Data));
-               }
-          }
- */
-        // stop and wait for thread to exit/join here
         eina_thread_join(pd->thread);
         efl_del(pd->fd.in_handler);
         efl_del(pd->fd.out_handler);

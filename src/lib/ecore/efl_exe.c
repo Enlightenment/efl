@@ -190,10 +190,11 @@ _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
         pd->exit_called = EINA_TRUE;
         if (pd->promise)
           {
+             Eina_Promise *p = pd->promise;
              int exit_code = efl_task_exit_code_get(obj);
-             if (exit_code != 0) eina_promise_reject(pd->promise, exit_code + 1000000);
-             else eina_promise_resolve(pd->promise, eina_value_int_init(0));
              pd->promise = NULL;
+             if (exit_code != 0) eina_promise_reject(p, exit_code + 1000000);
+             else eina_promise_resolve(p, eina_value_int_init(0));
           }
      }
 }
@@ -575,6 +576,8 @@ _efl_exe_efl_object_destructor(Eo *obj, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
 #else
+   if (pd->promise)
+     ERR("Exe being destroyed while child has not exited yet.");
    if (pd->fd.exited_read >= 0)
      {
         _ecore_signal_pid_lock();
