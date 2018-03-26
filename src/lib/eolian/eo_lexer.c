@@ -465,9 +465,11 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
    if (!doc)
      longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
 
+   doc->base.unit = ls->unit;
    doc->base.file = ls->filename;
    doc->base.line = line;
    doc->base.column = column;
+   doc->base.type = EOLIAN_OBJECT_DOCUMENTATION;
 
    Eina_Strbuf *rbuf = eina_strbuf_new();
 
