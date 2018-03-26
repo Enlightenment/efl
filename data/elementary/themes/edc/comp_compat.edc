@@ -1,6 +1,5 @@
 group { name: "e/comp/border/default";
    images.image: "win_shadow.png" COMP;
-   images.image: "win_glow.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
@@ -27,26 +26,6 @@ group { name: "e/comp/border/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         clip_to: "clipper";
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.to: "e.swallow.content";
-            rel1.offset: -5  -5;
-            rel2.to: "e.swallow.content";
-            rel2.offset: 4 4;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
          }
       }
       part { name: "shower"; type: SPACER;
@@ -128,6 +107,7 @@ group { name: "e/comp/border/default";
       program { name: "hide2";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
       }
+/*
       program {
          name: "focus_on";
          signal: "e,state,focus,on"; source: "e";
@@ -175,6 +155,7 @@ group { name: "e/comp/border/default";
          transition: SINUSOIDAL 0.6 CURRENT;
          target: "glow";
       }
+ */
    }
 }
 
@@ -290,6 +271,7 @@ group { name: "e/comp/border/default/fast";
          name: "visible_off";
          transition: DECELERATE 0;
       }
+/*
       program {
          name: "focus_on";
          signal: "e,state,focus,on"; source: "e";
@@ -308,6 +290,7 @@ group { name: "e/comp/border/default/fast";
          name: "focus_off";
          transition: SINUSOIDAL 0;
       }
+ */
    }
 }
 

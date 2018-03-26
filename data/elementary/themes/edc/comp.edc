@@ -224,7 +224,6 @@ group { name: "e/comp/screen/overlay/noeffects";
 }
 
 group { name: "e/comp/frame/default";
-   images.image: "win_glow.png" COMP;
    images.image: "win_shadow.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
@@ -276,30 +275,6 @@ group { name: "e/comp/frame/default";
          description { state: "hidden" 0.0;
             inherit;
             visible: 0;
-         }
-      }
-      rect { "focus_clip"; clip: "clipper";
-         desc {
-            rel1.offset: -9999 -9999;
-            rel2.offset: 9999 9999;
-         }
-         desc { "hid"; hid; }
-      }
-      part { name: "glow"; mouse_events: 0;
-         clip_to: "focus_clip";
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel.to: "gspacer";
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "focused" 0.0;
-            inherit;
-            color: 255 255 255 255;
-            visible: 1;
          }
       }
       part { name: "shower"; type: SPACER;
@@ -381,6 +356,7 @@ group { name: "e/comp/frame/default";
              action: SIGNAL_EMIT "e,action,hide,done" "e";
          }
       }
+/*
       program {
          name: "focus_on";
          signal: "e,state,focused"; source: "e";
@@ -430,6 +406,7 @@ group { name: "e/comp/frame/default";
          action: STATE_SET "default";
          target: "focus_clip";
       }
+ */
    }
 }
 
@@ -546,6 +523,7 @@ group { name: "e/comp/frame/default/fast";
          name: "visible_off";
          transition: DECELERATE 0;
       }
+/*
       program {
          name: "focus_on";
          signal: "e,state,focus,on"; source: "e";
@@ -562,6 +540,7 @@ group { name: "e/comp/frame/default/fast";
          name: "focus_off";
          transition: SINUSOIDAL 0;
       }
+ */
    }
 }
 
@@ -635,9 +614,6 @@ group { name: "e/comp/frame/menu";
             rel2.relative: 0.95 0.9;
          }
       }
-      image { "glow";
-         desc { "focused"; hid; }
-      }
    }
 }
 
@@ -649,9 +625,6 @@ group { name: "e/comp/frame/menu/fast";
             rel1.relative: 0.05 0.0;
             rel2.relative: 0.95 0.9;
          }
-      }
-      image { "glow";
-         desc { "focused"; hid; }
       }
    }
 }
