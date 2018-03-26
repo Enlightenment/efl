@@ -153,11 +153,27 @@ EINA_UNUSED static void
 _timing_end(void)
 {
    double diff;
+   static int thres_set = 0;
+   static double thres = 0;
 
    if (!_timing_enabled()) return;
+   if (!thres_set)
+     {
+        const char *env = getenv("TIME_DIFF_THRESHOLD");
+
+        if (env)
+          {
+             thres = strtod(env, NULL);
+             if (thres > 0)
+               thres_set = 1;
+          }
+        if (!thres_set)
+          thres = 0.0001;
+        thres_set = 1;
+     }
    diff = _timing_time_get() - _timing_start_time;
 
-   if (diff > 0.0001)
+   if (diff > thres)
      printf("TIME %s: %.5g\n", tcase_name(), diff);
 }
 
