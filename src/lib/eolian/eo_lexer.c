@@ -1065,7 +1065,7 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
      {
-        eolian_state_log(ls->state, "%s", strerror(errno));
+        eolian_state_log(state, "%s", strerror(errno));
         longjmp(ls->err_jmp, EO_LEXER_ERROR_NORMAL);
      }
    ls->lookahead.token = -1;
