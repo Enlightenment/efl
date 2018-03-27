@@ -1,6 +1,9 @@
 #ifndef _ELPUT_H
 # define _ELPUT_H
 
+# ifdef EFL_BETA_API_SUPPORT
+# include <Eina.h>
+
 # ifdef EAPI
 #  undef EAPI
 # endif
@@ -14,8 +17,6 @@
 # else
 #  define EAPI
 # endif
-
-# ifdef EFL_BETA_API_SUPPORT
 
 
 typedef enum
