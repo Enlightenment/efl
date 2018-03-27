@@ -162,8 +162,6 @@ EFL_START_TEST(ecore_test_timers)
       .precision = {0.01, 0.02, 0.03}
    };
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-
    timer.timer1 = ecore_timer_add(TIMEOUT_1, _timer1_cb, &timer);
    timer.timer2 = ecore_timer_add(TIMEOUT_2, _timer2_cb, &timer);
    timer.add_timer2++;
@@ -185,9 +183,6 @@ EFL_START_TEST(ecore_test_timers)
      ecore_timer_del(timer.timer4);
    if (timer.timer5)
      ecore_timer_del(timer.timer5);
-
-   ecore_shutdown();
-
 }
 EFL_END_TEST
 
@@ -216,17 +211,12 @@ EFL_START_TEST(ecore_test_timer_inside_call)
 {
    Test_Inside_Call c;
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-
    c.start = ecore_time_get();
    c.t = ecore_timer_add(0.01, _timeri_cb, &c);
 
    fail_if(!c.t, "Error add timer\n");
 
    ecore_main_loop_begin();
-
-   ecore_shutdown();
-
 }
 EFL_END_TEST
 
@@ -262,7 +252,6 @@ EFL_START_TEST(ecore_test_timer_lifecycle)
    Eo *et;
 
    efl_object_init();
-   ecore_init();
 
    t = ecore_timer_add(1.0, _test_time_cb, &rl);
    efl_event_callback_add((Eo*) t, EFL_EVENT_DEL, _test_death_cb, &dl);
@@ -272,8 +261,6 @@ EFL_START_TEST(ecore_test_timer_lifecycle)
                efl_event_callback_add(efl_added, EFL_EVENT_DEL, _test_death_cb, &de),
                efl_loop_timer_interval_set(efl_added, 1.0));
    efl_ref(et);
-
-   ecore_shutdown();
 
    fail_if(re == EINA_TRUE && rl == EINA_TRUE);
    fail_if(dl == EINA_FALSE);
@@ -289,10 +276,8 @@ EFL_END_TEST
 
 EFL_START_TEST(ecore_test_timer_valid_callbackfunc)
 {
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
    Ecore_Timer *t = NULL;
    fail_if((t = ecore_timer_add(0.5, NULL, NULL)), "ERROR: Invalid callback func!\n");
-   ecore_shutdown();
 }
 EFL_END_TEST
 

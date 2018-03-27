@@ -71,8 +71,6 @@ EFL_START_TEST(eina_counter_simple)
    char *dump;
    int i;
 
-   eina_init();
-
    cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
 
@@ -106,15 +104,12 @@ EFL_START_TEST(eina_counter_simple)
 
    eina_counter_free(cnt);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_counter_break)
 {
    Eina_Counter *cnt;
-
-   eina_init();
 
    cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
@@ -182,7 +177,6 @@ EFL_START_TEST(eina_counter_break)
    }
 #endif
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

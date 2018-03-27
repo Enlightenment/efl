@@ -87,7 +87,6 @@ EFL_START_TEST(evas_object_image_loader)
    evas_object_del(o);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -282,7 +281,6 @@ EFL_START_TEST(evas_object_image_loader_orientation)
    evas_object_del(rot);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -332,7 +330,6 @@ EFL_START_TEST(evas_object_image_orient)
    evas_object_del(orig);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -390,7 +387,6 @@ EFL_START_TEST(evas_object_image_tgv_loader_data)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 #endif
@@ -460,7 +456,6 @@ EFL_START_TEST(evas_object_image_all_loader_data)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -521,7 +516,6 @@ EFL_START_TEST(evas_object_image_buggy)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -632,7 +626,6 @@ EFL_START_TEST(evas_object_image_partially_load_orientation)
    evas_object_del(orig);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -659,7 +652,6 @@ EFL_START_TEST(evas_object_image_defaults)
    efl_del(o);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -823,7 +815,6 @@ EFL_START_TEST(evas_object_image_map_unmap)
    // TODO: test more color conversions
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 
@@ -875,7 +866,6 @@ EFL_START_TEST(evas_object_image_jp2k_loader_data)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 #endif

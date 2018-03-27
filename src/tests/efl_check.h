@@ -192,7 +192,7 @@ _timing_end(void)
 #endif
 
 EINA_UNUSED static int
-_efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc)
+_efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc, SFun init, SFun shutdown)
 {
    Suite *s;
    SRunner *sr;
@@ -214,6 +214,8 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
            continue;
 
         tc = tcase_create(etc[i].test_case);
+        if (init || shutdown)
+          tcase_add_checked_fixture(tc, init, shutdown);
 
         if (_efl_test_fork_has(sr))
           tcase_set_timeout(tc, 0);
@@ -232,5 +234,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
 #endif
    return failed_count;
 }
+
+#define SUITE_INIT(NAME) static void _##NAME##_suite_init(void)
+#define SUITE_INIT_FN(NAME) _##NAME##_suite_init
+#define SUITE_SHUTDOWN(NAME) static void _##NAME##_suite_shutdown(void)
+#define SUITE_SHUTDOWN_FN(NAME) _##NAME##_suite_shutdown
 
 #endif

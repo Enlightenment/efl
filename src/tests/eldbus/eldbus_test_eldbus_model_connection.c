@@ -18,7 +18,6 @@ static Eo *connection = NULL;
 static void
 _setup(void)
 {
-   check_init();
    connection = create_connection();
 }
 
@@ -26,7 +25,6 @@ static void
 _teardown(void)
 {
    efl_unref(connection);
-   check_shutdown();
 }
 
 EFL_START_TEST(properties_get)

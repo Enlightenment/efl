@@ -59,8 +59,6 @@ EFL_START_TEST (elm_genlist_group)
    Elm_Object_Item *git;
    int i;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
@@ -71,7 +69,6 @@ EFL_START_TEST (elm_genlist_group)
 
    verify_group_api(git);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -79,8 +76,6 @@ EFL_START_TEST (elm_genlist_legacy_type_check)
 {
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
@@ -93,14 +88,11 @@ EFL_START_TEST (elm_genlist_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_genlist"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 void test_init(void)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    elm_config_atspi_mode_set(EINA_TRUE);
    win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
    genlist = elm_genlist_add(win);
@@ -116,7 +108,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_LIST);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -141,7 +132,6 @@ EFL_START_TEST(elm_atspi_children_get1)
 
    eina_list_free(children);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -160,7 +150,6 @@ EFL_START_TEST(elm_atspi_children_get2)
    ck_assert(eina_list_nth(children, 0) == it[1]);
    ck_assert(eina_list_nth(children, 2) == it[2]);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -204,7 +193,6 @@ EFL_START_TEST(elm_atspi_children_events_add)
    ck_assert(ev_data.is_added == EINA_TRUE);
    ck_assert(ev_data.child == it[2]);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -235,7 +223,6 @@ EFL_START_TEST(elm_atspi_children_events_del1)
    ck_assert(ev_data.is_added == EINA_FALSE);
    ck_assert(ev_data.child == it[2]);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -257,7 +244,6 @@ EFL_START_TEST(elm_atspi_children_events_del2)
    ck_assert(ev_data.is_added == EINA_FALSE);
    ck_assert(ev_data.child == it);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

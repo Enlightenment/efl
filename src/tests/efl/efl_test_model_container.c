@@ -118,9 +118,6 @@ EFL_START_TEST(efl_test_model_container_values)
    const char **cmp_str;
    int i;
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
-
    cmp_int = calloc(8, sizeof(int*));
    cmp_str = calloc(8, sizeof(const char*));
    for (i = 0; i < 7; ++i)
@@ -158,8 +155,6 @@ EFL_START_TEST(efl_test_model_container_values)
 
    ck_assert(!!test_data.pass_flag);
    ck_assert(!test_data.fail_flag);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 

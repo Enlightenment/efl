@@ -43,7 +43,6 @@ do \
 { \
    evas_object_del(smart_obj); \
    evas_free(evas); \
-   ecore_evas_shutdown(); \
 } \
 while (0)
 

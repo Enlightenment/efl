@@ -21,7 +21,6 @@
 
 EFL_START_TEST(eo_simple)
 {
-   efl_object_init();
    Eo *obj = efl_add_ref(EO_CLASS, NULL);
    fail_if(obj);
 
@@ -31,13 +30,11 @@ EFL_START_TEST(eo_simple)
    efl_destructor(obj);
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eo_singleton)
 {
-   efl_object_init();
 
    Eo *obj = efl_add_ref(SINGLETON_CLASS, NULL);
    fail_if(!obj);
@@ -50,7 +47,6 @@ EFL_START_TEST(eo_singleton)
    efl_unref(obj);
    efl_unref(obj2);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -70,7 +66,6 @@ _simple_obj_override_a_double_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 
 EFL_START_TEST(efl_object_override_tests)
 {
-   efl_object_init();
 
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    fail_if(!obj);
@@ -133,7 +128,6 @@ EFL_START_TEST(efl_object_override_tests)
 
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -199,7 +193,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,
 
 EFL_START_TEST(eo_signals)
 {
-   efl_object_init();
 
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    Eina_Bool r;
@@ -280,13 +273,11 @@ EFL_START_TEST(eo_signals)
      }
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_data_fetch)
 {
-   efl_object_init();
 
    /* Usually should be const, not const only for the test... */
    static Efl_Class_Description class_desc = {
@@ -319,13 +310,11 @@ EFL_START_TEST(efl_data_fetch)
    fail_if(!efl_data_scope_get(obj, EFL_OBJECT_CLASS));
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_data_safe_fetch)
 {
-   efl_object_init();
 
    Eo *obj = efl_add_ref(SIMPLE2_CLASS, NULL);
    fail_if(!obj || !efl_data_scope_safe_get(obj, SIMPLE2_CLASS));
@@ -343,13 +332,11 @@ EFL_START_TEST(efl_data_safe_fetch)
    efl_unref(obj);
    fail_if(efl_data_scope_safe_get(obj, SIMPLE3_CLASS) != NULL);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_isa_tests)
 {
-   efl_object_init();
 
    const Efl_Class *klass, *iface, *mixin;
 
@@ -419,14 +406,12 @@ EFL_START_TEST(efl_isa_tests)
    fail_if(!efl_isa(obj, EO_CLASS));
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 
 EFL_START_TEST(efl_composite_tests)
 {
-   efl_object_init();
 
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    fail_if(!obj);
@@ -452,7 +437,6 @@ EFL_START_TEST(efl_composite_tests)
 
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -489,7 +473,6 @@ _class_initializer(Efl_Class *klass)
 
 EFL_START_TEST(eo_man_free)
 {
-   efl_object_init();
 
    /* Usually should be const, not const only for the test... */
    static Efl_Class_Description class_desc = {
@@ -564,13 +547,11 @@ EFL_START_TEST(eo_man_free)
    efl_unref(obj);
    fail_if(!efl_manual_free(obj));
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_refs)
 {
-   efl_object_init();
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj2 = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj3 = efl_add_ref(SIMPLE_CLASS, NULL);
@@ -697,13 +678,11 @@ EFL_START_TEST(efl_refs)
    efl_del(obj2);
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_weak_reference)
 {
-   efl_object_init();
 
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj2 = efl_add_ref(SIMPLE_CLASS, NULL);
@@ -768,13 +747,11 @@ EFL_START_TEST(efl_weak_reference)
    efl_unref(obj2);
 
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eo_generic_data)
 {
-   efl_object_init();
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj2 = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj3 = efl_add_ref(SIMPLE_CLASS, NULL);
@@ -941,7 +918,6 @@ EFL_START_TEST(eo_generic_data)
    efl_unref(obj2);
    efl_unref(obj3);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -950,7 +926,6 @@ EFL_START_TEST(eo_magic_checks)
 {
    char _buf[sizeof(long)]; /* Just enough to hold eina magic + a bit more. */
    char *buf = _buf;
-   efl_object_init();
 
    memset(_buf, 1, sizeof(_buf));
 
@@ -1033,7 +1008,6 @@ EFL_START_TEST(eo_magic_checks)
            buf = NULL;
      }
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -1061,7 +1035,6 @@ _multi_class_initializer(Efl_Class *klass)
 
 EFL_START_TEST(efl_func_resolve)
 {
-   efl_object_init();
 
    /* Usually should be const, not const only for the test... */
    static Efl_Class_Description class_desc = {
@@ -1093,7 +1066,6 @@ EFL_START_TEST(efl_func_resolve)
    fail_if(!efl_destructed_is(obj));
    efl_manual_free(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -1101,7 +1073,6 @@ EFL_START_TEST(efl_add_do_and_custom)
 {
    Simple_Public_Data *pd = NULL;
    Eo *obj = NULL;
-   efl_object_init();
 
    obj = efl_add_ref(SIMPLE_CLASS, NULL, efl_constructor(efl_added));
    fail_if(!obj);
@@ -1127,14 +1098,12 @@ EFL_START_TEST(efl_add_do_and_custom)
    fail_if(!finalized);
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eo_pointers_indirection)
 {
 #ifdef HAVE_EO_ID
-   efl_object_init();
 
    static const Efl_Class_Description class_desc = {
         EO_VERSION,
@@ -1213,7 +1182,6 @@ EFL_START_TEST(eo_pointers_indirection)
    efl_unref(objs[0]);
    free(objs);
 
-   efl_object_shutdown();
 #endif
 }
 EFL_END_TEST
@@ -1237,7 +1205,6 @@ _add_failures_class_initializer(Efl_Class *klass)
 
 EFL_START_TEST(efl_add_failures)
 {
-   efl_object_init();
 
    static const Efl_Class_Description class_desc = {
         EO_VERSION,
@@ -1255,7 +1222,6 @@ EFL_START_TEST(efl_add_failures)
 
    fail_if(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -1280,7 +1246,6 @@ _del_intercept_reuse(Eo *obj)
 EFL_START_TEST(efl_del_intercept)
 {
 #ifdef HAVE_EO_ID
-   efl_object_init();
 
    static const Efl_Class_Description class_desc = {
         EO_VERSION,
@@ -1330,14 +1295,12 @@ EFL_START_TEST(efl_del_intercept)
    ck_assert_int_eq(efl_ref_count(obj), 1);
    efl_unref(obj);
 
-   efl_object_shutdown();
 #endif
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_name)
 {
-   efl_object_init();
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj2 = efl_add_ref(SIMPLE_CLASS, NULL);
    Eo *obj3 = efl_add_ref(SIMPLE_CLASS, NULL);
@@ -1388,13 +1351,11 @@ EFL_START_TEST(efl_name)
 
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eo_comment)
 {
-   efl_object_init();
    Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    const char *comment;
 
@@ -1418,13 +1379,11 @@ EFL_START_TEST(eo_comment)
 
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eo_rec_interface)
 {
-   efl_object_init();
    Eo *s = efl_add_ref(SEARCHABLE_CLASS, NULL);
    Eo *obj = efl_add(SIMPLE_CLASS, s);
    Eo *obj2 = efl_add(SIMPLE_CLASS, obj);
@@ -1435,7 +1394,6 @@ EFL_START_TEST(eo_rec_interface)
 
    efl_del(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -1535,7 +1493,6 @@ EFL_START_TEST(eo_domain)
    Eo *obj, *objs;
 
    printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-   efl_object_init();
 
 #ifndef _WIN32
    signal(SIGALRM, _timeout);
@@ -1613,7 +1570,6 @@ EFL_START_TEST(eo_domain)
    efl_unref(obj);
    efl_unref(objs);
 
-   efl_object_shutdown();
    printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 #ifndef _WIN32
@@ -1654,7 +1610,6 @@ _cast_inherit_class_initializer_2(Efl_Class *klass)
 
 EFL_START_TEST(efl_cast_test)
 {
-   efl_object_init();
 
    static const Efl_Class_Description class_desc_1 = {
         EO_VERSION,
@@ -1715,7 +1670,6 @@ EFL_START_TEST(efl_cast_test)
    ck_assert_int_eq(inherit_value(efl_cast(obj, SIMPLE_CLASS)), 0);
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -1742,7 +1696,6 @@ EFL_START_TEST(efl_object_destruct_test)
    int var = 0;
    Eo *obj;
 
-   efl_object_init();
 
    obj = efl_add_ref(SIMPLE_CLASS, NULL);
    fail_if(efl_ref_count(obj) != 1);
@@ -1753,7 +1706,6 @@ EFL_START_TEST(efl_object_destruct_test)
    // var should be 2 if del then destruct, 0 otherwise
    ck_assert_int_eq(var, 2);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -1768,7 +1720,6 @@ EFL_START_TEST(efl_object_auto_unref_test)
    int _auto_unref_del;
    Eo *obj, *parent;
 
-   efl_object_init();
 
    // Test unref after valid call
    _auto_unref_del = 0;
@@ -1806,7 +1757,6 @@ EFL_START_TEST(efl_object_auto_unref_test)
    fail_if(!_auto_unref_del);
    efl_unref(parent);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 

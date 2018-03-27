@@ -53,7 +53,6 @@ EFL_START_TEST(eina_simple_xml_parser_node_dump)
 {
    FILE *f;
 
-   eina_init();
    f = fopen(get_file_full_path("sample.gpx"), "rb");
    if (f)
      {
@@ -86,24 +85,20 @@ EFL_START_TEST(eina_simple_xml_parser_node_dump)
         fclose(f);
      }
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_simple_xml_parser_null_node_dump)
 {
-   eina_init();
    
    char *out = eina_simple_xml_node_dump(NULL, "  ");
    fail_if(out != NULL);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_simple_xml_parser_childs_count)
 {
-    eina_init();
 
     const char *buf = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n"
 	    "<test version=\"0.1\"><child>I'm a child.</child><child><![CDATA[I'm a 2-nd child.]]></child><!-- Some comment --></test>";
@@ -114,7 +109,6 @@ EFL_START_TEST(eina_simple_xml_parser_childs_count)
     fail_if(eina_inlist_count(root->children) != 2);
     eina_simple_xml_node_root_free(root);
 
-    eina_shutdown();
 }
 EFL_END_TEST
 
@@ -225,7 +219,6 @@ EFL_START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
 {
     FILE *f;
 
-    eina_init();
     f = fopen(get_file_full_path("sample.gpx"), "rb");
 
     if (f)
@@ -261,7 +254,6 @@ EFL_START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
         fclose(f);
       }
 
-    eina_shutdown();
 }
 EFL_END_TEST
 

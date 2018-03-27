@@ -18,13 +18,6 @@
 
 EFL_START_TEST(edje_test_edje_init)
 {
-   int ret;
-
-   ret = edje_init();
-   fail_if(ret != 1);
-
-   ret = edje_shutdown();
-   fail_if(ret != 0);
 }
 EFL_END_TEST
 

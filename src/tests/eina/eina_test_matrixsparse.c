@@ -105,7 +105,6 @@ EFL_START_TEST(eina_test_simple)
    value3 = -3;
    value4 = -4;
 
-   eina_init();
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
                                   eina_matrixsparse_free_cell_cb, data);
@@ -266,7 +265,6 @@ EFL_START_TEST(eina_test_simple)
    matrixsparse_check(matrix, data, MAX_ROWS, MAX_COLS);
    eina_matrixsparse_free(matrix);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -283,7 +281,6 @@ EFL_START_TEST(eina_test_resize)
       for (j = 0; j < MAX_COLS; j++)
          data[i][j] = 0;
 
-   eina_init();
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
                                   eina_matrixsparse_free_cell_cb, data);
@@ -378,7 +375,6 @@ EFL_START_TEST(eina_test_resize)
 
    eina_matrixsparse_free(matrix);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -405,7 +401,6 @@ EFL_START_TEST(eina_test_iterators)
              printf("\n");
      }
 
-             eina_init();
 
    matrix = eina_matrixsparse_new(MAX_ROWS, MAX_COLS,
                                   eina_matrixsparse_free_cell_cb, data);
@@ -477,7 +472,6 @@ EFL_START_TEST(eina_test_iterators)
 
    eina_matrixsparse_free(matrix);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

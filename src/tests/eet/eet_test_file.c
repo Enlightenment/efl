@@ -26,8 +26,6 @@ EFL_START_TEST(eet_test_file_simple_write)
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
 
-   eet_init();
-
    fail_if(-1 == (tmpfd = mkstemp(file)));
    fail_if(!!close(tmpfd));
 
@@ -120,7 +118,6 @@ EFL_START_TEST(eet_test_file_simple_write)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -139,8 +136,6 @@ EFL_START_TEST(eet_test_file_data)
    int tmpfd;
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -280,7 +275,6 @@ EFL_START_TEST(eet_test_file_data)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -297,8 +291,6 @@ EFL_START_TEST(eet_test_file_data_dump)
    int tmpfd;
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -382,7 +374,6 @@ EFL_START_TEST(eet_test_file_data_dump)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -399,8 +390,6 @@ EFL_START_TEST(eet_test_file_fp)
    int tmpfd;
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   eet_init();
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_5FP);
    edd_5FP = eet_data_descriptor_file_new(&eddc);
@@ -456,7 +445,6 @@ EFL_START_TEST(eet_test_file_fp)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 

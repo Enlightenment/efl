@@ -88,6 +88,20 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(elm)
+{
+   char *args[] = { "exe" };
+   ck_assert_int_eq(elm_init(1, args), 1);
+}
+
+SUITE_SHUTDOWN(elm)
+{
+   ck_assert_int_eq(elm_shutdown(), 0);
+   /* verify that ecore was de-initialized completely */
+   ck_assert_int_eq(ecore_init(), 1);
+   ck_assert_int_eq(ecore_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -105,7 +119,7 @@ main(int argc, char **argv)
      putenv("TESTS_GL_DISABLED=1");
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Elementary", etc);
+                                           "Elementary", etc, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
 
    return (failed_count == 0) ? 0 : 255;
 }

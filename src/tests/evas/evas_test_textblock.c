@@ -58,7 +58,6 @@ do \
    evas_object_del(tb); \
    evas_textblock_style_free(st); \
    evas_free(evas); \
-   ecore_evas_shutdown(); \
 } \
 while (0)
 

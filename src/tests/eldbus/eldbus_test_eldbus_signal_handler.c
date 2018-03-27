@@ -23,25 +23,8 @@ static Ecore_Timer *timeout = NULL;
 * @defgroup eldbus_signal_handler
 *
 * @precondition
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   ecore_shutdown();
-   int ret = eldbus_shutdown();
-   ck_assert_int_eq(ret, 0);
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -474,7 +457,6 @@ EFL_END_TEST
 void
 eldbus_test_eldbus_signal_handler(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_signal_handler_add_p);
    tcase_add_test(tc, utc_eldbus_signal_handler_del_p);
    tcase_add_test(tc, utc_eldbus_signal_handler_get_p);

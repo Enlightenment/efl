@@ -37,7 +37,6 @@ EFL_START_TEST(eina_ustringshare_simple)
    const Eina_Unicode *t0;
    const Eina_Unicode *t1;
 
-   eina_init();
 
    t0 = eina_ustringshare_add(TEST0);
    t1 = eina_ustringshare_add(TEST1);
@@ -57,7 +56,6 @@ EFL_START_TEST(eina_ustringshare_simple)
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t1);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -67,7 +65,6 @@ EFL_START_TEST(eina_ustringshare_test_share)
    const Eina_Unicode *t0;
    const Eina_Unicode *t1;
 
-   eina_init();
 
    t0 = eina_ustringshare_add(TEST0);
    t1 = eina_ustringshare_add(TEST0);
@@ -83,7 +80,6 @@ EFL_START_TEST(eina_ustringshare_test_share)
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t1);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -92,7 +88,6 @@ EFL_START_TEST(eina_ustringshare_putstuff)
    const Eina_Unicode *tmp;
    int i;
 
-   eina_init();
 
    for (i = 10000; i > 0; --i)
      {
@@ -107,7 +102,6 @@ EFL_START_TEST(eina_ustringshare_putstuff)
         fail_if((int)eina_unicode_strlen(build) != eina_ustringshare_strlen(tmp));
      }
 
-        eina_shutdown();
 }
 EFL_END_TEST
 

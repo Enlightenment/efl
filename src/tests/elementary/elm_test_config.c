@@ -11,9 +11,6 @@ typedef unsigned int uint;
 
 EFL_START_TEST (elm_config_eoapi)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
@@ -143,15 +140,11 @@ EFL_START_TEST (elm_config_eoapi)
           fail(channels[i].name);
      }
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (elm_config_win)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
@@ -163,7 +156,6 @@ EFL_START_TEST (elm_config_win)
    fail_if(efl_config_int_get(win, "cache_flush_interval") != 42);
 
    efl_del(win);
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -182,9 +174,6 @@ _eina_list_string_has(const Eina_List *list, const char *str)
 
 EFL_START_TEST (elm_config_profiles)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    // this only tests some of the profile APIs. we're not going to mess with
    // the global config during make check :)
 
@@ -228,7 +217,6 @@ EFL_START_TEST (elm_config_profiles)
    elm_config_profile_dir_free(dir);
    eina_stringshare_del(str);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

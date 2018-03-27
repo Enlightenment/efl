@@ -24,8 +24,6 @@ static Fake_Server_Data fake_server_data = {0};
 static void
 _setup(void)
 {
-   check_init();
-
    fake_server_data = (Fake_Server_Data){
      .readonly_property = FAKE_SERVER_READONLY_PROPERTY_VALUE,
      .writeonly_property = FAKE_SERVER_WRITEONLY_PROPERTY_VALUE,
@@ -45,8 +43,6 @@ _teardown(void)
    efl_del(fake_server_object);
 
    fake_server_stop(fake_server);
-
-   check_shutdown();
 }
 
 EFL_START_TEST(properties_get)

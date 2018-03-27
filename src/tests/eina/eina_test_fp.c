@@ -37,8 +37,6 @@ EFL_START_TEST(eina_fp_cos)
    double dresult;
    double delta;
 
-        fail_if(!eina_init());
-
    fl = eina_f32p32_scale(EINA_F32P32_PI, 4);
    step = eina_f32p32_div(fl, eina_f32p32_int_from(2048));
 
@@ -52,7 +50,6 @@ EFL_START_TEST(eina_fp_cos)
         fail_if(delta > 0.005);
      }
 
-        eina_shutdown();
 }
 EFL_END_TEST
 
@@ -65,8 +62,6 @@ EFL_START_TEST(eina_fp_sin)
    double dc;
    double dresult;
    double delta;
-
-        fail_if(!eina_init());
 
    fl = eina_f32p32_scale(EINA_F32P32_PI, 4);
    step = eina_f32p32_div(fl, eina_f32p32_int_from(2048));
@@ -82,7 +77,6 @@ EFL_START_TEST(eina_fp_sin)
      }
 
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -97,8 +91,6 @@ EFL_START_TEST(eina_fp_mul)
    double delta, delta_per;
    double maxdelta = 0;
    double maxdelta_per = 0;
-
-        fail_if(!eina_init());
 
    dl1 = 10;
    step1 = 0.001;
@@ -135,7 +127,6 @@ EFL_START_TEST(eina_fp_mul)
      }
    printf("Max delta(multiplication): %f (%f%%)\n", maxdelta, maxdelta_per*100);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -150,8 +141,6 @@ EFL_START_TEST(eina_fp_div)
    double delta, delta_per;
    double maxdelta = 0;
    double maxdelta_per = 0;
-
-        fail_if(!eina_init());
 
    dl1 = 10;
    step1 = 0.001;
@@ -187,7 +176,6 @@ EFL_START_TEST(eina_fp_div)
      }
    printf("Max delta(division): %f (%f%%)\n", maxdelta, maxdelta_per*100);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

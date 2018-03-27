@@ -50,7 +50,6 @@ EFL_START_TEST(eina_test_xattr_set)
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path;
 
-   eina_init();
 
    test_file_path = get_file_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -93,7 +92,6 @@ EFL_START_TEST(eina_test_xattr_set)
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -121,7 +119,6 @@ EFL_START_TEST(eina_test_xattr_list)
    Eina_Iterator *it;
    Eina_Xattr *xattr;
 
-   eina_init();
 
    test_file_path = get_file_path(XATTR_TEST_DIR, filename);
    cp_file_path = get_file_path(XATTR_TEST_DIR, filename_cp);
@@ -243,7 +240,6 @@ EFL_START_TEST(eina_test_xattr_list)
    unlink(cp_file_path);
    eina_tmpstr_del(test_file_path);
    eina_tmpstr_del(cp_file_path);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -260,7 +256,6 @@ EFL_START_TEST(eina_test_xattr_types)
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path;
 
-   eina_init();
 
    test_file_path = get_file_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -289,7 +284,6 @@ EFL_START_TEST(eina_test_xattr_types)
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 #endif

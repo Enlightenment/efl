@@ -26,8 +26,6 @@
 
 EFL_START_TEST(ector_init_simple)
 {
-   fail_if(ector_init() != 1);
-   fail_if(ector_shutdown() != 0);
 }
 EFL_END_TEST
 

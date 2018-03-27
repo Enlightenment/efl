@@ -11,8 +11,6 @@ EFL_START_TEST (elm_colorselector_legacy_type_check)
    Evas_Object *win, *colorselector;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
 
    colorselector = elm_colorselector_add(win);
@@ -25,7 +23,6 @@ EFL_START_TEST (elm_colorselector_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_colorselector"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -34,8 +31,6 @@ EFL_START_TEST (elm_colorselector_palette)
    Evas_Object *win, *c;
    unsigned int palette_cnt;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
 
    c = elm_colorselector_add(win);
@@ -53,7 +48,6 @@ EFL_START_TEST (elm_colorselector_palette)
    ck_assert(eina_list_count(elm_colorselector_palette_items_get(c)) == palette_cnt);
    evas_object_del(c);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -62,8 +56,6 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *c;
    Efl_Access_Role role;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
 
    c = elm_colorselector_add(win);
@@ -71,7 +63,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_COLOR_CHOOSER);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

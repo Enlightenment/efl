@@ -118,9 +118,7 @@ EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
    int *cb_data = (int *) malloc(sizeof(int));
    *cb_data = 1;
 
-   eina_init();
    eet_init();
-   ecore_con_init();
    _ece_test_descriptor_init();
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
@@ -165,9 +163,7 @@ EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
    free(cb_data);
    _ece_test_descriptor_shutdown();
    ecore_con_server_del(svr);
-   ecore_con_shutdown();
    eet_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -200,9 +196,7 @@ EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_del)
    int *cb_data = (int *) malloc(sizeof(int));
    *cb_data = 0;
 
-   eina_init();
    eet_init();
-   ecore_con_init();
    _ece_test_descriptor_init();
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
@@ -235,9 +229,7 @@ EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 
    free(cb_data);
    _ece_test_descriptor_shutdown();
-   ecore_con_shutdown();
    eet_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 

@@ -34,7 +34,6 @@ EFL_START_TEST(eina_test_slice_init)
    Eina_Rw_Slice c = EINA_SLICE_STR("hi there");
    EINA_RW_SLICE_DECLARE(d, 512);
 
-   eina_init();
 
    fail_unless(a.len == sizeof("hello world") - 1);
    fail_unless(strcmp(a.mem, "hello world") == 0);
@@ -46,7 +45,6 @@ EFL_START_TEST(eina_test_slice_init)
 
    fail_unless(d.len == 512);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

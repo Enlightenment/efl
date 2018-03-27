@@ -28,9 +28,6 @@ void generate_app(void)
 
 EFL_START_TEST (test_efl_access_app_obj_name_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    ck_assert(root != NULL);
@@ -44,14 +41,11 @@ EFL_START_TEST (test_efl_access_app_obj_name_get)
    ck_assert_str_eq(ret, "Test name");
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_i18n_name_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    const char *name;
@@ -71,14 +65,11 @@ EFL_START_TEST (test_efl_access_i18n_name_get)
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Some\ntext");
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_i18n_name_set)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    const char *name;
@@ -97,15 +88,11 @@ EFL_START_TEST (test_efl_access_i18n_name_set)
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Other text");
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_role_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    Efl_Access_Role role;
@@ -115,14 +102,11 @@ EFL_START_TEST (test_efl_access_role_get)
    ck_assert(role == EFL_ACCESS_ROLE_APPLICATION);
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_role_set)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
    Efl_Access_Role role;
 
@@ -138,15 +122,11 @@ EFL_START_TEST (test_efl_access_role_set)
    if (role != EFL_ACCESS_ROLE_ENTRY)
       ck_assert(0);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_role_name_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
@@ -156,15 +136,11 @@ EFL_START_TEST (test_efl_access_role_name_get)
    ck_assert(ret != NULL);
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_localized_role_name_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
@@ -174,15 +150,11 @@ EFL_START_TEST (test_efl_access_localized_role_name_get)
    ck_assert(ret != NULL);
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_description_set)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
@@ -205,15 +177,12 @@ EFL_START_TEST (test_efl_access_description_set)
    ck_assert(ret == NULL);
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 /* Test if initial description value is NULL */
 EFL_START_TEST (test_efl_access_description_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    const char *descr;
@@ -221,15 +190,11 @@ EFL_START_TEST (test_efl_access_description_get)
 
    ck_assert(descr == NULL);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_children_and_parent)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    generate_app();
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
@@ -249,15 +214,11 @@ EFL_START_TEST (test_efl_access_children_and_parent)
    ck_assert(win == g_win);
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_children_and_parent2)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    generate_app();
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
@@ -279,15 +240,12 @@ EFL_START_TEST (test_efl_access_children_and_parent2)
    ck_assert(btn == g_btn);
 
    efl_del(root);
-   elm_shutdown();
 }
 EFL_END_TEST
 
 /* Initial value of translation domain should be NULL */
 EFL_START_TEST (test_efl_access_translation_domain_get)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    const char *domain;
@@ -296,14 +254,11 @@ EFL_START_TEST (test_efl_access_translation_domain_get)
 
    ck_assert(domain == NULL);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_translation_domain_set)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    const char *domain;
@@ -319,14 +274,11 @@ EFL_START_TEST (test_efl_access_translation_domain_set)
 
    ck_assert(domain == NULL);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_relationship_append)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    Efl_Access_Relation_Set set;
@@ -383,14 +335,11 @@ EFL_START_TEST (test_efl_access_relationship_append)
 
    efl_access_relation_set_free(set);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (test_efl_access_relationship_remove)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    Efl_Access_Relation_Set set;
@@ -461,7 +410,6 @@ EFL_START_TEST (test_efl_access_relationship_remove)
    if (rel_from) ck_assert(eina_list_data_find(rel_from->objects, g_bg) == NULL);
 
    efl_access_relation_set_free(set);
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -471,8 +419,6 @@ EFL_START_TEST (test_efl_access_relationships_clear)
    Efl_Access_Relation *rel;
    Eina_List *l;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    generate_app();
 
    efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
@@ -492,7 +438,6 @@ EFL_START_TEST (test_efl_access_relationships_clear)
    }
 
    efl_access_relation_set_free(set);
-   elm_shutdown();
 }
 EFL_END_TEST
 

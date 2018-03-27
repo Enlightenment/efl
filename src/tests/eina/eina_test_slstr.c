@@ -19,12 +19,10 @@ EFL_START_TEST(slstr_copy)
 {
    Eina_Slstr *str;
 
-   eina_init();
 
    str = _slstr_copy();
    ck_assert_str_eq(str, "Hello world 1");
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -40,12 +38,10 @@ EFL_START_TEST(slstr_steal)
 {
    Eina_Slstr *str;
 
-   eina_init();
 
    str = _slstr_steal();
    ck_assert_str_eq(str, "Hello world 2");
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -62,13 +58,11 @@ EFL_START_TEST(slstr_stringshare)
    Eina_Stringshare *ss;
    Eina_Slstr *str;
 
-   eina_init();
 
    str = _slstr_stringshare();
    ss = eina_stringshare_add("Hello world 3");
    fail_if(ss != str);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -84,12 +78,10 @@ EFL_START_TEST(slstr_tmpstr)
 {
    Eina_Slstr *str;
 
-   eina_init();
 
    str = _slstr_tmpstr();
    ck_assert_str_eq(str, "Hello world 4");
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -109,12 +101,10 @@ EFL_START_TEST(slstr_strbuf)
 {
    Eina_Slstr *str;
 
-   eina_init();
 
    str = _slstr_strbuf();
    ck_assert_str_eq(str, "Hello world 5");
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -128,12 +118,10 @@ EFL_START_TEST(slstr_slstr_printf)
 {
    Eina_Slstr *str;
 
-   eina_init();
 
    str = _slstr_printf(6);
    ck_assert_str_eq(str, "Hello world 6");
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -156,13 +144,11 @@ _many_do(void)
 
 EFL_START_TEST(slstr_many)
 {
-   eina_init();
 
    _many_do();
 
    eina_slstr_local_clear();
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -180,7 +166,6 @@ EFL_START_TEST(slstr_thread)
    Eina_Thread th[threads];
    int k;
 
-   eina_init();
 
    for (k = 0; k < threads; k++)
      fail_if(!eina_thread_create(&th[k], EINA_THREAD_NORMAL, -1, _thread_cb, NULL));
@@ -190,7 +175,6 @@ EFL_START_TEST(slstr_thread)
 
    eina_slstr_local_clear();
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

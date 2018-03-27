@@ -6,6 +6,7 @@
 
 #include "eio_suite.h"
 #include "../efl_check.h"
+#include <Eio.h>
 
 static const Efl_Test_Case etc[] = {
   {"Eio_Monitor", eio_test_monitor},
@@ -23,6 +24,17 @@ static const Efl_Test_Case etc[] = {
   {NULL, NULL}
 };
 
+SUITE_INIT(eio)
+{
+   //T6813
+   //ck_assert_int_eq(eio_init(), 1);
+}
+
+SUITE_SHUTDOWN(eio)
+{
+   //ck_assert_int_eq(eio_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -38,7 +50,7 @@ main(int argc, char **argv)
    eina_init();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eio", etc);
+                                           "Eio", etc, SUITE_INIT_FN(eio), SUITE_SHUTDOWN_FN(eio));
 
    eina_shutdown();
 

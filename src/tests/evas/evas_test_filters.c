@@ -25,7 +25,6 @@
    Ecore_Evas *ee; Evas *evas; \
    Evas_Object *to; \
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1); \
-   ecore_evas_init(); \
    ee = ecore_evas_buffer_new(1, 1); \
    ecore_evas_show(ee); \
    ecore_evas_manual_render_set(ee, EINA_TRUE); \
@@ -41,7 +40,6 @@
 #define END_FILTER_TEST() \
    evas_object_del(to); \
    ecore_evas_free(ee); \
-   ecore_evas_shutdown(); \
    do {} while (0)
 
 #ifdef LITTLE_ENDIAN

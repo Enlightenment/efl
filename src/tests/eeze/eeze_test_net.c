@@ -9,29 +9,18 @@
 
 EFL_START_TEST(eeze_test_net_list)
 {
-   int ret;
    Eina_List *list = NULL;
-
-   ret = eeze_init();
-   fail_if(ret != 1);
 
    list = eeze_net_list();
    fail_if(list == NULL);
-
-   ret = eeze_shutdown();
-   fail_if(ret != 0);
 }
 EFL_END_TEST
 
 EFL_START_TEST(eeze_test_net_attr)
 {
-   int ret;
    int idx = 0;
    Eeze_Net *net = NULL;
    const char *tmp = NULL;
-
-   ret = eeze_init();
-   fail_if(ret != 1);
 
    net = eeze_net_new("lo");
    fail_if(net == NULL);
@@ -65,9 +54,6 @@ EFL_START_TEST(eeze_test_net_attr)
    fail_if(tmp == NULL);
 
    eeze_net_free(net);
-
-   ret = eeze_shutdown();
-   fail_if(ret != 0);
 }
 EFL_END_TEST
 
@@ -75,12 +61,8 @@ EFL_END_TEST
 #ifdef HAVE_IPV6
 EFL_START_TEST(eeze_test_net_attr_ipv6)
 {
-   int ret;
    Eeze_Net *net = NULL;
    const char *tmp = NULL;
-
-   ret = eeze_init();
-   fail_if(ret != 1);
 
    net = eeze_net_new("lo");
    fail_if(net == NULL);
@@ -104,9 +86,6 @@ EFL_START_TEST(eeze_test_net_attr_ipv6)
 
 cleanup:
    eeze_net_free(net);
-
-   ret = eeze_shutdown();
-   fail_if(ret != 0);
 }
 EFL_END_TEST
 #endif

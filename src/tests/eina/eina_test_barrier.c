@@ -65,9 +65,6 @@ EFL_START_TEST(eina_barrier_test_simple)
     Eina_Bool r;
     int i;
 
-    i = eina_init();
-    _ck_assert_int(i, >=, 1);
-
     i = eina_threads_init();
     _ck_assert_int(i, >=, 1);
 
@@ -104,7 +101,6 @@ EFL_START_TEST(eina_barrier_test_simple)
     eina_barrier_free(&barrier);
 
     eina_threads_shutdown();
-    eina_shutdown();
 }
 EFL_END_TEST
 

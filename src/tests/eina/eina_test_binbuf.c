@@ -34,8 +34,6 @@ EFL_START_TEST(binbuf_simple)
    Eina_Slice ro_slice;
    Eina_Rw_Slice rw_slice;
 
-   eina_init();
-
    buf = eina_binbuf_new();
    fail_if(!buf);
 
@@ -80,7 +78,6 @@ EFL_START_TEST(binbuf_simple)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 #undef TEXT
 }
 EFL_END_TEST
@@ -90,8 +87,6 @@ EFL_START_TEST(binbuf_remove)
    Eina_Binbuf *buf;
    const unsigned char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -112,8 +107,6 @@ EFL_START_TEST(binbuf_remove)
    fail_if(0 != eina_binbuf_length_get(buf));
 
    eina_binbuf_free(buf);
-
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -130,8 +123,6 @@ EFL_START_TEST(binbuf_manage_simple)
    unsigned char *alloc_buf = malloc(size);
    memcpy(alloc_buf, cbuf, size);
 
-   eina_init();
-
    buf = eina_binbuf_manage_new_length(alloc_buf, size);
    fail_if(!buf);
 
@@ -144,7 +135,6 @@ EFL_START_TEST(binbuf_manage_simple)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -154,8 +144,6 @@ EFL_START_TEST(binbuf_manage_read_only_simple)
    const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
    const unsigned char *cbuf = (const unsigned char *) _cbuf;
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
-
-   eina_init();
 
    buf = eina_binbuf_manage_read_only_new_length(cbuf, size);
    fail_if(!buf);
@@ -174,7 +162,6 @@ EFL_START_TEST(binbuf_manage_read_only_simple)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 #pragma GCC diagnostic pop
@@ -183,8 +170,6 @@ EFL_START_TEST(binbuf_insert)
 {
 #if 0
    Eina_Binbuf *buf;
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -227,7 +212,6 @@ EFL_START_TEST(binbuf_insert)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 #endif
 }
 EFL_END_TEST
@@ -247,8 +231,6 @@ EFL_START_TEST(binbuf_realloc)
            pattern[i] = 'a' + (i % 27);
      }
    pattern[i] = '\0';
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -302,7 +284,6 @@ EFL_START_TEST(binbuf_realloc)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -315,8 +296,6 @@ EFL_START_TEST(binbuf_expand)
    Eina_Slice hi_there = EINA_SLICE_STR_LITERAL("Hi There");
    size_t i;
    Eina_Bool r;
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -369,7 +348,6 @@ EFL_START_TEST(binbuf_expand)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

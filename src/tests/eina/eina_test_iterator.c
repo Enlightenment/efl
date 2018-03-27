@@ -44,8 +44,6 @@ EFL_START_TEST(eina_iterator_filter_simple)
    Eina_Iterator *it, *filtered;
    Eina_Array *ea;
 
-   eina_init();
-
    ea = eina_array_new(11);
    fail_if(!ea);
 
@@ -85,7 +83,6 @@ EFL_START_TEST(eina_iterator_filter_simple)
 
    eina_array_free(ea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -111,7 +108,6 @@ EFL_START_TEST(eina_iterator_filter_free)
    Eina_Iterator *it, *filtered;
    Eina_Array *ea;
    struct Free_test *data;
-   eina_init();
 
    data = calloc(1, sizeof(struct Free_test));
    ea = eina_array_new(11);
@@ -127,7 +123,6 @@ EFL_START_TEST(eina_iterator_filter_free)
 
    free(data);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 static Eina_Bool
@@ -146,8 +141,6 @@ EFL_START_TEST(eina_iterator_array_simple)
    Eina_Array *ea;
    int *tmp;
    int i;
-
-   eina_init();
 
    ea = eina_array_new(11);
         fail_if(!ea);
@@ -175,7 +168,6 @@ EFL_START_TEST(eina_iterator_array_simple)
 
    eina_array_free(ea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -216,7 +208,6 @@ EFL_START_TEST(eina_iterator_hash_simple)
    Eina_Hash *hash;
    int array[] = { 1, 42, 7, 8, 6 };
 
-   eina_init();
 
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
@@ -241,7 +232,6 @@ EFL_START_TEST(eina_iterator_hash_simple)
 
    eina_hash_free(hash);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -361,7 +351,6 @@ EFL_START_TEST(eina_iterator_list_simple)
    int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
    int i = 0;
 
-   eina_init();
 
    list = eina_list_append(list, &data[0]);
    fail_if(list == NULL);
@@ -426,7 +415,6 @@ EFL_START_TEST(eina_reverse_iterator_list_simple)
    int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
    int i = 0;
 
-   eina_init();
 
    list = eina_list_append(list, &data[0]);
    fail_if(list == NULL);

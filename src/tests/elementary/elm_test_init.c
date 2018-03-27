@@ -7,11 +7,6 @@
 
 EFL_START_TEST (elm_main)
 {
-   char *args[] = { "exe" };
-   ck_assert(elm_init(1, args) == 1);
-   ck_assert(elm_shutdown() == 0);
-   ck_assert(ecore_init() == 1);
-   ck_assert(ecore_shutdown() == 0);
 }
 EFL_END_TEST
 

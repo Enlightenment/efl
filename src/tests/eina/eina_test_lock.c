@@ -85,7 +85,6 @@ EFL_START_TEST(eina_test_spinlock)
 {
    unsigned int i;
 
-   fail_if(!eina_init());
 
    counter = 0;
    fail_if(!eina_spinlock_new(&spin));
@@ -108,7 +107,6 @@ EFL_START_TEST(eina_test_spinlock)
 
    eina_spinlock_free(&spin);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -150,7 +148,6 @@ _eina_test_tls_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 
 EFL_START_TEST(eina_test_tls)
 {
-   fail_if(!eina_init());
 
    fail_if(!eina_tls_cb_new(&key, _eina_test_tls_free));
 
@@ -167,7 +164,6 @@ EFL_START_TEST(eina_test_tls)
 
    eina_tls_free(key);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -202,7 +198,6 @@ EFL_START_TEST(eina_test_rwlock)
    struct timespec ts, ts2;
    long delay;
 
-   fail_if(!eina_init());
 
    fail_if(!eina_rwlock_new(&mutex));
    fail_if(!eina_lock_new(&mtcond));
@@ -251,7 +246,6 @@ EFL_START_TEST(eina_test_rwlock)
    eina_lock_free(&mtcond);
    eina_rwlock_free(&mutex);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

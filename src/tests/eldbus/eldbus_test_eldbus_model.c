@@ -135,22 +135,6 @@ efl_model_first_child_get(Efl_Model *efl_model)
 }
 
 void
-check_init(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-void
-check_shutdown(void)
-{
-   ecore_shutdown();
-   int ret = eldbus_shutdown();
-   ck_assert_int_eq(ret, 0);
-}
-
-void
 check_property(Eo *object, const char *property_name, const char *expected_value)
 {
    Efl_Future *future;
@@ -279,31 +263,22 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
 
 EFL_START_TEST(smoke)
 {
-   check_init();
-
    Eo *connection = create_connection();
    efl_unref(connection);
-
-   check_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(object)
 {
-   check_init();
-
    Eo *root = create_object();
 
    efl_unref(root);
 
-   check_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(proxy)
 {
-   check_init();
-
    Eo *root = create_object();
 
    Eina_Accessor *accessor = NULL;
@@ -326,7 +301,6 @@ EFL_START_TEST(proxy)
 
    efl_unref(root);
 
-   check_shutdown();
 }
 EFL_END_TEST
 

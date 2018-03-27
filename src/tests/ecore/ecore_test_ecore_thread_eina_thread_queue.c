@@ -73,9 +73,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
 {
    int val = 99;
 
-   eina_init();
-   ecore_init();
-
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
    thq2 = eina_thread_queue_new();
@@ -101,8 +98,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
         if (val == 1000) break;
      }
 
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -144,9 +139,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
    int i, mcount;
    Ecore_Thread *th;
 
-   eina_init();
-   ecore_init();
-
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
    th = ecore_thread_feedback_run(thspeed2_do, NULL, NULL, NULL, NULL, EINA_TRUE);
@@ -166,8 +158,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
      }
    printf("%i messages sent\n", i);
 
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -220,9 +210,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
 {
    int val1 = 99, val2 = 99, cnt = 0;
    Eina_Thread_Queue *parent;
-
-   eina_init();
-   ecore_init();
 
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
@@ -282,8 +269,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
      }
    printf("enough msgs\n");
 
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -335,9 +320,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
 {
    int cnt = 0;
    int val1 = 99, val2 = 9999;
-
-   eina_init();
-   ecore_init();
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
    ecore_thread_feedback_run(th41_do, NULL, NULL, NULL, NULL, EINA_TRUE);
@@ -372,8 +354,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
      }
    printf("msgs ok\n");
 
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -439,7 +419,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
 {
    int val = 99;
 
-   ecore_init();
    eina_semaphore_new(&th4_sem, 0);
 
    thq1 = eina_thread_queue_new();
@@ -481,8 +460,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
    eina_semaphore_free(&th4_sem);
    eina_thread_queue_free(thq1);
    eina_thread_queue_free(thq2);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -588,9 +565,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
 
    if (DEBUG) setbuf(stdout, NULL);
 
-   eina_init();
-   ecore_init();
-
    eina_semaphore_new(&th6_sem, 0);
    eina_spinlock_new(&msgnum_lock);
    thq1 = eina_thread_queue_new();
@@ -628,8 +602,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
    eina_thread_queue_free(thq1);
    eina_spinlock_free(&msgnum_lock);
 
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -662,9 +634,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
    void *ref;
    int msgcnt = 0, ret;
 
-   eina_init();
-   ecore_init();
-
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
    if (pipe(p) != 0)
@@ -694,8 +663,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
      }
    printf("msg fd ok\n");
 
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 

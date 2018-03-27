@@ -153,7 +153,6 @@ EFL_START_TEST(evas_object_mesh_loader_saver)
    unlink(tmp);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 

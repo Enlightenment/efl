@@ -91,35 +91,16 @@ static const Efl_Test_Case etc[] = {
    { NULL, NULL }
 };
 
-/* FIXME this is a copy from eina_test_mempool
- * we should remove the duplication
- */
 static Eina_Array *_modules;
-static void _mempool_init(void)
+
+SUITE_INIT(eina)
 {
-   eina_init();
-   /* force modules to be loaded in case they are not installed */
-   _modules = eina_module_list_get(NULL,
-                                   PACKAGE_BUILD_DIR "/src/modules/eina",
-                                   EINA_TRUE,
-                                   NULL,
-                                   NULL);
-   eina_module_list_load(_modules);
+   ck_assert_int_eq(eina_init(), 1);
 }
 
-static void _mempool_shutdown(void)
+SUITE_SHUTDOWN(eina)
 {
-   unsigned int i;
-   Eina_Array_Iterator it;
-   Eina_Module *module;
-   eina_module_list_free(_modules);
-   if (_modules)
-     {
-        EINA_ARRAY_ITER_NEXT(_modules, i, module, it)
-          free(module);
-        eina_array_free(_modules);
-     }
-   eina_shutdown();
+   ck_assert_int_eq(eina_shutdown(), 0);
 }
 
 int
@@ -134,12 +115,9 @@ main(int argc, char **argv)
    putenv("EFL_RUN_IN_TREE=1");
 #endif
 
-   _mempool_init();
-
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eina", etc);
+                                           "Eina", etc, SUITE_INIT_FN(eina), SUITE_SHUTDOWN_FN(eina));
 
-   _mempool_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }

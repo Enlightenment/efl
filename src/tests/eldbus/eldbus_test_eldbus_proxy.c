@@ -29,24 +29,8 @@ static int proxy_data_stored = 5;
 * @defgroup eldbus_proxy
 *
 * @preconditio
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   eldbus_shutdown();
-   ecore_shutdown();
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -409,7 +393,6 @@ EFL_END_TEST
 void
 eldbus_test_eldbus_proxy(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_proxy_info_get_call_p);
    tcase_add_test(tc, utc_eldbus_proxy_send_call_p);
    tcase_add_test(tc, utc_eldbus_proxy_send_and_block_p);

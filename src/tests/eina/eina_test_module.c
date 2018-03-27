@@ -52,9 +52,8 @@ EFL_START_TEST(eina_module_load_unload)
    Eina_Array_Iterator it;
    Eina_Module *module;	
    
-   eina_init();
    _modules = eina_module_list_get(NULL,
-                                   PACKAGE_BUILD_DIR "/src/tests/",
+                                   PACKAGE_BUILD_DIR "/src/tests/eina",
                                    EINA_TRUE,
                                    &list_cb,
                                    NULL);
@@ -65,7 +64,6 @@ EFL_START_TEST(eina_module_load_unload)
    EINA_ARRAY_ITER_NEXT(_modules, i, module, it)
      free(module);
    eina_array_free(_modules);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -73,15 +71,13 @@ EFL_START_TEST(eina_module_find_test)
 {
    Eina_Array *_modules;
 
-   eina_init();
    _modules = eina_module_list_get(NULL,
-                                   PACKAGE_BUILD_DIR "/src/tests/",
+                                   PACKAGE_BUILD_DIR "/src/tests/eina",
                                    EINA_TRUE,
                                    &list_cb,
                                    NULL);
    fail_if(!_modules);
    fail_if(eina_module_find(_modules, NULL) != NULL);
-   eina_shutdown();
 }
 EFL_END_TEST
 

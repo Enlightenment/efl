@@ -11,8 +11,6 @@ EFL_START_TEST (elm_photocam_legacy_type_check)
    Evas_Object *win, *photocam;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
 
    photocam = elm_photocam_add(win);
@@ -25,7 +23,6 @@ EFL_START_TEST (elm_photocam_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_photocam"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -34,8 +31,6 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *photocam;
    Efl_Access_Role role;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
 
    photocam = elm_photocam_add(win);
@@ -43,7 +38,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_IMAGE);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -53,8 +47,6 @@ EFL_START_TEST (efl_ui_image_zoomable_icon)
    Eina_Bool ok;
    const char *icon_name;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
 
    img_zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win);
@@ -70,7 +62,6 @@ EFL_START_TEST (efl_ui_image_zoomable_icon)
    icon_name = efl_ui_image_icon_get(img_zoomable);
    ck_assert(icon_name == NULL);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

@@ -54,6 +54,16 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(efl_ui)
+{
+   //???
+}
+
+SUITE_SHUTDOWN(efl_ui)
+{
+
+}
+
 int
 main(int argc, char **argv)
 {
@@ -67,7 +77,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Efl_Ui", etc);
+                                           "Efl_Ui", etc, SUITE_INIT_FN(efl_ui), SUITE_SHUTDOWN_FN(efl_ui));
 
    return (failed_count == 0) ? 0 : 255;
 }

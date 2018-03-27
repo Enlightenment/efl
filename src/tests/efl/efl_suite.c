@@ -20,7 +20,7 @@
 # include "config.h"
 #endif
 
-#include <Eina.h>
+#include <Ecore.h>
 
 #include "efl_suite.h"
 #include "../efl_check.h"
@@ -30,6 +30,16 @@ static const Efl_Test_Case etc[] = {
    { "Efl_Model_Composite_Boolean", efl_test_case_model_composite_boolean },
    { NULL, NULL }
 };
+
+SUITE_INIT(efl)
+{
+   ck_assert_int_eq(ecore_init(), 1);
+}
+
+SUITE_SHUTDOWN(efl)
+{
+   ck_assert_int_eq(ecore_shutdown(), 0);
+}
 
 int
 main(int argc, char **argv)
@@ -44,7 +54,7 @@ main(int argc, char **argv)
    eina_init();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Efl", etc);
+                                           "Efl", etc, SUITE_INIT_FN(efl), SUITE_SHUTDOWN_FN(efl));
 
    eina_shutdown();
 

@@ -16,7 +16,6 @@ EFL_START_TEST(eina_quad_simple)
    double x0, x1, x2, x3;
    double y0, y1, y2, y3;
 
-   fail_if(!eina_init());
 
    eina_quad_coords_set(&r2,
                         0.0, 5.0,
@@ -66,7 +65,6 @@ EFL_START_TEST(eina_quad_simple)
             !EINA_FLT_EQ(r2.x3, 5.0) ||
             !EINA_FLT_EQ(r2.y3, 40.0));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

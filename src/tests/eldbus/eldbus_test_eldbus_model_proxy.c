@@ -17,7 +17,6 @@ static Eo *dbus_proxy = NULL;
 static void
 _setup(void)
 {
-   check_init();
    dbus_object1 = create_object();
 
    dbus_proxy = eldbus_model_proxy_from_object_get(dbus_object1, ELDBUS_FDO_INTERFACE);
@@ -28,7 +27,6 @@ static void
 _teardown(void)
 {
    efl_unref(dbus_object1);
-   check_shutdown();
 }
 
 EFL_START_TEST(properties_get)

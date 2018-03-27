@@ -110,9 +110,6 @@ EFL_START_TEST(correct_register)
    Eina_List *set1 = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -142,7 +139,6 @@ EFL_START_TEST(correct_register)
    efl_del(child3);
    efl_del(sub);
    efl_del(manager);
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -151,9 +147,6 @@ EFL_START_TEST(correct_unregister)
    Eina_List *set = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -186,7 +179,6 @@ EFL_START_TEST(correct_unregister)
    efl_del(child1);
    efl_del(child2);
    efl_del(child3);
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -195,9 +187,6 @@ EFL_START_TEST(correct_un_register)
    Eina_List *set_add = NULL, *set_del = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -228,7 +217,6 @@ EFL_START_TEST(correct_un_register)
    efl_del(child1);
    efl_del(child2);
    efl_del(child3);
-   elm_shutdown();
 }
 EFL_END_TEST
 

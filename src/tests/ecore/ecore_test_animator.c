@@ -27,8 +27,6 @@ EFL_START_TEST(ecore_test_animators)
    double interval1 = 0.02;
    double interval2 = 0.01;
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-
    ecore_animator_frametime_set(interval1);
    animator = ecore_animator_timeline_add(1, _anim_cb, &interval1);
 
@@ -42,8 +40,6 @@ EFL_START_TEST(ecore_test_animators)
    fail_if(!animator);
 
    ecore_main_loop_begin();
-
-   ecore_shutdown();
 
 }
 EFL_END_TEST
@@ -132,8 +128,6 @@ EFL_START_TEST(ecore_test_begin_end_tick)
    Eina_Bool is_begin_cb_called = EINA_FALSE;
    Eina_Bool is_end_cb_called = EINA_FALSE;
 
-   ecore_init();
-
    ecore_animator_custom_source_tick_begin_callback_set(_animator_called_cb, &is_begin_cb_called);
    ecore_animator_custom_source_tick_end_callback_set(_animator_called_cb, &is_end_cb_called);
 
@@ -153,8 +147,6 @@ EFL_START_TEST(ecore_test_begin_end_tick)
    fail_if(!is_begin_cb_called);
    fail_if(!is_end_cb_called);
    fail_if(!is_animator_cb_called);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 

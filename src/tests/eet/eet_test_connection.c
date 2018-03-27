@@ -95,8 +95,6 @@ EFL_START_TEST(eet_test_connection_check)
    Eet_Test_Ex_Type etbt;
    Eina_Bool on_going;
 
-   eet_init();
-
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -139,8 +137,6 @@ EFL_START_TEST(eet_test_connection_check)
    fail_if(!eet_connection_close(ecd.conn, &on_going));
 
    fail_if(on_going);
-
-   eet_shutdown();
 }
 EFL_END_TEST
 

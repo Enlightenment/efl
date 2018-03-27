@@ -23,8 +23,6 @@ static Eo *pong_signal = NULL;
 static void
 _setup(void)
 {
-   check_init();
-
    fake_server = fake_server_start(&fake_server_data);
 
    fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(), eldbus_model_object_custom_constructor(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
@@ -44,7 +42,6 @@ _teardown(void)
 
    fake_server_stop(fake_server);
 
-   check_shutdown();
 }
 
 EFL_START_TEST(properties_get)

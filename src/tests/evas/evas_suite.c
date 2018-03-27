@@ -25,6 +25,18 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(evas)
+{
+   ck_assert_int_eq(evas_init(), 1);
+   ck_assert_int_eq(ecore_evas_init(), 1);
+}
+
+SUITE_SHUTDOWN(evas)
+{
+   ck_assert_int_eq(ecore_evas_shutdown(), 0);
+   ck_assert_int_eq(evas_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -37,12 +49,8 @@ main(int argc, char **argv)
    putenv("EFL_RUN_IN_TREE=1");
 #endif
 
-   ecore_evas_init();
-
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Evas", etc);
-
-   ecore_evas_shutdown();
+                                           "Evas", etc, SUITE_INIT_FN(evas), SUITE_SHUTDOWN_FN(evas));
 
    return (failed_count == 0) ? 0 : 255;
 }

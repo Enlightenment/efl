@@ -43,8 +43,6 @@ EFL_START_TEST(eina_accessor_array_simple)
    int *tmp;
    int i;
 
-   eina_init();
-
    ea = eina_array_new(11);
         fail_if(!ea);
 
@@ -74,7 +72,6 @@ EFL_START_TEST(eina_accessor_array_simple)
 
    eina_array_free(ea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -191,8 +188,6 @@ EFL_START_TEST(eina_accessor_list_simple)
    int data[] = { 6, 9, 42, 1, 7, 1337, 81, 1664 };
    int *j;
    int i = 0;
-
-   eina_init();
 
    list = eina_list_append(list, &data[0]);
    fail_if(list == NULL);

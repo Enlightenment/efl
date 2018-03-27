@@ -64,8 +64,6 @@ EFL_START_TEST(efl_test_promise_future_success)
    int progress = 7;
    int value = 42;
 
-   ecore_init();
-
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
@@ -91,7 +89,6 @@ EFL_START_TEST(efl_test_promise_future_success)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -103,8 +100,6 @@ EFL_START_TEST(efl_test_promise_future_success_before_get)
    Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -131,7 +126,6 @@ EFL_START_TEST(efl_test_promise_future_success_before_get)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -143,8 +137,6 @@ EFL_START_TEST(efl_test_promise_future_cancel)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -175,7 +167,6 @@ EFL_START_TEST(efl_test_promise_future_cancel)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -188,8 +179,6 @@ EFL_START_TEST(efl_test_promise_before_future_success)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -214,7 +203,6 @@ EFL_START_TEST(efl_test_promise_before_future_success)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -226,8 +214,6 @@ EFL_START_TEST(efl_test_promise_before_future_cancel)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -257,7 +243,6 @@ EFL_START_TEST(efl_test_promise_before_future_cancel)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -308,8 +293,6 @@ EFL_START_TEST(efl_test_promise_future_chain_success)
    int progress = 7;
    int value = 42;
 
-   ecore_init();
-
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
 
@@ -341,7 +324,6 @@ EFL_START_TEST(efl_test_promise_future_chain_success)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -354,8 +336,6 @@ EFL_START_TEST(efl_test_promise_future_chain_cancel)
    Eina_Bool deadf1 = EINA_FALSE, deadf2 = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -392,7 +372,6 @@ EFL_START_TEST(efl_test_promise_future_chain_cancel)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -406,8 +385,6 @@ EFL_START_TEST(efl_test_promise_future_multi_success)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -438,7 +415,6 @@ EFL_START_TEST(efl_test_promise_future_multi_success)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -451,8 +427,6 @@ EFL_START_TEST(efl_test_promise_future_multi_success_noref)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -481,7 +455,6 @@ EFL_START_TEST(efl_test_promise_future_multi_success_noref)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -494,8 +467,6 @@ EFL_START_TEST(efl_test_promise_future_multi_cancel)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -528,7 +499,6 @@ EFL_START_TEST(efl_test_promise_future_multi_cancel)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -542,8 +512,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_success)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -572,7 +540,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_success)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -585,8 +552,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_success_noref)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -613,7 +578,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_success_noref)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -627,8 +591,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_cancel)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -665,7 +627,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_cancel)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -679,8 +640,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_cancel_noref)
    Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
    int progress = 7;
    int value = 42;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -717,7 +676,6 @@ EFL_START_TEST(efl_test_promise_before_future_multi_cancel_noref)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -739,8 +697,6 @@ EFL_START_TEST(efl_test_promise_future_optional_success)
    int value = 42;
 
    cleanup = EINA_FALSE;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -766,7 +722,6 @@ EFL_START_TEST(efl_test_promise_future_optional_success)
 
    fail_if(!deadp || !cleanup);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -779,8 +734,6 @@ EFL_START_TEST(efl_test_promise_future_optional_cancel)
    int value = 42;
 
    cleanup = EINA_FALSE;
-
-   ecore_init();
 
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    fail_if(!p);
@@ -810,7 +763,6 @@ EFL_START_TEST(efl_test_promise_future_optional_cancel)
 
    fail_if(!deadp);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -840,8 +792,6 @@ EFL_START_TEST(efl_test_promise_all)
    Efl_Future *all = NULL, *f1;
    Future_Ok donea = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
    Future_Ok donep1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
-
-   ecore_init();
 
    p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
@@ -881,7 +831,6 @@ EFL_START_TEST(efl_test_promise_all)
    efl_del(p2);
    efl_del(p3);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -890,8 +839,6 @@ EFL_START_TEST(efl_test_promise_all_after_value_set)
    Efl_Promise *p1, *p2, *p3;
    Efl_Future *all = NULL, *f1, *f2, *f3;
    Future_Ok donea = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
-
-   ecore_init();
 
    p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
@@ -925,7 +872,6 @@ EFL_START_TEST(efl_test_promise_all_after_value_set)
    efl_del(p2);
    efl_del(p3);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -948,8 +894,6 @@ EFL_START_TEST(efl_test_promise_race)
    Efl_Future *race = NULL, *f1;
    Future_Ok donea = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
    Future_Ok donep1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
-
-   ecore_init();
 
    p1 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    p2 = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
@@ -977,7 +921,6 @@ EFL_START_TEST(efl_test_promise_race)
    efl_del(p2);
    efl_del(p3);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -986,8 +929,6 @@ EFL_START_TEST(efl_test_future_link)
    Efl_Promise *p;
    Efl_Future *f;
    Eo *o;
-
-   ecore_init();
 
    o = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                efl_loop_timer_interval_set(efl_added, 0.0));
@@ -1007,7 +948,6 @@ EFL_START_TEST(efl_test_future_link)
    efl_del(o);
    efl_del(p);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -1024,8 +964,6 @@ EFL_START_TEST(efl_test_recursive_mess)
    Efl_Promise *p;
    Future_Ok done = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
 
-   ecore_init();
-
    p = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    efl_future_use(&recursive_future, efl_promise_future_get(p));
    efl_future_then(recursive_future, _then_cleanup, _cancel, NULL, &done);
@@ -1036,7 +974,6 @@ EFL_START_TEST(efl_test_recursive_mess)
 
    efl_del(p);
 
-   ecore_shutdown();
 }
 EFL_END_TEST
 

@@ -13,8 +13,6 @@ EFL_START_TEST (elm_list_legacy_type_check)
    Evas_Object *win, *list;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
    list = elm_list_add(win);
@@ -27,7 +25,6 @@ EFL_START_TEST (elm_list_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_list"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -41,8 +38,7 @@ EFL_START_TEST (elm_list_atspi_selection_selected_children_count_get)
  Elm_Object_Item *item;
  int val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -59,7 +55,6 @@ EFL_START_TEST (elm_list_atspi_selection_selected_children_count_get)
  val = elm_interface_atspi_selection_selected_children_count_get(list);
  ck_assert(val == 0);
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -69,8 +64,7 @@ EFL_START_TEST (elm_list_atspi_selection_child_select)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -80,7 +74,6 @@ EFL_START_TEST (elm_list_atspi_selection_child_select)
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item));
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -90,8 +83,7 @@ EFL_START_TEST (elm_list_atspi_selection_selected_child_deselect)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -104,7 +96,6 @@ EFL_START_TEST (elm_list_atspi_selection_selected_child_deselect)
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -114,8 +105,7 @@ EFL_START_TEST (elm_list_atspi_selection_is_child_selected)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -128,7 +118,6 @@ EFL_START_TEST (elm_list_atspi_selection_is_child_selected)
  val = elm_interface_atspi_selection_is_child_selected(list, 0);
  ck_assert(val == EINA_TRUE);
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -138,8 +127,7 @@ EFL_START_TEST (elm_list_atspi_selection_all_children_select)
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -156,7 +144,6 @@ EFL_START_TEST (elm_list_atspi_selection_all_children_select)
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item1));
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item2));
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -167,8 +154,7 @@ EFL_START_TEST (elm_list_atspi_selection_clear)
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -184,7 +170,6 @@ EFL_START_TEST (elm_list_atspi_selection_clear)
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item1));
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item2));
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -194,8 +179,7 @@ EFL_START_TEST (elm_list_atspi_selection_child_deselect)
  Elm_Object_Item *item;
  Eina_Bool val;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -208,7 +192,6 @@ EFL_START_TEST (elm_list_atspi_selection_child_deselect)
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -219,8 +202,7 @@ EFL_START_TEST (elm_atspi_role_get)
  Evas_Object *win, *list;
  Efl_Access_Role role;
 
- char *args[] = { "exe" };
-   elm_init(1, args);
+
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
@@ -228,7 +210,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
  ck_assert(role == EFL_ACCESS_ROLE_LIST);
 
- elm_shutdown();
 }
 EFL_END_TEST
 
@@ -242,8 +223,6 @@ EFL_START_TEST(elm_atspi_children_parent)
    Efl_Access *parent;
    Elm_Object_Item *it;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
    Evas_Object *icon = elm_icon_add(win);
@@ -260,7 +239,6 @@ EFL_START_TEST(elm_atspi_children_parent)
    parent = efl_provider_find(efl_parent_get(end), EFL_ACCESS_MIXIN);
    ck_assert(it == parent);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

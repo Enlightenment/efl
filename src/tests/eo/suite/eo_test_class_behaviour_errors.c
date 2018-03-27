@@ -34,7 +34,6 @@ _destructor_unref_class_initializer(Efl_Class *klass2)
 
 EFL_START_TEST(efl_destructor_unref)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    static Efl_Class_Description class_desc = {
@@ -58,13 +57,11 @@ EFL_START_TEST(efl_destructor_unref)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(efl_destructor_double_del)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    static Efl_Class_Description class_desc = {
@@ -90,7 +87,6 @@ EFL_START_TEST(efl_destructor_double_del)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 

@@ -35,7 +35,6 @@ EFL_START_TEST(eina_matrix2)
    Eina_Matrix2 n;
    double xx, xy, yx, yy;
 
-   eina_init();
 
    eina_matrix2_values_set(&m,
                            1, 0,
@@ -54,7 +53,6 @@ EFL_START_TEST(eina_matrix2)
    fail_if(!EINA_DBL_EQ(xy, yx) ||
            !EINA_DBL_EQ(xy, 0));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -130,7 +128,6 @@ EFL_START_TEST(eina_matrix4)
      zx, zy, zz, zw,
      wx, wy, wz, ww;
 
-   eina_init();
 
    eina_matrix4_values_set(&m,
                            1, 0, 0, 0,
@@ -192,7 +189,6 @@ EFL_START_TEST(eina_matrix4)
            !EINA_DBL_EQ(n.wz, 12) ||
            !EINA_DBL_EQ(n.ww, 16));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -323,7 +319,6 @@ EFL_START_TEST(eina_matrix4_2_3)
    Eina_Matrix4 m4;
    Eina_Matrix3 m3, m3b;
 
-   eina_init();
 
    eina_matrix3_values_set(&m3,
                            1, 3, 2,
@@ -335,7 +330,6 @@ EFL_START_TEST(eina_matrix4_2_3)
 
    fail_if(memcmp(&m3, &m3b, sizeof (Eina_Matrix3)) != 0);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -347,7 +341,6 @@ EFL_START_TEST(eina_matrix3)
           yx, yy, yz,
           zx, zy, zz;
 
-          eina_init();
 
    eina_matrix3_values_set(&m,
                            1, 0, 0,
@@ -385,7 +378,6 @@ EFL_START_TEST(eina_matrix3)
    ret = eina_matrix3_equal(&m1, &m2);
    fail_if(ret != EINA_FALSE);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -664,7 +656,6 @@ EFL_START_TEST(eina_matrix3_f16p16)
                zx, zy, zz;
    Eina_Matrix3_F16p16 m3;
 
-   eina_init();
 
    eina_matrix3_values_set(&m2,
                            1, 0, 0,
@@ -715,7 +706,6 @@ EFL_START_TEST(eina_matrix3_f16p16)
             m3.zy != m3.zz ||
             m3.zz != 196608);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -727,7 +717,6 @@ EFL_START_TEST(eina_matrix3_map_transform)
    Eina_Quad q;
    Eina_Bool ret;
 
-   eina_init();
 
    eina_matrix3_values_set(&m,
                            0, 1, 0,
@@ -779,7 +768,6 @@ EFL_START_TEST(eina_matrix3_map_transform)
            !EINA_DBL_EQ(q.x3, 0) ||
            !EINA_DBL_EQ(q.y3, 3));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -791,7 +779,6 @@ EFL_START_TEST(eina_normal3_test)
           yx, yy, yz,
           zx, zy, zz;
 
-   eina_init();
    eina_matrix4_values_set(&m,
                            1, 0, 0, 0,
                            0, 1, 0, 0,
@@ -826,7 +813,6 @@ EFL_START_TEST(eina_normal3_test)
            (fabs(yz)) > DBL_EPSILON ||
            (fabs(zy)) > DBL_EPSILON
           );
-   eina_shutdown();
 }
 EFL_END_TEST
 

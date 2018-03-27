@@ -15,7 +15,6 @@ do \
    evas_object_del(tb); \
    evas_textblock_style_free(st); \
    evas_free(evas); \
-   ecore_evas_shutdown(); \
 } \
 while (0)
 
@@ -25,7 +24,6 @@ _setup_evas()
    Evas *evas;
    Evas_Engine_Info *einfo;
 
-   ecore_evas_init();
    evas = evas_new();
 
    evas_output_method_set(evas, evas_render_method_lookup("buffer"));

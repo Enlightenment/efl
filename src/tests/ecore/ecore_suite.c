@@ -4,6 +4,7 @@
 
 #include "ecore_suite.h"
 #include "../efl_check.h"
+#include <Ecore.h>
 
 static const Efl_Test_Case etc[] = {
   { "Ecore", ecore_test_ecore },
@@ -33,6 +34,16 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(ecore)
+{
+   ck_assert_int_eq(ecore_init(), 1);
+}
+
+SUITE_SHUTDOWN(ecore)
+{
+   ck_assert_int_eq(ecore_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -46,7 +57,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Ecore", etc);
+                                           "Ecore", etc, SUITE_INIT_FN(ecore), SUITE_SHUTDOWN_FN(ecore));
 
    return (failed_count == 0) ? 0 : 255;
 }

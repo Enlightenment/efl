@@ -18,7 +18,6 @@ static Eo *object = NULL;
 static void
 _setup(void)
 {
-   check_init();
    object = create_object();
 }
 
@@ -26,7 +25,6 @@ static void
 _teardown(void)
 {
    efl_unref(object);
-   check_shutdown();
 }
 
 EFL_START_TEST(properties_get)

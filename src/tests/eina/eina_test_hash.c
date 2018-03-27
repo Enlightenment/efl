@@ -76,8 +76,6 @@ EFL_START_TEST(eina_hash_simple)
    int array[] = { 1, 42, 4, 5, 6 };
 
    /* As mempool is already initialized and it use hash, we should have 2 init. */
-   fail_if(eina_init() != 2);
-
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
 
@@ -122,8 +120,6 @@ EFL_START_TEST(eina_hash_simple)
 
    eina_hash_free(hash);
 
-   /* Same comment as eina_init */
-        fail_if(eina_shutdown() != 1);
 }
 EFL_END_TEST
 
@@ -132,8 +128,6 @@ EFL_START_TEST(eina_test_hash_crc)
    Eina_Hash *hash = NULL;
    int *test;
    int array[] = { 1, 42, 4, 5, 6 };
-
-   fail_if(eina_init() != 2);
 
    hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
                         EINA_KEY_CMP(_eina_string_key_cmp),
@@ -183,8 +177,6 @@ EFL_START_TEST(eina_test_hash_crc)
 
    eina_hash_free(hash);
 
-   /* Same comment as eina_init */
-        fail_if(eina_shutdown() != 1);
 }
 EFL_END_TEST
 
@@ -192,8 +184,6 @@ EFL_START_TEST(eina_hash_extended)
 {
    Eina_Hash *hash = NULL;
    int i;
-
-        fail_if(eina_init() != 2);
 
    hash = eina_hash_string_djb2_new(NULL);
         fail_if(hash == NULL);
@@ -212,7 +202,6 @@ EFL_START_TEST(eina_hash_extended)
 
         eina_hash_free(hash);
 
-   fail_if(eina_shutdown() != 1);
 }
 EFL_END_TEST
 
@@ -221,8 +210,6 @@ EFL_START_TEST(eina_hash_double_item)
    Eina_Hash *hash = NULL;
    int i[] = { 7, 7 };
    int *test;
-
-   fail_if(eina_init() != 2);
 
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
@@ -236,7 +223,6 @@ EFL_START_TEST(eina_hash_double_item)
 
    eina_hash_free(hash);
 
-      fail_if(eina_shutdown() != 1);
 }
 EFL_END_TEST
 
@@ -248,8 +234,6 @@ EFL_START_TEST(eina_hash_all_int)
    int64_t *test2;
    int *test;
    int it;
-
-      fail_if(eina_init() != 2);
 
    hash = eina_hash_int32_new(NULL);
       fail_if(hash == NULL);
@@ -278,7 +262,6 @@ EFL_START_TEST(eina_hash_all_int)
 
       eina_hash_free(hash);
 
-   fail_if(eina_shutdown() != 1);
 }
 EFL_END_TEST
 
@@ -290,8 +273,6 @@ EFL_START_TEST(eina_hash_int32_fuzze)
    unsigned int i;
    unsigned int j;
    unsigned int seed;
-
-   eina_init();
 
    seed = time(NULL);
    srand(seed);
@@ -341,7 +322,6 @@ EFL_START_TEST(eina_hash_int32_fuzze)
 
    eina_hash_free(hash);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -353,8 +333,6 @@ EFL_START_TEST(eina_hash_string_fuzze)
    unsigned int i;
    unsigned int j;
    unsigned int seed;
-
-   eina_init();
 
    seed = time(NULL);
    srand(seed);
@@ -405,17 +383,13 @@ EFL_START_TEST(eina_hash_string_fuzze)
 
    eina_hash_free(hash);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_hash_seed)
 {
-   eina_init();
-
    fail_if(eina_seed == 0);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -424,8 +398,6 @@ EFL_START_TEST(eina_hash_add_del_by_hash)
    Eina_Hash *hash = NULL;
    int array[] = { 1, 42, 4, 5, 6 };
    int key_len, key_hash;
-
-   fail_if(eina_init() != 2);
 
    hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
                         EINA_KEY_CMP(_eina_string_key_cmp),

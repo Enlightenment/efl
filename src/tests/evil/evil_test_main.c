@@ -26,8 +26,6 @@
 
 EFL_START_TEST(evil_main_simple)
 {
-   fail_if(evil_init() != 1);
-   fail_if(evil_shutdown() != 0);
 }
 EFL_END_TEST
 

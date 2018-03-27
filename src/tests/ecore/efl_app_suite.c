@@ -97,7 +97,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Efl_App", etc);
+                                           "Efl_App", etc, NULL, NULL);
 
    return (failed_count == 0) ? 0 : 255;
 }

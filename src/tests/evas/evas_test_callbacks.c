@@ -25,7 +25,6 @@ do \
 { \
    evas_object_del(rect); \
    evas_free(evas); \
-   ecore_evas_shutdown(); \
 } \
 while (0)
 

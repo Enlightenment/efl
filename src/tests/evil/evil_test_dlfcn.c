@@ -64,11 +64,11 @@ EFL_START_TEST(evil_dlfcn_dlsym_success)
 
    sym_init = dlsym(mod, "evil_init");
    fail_if(sym_init == NULL);
-   fail_if(sym_init() != 1);
+   fail_if(sym_init() != 2);
 
    sym_shutdown = dlsym(mod, "evil_shutdown");
    fail_if(sym_shutdown == NULL);
-   fail_if(sym_shutdown() != 0);
+   fail_if(sym_shutdown() != 1);
 
    res = dlclose(mod);
    fail_if(res != 0);

@@ -25,6 +25,7 @@
 
 #include "evil_suite.h"
 #include "../efl_check.h"
+#include <Evil.h>
 
 static const Efl_Test_Case etc[] = {
    { "Dlfcn", evil_test_dlfcn },
@@ -44,6 +45,17 @@ static const Efl_Test_Case etc[] = {
    { NULL, NULL }
 };
 
+
+SUITE_INIT(evil)
+{
+   ck_assert_int_eq(evil_init(), 1);
+}
+
+SUITE_SHUTDOWN(evil)
+{
+   ck_assert_int_eq(evil_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -57,7 +69,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Evil", etc);
+                                           "Evil", etc, SUITE_INIT_FN(evil), SUITE_SHUTDOWN_FN(evil));
 
    return (failed_count == 0) ? 0 : 255;
 }

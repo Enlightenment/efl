@@ -59,7 +59,6 @@ EFL_START_TEST(eina_test_sched_prio_drop)
     Eina_Thread tid;
     Eina_Bool r;
 
-    eina_init();
 
     r = eina_thread_create(&tid, EINA_THREAD_NORMAL, -1, _thread_run, NULL);
     fail_unless(r);
@@ -72,7 +71,6 @@ EFL_START_TEST(eina_test_sched_prio_drop)
     /* niceness of main thread should not have changed */
     ck_assert_int_eq(niceval2, niceval);
 
-    eina_shutdown();
 }
 EFL_END_TEST
 #else

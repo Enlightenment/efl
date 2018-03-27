@@ -92,8 +92,6 @@ EFL_START_TEST(eina_file_split_simple)
 {
    Eina_Array *ea;
 
-   eina_init();
-
 #ifdef EINA_SAFETY_CHECKS
 #ifdef SHOW_LOG
    fprintf(stderr, "you should have a safety check failure below:\n");
@@ -151,7 +149,6 @@ EFL_START_TEST(eina_file_split_simple)
 
    eina_array_free(ea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -180,8 +177,6 @@ get_eina_test_file_tmp_dir()
 
 EFL_START_TEST(eina_file_direct_ls_simple)
 {
-   eina_init();
-
    /*
     * Windows: naming conventions
     * https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
@@ -238,14 +233,11 @@ EFL_START_TEST(eina_file_direct_ls_simple)
      }
    fail_if(rmdir(test_dirname) != 0);
    eina_tmpstr_del(test_dirname);
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_file_ls_simple)
 {
-   eina_init();
-
    /*
     * Windows: naming conventions
     * https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
@@ -300,7 +292,6 @@ EFL_START_TEST(eina_file_ls_simple)
      }
    fail_if(rmdir(test_dirname) != 0);
    eina_tmpstr_del(test_dirname);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -326,8 +317,6 @@ EFL_START_TEST(eina_file_map_new_test)
    int test_file2_name_part_size = strlen(test_file2_name_part);
    int test_dirname_size;
    int start_point_final, last_chunk_size;
-
-   eina_init();
 
    Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
    fail_if(test_dirname == NULL);
@@ -440,7 +429,6 @@ EFL_START_TEST(eina_file_map_new_test)
    free(test_file2_path);
    eina_tmpstr_del(test_dirname);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -460,8 +448,6 @@ EFL_START_TEST(eina_test_file_virtualize)
    Eina_File_Line *ln;
    void *map;
    unsigned int i = 0;
-
-   eina_init();
 
    f = eina_file_virtualize("gloubi", virtual_file_data, strlen(virtual_file_data), EINA_FALSE);
    fail_if(!f);
@@ -494,7 +480,6 @@ EFL_START_TEST(eina_test_file_virtualize)
 
    eina_file_close(f);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -519,15 +504,12 @@ EFL_START_TEST(eina_test_file_thread)
    Eina_Thread th[4];
    unsigned int i;
 
-   fail_if(!eina_init());
-
    for (i = 0; i < 4; i++)
      fail_if(!(eina_thread_create(&th[i], EINA_THREAD_NORMAL, -1, _eina_test_file_thread, NULL)));
 
    for (i = 0; i < 4; i++)
      fail_if(eina_thread_join(th[i]) != NULL);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -543,15 +525,12 @@ EFL_START_TEST(eina_test_file_path)
    unsigned int i;
    char *path;
 
-   fail_if(!eina_init());
-
    for (i = 0; i < sizeof (sanitize) / sizeof (sanitize[0]); i++)
      {
         path = eina_file_path_sanitize(sanitize[i].test);
         fail_if(strcmp(path, sanitize[i].result));
      }
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -580,7 +559,6 @@ EFL_START_TEST(eina_test_file_xattr)
    int fd, count=0;
    Eina_Xattr *xattr;
 
-   eina_init();
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
 
    fd = open(test_file_path, O_RDONLY | O_BINARY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -627,7 +605,6 @@ EFL_START_TEST(eina_test_file_xattr)
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
    eina_file_close(ef);
-   eina_shutdown();
 }
 EFL_END_TEST
 #endif
@@ -643,8 +620,6 @@ EFL_START_TEST(eina_test_file_copy)
    size_t file1_len, file2_len;
    Eina_Bool ret;
    void *content1, *content2;
-
-   eina_init();
 
    fd1 = eina_file_mkstemp(test_file1_name, &test_file1_path);
    fail_if(fd1 <= 0);
@@ -694,7 +669,6 @@ EFL_START_TEST(eina_test_file_copy)
    eina_tmpstr_del(test_file1_path);
    eina_tmpstr_del(test_file2_path);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -707,8 +681,6 @@ EFL_START_TEST(eina_test_file_statat)
    const char *template = "abcdefghijklmnopqrstuvwxyz";
    int template_size = strlen(template);
    int fd, ret;
-
-   eina_init();
 
    Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
    fail_if(test_dirname == NULL);
@@ -743,7 +715,6 @@ EFL_START_TEST(eina_test_file_statat)
    eina_tmpstr_del(test_file2_path);
    eina_tmpstr_del(test_dirname);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -868,8 +839,6 @@ EFL_START_TEST(eina_test_file_unlink)
    Eina_Tmpstr *test_file_path;
    const char *tmpfile = "eina_file_test_XXXXXX";
 
-   eina_init();
-
    /*If file was not opened as 'eina'*/
    fd = create_file_not_empty(tmpfile, &test_file_path, EINA_TRUE);
    fail_if(fd != 0);
@@ -881,7 +850,6 @@ EFL_START_TEST(eina_test_file_unlink)
    fail_if(!eina_file_open(test_file_path, EINA_FALSE));
    fail_if(!eina_file_unlink(test_file_path));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

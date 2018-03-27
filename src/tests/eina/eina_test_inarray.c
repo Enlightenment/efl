@@ -40,8 +40,6 @@ EFL_START_TEST(eina_inarray_test_simple)
      {-1, -1}
    };
 
-   eina_init();
-
    array = eina_inarray_new(sizeof(int), 2);
    fail_unless(array != NULL);
 
@@ -84,7 +82,6 @@ EFL_START_TEST(eina_inarray_test_simple)
      }
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -94,8 +91,6 @@ EFL_START_TEST(eina_inarray_test_alloc_at)
    Eina_Inarray *array;
    int *member;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(int), 2);
    fail_unless(array != NULL);
@@ -124,7 +119,6 @@ EFL_START_TEST(eina_inarray_test_alloc_at)
      fail_unless(member[i] == i);
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -173,8 +167,6 @@ EFL_START_TEST(eina_inarray_test_insert_sort)
 {
    Eina_Inarray *array;
    int i, pos;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -235,7 +227,6 @@ EFL_START_TEST(eina_inarray_test_insert_sort)
    eina_inarray_flush(array);
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -243,8 +234,6 @@ EFL_START_TEST(eina_inarray_test_sort)
 {
    Eina_Inarray *array;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -257,7 +246,6 @@ EFL_START_TEST(eina_inarray_test_sort)
    eina_inarray_sort(array, short_cmp);
    fail_unless(check_short_sorted(array));
    eina_inarray_free(array);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -265,8 +253,6 @@ EFL_START_TEST(eina_inarray_test_reverse)
 {
    Eina_Inarray *array;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -285,7 +271,6 @@ EFL_START_TEST(eina_inarray_test_reverse)
      }
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -318,8 +303,6 @@ EFL_START_TEST(eina_inarray_test_itr)
    Eina_Accessor *ac;
    short *member;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -386,7 +369,6 @@ EFL_START_TEST(eina_inarray_test_itr)
    eina_accessor_free(ac);
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -422,8 +404,6 @@ EFL_START_TEST(eina_inarray_test_search)
    int arr_size = sizeof(arr)/sizeof(arr[0]);
    unsigned int curr_len;
    Eina_Bool rval;
-
-   eina_init();
 
    iarr = eina_inarray_new(sizeof(int), 0);
 
@@ -490,7 +470,6 @@ EFL_START_TEST(eina_inarray_test_search)
    fail_if(iarr->len != curr_len-3);
 
    eina_inarray_free(iarr);
-   eina_shutdown();
 }
 EFL_END_TEST
 

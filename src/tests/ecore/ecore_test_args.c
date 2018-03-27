@@ -26,12 +26,10 @@ _cb_args1(void *data EINA_UNUSED, const Efl_Event *event)
 
 EFL_START_TEST(ecore_test_args1)
 {
-   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS,
                         _cb_args1, NULL);
    ecore_loop_arguments_send(8, args);
    ecore_main_loop_begin();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -51,12 +49,10 @@ EFL_START_TEST(ecore_test_args2)
      "hello world"
    };
 
-   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS,
                         _cb_args2, NULL);
    ecore_loop_arguments_send(1, simple_args);
    ecore_main_loop_begin();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -71,12 +67,10 @@ _cb_args3(void *data EINA_UNUSED, const Efl_Event *event)
 
 EFL_START_TEST(ecore_test_args3)
 {
-   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS,
                         _cb_args3, NULL);
    ecore_loop_arguments_send(0, NULL);
    ecore_main_loop_begin();
-   ecore_shutdown();
 }
 EFL_END_TEST
 

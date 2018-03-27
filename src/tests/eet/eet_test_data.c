@@ -288,8 +288,6 @@ EFL_START_TEST(eet_test_data_basic_type_encoding_decoding)
    void *transfert;
    int size;
 
-   eet_init();
-
    eet_test_basic_set(&etbt, 0);
 
    eet_test_setup_eddc(&eddc);
@@ -313,8 +311,6 @@ EFL_START_TEST(eet_test_data_basic_type_encoding_decoding)
    free(result);
 
    eet_data_descriptor_free(edd);
-
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -327,8 +323,6 @@ EFL_START_TEST(eet_test_data_type_encoding_decoding)
    Eet_Test_Ex_Type etbt;
    int size;
    int test;
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -379,8 +373,6 @@ EFL_START_TEST(eet_test_data_type_encoding_decoding)
      eina_hash_foreach(result->ihash, func7, &test);
 
    fail_if(test != 0);
-
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -397,8 +389,6 @@ EFL_START_TEST(eet_test_data_type_dump_undump)
    int size1;
    int size2;
    int test;
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -470,7 +460,6 @@ EFL_START_TEST(eet_test_data_type_dump_undump)
 
    fail_if(test != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -488,8 +477,6 @@ EFL_START_TEST(eet_test_data_type_escape_dump_undump)
      "    value \"\\\\My\\\\NewLine\\\\\" string: \"\\n\";\n"
      "}\n";
 
-   eet_init();
-
    blob = eet_data_text_undump(inputstr, strlen(inputstr), &blob_len);
    fail_if(!blob);
 
@@ -504,7 +491,6 @@ EFL_START_TEST(eet_test_data_type_escape_dump_undump)
    eina_strbuf_free(strbuf);
    free(blob);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -518,8 +504,6 @@ EFL_START_TEST(eet_test_data_fp)
    Eet_5FP *build;
    void *blob;
    int size;
-
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_5FP);
    edd_5FP = eet_data_descriptor_stream_new(&eddc);
@@ -566,7 +550,6 @@ EFL_START_TEST(eet_test_data_fp)
    fail_if(convert->f1 != 1);
    fail_if(convert->f0 != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -581,9 +564,6 @@ EFL_START_TEST(eet_test_data_union)
    void *blob;
    int size;
    int i;
-
-   eina_init();
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Union_Test);
    edd = eet_data_descriptor_stream_new(&eddc);
@@ -642,9 +622,6 @@ EFL_START_TEST(eet_test_data_union)
         EUT_CMP(2);
         EUT_CMP(3);
      }
-
-   eet_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -662,9 +639,6 @@ EFL_START_TEST(eet_test_data_variant)
    void *blob;
    int size;
    int i;
-
-   eina_init();
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Variant_Test);
    edd = eet_data_descriptor_stream_new(&eddc);
@@ -753,8 +727,6 @@ EFL_START_TEST(eet_test_data_variant)
         EVT_CMP(3);
      }
 
-   eet_shutdown();
-   eina_shutdown();
 } /* EFL_START_TEST */
 EFL_END_TEST
 
@@ -769,9 +741,6 @@ EFL_START_TEST(eet_test_data_hash_value)
    int i;
    double d;
    char *s;
-
-   eina_init();
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Hash);
    edd = eet_data_descriptor_stream_new(&eddc);
@@ -810,9 +779,6 @@ EFL_START_TEST(eet_test_data_hash_value)
    val = (Eina_Value *)eina_hash_find(h->hash, "val/string");
    eina_value_get(val, &s);
    fail_if((!val) || strcmp(s, EET_TEST_STRING));
-
-   eet_shutdown();
-   eina_shutdown();
 } /* EFL_START_TEST */
 EFL_END_TEST
 

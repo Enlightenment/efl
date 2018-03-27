@@ -33,8 +33,6 @@ EFL_START_TEST(eina_array_simple)
    Eina_Array_Iterator it;
    unsigned int i;
 
-   eina_init();
-
    ea = eina_array_new(11);
         fail_if(!ea);
 
@@ -66,7 +64,6 @@ EFL_START_TEST(eina_array_simple)
    eina_array_flush(ea);
    eina_array_free(ea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -76,8 +73,6 @@ EFL_START_TEST(eina_array_static)
    char *tmp;
    Eina_Array_Iterator it;
    unsigned int i;
-
-   eina_init();
 
    eina_array_step_set(&sea, sizeof(sea), 10);
 
@@ -104,7 +99,6 @@ EFL_START_TEST(eina_array_static)
    eina_array_clean(&sea);
    eina_array_flush(&sea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -128,8 +122,6 @@ EFL_START_TEST(eina_array_remove_stuff)
    int *tmp;
    Eina_Array_Iterator it;
    unsigned int i;
-
-   eina_init();
 
    ea = eina_array_new(64);
         fail_if(!ea);
@@ -179,7 +171,6 @@ EFL_START_TEST(eina_array_remove_stuff)
 
    eina_array_free(ea);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

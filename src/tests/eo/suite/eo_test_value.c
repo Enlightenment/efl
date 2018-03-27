@@ -11,7 +11,6 @@
 
 EFL_START_TEST(eo_value)
 {
-   efl_object_init();
    char *str, *str2;
 
    Eina_Value val2, eo_val;
@@ -45,7 +44,6 @@ EFL_START_TEST(eo_value)
    efl_dbg_info_free(eo_dbg_info);
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 

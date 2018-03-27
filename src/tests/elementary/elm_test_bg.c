@@ -10,8 +10,6 @@ EFL_START_TEST (elm_bg_legacy_type_check)
    Evas_Object *win, *bg;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "bg", ELM_WIN_BASIC);
 
    bg = elm_bg_add(win);
@@ -24,7 +22,6 @@ EFL_START_TEST (elm_bg_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_bg"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -33,7 +30,6 @@ EFL_START_TEST (elm_bg_legacy_file_set_get_check)
    Evas_Object *win, *bg;
    const char *file = NULL, *key = NULL;
 
-   elm_init(1, NULL);
    win = elm_win_add(NULL, "bg", ELM_WIN_BASIC);
 
    bg = elm_bg_add(win);
@@ -51,7 +47,6 @@ EFL_START_TEST (elm_bg_legacy_file_set_get_check)
    ck_assert(key != NULL);
    ck_assert(!strcmp(key, "test_key"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

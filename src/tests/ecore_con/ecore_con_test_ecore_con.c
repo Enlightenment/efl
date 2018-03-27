@@ -200,11 +200,6 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    void *del_ret;
    const char *server_name;
 
-   ret = eina_init();
-   fail_if(ret != 1);
-   ret = ecore_con_init();
-   fail_if(ret != 1);
-
    handlers[0] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
                                          _add, (void *) 1);
    fail_if(handlers[0] == NULL);
@@ -316,10 +311,6 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    fail_if (del_ret != (void *) 2);
    del_ret = ecore_event_handler_del (handlers[5]);
    fail_if (del_ret != (void *) 2);
-
-   ret = ecore_con_shutdown();
-   fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 
 EFL_START_TEST(ecore_test_ecore_con_local_user)
@@ -470,30 +461,12 @@ EFL_START_TEST(ecore_test_ecore_con_ssl_available)
 }
 EFL_END_TEST
 
-EFL_START_TEST(ecore_test_ecore_con_init)
-{
-   int ret;
-
-   ret = ecore_con_init();
-   fail_if(ret != 1);
-
-   ret = ecore_con_shutdown();
-   fail_if(ret != 0);
-}
-EFL_END_TEST
-
 EFL_START_TEST(ecore_test_ecore_con_dns)
 {
    Ecore_Con_Server *client;
    Ecore_Event_Handler *e_err;
    Ecore_Event_Handler *e_add;
    Eina_Bool err_check = EINA_FALSE;
-   int ret;
-
-   ret = eina_init();
-   fail_if(ret != 1);
-   ret = ecore_con_init();
-   fail_if(ret != 1);
 
    e_add = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _dns_add_del, (void *) &err_check);
    e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, _dns_err, (void *) &err_check);
@@ -509,27 +482,16 @@ EFL_START_TEST(ecore_test_ecore_con_dns)
    fail_if (err_check == EINA_FALSE);
    fail_if (ecore_event_handler_del(e_err) != (void *) &err_check);
    fail_if (ecore_event_handler_del(e_add) != (void *) &err_check);
-
-   ret = ecore_con_shutdown();
-   fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 {
-   int ret;
-
-   eina_init();
-   ret = ecore_con_shutdown();
+   int ret = ecore_con_shutdown();
    fail_if(ret != 0);
-
-   ret = ecore_con_init();
-   fail_if(ret != 1);
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -549,19 +511,15 @@ _lookup_done_cb(const char *canonname, const char *ip, struct sockaddr *addr, in
 EFL_START_TEST(ecore_test_ecore_con_dns_lookup)
 {
    const char link[] = "www.google.com";
-   ecore_con_init();
 
    fail_unless(ecore_con_lookup(link, _lookup_done_cb, link));
 
    ecore_main_loop_begin();
-
-   ecore_con_shutdown();
 }
 EFL_END_TEST
 
 void ecore_con_test_ecore_con(TCase *tc)
 {
-   tcase_add_test(tc, ecore_test_ecore_con_init);
    tcase_add_test(tc, ecore_test_ecore_con_local_user);
    tcase_add_test(tc, ecore_test_ecore_con_local_user_home);
    tcase_add_test(tc, ecore_test_ecore_con_local_user_tmp);

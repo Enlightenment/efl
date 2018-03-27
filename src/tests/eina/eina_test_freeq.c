@@ -11,8 +11,6 @@ EFL_START_TEST(freeq_simple)
    Eina_FreeQ *fq;
    int *p;
 
-   eina_init();
-
    fq = eina_freeq_main_get();
    fail_if(fq == NULL);
    fail_if(eina_freeq_type_get(fq) != EINA_FREEQ_DEFAULT);
@@ -28,7 +26,6 @@ EFL_START_TEST(freeq_simple)
 
    eina_freeq_free(fq);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -43,8 +40,6 @@ static void freefn(void *data)
 EFL_START_TEST(freeq_tune)
 {
    void *p;
-
-   eina_init();
 
    eina_freeq_count_max_set(eina_freeq_main_get(), 3);
    fail_if(eina_freeq_count_max_get(eina_freeq_main_get()) != 3);
@@ -72,15 +67,12 @@ EFL_START_TEST(freeq_tune)
 
    fail_if(eina_freeq_ptr_pending(eina_freeq_main_get()) == EINA_TRUE);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(freeq_reduce)
 {
    void *p;
-
-   eina_init();
 
    _n++;
    p = malloc(9);
@@ -112,7 +104,6 @@ EFL_START_TEST(freeq_reduce)
    fail_if(_n > 0);
    fail_if(eina_freeq_ptr_pending(eina_freeq_main_get()) == EINA_TRUE);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -142,7 +133,6 @@ EFL_START_TEST(freeq_postponed)
    unsigned int *values[20];
    size_t k;
 
-   eina_init();
    _n = 0;
 
    fq = eina_freeq_new(EINA_FREEQ_POSTPONED);
@@ -192,7 +182,6 @@ EFL_START_TEST(freeq_postponed)
 
    eina_freeq_free(fq);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

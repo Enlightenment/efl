@@ -90,8 +90,6 @@ _eina_convert_check(double test, int length)
    long long int m = 0;
    long e = 0;
 
-   eina_init();
-
    _eina_convert_check(EET_TEST_DOUBLE0,  20);
    _eina_convert_check(-EET_TEST_DOUBLE0, 21);
    _eina_convert_check(EET_TEST_DOUBLE1,   6);
@@ -103,7 +101,6 @@ _eina_convert_check(double test, int length)
    fail_if(eina_convert_atod("0xjo", 8, &m, &e) != EINA_FALSE);
    fail_if(eina_convert_atod("0xp", 8, &m, &e) != EINA_FALSE);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

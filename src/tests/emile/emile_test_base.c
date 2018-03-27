@@ -9,8 +9,6 @@
 
 EFL_START_TEST(emile_test_init)
 {
-   fail_if(emile_init() <= 0);
-   fail_if(emile_shutdown() != 0);
 }
 EFL_END_TEST
 

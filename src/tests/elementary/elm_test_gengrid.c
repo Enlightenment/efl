@@ -12,8 +12,6 @@ EFL_START_TEST (elm_gengrid_legacy_type_check)
    Evas_Object *win, *gengrid;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
@@ -26,7 +24,6 @@ EFL_START_TEST (elm_gengrid_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_gengrid"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -35,8 +32,6 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *gengrid;
    Efl_Access_Role role;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
@@ -44,7 +39,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_TREE_TABLE);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -67,8 +61,6 @@ gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_U
  */
 EFL_START_TEST(elm_atspi_children_parent)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
    elm_config_atspi_mode_set(EINA_TRUE);
    static Elm_Gengrid_Item_Class itc;
 
@@ -93,7 +85,6 @@ EFL_START_TEST(elm_atspi_children_parent)
    parent = efl_provider_find(efl_parent_get(content), EFL_ACCESS_MIXIN);
    ck_assert(it == parent);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 #endif

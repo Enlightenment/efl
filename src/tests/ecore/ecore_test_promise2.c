@@ -1316,9 +1316,23 @@ EFL_END_TEST
 
 #endif
 
+static void
+promise_init(void)
+{
+   /* enable ecore init count manipulation for these tests */
+   ecore_shutdown();
+}
+
+static void
+promise_shutdown(void)
+{
+   /* enable ecore init count manipulation for these tests */
+   ecore_init();
+}
 
 void ecore_test_ecore_promise2(TCase *tc)
 {
+   tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
    tcase_add_test(tc, efl_test_timeout);
    tcase_add_test(tc, efl_test_job);
    tcase_add_test(tc, efl_test_idle);

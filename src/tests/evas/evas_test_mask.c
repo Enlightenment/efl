@@ -15,7 +15,6 @@
 
 #define START_MASK_TEST(w, h) \
    Ecore_Evas *ee; Evas *e; \
-   ecore_evas_init(); \
    ee = ecore_evas_buffer_new(w, h); \
    ecore_evas_show(ee); \
    ecore_evas_manual_render_set(ee, EINA_TRUE); \
@@ -27,7 +26,6 @@
    Evas_Object *o; \
    EINA_LIST_FREE(tofree, o) { evas_object_del(o); } \
    ecore_evas_free(ee); \
-   ecore_evas_shutdown(); \
    } while (0)
 
 #define AUTODEL(o) do { tofree = eina_list_prepend(tofree, o); } while (0)
@@ -99,7 +97,6 @@ EFL_START_TEST(evas_mask_test_setget)
    evas_object_del(obj);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
 EFL_END_TEST
 

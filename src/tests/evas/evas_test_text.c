@@ -33,7 +33,6 @@ do \
 { \
    evas_object_del(to); \
    evas_free(evas); \
-   ecore_evas_shutdown(); \
 } \
 while (0)
 

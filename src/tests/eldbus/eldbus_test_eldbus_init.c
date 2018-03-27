@@ -20,36 +20,17 @@ _quit_cb(void *data EINA_UNUSED)
 
 EFL_START_TEST(eldbus_test_eldbus)
 {
-   int ret;
-
-   ecore_init();
-   ret = eldbus_init();
-   fail_if(ret < 1);
-
-   ret = eldbus_shutdown();
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eldbus_test_eldbus_main_loop)
 {
    Ecore_Timer *timer;
-   int ret;
-
-   ecore_init();
-   ret = eldbus_init();
-   fail_if(ret < 1);
 
    timer = ecore_timer_add(0.1, _quit_cb, NULL);
    fail_if(timer == NULL);
 
    ecore_main_loop_begin();
-
-   ret = eldbus_shutdown();
-
-   ecore_shutdown();
-
 }
 EFL_END_TEST
 
@@ -63,12 +44,6 @@ EFL_END_TEST
 EFL_START_TEST(eldbus_test_eldbus_conn)
 {
    Eldbus_Connection *conn;
-   int ret;
-
-   ecore_init();
-
-   ret = eldbus_init();
-   fail_if(ret < 1);
 
    /*
     * let's use connection type == system, so it works without a session,
@@ -79,11 +54,6 @@ EFL_START_TEST(eldbus_test_eldbus_conn)
    fail_if(conn == NULL);
 
    eldbus_connection_unref(conn);
-
-   ret = eldbus_shutdown();
-
-   ecore_shutdown();
-
 }
 EFL_END_TEST
 
@@ -91,12 +61,6 @@ EFL_START_TEST(eldbus_test_eldbus_conn_object)
 {
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
-   int ret;
-
-   ecore_init();
-
-   ret = eldbus_init();
-   fail_if(ret < 1);
 
    /*
     * let's use connection type == system, so it works without a D-Bus session.
@@ -113,10 +77,6 @@ EFL_START_TEST(eldbus_test_eldbus_conn_object)
 
    eldbus_connection_unref(conn);
 
-   ret = eldbus_shutdown();
-
-   ecore_shutdown();
-
 }
 EFL_END_TEST
 
@@ -131,9 +91,6 @@ EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
    Eldbus_Connection *conn;
    const char *id = NULL;
 
-   ecore_init();
-   eldbus_init();
-
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    fail_if(conn == NULL);
 
@@ -147,8 +104,6 @@ EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
 
    eldbus_connection_unref(conn);
 
-   eldbus_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 #endif

@@ -105,7 +105,6 @@ EFL_START_TEST(eina_log_macro)
    int oldlevel;
    int maxlevel;
 
-   fail_if(!eina_init());
 
    oldlevel = eina_log_level_get();
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
@@ -164,7 +163,6 @@ EFL_START_TEST(eina_log_macro)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    eina_log_level_set(oldlevel);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -174,7 +172,6 @@ EFL_START_TEST(eina_log_domains_macros)
    int oldlevel;
    int maxlevel;
 
-   fail_if(!eina_init());
 
    /* make global log level blocker */
    oldlevel = eina_log_level_get();
@@ -241,13 +238,11 @@ EFL_START_TEST(eina_log_domains_macros)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    eina_log_level_set(oldlevel);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_log_domains_registry)
 {
-        fail_if(!eina_init());
 
    int i;
    int d[50];
@@ -261,13 +256,11 @@ EFL_START_TEST(eina_log_domains_registry)
    for (i = 0; i < 50; i++)
       eina_log_domain_unregister(d[i]);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_log_domains_slot_reuse)
 {
-        fail_if(!eina_init());
         fail_if(!eina_threads_init());
 
    // Create 9 domains
@@ -298,7 +291,6 @@ EFL_START_TEST(eina_log_domains_slot_reuse)
    fail_if(new != removed);
 
    eina_threads_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -307,8 +299,6 @@ EFL_START_TEST(eina_log_level_indexes)
    struct log_ctx ctx;
    int maxlevel;
 
-   fail_if(!eina_init());
-   fail_if(!eina_threads_init());
    fail_if(!eina_threads_init());
 
    int d = eina_log_domain_register("Levels", EINA_COLOR_GREEN);
@@ -369,8 +359,6 @@ EFL_START_TEST(eina_log_level_indexes)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
    eina_threads_shutdown();
-   eina_threads_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -382,7 +370,6 @@ EFL_START_TEST(eina_log_customize)
    /* please don't define EINA_LOG_LEVELS for it */
 #define TEST_DOM "_Test_Log_Dom"
 
-   fail_if(!eina_init());
 
 #define test_set_get(func, val)                 \
    eina_log_ ## func ## _set(val);                  \
@@ -444,7 +431,6 @@ EFL_START_TEST(eina_log_customize)
 #undef test_set_get_bool
 #undef test_set_get
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -452,7 +438,6 @@ EFL_START_TEST(eina_log_level_name)
 {
    char name[4];
 
-   fail_if(!eina_init());
 
 #define tst(level, str)                         \
    eina_log_level_name_get(level, name);        \
@@ -471,7 +456,6 @@ EFL_START_TEST(eina_log_level_name)
 
 #undef tst
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

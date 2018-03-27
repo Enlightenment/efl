@@ -34,7 +34,6 @@ EFL_START_TEST(eina_test_reusable)
 {
    unsigned int i;
 
-   eina_init();
 
    for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
      {
@@ -68,7 +67,6 @@ EFL_START_TEST(eina_test_reusable)
           }
      }
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -116,7 +114,6 @@ EFL_START_TEST(eina_test_threading)
    Eina_Thread t1, t2;
    unsigned int i;
 
-   eina_init();
 
    // We need a barrier so that both thread are more likely
    // to start running in parallel
@@ -147,7 +144,6 @@ EFL_START_TEST(eina_test_threading)
           }
      }
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -155,7 +151,6 @@ EFL_START_TEST(eina_test_lowestbit)
 {
    unsigned int i;
 
-   eina_init();
 
    for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
      {
@@ -175,7 +170,6 @@ EFL_START_TEST(eina_test_lowestbit)
         fail_if(eina_safepointer_get(pointers[i]) != NULL);
      }
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

@@ -66,8 +66,6 @@ EFL_START_TEST(eet_test_identity_simple)
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
 
-   eet_init();
-
    fail_if(-1 == (fd = mkstemp(file)));
    fail_if(!!close(fd));
    fail_if(!(noread = fopen("/dev/null", "wb")));
@@ -129,7 +127,6 @@ EFL_START_TEST(eet_test_identity_simple)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -137,15 +134,12 @@ EFL_START_TEST(eet_test_identity_open_simple)
 {
    Eet_Key *k = NULL;
 
-   eet_init();
-
    k = eet_identity_open(_cert_pem, _key_pem, NULL);
    fail_if(!k);
 
    if (k)
      eet_identity_close(k);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
@@ -153,23 +147,18 @@ EFL_START_TEST(eet_test_identity_open_pkcs8)
 {
    Eet_Key *k = NULL;
 
-   eet_init();
-
    k = eet_identity_open(_cert_pem, _key_enc_none_pem, NULL);
    fail_if(!k);
 
    if (k)
      eet_identity_close(k);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST(eet_test_identity_open_pkcs8_enc)
 {
    Eet_Key *k = NULL;
-
-   eet_init();
 
    k = eet_identity_open(_cert_pem, _key_enc_pem, NULL);
    fail_if(k);
@@ -189,7 +178,6 @@ EFL_START_TEST(eet_test_identity_open_pkcs8_enc)
    if (k)
      eet_identity_close(k);
 
-   eet_shutdown();
 }
 EFL_END_TEST
 

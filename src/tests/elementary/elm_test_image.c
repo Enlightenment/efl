@@ -22,8 +22,6 @@ EFL_START_TEST (elm_image_legacy_type_check)
    Evas_Object *win, *image;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = elm_image_add(win);
@@ -36,7 +34,6 @@ EFL_START_TEST (elm_image_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_image"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -45,8 +42,6 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *image;
    Efl_Access_Role role;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = elm_image_add(win);
@@ -54,7 +49,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_IMAGE);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -139,8 +133,6 @@ EFL_START_TEST (elm_image_async_path)
    Eina_Bool ok;
    Test_Data td;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    td.success = 0;
@@ -160,7 +152,6 @@ EFL_START_TEST (elm_image_async_path)
    elm_run();
    ck_assert(td.success == 3);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -172,8 +163,6 @@ EFL_START_TEST (elm_image_async_mmap)
    Eina_File *f;
    char path[PATH_MAX];
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    td.success = 1; // skip "error" case
@@ -199,7 +188,6 @@ EFL_START_TEST (elm_image_async_mmap)
 
    eina_file_close(f);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -209,8 +197,6 @@ EFL_START_TEST (efl_ui_image_icon)
    Eina_Bool ok;
    const char *icon_name;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = efl_add(EFL_UI_IMAGE_CLASS, win);
@@ -226,7 +212,6 @@ EFL_START_TEST (efl_ui_image_icon)
    icon_name = efl_ui_image_icon_get(image);
    ck_assert(icon_name == NULL);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

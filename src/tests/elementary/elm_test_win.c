@@ -68,8 +68,6 @@ EFL_START_TEST (elm_win_legacy_type_check)
    Evas_Object *win;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
    type = elm_object_widget_type_get(win);
@@ -80,7 +78,6 @@ EFL_START_TEST (elm_win_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_win"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -89,15 +86,12 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win;
    Efl_Access_Role role;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
    role = efl_access_role_get(win);
 
    ck_assert(role == EFL_ACCESS_ROLE_WINDOW);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -105,9 +99,6 @@ EFL_START_TEST (elm_atspi_component_screen_position)
 {
    Eina_Bool ret;
    int x, y;
-
-   char *args[] = { "exe" };
-   elm_init(1, args);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
@@ -120,15 +111,11 @@ EFL_START_TEST (elm_atspi_component_screen_position)
 
    ck_assert((x == 45) && (y == 45));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (elm_win_autohide)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
    if (elm_win_xwindow_get(win))
      {
@@ -145,15 +132,11 @@ EFL_START_TEST (elm_win_autohide)
         visible = efl_gfx_visible_get(win);
         ck_assert(visible == EINA_FALSE);
      }
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
@@ -172,15 +155,11 @@ EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
    ck_assert(efl_ref_count(win) >= 1);
    ck_assert(visible == EINA_FALSE);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
 EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
 {
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
@@ -202,7 +181,6 @@ EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
         ck_assert(efl_ref_count(win) >= 1);
         ck_assert(visible == EINA_FALSE);
      }
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -383,9 +361,6 @@ EFL_START_TEST (efl_ui_win_multi_touch_inputs)
     * pointer x: down, move, move, ...
     */
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
@@ -402,7 +377,6 @@ EFL_START_TEST (efl_ui_win_multi_touch_inputs)
 
    fail_if(fail_flag != EINA_FALSE);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

@@ -11,8 +11,6 @@ EFL_START_TEST (elm_fileselector_entry_legacy_type_check)
    Evas_Object *win, *fileselector_entry;
    const char *type;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "fileselector_entry", ELM_WIN_BASIC);
 
    fileselector_entry = elm_fileselector_entry_add(win);
@@ -25,7 +23,6 @@ EFL_START_TEST (elm_fileselector_entry_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_fileselector_entry"));
 
-   elm_shutdown();
 }
 EFL_END_TEST
 
@@ -34,8 +31,6 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *fs_entry;
    Efl_Access_Role role;
 
-   char *args[] = { "exe" };
-   elm_init(1, args);
    win = elm_win_add(NULL, "fileselectorentry", ELM_WIN_BASIC);
 
    fs_entry = elm_fileselector_entry_add(win);
@@ -43,7 +38,6 @@ EFL_START_TEST (elm_atspi_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_GROUPING);
 
-   elm_shutdown();
 }
 EFL_END_TEST
 

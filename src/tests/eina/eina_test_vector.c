@@ -40,7 +40,6 @@ EFL_START_TEST(eina_test_vector2_operations)
    double res = 0;
    const double arr[] = {5, 5};
 
-   eina_init();
 
    eina_vector2_set(&v1, x, y);
    fail_if((v1.x != 1) || (v1.y != 2));
@@ -107,7 +106,6 @@ EFL_START_TEST(eina_test_vector2_operations)
    eina_vector2_homogeneous_direction_transform(&v3, &m3, &v3);
    fail_if((v3.x != 24) || (v3.y != 24));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -126,7 +124,6 @@ EFL_START_TEST(eina_test_vector3_operations)
    Eina_Bool res2 = EINA_FALSE;
    const double arr[] = {5, 5, 5};
 
-   eina_init();
 
    eina_vector3_set(&v1, x, y, z);
    fail_if((v1.x != 1) || (v1.y != 2) || (v1.z != 3));
@@ -238,7 +235,6 @@ EFL_START_TEST(eina_test_vector3_operations)
    eina_vector3_homogeneous_direction_transform(&v3, &m4, &v3);
    fail_if((v3.x != 72) || (v3.y != 72) || (v3.z != 72));
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

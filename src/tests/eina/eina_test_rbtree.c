@@ -368,7 +368,6 @@ EFL_START_TEST(eina_rbtree_remove)
    Eina_Array_Iterator it;
    unsigned int i;
 
-   eina_init();
 
    ea = eina_array_new(11);
    fail_if(!ea);
@@ -403,7 +402,6 @@ EFL_START_TEST(eina_rbtree_remove)
 
    fail_if(root != NULL);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -622,7 +620,6 @@ EFL_START_TEST(eina_rbtree_fuzzy)
    unsigned int i;
    unsigned int j;
 
-   eina_init();
 
 
    for (i = 0; i < 10000; i++)
@@ -672,7 +669,6 @@ EFL_START_TEST(eina_rbtree_fuzzy)
           }
      }
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

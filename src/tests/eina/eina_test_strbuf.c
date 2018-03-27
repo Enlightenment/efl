@@ -35,7 +35,6 @@ EFL_START_TEST(strbuf_simple)
 #define TEST_TEXT \
    "This test should be so long that it is longer than the initial size of strbuf"
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -74,7 +73,6 @@ EFL_START_TEST(strbuf_simple)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 #undef TEST_TEXT
 }
 EFL_END_TEST
@@ -86,7 +84,6 @@ EFL_START_TEST(strbuf_manage_simple)
 #define TEST_TEXT \
    "This test should be so long that it is longer than the initial size of strbuf"
 
-   eina_init();
 
    txt = strdup(TEST_TEXT);
 
@@ -126,7 +123,6 @@ EFL_START_TEST(strbuf_manage_simple)
    fail_if(strcmp(txt, TEST_TEXT TEST_TEXT));
    free(txt);
 
-   eina_shutdown();
 #undef TEST_TEXT
 }
 EFL_END_TEST
@@ -135,7 +131,6 @@ EFL_START_TEST(strbuf_remove)
 {
    Eina_Strbuf *buf;
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -171,7 +166,6 @@ EFL_START_TEST(strbuf_remove)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -182,7 +176,6 @@ EFL_START_TEST(strbuf_append)
 
    ro_slice.len -= strlen("ELSE");
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -224,7 +217,6 @@ EFL_START_TEST(strbuf_append)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -235,7 +227,6 @@ EFL_START_TEST(strbuf_insert)
 
    ro_slice.len = 2;
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -278,7 +269,6 @@ EFL_START_TEST(strbuf_insert)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -286,7 +276,6 @@ EFL_START_TEST(strbuf_replace)
 {
    Eina_Strbuf *buf;
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -326,7 +315,6 @@ EFL_START_TEST(strbuf_replace)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -341,7 +329,6 @@ EFL_START_TEST(strbuf_realloc)
       pattern[i] = 'a' + (i % 26);
    pattern[i] = '\0';
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -393,7 +380,6 @@ EFL_START_TEST(strbuf_realloc)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -405,7 +391,6 @@ EFL_START_TEST(strbuf_append_realloc)
    const char *str;
    size_t i, target_pattern_size;
 
-   eina_init();
 
    buf = eina_strbuf_new();
         fail_if(!buf);
@@ -428,7 +413,6 @@ EFL_START_TEST(strbuf_append_realloc)
 
         eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -440,7 +424,6 @@ EFL_START_TEST(strbuf_prepend_realloc)
    const char *str;
    size_t i, target_pattern_size;
 
-   eina_init();
 
    buf = eina_strbuf_new();
         fail_if(!buf);
@@ -463,7 +446,6 @@ EFL_START_TEST(strbuf_prepend_realloc)
 
         eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -472,7 +454,6 @@ EFL_START_TEST(strbuf_trim)
     Eina_Strbuf* buf;
     const char *str;
 
-    eina_init();
     buf = eina_strbuf_new();
     fail_unless(buf != NULL);
 
@@ -510,7 +491,6 @@ EFL_START_TEST(strbuf_trim)
     eina_strbuf_reset(buf);
 
     eina_strbuf_free(buf);
-    eina_shutdown();
 }
 EFL_END_TEST
 
@@ -519,7 +499,6 @@ EFL_START_TEST(strbuf_tolower)
    Eina_Strbuf* buf;
    const char *str;
 
-   eina_init();
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
 
@@ -538,7 +517,6 @@ EFL_START_TEST(strbuf_tolower)
    fail_unless(str || strcmp(str, "upper1@ "));
 
    eina_strbuf_free(buf);
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -547,7 +525,6 @@ EFL_START_TEST(strbuf_substr_get)
    Eina_Strbuf* buf, *substr;
    const char *str;
 
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
@@ -583,7 +560,6 @@ EFL_START_TEST(strbuf_substr_get)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -615,7 +591,6 @@ EFL_START_TEST(strbuf_prepend_print)
    Eina_Strbuf* buf;
    const char *str;
 
-   eina_init();
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
 
@@ -640,7 +615,6 @@ EFL_START_TEST(strbuf_prepend_print)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

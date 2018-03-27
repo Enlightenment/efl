@@ -96,8 +96,6 @@ EFL_START_TEST(eina_inlist_simple)
    struct log_ctx ctx;
 #endif
 
-   fail_if(!eina_init());
-
    tmp = _eina_test_inlist_build(42);
    lst = eina_inlist_append(lst, EINA_INLIST_GET(tmp));
    fail_if(!lst);
@@ -296,7 +294,6 @@ EFL_START_TEST(eina_inlist_simple)
    while (lst)
       lst = eina_inlist_remove(lst, lst);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -337,8 +334,6 @@ EFL_START_TEST(eina_inlist_sorted)
    Eina_Inlist *sorted = NULL;
    int i;
 
-   fail_if(!eina_init());
-
    srand(time(NULL));
 
    for (i = 0; i < 2000; ++i)
@@ -371,7 +366,6 @@ EFL_START_TEST(eina_inlist_sorted)
 
    _eina_test_inlist_check(sorted);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 
@@ -381,8 +375,6 @@ EFL_START_TEST(eina_inlist_sorted_state)
    Eina_Inlist_Sorted_State *state;
    Eina_Inlist *list = NULL;
    int i;
-
-   fail_if(!eina_init());
 
    state = eina_inlist_sorted_state_new();
    fail_if(!state);
@@ -402,7 +394,6 @@ EFL_START_TEST(eina_inlist_sorted_state)
 
    eina_inlist_sorted_state_free(state);
 
-   eina_shutdown();
 }
 EFL_END_TEST
 

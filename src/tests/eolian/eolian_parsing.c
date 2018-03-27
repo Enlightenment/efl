@@ -22,7 +22,6 @@ EFL_START_TEST(eolian_namespaces)
    const Eolian_Unit *unit;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -91,7 +90,6 @@ EFL_START_TEST(eolian_namespaces)
    eina_iterator_free(iter);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -105,7 +103,6 @@ EFL_START_TEST(eolian_events)
    const Eolian_Unit *unit;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -167,7 +164,6 @@ EFL_START_TEST(eolian_events)
    fail_if(eolian_class_event_by_name_get(class, "clicked,triple"));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -180,7 +176,6 @@ EFL_START_TEST(eolian_override)
    const Eolian_Implement *impl;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -227,7 +222,6 @@ EFL_START_TEST(eolian_override)
    eina_iterator_free(iter);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -237,7 +231,6 @@ EFL_START_TEST(eolian_consts)
    const Eolian_Class *class;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -249,7 +242,6 @@ EFL_START_TEST(eolian_consts)
    fail_if(EINA_FALSE == eolian_function_object_is_const(fid));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -264,7 +256,6 @@ EFL_START_TEST(eolian_ctor_dtor)
    const Eolian_Unit *unit;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -319,7 +310,6 @@ EFL_START_TEST(eolian_ctor_dtor)
    eina_iterator_free(iter);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -333,7 +323,6 @@ EFL_START_TEST(eolian_typedef)
    const Eolian_Unit *unit;
    const char *file;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -403,7 +392,6 @@ EFL_START_TEST(eolian_typedef)
    fail_if(eina_iterator_next(iter, (void**)&tdl));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -418,7 +406,6 @@ EFL_START_TEST(eolian_complex_type)
    const Eolian_Unit *unit;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -492,7 +479,6 @@ EFL_START_TEST(eolian_complex_type)
    eina_stringshare_del(type_name);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -502,7 +488,6 @@ EFL_START_TEST(eolian_scope)
    const Eolian_Class *class;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -528,7 +513,6 @@ EFL_START_TEST(eolian_scope)
    fail_if(eolian_function_scope_get(fid, EOLIAN_METHOD) != EOLIAN_SCOPE_PUBLIC);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -545,7 +529,6 @@ EFL_START_TEST(eolian_simple_parsing)
    Eolian_Value v;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -667,7 +650,6 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(!eolian_type_is_ptr(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -682,7 +664,6 @@ EFL_START_TEST(eolian_struct)
    const char *type_name;
    const char *file;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    /* Parsing */
@@ -740,7 +721,6 @@ EFL_START_TEST(eolian_struct)
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -750,7 +730,6 @@ EFL_START_TEST(eolian_extern)
    const Eolian_Class *class;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    /* Parsing */
@@ -778,7 +757,6 @@ EFL_START_TEST(eolian_extern)
    fail_if(!eolian_typedecl_is_extern(tdl));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -792,7 +770,6 @@ EFL_START_TEST(eolian_var)
    Eolian_Value v;
    const char *name;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    /* Parsing */
@@ -846,7 +823,6 @@ EFL_START_TEST(eolian_var)
    fail_if(eolian_variable_value_get(var));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -863,7 +839,6 @@ EFL_START_TEST(eolian_enum)
    const char *name;
    Eolian_Value v;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    /* Parsing */
@@ -950,7 +925,6 @@ EFL_START_TEST(eolian_enum)
    fail_if(v.value.i != 5);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -960,7 +934,6 @@ EFL_START_TEST(eolian_class_funcs)
    const Eolian_Class *class;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
    /* Parsing */
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -989,7 +962,6 @@ EFL_START_TEST(eolian_class_funcs)
    fail_if(eolian_function_scope_get(fid, EOLIAN_METHOD) != EOLIAN_SCOPE_PROTECTED);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1000,7 +972,6 @@ EFL_START_TEST(eolian_free_func)
    const Eolian_Type *type;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    /* Parsing */
@@ -1038,7 +1009,6 @@ EFL_START_TEST(eolian_free_func)
    fail_if(strcmp(eolian_type_free_func_get(type), "ptr_free"));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1050,7 +1020,6 @@ EFL_START_TEST(eolian_null)
    const Eolian_Unit *unit;
    Eina_Iterator *iter;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    /* Parsing */
@@ -1090,7 +1059,6 @@ EFL_START_TEST(eolian_null)
    eina_iterator_free(iter);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1100,7 +1068,6 @@ EFL_START_TEST(eolian_import)
    const Eolian_Typedecl *tdl;
    const Eolian_Unit *unit;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -1115,7 +1082,6 @@ EFL_START_TEST(eolian_import)
    fail_if(strcmp(eolian_object_file_get((const Eolian_Object *)tdl), "import_types.eot"));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1127,7 +1093,6 @@ EFL_START_TEST(eolian_decl)
    const Eolian_Unit *unit;
    Eina_Iterator *itr;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -1177,7 +1142,6 @@ EFL_START_TEST(eolian_decl)
    fail_if(eolian_object_type_get(decl) != EOLIAN_OBJECT_TYPEDECL);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1195,7 +1159,6 @@ EFL_START_TEST(eolian_docs)
    const Eolian_Unit *unit;
    Eina_Iterator *itr;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -1423,7 +1386,6 @@ EFL_START_TEST(eolian_docs)
    fail_if(eolian_documentation_description_get(doc));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1439,7 +1401,6 @@ EFL_START_TEST(eolian_function_types)
    const char* type_name = NULL;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -1551,7 +1512,6 @@ EFL_START_TEST(eolian_function_types)
    fail_if(eina_iterator_next(iter, &dummy));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1567,7 +1527,6 @@ EFL_START_TEST(eolian_function_as_arguments)
    const char *type_name = NULL;
    void *dummy;
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -1593,7 +1552,6 @@ EFL_START_TEST(eolian_function_as_arguments)
    fail_if(eina_iterator_next(iter, &dummy));
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 
@@ -1609,7 +1567,6 @@ EFL_START_TEST(eolian_parts)
       "Override", "Base", "Parts"
    };
 
-   eolian_init();
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
@@ -1640,7 +1597,6 @@ EFL_START_TEST(eolian_parts)
    eina_iterator_free(iter);
 
    eolian_state_free(eos);
-   eolian_shutdown();
 }
 EFL_END_TEST
 

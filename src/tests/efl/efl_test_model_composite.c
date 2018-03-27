@@ -178,9 +178,6 @@ EFL_START_TEST(efl_test_model_composite_boolean)
    Test_Data *tdata;
    Efl_Future *future;
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
-
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
    base_model = efl_add(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
@@ -207,8 +204,6 @@ EFL_START_TEST(efl_test_model_composite_boolean)
    while (!tdata->success_flag) ecore_main_loop_iterate();
 
    ck_assert(tdata->success_flag);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -220,9 +215,6 @@ EFL_START_TEST(efl_test_model_composite_selection)
    Efl_Model_Composite_Selection *model;
    Test_Data *tdata;
    Efl_Future *future;
-
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
@@ -249,8 +241,6 @@ EFL_START_TEST(efl_test_model_composite_selection)
    while (!tdata->success_flag) ecore_main_loop_iterate();
 
    ck_assert(tdata->success_flag);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 

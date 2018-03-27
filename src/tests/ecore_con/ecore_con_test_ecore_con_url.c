@@ -172,8 +172,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
    char link[] = ECORE_CON_FTP_TEST_URL;
    char url[4096], *username, *password, *file = NULL, *dir = NULL;
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -196,7 +194,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 EFL_END_TEST
 #endif
@@ -212,8 +209,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_post)
    char *username = NULL, *password = NULL;
    char url[4096];
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -240,7 +235,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_post)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 EFL_END_TEST
 #endif
@@ -257,8 +251,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_download)
 #endif
    char url_data[] = "test";
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -290,7 +282,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_download)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 EFL_END_TEST
 
@@ -299,8 +290,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_create)
    Ecore_Con_Url *url;
    int ret;
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -311,7 +300,6 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_create)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 EFL_END_TEST
 
@@ -359,8 +347,6 @@ _ecore_con_url_cookies_test_init()
    const char link[] = DEFAULT_LINK;
 #endif
 
-   eina_init();
-   ecore_con_init();
    ecore_con_url_init();
 
    ec_url = ecore_con_url_new(link);
@@ -385,8 +371,6 @@ _ecore_con_url_cookies_test_shutdown(Ecore_Con_Url *ec_url, int tmpfd, Eina_Tmps
    eina_tmpstr_del(*path);
    ecore_con_url_free(ec_url);
    ecore_con_url_shutdown();
-   ecore_con_shutdown();
-   eina_shutdown();
 }
 
 EFL_START_TEST(ecore_con_test_ecore_con_url_cookies_clear)

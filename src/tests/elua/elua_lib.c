@@ -25,8 +25,6 @@ EFL_START_TEST(elua_api)
     cargv[1] = arg2;
     char *spath = NULL;
 
-    fail_if(!elua_init());
-
     st = elua_state_new("test");
     fail_if(!st);
 
@@ -127,8 +125,6 @@ EFL_START_TEST(elua_api)
     fail_if(remove(buf));
 
     elua_state_free(st);
-
-    elua_shutdown();
 }
 EFL_END_TEST
 

@@ -23,8 +23,6 @@ EFL_START_TEST(eet_test_cipher_decipher_simple)
    int size;
    int tmpfd;
 
-   eet_init();
-
    fail_if(-1 == (tmpfd = mkstemp(file)));
    fail_if(!!close(tmpfd));
 
@@ -61,8 +59,6 @@ EFL_START_TEST(eet_test_cipher_decipher_simple)
    eet_close(ef);
 
    fail_if(unlink(file) != 0);
-
-   eet_shutdown();
 }
 EFL_END_TEST
 

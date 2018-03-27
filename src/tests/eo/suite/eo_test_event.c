@@ -60,7 +60,6 @@ _cb1(void *data, const Efl_Event *event)
 EFL_START_TEST(eo_event)
 {
    Test_Data data;
-   efl_object_init();
    Eo *obj;
 
    obj = efl_add_ref(efl_test_event_class_get(), NULL);
@@ -79,7 +78,6 @@ EFL_START_TEST(eo_event)
    ck_assert_int_ne(data.event2, 0);
    ck_assert_int_ne(data.event3, 0);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -120,7 +118,6 @@ _cb_rec_1(void *data, const Efl_Event *event)
 EFL_START_TEST(eo_event_call_in_call)
 {
    Test_Data data;
-   efl_object_init();
    Eo *obj;
 
    obj = efl_add_ref(efl_test_event_class_get(), NULL);
@@ -132,7 +129,6 @@ EFL_START_TEST(eo_event_call_in_call)
    ck_assert_int_ne(data.event2, 0);
    ck_assert_int_ne(data.event3, 0);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 
@@ -164,7 +160,6 @@ _generation_clamp_step1(void *data EINA_UNUSED, const Efl_Event *e)
 
 EFL_START_TEST(eo_event_generation_bug)
 {
-   efl_object_init();
 
    /*
     * The idea is:
@@ -187,7 +182,6 @@ EFL_START_TEST(eo_event_generation_bug)
 
    ck_assert_int_ne(emitted, 0);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 

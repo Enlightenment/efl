@@ -115,7 +115,6 @@ EFL_START_TEST(eo_threaded_calls_test)
 {
    Eina_Thread threads[2];
 
-   efl_object_init();
 
    fail_if(!eina_spinlock_new(&locks[0]));
    fail_if(!eina_spinlock_new(&locks[1]));
@@ -133,7 +132,6 @@ EFL_START_TEST(eo_threaded_calls_test)
    eina_barrier_free(&barrier);
    eina_barrier_free(&barrier0);
 
-   efl_object_shutdown();
 }
 EFL_END_TEST
 

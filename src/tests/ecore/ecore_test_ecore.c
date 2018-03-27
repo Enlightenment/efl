@@ -33,13 +33,6 @@ _dummy_cb(void *data)
 
 EFL_START_TEST(ecore_test_ecore_init)
 {
-   int ret;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
-
-   ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 EFL_END_TEST
 
@@ -47,10 +40,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Timer *timer;
-   int ret;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    timer = ecore_timer_add(0.0, _quit_cb, &did);
    fail_if(timer == NULL);
@@ -58,8 +47,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop)
    ecore_main_loop_begin();
 
    fail_if(did == EINA_FALSE);
-
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -67,10 +54,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idler)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Idler *idler;
-   int ret;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    idler = ecore_idler_add(_quit_cb, &did);
    fail_if(idler == NULL);
@@ -78,8 +61,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idler)
    ecore_main_loop_begin();
 
    fail_if(did == EINA_FALSE);
-
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -87,10 +68,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_enterer)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Idle_Enterer *idle_enterer;
-   int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    idle_enterer = ecore_idle_enterer_add(_quit_cb, &did);
    fail_if(idle_enterer == NULL);
@@ -99,7 +77,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_enterer)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -107,10 +84,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_before_enterer)
 {
    Eina_Bool did = EINA_FALSE;
    Ecore_Idle_Enterer *idle_enterer;
-   int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    idle_enterer = ecore_idle_enterer_before_add(_quit_cb, &did);
    fail_if(idle_enterer == NULL);
@@ -119,7 +93,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_before_enterer)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -128,10 +101,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_exiter)
    Eina_Bool did = EINA_FALSE;
    Ecore_Timer *timer;
    Ecore_Idle_Exiter *idle_exiter;
-   int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    /* make system exit idle */
    timer = ecore_timer_add(0.0, _dummy_cb, (void *)(long)0);
@@ -144,7 +114,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_exiter)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -153,10 +122,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer)
    Eina_Bool did = EINA_FALSE;
    Ecore_Timer *timer;
    double start, end, elapsed;
-   int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    timer = ecore_timer_add(2.0, _quit_cb, &did);
    fail_if(timer == NULL);
@@ -170,7 +136,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer)
    fail_if(elapsed < 2.0);
    fail_if(elapsed > 3.0); /* 1 second "error margin" */
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -207,11 +172,7 @@ static Eina_Bool _timer1(void *data)
 EFL_START_TEST(ecore_test_ecore_main_loop_timer_inner)
 {
    Ecore_Timer *timer;
-   int ret;
    int times = 0;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    timer = ecore_timer_add(1.0, _timer1, &times);
    fail_if(timer == NULL);
@@ -221,8 +182,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer_inner)
    /*END: outer mainloop */
 
    fail_if(times != 1);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 #endif
@@ -245,9 +204,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler)
    int comm[2];
    int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
-
    ret = pipe(comm);
    fail_if(ret != 0);
 
@@ -265,7 +221,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -274,9 +229,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
    Ecore_Fd_Handler *fd_handler;
    int comm[2];
    int ret;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    ret = pipe(comm);
    fail_if(ret != 0);
@@ -290,8 +242,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
 
    close(comm[0]);
    close(comm[1]);
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -311,9 +261,6 @@ EFL_START_TEST(ecore_test_efl_loop_fd)
    int comm[2];
    int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
-
    ret = pipe(comm);
    fail_if(ret != 0);
 
@@ -332,7 +279,6 @@ EFL_START_TEST(ecore_test_efl_loop_fd)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -353,9 +299,6 @@ EFL_START_TEST(ecore_test_efl_loop_fd_lifecycle)
    int ret;
 
    efl_object_init();
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    ret = pipe(comm);
    fail_if(ret != 0);
@@ -378,7 +321,8 @@ EFL_START_TEST(ecore_test_efl_loop_fd_lifecycle)
    fail_if(did == EINA_FALSE);
    fail_if(dead == EINA_TRUE);
 
-   ret = ecore_shutdown();
+   ecore_shutdown();
+   ecore_init();
 
    efl_del(fd);
    fail_if(dead == EINA_FALSE);
@@ -393,9 +337,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
    Ecore_Fd_Handler *fd_handler;
    int comm[2];
    int ret;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    ret = pipe(comm);
    fail_if(ret != 0);
@@ -416,7 +357,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 
    fail_if(did != EINA_TRUE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -532,14 +472,10 @@ EFL_START_TEST(ecore_test_ecore_main_loop_event)
    Ecore_Event_Filter *filter_handler;
    Ecore_Event *event;
    Ecore_Event *event2;
-   int res_counter;
    int type, type2;
    int *ev = NULL;
    int did = 0;
    int filter = 0;
-
-   res_counter = ecore_init();
-   fail_if(res_counter < 1);
 
    /* Create 2 new event types */
    type = ecore_event_type_new();
@@ -627,8 +563,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_event)
 
    /* Filter counter shouldn't change */
    fail_if(filter != 0); // 0
-
-   res_counter = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -678,14 +612,10 @@ EFL_START_TEST(ecore_test_ecore_main_loop_event_recursive)
     */
    Ecore_Event *e;
    int type;
-   int ret;
 
    _log_dom = eina_log_domain_register("test", EINA_COLOR_CYAN);
 
    INF("main: begin");
-   ret = ecore_init();
-   fail_if(ret < 1);
-
 
    type = ecore_event_type_new();
    ecore_event_handler_add(type, _event_recursive_cb, NULL);
@@ -696,23 +626,17 @@ EFL_START_TEST(ecore_test_ecore_main_loop_event_recursive)
    INF(" main loop end");
 
    INF("main: end");
-   ecore_shutdown();
 }
 EFL_END_TEST
 #endif
 
 EFL_START_TEST(ecore_test_ecore_app)
 {
-   int ret;
-
    int argc_in = 2;
    const char *argv_in[] = {"arg_str_1", "arg_str2"};
 
    int argc_out = 0;
    char **argv_out = NULL;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    ecore_app_args_set(argc_in, argv_in);
    ecore_app_args_get(&argc_out, &argv_out);
@@ -724,7 +648,6 @@ EFL_START_TEST(ecore_test_ecore_app)
         fail_if( 0 != strcmp(argv_in[i], argv_out[i]) );
      }
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -737,8 +660,6 @@ Eina_Bool _poller_cb(void *data)
 
 EFL_START_TEST(ecore_test_ecore_main_loop_poller)
 {
-   int ret;
-
    Ecore_Poller *poll1_ptr = NULL;
    int poll1_interval = 1;
    int poll1_counter = 0;
@@ -752,9 +673,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_poller)
    int poll3_counter = 0;
 
    Eina_Bool did = EINA_FALSE;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    /* Check ECORE_POLLER_CORE poll interval */
    double interval = 1.0;
@@ -789,7 +707,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_poller)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -828,12 +745,9 @@ Eina_Bool _poller_loop(void *data)
 
 EFL_START_TEST(ecore_test_ecore_main_loop_poller_add_del)
 {
-   int ret, count_res = 0;
+   int count_res = 0;
 
    Eina_Bool did = EINA_FALSE;
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    /* Create renewable main poller */
    Ecore_Poller *poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop, &count_res);
@@ -853,7 +767,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_poller_add_del)
 
    fail_if(did == EINA_FALSE);
 
-   ret = ecore_shutdown();
 }
 EFL_END_TEST
 

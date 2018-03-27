@@ -601,12 +601,6 @@ void setup(void)
 {
    int ret;
 
-   ret = eina_init();
-   ck_assert_int_eq(ret, 1);
-
-   ret = ecore_init();
-   fail_if(ret < 1);
-
    ret = ecore_audio_init();
    ck_assert_int_eq(ret, 1);
 }
@@ -614,8 +608,6 @@ void setup(void)
 void teardown(void)
 {
    ecore_audio_shutdown();
-   ecore_shutdown();
-   eina_shutdown();
 }
 
 void
