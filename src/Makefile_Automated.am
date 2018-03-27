@@ -1,6 +1,8 @@
+
 if EFL_ENABLE_TESTS
 
-AM_TESTS_ENVIRONMENT += export EOLIAN_SO_DIR='$(top_builddir)/src/lib/eolian/.libs/'
+#AM_TESTS_ENVIRONMENT += EOLIAN_SO_DIR='$(top_builddir)/src/lib/eolian/.libs/'; export EOLIAN_SO_DIR;
+#gen_eolian_dir = EOLIAN_SO_DIR='$(top_builddir)/src/lib/eolian/.libs/'
 TEST_GEN = $(top_srcdir)/src/scripts/pyolian/testgenerator.py
 
 #### ecore ####
@@ -55,6 +57,7 @@ tests_automated_ecore_con_suite_automated_DEPENDENCIES = $(tests_ecore_con_ecore
 ector_automated_source = tests/automated/ector_suite_automated.c
 ector_automated_suite = $(top_builddir)/src/$(ector_automated_source)
 $(ector_automated_source):
+#	$(TEST_GEN) automated ector $(top_builddir)/src/$@ $(ector_eolian_files_generic)
 	$(TEST_GEN) automated ector $(top_builddir)/src/$@ $(ector_eolian_files)
 
 check_PROGRAMS += tests/automated/ector_suite_automated
@@ -179,24 +182,24 @@ tests_automated_eo_suite_automated_LDADD = $(tests_eo_eo_suite_LDADD) \
 @USE_ECORE_LIBS@
 tests_automated_eo_suite_automated_DEPENDENCIES = $(tests_eo_eo_suite_DEPENDENCIES)
 
-##### evas ####
-#evas_automated_source = tests/automated/evas_suite_automated.c
-#evas_automated_suite = $(top_builddir)/src/$(evas_automated_source)
-#$(evas_automated_source):
-#	$(TEST_GEN) automated evas $(top_builddir)/src/$@ $(evas_eolian_files)
-#
-#check_PROGRAMS += tests/automated/evas_suite_automated
-#TESTS += tests/automated/evas_suite_automated
-#
-#tests_automated_evas_suite_automated_SOURCE = $(evas_automated_source)
-#tests_automated_evas_suite_automated_CPPFLAGS = $(tests_evas_evas_suite_CPPFLAGS) \
-#-I$(top_srcdir)/src/tests \
-#-I$(top_srcdir)/src/lib/evas/canvas \
-#-I$(top_srcdir)/src/lib/evas/include \
-#@ELEMENTARY_CFLAGS@
-#tests_automated_evas_suite_automated_LDADD = $(tests_evas_evas_suite_LDADD) \
-#@USE_ECORE_LIBS@
-#tests_automated_evas_suite_automated_DEPENDENCIES = $(tests_evas_evas_suite_DEPENDENCIES)
+#### evas ####
+evas_automated_source = tests/automated/evas_suite_automated.c
+evas_automated_suite = $(top_builddir)/src/$(evas_automated_source)
+$(evas_automated_source):
+	$(TEST_GEN) automated evas $(top_builddir)/src/$@ $(evas_eolian_files)
+
+check_PROGRAMS += tests/automated/evas_suite_automated
+TESTS += tests/automated/evas_suite_automated
+
+tests_automated_evas_suite_automated_SOURCE = $(evas_automated_source)
+tests_automated_evas_suite_automated_CPPFLAGS = $(tests_evas_evas_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/evas/include \
+@ELEMENTARY_CFLAGS@
+tests_automated_evas_suite_automated_LDADD = $(tests_evas_evas_suite_LDADD) \
+@USE_ECORE_LIBS@
+tests_automated_evas_suite_automated_DEPENDENCIES = $(tests_evas_evas_suite_DEPENDENCIES)
 
 
 endif

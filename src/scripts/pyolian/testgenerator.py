@@ -130,8 +130,8 @@ class SuiteCase():
                 cls.custom += load_file(os.path.join(filedir, func.name, "custom.c")) or ''
                 func.init = load_file(os.path.join(filedir, func.name, "init.c"))
                 func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown.c"))
-                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init.c")) or "/* Zero/NULL args init */"
-                func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown.c")) or "/* Zero/NULL args shutdown */"
+                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init.c")) or "/* Zero/NULL args initialized */"
+                func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown.c")) or ''
 
             cls.plist = [ p for p in cls.properties if p.getter_scope == p.getter_scope.PUBLIC or p.setter_scope == p.setter_scope.PUBLIC ]
             for func in cls.plist:
@@ -139,15 +139,15 @@ class SuiteCase():
                     cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom.c")) or ""
                     func.get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init.c"))
                     func.get_shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown.c"))
-                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init.c")) or "/* Zero/NULL args getter init */"
-                    func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args getter shutdown */"
+                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init.c")) or "/* Zero/NULL args initialized */"
+                    func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or ''
 
                 if func.setter_scope == func.setter_scope.PUBLIC:
                     cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom.c")) or ""
                     func.set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init.c"))
                     func.set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown.c"))
-                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init.c")) or "/* Zero/NULL args setter init */"
-                    func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or "/* Zero/NULL args setter shutdown */"
+                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init.c")) or "/* Zero/NULL args initialized */"
+                    func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or ''
 
 
 if __name__ == '__main__':
