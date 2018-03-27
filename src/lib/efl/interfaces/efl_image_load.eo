@@ -1,3 +1,4 @@
+import eina_types;
 import efl_gfx_types;
 
 /*

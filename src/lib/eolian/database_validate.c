@@ -660,7 +660,7 @@ end:
 
 /* FIXME: need much better error handling here */
 static Eina_Bool
-_db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
+_db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
 {
    if (eina_hash_find(fhash, cl->base.name))
      return EINA_TRUE;
@@ -677,7 +677,7 @@ _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
              eina_stringshare_del(inn);
              continue;
           }
-        Eolian_Class *icl = eina_hash_find(src->classes, inn);
+        Eolian_Class *icl = eina_hash_find(cl->base.unit->classes, inn);
         if (!icl)
           {
              succ = EINA_FALSE;
@@ -689,7 +689,7 @@ _db_fill_inherits(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *fhash)
           {
              cl->inherits = eina_list_append(cl->inherits, icl);
              /* recursively fill so the tree is valid */
-             if (!icl->valid_impls && !_db_fill_inherits(src, icl, fhash))
+             if (!icl->valid_impls && !_db_fill_inherits(icl, fhash))
                succ = EINA_FALSE;
           }
         eina_stringshare_del(inn);
@@ -725,7 +725,7 @@ _validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
 }
 
 static Eina_Bool
-_validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
+_validate_class(Validate_State *vals, Eolian_Class *cl,
                 Eina_Hash *nhash, Eina_Hash *chash)
 {
    Eina_List *l;
@@ -741,6 +741,8 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
    /* we've gone through this part */
    if (eina_hash_find(chash, cl->base.name))
      return EINA_TRUE;
+
+   const Eolian_Unit *src = cl->base.unit;
 
    Eina_Bool valid = cl->base.validated;
 
@@ -772,7 +774,7 @@ _validate_class(Validate_State *vals, const Eolian_Unit *src, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_validate_class(vals, src, icl, nhash, chash))
+        if (!_validate_class(vals, icl, nhash, chash))
           return EINA_FALSE;
      }
 
@@ -859,7 +861,7 @@ database_validate(const Eolian_Unit *src)
         if (cl->valid_impls)
           continue;
         Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
-        if (!_db_fill_inherits(src, cl, fhash))
+        if (!_db_fill_inherits(cl, fhash))
           {
              eina_hash_free(fhash);
              return EINA_FALSE;
@@ -874,7 +876,7 @@ database_validate(const Eolian_Unit *src)
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
-        if (!_validate_class(&vals, src, cl, nhash, chash))
+        if (!_validate_class(&vals, cl, nhash, chash))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);

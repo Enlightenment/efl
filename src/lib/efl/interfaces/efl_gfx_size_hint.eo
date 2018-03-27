@@ -1,3 +1,4 @@
+import eina_types;
 import efl_gfx_types;
 
 const Efl.Gfx.Size.Hint.Expand: double = 1.0;
