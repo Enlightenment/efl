@@ -1933,6 +1933,7 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
    sd->ref.file = NULL;
    _xattr_data_unref(sd->xattr);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
+   emotion_shutdown();
 }
 
 EOLIAN static void
