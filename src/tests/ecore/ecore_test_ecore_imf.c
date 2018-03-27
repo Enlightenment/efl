@@ -34,6 +34,11 @@ _find_list(const Eina_List *lst, const char *item)
 {
    const Eina_List *n;
    const char *s;
+
+   if (eina_streq(item, "xim"))
+     {
+        if (!getenv("DISPLAY")) return EINA_TRUE;
+     }
    EINA_LIST_FOREACH(lst, n, s)
      {
         if (strcmp(s, item) == 0)
@@ -71,7 +76,14 @@ EFL_START_TEST(ecore_test_ecore_imf_modules_load)
    ecore_imf_init();
    for (itr = built_modules; *itr != NULL; itr++)
      {
-        Ecore_IMF_Context *ctx = ecore_imf_context_add(*itr);
+        Ecore_IMF_Context *ctx;
+
+        if (eina_streq(*itr, "xim"))
+          {
+             if (!getenv("DISPLAY")) continue;
+          }
+
+        ctx = ecore_imf_context_add(*itr);
         fail_if(ctx == NULL, "could not add imf context: %s", *itr);
         ecore_imf_context_del(ctx);
      }
