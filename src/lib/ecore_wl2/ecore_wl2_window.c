@@ -1187,42 +1187,9 @@ ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window)
 EAPI Ecore_Wl2_Output *
 ecore_wl2_window_output_find(Ecore_Wl2_Window *window)
 {
-   Ecore_Wl2_Output *out;
-   Eina_Inlist *tmp;
-   int x = 0, y = 0;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
-   x = window->set_config.geometry.x;
-   y = window->set_config.geometry.y;
-
-   EINA_INLIST_FOREACH_SAFE(window->display->outputs, tmp, out)
-     {
-        int ox, oy, ow, oh;
-
-        ox = out->geometry.x;
-        oy = out->geometry.y;
-
-        switch (out->transform)
-          {
-           case WL_OUTPUT_TRANSFORM_90:
-           case WL_OUTPUT_TRANSFORM_270:
-           case WL_OUTPUT_TRANSFORM_FLIPPED_90:
-           case WL_OUTPUT_TRANSFORM_FLIPPED_270:
-             ow = out->geometry.h;
-             oh = out->geometry.w;
-             break;
-           default:
-             ow = out->geometry.w;
-             oh = out->geometry.h;
-             break;
-          }
-
-        if (((x >= ox) && (x < ow)) && ((y >= oy) && (y < oh)))
-          return out;
-     }
-
-   return NULL;
+   return eina_list_data_get(window->outputs);
 }
 
 EAPI void
