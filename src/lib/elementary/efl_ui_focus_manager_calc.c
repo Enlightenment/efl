@@ -1147,8 +1147,8 @@ _efl_ui_focus_manager_calc_efl_object_provider_find(const Eo *obj, Efl_Ui_Focus_
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
-   eina_list_free(pd->focus_stack);
-   eina_list_free(pd->dirty);
+   pd->focus_stack = eina_list_free(pd->focus_stack);
+   pd->dirty = eina_list_free(pd->dirty);
 
    eina_hash_free(pd->node_hash);
 
