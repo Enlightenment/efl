@@ -3,6 +3,7 @@
 
 #include <dbus/dbus.h>
 #include <Eina.h>
+#include <Eo.h>
 #include "eina_safety_checks.h"
 #include <Ecore.h>
 #include "Eldbus.h"

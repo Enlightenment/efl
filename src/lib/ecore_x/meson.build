@@ -77,9 +77,19 @@ if x11.found() == false
   x11 = cc.find_library('x11', required: true)
 endif
 
+xcb = dependency('xcb', required: false)
+if xcb.found() == false
+  xcb = cc.find_library('xcb', required: true)
+endif
+
+x11_xcb = dependency('x11-xcb', required: false)
+if x11_xcb.found() == false
+  x11_xcb = cc.find_library('x11-xcb', required: true)
+endif
+
 foreach ecore_x_check : ecore_x_checks
   x_lib = cc.find_library(ecore_x_check[2], 
-    dependencies : [x11],
+    dependencies : [x11, xcb],
     required: false
   )
 
@@ -102,9 +112,11 @@ int main () {
 endforeach
 
 ecore_x_deps += x11
+ecore_x_deps += xcb
+ecore_x_deps += x11_xcb
 # there are a few special cases
 cc.has_header_symbol('X11/XKBlib.h', 'XkbSetDetectableAutoRepeat',
-  dependencies : x11
+  dependencies : [x11, xcb]
 )
 config_h.set('ECORE_XKB', '1')
 

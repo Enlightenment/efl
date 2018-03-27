@@ -1,10 +1,10 @@
 pub_eo_files = [
-  'efl_gesture_touch.eo',
-  'efl_gesture.eo',
-  'efl_gesture_tap.eo',
-  'efl_gesture_long_tap.eo',
-  'efl_gesture_recognizer.eo',
-  'efl_gesture_manager.eo'
+  'efl_canvas_gesture_touch.eo',
+  'efl_canvas_gesture.eo',
+  'efl_canvas_gesture_tap.eo',
+  'efl_canvas_gesture_long_tap.eo',
+  'efl_canvas_gesture_recognizer.eo',
+  'efl_canvas_gesture_manager.eo'
 ]
 
 foreach eo_file : pub_eo_files
@@ -21,8 +21,8 @@ foreach eo_file : pub_eo_files
 endforeach
 
 pub_eo_files = [
-  'efl_gesture_recognizer_tap.eo',
-  'efl_gesture_recognizer_long_tap.eo'
+  'efl_canvas_gesture_recognizer_tap.eo',
+  'efl_canvas_gesture_recognizer_long_tap.eo'
 ]
 
 foreach eo_file : pub_eo_files
@@ -39,7 +39,7 @@ foreach eo_file : pub_eo_files
 endforeach
 
 pub_eo_types_files = [
-  'efl_gesture_types.eot',
+  'efl_canvas_gesture_types.eot',
 ]
 
 foreach eo_file : pub_eo_types_files
@@ -54,12 +54,12 @@ foreach eo_file : pub_eo_types_files
 endforeach
 
 evas_src += files([
-  'efl_gesture_touch.c',
-  'efl_gesture.c',
-  'efl_gesture_tap.c',
-  'efl_gesture_long_tap.c',
-  'efl_gesture_recognizer.c',
-  'efl_gesture_recognizer_tap.c',
-  'efl_gesture_recognizer_long_tap.c',
-  'efl_gesture_manager.c',
+  'efl_canvas_gesture_touch.c',
+  'efl_canvas_gesture.c',
+  'efl_canvas_gesture_tap.c',
+  'efl_canvas_gesture_long_tap.c',
+  'efl_canvas_gesture_recognizer.c',
+  'efl_canvas_gesture_recognizer_tap.c',
+  'efl_canvas_gesture_recognizer_long_tap.c',
+  'efl_canvas_gesture_manager.c',
 ])

@@ -14,7 +14,7 @@ ecore_imf_src = [
 
 ecore_imf_lib = library('ecore_imf',
     ecore_imf_src, pub_eo_file_target,
-    dependencies: [ecore, ecore_imf_deps],
+    dependencies: [ecore, buildsystem, ecore_imf_deps],
     include_directories : config_dir,
     c_args : package_c_args,
     install: true,

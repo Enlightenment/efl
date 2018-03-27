@@ -21,12 +21,18 @@ foreach eo_file : pub_legacy_eo_files
 endforeach
 
 pub_eo_files = [
+  'efl_app.eo',
   'efl_loop.eo',
   'efl_loop_consumer.eo',
   'efl_loop_fd.eo',
   'efl_loop_handler.eo',
   'efl_loop_message.eo',
   'efl_loop_message_handler.eo',
+  'efl_exe.eo',
+  'efl_thread.eo',
+  'efl_threadio.eo',
+  'efl_appthread.eo',
+  'efl_task.eo',
   'efl_io_closer_fd.eo',
   'efl_io_positioner_fd.eo',
   'efl_io_reader_fd.eo',
@@ -50,6 +56,8 @@ pub_eo_files = [
 ]
 #split for later multilang eolian files stuff
 pub_eo_files += [
+  'efl_loop_message_future_handler.eo',
+  'efl_loop_message_future.eo',
   'efl_promise.eo',
   'efl_model_item.eo',
   'efl_model_container.eo',
@@ -85,6 +93,7 @@ ecore_header_src = [
 ]
 
 ecore_src = [
+  'efl_app.c',
   'ecore.c',
   'ecore_alloc.c',
   'ecore_anim.c',
@@ -104,7 +113,10 @@ ecore_src = [
   'efl_loop_fd.c',
   'efl_loop_handler.c',
   'efl_loop_message.c',
+  'efl_loop_message_future.c',
   'efl_loop_message_handler.c',
+  'efl_loop_message_future_handler.c',
+  'efl_task.c',
   'efl_io_closer_fd.c',
   'efl_io_positioner_fd.c',
   'efl_io_reader_fd.c',
@@ -178,7 +190,7 @@ endif
 
 ecore_lib = library('ecore',
     ecore_src, pub_eo_file_target,
-    dependencies: [eina, eo, efl, m, ecore_deps],
+    dependencies: [eina, eo, efl, m, buildsystem, ecore_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
     c_args : package_c_args,

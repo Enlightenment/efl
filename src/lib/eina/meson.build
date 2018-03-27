@@ -98,7 +98,9 @@ public_sub_headers = [
 'eina_inline_slice.x',
 'eina_inline_modinfo.x',
 'eina_freeq.h',
-'eina_slstr.h']
+'eina_slstr.h',
+'eina_vpath.h',
+]
 
 public_headers = [
   'Eina.h'
@@ -177,7 +179,9 @@ sources = [
 'eina_bezier.c',
 'eina_safepointer.c',
 'eina_freeq.c',
-'eina_slstr.c']
+'eina_slstr.c',
+'eina_vpath.c'
+]
 
 if target_machine.system() == 'cygwin'
   sources += 'eina_file_win32.c'

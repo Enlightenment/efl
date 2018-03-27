@@ -74,7 +74,7 @@ config_h.set_quoted('EEZE_UNMOUNT_BIN', unmount_bin)
 
 eeze_lib = library('eeze',
     eeze_src, pub_eo_file_target,
-    dependencies: [ecore, ecore_file, eeze_deps],
+    dependencies: [ecore, ecore_file, buildsystem, eeze_deps],
     include_directories : config_dir,
     install: true,
     c_args : package_c_args,

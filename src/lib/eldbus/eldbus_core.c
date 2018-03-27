@@ -135,7 +135,8 @@ eldbus_init(void)
         fputs("Eldbus: Unable to initialize eina\n", stderr);
         return 0;
      }
-
+   efl_object_init();
+   
    _eldbus_log_dom = eina_log_domain_register("eldbus", EINA_COLOR_BLUE);
    if (_eldbus_log_dom < 0)
      {

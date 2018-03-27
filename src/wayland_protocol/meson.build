@@ -12,16 +12,26 @@ wl_protocol_local = [
   'www.xml'
 ]
 
-wl_protocol_sys = [
+wl_unstable_protocol_sys = [
   join_paths('xdg-shell', 'xdg-shell-unstable-v6.xml'),
   join_paths('linux-dmabuf', 'linux-dmabuf-unstable-v1.xml'),
   join_paths('text-input', 'text-input-unstable-v1.xml'),
 ]
 
-foreach sys_protocol : wl_protocol_sys
+wl_stable_protocol_sys = [
+  join_paths('xdg-shell', 'xdg-shell.xml'),
+]
+
+foreach sys_protocol : wl_unstable_protocol_sys
 	wl_protocol_local += [ 
 		join_paths(_wayland_protocols.get_pkgconfig_variable('pkgdatadir'), 'unstable',
 			sys_protocol)]
+endforeach
+
+foreach sys_protocol : wl_stable_protocol_sys
+  wl_protocol_local += [ 
+    join_paths(_wayland_protocols.get_pkgconfig_variable('pkgdatadir'), 'stable',
+      sys_protocol)]
 endforeach
 
 gen_obj = []

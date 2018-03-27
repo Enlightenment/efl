@@ -89,6 +89,7 @@ if get_option('ecore_wl2') == true or get_option('ecore_buffer') == true
   subdir(join_paths('src', 'wayland_protocol'))
 endif
 
+ecore_evas_wayland_engine_include_dir = []
 
 subprojects = [
 # name              | mod  | lib  | bin  | bench | tests | examples | name of static libs
@@ -98,7 +99,7 @@ subprojects = [
 ['efl'              , false,  true, false, false,  true, false, []],
 ['emile'            , false,  true, false, false,  true,  true, ['lz4', 'rg_etc']],
 ['eet'              , false,  true,  true, false,  true,  true, []],
-['ecore'            , false,  true, false, false, false, false, []],
+['ecore'            , false,  true, false, false, false, false, ['buildsystem']],
 ['eldbus'           , false,  true,  true, false,  true,  true, []],
 ['ecore'            ,  true, false, false, false,  true,  true, []], #ecores modules depend on eldbus
 ['ecore_audio'      , false,  true, false, false, false, false, []],
