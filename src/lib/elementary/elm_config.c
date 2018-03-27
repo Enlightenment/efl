@@ -3445,6 +3445,40 @@ elm_config_focus_move_policy_get(void)
    return _elm_config->focus_move_policy;
 }
 
+static void
+_efl_ui_widget_config_reload(Efl_Ui_Widget *obj)
+{
+   Elm_Focus_Move_Policy focus_move_policy = elm_config_focus_move_policy_get();
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd);
+   Efl_Ui_Widget *w;
+   Eina_List *n;
+
+   //reload focus move policy
+   if (efl_ui_widget_focus_move_policy_automatic_get(obj) &&
+       (sd->focus_move_policy != focus_move_policy))
+     {
+        sd->focus_move_policy = focus_move_policy;
+     }
+
+   EINA_LIST_FOREACH(sd->subobjs, n, w)
+     {
+        if (efl_isa(w, EFL_UI_WIDGET_CLASS))
+          _efl_ui_widget_config_reload(w);
+     }
+}
+
+void
+_elm_win_focus_reconfigure(void)
+{
+   const Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     {
+        _efl_ui_widget_config_reload(obj);
+     }
+}
+
 EAPI void
 elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy)
 {

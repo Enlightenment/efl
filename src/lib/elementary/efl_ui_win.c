@@ -3658,11 +3658,6 @@ _elm_win_translate(void)
      efl_ui_translatable_translation_update(obj);
 }
 
-void
-_elm_win_focus_reconfigure(void)
-{
-   /* FOCUS-FIXME */
-}
 
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
