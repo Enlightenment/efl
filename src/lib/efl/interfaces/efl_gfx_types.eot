@@ -1,3 +1,5 @@
+import eina_types;
+
 enum Efl.Gfx.Colorspace {
   [[Graphics colorspace type]]
   argb8888,             [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32bit word at a time.]]

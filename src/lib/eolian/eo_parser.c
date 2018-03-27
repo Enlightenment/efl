@@ -1446,6 +1446,7 @@ static void
 parse_part(Eo_Lexer *ls)
 {
    Eolian_Part *part = calloc(1, sizeof(Eolian_Part));
+   FILL_BASE(part->base, ls, ls->line_number, ls->column, PART);
    ls->klass->parts = eina_list_append(ls->klass->parts, part);
    eolian_object_ref(&part->base);
    check(ls, TOK_VALUE);

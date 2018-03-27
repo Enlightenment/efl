@@ -51,33 +51,29 @@ _validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str, const Eolian_Obj
 }
 
 static Eina_Bool
-_validate_doc(const Eolian_Unit *src, Eolian_Documentation *doc)
+_validate_doc(Eolian_Documentation *doc)
 {
    if (!doc)
      return EINA_TRUE;
 
-   if (!_validate_docstr(src, doc->summary, &doc->base))
+   if (!_validate_docstr(doc->base.unit, doc->summary, &doc->base))
      return EINA_FALSE;
-   if (!_validate_docstr(src, doc->description, &doc->base))
+   if (!_validate_docstr(doc->base.unit, doc->description, &doc->base))
      return EINA_FALSE;
 
    return _validate(&doc->base);
 }
 
-static Eina_Bool _validate_type(Validate_State *vals,
-                                const Eolian_Unit *src, Eolian_Type *tp);
-static Eina_Bool _validate_expr(const Eolian_Unit *src,
-                                Eolian_Expression *expr,
+static Eina_Bool _validate_type(Validate_State *vals, Eolian_Type *tp);
+static Eina_Bool _validate_expr(Eolian_Expression *expr,
                                 const Eolian_Type *tp,
                                 Eolian_Expression_Mask msk);
 static Eina_Bool _validate_function(Validate_State *vals,
-                                    const Eolian_Unit *src,
                                     Eolian_Function *func,
                                     Eina_Hash *nhash);
 
 typedef struct _Cb_Ret
 {
-   const Eolian_Unit *unit;
    Validate_State *vals;
    Eina_Bool succ;
 } Cb_Ret;
@@ -86,12 +82,12 @@ static Eina_Bool
 _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Struct_Type_Field *sf, Cb_Ret *sc)
 {
-   sc->succ = _validate_type(sc->vals, sc->unit, sf->type);
+   sc->succ = _validate_type(sc->vals, sf->type);
 
    if (!sc->succ)
      return EINA_FALSE;
 
-   sc->succ = _validate_doc(sc->unit, sf->doc);
+   sc->succ = _validate_doc(sf->doc);
 
    return sc->succ;
 }
@@ -101,14 +97,14 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Enum_Type_Field *ef, Cb_Ret *sc)
 {
    if (ef->value)
-     sc->succ = _validate_expr(sc->unit, ef->value, NULL, EOLIAN_MASK_INT);
+     sc->succ = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
    else
      sc->succ = EINA_TRUE;
 
    if (!sc->succ)
      return EINA_FALSE;
 
-   sc->succ = _validate_doc(sc->unit, ef->doc);
+   sc->succ = _validate_doc(ef->doc);
 
    return sc->succ;
 }
@@ -121,25 +117,25 @@ _obj_error(const Eolian_Object *o, const char *msg)
 }
 
 static Eina_Bool
-_validate_typedecl(Validate_State *vals, const Eolian_Unit *src, Eolian_Typedecl *tp)
+_validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
 {
    if (tp->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(src, tp->doc))
+   if (!_validate_doc(tp->doc))
      return EINA_FALSE;
 
    switch (tp->type)
      {
       case EOLIAN_TYPEDECL_ALIAS:
-        if (!_validate_type(vals, src, tp->base_type))
+        if (!_validate_type(vals, tp->base_type))
           return EINA_FALSE;
         if (!tp->freefunc && tp->base_type->freefunc)
           tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_STRUCT:
         {
-           Cb_Ret rt = { src, vals, EINA_TRUE };
+           Cb_Ret rt = { vals, EINA_TRUE };
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_sf_map_cb, &rt);
            if (!rt.succ)
              return EINA_FALSE;
@@ -149,14 +145,14 @@ _validate_typedecl(Validate_State *vals, const Eolian_Unit *src, Eolian_Typedecl
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_ENUM:
         {
-           Cb_Ret rt = { src, vals, EINA_TRUE };
+           Cb_Ret rt = { vals, EINA_TRUE };
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &rt);
            if (!rt.succ)
              return EINA_FALSE;
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_FUNCTION_POINTER:
-        if (!_validate_function(vals, src, tp->function_pointer, NULL))
+        if (!_validate_function(vals, tp->function_pointer, NULL))
           return EINA_FALSE;
         return _validate(&tp->base);
       default:
@@ -181,8 +177,10 @@ static const char *eo_value_free = "eina_value_flush";
 static const char *eo_value_ptr_free = "eina_value_free";
 
 static Eina_Bool
-_validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
+_validate_type(Validate_State *vals, Eolian_Type *tp)
 {
+   const Eolian_Unit *src = tp->base.unit;
+
    char buf[256];
    if (tp->owned && !database_type_is_ownable(src, tp))
      {
@@ -220,7 +218,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
                 /* validate types in brackets so freefuncs get written... */
                 while (itp)
                   {
-                     if (!_validate_type(vals, src, itp))
+                     if (!_validate_type(vals, itp))
                        return EINA_FALSE;
                      if ((kwid >= KW_accessor) && (kwid <= KW_list))
                        {
@@ -269,7 +267,7 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->base.name);
                 return _obj_error(&tp->base, buf);
              }
-           if (!_validate_typedecl(vals, src, tp->tdecl))
+           if (!_validate_typedecl(vals, tp->tdecl))
              return EINA_FALSE;
            if (tp->tdecl->freefunc && !tp->freefunc)
              tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
@@ -295,14 +293,14 @@ _validate_type(Validate_State *vals, const Eolian_Unit *src, Eolian_Type *tp)
 }
 
 static Eina_Bool
-_validate_expr(const Eolian_Unit *src, Eolian_Expression *expr,
-               const Eolian_Type *tp, Eolian_Expression_Mask msk)
+_validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
+               Eolian_Expression_Mask msk)
 {
    Eolian_Value val;
    if (tp)
-     val = database_expr_eval_type(src, expr, tp);
+     val = database_expr_eval_type(expr->base.unit, expr, tp);
    else
-     val = database_expr_eval(src, expr, msk);
+     val = database_expr_eval(expr->base.unit, expr, msk);
 
    if (val.type == EOLIAN_EXPR_UNKNOWN)
      return EINA_FALSE;
@@ -311,23 +309,22 @@ _validate_expr(const Eolian_Unit *src, Eolian_Expression *expr,
 }
 
 static Eina_Bool
-_validate_param(Validate_State *vals, const Eolian_Unit *src, Eolian_Function_Parameter *param)
+_validate_param(Validate_State *vals, Eolian_Function_Parameter *param)
 {
-   if (!_validate_type(vals, src, param->type))
+   if (!_validate_type(vals, param->type))
      return EINA_FALSE;
 
-   if (param->value && !_validate_expr(src, param->value, param->type, 0))
+   if (param->value && !_validate_expr(param->value, param->type, 0))
      return EINA_FALSE;
 
-   if (!_validate_doc(src, param->doc))
+   if (!_validate_doc(param->doc))
      return EINA_FALSE;
 
    return _validate(&param->base);
 }
 
 static Eina_Bool
-_validate_function(Validate_State *vals, const Eolian_Unit *src,
-                   Eolian_Function *func, Eina_Hash *nhash)
+_validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash)
 {
    Eina_List *l;
    Eolian_Function_Parameter *param;
@@ -355,23 +352,23 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
         return EINA_TRUE;
      }
 
-   if (func->get_ret_type && !_validate_type(vals, src, func->get_ret_type))
+   if (func->get_ret_type && !_validate_type(vals, func->get_ret_type))
      return EINA_FALSE;
 
-   if (func->set_ret_type && !_validate_type(vals, src, func->set_ret_type))
+   if (func->set_ret_type && !_validate_type(vals, func->set_ret_type))
      return EINA_FALSE;
 
-   if (func->get_ret_val && !_validate_expr(src, func->get_ret_val,
+   if (func->get_ret_val && !_validate_expr(func->get_ret_val,
                                             func->get_ret_type, 0))
      return EINA_FALSE;
 
-   if (func->set_ret_val && !_validate_expr(src, func->set_ret_val,
+   if (func->set_ret_val && !_validate_expr(func->set_ret_val,
                                             func->set_ret_type, 0))
      return EINA_FALSE;
 
 #define EOLIAN_PARAMS_VALIDATE(params) \
    EINA_LIST_FOREACH(params, l, param) \
-     if (!_validate_param(vals, src, param)) \
+     if (!_validate_param(vals, param)) \
        return EINA_FALSE;
 
    EOLIAN_PARAMS_VALIDATE(func->prop_values);
@@ -383,9 +380,9 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
 
 #undef EOLIAN_PARAMS_VALIDATE
 
-   if (!_validate_doc(src, func->get_return_doc))
+   if (!_validate_doc(func->get_return_doc))
      return EINA_FALSE;
-   if (!_validate_doc(src, func->set_return_doc))
+   if (!_validate_doc(func->set_return_doc))
      return EINA_FALSE;
 
    /* just for now, when dups become errors there will be no need to check */
@@ -396,7 +393,7 @@ _validate_function(Validate_State *vals, const Eolian_Unit *src,
 }
 
 static Eina_Bool
-_validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
+_validate_part(Eolian_Part *part, Eina_Hash *nhash)
 {
    const Eolian_Function *ofunc = eina_hash_find(nhash, part->base.name);
    if (ofunc)
@@ -413,11 +410,11 @@ _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
    if (part->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(src, part->doc))
+   if (!_validate_doc(part->doc))
      return EINA_FALSE;
 
    /* switch the class name for class */
-   Eolian_Class *pcl = eina_hash_find(src->classes, part->klass_name);
+   Eolian_Class *pcl = eina_hash_find(part->base.unit->classes, part->klass_name);
    if (!pcl)
      {
         char buf[PATH_MAX];
@@ -433,15 +430,15 @@ _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
 }
 
 static Eina_Bool
-_validate_event(Validate_State *vals, const Eolian_Unit *src, Eolian_Event *event)
+_validate_event(Validate_State *vals, Eolian_Event *event)
 {
    if (event->base.validated)
      return EINA_TRUE;
 
-   if (event->type && !_validate_type(vals, src, event->type))
+   if (event->type && !_validate_type(vals, event->type))
      return EINA_FALSE;
 
-   if (!_validate_doc(src, event->doc))
+   if (!_validate_doc(event->doc))
      return EINA_FALSE;
 
    return _validate(&event->base);
@@ -709,16 +706,16 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
 }
 
 static Eina_Bool
-_validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
+_validate_implement(Eolian_Implement *impl)
 {
    if (impl->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(src, impl->common_doc))
+   if (!_validate_doc(impl->common_doc))
      return EINA_FALSE;
-   if (!_validate_doc(src, impl->get_doc))
+   if (!_validate_doc(impl->get_doc))
      return EINA_FALSE;
-   if (!_validate_doc(src, impl->set_doc))
+   if (!_validate_doc(impl->set_doc))
      return EINA_FALSE;
 
    return _validate(&impl->base);
@@ -741,8 +738,6 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
    /* we've gone through this part */
    if (eina_hash_find(chash, cl->base.name))
      return EINA_TRUE;
-
-   const Eolian_Unit *src = cl->base.unit;
 
    Eina_Bool valid = cl->base.validated;
 
@@ -779,23 +774,23 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
      }
 
    EINA_LIST_FOREACH(cl->properties, l, func)
-     if (!_validate_function(vals, src, func, nhash))
+     if (!_validate_function(vals, func, nhash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->methods, l, func)
-     if (!_validate_function(vals, src, func, nhash))
+     if (!_validate_function(vals, func, nhash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->events, l, event)
-     if (!_validate_event(vals, src, event))
+     if (!_validate_event(vals, event))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
-     if (!_validate_part(src, part, nhash))
+     if (!_validate_part(part, nhash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!_validate_implement(src, impl))
+     if (!_validate_implement(impl))
        return EINA_FALSE;
 
    /* all the checks that need to be done every time are performed now */
@@ -806,7 +801,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
         return EINA_TRUE;
      }
 
-   if (!_validate_doc(src, cl->doc))
+   if (!_validate_doc(cl->doc))
      return EINA_FALSE;
 
    /* also done */
@@ -816,18 +811,18 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
 }
 
 static Eina_Bool
-_validate_variable(Validate_State *vals, const Eolian_Unit *src, Eolian_Variable *var)
+_validate_variable(Validate_State *vals, Eolian_Variable *var)
 {
    if (var->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_type(vals, src, var->base_type))
+   if (!_validate_type(vals, var->base_type))
      return EINA_FALSE;
 
-   if (var->value && !_validate_expr(src, var->value, var->base_type, 0))
+   if (var->value && !_validate_expr(var->value, var->base_type, 0))
      return EINA_FALSE;
 
-   if (!_validate_doc(src, var->doc))
+   if (!_validate_doc(var->doc))
      return EINA_FALSE;
 
    return _validate(&var->base);
@@ -837,14 +832,14 @@ static Eina_Bool
 _typedecl_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
                  Eolian_Typedecl *tp, Cb_Ret *sc)
 {
-   return (sc->succ = _validate_typedecl(sc->vals, sc->unit, tp));
+   return (sc->succ = _validate_typedecl(sc->vals, tp));
 }
 
 static Eina_Bool
 _var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
              Eolian_Variable *var, Cb_Ret *sc)
 {
-   return (sc->succ = _validate_variable(sc->vals, sc->unit, var));
+   return (sc->succ = _validate_variable(sc->vals, var));
 }
 
 Eina_Bool
@@ -888,7 +883,7 @@ database_validate(const Eolian_Unit *src)
    eina_hash_free(nhash);
    eina_iterator_free(iter);
 
-   Cb_Ret rt = { src, &vals, EINA_TRUE };
+   Cb_Ret rt = { &vals, EINA_TRUE };
 
    eina_hash_foreach(src->aliases, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
