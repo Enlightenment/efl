@@ -531,9 +531,6 @@ void                 _elm_prefs_shutdown(void);
 void                 _elm_prefs_data_init(void);
 void                 _elm_prefs_data_shutdown(void);
 
-void                 _elm_emotion_init(void);
-void                 _elm_emotion_shutdown(void);
-
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
 void                 _elm_ews_wm_rescale(Elm_Theme *th,

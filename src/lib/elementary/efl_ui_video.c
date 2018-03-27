@@ -219,7 +219,6 @@ EOLIAN static void
 _efl_ui_video_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Video_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   _elm_emotion_init();
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "video");

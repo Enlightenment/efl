@@ -122,26 +122,6 @@ _elm_rescale(void)
    _elm_ews_wm_rescale(NULL, EINA_FALSE);
 }
 
-static Eina_Bool _emotion_inited = EINA_FALSE;
-
-void
-_elm_emotion_init(void)
-{
-   if (_emotion_inited) return ;
-
-   emotion_init();
-   _emotion_inited = EINA_TRUE;
-}
-
-void
-_elm_emotion_shutdown(void)
-{
-   if (!_emotion_inited) return ;
-
-   emotion_shutdown();
-   _emotion_inited = EINA_FALSE;
-}
-
 static void *app_mainfunc = NULL;
 static const char *app_name = NULL;
 static const char *app_desktop_entry = NULL;
@@ -871,7 +851,6 @@ elm_quicklaunch_shutdown(void)
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_shutdown();
 #endif
-   _elm_emotion_shutdown();
 
    ecore_file_shutdown();
    eio_shutdown();
