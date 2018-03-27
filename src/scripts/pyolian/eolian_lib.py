@@ -14,6 +14,7 @@ root_path = os.path.abspath(os.path.join(script_path, '..', '..', '..'))
 search_in = [
     os.path.join(root_path, 'src', 'lib', 'eolian', '.libs'),
     os.path.join(root_path, 'build', 'src', 'lib', 'eolian'),
+    os.path.join(root_path, 'build', 'src', 'lib', 'eolian', '.libs'),
 ]
 
 if 'EOLIAN_SO_DIR' in os.environ:
