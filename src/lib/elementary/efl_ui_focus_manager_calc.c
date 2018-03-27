@@ -81,6 +81,7 @@ typedef struct {
 
 
 static Node* _request_subchild(Node *node);
+static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
 
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
@@ -237,13 +238,45 @@ node_item_free(Node *item)
 {
    Node *n;
    Eina_List *l;
-   //free the graph items
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+   Eo *obj = item->manager;
+   FOCUS_DATA(obj);
+
+   /*cleanup graph parts*/
+
+   //add all neighbors of the node to the dirty list
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
+        Node *partner;
+        Eina_List *n;
+
+#define MAKE_LIST_DIRTY(node, field) \
+        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, n, partner) \
+          { \
+             dirty_add(obj, pd, partner); \
+          }
+
+        MAKE_LIST_DIRTY(item, partners)
+        MAKE_LIST_DIRTY(item, one_direction)
+        MAKE_LIST_DIRTY(item, cleanup_nodes)
+
         border_partners_set(item, i, NULL);
         border_onedirection_cleanup(item, i);
         border_onedirection_set(item, i, NULL);
      }
+
+   /*cleanup manager householdings*/
+
+   //remove from the focus stack
+   pd->focus_stack = eina_list_remove(pd->focus_stack, item);
+
+   //if this is the entry for redirect, NULL them out!
+   if (pd->redirect_entry == item->focusable)
+     pd->redirect_entry = NULL;
+
+   //remove from the dirty parts
+   pd->dirty = eina_list_remove(pd->dirty, item);
+
+   /*merge tree items*/
 
    //free the tree items
    if (!item->tree.parent && item->tree.children)
@@ -974,11 +1007,22 @@ _efl_ui_focus_manager_calc_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Man
    return EINA_TRUE;
 }
 
+static inline Node*
+_request_subchild_except(Node *n, Node *except)
+{
+   do
+     {
+        n = _request_subchild(n);
+     }
+   while (n == except);
+
+   return n;
+}
+
 EOLIAN static void
 _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
 {
    Node *node;
-   Eina_Bool refocus = EINA_FALSE;
 
    node = eina_hash_find(pd->node_hash, &child);
 
@@ -988,53 +1032,31 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
-        //unfocus the current head
-        efl_ui_focus_object_focus_set(child, EINA_FALSE);
-        refocus = EINA_TRUE;
-     }
+        if (!efl_invalidated_get(pd->root->focusable))
+          {
+             Node *n;
 
+             n = eina_list_nth(pd->focus_stack, eina_list_count(pd->focus_stack) - 2);
+             if (!n)
+               {
+                  n = _request_subchild_except(pd->root, node);
+               }
+             else if (n->type != NODE_TYPE_NORMAL)
+               {
+                  n = _request_subchild_except(n, node);
+                  if (!n)
+                    {
+                       n = _request_subchild_except(pd->root, node);
+                    }
+               }
 
-   //remove the object from the stack if it hasn't done that until now
-   //after this it's not at the top anymore
-   //elm_widget_focus_set(node->focusable, EINA_FALSE);
-   //delete again from the list, for the case it was not at the top
-   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
+             if (n)
+               efl_ui_focus_manager_focus_set(obj, n->focusable);
 
-   //if this is the entry for redirect, NULL them out!
-   if (pd->redirect_entry == node->focusable)
-     pd->redirect_entry = NULL;
-
-   //add all neighbors of the node to the dirty list
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
-     {
-        Node *partner;
-        Eina_List *n;
-
-#define MAKE_LIST_DIRTY(node, field) \
-        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, n, partner) \
-          { \
-             dirty_add(obj, pd, partner); \
           }
-
-        MAKE_LIST_DIRTY(node, partners)
-        MAKE_LIST_DIRTY(node, one_direction)
-        MAKE_LIST_DIRTY(node, cleanup_nodes)
      }
-
-   //remove from the dirty parts
-   pd->dirty = eina_list_remove(pd->dirty, node);
 
    eina_hash_del_by_key(pd->node_hash, &child);
-
-   if (refocus && !efl_invalidated_get(pd->root->focusable))
-     {
-        Node *n = eina_list_last_data_get(pd->focus_stack);
-        if (!n)
-          n = pd->root;
-
-        if (_request_subchild(n))
-          efl_ui_focus_manager_focus_set(obj, n->focusable);
-     }
 }
 
 EOLIAN static void
