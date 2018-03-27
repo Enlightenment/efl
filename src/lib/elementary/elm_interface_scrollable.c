@@ -4679,13 +4679,14 @@ _elm_interface_scrollable_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED
 EOLIAN static Efl_Object*
 _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
+   Eo *o = efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
    pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
 
    _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
 
-   return efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
+   return o;
 }
 
 static Eina_Bool
