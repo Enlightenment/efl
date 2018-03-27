@@ -136,10 +136,18 @@ eldbus_init(void)
         return 0;
      }
 
+   if (!ecore_init())
+     {
+        fputs("Eldbus: Unable to initialize ecore\n", stderr);
+        eina_shutdown();
+        return 0;
+     }
+
    _eldbus_log_dom = eina_log_domain_register("eldbus", EINA_COLOR_BLUE);
    if (_eldbus_log_dom < 0)
      {
         EINA_LOG_ERR("Unable to create an 'eldbus' log domain");
+        ecore_shutdown();
         eina_shutdown();
         return 0;
      }
@@ -150,6 +158,7 @@ eldbus_init(void)
         EINA_LOG_ERR("Unable to create an 'eldbus_model' log domain");
         eina_log_domain_unregister(_eldbus_log_dom);
         _eldbus_log_dom = -1;
+        ecore_shutdown();
         eina_shutdown();
         return 0;
      }
@@ -188,6 +197,7 @@ message_failed:
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
+   ecore_shutdown();
    eina_shutdown();
 
    return 0;
@@ -291,6 +301,7 @@ eldbus_shutdown(void)
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
+   ecore_shutdown();
    eina_shutdown();
 
    return 0;
