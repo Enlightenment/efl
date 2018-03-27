@@ -103,6 +103,29 @@ SUITE_SHUTDOWN(eina)
    ck_assert_int_eq(eina_shutdown(), 0);
 }
 
+EFL_START_TEST(mempool_module_load)
+{
+    _modules = eina_module_list_get(NULL,
+                                 PACKAGE_BUILD_DIR "/src/modules/eina",
+                                 EINA_TRUE,
+                                 NULL,
+                                 NULL);
+   eina_module_list_load(_modules);
+   eina_module_list_unload(_modules);
+}
+EFL_END_TEST
+
+static void
+mempool_init(TCase *tc)
+{
+   tcase_add_test(tc, mempool_module_load);
+}
+
+static const Efl_Test_Case mp_etc[] = {
+   { "mempool_init", mempool_init },
+   { NULL, NULL },
+};
+
 int
 main(int argc, char **argv)
 {
@@ -114,10 +137,26 @@ main(int argc, char **argv)
 #ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
 #endif
+   /* force modules to be loaded in case they are not installed
+    * this function does not require eina_init to be called
+    */
+
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eina", etc, SUITE_INIT_FN(eina), SUITE_SHUTDOWN_FN(eina));
+                                           "eina_init_module", mp_etc, SUITE_INIT_FN(eina), SUITE_SHUTDOWN_FN(eina));
 
+   eina_init();
+   eina_module_list_load(_modules);
+   failed_count += _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                           "Eina", etc, NULL, NULL);
+
+   if (_modules)
+     {
+        while (eina_array_count(_modules))
+          eina_module_free(eina_array_pop(_modules));
+        eina_array_free(_modules);
+     }
+   eina_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }
