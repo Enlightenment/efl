@@ -1,5 +1,5 @@
 engines = [
-#['cocoa', ]
+['cocoa', ['ecore_cocoa']],
 ['drm', ['ecore_drm2']], 
 ['extn', []],
 ['fb', ['ecore_fb']],
