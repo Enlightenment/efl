@@ -13,5 +13,5 @@ foreach sensor_conf : sensors
     install : true,
     install_dir : join_paths(dir_package_modules, 'sensor', sensor, module_arch)
   )
-  module_files += join_paths(dir_package_modules, 'sensor', sensor, module_arch, 'libeeze_' + sensor + '.so')
+  module_files += join_paths(dir_package_modules, 'sensor', sensor, module_arch, 'libeeze_' + sensor + sys_lib_extension)
 endforeach

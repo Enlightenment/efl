@@ -96,7 +96,7 @@ foreach engine_conf : engines
         install : true,
         install_dir : mod_install_dir
       )
-      module_files += join_paths(mod_install_dir, 'lib'+mod_full_name+'.so')
+      module_files += join_paths(mod_install_dir, 'lib'+mod_full_name + sys_lib_extension)
     endif
     config_h.set('BUILD_ENGINE_'+engine.to_upper(), '1')
   endif

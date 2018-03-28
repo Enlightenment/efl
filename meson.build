@@ -83,6 +83,14 @@ config_h.set10('EFL_HAVE_THREADS', true)
 config_dir = [include_directories('.')]
 eolian_include_directories = []
 
+if target_machine.system() == 'linux' or target_machine.system() == 'bsd'
+  sys_lib_extension = '.so'
+elif target_machine.system() == 'windows' or target_machine.system() == 'cygwin'
+  sys_lib_extension = '.dll'
+elif target_machine.system() == 'darwin'
+  sys_lib_extension = '.dylib'
+endif
+
 subdir('header_checks')
 
 if get_option('ecore_wl2') == true or get_option('ecore_buffer') == true

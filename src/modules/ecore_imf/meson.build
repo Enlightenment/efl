@@ -23,6 +23,6 @@ foreach mod_name : mods
       install: true,
       install_dir : mod_install_dir
   )
-  module_files += join_paths(mod_install_dir, 'lib'+mod_name+'.so')
+  module_files += join_paths(mod_install_dir, 'lib'+mod_name+sys_lib_extension)
 
 endforeach
