@@ -1951,6 +1951,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_subchild(Eo *obj, Efl_Ui
    Node *child, *target;
 
    child = node_get(obj, pd, child_obj);
+   if (!child) return NULL;
+
    target = _request_subchild(child);
 
    if (target) return target->focusable;
