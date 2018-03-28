@@ -175,7 +175,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
         eina_stringshare_del(spath);
      }
 
-   cevt.child = efl_add_ref(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(efl_added, evt->filename));
+   cevt.child = efl_add(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(efl_added, evt->filename));
    priv->children_list = eina_list_append(priv->children_list, cevt.child);
    cevt.index = eina_list_count(priv->children_list);
 

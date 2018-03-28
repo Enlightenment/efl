@@ -699,7 +699,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj, Efl_Ui_List_Data *pd)
 {
 
    if (!pd->factory)
-     pd->factory = efl_add_ref(EFL_UI_LAYOUT_FACTORY_CLASS, NULL);
+     pd->factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS));
 
    if(!pd->relayout)
      {

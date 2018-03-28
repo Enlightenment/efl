@@ -173,7 +173,7 @@ _make_model()
    Efl_Model_Item *model, *child;
    unsigned int i, len;
 
-   model = efl_add_ref(EFL_MODEL_ITEM_CLASS, NULL);
+   model = efl_add(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
    eina_value_setup(&value, EINA_VALUE_TYPE_UCHAR);
 

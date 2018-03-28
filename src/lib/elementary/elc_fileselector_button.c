@@ -106,6 +106,7 @@ _selection_done(void *data, const Efl_Event *event)
         Efl_Future *future = NULL;
         if (sd->fsd.model)
           efl_unref(sd->fsd.model);
+        // XXX: the efl_ref here smells wrong. fsd.model is only unreffed ONCE so this obj leaks...
         sd->fsd.model = efl_ref(model);
         future = efl_model_property_get(model, "path");
         efl_future_then(future, _replace_path_then, _replace_path_then_error, NULL, sd);
@@ -222,7 +223,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
-   priv->fsd.model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, priv->fsd.path));
+   priv->fsd.model = efl_add(EIO_MODEL_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS), eio_model_path_set(efl_added, priv->fsd.path));
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;
@@ -321,7 +322,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
 
-   Efl_Model *model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, path));
+   Efl_Model *model = efl_add(EIO_MODEL_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS), eio_model_path_set(efl_added, path));
    if (!model)
      {
         ERR("Efl.Model allocation error");
@@ -330,6 +331,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 
    if (sd->fsd.model)
      efl_unref(sd->fsd.model);
+   // XXX: the efl_ref here smells wrong. fsd.model is only unreffed ONCE so this obj leaks...
    sd->fsd.model = efl_ref(model);
 
    eina_stringshare_replace(&sd->fsd.path, path);

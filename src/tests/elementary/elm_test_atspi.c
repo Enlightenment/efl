@@ -31,7 +31,7 @@ START_TEST (test_efl_access_app_obj_name_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    ck_assert(root != NULL);
 
@@ -43,7 +43,7 @@ START_TEST (test_efl_access_app_obj_name_get)
 
    ck_assert_str_eq(ret, "Test name");
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST
@@ -106,7 +106,7 @@ START_TEST (test_efl_access_role_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    Efl_Access_Role role;
 
@@ -114,7 +114,7 @@ START_TEST (test_efl_access_role_get)
 
    ck_assert(role == EFL_ACCESS_ROLE_APPLICATION);
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST
@@ -147,7 +147,7 @@ START_TEST (test_efl_access_role_name_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
 
@@ -155,7 +155,7 @@ START_TEST (test_efl_access_role_name_get)
 
    ck_assert(ret != NULL);
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST
@@ -165,7 +165,7 @@ START_TEST (test_efl_access_localized_role_name_get)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
 
@@ -173,7 +173,7 @@ START_TEST (test_efl_access_localized_role_name_get)
 
    ck_assert(ret != NULL);
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST
@@ -183,7 +183,7 @@ START_TEST (test_efl_access_description_set)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
 
@@ -204,7 +204,7 @@ START_TEST (test_efl_access_description_set)
 
    ck_assert(ret == NULL);
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST
@@ -231,7 +231,7 @@ START_TEST (test_efl_access_children_and_parent)
    elm_init(1, args);
 
    generate_app();
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    Eina_List *child_list = NULL;
 
@@ -248,7 +248,7 @@ START_TEST (test_efl_access_children_and_parent)
    ck_assert(win != NULL);
    ck_assert(win == g_win);
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST
@@ -259,7 +259,7 @@ START_TEST (test_efl_access_children_and_parent2)
    elm_init(1, args);
 
    generate_app();
-   Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    Eo *win = NULL;
 
@@ -278,7 +278,7 @@ START_TEST (test_efl_access_children_and_parent2)
    ck_assert(btn != NULL);
    ck_assert(btn == g_btn);
 
-   efl_unref(root);
+   efl_del(root);
    elm_shutdown();
 }
 END_TEST

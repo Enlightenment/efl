@@ -228,7 +228,7 @@ _elm_unneed_sys_notify(void)
    if (manager)
      {
         elm_obj_sys_notify_servers_set(manager, ELM_SYS_NOTIFY_SERVER_NONE);
-        efl_unref(manager);
+        efl_del(manager);
      }
 }
 
