@@ -1,7 +1,12 @@
-mods = ['ibus', 'xim']
+mods = []
 
-if dependency('scim-1.0', required : false).found()
-  mods += ['scim']
+
+if get_option('ecore_x')
+  mods +=['ibus', 'xim']
+
+  if dependency('scim-1.0', required : false).found()
+    mods += ['scim']
+  endif
 endif
 
 if get_option('ecore_wl2')
