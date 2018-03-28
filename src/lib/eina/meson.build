@@ -334,7 +334,7 @@ if target_machine.system() == 'darwin'
    if cc.has_header_symbol('libkern/OSAtomic.h', 'OSSpinLockTry')
      eina_config.set('EINA_HAVE_OSX_SPINLOCK', 1)
    endif
-   if cc.has_header_symbol('mach/semaphore.h', 'semaphore_create')
+   if cc.has_header_symbol('mach/task.h', 'semaphore_create')
      eina_config.set('EINA_HAVE_OSX_SEMAPHORE', 1)
    endif
 
