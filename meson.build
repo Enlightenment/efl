@@ -91,12 +91,20 @@ config_dir = [include_directories('.')]
 eolian_include_directories = []
 
 if target_machine.system() == 'linux' or target_machine.system() == 'bsd'
-  sys_lib_extension = '.so'
+  sys_lib_extension = 'so'
+  sys_exe_extension = ''
+  sys_mod_extension = 'so'
 elif target_machine.system() == 'windows' or target_machine.system() == 'cygwin'
-  sys_lib_extension = '.dll'
+  sys_lib_extension = 'dll'
+  sys_exe_extension = 'exe'
+  sys_mod_extension = 'dll'
 elif target_machine.system() == 'darwin'
-  sys_lib_extension = '.dylib'
+  sys_lib_extension = 'dylib'
+  sys_exe_extension = ''
+  sys_mod_extension = 'so'
 endif
+
+config_h.set_quoted('SHARED_LIB_SUFFIX', '.'+sys_lib_extension)
 
 subdir('header_checks')
 

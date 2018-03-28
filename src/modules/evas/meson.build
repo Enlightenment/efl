@@ -82,21 +82,21 @@ foreach engine_conf : engines
         )
         if engine == 'gl_generic'
           #special case, see evas_module.c
-          config_h.set('EVAS_STATIC_BUILD_GL_COMMON', value)
+          config_h.set('EVAS_STATIC_BUILD_GL_COMMON', '1')
         else 
           config_h.set('EVAS_STATIC_BUILD_'+engine.to_upper(), '1')
         endif
         
       endif
-
     else
       shared_module(mod_full_name, engine_src,
         include_directories : config_dir + [engine_include_dir],
         dependencies : [eina, evas_pre] + engine_deps,
         install : true,
-        install_dir : mod_install_dir
+        install_dir : mod_install_dir,
+        name_suffix : sys_mod_extension
       )
-      module_files += join_paths(mod_install_dir, 'lib'+mod_full_name + sys_lib_extension)
+      module_files += join_paths(mod_install_dir, 'lib'+mod_full_name + '.' + sys_mod_extension)
     endif
     config_h.set('BUILD_ENGINE_'+engine.to_upper(), '1')
   endif

@@ -34,8 +34,9 @@ foreach engine_conf : engines
       include_directories : config_dir + [engine_include_dir],
       dependencies : [eina, ecore_evas, ecore_input_evas] + engine_deps,
       install : true,
-      install_dir : mod_install_dir
+      install_dir : mod_install_dir,
+      name_suffix : sys_mod_extension
     )
-    module_files += join_paths(mod_install_dir, 'lib'+mod_full_name+sys_lib_extension)
+    module_files += join_paths(mod_install_dir, 'lib'+mod_full_name + '.' + sys_mod_extension)
   endif
 endforeach
