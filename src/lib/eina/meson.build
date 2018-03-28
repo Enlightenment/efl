@@ -315,15 +315,15 @@ if cc.has_header('byteswap.h')
 endif
 
 if cc.has_header_symbol('byteswap.h', 'bswap_16')
-   eina_config.set('EINA_CONFIGURE_HAVE_BSWAP16', '1')
+   eina_config.set('EINA_HAVE_BSWAP16', '1')
 endif
 
 if cc.has_header_symbol('byteswap.h', 'bswap_32')
-   eina_config.set('EINA_CONFIGURE_HAVE_BSWAP32', '1')
+   eina_config.set('EINA_HAVE_BSWAP32', '1')
 endif
 
 if cc.has_header_symbol('byteswap.h', 'bswap_64')
-   eina_config.set('EINA_CONFIGURE_HAVE_BSWAP64', '1')
+   eina_config.set('EINA_HAVE_BSWAP64', '1')
 endif
 
 if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
@@ -332,10 +332,10 @@ endif
 
 if target_machine.system() == 'darwin'
    if cc.has_header_symbol('libkern/OSAtomic.h', 'OSSpinLockTry')
-     eina_config.set('EINA_CONFIGURE_HAVE_OSX_SPINLOCK', 1)
+     eina_config.set('EINA_HAVE_OSX_SPINLOCK', 1)
    endif
    if cc.has_header_symbol('mach/semaphore.h', 'semaphore_create')
-     eina_config.set('EINA_CONFIGURE_HAVE_OSX_SEMAPHORE', 1)
+     eina_config.set('EINA_HAVE_OSX_SEMAPHORE', 1)
    endif
 
 endif
