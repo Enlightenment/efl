@@ -58,8 +58,15 @@ local_scripts = join_paths('src', 'scripts')
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
+
 add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'c')
 add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'c')
+add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'objc')
+add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'objc')
+
+
+
+
 
 config_h = configuration_data()
 config_h.set_quoted('MODULE_ARCH', module_arch)
