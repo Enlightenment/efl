@@ -560,6 +560,8 @@ EFL_START_TEST(eina_rbtree_fuzzy)
    for (i = 0; i < 100; i++)
      {
         child = _eina_rbtree_int_new(r2[i], mem, i);
+        root = eina_rbtree_inline_remove(root, (Eina_Rbtree*) child,
+                                         EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
         root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) child,
                                          EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
      }
