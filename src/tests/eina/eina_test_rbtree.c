@@ -375,13 +375,15 @@ EFL_START_TEST(eina_rbtree_remove)
    unsigned int i;
    Eina_Rbtree_Int *mem;
 
-   mem = _eina_rbtree_int_init(500);
+   unsigned int num_nodes = 20;
 
-   ea = eina_array_new(500);
+   mem = _eina_rbtree_int_init(num_nodes);
+
+   ea = eina_array_new(num_nodes);
    fail_if(!ea);
 
 
-   for (i = 0; i < 500; ++i)
+   for (i = 0; i < num_nodes; ++i)
      {
         item = _eina_rbtree_int_new(r1[i], mem, i);
         eina_array_push(ea, item);
