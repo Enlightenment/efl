@@ -126,7 +126,8 @@ static inline void
 _efl_canvas_vg_node_changed(Eo *obj)
 {
    Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_FILL };
-   efl_event_callback_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
+
+   if (obj) efl_event_callback_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 static inline void *

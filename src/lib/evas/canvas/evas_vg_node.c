@@ -205,8 +205,8 @@ _efl_canvas_vg_node_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EI
 // Parent should be a container otherwise dismissing the stacking operation
 static Eina_Bool
 _efl_canvas_vg_node_parent_checked_get(Eo *obj,
-                                Eo **parent,
-                                Efl_Canvas_VG_Container_Data **cd)
+                                       Eo **parent,
+                                       Efl_Canvas_VG_Container_Data **cd)
 {
    *cd = NULL;
    *parent = efl_parent_get(obj);
@@ -222,7 +222,8 @@ _efl_canvas_vg_node_parent_checked_get(Eo *obj,
      }
    else if (efl_isa(*parent, EFL_CANVAS_VG_CLASS))
      {
-        goto on_error;
+        *cd = NULL;
+        *parent = NULL;
      }
    else if (*parent != NULL)
      {
@@ -327,7 +328,8 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 {
    Efl_Canvas_VG_Container_Data *cd = NULL;
    Efl_Canvas_VG_Container_Data *old_cd = NULL;
-   Eo *old_parent;
+   Eo *old_parent = NULL;
+   Eina_Bool parent_container = EINA_TRUE;
 
    if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
@@ -338,9 +340,13 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
              goto on_error;
           }
      }
+   else if (efl_isa(parent, EFL_CANVAS_VG_CLASS))
+     {
+        parent_container = EINA_FALSE;
+     }
    else if (parent != NULL)
      {
-        ERR("%p not even an EVAS_VG_CLASS.", parent);
+        ERR("%p not even an Vector Graphics related class.", parent);
         goto on_error;
      }
 
@@ -368,7 +374,7 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 
    _efl_canvas_vg_node_changed(old_parent);
    _efl_canvas_vg_node_changed(obj);
-   _efl_canvas_vg_node_changed(parent);
+   if (parent_container) _efl_canvas_vg_node_changed(parent);
 
    return ;
 
