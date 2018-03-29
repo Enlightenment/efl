@@ -281,9 +281,6 @@ _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
 
    if (!found) return;
 
-   /* output = eina_list_nth(edata->outputs, 0); */
-   /* if (!output) return; */
-
    rotations = ecore_drm2_output_supported_rotations_get(output);
    if (rotations >= 0)
      {
