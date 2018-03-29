@@ -692,6 +692,24 @@ EAPI Eina_Bool ecore_drm2_output_connected_get(Ecore_Drm2_Output *output);
 EAPI Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
 
 /**
+ * Set if a given output is cloned
+ *
+ * @param output The output to set cloned mode on
+ * @param clone The output of which to clone
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @brief This function should be used to perform the actual cloning.
+ * Please note that both ecore_drm2_output_relative_to_set and
+ * ecore_drm2_output_relative_mode_set should be used before
+ * calling this function.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI Eina_Bool ecore_drm2_output_clone_set(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output, Ecore_Drm2_Output *clone);
+
+/**
  * Get the connector type of a given output
  *
  * @param output

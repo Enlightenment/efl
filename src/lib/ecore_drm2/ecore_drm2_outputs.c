@@ -1380,6 +1380,33 @@ ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output)
            output->relative.mode == ECORE_DRM2_RELATIVE_MODE_CLONE);
 }
 
+EAPI Eina_Bool
+ecore_drm2_output_clone_set(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output, Ecore_Drm2_Output *clone)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+   if (clone)
+     {
+        if (ecore_drm2_output_possible_crtc_get(output, clone->crtc_id))
+          {
+             output->relative.saved_crtc = output->crtc_id;
+             output->crtc_id = clone->crtc_id;
+             ret = EINA_TRUE;
+          }
+     }
+   else
+     {
+        if (output->relative.saved_crtc)
+          output->crtc_id = output->relative.saved_crtc;
+        ret = EINA_TRUE;
+     }
+
+   return ret;
+}
+
 EAPI unsigned int
 ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output)
 {

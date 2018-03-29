@@ -234,6 +234,7 @@ struct _Ecore_Drm2_Output
 
    struct
      {
+        uint32_t saved_crtc;
         const char *to;
         Ecore_Drm2_Relative_Mode mode;
      } relative;
