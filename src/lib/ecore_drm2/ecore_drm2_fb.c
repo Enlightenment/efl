@@ -503,7 +503,8 @@ _fb_flip(Ecore_Drm2_Output *output)
 
         repeat = EINA_FALSE;
         ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                                  DRM_MODE_PAGE_FLIP_EVENT, output);
+                                  DRM_MODE_PAGE_FLIP_EVENT,
+                                  output);
 
         /* Some drivers (RPI - looking at you) are broken and produce
          * flip events before they are ready for another flip, so be
