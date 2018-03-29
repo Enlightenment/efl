@@ -39,7 +39,6 @@ wk_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 static void *
 wk1_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    sleep(1);
     eina_barrier_wait(&barrier);
     return NULL;
 }
@@ -47,7 +46,6 @@ wk1_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 static void *
 wk2_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    sleep(2);
     eina_barrier_wait(&barrier);
     return NULL;
 }
@@ -55,7 +53,6 @@ wk2_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 static void *
 wk3_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    sleep(3);
     eina_barrier_wait(&barrier);
     return NULL;
 }
@@ -108,7 +105,7 @@ void
 eina_test_barrier(TCase *tc)
 {
 #ifndef _WIN32
-   tcase_set_timeout(tc, 6);
+   tcase_set_timeout(tc, 1);
 #endif
    tcase_add_test(tc, eina_barrier_test_simple);
 }
