@@ -65,6 +65,7 @@ abstract Efl.Canvas.VG.Node (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, 
       Efl.Object.name { set; }
       Efl.Object.parent { set; }
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Gfx.visible { get; set; }
       Efl.Gfx.Color.color { get; set; }

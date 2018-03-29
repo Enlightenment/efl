@@ -261,18 +261,24 @@ _efl_canvas_vg_node_efl_object_constructor(Eo *obj,
 }
 
 static void
+_efl_canvas_vg_node_efl_object_invalidate(Eo *obj, Efl_Canvas_VG_Node_Data *pd)
+{
+   if (pd->renderer)
+     {
+        efl_unref(pd->renderer);
+        pd->renderer = NULL;
+     }
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+static void
 _efl_canvas_vg_node_efl_object_destructor(Eo *obj, Efl_Canvas_VG_Node_Data *pd)
 {
    if (pd->m)
      {
         free(pd->m);
         pd->m = NULL;
-     }
-
-   if (pd->renderer)
-     {
-        efl_del(pd->renderer);
-        pd->renderer = NULL;
      }
    if (pd->intp)
      {
@@ -651,7 +657,7 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
    tod = efl_data_scope_get(to, EFL_CANVAS_VG_NODE_CLASS);
    from_map = 1.0 - pos_map;
 
-   efl_del(pd->renderer);
+   efl_unref(pd->renderer);
    pd->renderer = NULL;
 
    if (fromd->m || tod->m)
