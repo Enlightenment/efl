@@ -171,6 +171,8 @@ struct _Ecore_Evas_Engine_Func
    Eina_Bool (*fn_prepare)(Ecore_Evas *ee);
 
    double (*fn_last_tick_get)(Ecore_Evas *ee);
+
+   Eina_Bool (*fn_output_clone_set)(const Ecore_Evas *ee, void *output, void *clone);
 };
 
 struct _Ecore_Evas_Interface
@@ -323,6 +325,7 @@ struct _Ecore_Evas
       void          (*fn_focus_device_out) (Ecore_Evas *ee, Efl_Input_Device *seat);
       void          (*fn_device_mouse_in) (Ecore_Evas *ee, Efl_Input_Device *mouse);
       void          (*fn_device_mouse_out) (Ecore_Evas *ee, Efl_Input_Device *mouse);
+      Eina_Bool     (*fn_output_clone_set) (const Ecore_Evas *ee, void *output, void *clone);
    } func;
 
    Ecore_Evas_Engine engine;

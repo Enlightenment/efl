@@ -3653,6 +3653,8 @@ EAPI unsigned long ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee);
  */
 EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
 
+EAPI Eina_Bool ecore_evas_output_clone_set(const Ecore_Evas *ee, void *output, void *clone);
+
 /**
  * @}
  */

@@ -2915,6 +2915,17 @@ ecore_evas_pixmap_depth_get(const Ecore_Evas *ee)
    return 0;
 }
 
+EAPI Eina_Bool
+ecore_evas_output_clone_set(const Ecore_Evas *ee, void *output, void *clone)
+{
+   ECORE_EVAS_CHECK(ee, EINA_FALSE);
+
+   if (ee->engine.func->fn_output_clone_set)
+     return ee->engine.func->fn_output_clone_set(ee, output, clone);
+
+   return EINA_FALSE;
+}
+
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
