@@ -372,7 +372,7 @@ EFL_END_TEST
 EFL_START_TEST(eina_test_strbuf_append_realloc)
 {
    Eina_Strbuf *buf;
-   const size_t runs = 40960;
+   const size_t runs = 3 * 10;
    const char target_pattern[] = "stringstrsstr";
    const char *str;
    size_t i, target_pattern_size;
@@ -382,19 +382,19 @@ EFL_START_TEST(eina_test_strbuf_append_realloc)
 
    for (i = 0; i < runs; i++)
      {
-        fail_if(!eina_strbuf_append(buf, "string"));
-        fail_if(!eina_strbuf_append_n(buf, "string", 3));
-        fail_if(!eina_strbuf_append_char(buf, 's'));
-        fail_if(!eina_strbuf_append_length(buf, "string", 3));
+        ck_assert_int_ne(eina_strbuf_append(buf, "string"), 0); //6
+        ck_assert_int_ne(eina_strbuf_append_n(buf, "string", 3), 0); //3
+        ck_assert_int_ne(eina_strbuf_append_char(buf, 's'), 0); //1
+        ck_assert_int_ne(eina_strbuf_append_length(buf, "string", 3), 0); //3
      }
 
    target_pattern_size = strlen(target_pattern);
    ck_assert_int_eq(eina_strbuf_length_get(buf), runs * target_pattern_size);
 
    str = eina_strbuf_string_get(buf);
-   fail_if(str == NULL);
+   ck_assert_ptr_nonnull(str);
    for (i = 0; i < runs; i++, str += target_pattern_size)
-     fail_if(memcmp(str, target_pattern, target_pattern_size));
+     ck_assert_int_eq(memcmp(str, target_pattern, target_pattern_size), 0);
 
    eina_strbuf_free(buf);
 }
@@ -403,7 +403,7 @@ EFL_END_TEST
 EFL_START_TEST(eina_test_strbuf_prepend_realloc)
 {
    Eina_Strbuf *buf;
-   const size_t runs = 40960;
+   const size_t runs = 3 * 10;
    const char target_pattern[] = "strsstrstring";
    const char *str;
    size_t i, target_pattern_size;
@@ -413,19 +413,19 @@ EFL_START_TEST(eina_test_strbuf_prepend_realloc)
 
    for (i = 0; i < runs; i++)
      {
-        fail_if(!eina_strbuf_prepend(buf, "string"));
-        fail_if(!eina_strbuf_prepend_n(buf, "string", 3));
-        fail_if(!eina_strbuf_prepend_char(buf, 's'));
-        fail_if(!eina_strbuf_prepend_length(buf, "string", 3));
+        ck_assert_int_ne(eina_strbuf_prepend(buf, "string"), 0); //6
+        ck_assert_int_ne(eina_strbuf_prepend_n(buf, "string", 3), 0); //3
+        ck_assert_int_ne(eina_strbuf_prepend_char(buf, 's'), 0); //1
+        ck_assert_int_ne(eina_strbuf_prepend_length(buf, "string", 3), 0); //3
      }
 
    target_pattern_size = strlen(target_pattern);
-   fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+   ck_assert_int_eq(eina_strbuf_length_get(buf), runs * target_pattern_size);
 
    str = eina_strbuf_string_get(buf);
-   fail_if(str == NULL);
+   ck_assert_ptr_nonnull(str);
    for (i = 0; i < runs; i++, str += target_pattern_size)
-     fail_if(memcmp(str, target_pattern, target_pattern_size));
+     ck_assert_int_eq(memcmp(str, target_pattern, target_pattern_size), 0);
 
    eina_strbuf_free(buf);
 }
