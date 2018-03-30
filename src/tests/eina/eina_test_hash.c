@@ -29,7 +29,7 @@
 
 #include "eina_suite.h"
 
-#define EINA_HASH_BUCKET_SIZE       8
+#define EINA_HASH_BUCKET_SIZE 8
 
 static unsigned int
 _eina_string_key_length(const char *key)
@@ -61,7 +61,7 @@ eina_foreach_check(EINA_UNUSED const Eina_Hash *hash,
    int i;
 
    if (strlen(key) <= 0)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    i = atoi(key);
    fail_if(i != *j);
@@ -119,7 +119,6 @@ EFL_START_TEST(eina_test_hash_simple)
    fail_if(eina_hash_del(hash, "42", NULL) != EINA_TRUE);
 
    eina_hash_free(hash);
-
 }
 EFL_END_TEST
 
@@ -176,7 +175,6 @@ EFL_START_TEST(eina_test_hash_crc)
    fail_if(eina_hash_del(hash, "42", NULL) != EINA_TRUE);
 
    eina_hash_free(hash);
-
 }
 EFL_END_TEST
 
@@ -186,9 +184,9 @@ EFL_START_TEST(eina_test_hash_extended)
    int i;
 
    hash = eina_hash_string_djb2_new(NULL);
-        fail_if(hash == NULL);
+   fail_if(hash == NULL);
 
-        fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
+   fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
 
    for (i = 43; i < 3043; ++i)
      {
@@ -198,10 +196,9 @@ EFL_START_TEST(eina_test_hash_extended)
         fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
      }
 
-        fail_if(eina_hash_find(hash, "42") == NULL);
+   fail_if(eina_hash_find(hash, "42") == NULL);
 
-        eina_hash_free(hash);
-
+   eina_hash_free(hash);
 }
 EFL_END_TEST
 
@@ -222,7 +219,6 @@ EFL_START_TEST(eina_test_hash_double_item)
    fail_if(test != &i[0]);
 
    eina_hash_free(hash);
-
 }
 EFL_END_TEST
 
@@ -236,32 +232,31 @@ EFL_START_TEST(eina_test_hash_all_int)
    int it;
 
    hash = eina_hash_int32_new(NULL);
-      fail_if(hash == NULL);
+   fail_if(hash == NULL);
 
    for (it = 0; it < 4; ++it)
-      fail_if(eina_hash_add(hash, &i[it], &i[it]) != EINA_TRUE);
+     fail_if(eina_hash_add(hash, &i[it], &i[it]) != EINA_TRUE);
 
-      fail_if(eina_hash_del(hash, &i[1], &i[1]) != EINA_TRUE);
+   fail_if(eina_hash_del(hash, &i[1], &i[1]) != EINA_TRUE);
    test = eina_hash_find(hash, &i[2]);
-      fail_if(test != &i[2]);
+   fail_if(test != &i[2]);
 
    test = eina_hash_find(hash, &i[3]);
-      fail_if(test != &i[3]);
+   fail_if(test != &i[3]);
 
-      eina_hash_free(hash);
+   eina_hash_free(hash);
 
    hash = eina_hash_int64_new(NULL);
-      fail_if(hash == NULL);
+   fail_if(hash == NULL);
 
    for (it = 0; it < 4; ++it)
-      fail_if(eina_hash_add(hash, &j[it], &j[it]) != EINA_TRUE);
+     fail_if(eina_hash_add(hash, &j[it], &j[it]) != EINA_TRUE);
 
-      fail_if(eina_hash_del(hash, &j[1], &j[1]) != EINA_TRUE);
+   fail_if(eina_hash_del(hash, &j[1], &j[1]) != EINA_TRUE);
    test2 = eina_hash_find(hash, &j[0]);
-      fail_if(test2 != &j[0]);
+   fail_if(test2 != &j[0]);
 
-      eina_hash_free(hash);
-
+   eina_hash_free(hash);
 }
 EFL_END_TEST
 
@@ -315,13 +310,12 @@ EFL_START_TEST(eina_test_hash_int32_fuzze)
              unsigned int *s;
 
              s = eina_hash_find(hash, r);
-	     fail_if(s != r);
+             fail_if(s != r);
              eina_hash_del(hash, r, r);
           }
      }
 
    eina_hash_free(hash);
-
 }
 EFL_END_TEST
 
@@ -376,20 +370,18 @@ EFL_START_TEST(eina_test_hash_string_fuzze)
              char *s;
 
              s = eina_hash_find(hash, r);
-	     fail_if(s != r);
+             fail_if(s != r);
              eina_hash_del(hash, r, r);
           }
      }
 
    eina_hash_free(hash);
-
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_test_hash_seed)
 {
    fail_if(eina_seed == 0);
-
 }
 EFL_END_TEST
 
@@ -418,14 +410,15 @@ EFL_START_TEST(eina_test_hash_add_del_by_hash)
    fail_if(eina_hash_del_by_hash(hash, "4", key_len, key_hash, &array[2]) != EINA_FALSE);
 
    key_len = _eina_string_key_length("42");
-   key_hash =  eina_hash_crc("42", key_len);
+   key_hash = eina_hash_crc("42", key_len);
    fail_if(eina_hash_del_by_hash(hash, "42", key_len, key_hash, &array[1]) != EINA_TRUE);
 
    fail_if(eina_hash_population(hash) != 3);
 }
 EFL_END_TEST
 
-void eina_test_hash(TCase *tc)
+void
+eina_test_hash(TCase *tc)
 {
    tcase_add_test(tc, eina_test_hash_simple);
    tcase_add_test(tc, eina_test_hash_crc);
@@ -437,3 +430,4 @@ void eina_test_hash(TCase *tc)
    tcase_add_test(tc, eina_test_hash_string_fuzze);
    tcase_add_test(tc, eina_test_hash_add_del_by_hash);
 }
+
