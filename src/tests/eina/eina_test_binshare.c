@@ -132,42 +132,31 @@ EFL_START_TEST(eina_binshare_collision)
    Eina_Array *ea;
    char buffer[50];
    int i;
-
-   srand(time(NULL));
+   const void *r;
 
    ea = eina_array_new(256);
-   fail_if(!ea);
 
-   for (i = 0; i < 10000; ++i)
+   for (i = 0; i < 256; ++i)
      {
-        eina_convert_itoa(rand(), buffer);
-        eina_array_push(ea,
-                        (void *)eina_binshare_add_length(buffer, strlen(buffer)));
-        if (rand() > RAND_MAX / 2)
-          {
-             const char *r = eina_binshare_add_length(buffer, strlen(buffer));
-             fail_if(r == NULL);
-          }
-     }
-
-   for (i = 0; i < 10000; ++i)
-     {
-        const char *r;
-
+        unsigned int len;
         eina_convert_itoa(60000 - i, buffer);
-        eina_array_push(ea,
-                        (void *)eina_binshare_add_length(buffer, strlen(buffer)));
-        r = eina_binshare_add_length(buffer, strlen(buffer));
-        fail_if(r == NULL);
-        r = eina_binshare_add_length(buffer, strlen(buffer));
-        fail_if(r == NULL);
+        len = strlen(buffer);
+        r = eina_binshare_add_length(buffer, len);
+        ck_assert_ptr_nonnull(r);
+        eina_array_push(ea, r);
+        r = eina_binshare_add_length(buffer, len);
+        ck_assert_ptr_nonnull(r);
+        r = eina_binshare_add_length(buffer, len);
+        ck_assert_ptr_nonnull(r);
      }
 
-   for (i = 0; i < 200; ++i)
-      eina_binshare_del(eina_array_data_get(ea, i));
-
-   for (i = 0; i < 1000; ++i)
-      eina_binshare_del(eina_array_pop(ea));
+   while (eina_array_count(ea))
+      {
+         r = eina_array_pop(ea);
+         eina_binshare_del(r);
+         eina_binshare_del(r);
+         eina_binshare_del(r);
+      }
 
    eina_array_free(ea);
 }
