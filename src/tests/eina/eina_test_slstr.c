@@ -126,9 +126,9 @@ EFL_START_TEST(slstr_slstr_printf)
 EFL_END_TEST
 
 static void
-_many_do(void)
+_many_do(Eina_Bool threaded)
 {
-   const int many = 2048;
+   const int many = threaded ? 256 : 2048;
    Eina_Slstr *str;
    int k;
 
@@ -145,7 +145,7 @@ _many_do(void)
 EFL_START_TEST(slstr_many)
 {
 
-   _many_do();
+   _many_do(0);
 
    eina_slstr_local_clear();
 
@@ -155,7 +155,7 @@ EFL_END_TEST
 static void *
 _thread_cb(void *data EINA_UNUSED, Eina_Thread th EINA_UNUSED)
 {
-   _many_do();
+   _many_do(1);
 
    return NULL;
 }
