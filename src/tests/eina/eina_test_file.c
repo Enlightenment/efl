@@ -489,7 +489,7 @@ _eina_test_file_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    Eina_File *f;
    unsigned int i;
 
-   for (i = 0; i < 10000; ++i)
+   for (i = 0; i < 100; ++i)
      {
         f = eina_file_open("/bin/sh", EINA_FALSE);
         fail_if(!f);
