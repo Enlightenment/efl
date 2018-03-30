@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-static int test_array[1024] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+static int test_array[128] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 static int test_array2[64] = { 8, 9, 10, 11, 12, 13, 14 };
 static const void *pointers[EINA_C_ARRAY_LENGTH(test_array) + EINA_C_ARRAY_LENGTH(test_array2)] = { NULL };
 
