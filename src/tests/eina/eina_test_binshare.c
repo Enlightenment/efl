@@ -115,14 +115,19 @@ EFL_START_TEST(eina_binshare_putstuff)
    const char *tmp;
    int i;
 
-   for (i = 10000; i > 0; --i)
+   for (i = 100; i > 0; --i)
      {
         char build[64] = "string_";
+        unsigned int len;
 
         eina_convert_xtoa(i, build + 7);
-        tmp = eina_binshare_add_length(build, strlen(build));
-        fail_if(tmp != eina_binshare_add_length(build, strlen(build)));
-        fail_if((int)strlen(build) != eina_binshare_length(tmp));
+        len = strlen(build);
+        tmp = eina_binshare_add_length(build, len);
+        ck_assert_ptr_nonnull(tmp);
+        ck_assert_ptr_eq(tmp, eina_binshare_add_length(build, len));
+        ck_assert_int_eq(len, eina_binshare_length(tmp));
+        eina_binshare_del(tmp);
+        eina_binshare_del(tmp);
      }
 }
 EFL_END_TEST
