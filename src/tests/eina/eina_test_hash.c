@@ -268,119 +268,78 @@ EFL_END_TEST
 EFL_START_TEST(eina_test_hash_int32_fuzze)
 {
    Eina_Hash *hash;
-   Eina_List *added = NULL;
-   unsigned int *r;
+   unsigned int *r, *array;
    unsigned int i;
-   unsigned int j;
    unsigned int seed;
+   unsigned int num_loops = 10000;
 
    seed = time(NULL);
    srand(seed);
 
-   hash = eina_hash_int32_new(free);
+   hash = eina_hash_int32_new(NULL);
 
-   for (i = 0; i < 10000; ++i)
+   array = malloc(sizeof(int) * num_loops);
+   for (i = 0; i < num_loops; ++i)
      {
-        r = malloc(sizeof (unsigned int));
-        *r = rand();
-        eina_hash_direct_add(hash, r, r);
+        r = array + i;
+        *r = rand() % 10000;
+        ck_assert_int_ne(eina_hash_direct_add(hash, r, r), 0);
      }
 
-   for (j = 0; j < 100; ++j)
+   for (i = 0; i < num_loops / 2; ++i)
      {
-        for (i = 0; i < 1000; ++i)
-          {
-             do
-               {
-                  unsigned int tr;
+        unsigned int tr = rand() + 10000;
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_null(r);
+     }
 
-                  tr = rand();
-                  r = eina_hash_find(hash, &tr);
-                  if (r)
-                    {
-                       r = NULL;
-                       continue;
-                    }
-
-                  r = malloc(sizeof (unsigned int));
-                  *r = tr;
-                  eina_hash_direct_add(hash, r, r);
-                  added = eina_list_append(added, r);
-               }
-             while (r == NULL);
-          }
-
-        EINA_LIST_FREE(added, r)
-          {
-             unsigned int *s;
-
-             s = eina_hash_find(hash, r);
-             fail_if(s != r);
-             eina_hash_del(hash, r, r);
-          }
+   for (i = 0; i < num_loops / 2; ++i)
+     {
+        unsigned int tr = (rand() % 10000) - (10000 * 2);
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_null(r);
      }
 
    eina_hash_free(hash);
+   free(array);
 }
 EFL_END_TEST
 
 EFL_START_TEST(eina_test_hash_string_fuzze)
 {
    Eina_Hash *hash;
-   Eina_List *added = NULL;
-   char *r;
    unsigned int i;
-   unsigned int j;
    unsigned int seed;
+   char *array;
+   unsigned int num_loops = 100;
 
    seed = time(NULL);
    srand(seed);
 
-   hash = eina_hash_string_superfast_new(free);
+   hash = eina_hash_string_superfast_new(NULL);
 
-   for (i = 0; i < 10000; ++i)
+   array = malloc(num_loops * 10);
+   ck_assert_ptr_nonnull(array);
+
+   for (i = 0; i < num_loops; ++i)
      {
-        char convert[128];
-
-        eina_convert_itoa(rand(), convert);
-        r = strdup(convert);
-        eina_hash_direct_add(hash, r, r);
+        char *tmp = array + (i * 10);
+        eina_convert_itoa(i, tmp);
+        fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
      }
 
-   for (j = 0; j < 50; ++j)
+   for (i = 0; i < num_loops; ++i)
      {
-        for (i = 0; i < 1000; ++i)
-          {
-             do
-               {
-                  char convert[128];
+        char convert[128];
+        char *r;
 
-                  eina_convert_itoa(rand(), convert);
-                  r = eina_hash_find(hash, convert);
-                  if (r)
-                    {
-                       r = NULL;
-                       continue;
-                    }
-
-                  r = strdup(convert);
-                  eina_hash_direct_add(hash, r, r);
-                  added = eina_list_append(added, r);
-               }
-             while (r == NULL);
-          }
-
-        EINA_LIST_FREE(added, r)
-          {
-             char *s;
-
-             s = eina_hash_find(hash, r);
-             fail_if(s != r);
-             eina_hash_del(hash, r, r);
-          }
+        eina_convert_itoa(rand() + num_loops, convert);
+        r = eina_hash_find(hash, convert);
+        ck_assert_ptr_null(r);
      }
 
    eina_hash_free(hash);
+   free(array);
 }
 EFL_END_TEST
 
