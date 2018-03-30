@@ -89,7 +89,7 @@ EFL_START_TEST(eina_ustringshare_putstuff)
    int i;
 
 
-   for (i = 10000; i > 0; --i)
+   for (i = 100; i > 0; --i)
      {
         Eina_Unicode string_[] = {'s', 't', 'r', 'i', 'n', 'g', '_', 0};
         Eina_Unicode build[64];
