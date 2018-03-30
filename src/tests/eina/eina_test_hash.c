@@ -419,6 +419,7 @@ EFL_START_TEST(eina_test_hash_add_del_by_hash)
    fail_if(eina_hash_del_by_hash(hash, "42", key_len, key_hash, &array[1]) != EINA_TRUE);
 
    fail_if(eina_hash_population(hash) != 3);
+   eina_hash_free(hash);
 }
 EFL_END_TEST
 
