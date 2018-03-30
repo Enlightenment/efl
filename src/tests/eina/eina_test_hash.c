@@ -181,24 +181,29 @@ EFL_END_TEST
 EFL_START_TEST(eina_test_hash_extended)
 {
    Eina_Hash *hash = NULL;
-   int i;
+   unsigned int i;
+   unsigned int num_loops = 3011;
+   char *array;
 
    hash = eina_hash_string_djb2_new(NULL);
    fail_if(hash == NULL);
 
    fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
 
-   for (i = 43; i < 3043; ++i)
+   array = malloc(num_loops * 10);
+   ck_assert_ptr_nonnull(array);
+
+   for (i = 0; i < num_loops; ++i)
      {
-        char *tmp = malloc(10);
-        fail_if(!tmp);
-        eina_convert_itoa(i, tmp);
+        char *tmp = array + (i * 10);
+        eina_convert_itoa(i + 42, tmp);
         fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
      }
 
    fail_if(eina_hash_find(hash, "42") == NULL);
 
    eina_hash_free(hash);
+   free(array);
 }
 EFL_END_TEST
 
