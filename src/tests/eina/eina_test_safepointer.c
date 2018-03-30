@@ -35,7 +35,7 @@ EFL_START_TEST(eina_test_reusable)
    unsigned int i;
 
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         pointers[i] = eina_safepointer_register(&test_array[i]);
         fail_if(pointers[i] == NULL);
@@ -43,25 +43,25 @@ EFL_START_TEST(eina_test_reusable)
         fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
      }
 
-   for (i = 0; i < sizeof (test_array2) / sizeof (test_array2[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array2); i++)
      {
-        pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] = eina_safepointer_register(&test_array2[i]);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == NULL);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == &test_array2[i]);
-        fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]));
-        eina_safepointer_unregister(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]);
+        pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] = eina_safepointer_register(&test_array2[i]);
+        fail_if(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] == NULL);
+        fail_if(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] == &test_array2[i]);
+        fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))]));
+        eina_safepointer_unregister(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))]);
      }
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         eina_safepointer_unregister(pointers[i]);
      }
 
-   for (i = 0; i < sizeof (pointers) / sizeof (pointers[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(pointers); i++)
      {
         unsigned int j;
 
-        for (j = i + 1; j < sizeof (pointers) / sizeof (pointers[0]); j++)
+        for (j = i + 1; j < EINA_C_ARRAY_LENGTH(pointers); j++)
           {
              fail_if(pointers[j] == pointers[i]);
           }
@@ -79,7 +79,7 @@ _thread1(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 
    fail_if(!eina_barrier_wait(&b));
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         pointers[i] = eina_safepointer_register(&test_array[i]);
         fail_if(pointers[i] == NULL);
@@ -97,13 +97,13 @@ _thread2(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 
    fail_if(!eina_barrier_wait(&b));
 
-   for (i = 0; i < sizeof (test_array2) / sizeof (test_array2[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array2); i++)
      {
-        pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] = eina_safepointer_register(&test_array2[i]);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == NULL);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == &test_array2[i]);
-        fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]));
-        eina_safepointer_unregister(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]);
+        pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] = eina_safepointer_register(&test_array2[i]);
+        fail_if(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] == NULL);
+        fail_if(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] == &test_array2[i]);
+        fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))]));
+        eina_safepointer_unregister(pointers[i + (EINA_C_ARRAY_LENGTH(test_array))]);
      }
 
    return NULL;
@@ -127,18 +127,18 @@ EFL_START_TEST(eina_test_threading)
    eina_thread_join(t1);
    eina_thread_join(t2);
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         eina_safepointer_unregister(pointers[i]);
      }
 
    eina_barrier_free(&b);
 
-   for (i = 0; i < sizeof (pointers) / sizeof (pointers[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(pointers); i++)
      {
         unsigned int j;
 
-        for (j = i + 1; j < sizeof (pointers) / sizeof (pointers[0]); j++)
+        for (j = i + 1; j < EINA_C_ARRAY_LENGTH(pointers); j++)
           {
              fail_if(pointers[j] == pointers[i]);
           }
@@ -152,7 +152,7 @@ EFL_START_TEST(eina_test_lowestbit)
    unsigned int i;
 
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         pointers[i] = eina_safepointer_register(&test_array[i]);
         fail_if(pointers[i] == NULL);
