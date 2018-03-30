@@ -2173,14 +2173,17 @@ _efl_object_finalize(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 static void
 _efl_object_invalidate(Eo *obj, Efl_Object_Data *pd)
 {
+   efl_event_callback_call(obj, EFL_EVENT_INVALIDATE, NULL);
+
    _efl_pending_futures_clear(pd);
    efl_parent_set(obj, NULL);
    pd->invalidate = EINA_TRUE;
 }
 
 static void
-_efl_object_noref(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED)
+_efl_object_noref(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
+   efl_event_callback_call(obj, EFL_EVENT_NOREF, NULL);
 }
 
 EOLIAN static void
