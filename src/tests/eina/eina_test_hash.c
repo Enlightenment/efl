@@ -305,6 +305,44 @@ EFL_START_TEST(eina_test_hash_int32_fuzze)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_test_hash_int64_fuzze)
+{
+   Eina_Hash *hash;
+   uint64_t *r, *array;
+   uint64_t i;
+   uint64_t num_loops = 10000;
+
+   srand(time(NULL));
+
+   hash = eina_hash_int64_new(NULL);
+
+   array = malloc(sizeof(int64_t) * num_loops);
+   for (i = 0; i < num_loops; ++i)
+     {
+        r = array + i;
+        *r = rand() % 10000;
+        ck_assert_int_ne(eina_hash_direct_add(hash, r, r), 0);
+     }
+
+   for (i = 0; i < num_loops / 2; ++i)
+     {
+        uint64_t tr = rand() + 10000;
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_null(r);
+     }
+
+   for (i = 0; i < num_loops / 2; ++i)
+     {
+        uint64_t tr = (rand() % 10000) - (10000 * 2);
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_null(r);
+     }
+
+   eina_hash_free(hash);
+   free(array);
+}
+EFL_END_TEST
+
 EFL_START_TEST(eina_test_hash_string_fuzze)
 {
    Eina_Hash *hash;
@@ -392,6 +430,7 @@ eina_test_hash(TCase *tc)
    tcase_add_test(tc, eina_test_hash_all_int);
    tcase_add_test(tc, eina_test_hash_seed);
    tcase_add_test(tc, eina_test_hash_int32_fuzze);
+   tcase_add_test(tc, eina_test_hash_int64_fuzze);
    tcase_add_test(tc, eina_test_hash_string_fuzze);
    tcase_add_test(tc, eina_test_hash_add_del_by_hash);
 }
