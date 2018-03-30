@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-EFL_START_TEST(strbuf_simple)
+EFL_START_TEST(eina_test_strbuf_simple)
 {
    Eina_Strbuf *buf;
    char *txt;
@@ -77,7 +77,7 @@ EFL_START_TEST(strbuf_simple)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_manage_simple)
+EFL_START_TEST(eina_test_strbuf_manage_simple)
 {
    Eina_Strbuf *buf;
    char *txt;
@@ -127,7 +127,7 @@ EFL_START_TEST(strbuf_manage_simple)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_remove)
+EFL_START_TEST(eina_test_strbuf_remove)
 {
    Eina_Strbuf *buf;
 
@@ -169,7 +169,7 @@ EFL_START_TEST(strbuf_remove)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_append)
+EFL_START_TEST(eina_test_strbuf_append)
 {
    Eina_Strbuf *buf;
    Eina_Slice ro_slice = EINA_SLICE_STR_LITERAL("somethingELSE");
@@ -220,7 +220,7 @@ EFL_START_TEST(strbuf_append)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_insert)
+EFL_START_TEST(eina_test_strbuf_insert)
 {
    Eina_Strbuf *buf;
    Eina_Slice ro_slice = EINA_SLICE_STR_LITERAL("EINA");
@@ -272,7 +272,7 @@ EFL_START_TEST(strbuf_insert)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_replace)
+EFL_START_TEST(eina_test_strbuf_replace)
 {
    Eina_Strbuf *buf;
 
@@ -318,7 +318,7 @@ EFL_START_TEST(strbuf_replace)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_realloc)
+EFL_START_TEST(eina_test_strbuf_realloc)
 {
    Eina_Strbuf *buf;
    char pattern[1024 * 16];
@@ -383,7 +383,7 @@ EFL_START_TEST(strbuf_realloc)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_append_realloc)
+EFL_START_TEST(eina_test_strbuf_append_realloc)
 {
    Eina_Strbuf *buf;
    const size_t runs = 40960;
@@ -416,7 +416,7 @@ EFL_START_TEST(strbuf_append_realloc)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_prepend_realloc)
+EFL_START_TEST(eina_test_strbuf_prepend_realloc)
 {
    Eina_Strbuf *buf;
    const size_t runs = 40960;
@@ -449,7 +449,7 @@ EFL_START_TEST(strbuf_prepend_realloc)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_trim)
+EFL_START_TEST(eina_test_strbuf_trim)
 {
     Eina_Strbuf* buf;
     const char *str;
@@ -494,7 +494,7 @@ EFL_START_TEST(strbuf_trim)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_tolower)
+EFL_START_TEST(eina_test_strbuf_tolower)
 {
    Eina_Strbuf* buf;
    const char *str;
@@ -520,7 +520,7 @@ EFL_START_TEST(strbuf_tolower)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_substr_get)
+EFL_START_TEST(eina_test_strbuf_substr_get)
 {
    Eina_Strbuf* buf, *substr;
    const char *str;
@@ -585,7 +585,7 @@ test_prepend(Eina_Strbuf *buf, ...)
    return str;
 }
 
-EFL_START_TEST(strbuf_prepend_print)
+EFL_START_TEST(eina_test_strbuf_prepend_print)
 {
    Eina_Bool ret;
    Eina_Strbuf* buf;
@@ -618,7 +618,7 @@ EFL_START_TEST(strbuf_prepend_print)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_release_test)
+EFL_START_TEST(eina_test_strbuf_release_test)
 {
    Eina_Strbuf *buf;
    char *string;
@@ -632,7 +632,7 @@ EFL_START_TEST(strbuf_release_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST(strbuf_strftime_test)
+EFL_START_TEST(eina_test_strbuf_strftime_test)
 {
    Eina_Strbuf *buf;
    time_t curr_time;
@@ -666,19 +666,19 @@ EFL_END_TEST
 void
 eina_test_strbuf(TCase *tc)
 {
-   tcase_add_test(tc, strbuf_simple);
-   tcase_add_test(tc, strbuf_remove);
-   tcase_add_test(tc, strbuf_append);
-   tcase_add_test(tc, strbuf_insert);
-   tcase_add_test(tc, strbuf_replace);
-   tcase_add_test(tc, strbuf_realloc);
-   tcase_add_test(tc, strbuf_append_realloc);
-   tcase_add_test(tc, strbuf_prepend_realloc);
-   tcase_add_test(tc, strbuf_manage_simple);
-   tcase_add_test(tc, strbuf_trim);
-   tcase_add_test(tc, strbuf_tolower);
-   tcase_add_test(tc, strbuf_substr_get);
-   tcase_add_test(tc, strbuf_prepend_print);
-   tcase_add_test(tc, strbuf_release_test);
-   tcase_add_test(tc, strbuf_strftime_test);
+   tcase_add_test(tc, eina_test_strbuf_simple);
+   tcase_add_test(tc, eina_test_strbuf_remove);
+   tcase_add_test(tc, eina_test_strbuf_append);
+   tcase_add_test(tc, eina_test_strbuf_insert);
+   tcase_add_test(tc, eina_test_strbuf_replace);
+   tcase_add_test(tc, eina_test_strbuf_realloc);
+   tcase_add_test(tc, eina_test_strbuf_append_realloc);
+   tcase_add_test(tc, eina_test_strbuf_prepend_realloc);
+   tcase_add_test(tc, eina_test_strbuf_manage_simple);
+   tcase_add_test(tc, eina_test_strbuf_trim);
+   tcase_add_test(tc, eina_test_strbuf_tolower);
+   tcase_add_test(tc, eina_test_strbuf_substr_get);
+   tcase_add_test(tc, eina_test_strbuf_prepend_print);
+   tcase_add_test(tc, eina_test_strbuf_release_test);
+   tcase_add_test(tc, eina_test_strbuf_strftime_test);
 }
