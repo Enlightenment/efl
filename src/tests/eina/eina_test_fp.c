@@ -93,9 +93,9 @@ EFL_START_TEST(eina_fp_mul)
    double maxdelta_per = 0;
 
    dl1 = 10;
-   step1 = 0.001;
+   step1 = 0.007;
    dl2 = 1000;
-   step2 = 0.01;
+   step2 = 0.061;
 
    for (dc1 = 0; dc1 < dl1; dc1 += step1)
      {
@@ -143,9 +143,9 @@ EFL_START_TEST(eina_fp_div)
    double maxdelta_per = 0;
 
    dl1 = 10;
-   step1 = 0.001;
+   step1 = 0.007;
    dl2 = 1000;
-   step2 = 0.01;
+   step2 = 0.061;
 
    for (dc1 = 0; dc1 < dl1; dc1 += step1)
      {
