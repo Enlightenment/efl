@@ -71,7 +71,7 @@ _eina_test_lock_thread(void *data, Eina_Thread t)
    fail_if(!eina_thread_equal(t, thread));
    fail_if(strcmp("test", data));
 
-   for (i = 0; i < 10000; i++)
+   for (i = 0; i < 150; i++)
      {
         fail_if(eina_spinlock_take(&spin) != EINA_LOCK_SUCCEED);
         counter++;
@@ -91,7 +91,7 @@ EFL_START_TEST(eina_test_spinlock)
 
    fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _eina_test_lock_thread, "test"));
 
-   for (i = 0; i < 10000; i++)
+   for (i = 0; i < 150; i++)
      {
         fail_if(eina_spinlock_take(&spin) != EINA_LOCK_SUCCEED);
         counter++;
@@ -100,7 +100,7 @@ EFL_START_TEST(eina_test_spinlock)
 
    fail_if(strcmp("test", eina_thread_join(thread)));
 
-   fail_if(counter != 20000);
+   fail_if(counter != 300);
 
    fail_if(eina_spinlock_take_try(&spin) != EINA_LOCK_SUCCEED);
    fail_if(eina_spinlock_release(&spin) != EINA_LOCK_SUCCEED);
