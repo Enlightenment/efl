@@ -50,7 +50,7 @@ group { name: "e/pointer/enlightenment/default/color";
       program {
          signal: "e,state,mouse,suspend"; source: "e";
          action: STATE_SET "suspend" 0.0;
-         transition: ACCELERATE 1.0;
+         transition: ACCELERATE 0.5;
          target: "parent";
          sequence {
             action: SIGNAL_EMIT "e,state,mouse,suspend,done" "e";
@@ -59,7 +59,7 @@ group { name: "e/pointer/enlightenment/default/color";
       program {
          signal: "e,state,mouse,resume"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 1.0;
+         transition: DECELERATE 0.5;
          target: "parent";
          sequence {
             action: SIGNAL_EMIT "e,state,mouse,resume,done" "e";
