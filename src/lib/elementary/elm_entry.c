@@ -6130,6 +6130,15 @@ _elm_entry_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ent
    return &atspi_actions[0];
 }
 
+EOLIAN static Efl_Ui_Focus_Manager*
+_elm_entry_efl_ui_widget_focus_manager_create(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+{
+   return efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
+     efl_ui_focus_manager_root_set(efl_added, root)
+   );
+}
+
+
 /* Efl.Part begin */
 
 ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, Elm_Entry_Data)
