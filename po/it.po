@@ -3,13 +3,13 @@
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2013
 #
-#: src/lib/elementary/elm_config.c:4097
+#: src/lib/elementary/elm_config.c:4131
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-03-12 21:08+0900\n"
-"PO-Revision-Date: 2017-01-01 16:29+0100\n"
+"POT-Creation-Date: 2018-04-01 17:03+0200\n"
+"PO-Revision-Date: 2018-04-01 19:01+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -290,9 +290,8 @@ msgid "Title"
 msgstr "Titolo"
 
 #: src/lib/elementary/elc_naviframe.c:439
-#, fuzzy
 msgid "Subtitle"
-msgstr "Titolo"
+msgstr "Sottotitolo"
 
 #: src/lib/elementary/elc_naviframe.c:1026
 #: src/lib/elementary/elc_naviframe.c:1244
@@ -313,7 +312,7 @@ msgstr "Testo corpo popup"
 
 #: src/lib/elementary/elc_popup.c:1820
 msgid "Alert"
-msgstr ""
+msgstr "Allarme"
 
 #: src/lib/elementary/elm_bubble.c:162
 msgid "Bubble"
@@ -437,7 +436,7 @@ msgstr "oggetto palette selezione colore"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4120
+#: src/lib/elementary/elm_config.c:4154
 msgid "default:LTR"
 msgstr "default:LTR"
 
