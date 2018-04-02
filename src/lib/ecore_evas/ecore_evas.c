@@ -5085,6 +5085,14 @@ ecore_evas_callback_device_mouse_in_set(Ecore_Evas *ee,
    ee->func.fn_device_mouse_in = func;
 }
 
+static Evas *(*replacement_new)(int w, int h) = NULL;
+
+EAPI void
+ecore_evas_callback_new_set(Evas *(*func)(int w, int h))
+{
+   replacement_new = func;
+}
+
 EAPI Evas *
 ecore_evas_evas_new(Ecore_Evas *ee, int w, int h)
 {
@@ -5092,7 +5100,8 @@ ecore_evas_evas_new(Ecore_Evas *ee, int w, int h)
 
    if (ee->evas) return ee->evas;
 
-   e = evas_new();
+   if (replacement_new) e = replacement_new(w, h);
+   else e = evas_new();
    if (!e) return NULL;
 
    ee->evas = e;
