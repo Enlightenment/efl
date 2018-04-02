@@ -32,6 +32,7 @@
 #include "elm_part_helper.h"
 #include "efl_ui_win_part.eo.h"
 #include "elm_plug.eo.h"
+#include "efl_ui_win_legacy.eo.h"
 
 #define MY_CLASS EFL_UI_WIN_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win"
@@ -4788,6 +4789,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      }
 
    parent = efl_parent_get(obj);
+   if (!(efl_isa(parent, EFL_UI_WIN_CLASS) ||
+         efl_isa(parent, EFL_UI_WIN_LEGACY_CLASS) ||
+         efl_isa(parent, EFL_UI_WIN_INLINED_CLASS))) parent = NULL;
 
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Efl_Ui_Win_Data));
@@ -5225,12 +5229,10 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
    if ((_elm_config->bgpixmap)
 #ifdef HAVE_ELEMENTARY_X
-       &&
-       (((sd->x.xwin) && (!ecore_x_screen_is_composited(0))) ||
-           (!sd->x.xwin)))
-#else
-     )
+       && (((sd->x.xwin) && (!ecore_x_screen_is_composited(0))) ||
+           (!sd->x.xwin))
 #endif
+      )
      TRAP(sd, avoid_damage_set, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
    // bg pixmap done by x - has other issues like can be redrawn by x before it
    // is filled/ready by app
@@ -8633,8 +8635,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)
    EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_ui_win_efl_canvas_object_legacy_ctor)
 
 #include "efl_ui_win.eo.c"
-
-#include "efl_ui_win_legacy.eo.h"
 
 static void
 _efl_ui_win_legacy_class_constructor(Efl_Class *klass)
