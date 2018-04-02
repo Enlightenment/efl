@@ -1149,8 +1149,8 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
           {
              elm_genlist_item_selected_set(it, EINA_TRUE);
 
-             /* This is another bug! This focus item at start do not work */
-             // elm_object_item_focus_set(it, EINA_TRUE);
+             /* focus should start from second item */
+             elm_object_item_focus_set(it, EINA_TRUE);
           }
      }
    elm_genlist_item_class_free(itc);
@@ -1163,8 +1163,8 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
         elm_layout_box_append(ly, "box", btn);
         evas_object_show(btn);
         /* focus should start from second button */
-        if (i == 1)
-          elm_object_focus_set(btn, EINA_TRUE);
+        // if (i == 1)
+          // elm_object_focus_set(btn, EINA_TRUE);
      }
 
    // 4 buttons (not focusable) to test focus move by API
