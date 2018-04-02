@@ -1027,11 +1027,13 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
      ee->can_async_render = 0;
 
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create a Canvas.");
+        goto eng_err;
+     }
+
    evas_output_method_set(ee->evas, method);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
@@ -1086,13 +1088,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
 
    ecore_evas_data_set(ee, "device", edata->dev);
 
-   _ecore_evas_register(ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    ecore_drm2_output_info_get(edata->output, NULL, NULL, &mw, &mh, NULL);
 

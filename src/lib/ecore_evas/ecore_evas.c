@@ -3746,12 +3746,7 @@ ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee)
 EAPI void
 ecore_evas_input_event_register(Ecore_Evas *ee)
 {
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set((Ecore_Window)ee, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 }
 
 EAPI void
@@ -5088,4 +5083,46 @@ ecore_evas_callback_device_mouse_in_set(Ecore_Evas *ee,
    IFC(ee, fn_callback_device_mouse_in_set) (ee, func);
    IFE;
    ee->func.fn_device_mouse_in = func;
+}
+
+EAPI Evas *
+ecore_evas_evas_new(Ecore_Evas *ee, int w, int h)
+{
+   Evas *e;
+
+   if (ee->evas) return ee->evas;
+
+   e = evas_new();
+   if (!e) return NULL;
+
+   ee->evas = e;
+   evas_data_attach_set(e, ee);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     {
+        evas_output_size_set(e, w, h);
+        evas_output_viewport_set(e, 0, 0, w, h);
+     }
+   else
+     {
+        evas_output_size_set(e, h, w);
+        evas_output_viewport_set(e, 0, 0, h, w);
+     }
+
+   return e;
+}
+
+EAPI void
+ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window)
+{
+   _ecore_evas_register(ee);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
+   if (single_window)
+     evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 }

@@ -487,6 +487,9 @@ Eina_Bool _ecore_evas_cursors_init(Ecore_Evas *ee);
 EAPI void ecore_evas_render_wait(Ecore_Evas *ee);
 EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
 
+EAPI Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
+EAPI void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
+
 static inline Eina_Bool
 ecore_evas_render_prepare(Ecore_Evas *ee)
 {

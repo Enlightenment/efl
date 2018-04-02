@@ -4089,7 +4089,13 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
      ee->can_async_render = 1;
 
    /* init evas here */
-   ee->evas = evas_new();
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create a Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
+
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
@@ -4097,10 +4103,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
 			     _ecore_evas_x_render_updates, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    edata->win_root = parent;
    edata->screen_num = 0;
@@ -4216,14 +4219,9 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
-   _ecore_evas_register(ee);
+
    ecore_x_input_multi_select(ee->prop.window);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    return ee;
 }
@@ -4292,22 +4290,24 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
      ee->can_async_render = 1;
 
    /* init evas here */
-   ee->evas = evas_new();
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE, 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
                            _ecore_evas_x_render_pre, ee);
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
 			     _ecore_evas_x_render_updates, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    edata->win_root = parent;
    edata->screen_num = 0;
@@ -4611,13 +4611,15 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    edata->state.sticky = 0;
 
    /* init evas here */
-   ee->evas = evas_new();
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (parent == 0) parent = ecore_x_window_root_first_get();
    edata->win_root = parent;
@@ -4664,14 +4666,9 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
-   _ecore_evas_register(ee);
    ecore_x_input_multi_select(ee->prop.window);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
+   ecore_evas_done(ee, EINA_FALSE);
 
    return ee;
 }
@@ -4752,17 +4749,19 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
    edata->state.sticky = 0;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, 
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_x_flush_pre, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE, 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
                            _ecore_evas_x_render_pre, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,

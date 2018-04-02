@@ -2529,11 +2529,13 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
    ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
 
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, ee->w + fw, ee->h + fh))
+     {
+        ERR("Can not create Canvas.");
+        goto eng_err;
+     }
+
    evas_output_method_set(ee->evas, method);
-   evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
                            _ecore_evas_wl_common_render_updates, ee);
@@ -2573,16 +2575,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    _ecore_evas_wl_common_wm_rotation_protocol_set(ee);
 
-   _ecore_evas_register(ee);
-   ecore_evas_input_event_register(ee);
-
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window,
-                                     _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    wdata->sync_handler =
      ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);

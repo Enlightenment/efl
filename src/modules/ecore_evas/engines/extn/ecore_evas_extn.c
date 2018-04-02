@@ -2155,11 +2155,13 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Failed to create the canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_ews_update_image, ee);
 
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
