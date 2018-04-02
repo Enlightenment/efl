@@ -83,7 +83,8 @@ _toolbar_item_prio_compare_cb(const void *i1,
 }
 
 static void
-_items_visibility_fix(Elm_Toolbar_Data *sd,
+_items_visibility_fix(Elm_Toolbar *obj,
+                      Elm_Toolbar_Data *sd,
                       Evas_Coord *iw,
                       Evas_Coord vw,
                       Eina_Bool *more)
@@ -139,6 +140,7 @@ _items_visibility_fix(Elm_Toolbar_Data *sd,
              *more = EINA_TRUE;
           }
      }
+   efl_ui_focus_composition_dirty(obj);
 }
 
 static void
@@ -381,12 +383,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(sd, &ih, vh, &more);
+             _items_visibility_fix(obj, sd, &ih, vh, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(sd, &iw, vw, &more);
+             _items_visibility_fix(obj, sd, &iw, vw, &more);
           }
         evas_object_geometry_get
           (sd->VIEW(more_item), NULL, NULL, &more_w, &more_h);
@@ -462,12 +464,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(sd, &ih, vh, &more);
+             _items_visibility_fix(obj, sd, &ih, vh, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(sd, &iw, vw, &more);
+             _items_visibility_fix(obj, sd, &iw, vw, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
@@ -505,9 +507,9 @@ _resize_job(void *data)
           w = (vw >= mw) ? vw : mw;
 
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
-          _items_visibility_fix(sd, &ih, vh, &more);
+          _items_visibility_fix(obj, sd, &ih, vh, &more);
         else
-          _items_visibility_fix(sd, &iw, vw, &more);
+          _items_visibility_fix(obj, sd, &iw, vw, &more);
 
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         evas_object_box_remove_all(sd->bx_more, EINA_FALSE);
@@ -2464,6 +2466,8 @@ _item_new(Evas_Object *obj,
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
+   efl_ui_focus_composition_dirty(obj);
+
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_RESIZE, _item_resize, obj);
    if ((!sd->items) && (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
@@ -4057,7 +4061,7 @@ _part_of_chain(Elm_Toolbar_Item_Data *pd)
    if (elm_wdg_item_disabled_get(pd->base->eo_obj))
      want = EINA_FALSE;
 
-   if (!evas_object_visible_get(VIEW(pd)))
+   if (!pd->prio.visible)
      want = EINA_FALSE;
 
    if (pd->separator)
@@ -4071,14 +4075,16 @@ _elm_toolbar_efl_ui_focus_composition_prepare(Eo *obj, Elm_Toolbar_Data *pd)
 {
    Elm_Toolbar_Item_Data *it;
    Eina_List *order = NULL;
+   Eina_Bool require_more_items = EINA_FALSE;
 
    EINA_INLIST_FOREACH(pd->items, it)
      {
        if (_part_of_chain(it))
           order = eina_list_append(order, EO_OBJ(it));
+        if (!it->prio.visible) require_more_items = EINA_TRUE;
      }
 
-   if (pd->more_item)
+   if (require_more_items)
      {
         if (_part_of_chain(pd->more_item))
           order = eina_list_append(order, EO_OBJ(pd->more_item));
