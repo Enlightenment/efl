@@ -1492,6 +1492,12 @@ elementary_fdo_intl_128_files = \
 	elementary/themes/fdo/intl/128/flag-vn.png \
 	elementary/themes/fdo/intl/128/flag-za.png
 
+elementary_fdo_mimetypes_16_files = \
+	elementary/themes/fdo/mimetypes/16/inode-directory.png 
+
+elementary_fdo_mimetypes_128_files = \
+	elementary/themes/fdo/mimetypes/128/inode-directory.png 
+
 
 elementary_fdo_files = \
 	$(elementary_fdo_actions_128_files) \
@@ -1503,7 +1509,9 @@ elementary_fdo_files = \
 	$(elementary_fdo_status_128_files) \
 	$(elementary_fdo_devices_128_files) \
 	$(elementary_fdo_apps_64_files) \
-	$(elementary_fdo_intl_128_files)
+	$(elementary_fdo_intl_128_files) \
+	$(elementary_fdo_mimetypes_16_files) \
+	$(elementary_fdo_mimetypes_128_files)
 
 
 EXTRA_DIST += $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files)

@@ -18,6 +18,7 @@
  *   - src/bin/elementary/test_icon.c (elementary_test -to "Icon Standard")
  *   - data/elementary/themes/Makefile.am
  *   - data/Makefile.am (only for new dirs)
+ *   - data/elementary/themes/fdo/index.theme (only for new dirs)
  *   - elm_icon documentation   ?????  really?
  *   - don't forget to run "make distcheck"
  * 
@@ -588,6 +589,7 @@ FLAG(CTX, "flag-za")
 
 ////  mimetypes  //////////////////////////////////////////////////////////////
 #define CTX "mimetypes"
+ICO2(CTX, "inode-directory")
 // TODO ... don't really know about this one (they are LOTS of icons)
 #undef CTX
 
