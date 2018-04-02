@@ -134,7 +134,7 @@ static void
 FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
              RGBA_Draw_Context *dc,
              const RGBA_Map_Spans *ms,
-             int smooth, int anti_alias EINA_UNUSED, int level EINA_UNUSED) // level unused for now - for future use
+             int smooth, int anti_alias, int level EINA_UNUSED) // level unused for now - for future use
 {
    Line *spans;
    DATA32 *buf = NULL, *sp;
