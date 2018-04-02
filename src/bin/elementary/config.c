@@ -1944,6 +1944,25 @@ _status_config_focus(Evas_Object *win,
 }
 
 static void
+_web_entry_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   if (interactive)
+     {
+        const char *web_backend_set = elm_config_web_backend_get();
+
+        web_backend = elm_object_text_get(obj);
+        if ((web_backend_set != web_backend) ||
+            (web_backend && web_backend_set &&
+             (!!strcmp(web_backend, web_backend_set))))
+          {
+             elm_config_web_backend_set(web_backend);
+             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
+             elm_config_all_flush();
+          }
+     }
+}
+
+static void
 _status_config_etc(Evas_Object *win,
                    Evas_Object *naviframe)
 {
@@ -2015,6 +2034,7 @@ _status_config_etc(Evas_Object *win,
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(en);
    elm_box_pack_end(bx3, en);
+   evas_object_event_callback_add(en, EVAS_CALLBACK_DEL, _web_entry_del, NULL);
 
    web_backend_entry = en;
 
@@ -4286,19 +4306,6 @@ efl_terminate(void *data EINA_UNUSED,
               const Efl_Event *ev EINA_UNUSED)
 {
    fprintf(stderr, "Terminating.\n");
-   if (interactive)
-     {
-        const char *web_backend_set = elm_config_web_backend_get();
-
-        web_backend = elm_object_text_get(web_backend_entry);
-        if (web_backend_set != web_backend ||
-            (web_backend && web_backend_set && !!strcmp(web_backend, web_backend_set)))
-          {
-             elm_config_web_backend_set(web_backend);
-             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
-             elm_config_all_flush();
-          }
-     }
 }
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY
