@@ -281,7 +281,7 @@ struct klass
              << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "if(parent != null)\n"
              << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
-             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
+             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_internal_start(\"file\", 0, klass, parent_ptr, 1, 0);\n"
              << scope_tab << scope_tab << "if (init_cb != null) {\n"
              << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
              << scope_tab << scope_tab << "}\n"
