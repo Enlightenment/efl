@@ -237,7 +237,7 @@
         u += ud;
         v += vd;
 # endif //COLBLACK
-        if (anti_alias) *d = _aa_coverage_apply(line, ww, w, *d);
+        if (anti_alias) *d = _aa_coverage_apply(line, ww, w, *d, sa);
         d++;
         ww--;
      }
@@ -359,7 +359,7 @@
         u += ud;
         v += vd;
 # endif //COLBLACK
-        if (anti_alias) *d = _aa_coverage_apply(line, ww, w, *d);
+        if (anti_alias) *d = _aa_coverage_apply(line, ww, w, *d, sa);
         d++;
         ww--;
      }

@@ -111,7 +111,7 @@
 }
 
 static inline DATA32
-_aa_coverage_apply(Line *line, int ww, int w, DATA32 val)
+_aa_coverage_apply(Line *line, int ww, int w, DATA32 val, Eina_Bool src_alpha)
 {
    //Left Edge Anti Anliasing
    if ((w - line->aa_len[0]) < ww)
@@ -124,6 +124,13 @@ _aa_coverage_apply(Line *line, int ww, int w, DATA32 val)
         return MUL_256(256 - (line->aa_cov[1] * (line->aa_len[1] - ww + 1)),
                        val);
      }
+   //Remove Transparency if src image alpha is off.
+   if (!src_alpha)
+     {
+        if (((val & 0xff000000) >> 24) < 0xff)
+          return (val | 0xff000000);
+     }
+
    return val;
 }
 
