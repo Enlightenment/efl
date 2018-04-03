@@ -2022,13 +2022,13 @@ EAPI int ecore_thread_pending_total_get(void);
  *
  * This returns the maximum number of Ecore_Thread's that may be running at
  * the same time. If this number is reached, new jobs started by either
- *ecore_thread_run() or ecore_thread_feedback_run() will be added to the
+ * ecore_thread_run() or ecore_thread_feedback_run() will be added to the
  * respective pending queue until one of the running threads finishes its
  * task and becomes available to run a new one.
  *
- * By default, this will be the number of available CPUs for the
- * running program (as returned by eina_cpu_count()), or 1 if this value
- * could not be fetched.
+ * By default, this will be the proportional to the number of CPU cores
+ * found, and will be at least 1 so at least 1 worker can run through
+ * the quque of work to do.
  *
  * @see ecore_thread_max_set()
  * @see ecore_thread_max_reset()
@@ -2041,8 +2041,10 @@ EAPI int ecore_thread_max_get(void);
  * @param num The new maximum
  *
  * This sets a new value for the maximum number of concurrently running
- * Ecore_Thread's. It @b must an integer between 1 and (16 * @c x), where @c x
- * is the number for CPUs available.
+ * Ecore_Thread's. It @b must an interger of at least 1 and may be limited
+ * to a reasonable value as to not overload the system too much with
+ * too many workers. This limit may change based on the number of CPU
+ * cores detected.
  *
  * @see ecore_thread_max_get()
  * @see ecore_thread_max_reset()
