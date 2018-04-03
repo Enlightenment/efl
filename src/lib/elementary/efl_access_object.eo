@@ -244,11 +244,11 @@ struct Efl.Access.Relation
 
 type Efl.Access.Relation_Set: list<ptr(Efl.Access.Relation)>; [[Elementary Accessibility relation set type]]
 
-mixin Efl.Access (Efl.Interface, Efl.Object)
+mixin Efl.Access.Object (Efl.Interface, Efl.Object)
 {
    [[Accessibility accessible mixin]]
-   eo_prefix: efl_access;
-   data: Efl_Access_Data;
+   eo_prefix: efl_access_object;
+   data: Efl_Access_Object_Data;
    methods {
       @property localized_role_name @protected @beta {
          [[Gets an localized string describing accessible object role name.]]
@@ -291,7 +291,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            children: list<Efl.Access> @owned; [[List of widget's children]]
+            children: list<Efl.Access.Object> @owned; [[List of widget's children]]
          }
       }
       @property role_name @protected @beta {
@@ -378,7 +378,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
       event_emit @class @protected @beta {
           [[Emit event]]
          params {
-            @in accessible: Efl.Access; [[Accessibility object.]]
+            @in accessible: Efl.Access.Object; [[Accessibility object.]]
             @cref event: Efl.Event.Description; [[Accessibility event type.]]
             @in event_info: void_ptr; [[Accessibility event details.]]
          }
@@ -431,7 +431,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          return: bool; [[$true if relationship was successfully appended, $false otherwise]]
          params {
             @in type: Efl.Access.Relation_Type; [[Relation type]]
-            @in relation_object: const(Efl.Access); [[Object to relate to]]
+            @in relation_object: const(Efl.Access.Object); [[Object to relate to]]
          }
       }
       relationship_remove @beta {
@@ -442,7 +442,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          ]]
          params {
             @in type: Efl.Access.Relation_Type; [[Relation type]]
-            @in relation_object: const(Efl.Access); [[Object to remove relation from]]
+            @in relation_object: const(Efl.Access.Object); [[Object to remove relation from]]
          }
       }
       relationships_clear @beta {

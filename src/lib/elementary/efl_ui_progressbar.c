@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 
@@ -381,7 +381,7 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
    efl_ui_range_min_max_set(obj, 0.0, 1.0);
    return obj;
 }

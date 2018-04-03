@@ -337,8 +337,8 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Ui.Widget.widget_sub_object_del;
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
-      Efl.Access.state_set { get; }
-      Efl.Access.i18n_name { get; }
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
       Efl.Access.Text.access_text { get; }
       Efl.Access.Text.string { get; }
       Efl.Access.Text.attribute { get; }

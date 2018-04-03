@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_IMAGE_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
@@ -855,7 +855,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
    pd->scale_type = EFL_IMAGE_SCALE_TYPE_FIT_INSIDE;
    pd->self = obj;

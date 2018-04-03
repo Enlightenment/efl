@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -705,7 +705,7 @@ _elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
 
    return obj;
 }
@@ -1042,7 +1042,7 @@ _elm_hoversel_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED
 }
 
 EOLIAN Eina_List*
-_elm_hoversel_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd)
+_elm_hoversel_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd)
 {
 	return eina_list_clone(pd->items);
 }

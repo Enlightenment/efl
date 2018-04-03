@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
@@ -657,7 +657,7 @@ _efl_ui_view_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_View_List_Data *pd)
 
    efl_gfx_visible_set(pd->pan_obj, EINA_TRUE);
 
-   efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
+   efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    edje_object_size_min_calc(wd->resize_obj, &min.w, &min.h);
    efl_gfx_size_hint_restricted_min_set(obj, min);
@@ -719,7 +719,7 @@ _efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
    pd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    pd->segarray = efl_add(EFL_UI_VIEW_LIST_SEGARRAY_CLASS, obj, efl_ui_view_list_segarray_setup(efl_added, 32));
 
@@ -970,12 +970,12 @@ _efl_ui_view_list_efl_ui_focus_composition_prepare(Eo *obj, Efl_Ui_View_List_Dat
 }
 
 EOLIAN Eina_List*
-_efl_ui_view_list_efl_access_access_children_get(const Eo *obj, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_efl_access_object_access_children_get(const Eo *obj, Efl_Ui_View_List_Data *pd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
 
    ret = efl_ui_view_list_relayout_elements_get(pd->relayout);
-   ret2 = efl_access_children_get(efl_super(obj, EFL_UI_VIEW_LIST_CLASS));
+   ret2 = efl_access_object_access_children_get(efl_super(obj, EFL_UI_VIEW_LIST_CLASS));
 
    return eina_list_merge(ret, ret2);
 }

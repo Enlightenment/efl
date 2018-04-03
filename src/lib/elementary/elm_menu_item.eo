@@ -111,10 +111,10 @@ class Elm.Menu.Item(Elm.Widget.Item, Efl.Access.Selection, Efl.Ui.Legacy)
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.part_content { get; set; }
-        Efl.Access.access_children { get; }
-        Efl.Access.role { get; }
-        Efl.Access.i18n_name { get; }
-        Efl.Access.state_set { get; }
+        Efl.Access.Object.access_children { get; }
+        Efl.Access.Object.role { get; }
+        Efl.Access.Object.i18n_name { get; }
+        Efl.Access.Object.state_set { get; }
         Efl.Access.Selection.selected_children_count { get; }
         Efl.Access.Selection.selected_child { get; }
    }

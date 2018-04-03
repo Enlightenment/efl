@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 
 #include <Elementary.h>
@@ -933,7 +933,7 @@ _efl_ui_clock_efl_object_constructor(Eo *obj, Efl_Ui_Clock_Data *_pd EINA_UNUSED
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
 
    return obj;
 }

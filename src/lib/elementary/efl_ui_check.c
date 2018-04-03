@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_NSTATE_PROTECTED
@@ -86,11 +86,11 @@ _activate(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_check_efl_access_state_set_get(const Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set states = 0;
 
-   states = efl_access_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
+   states = efl_access_object_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
 
    if (elm_check_state_get(obj))
        STATE_TYPE_SET(states, EFL_ACCESS_STATE_CHECKED);
@@ -287,7 +287,7 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    efl_layout_signal_callback_add
      (wd->resize_obj, "elm,action,check,toggle", "*", _on_check_toggle, obj);
 
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);
    _elm_access_object_register(obj, wd->resize_obj);
    _elm_access_text_set
      (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Check"));

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -1402,7 +1402,7 @@ _elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    return obj;
 }
@@ -1683,10 +1683,10 @@ _elm_spinner_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Elm_Spinn
 }
 
 EOLIAN static const char*
-_elm_spinner_efl_access_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_object_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd)
 {
    const char *name, *ret;
-   name = efl_access_i18n_name_get(efl_super(obj, ELM_SPINNER_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
    if (sd->button_layout)
      {

@@ -1028,7 +1028,7 @@ _efl_ui_calendar_efl_object_constructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
 
    obj = _efl_ui_calendar_constructor_internal(obj, sd);
 

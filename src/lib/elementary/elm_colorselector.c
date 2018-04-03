@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -1804,7 +1804,7 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      elm_wdg_item_access_register(eo_item);
 
-   efl_access_role_set(eo_item, EFL_ACCESS_ROLE_RADIO_BUTTON);
+   efl_access_object_role_set(eo_item, EFL_ACCESS_ROLE_RADIO_BUTTON);
 
    return eo_item;
 }
@@ -2276,7 +2276,7 @@ _elm_colorselector_efl_object_constructor(Eo *obj, Elm_Colorselector_Data *_pd E
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_COLOR_CHOOSER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_COLOR_CHOOSER);
 
    return obj;
 }
@@ -2601,11 +2601,11 @@ _elm_colorselector_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_U
 }
 
 EOLIAN static Eina_List*
-_elm_colorselector_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    Eina_List *ret = NULL;
 
-   ret = efl_access_children_get(efl_super(obj, ELM_COLORSELECTOR_CLASS));
+   ret = efl_access_object_access_children_get(efl_super(obj, ELM_COLORSELECTOR_CLASS));
    // filter - out box contiainer
    ret = eina_list_remove(ret, sd->palette_box);
    // append items as colorselector children
@@ -2615,12 +2615,12 @@ _elm_colorselector_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_color_item_efl_access_state_set_get(const Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
+_elm_color_item_efl_access_object_state_set_get(const Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = efl_access_state_set_get(efl_super(obj, ELM_COLOR_ITEM_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, ELM_COLOR_ITEM_CLASS));
 
    sel = elm_obj_color_item_selected_get(obj);
 
@@ -2678,14 +2678,14 @@ _elm_color_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UN
 }
 
 EOLIAN static const char*
-_elm_color_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Color_Item_Data *it)
+_elm_color_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Color_Item_Data *it)
 {
    Eina_Strbuf *buf;
    const char *color_name = NULL;
    const char *name;
    char *accessible_name;
 
-   name = efl_access_i18n_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
    if (name) return name;
 
    buf = eina_strbuf_new();

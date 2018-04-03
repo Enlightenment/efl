@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -1523,7 +1523,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
 
    return obj;
 }
@@ -1794,10 +1794,10 @@ _elm_popup_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_popup_efl_access_state_set_get(const Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
+_elm_popup_efl_access_object_state_set_get(const Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, MY_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
 
@@ -1805,12 +1805,12 @@ _elm_popup_efl_access_state_set_get(const Eo *obj, Elm_Popup_Data *sd EINA_UNUSE
 }
 
 EOLIAN static const char*
-_elm_popup_efl_access_i18n_name_get(const Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_access_object_i18n_name_get(const Eo *obj, Elm_Popup_Data *sd)
 {
    const char *name = NULL;
    Eina_Strbuf *buf;
 
-   name = efl_access_i18n_name_get(efl_super(obj, ELM_POPUP_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, ELM_POPUP_CLASS));
    if (name) return name;
 
    buf = eina_strbuf_new();

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
@@ -196,7 +196,7 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
 
    elm_layout_sizing_eval(obj);
 
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
    _elm_access_text_set
      (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
    _elm_access_callback_set
@@ -323,11 +323,11 @@ _efl_ui_radio_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED
 }
 
 EOLIAN Efl_Access_State_Set
-_efl_ui_radio_efl_access_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
 
-   ret = efl_access_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
 

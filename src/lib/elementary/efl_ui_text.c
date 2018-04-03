@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
@@ -2130,14 +2130,14 @@ _entry_changed_user_signal_cb(void *data,
              atspi_info.content = edje_info->change.insert.content;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
           }
         else if (edje_info && !edje_info->insert)
           {
              atspi_info.content = edje_info->change.del.content;
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
              atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
           }
      }
 }
@@ -2192,7 +2192,7 @@ _entry_cursor_changed_signal_cb(void *data,
    _decoration_defer(obj);
 
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2203,7 +2203,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
 {
    efl_event_callback_call(data, EFL_UI_TEXT_EVENT_CURSOR_CHANGED_MANUAL, NULL);
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -3010,7 +3010,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_widget_sub_object_parent_add(obj);
 
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
@@ -3317,7 +3317,7 @@ _efl_ui_text_password_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password
         sd->single_line = EINA_TRUE;
         sd->line_wrap = ELM_WRAP_NONE;
         efl_ui_text_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
-        efl_access_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
+        efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
      }
    else
      {
@@ -3329,7 +3329,7 @@ _efl_ui_text_password_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password
                             _dnd_drop_cb, NULL);
 
         efl_ui_text_input_hint_set(obj, ((sd->input_hints | ELM_INPUT_HINT_AUTO_COMPLETE) & ~ELM_INPUT_HINT_SENSITIVE_DATA));
-        efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+        efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
 
    efl_ui_widget_theme_apply(obj);
@@ -4460,10 +4460,10 @@ _efl_ui_text_efl_access_editable_text_cut(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNU
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_text_efl_access_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_text_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
 
    if (efl_ui_text_interactive_editable_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
@@ -4472,10 +4472,10 @@ _efl_ui_text_efl_access_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_
 }
 
 EOLIAN static const char*
-_efl_ui_text_efl_access_i18n_name_get(const Eo *obj, Efl_Ui_Text_Data *pd)
+_efl_ui_text_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Text_Data *pd)
 {
    const char *name;
-   name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(pd->entry_edje, "elm.guide");
    return ret;

@@ -3,8 +3,8 @@
 #endif
 
 #define EFL_ACCESS_SELECTION_PROTECTED
-#define EFL_ACCESS_BETA
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_BETA
+#define EFL_ACCESS_OBJECT_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -206,7 +206,7 @@ EFL_START_TEST (elm_atspi_role_get)
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
- role = efl_access_role_get(list);
+ role = efl_access_object_role_get(list);
 
  ck_assert(role == EFL_ACCESS_ROLE_LIST);
 
@@ -220,7 +220,7 @@ EFL_END_TEST
  */
 EFL_START_TEST(elm_atspi_children_parent)
 {
-   Efl_Access *parent;
+   Efl_Access_Object *parent;
    Elm_Object_Item *it;
 
    Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
@@ -233,10 +233,10 @@ EFL_START_TEST(elm_atspi_children_parent)
 
    evas_object_show(list);
 
-   parent = efl_provider_find(efl_parent_get(icon), EFL_ACCESS_MIXIN);
+   parent = efl_provider_find(efl_parent_get(icon), EFL_ACCESS_OBJECT_MIXIN);
    ck_assert(it == parent);
 
-   parent = efl_provider_find(efl_parent_get(end), EFL_ACCESS_MIXIN);
+   parent = efl_provider_find(efl_parent_get(end), EFL_ACCESS_OBJECT_MIXIN);
    ck_assert(it == parent);
 
 }

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -792,7 +792,7 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    return obj;
 }
@@ -883,10 +883,10 @@ _efl_ui_spin_button_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static const char*
-_efl_ui_spin_button_efl_access_i18n_name_get(const Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    const char *name;
-   name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));
    if (name) return name;
    const char *ret = elm_layout_text_get(obj, "elm.text");
    return ret;

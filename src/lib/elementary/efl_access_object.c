@@ -2,7 +2,7 @@
   #include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_widget.h"
@@ -121,7 +121,7 @@ struct _Efl_Access_Event_Handler
    void *data;
 };
 
-struct _Efl_Access_Data
+struct _Efl_Access_Object_Data
 {
    Efl_Access_Relation_Set relations;
    Eina_List     *attr_list;
@@ -133,23 +133,23 @@ struct _Efl_Access_Data
    Efl_Access_Type type: 2;
 };
 
-typedef struct _Efl_Access_Data Efl_Access_Data;
+typedef struct _Efl_Access_Object_Data Efl_Access_Object_Data;
 
 
 static Eina_List *global_callbacks;
 static Eo *root;
 
 EOLIAN static int
-_efl_access_index_in_parent_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
    Eina_List *l, *children = NULL;
    Eo *chld, *parent = NULL;
    int ret = 0;
 
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
+   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
    if (!parent) return -1;
 
-   children = efl_access_children_get(parent);
+   children = efl_access_object_access_children_get(parent);
    if (!children) return -1;
 
    EINA_LIST_FOREACH(children, l, chld)
@@ -169,22 +169,22 @@ _efl_access_index_in_parent_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
 
 
 EOLIAN static Efl_Object *
-_efl_access_efl_object_provider_find(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED, const Efl_Object *klass)
+_efl_access_object_efl_object_provider_find(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED, const Efl_Object *klass)
 {
    if (efl_isa(obj, klass))
      {
-        if (klass == EFL_ACCESS_MIXIN)
+        if (klass == EFL_ACCESS_OBJECT_MIXIN)
           {
-             Efl_Access_Type type = efl_access_type_get(obj);
+             Efl_Access_Type type = efl_access_object_access_type_get(obj);
              if (type != EFL_ACCESS_TYPE_SKIPPED) return (Eo*)obj;
           }
         else return (Eo*)obj;
      }
-   return efl_provider_find(efl_super(obj, EFL_ACCESS_MIXIN), klass);
+   return efl_provider_find(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN), klass);
 }
 
 EOLIAN Eina_List*
-_efl_access_attributes_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_attributes_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    Eina_List *attr_list = NULL;
    if (pd->attr_list)
@@ -206,7 +206,7 @@ _efl_access_attributes_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 }
 
 EOLIAN static void
-_efl_access_attribute_append(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *key, const char *value)
+_efl_access_object_attribute_append(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd, const char *key, const char *value)
 {
    Eina_List *l;
    Efl_Access_Attribute *attr = NULL;
@@ -232,7 +232,7 @@ _efl_access_attribute_append(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const cha
    pd->attr_list = eina_list_append(pd->attr_list, attr);
 }
 
-EOLIAN static void _efl_access_attributes_clear(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+EOLIAN static void _efl_access_object_attributes_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    if (!pd->attr_list) return;
    Efl_Access_Attribute *attr;
@@ -246,7 +246,7 @@ EOLIAN static void _efl_access_attributes_clear(Eo *obj EINA_UNUSED, Efl_Access_
 }
 
 EOLIAN static void
-_efl_access_reading_info_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Reading_Info_Type reading_info)
+_efl_access_object_reading_info_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Access_Reading_Info_Type reading_info)
 {
    Eina_Strbuf *buf = NULL;
    pd->reading_info = reading_info;
@@ -271,24 +271,24 @@ _efl_access_reading_info_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Readi
      {
         eina_strbuf_append(buf, "state");
      }
-   efl_access_attribute_append(obj, "reading_info_type", eina_strbuf_string_get(buf));
+   efl_access_object_attribute_append(obj, "reading_info_type", eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
 }
 
 EOLIAN Efl_Access_Reading_Info_Type
-_efl_access_reading_info_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_reading_info_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    return pd->reading_info;
 }
 
 EOLIAN static Efl_Access_Role
-_efl_access_role_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_role_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    return pd->role;
 }
 
 EOLIAN static void
-_efl_access_role_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Role role)
+_efl_access_object_role_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Access_Role role)
 {
    if (pd->role != role)
      {
@@ -298,17 +298,17 @@ _efl_access_role_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Role role)
 }
 
 EOLIAN const char *
-_efl_access_role_name_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_object_role_name_get(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
    Efl_Access_Role role;
 
-   role = efl_access_role_get(obj);
+   role = efl_access_object_role_get(obj);
 
    return role > EFL_ACCESS_ROLE_LAST_DEFINED ? "" : Access_Name[role];
 }
 
 EOLIAN const char *
-_efl_access_i18n_name_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_i18n_name_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
 #ifdef ENABLE_NLS
    if (pd->translation_domain)
@@ -318,12 +318,12 @@ _efl_access_i18n_name_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 }
 
 EOLIAN static void
-_efl_access_i18n_name_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *val)
+_efl_access_object_i18n_name_set(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->name, val);
 }
 
-const char * _efl_access_description_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+const char * _efl_access_object_description_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
 #ifdef ENABLE_NLS
    if (pd->translation_domain)
@@ -333,16 +333,16 @@ const char * _efl_access_description_get(const Eo *obj EINA_UNUSED, Efl_Access_D
 }
 
 EOLIAN static void
-_efl_access_description_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *val)
+_efl_access_object_description_set(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->description, val);
 }
 
 EOLIAN static const char *
-_efl_access_localized_role_name_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_object_localized_role_name_get(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
    const char *ret = NULL;
-   ret = efl_access_role_name_get(obj);
+   ret = efl_access_object_role_name_get(obj);
 #ifdef ENABLE_NLS
    ret = gettext(ret);
 #endif
@@ -350,7 +350,7 @@ _efl_access_localized_role_name_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUS
 }
 
 EOLIAN static Eina_List *
-_efl_access_access_children_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_object_access_children_get(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
    Eina_List *children = NULL;
    Eina_Iterator *iter = NULL;
@@ -363,7 +363,7 @@ _efl_access_access_children_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
 
    EINA_ITERATOR_FOREACH(iter, chld)
      {
-        if (efl_isa(chld, EFL_ACCESS_MIXIN))
+        if (efl_isa(chld, EFL_ACCESS_OBJECT_MIXIN))
           children = eina_list_append(children, chld);
      }
    eina_iterator_free(iter);
@@ -372,13 +372,13 @@ _efl_access_access_children_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_access_state_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_object_state_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN Efl_Access_Relation_Set
-_efl_access_relation_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_relation_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    return efl_access_relation_set_clone(pd->relations);
 }
@@ -395,26 +395,26 @@ EAPI void efl_access_attributes_list_free(Eina_List *list)
 }
 
 EOLIAN void
-_efl_access_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
+_efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
 {
    Eina_List *l;
    Efl_Access_Event_Handler *hdl;
    Efl_Access_Type type;
 
-   if (!accessible || !event || !efl_isa(accessible, EFL_ACCESS_MIXIN))
+   if (!accessible || !event || !efl_isa(accessible, EFL_ACCESS_OBJECT_MIXIN))
      {
         CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? efl_class_name_get(accessible) : "NULL");
         return;
      }
 
-   type = efl_access_type_get(accessible);
+   type = efl_access_object_access_type_get(accessible);
    if (type != EFL_ACCESS_TYPE_REGULAR)
      return;
 
-   if (event == EFL_ACCESS_EVENT_CHILDREN_CHANGED)
+   if (event == EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED)
      {
         Efl_Access_Event_Children_Changed_Data *event_data = event_info;
-        type = efl_access_type_get(event_data->child);
+        type = efl_access_object_access_type_get(event_data->child);
         if (type != EFL_ACCESS_TYPE_REGULAR)
           return;
      }
@@ -431,7 +431,7 @@ _efl_access_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessib
 }
 
 EOLIAN Efl_Access_Event_Handler *
-_efl_access_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
+_efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
 {
    Efl_Access_Event_Handler *ret = calloc(1, sizeof(Efl_Access_Event_Handler));
 
@@ -444,7 +444,7 @@ _efl_access_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_E
 }
 
 EOLIAN void 
-_efl_access_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Event_Handler *handler)
+_efl_access_object_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Event_Handler *handler)
 {
    Eina_List *l, *l2;
    Efl_Access_Event_Handler *hdl;
@@ -460,14 +460,14 @@ _efl_access_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_A
 }
 
 EOLIAN void
-_efl_access_translation_domain_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *domain)
+_efl_access_object_translation_domain_set(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd, const char *domain)
 {
    eina_stringshare_replace(&pd->translation_domain, domain);
 }
 
 
 EOLIAN const char*
-_efl_access_translation_domain_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_translation_domain_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    return pd->translation_domain;
 }
@@ -519,7 +519,7 @@ efl_access_relation_set_relation_append(Efl_Access_Relation_Set *set, Efl_Access
    Efl_Access_Relation *rel;
    Eina_List *l;
 
-   if (!efl_isa(rel_obj, EFL_ACCESS_MIXIN))
+   if (!efl_isa(rel_obj, EFL_ACCESS_OBJECT_MIXIN))
      return EINA_FALSE;
 
    EINA_LIST_FOREACH(*set, l, rel)
@@ -623,13 +623,13 @@ efl_access_relation_set_clone(const Efl_Access_Relation_Set set)
 }
 
 EOLIAN static Eina_Bool
-_efl_access_relationship_append(Eo *obj EINA_UNUSED, Efl_Access_Data *sd, Efl_Access_Relation_Type type, const Efl_Access *relation_obj)
+_efl_access_object_relationship_append(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation_obj)
 {
    return efl_access_relation_set_relation_append(&sd->relations, type, relation_obj);
 }
 
 EOLIAN static void
-_efl_access_relationship_remove(Eo *obj EINA_UNUSED, Efl_Access_Data *sd, Efl_Access_Relation_Type type, const Efl_Access *relation_obj)
+_efl_access_object_relationship_remove(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation_obj)
 {
    if (relation_obj)
      efl_access_relation_set_relation_remove(&sd->relations, type, relation_obj);
@@ -638,14 +638,14 @@ _efl_access_relationship_remove(Eo *obj EINA_UNUSED, Efl_Access_Data *sd, Efl_Ac
 }
 
 EOLIAN static void
-_efl_access_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Data *sd)
+_efl_access_object_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd)
 {
    efl_access_relation_set_free(sd->relations);
    sd->relations = NULL;
 }
 
 EOLIAN Eo*
-_efl_access_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_access_object_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (!root)
      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
@@ -654,19 +654,19 @@ _efl_access_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN Efl_Access_Type
-_efl_access_access_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_object_access_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    return pd->type;
 }
 
 EOLIAN void
-_efl_access_access_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Type val)
+_efl_access_object_access_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Access_Type val)
 {
-   Efl_Access *parent;
+   Efl_Access_Object *parent;
    if (val == pd->type)
      return;
 
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_MIXIN);
+   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
 
    switch (val)
      {
@@ -683,14 +683,14 @@ _efl_access_access_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Type val)
 }
 
 EOLIAN void
-_efl_access_efl_object_destructor(Eo *obj, Efl_Access_Data *pd)
+_efl_access_object_efl_object_destructor(Eo *obj, Efl_Access_Object_Data *pd)
 {
    eina_stringshare_del(pd->name);
    eina_stringshare_del(pd->description);
    eina_stringshare_del(pd->translation_domain);
    efl_access_relation_set_free(pd->relations);
 
-   efl_destructor(efl_super(obj, EFL_ACCESS_MIXIN));
+   efl_destructor(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
 }
 
 void
@@ -704,4 +704,4 @@ _efl_access_shutdown(void)
    ELM_SAFE_DEL(root);
 }
 
-#include "efl_access.eo.c"
+#include "efl_access_object.eo.c"

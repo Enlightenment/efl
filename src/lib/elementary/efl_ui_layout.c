@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_WIDGET_PART_BG_PROTECTED
 
@@ -2116,7 +2116,7 @@ _efl_ui_layout_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
    sd->obj = obj;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
 }

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -1565,8 +1565,8 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
               evas_object_size_hint_display_mode_get(obj));
         if (_elm_config->atspi_mode && !sd->on_create)
           {
-             Efl_Access *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_MIXIN);
+             Efl_Access_Object *aparent;
+             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
              if (aparent)
                 efl_access_children_changed_added_signal_emit(aparent, sobj);
           }
@@ -1643,8 +1643,8 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
           }
         if (_elm_config->atspi_mode && !sd->on_destroy)
           {
-             Efl_Access *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_MIXIN);
+             Efl_Access_Object *aparent;
+             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
              if (aparent)
                 efl_access_children_changed_del_signal_emit(aparent, sobj);
           }
@@ -3967,7 +3967,7 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
-   efl_access_attributes_clear(eo_item);
+   efl_access_object_attributes_clear(eo_item);
    efl_access_removed(eo_item);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
@@ -4184,8 +4184,8 @@ _elm_widget_item_accessible_plain_name_get(const Elm_Object_Item *item, const ch
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_widget_item_efl_access_state_set_get(const Eo *eo_item,
-                                                              Elm_Widget_Item_Data *item EINA_UNUSED)
+_elm_widget_item_efl_access_object_state_set_get(const Eo *eo_item,
+                                                 Elm_Widget_Item_Data *item EINA_UNUSED)
 {
    Efl_Access_State_Set states = 0;
 
@@ -5258,7 +5258,7 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    efl_ui_widget_parent_set(obj, parent);
    sd->on_create = EINA_FALSE;
 
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
 
    efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_event_changed, NULL);
 
@@ -5286,7 +5286,7 @@ _efl_ui_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
         efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
         sd->manager.provider = NULL;
      }
-   efl_access_attributes_clear(obj);
+   efl_access_object_attributes_clear(obj);
    efl_access_removed(obj);
    if (sd->logical.parent)
      {
@@ -5371,10 +5371,10 @@ _efl_ui_widget_efl_access_component_focus_grab(Eo *obj, Elm_Widget_Smart_Data *p
 }
 
 EOLIAN static const char*
-_efl_ui_widget_efl_access_i18n_name_get(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_efl_ui_widget_efl_access_object_i18n_name_get(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    const char *ret, *name;
-   name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
 
    if (name) return name;
 
@@ -5385,7 +5385,7 @@ _efl_ui_widget_efl_access_i18n_name_get(const Eo *obj, Elm_Widget_Smart_Data *_p
 }
 
 EOLIAN static Eina_List*
-_efl_ui_widget_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
+_efl_ui_widget_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *widget;
@@ -5394,13 +5394,13 @@ _efl_ui_widget_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Wid
    EINA_LIST_FOREACH(pd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
-        if (!efl_isa(widget, EFL_ACCESS_MIXIN)) continue;
-        type = efl_access_type_get(widget);
+        if (!efl_isa(widget, EFL_ACCESS_OBJECT_MIXIN)) continue;
+        type = efl_access_object_access_type_get(widget);
         if (type == EFL_ACCESS_TYPE_DISABLED) continue;
         if (type == EFL_ACCESS_TYPE_SKIPPED)
           {
              Eina_List *children;
-             children = efl_access_children_get(widget);
+             children = efl_access_object_access_children_get(widget);
              accs = eina_list_merge(accs, children);
              continue;
           }
@@ -5410,11 +5410,11 @@ _efl_ui_widget_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Wid
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_widget_efl_access_state_set_get(const Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_efl_access_object_state_set_get(const Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set states = 0;
 
-   states = efl_access_state_set_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
+   states = efl_access_object_state_set_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
 
    if (evas_object_visible_get(obj))
      {
@@ -5439,14 +5439,14 @@ _efl_ui_widget_efl_access_state_set_get(const Eo *obj, Elm_Widget_Smart_Data *pd
 }
 
 EOLIAN static Eina_List*
-_efl_ui_widget_efl_access_attributes_get(const Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_efl_access_object_attributes_get(const Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    const char *type = NULL;
    const char *style = NULL;
    Eina_List *attr_list = NULL;
    Efl_Access_Attribute *attr = NULL;
 
-   attr_list = efl_access_attributes_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
+   attr_list = efl_access_object_attributes_get(efl_super(obj, EFL_UI_WIDGET_CLASS));
 
    //Add type and style information in addition.
    type = elm_widget_type_get(obj);
@@ -5477,13 +5477,13 @@ _efl_ui_widget_efl_access_attributes_get(const Eo *obj, Elm_Widget_Smart_Data *p
 }
 
 EOLIAN static Eina_List *
-_elm_widget_item_efl_access_attributes_get(const Eo *eo_item, Elm_Widget_Item_Data *pd  EINA_UNUSED)
+_elm_widget_item_efl_access_object_attributes_get(const Eo *eo_item, Elm_Widget_Item_Data *pd  EINA_UNUSED)
 {
    const char *style = NULL;
    Eina_List *attr_list = NULL;
    Efl_Access_Attribute *attr = NULL;
 
-   attr_list = efl_access_attributes_get(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
+   attr_list = efl_access_object_attributes_get(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
 
    style = elm_object_item_style_get(eo_item);
    if (style)
@@ -5542,9 +5542,9 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
    if ((klass == EFL_CONFIG_INTERFACE) || (klass == EFL_CONFIG_GLOBAL_CLASS))
      return _efl_config_obj;
 
-   if (klass == EFL_ACCESS_MIXIN)
+   if (klass == EFL_ACCESS_OBJECT_MIXIN)
      {
-        Efl_Access_Type type = efl_access_type_get(obj);
+        Efl_Access_Type type = efl_access_object_access_type_get(obj);
         if (type != EFL_ACCESS_TYPE_SKIPPED)
           return (Eo*)obj;
      }

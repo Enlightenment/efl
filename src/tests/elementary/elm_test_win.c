@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_COMPONENT_BETA
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_CANVAS_SCENE_BETA
@@ -88,7 +88,7 @@ EFL_START_TEST (elm_atspi_role_get)
 
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
-   role = efl_access_role_get(win);
+   role = efl_access_object_role_get(win);
 
    ck_assert(role == EFL_ACCESS_ROLE_WINDOW);
 

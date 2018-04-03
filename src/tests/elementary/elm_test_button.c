@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_ACTION_PROTECTED
 #include <Elementary.h>
@@ -36,7 +36,7 @@ EFL_START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "button", ELM_WIN_BASIC);
 
    button = elm_button_add(win);
-   role = efl_access_role_get(button);
+   role = efl_access_object_role_get(button);
 
    ck_assert(role == EFL_ACCESS_ROLE_PUSH_BUTTON);
 
@@ -51,7 +51,7 @@ EFL_START_TEST (elm_atspi_interfaces_check)
 
    button = elm_button_add(win);
 
-   ck_assert(efl_isa(button, EFL_ACCESS_MIXIN));
+   ck_assert(efl_isa(button, EFL_ACCESS_OBJECT_MIXIN));
    ck_assert(efl_isa(button, EFL_ACCESS_COMPONENT_MIXIN));
    ck_assert(efl_isa(button, EFL_ACCESS_ACTION_MIXIN));
 

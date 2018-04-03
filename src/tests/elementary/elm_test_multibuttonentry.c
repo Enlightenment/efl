@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -34,7 +34,7 @@ EFL_START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "multibuttonentry", ELM_WIN_BASIC);
 
    multibuttonentry = elm_multibuttonentry_add(win);
-   role = efl_access_role_get(multibuttonentry);
+   role = efl_access_object_role_get(multibuttonentry);
 
    ck_assert_int_eq(role, EFL_ACCESS_ROLE_PANEL);
 

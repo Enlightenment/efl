@@ -2,8 +2,8 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_BETA
+#define EFL_ACCESS_OBJECT_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -103,7 +103,7 @@ EFL_START_TEST (elm_atspi_role_get)
 
    Efl_Access_Role role;
 
-   role = efl_access_role_get(genlist);
+   role = efl_access_object_role_get(genlist);
 
    ck_assert(role == EFL_ACCESS_ROLE_LIST);
 
@@ -116,14 +116,14 @@ EFL_START_TEST(elm_atspi_children_get1)
    Eina_List *children;
    Elm_Object_Item *it[3];
 
-   children = efl_access_children_get(genlist);
+   children = efl_access_object_access_children_get(genlist);
    ck_assert(children == NULL);
 
    it[0] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[1] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   children = efl_access_children_get(genlist);
+   children = efl_access_object_access_children_get(genlist);
    ck_assert(eina_list_count(children) == 3);
    ck_assert(eina_list_nth(children, 0) == it[0]);
    ck_assert(eina_list_nth(children, 1) == it[1]);
@@ -144,7 +144,7 @@ EFL_START_TEST(elm_atspi_children_get2)
    it[1] = elm_genlist_item_prepend(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
-   children = efl_access_children_get(genlist);
+   children = efl_access_object_access_children_get(genlist);
    ck_assert(eina_list_nth(children, 1) == it[0]);
    ck_assert(eina_list_nth(children, 0) == it[1]);
    ck_assert(eina_list_nth(children, 2) == it[2]);
@@ -155,7 +155,7 @@ EFL_END_TEST
 static void
 _children_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   if (event->desc != EFL_ACCESS_EVENT_CHILDREN_CHANGED)
+   if (event->desc != EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED)
      return;
 
    ev_data = *(Efl_Access_Event_Children_Changed_Data*)event->info;
@@ -172,7 +172,7 @@ EFL_START_TEST(elm_atspi_children_events_add)
 
    Elm_Object_Item *it[3];
 
-   efl_access_event_handler_add(EFL_ACCESS_MIXIN, _children_changed_cb, NULL);
+   efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _children_changed_cb, NULL);
 
    it[0] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    ck_assert(genlist == current);
@@ -208,7 +208,7 @@ EFL_START_TEST(elm_atspi_children_events_del1)
    it[1] = elm_genlist_item_prepend(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
-   efl_access_event_handler_add(EFL_ACCESS_MIXIN, _children_changed_cb, NULL);
+   efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _children_changed_cb, NULL);
 
    elm_object_item_del(it[0]);
    ck_assert(genlist == current);
@@ -235,7 +235,7 @@ EFL_START_TEST(elm_atspi_children_events_del2)
 
    it = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   efl_access_event_handler_add(EFL_ACCESS_MIXIN, _children_changed_cb, NULL);
+   efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _children_changed_cb, NULL);
    elm_genlist_clear(genlist);
 
    ck_assert(genlist == current);

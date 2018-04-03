@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -2119,12 +2119,12 @@ _elm_list_item_elm_widget_item_item_focus_get(const Eo *eo_it, Elm_List_Item_Dat
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_list_item_efl_access_state_set_get(const Eo *eo_it, Elm_List_Item_Data *data EINA_UNUSED)
+_elm_list_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_List_Item_Data *data EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = efl_access_state_set_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
 
    if (elm_object_item_disabled_get(eo_it))
      return ret;
@@ -2141,10 +2141,10 @@ _elm_list_item_efl_access_state_set_get(const Eo *eo_it, Elm_List_Item_Data *dat
 }
 
 EOLIAN static const char*
-_elm_list_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_List_Item_Data *data)
+_elm_list_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_List_Item_Data *data)
 {
    const char *ret;
-   ret = efl_access_i18n_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
+   ret = efl_access_object_i18n_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    if (ret) return ret;
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->label);
 }
@@ -2271,7 +2271,7 @@ _elm_list_item_efl_object_constructor(Eo *eo_it, Elm_List_Item_Data *it)
 {
    eo_it = efl_constructor(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    it->base = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
-   efl_access_role_set(eo_it, EFL_ACCESS_ROLE_LIST_ITEM);
+   efl_access_object_role_set(eo_it, EFL_ACCESS_ROLE_LIST_ITEM);
 
    return eo_it;
 }
@@ -2324,7 +2324,7 @@ _item_new(Evas_Object *obj,
         evas_object_event_callback_add
           (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
-        efl_access_type_set(it->icon, EFL_ACCESS_TYPE_DISABLED);
+        efl_access_object_access_type_set(it->icon, EFL_ACCESS_TYPE_DISABLED);
         elm_widget_tree_unfocusable_set(it->icon, EINA_TRUE);
      }
    if (it->end)
@@ -2333,7 +2333,7 @@ _item_new(Evas_Object *obj,
         evas_object_event_callback_add
           (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
-        efl_access_type_set(it->end, EFL_ACCESS_TYPE_DISABLED);
+        efl_access_object_access_type_set(it->end, EFL_ACCESS_TYPE_DISABLED);
         elm_widget_tree_unfocusable_set(it->end, EINA_TRUE);
      }
 
@@ -2403,7 +2403,7 @@ _elm_list_efl_canvas_group_group_add(Eo *obj, Elm_List_Data *priv)
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set(priv->box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(priv->box, EVAS_HINT_FILL, 0.0);
-   efl_access_type_set(priv->box, EFL_ACCESS_TYPE_DISABLED);
+   efl_access_object_access_type_set(priv->box, EFL_ACCESS_TYPE_DISABLED);
 
    /* FIXME: change this ugly code path later */
    elm_widget_on_show_region_hook_set(priv->box, obj, _show_region_hook, NULL);
@@ -2525,7 +2525,7 @@ _elm_list_efl_object_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    return obj;
 }
@@ -2867,9 +2867,9 @@ _elm_list_item_separator_set(Eo *eo_item, Elm_List_Item_Data *it, Eina_Bool sett
    it->is_separator = !!setting;
 
    if (it->is_separator)
-      efl_access_role_set(eo_item, EFL_ACCESS_ROLE_SEPARATOR);
+      efl_access_object_role_set(eo_item, EFL_ACCESS_ROLE_SEPARATOR);
    else
-      efl_access_role_set(eo_item, EFL_ACCESS_ROLE_LIST_ITEM);
+      efl_access_object_role_set(eo_item, EFL_ACCESS_ROLE_LIST_ITEM);
 }
 
 EOLIAN static Eina_Bool
@@ -3157,10 +3157,10 @@ _elm_list_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, El
 }
 
 EOLIAN Eina_List*
-_elm_list_efl_access_access_children_get(const Eo *obj, Elm_List_Data *pd)
+_elm_list_efl_access_object_access_children_get(const Eo *obj, Elm_List_Data *pd)
 {
    Eina_List *ret;
-   ret = efl_access_children_get(efl_super(obj, ELM_LIST_CLASS));
+   ret = efl_access_object_access_children_get(efl_super(obj, ELM_LIST_CLASS));
    return eina_list_merge(eina_list_clone(pd->items), ret);
 }
 

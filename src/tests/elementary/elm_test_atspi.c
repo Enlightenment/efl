@@ -3,8 +3,8 @@
 #endif
 
 #define ELM_INTERNAL_API_ARGESFSDFEFC
-#define EFL_ACCESS_BETA
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_BETA
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -36,7 +36,7 @@ EFL_START_TEST (test_efl_access_app_obj_name_get)
 
    elm_app_name_set("Test name");
 
-   ret = efl_access_i18n_name_get(root);
+   ret = efl_access_object_i18n_name_get(root);
 
    ck_assert_str_eq(ret, "Test name");
 
@@ -44,13 +44,13 @@ EFL_START_TEST (test_efl_access_app_obj_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_i18n_name_get)
+EFL_START_TEST (test_efl_access_object_i18n_name_get)
 {
    generate_app();
 
    const char *name;
 
-   name = efl_access_i18n_name_get(g_btn);
+   name = efl_access_object_i18n_name_get(g_btn);
 
    if (name && name[0]) {
       ck_assert(0);
@@ -59,7 +59,7 @@ EFL_START_TEST (test_efl_access_i18n_name_get)
    // Set name with additional text tags
    elm_object_text_set(g_btn, "Some<br>text");
 
-   name = efl_access_i18n_name_get(g_btn);
+   name = efl_access_object_i18n_name_get(g_btn);
 
    // Accessible name should have cleared tags
    ck_assert(name != NULL);
@@ -68,22 +68,22 @@ EFL_START_TEST (test_efl_access_i18n_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_i18n_name_set)
+EFL_START_TEST (test_efl_access_object_i18n_name_set)
 {
    generate_app();
 
    const char *name;
 
    elm_object_text_set(g_btn, "Other text");
-   efl_access_i18n_name_set(g_btn, "Test name");
+   efl_access_object_i18n_name_set(g_btn, "Test name");
 
-   name = efl_access_i18n_name_get(g_btn);
+   name = efl_access_object_i18n_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Test name");
 
-   efl_access_i18n_name_set(g_btn, NULL);
-   name = efl_access_i18n_name_get(g_btn);
+   efl_access_object_i18n_name_set(g_btn, NULL);
+   name = efl_access_object_i18n_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Other text");
@@ -91,13 +91,13 @@ EFL_START_TEST (test_efl_access_i18n_name_set)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_role_get)
+EFL_START_TEST (test_efl_access_object_role_get)
 {
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    Efl_Access_Role role;
 
-   role = efl_access_role_get(root);
+   role = efl_access_object_role_get(root);
 
    ck_assert(role == EFL_ACCESS_ROLE_APPLICATION);
 
@@ -105,19 +105,19 @@ EFL_START_TEST (test_efl_access_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_role_set)
+EFL_START_TEST (test_efl_access_object_role_set)
 {
    generate_app();
    Efl_Access_Role role;
 
-   efl_access_role_set(g_btn, EFL_ACCESS_ROLE_ACCELERATOR_LABEL);
-   role = efl_access_role_get(g_btn);
+   efl_access_object_role_set(g_btn, EFL_ACCESS_ROLE_ACCELERATOR_LABEL);
+   role = efl_access_object_role_get(g_btn);
 
    if (role != EFL_ACCESS_ROLE_ACCELERATOR_LABEL)
       ck_assert(0);
 
-   efl_access_role_set(g_btn, EFL_ACCESS_ROLE_ENTRY);
-   role = efl_access_role_get(g_btn);
+   efl_access_object_role_set(g_btn, EFL_ACCESS_ROLE_ENTRY);
+   role = efl_access_object_role_get(g_btn);
 
    if (role != EFL_ACCESS_ROLE_ENTRY)
       ck_assert(0);
@@ -125,13 +125,13 @@ EFL_START_TEST (test_efl_access_role_set)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_role_name_get)
+EFL_START_TEST (test_efl_access_object_role_name_get)
 {
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
 
-   ret = efl_access_role_name_get(root);
+   ret = efl_access_object_role_name_get(root);
 
    ck_assert(ret != NULL);
 
@@ -139,13 +139,13 @@ EFL_START_TEST (test_efl_access_role_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_localized_role_name_get)
+EFL_START_TEST (test_efl_access_object_localized_role_name_get)
 {
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    const char *ret = NULL;
 
-   ret = efl_access_localized_role_name_get(root);
+   ret = efl_access_object_localized_role_name_get(root);
 
    ck_assert(ret != NULL);
 
@@ -153,7 +153,7 @@ EFL_START_TEST (test_efl_access_localized_role_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_description_set)
+EFL_START_TEST (test_efl_access_object_description_set)
 {
    Eo* root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
@@ -161,18 +161,18 @@ EFL_START_TEST (test_efl_access_description_set)
 
    const char *desc = "Test description";
 
-   ret = efl_access_description_get(root);
+   ret = efl_access_object_description_get(root);
 
    ck_assert(ret == NULL);
 
-   efl_access_description_set(root, desc);
-   ret = efl_access_description_get(root);
+   efl_access_object_description_set(root, desc);
+   ret = efl_access_object_description_get(root);
 
    ck_assert(ret != NULL);
    ck_assert_str_eq(ret, "Test description");
 
-   efl_access_description_set(root, NULL);
-   ret = efl_access_description_get(root);
+   efl_access_object_description_set(root, NULL);
+   ret = efl_access_object_description_get(root);
 
    ck_assert(ret == NULL);
 
@@ -181,12 +181,12 @@ EFL_START_TEST (test_efl_access_description_set)
 EFL_END_TEST
 
 /* Test if initial description value is NULL */
-EFL_START_TEST (test_efl_access_description_get)
+EFL_START_TEST (test_efl_access_object_description_get)
 {
    generate_app();
 
    const char *descr;
-   descr = efl_access_description_get(g_bg);
+   descr = efl_access_object_description_get(g_bg);
 
    ck_assert(descr == NULL);
 
@@ -200,9 +200,9 @@ EFL_START_TEST (test_efl_access_children_and_parent)
 
    Eina_List *child_list = NULL;
 
-   child_list = efl_access_children_get(root);
+   child_list = efl_access_object_access_children_get(root);
 
-   //bg_child_list = efl_access_children_get(eina_list_nth(child_list, 0));
+   //bg_child_list = efl_access_object_access_children_get(eina_list_nth(child_list, 0));
 
    ck_assert(eina_list_count(child_list) == 1);
 
@@ -225,11 +225,11 @@ EFL_START_TEST (test_efl_access_children_and_parent2)
    Eo *win = NULL;
 
    Eina_List *root_children;
-   root_children = efl_access_children_get(root);
+   root_children = efl_access_object_access_children_get(root);
    win = eina_list_nth(root_children, 0);
 
    Eina_List *win_children;
-   win_children = efl_access_children_get(win);
+   win_children = efl_access_object_access_children_get(win);
 
    ck_assert(eina_list_count(win_children) == 1);
 
@@ -244,40 +244,40 @@ EFL_START_TEST (test_efl_access_children_and_parent2)
 EFL_END_TEST
 
 /* Initial value of translation domain should be NULL */
-EFL_START_TEST (test_efl_access_translation_domain_get)
+EFL_START_TEST (test_efl_access_object_translation_domain_get)
 {
    generate_app();
 
    const char *domain;
 
-   domain = efl_access_translation_domain_get(g_btn);
+   domain = efl_access_object_translation_domain_get(g_btn);
 
    ck_assert(domain == NULL);
 
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_translation_domain_set)
+EFL_START_TEST (test_efl_access_object_translation_domain_set)
 {
    generate_app();
 
    const char *domain;
 
-   efl_access_translation_domain_set(g_btn, "Test translation_domain");
-   domain = efl_access_translation_domain_get(g_btn);
+   efl_access_object_translation_domain_set(g_btn, "Test translation_domain");
+   domain = efl_access_object_translation_domain_get(g_btn);
 
    ck_assert(domain != NULL);
    ck_assert_str_eq(domain, "Test translation_domain");
 
-   efl_access_translation_domain_set(g_btn, NULL);
-   domain = efl_access_translation_domain_get(g_btn);
+   efl_access_object_translation_domain_set(g_btn, NULL);
+   domain = efl_access_object_translation_domain_get(g_btn);
 
    ck_assert(domain == NULL);
 
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_relationship_append)
+EFL_START_TEST (test_efl_access_object_relationship_append)
 {
    generate_app();
 
@@ -285,9 +285,9 @@ EFL_START_TEST (test_efl_access_relationship_append)
    Efl_Access_Relation *rel, *rel_to, *rel_from;
    Eina_List *l;
 
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
-   set = efl_access_relation_set_get(g_btn);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   set = efl_access_object_relation_set_get(g_btn);
 
    ck_assert(set != NULL);
    ck_assert(eina_list_count(set) >= 2);
@@ -310,9 +310,9 @@ EFL_START_TEST (test_efl_access_relationship_append)
    efl_access_relation_set_free(set);
 
    /* Check if append do not procude duplicated relations */
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
-   set = efl_access_relation_set_get(g_btn);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   set = efl_access_object_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;
    EINA_LIST_FOREACH(set, l, rel)
@@ -338,7 +338,7 @@ EFL_START_TEST (test_efl_access_relationship_append)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_relationship_remove)
+EFL_START_TEST (test_efl_access_object_relationship_remove)
 {
    generate_app();
 
@@ -347,10 +347,10 @@ EFL_START_TEST (test_efl_access_relationship_remove)
    Eina_List *l;
 
    /* Test if removal of single relationship works */
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
-   efl_access_relationship_remove(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   set = efl_access_relation_set_get(g_btn);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   efl_access_object_relationship_remove(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   set = efl_access_object_relation_set_get(g_btn);
 
    ck_assert(set != NULL);
    ck_assert(eina_list_count(set) >= 1);
@@ -371,10 +371,10 @@ EFL_START_TEST (test_efl_access_relationship_remove)
    efl_access_relation_set_free(set);
 
    /* Test if removal of type relationship works */
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_win);
-   efl_access_relationship_remove(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, NULL);
-   set = efl_access_relation_set_get(g_btn);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_win);
+   efl_access_object_relationship_remove(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, NULL);
+   set = efl_access_object_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;
    EINA_LIST_FOREACH(set, l, rel)
@@ -392,10 +392,10 @@ EFL_START_TEST (test_efl_access_relationship_remove)
    efl_access_relation_set_free(set);
 
    /* Test if relationship is implicity removed when object is deleted */
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_bg);
    efl_del(g_bg);
-   set = efl_access_relation_set_get(g_btn);
+   set = efl_access_object_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;
    EINA_LIST_FOREACH(set, l, rel)
@@ -413,7 +413,7 @@ EFL_START_TEST (test_efl_access_relationship_remove)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_relationships_clear)
+EFL_START_TEST (test_efl_access_object_relationships_clear)
 {
    Efl_Access_Relation_Set set;
    Efl_Access_Relation *rel;
@@ -421,14 +421,14 @@ EFL_START_TEST (test_efl_access_relationships_clear)
 
    generate_app();
 
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_bg);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_win);
-   efl_access_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_win);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
 
-   efl_access_relationships_clear(g_btn);
+   efl_access_object_relationships_clear(g_btn);
 
-   set = efl_access_relation_set_get(g_btn);
+   set = efl_access_object_relation_set_get(g_btn);
    EINA_LIST_FOREACH(set, l, rel)
    {
       ck_assert(!((rel->type == EFL_ACCESS_RELATION_FLOWS_TO) && eina_list_data_find(rel->objects, g_bg)));
@@ -444,19 +444,19 @@ EFL_END_TEST
 void elm_test_atspi(TCase *tc)
 {
    tcase_add_test(tc, test_efl_access_app_obj_name_get);
-   tcase_add_test(tc, test_efl_access_i18n_name_get);
-   tcase_add_test(tc, test_efl_access_i18n_name_set);
-   tcase_add_test(tc, test_efl_access_role_get);
-   tcase_add_test(tc, test_efl_access_role_set);
-   tcase_add_test(tc, test_efl_access_role_name_get);
-   tcase_add_test(tc, test_efl_access_localized_role_name_get);
-   tcase_add_test(tc, test_efl_access_description_set);
-   tcase_add_test(tc, test_efl_access_description_get);
+   tcase_add_test(tc, test_efl_access_object_i18n_name_get);
+   tcase_add_test(tc, test_efl_access_object_i18n_name_set);
+   tcase_add_test(tc, test_efl_access_object_role_get);
+   tcase_add_test(tc, test_efl_access_object_role_set);
+   tcase_add_test(tc, test_efl_access_object_role_name_get);
+   tcase_add_test(tc, test_efl_access_object_localized_role_name_get);
+   tcase_add_test(tc, test_efl_access_object_description_set);
+   tcase_add_test(tc, test_efl_access_object_description_get);
    tcase_add_test(tc, test_efl_access_children_and_parent);
    tcase_add_test(tc, test_efl_access_children_and_parent2);
-   tcase_add_test(tc, test_efl_access_translation_domain_get);
-   tcase_add_test(tc, test_efl_access_translation_domain_set);
-   tcase_add_test(tc, test_efl_access_relationship_append);
-   tcase_add_test(tc, test_efl_access_relationship_remove);
-   tcase_add_test(tc, test_efl_access_relationships_clear);
+   tcase_add_test(tc, test_efl_access_object_translation_domain_get);
+   tcase_add_test(tc, test_efl_access_object_translation_domain_set);
+   tcase_add_test(tc, test_efl_access_object_relationship_append);
+   tcase_add_test(tc, test_efl_access_object_relationship_remove);
+   tcase_add_test(tc, test_efl_access_object_relationships_clear);
 }

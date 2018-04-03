@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -3961,7 +3961,7 @@ _elm_gengrid_item_efl_object_constructor(Eo *eo_it, Elm_Gen_Item *it)
 {
    eo_it = efl_constructor(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
    it->base = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
-   efl_access_role_set(eo_it, EFL_ACCESS_ROLE_LIST_ITEM);
+   efl_access_object_role_set(eo_it, EFL_ACCESS_ROLE_LIST_ITEM);
 
    return eo_it;
 }
@@ -4274,7 +4274,7 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
 
    efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _gengrid_element_focused, obj);
 
@@ -5382,12 +5382,12 @@ _elm_gengrid_item_select_mode_get(const Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 }
 
 EOLIAN Efl_Access_State_Set
-_elm_gengrid_item_efl_access_state_set_get(const Eo *eo_it, Elm_Gen_Item *it EINA_UNUSED)
+_elm_gengrid_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Gen_Item *it EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = efl_access_state_set_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
 
    sel = elm_obj_gengrid_item_selected_get(eo_it);
 
@@ -5400,13 +5400,13 @@ _elm_gengrid_item_efl_access_state_set_get(const Eo *eo_it, Elm_Gen_Item *it EIN
 }
 
 EOLIAN const char*
-_elm_gengrid_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Gen_Item *it)
+_elm_gengrid_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Gen_Item *it)
 {
    const char *ret;
    Eina_Strbuf *buf;
    char *accessible_name;
 
-   ret = efl_access_i18n_name_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
+   ret = efl_access_object_i18n_name_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
    if (ret) return ret;
 
    buf = eina_strbuf_new();
@@ -5582,7 +5582,7 @@ _elm_gengrid_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN Eina_List*
-_elm_gengrid_efl_access_access_children_get(const Eo *obj, Elm_Gengrid_Data *sd)
+_elm_gengrid_efl_access_object_access_children_get(const Eo *obj, Elm_Gengrid_Data *sd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
    Elm_Gen_Item *it;
@@ -5590,17 +5590,17 @@ _elm_gengrid_efl_access_access_children_get(const Eo *obj, Elm_Gengrid_Data *sd)
    EINA_INLIST_FOREACH(sd->items, it)
       ret = eina_list_append(ret, EO_OBJ(it));
 
-   ret2 = efl_access_children_get(efl_super(obj, ELM_GENGRID_CLASS));
+   ret2 = efl_access_object_access_children_get(efl_super(obj, ELM_GENGRID_CLASS));
 
    return eina_list_merge(ret, ret2);
 }
 
 EOLIAN Efl_Access_State_Set
-_elm_gengrid_efl_access_state_set_get(const Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
+_elm_gengrid_efl_access_object_state_set_get(const Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
 
-   ret = efl_access_state_set_get(efl_super(obj, ELM_GENGRID_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, ELM_GENGRID_CLASS));
 
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
 

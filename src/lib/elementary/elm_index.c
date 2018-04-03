@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -543,7 +543,7 @@ _elm_index_item_efl_object_constructor(Eo *obj, Elm_Index_Item_Data *it)
 {
    obj = efl_constructor(efl_super(obj, ELM_INDEX_ITEM_CLASS));
    it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_MENU_ITEM);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_RADIO_MENU_ITEM);
 
    return obj;
 }
@@ -1211,7 +1211,7 @@ _elm_index_efl_object_constructor(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SCROLL_BAR);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SCROLL_BAR);
 
    return obj;
 }
@@ -1677,18 +1677,18 @@ _item_action_activate(Eo *obj, const char *params EINA_UNUSED EINA_UNUSED)
 }
 
 EOLIAN static Eina_List*
-_elm_index_efl_access_access_children_get(const Eo *obj, Elm_Index_Data *data)
+_elm_index_efl_access_object_access_children_get(const Eo *obj, Elm_Index_Data *data)
 {
    Eina_List *ret;
-   ret = efl_access_children_get(efl_super(obj, ELM_INDEX_CLASS));
+   ret = efl_access_object_access_children_get(efl_super(obj, ELM_INDEX_CLASS));
    return eina_list_merge(eina_list_clone(data->items), ret);
 }
 
 EOLIAN static const char*
-_elm_index_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Index_Item_Data *data)
+_elm_index_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Index_Item_Data *data)
 {
    const char *name;
-   name = efl_access_i18n_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
    if (name) return name;
 
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->letter);

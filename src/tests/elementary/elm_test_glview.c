@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -41,7 +41,7 @@ EFL_START_TEST (elm_atspi_role_get)
    // if no gl backend skip test
    if (glview)
      {
-        role = efl_access_role_get(glview);
+        role = efl_access_object_role_get(glview);
         ck_assert(role == EFL_ACCESS_ROLE_ANIMATION);
      }
 

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
@@ -1789,7 +1789,7 @@ _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Dat
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
    return obj;
 }

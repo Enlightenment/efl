@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 #include "elm_test_helper.h"
@@ -35,7 +35,7 @@ EFL_START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
-   role = efl_access_role_get(gengrid);
+   role = efl_access_object_role_get(gengrid);
 
    ck_assert(role == EFL_ACCESS_ROLE_TREE_TABLE);
 
@@ -69,7 +69,7 @@ EFL_START_TEST(elm_atspi_children_parent)
    Evas_Object *gengrid = elm_gengrid_add(win);
    evas_object_resize(gengrid, 100, 100);
 
-   Efl_Access *parent;
+   Efl_Access_Object *parent;
    content = NULL;
 
    itc.item_style = "default";
@@ -82,7 +82,7 @@ EFL_START_TEST(elm_atspi_children_parent)
    elm_gengrid_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
 
    ck_assert(content != NULL);
-   parent = efl_provider_find(efl_parent_get(content), EFL_ACCESS_MIXIN);
+   parent = efl_provider_find(efl_parent_get(content), EFL_ACCESS_OBJECT_MIXIN);
    ck_assert(it == parent);
 
 }

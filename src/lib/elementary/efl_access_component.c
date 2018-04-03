@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_COMPONENT_BETA
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -47,7 +47,7 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
    Eina_List *l, *children;
    Eo *ret = NULL, *child;
 
-   children = efl_access_children_get(obj);
+   children = efl_access_object_access_children_get(obj);
 
    EINA_LIST_FOREACH(children, l, child)
      {

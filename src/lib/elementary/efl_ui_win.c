@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
@@ -2271,7 +2271,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         Eo *root;
         efl_access_window_created_signal_emit(obj);
-        root = efl_access_root_get(EFL_ACCESS_MIXIN);
+        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
         if (root)
            efl_access_children_changed_added_signal_emit(root, obj);
      }
@@ -2325,7 +2325,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (_elm_config->atspi_mode)
      {
         Eo *root;
-        root = efl_access_root_get(EFL_ACCESS_MIXIN);
+        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
         efl_access_window_destroyed_signal_emit(obj);
         if (root)
            efl_access_children_changed_del_signal_emit(root, obj);
@@ -4324,7 +4324,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
                   efreet_desktop_free(d);
                }
           }
-        efl_access_type_set(sd->icon, EFL_ACCESS_TYPE_DISABLED);
+        efl_access_object_access_type_set(sd->icon, EFL_ACCESS_TYPE_DISABLED);
      }
 
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
@@ -5376,7 +5376,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
           elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
      }
 
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_WINDOW);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
      efl_access_window_created_signal_emit(obj);
 
@@ -6955,10 +6955,10 @@ _efl_ui_win_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_win_efl_access_state_set_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, MY_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
    if (elm_win_focus_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ACTIVE);
@@ -6967,10 +6967,10 @@ _efl_ui_win_efl_access_state_set_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNU
 }
 
 EOLIAN static const char*
-_efl_ui_win_efl_access_i18n_name_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    const char *ret;
-   ret = efl_access_i18n_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
+   ret = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
    return name;
@@ -7024,7 +7024,7 @@ _efl_ui_win_efl_object_provider_find(const Eo *obj,
       return (Eo *)obj;
 
    // attach all kinds of windows directly to ATSPI application root object
-   if (klass == EFL_ACCESS_MIXIN) return efl_access_root_get(EFL_ACCESS_MIXIN);
+   if (klass == EFL_ACCESS_OBJECT_MIXIN) return efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
 
     if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
       return pd->provider;

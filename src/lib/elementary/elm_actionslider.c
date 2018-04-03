@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -548,7 +548,7 @@ _elm_actionslider_efl_object_constructor(Eo *obj, Elm_Actionslider_Data *_pd EIN
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SLIDER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SLIDER);
 
    return obj;
 }

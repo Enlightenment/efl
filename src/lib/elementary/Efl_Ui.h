@@ -161,7 +161,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_translatable.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
-# include <efl_access.h>
+# include <efl_access_object.h>
 # include <efl_access_text.h>
 # include <efl_access_window.h>
 

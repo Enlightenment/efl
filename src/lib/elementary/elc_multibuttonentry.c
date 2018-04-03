@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 //#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
@@ -748,12 +748,12 @@ _item_new(Elm_Multibuttonentry_Data *sd,
      return NULL;
    WIDGET_ITEM_DATA_SET(eo_item, data);
 
-   efl_access_role_set(eo_item, EFL_ACCESS_ROLE_RADIO_BUTTON);
+   efl_access_object_role_set(eo_item, EFL_ACCESS_ROLE_RADIO_BUTTON);
 
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
    VIEW(item) = elm_layout_add(obj);
 
-   efl_access_type_set(VIEW(item), EFL_ACCESS_TYPE_DISABLED);
+   efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_DISABLED);
 
    if (!elm_layout_theme_set(VIEW(item), "multibuttonentry", PART_NAME_BUTTON,
                              elm_widget_style_get(obj)))
@@ -1683,7 +1683,7 @@ _elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
    //listen to manager changes here
    efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
@@ -1977,18 +1977,18 @@ _elm_multibuttonentry_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_List*
-_elm_multibuttonentry_efl_access_access_children_get(const Eo *obj, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_efl_access_object_access_children_get(const Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    Eina_List *ret;
-   ret = efl_access_children_get(efl_super(obj, ELM_MULTIBUTTONENTRY_CLASS));
+   ret = efl_access_object_access_children_get(efl_super(obj, ELM_MULTIBUTTONENTRY_CLASS));
    return eina_list_merge(eina_list_clone(sd->items), ret);
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
+_elm_multibuttonentry_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
 {
    const char *ret;
-   ret = efl_access_i18n_name_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+   ret = efl_access_object_i18n_name_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
    if (ret) return ret;
 
    ret = elm_object_part_text_get(VIEW(item), "elm.btn.text");
@@ -1996,12 +1996,12 @@ _elm_multibuttonentry_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Multibu
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_multibuttonentry_item_efl_access_state_set_get(const Eo *eo_it, Elm_Multibuttonentry_Item_Data *sd EINA_UNUSED)
+_elm_multibuttonentry_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Multibuttonentry_Item_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = efl_access_state_set_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
 
    sel = elm_obj_multibuttonentry_item_selected_get(eo_it);
 

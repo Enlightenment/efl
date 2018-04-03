@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -1522,10 +1522,10 @@ _elm_access_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_access_efl_access_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
+_elm_access_efl_access_object_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, ELM_ACCESS_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, ELM_ACCESS_CLASS));
 
    Elm_Access_Info *info = _elm_access_info_get(obj);
    if (info && !evas_object_visible_get(info->part_object))

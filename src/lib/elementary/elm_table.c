@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -137,7 +137,7 @@ _elm_table_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
 }

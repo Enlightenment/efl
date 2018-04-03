@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_WIDGET_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
@@ -695,7 +695,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
 
    return obj;
 }
@@ -853,10 +853,10 @@ _elm_hover_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_hover_efl_access_state_set_get(const Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
+_elm_hover_efl_access_object_state_set_get(const Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set states;
-   states = efl_access_state_set_get(efl_super(obj, MY_CLASS));
+   states = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
    STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
    return states;

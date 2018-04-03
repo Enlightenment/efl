@@ -4,7 +4,7 @@ import efl_ui;
 type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 
-class Elm.Widget.Item(Efl.Object, Efl.Access,
+class Elm.Widget.Item(Efl.Object, Efl.Access.Object,
                       Efl.Access.Component)
 {
       [[Elementary widget item class]]
@@ -540,8 +540,8 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
            Efl.Object.constructor;
            Efl.Object.destructor;
            Efl.Object.del;
-           Efl.Access.state_set { get; }
-           Efl.Access.attributes { get; }
+           Efl.Access.Object.state_set { get; }
+           Efl.Access.Object.attributes { get; }
            Efl.Access.Component.extents { get; set; }
            Efl.Access.Component.focus_grab;
       }

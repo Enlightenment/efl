@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_WIDGET_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -479,7 +479,7 @@ _elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
 
    return obj;
 }

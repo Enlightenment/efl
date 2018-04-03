@@ -176,8 +176,8 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Access.Widget.Action, Efl.Ui.Legacy)
       Efl.Ui.Widget.widget_event;
       Efl.Layout.Signal.signal_emit;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.state_set { get; }
-      Efl.Access.i18n_name { get; }
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
       Efl.Part.part;
    }
    events {
