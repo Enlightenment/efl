@@ -719,7 +719,8 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
 
    _efl_canvas_vg_node_changed(obj);
 
-   return r;
+   if (!r) return EINA_FALSE;
+   return efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 }
 
 EOLIAN static Efl_VG *
