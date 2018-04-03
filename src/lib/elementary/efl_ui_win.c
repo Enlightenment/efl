@@ -139,7 +139,7 @@ struct _Efl_Ui_Win_Data
       struct wl_surface *surf;
 #endif
       Ecore_Evas  *ee;
-      Evas_Object *obj, *hot_obj;
+      Evas_Object *obj;
       int          hot_x, hot_y;
       Eina_Bool    visible : 1;
    } pointer;
