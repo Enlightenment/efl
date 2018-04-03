@@ -323,8 +323,10 @@ _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
              Eina_Promise *p = pd->promise;
              int exit_code = efl_task_exit_code_get(obj);
              pd->promise = NULL;
-             if (exit_code != 0) eina_promise_reject(p, exit_code + 1000000);
-             else eina_promise_resolve(p, eina_value_int_init(0));
+             if ((exit_code != 0) && (!(efl_task_flags_get(obj) &
+                                        EFL_TASK_FLAGS_NO_EXIT_CODE_ERROR)))
+               eina_promise_reject(p, exit_code + 1000000);
+             else eina_promise_resolve(p, eina_value_int_init(exit_code));
           }
      }
 }

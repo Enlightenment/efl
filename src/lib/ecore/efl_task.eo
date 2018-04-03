@@ -12,9 +12,10 @@ enum Efl.Task.Priority {
 
 enum Efl.Task.Flags {
    [[ ]]
-   none             = 0,
-   use_stdin        = 1,
-   use_stdout       = 2
+   none               = 0,
+   use_stdin          = 1,
+   use_stdout         = 2,
+   no_exit_code_error = 4,
 }
 
 class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
