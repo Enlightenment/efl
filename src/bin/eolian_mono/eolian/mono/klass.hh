@@ -384,7 +384,7 @@ struct klass
              << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer), " << class_get_name << "());\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer), \"" << string << "\", " << class_get_name << "());\n"
              //<< scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(null/*new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer)*/, " << class_get_name << "());\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
@@ -423,7 +423,7 @@ struct klass
             .generate(sink
               , std::make_tuple(
                 cls, cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
-                , cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
+                , cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
                 , cls.cxx_name)
               , inherit_cxt))
            return false;

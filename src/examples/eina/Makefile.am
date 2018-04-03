@@ -153,7 +153,7 @@ EinaHash01Mono_SOURCES = EinaHash01.cs
 
 EinaArray01Mono$(EXEEXT): $(EinaArray01Mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 EinaArray01.csproj: $(EinaArray01Mono_SOURCES) $(am_dirstamp)
 	@rm -f $@
@@ -161,7 +161,7 @@ EinaArray01.csproj: $(EinaArray01Mono_SOURCES) $(am_dirstamp)
 
 EinaBinbuf01Mono$(EXEEXT): $(EinaBinbuf01Mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 EinaBinbuf01.csproj: $(EinaBinbuf01Mono_SOURCES) $(am_dirstamp)
 	@rm -f $@
@@ -169,7 +169,7 @@ EinaBinbuf01.csproj: $(EinaBinbuf01Mono_SOURCES) $(am_dirstamp)
 
 EinaError01Mono$(EXEEXT): $(EinaError01Mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 EinaError01.csproj: $(EinaError01Mono_SOURCES) $(am_dirstamp)
 	@rm -f $@
@@ -177,7 +177,7 @@ EinaError01.csproj: $(EinaError01Mono_SOURCES) $(am_dirstamp)
 
 EinaHash01Mono$(EXEEXT): $(EinaHash01Mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 EinaHash01.csproj: $(EinaHash01Mono_SOURCES) $(am_dirstamp)
 	@rm -f $@

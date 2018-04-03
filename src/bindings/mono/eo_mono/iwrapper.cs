@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using static eina.NativeCustomExportFunctions;
 
@@ -70,11 +71,11 @@ public class Globals {
 
     public delegate byte class_initializer(IntPtr klass);
     
-    public static IntPtr register_class(class_initializer initializer, IntPtr base_klass)
+    public static IntPtr register_class(class_initializer initializer, String class_name, IntPtr base_klass)
     {
         ClassDescription description;
         description.version = 2; // EO_VERSION
-        description.name = "BoxInherit";
+        description.name = class_name;
         description.class_type = 0; // REGULAR
         description.data_size = (UIntPtr)8;
         description.class_initializer = IntPtr.Zero;
@@ -101,7 +102,7 @@ public class Globals {
         if(parent != null)
             parent_ptr = parent.raw_handle;
 
-        System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 0, 0);
+        System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
         return eo;
     }
 
