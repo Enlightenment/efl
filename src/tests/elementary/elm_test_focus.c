@@ -742,6 +742,61 @@ START_TEST(test_request_subchild_child_regular_regular)
 }
 END_TEST
 
+START_TEST(test_unregister_last_focused_no_history)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *root, *c1, *c2, *c3;
+
+   char *args[] = { "exe" };
+   elm_init(1, args);
+
+   m = elm_focus_test_manager_new(&root);
+   c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
+   c2 = elm_focus_test_object_new("child2", 0, 0, 20, 20);
+   c3 = elm_focus_test_object_new("child3", 0, 0, 20, 20);
+   efl_ui_focus_manager_calc_register(m, c1, root, NULL);
+   efl_ui_focus_manager_calc_register(m, c2, root, NULL);
+   efl_ui_focus_manager_calc_register(m, c3, root, NULL);
+
+   efl_ui_focus_manager_focus_set(m, c2);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c2);
+
+   efl_ui_focus_manager_calc_unregister(m, c2);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c1);
+
+   efl_del(m);
+   elm_shutdown();
+}
+END_TEST
+
+START_TEST(test_unregister_last_focused)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *root, *c1, *c2, *c3;
+
+   char *args[] = { "exe" };
+   elm_init(1, args);
+
+   m = elm_focus_test_manager_new(&root);
+   c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
+   c2 = elm_focus_test_object_new("child2", 0, 0, 20, 20);
+   c3 = elm_focus_test_object_new("child3", 0, 0, 20, 20);
+   efl_ui_focus_manager_calc_register(m, c1, root, NULL);
+   efl_ui_focus_manager_calc_register(m, c2, root, NULL);
+   efl_ui_focus_manager_calc_register(m, c3, root, NULL);
+
+   efl_ui_focus_manager_focus_set(m, c2);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c2);
+   efl_ui_focus_manager_focus_set(m, c3);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c3);
+
+   efl_ui_focus_manager_calc_unregister(m, c3);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c2);
+
+   efl_del(m);
+   elm_shutdown();
+}
+END_TEST
 void elm_test_focus(TCase *tc)
 {
     tcase_add_test(tc, focus_register_twice);
@@ -764,4 +819,6 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, test_request_subchild_child_alongside);
     tcase_add_test(tc, test_request_subchild_child_logical_regular);
     tcase_add_test(tc, test_request_subchild_child_regular_regular);
+    tcase_add_test(tc, test_unregister_last_focused_no_history);
+    tcase_add_test(tc, test_unregister_last_focused);
 }
