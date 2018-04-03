@@ -1511,6 +1511,20 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED
      }
 }
 
+static int
+_node_depth(Node *node)
+{
+  int i = 0;
+
+  while (node->tree.parent)
+    {
+      node = node->tree.parent;
+      i++;
+    }
+
+  return i;
+}
+
 static Node*
 _request_subchild(Node *node)
 {
@@ -1519,19 +1533,22 @@ _request_subchild(Node *node)
 
    if (node->tree.children)
      {
-        target = node;
+        int new_depth, old_depth = _node_depth(node);
 
+        target = node;
         //try to find a child that is not logical or has a redirect manager
-        while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager)
+        do
           {
              if (target != node)
                efl_ui_focus_object_prepare_logical(target->focusable);
 
              target = _next(target);
              //abort if we are exceeding the childrens of node
-             if (target == node) target = NULL;
-          }
+             new_depth = _node_depth(target);
 
+             if (new_depth <= old_depth) target = NULL;
+          }
+        while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager);
         F_DBG("Found node %p", target);
      }
 
