@@ -157,8 +157,6 @@ _efl_canvas_vg_shape_efl_gfx_path_interpolate(Eo *obj,
 
    r = efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 
-   r &= efl_gfx_path_interpolate(obj, from, to, pos_map);
-
    if (fromd->fill && tod->fill && pd->fill)
      {
         r &= efl_gfx_path_interpolate(pd->fill, fromd->fill, tod->fill, pos_map);
