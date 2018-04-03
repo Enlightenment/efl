@@ -134,6 +134,7 @@ main(void)
    for (i = 0; i < sizeof (batmans_path) / sizeof (batmans_path[0]); i++)
      {
        batmans_vg[i] = evas_vg_shape_add(vg);
+       evas_vg_node_origin_set(batmans_vg[i], 100, 150);
        evas_vg_node_color_set(batmans_vg[i], 0, 0, 0, 255);
        evas_vg_shape_stroke_color_set(batmans_vg[i], 128, 10,10, 128);
        evas_vg_shape_stroke_width_set(batmans_vg[i], 4.0);
