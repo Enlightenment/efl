@@ -110,6 +110,43 @@ typedef struct
 
 static int _eo_nostep_alloc = -1;
 
+static void
+_efl_pending_futures_clear(Efl_Object_Data *pd)
+{
+   while (pd->pending_futures)
+     {
+        Efl_Future_Pending *pending = EINA_INLIST_CONTAINER_GET(pd->pending_futures, Efl_Future_Pending);
+        Eina_Future *future = *pending->desc.storage;
+        assert(future);
+        eina_future_cancel(future);
+     }
+}
+
+// Generate the invalidate event in all case and make sure it happens
+// before any user code can change the children invalidate state. This
+// make sure that the entire tree of object is valid at the time of
+// the invalidate event.
+static void
+_efl_invalidate(Eo *obj)
+{
+   efl_event_callback_call(obj, EFL_EVENT_INVALIDATE, NULL);
+
+   efl_invalidate(obj);
+}
+
+static void
+_efl_object_invalidate(Eo *obj, Efl_Object_Data *pd)
+{
+   _efl_pending_futures_clear(pd);
+   efl_parent_set(obj, NULL);
+   pd->invalidate = EINA_TRUE;
+}
+
+static void
+_efl_object_noref(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED)
+{
+}
+
 static inline void
 _efl_object_extension_free(Efl_Object_Extension *ext)
 {
@@ -676,7 +713,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    else
      {
         pd->parent = NULL;
-        if (prev_parent) efl_invalidate(obj);
+        if (prev_parent) _efl_invalidate(obj);
         if (prev_parent && !eo_obj->del_triggered) efl_unref(obj);
      }
 
@@ -1934,18 +1971,6 @@ EAPI const Eina_Value_Type *EFL_DBG_INFO_TYPE = &_EFL_DBG_INFO_TYPE;
 /* EFL_OBJECT_CLASS stuff */
 #define MY_CLASS EFL_OBJECT_CLASS
 
-static void
-_efl_pending_futures_clear(Efl_Object_Data *pd)
-{
-   while (pd->pending_futures)
-     {
-        Efl_Future_Pending *pending = EINA_INLIST_CONTAINER_GET(pd->pending_futures, Efl_Future_Pending);
-        Eina_Future *future = *pending->desc.storage;
-        assert(future);
-        eina_future_cancel(future);
-     }
-}
-
 static Eina_Value
 _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_future)
 {
@@ -2056,7 +2081,8 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
    // This can happen when the object has no parent and get
    // deleted by efl_unref.
    if (!pd->invalidate)
-     efl_invalidate(obj);
+     _efl_invalidate(obj);
+
 
    // special removal - remove from children list by hand after getting
    // child handle in case unparent method is overridden and does
@@ -2168,22 +2194,6 @@ EOLIAN static Eo *
 _efl_object_finalize(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
    return obj;
-}
-
-static void
-_efl_object_invalidate(Eo *obj, Efl_Object_Data *pd)
-{
-   efl_event_callback_call(obj, EFL_EVENT_INVALIDATE, NULL);
-
-   _efl_pending_futures_clear(pd);
-   efl_parent_set(obj, NULL);
-   pd->invalidate = EINA_TRUE;
-}
-
-static void
-_efl_object_noref(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
-{
-   efl_event_callback_call(obj, EFL_EVENT_NOREF, NULL);
 }
 
 EOLIAN static void
