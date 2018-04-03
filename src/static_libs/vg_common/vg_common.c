@@ -762,7 +762,10 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent, Vg_File_Data *vg
         case SVG_NODE_DOC:
         case SVG_NODE_G:
            {
-              vg = evas_vg_container_add(parent);
+              if (!parent)
+                vg = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
+              else
+                vg = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, parent);
               _apply_vg_property(node, vg, vg_data);
               EINA_LIST_FOREACH(node->child, l, child)
                 {
