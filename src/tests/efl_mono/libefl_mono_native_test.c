@@ -3,6 +3,7 @@
 #include "config.h"
 #endif
 
+#include <Ecore.h>
 #include <Eo.h>
 
 #undef EOAPI
