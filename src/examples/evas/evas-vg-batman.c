@@ -133,7 +133,7 @@ main(void)
 
    for (i = 0; i < sizeof (batmans_path) / sizeof (batmans_path[0]); i++)
      {
-        batmans_vg[i] = evas_vg_shape_add(NULL);
+       batmans_vg[i] = evas_vg_shape_add(vg);
        evas_vg_node_color_set(batmans_vg[i], 0, 0, 0, 255);
        evas_vg_shape_stroke_color_set(batmans_vg[i], 128, 10,10, 128);
        evas_vg_shape_stroke_width_set(batmans_vg[i], 4.0);
@@ -150,7 +150,7 @@ main(void)
 
    animation = ecore_animator_timeline_add(1, _animator, NULL);
 
-   root = evas_vg_container_add(NULL);
+   root = evas_vg_container_add(vg);
 
    evas_object_vg_root_node_set(vg, root);
 
@@ -158,7 +158,6 @@ main(void)
    eina_matrix3_identity(&matrix);
    eina_matrix3_scale(&matrix, 1.1, 1.1);
    evas_vg_node_transformation_set(root, &matrix);
-
 
    circle = evas_vg_shape_add(root);
    evas_vg_shape_append_circle(circle, WIDTH / 2, HEIGHT / 2, 200);
