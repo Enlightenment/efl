@@ -238,7 +238,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            "emoticon/happy" or "href=file://image.jpg" etc.
          ]]
          values {
-            item_factory: Efl.Canvas.Text.Factory; [[Factory to create items]]
+            item_factory: Efl.Canvas.Text_Factory; [[Factory to create items]]
          }
       }
       input_panel_show {
