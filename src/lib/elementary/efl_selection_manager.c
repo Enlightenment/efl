@@ -28,7 +28,7 @@ void efl_selection_manager_drop_target_del(Eo *obj, Efl_Object *target_obj, Efl_
 void efl_selection_manager_selection_clear(Eo *obj, Efl_Object *owner, Efl_Selection_Type type, unsigned int seat);
 void efl_selection_manager_drag_start(Eo *obj, Efl_Object *drag_obj, Efl_Selection_Format format, Eina_Slice data, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, unsigned int seat);
 
-static unsigned int managers;
+static Eina_List *managers;
 
 #ifdef HAVE_ELEMENTARY_X
 static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
@@ -45,11 +45,78 @@ static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, un
 static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
 #endif
 
+static Sel_Manager_Seat_Selection *
+_sel_manager_seat_selection_get(Efl_Selection_Manager_Data *pd, unsigned int seat)
+{
+   Eina_List *l = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
+
+   EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
+     {
+        if (seat_sel->seat == seat)
+          break;
+     }
+   if (!seat_sel)
+     ERR("Could not find request seat");
+
+   return seat_sel;
+}
+
 static inline void
-_owner_change_check(Efl_Object *owner, Sel_Manager_Seat_Selection *seat_sel,
+_owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
+                    Sel_Manager_Seat_Selection *seat_sel,
                     Sel_Manager_Selection *sel,
                     Efl_Selection_Type type, Eina_Bool same_win)
 {
+   if (!same_win)
+     {
+        Eina_List *l, *l_next;
+        Eo *man;
+
+        EINA_LIST_FOREACH_SAFE(managers, l, l_next, man)
+          {
+             if (man != manager)
+               {
+                  Eina_List *l2, *l2_next, *l3, *l3_next;
+                  Sel_Manager_Selection_Lost *sel_lost;
+                  Sel_Manager_Seat_Selection *seat_sel2;
+                  Efl_Selection_Manager_Data *pd = efl_data_scope_get(man, MY_CLASS);
+
+                  if (!pd) continue;
+                  EINA_LIST_FOREACH_SAFE(pd->seat_list, l3, l3_next, seat_sel2)
+                    {
+                       EINA_LIST_FOREACH_SAFE(seat_sel2->sel_lost_list, l2, l2_next, sel_lost)
+                         {
+                            if ((sel_lost->request) &&
+                                (sel_lost->type == type))
+                              {
+                                 eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                                 seat_sel2->sel_lost_list = eina_list_remove(seat_sel2->sel_lost_list, sel_lost);
+                                 free(sel_lost);
+                              }
+                         }
+                       seat_sel2->xwin = 0;
+                       if (seat_sel2->sel_list)
+                         {
+                            int i;
+
+                            for (i = 0;
+                                 i < (EFL_SELECTION_TYPE_CLIPBOARD + 1)
+                                 ; i++)
+                              {
+                                 seat_sel2->sel_list[i].xwin = 0;
+                                 seat_sel2->sel_list[i].active = EINA_FALSE;
+                              }
+                         }
+                       if (seat_sel2->sel)
+                         {
+                            seat_sel2->sel->xwin = 0;
+                            seat_sel2->sel->active = EINA_FALSE;
+                         }
+                    }
+               }
+          }
+     }
    if ((sel->owner != NULL) &&
        (sel->owner != owner) && same_win)
      {
@@ -66,23 +133,6 @@ _owner_change_check(Efl_Object *owner, Sel_Manager_Seat_Selection *seat_sel,
                }
           }
      }
-}
-
-static Sel_Manager_Seat_Selection *
-_sel_manager_seat_selection_get(Efl_Selection_Manager_Data *pd, unsigned int seat)
-{
-   Eina_List *l = NULL;
-   Sel_Manager_Seat_Selection *seat_sel = NULL;
-
-   EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
-     {
-        if (seat_sel->seat == seat)
-          break;
-     }
-   if (!seat_sel)
-     ERR("Could not find request seat");
-
-   return seat_sel;
 }
 
 static Sel_Manager_Seat_Selection *
@@ -1155,9 +1205,9 @@ _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *o
    seat_sel->active_type = type;
    sel = seat_sel->sel_list + type;
    //support 1 app with multiple window, 1 selection manager
-   if (sel->xwin == xwin)
+   if (seat_sel->xwin == xwin)
      same_win = EINA_TRUE;
-   _owner_change_check(owner, seat_sel, sel, type, same_win);
+   _owner_change_check(pd->sel_man, owner, seat_sel, sel, type, same_win);
 
    sel->owner = owner;
    free(sel->data.mem);
@@ -5310,7 +5360,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
    pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
                                              _wl_dnd_end, pd);
 #endif
-   managers++;
+   managers = eina_list_append(managers, obj);
    return obj;
 }
 
@@ -5321,6 +5371,7 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
    Eina_List *l;
    Sel_Manager_Dropable *dropable;
 
+   managers = eina_list_remove(managers, obj);
    EINA_LIST_FOREACH(pd->drop_list, l, dropable)
      {
         _drop_target_cbs_del(pd, dropable, dropable->obj);
@@ -5361,7 +5412,6 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
    eina_stringshare_del(pd->text_uri);
 
    efl_destructor(efl_super(obj, MY_CLASS));
-   managers--;
 #if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2) || defined(HAVE_ELEMENTARY_WIN32)
    const char *ev = getenv("ELM_DISPLAY");
 #endif
