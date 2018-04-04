@@ -86,6 +86,7 @@ START_TEST(pos_check)
    efl_del(north);
    efl_del(east);
    efl_del(west);
+   efl_del(m);
 
    elm_shutdown();
 }
@@ -487,6 +488,7 @@ START_TEST(root_redirect_chain)
    ck_assert_ptr_eq(efl_ui_focus_manager_redirect_get(m), m2);
 
    efl_del(m);
+   efl_del(m2);
    elm_shutdown();
 }
 END_TEST
@@ -542,7 +544,7 @@ START_TEST(root_redirect_chain_unset)
 END_TEST
 
 static Efl_Ui_Focus_Manager_Calc*
-_recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right, Efl_Ui_Focus_Object **most_left)
+_recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right, Efl_Ui_Focus_Object **most_left, Eina_List **managers)
 {
    Efl_Ui_Focus_Manager *m, *m_child1 = NULL, *m_child3 = NULL;
    Efl_Ui_Focus_Object *child1, *child3;
@@ -558,8 +560,8 @@ _recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right
 
    if (recusion_depth < 3)
      {
-        m_child1 = _recursive_triangle_manager(recusion_depth + 1, NULL, most_left);
-        m_child3 = _recursive_triangle_manager(recusion_depth + 1, most_right, NULL);
+        m_child1 = _recursive_triangle_manager(recusion_depth + 1, NULL, most_left, managers);
+        m_child3 = _recursive_triangle_manager(recusion_depth + 1, most_right, NULL, managers);
         child1 = efl_ui_focus_manager_root_get(m_child1);
         child3 = efl_ui_focus_manager_root_get(m_child3);
         focus_test_manager_set(child1, m);
@@ -594,6 +596,8 @@ _recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right
    efl_ui_focus_manager_calc_register(m, child2, root, NULL);
    efl_ui_focus_manager_calc_register(m, child3, root, m_child3);
 
+   *managers = eina_list_append(*managers , m);
+
    return m;
 }
 
@@ -614,11 +618,12 @@ START_TEST(first_touch_check)
 {
    Efl_Ui_Focus_Manager *m;
    Efl_Ui_Focus_Object *most_left, *most_right;
+   Eina_List *managers = NULL;
 
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   m = _recursive_triangle_manager(0, &most_right, &most_left);
+   m = _recursive_triangle_manager(0, &most_right, &most_left, &managers);
 
    efl_ui_focus_manager_setup_on_first_touch(m, EFL_UI_FOCUS_DIRECTION_NEXT, efl_ui_focus_manager_root_get(m));
    printf("%p %p\n", most_left, most_right);
@@ -631,7 +636,9 @@ START_TEST(first_touch_check)
    printf("%s\n", efl_name_get(efl_ui_focus_manager_focus_get(_get_highest_redirect(m))));
    ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(_get_highest_redirect(m)), most_right);
 
-   efl_del(m);
+   EINA_LIST_FREE(managers, m)
+     efl_del(m);
+
    elm_shutdown();
 }
 END_TEST
