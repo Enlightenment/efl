@@ -1,4 +1,4 @@
-class Evas.Image (Efl.Canvas.Image.Internal, Efl.File)
+class Evas.Image (Efl.Canvas.Image_Internal, Efl.File)
 {
    [[Internal class for legacy support of Evas Image.]]
    data: null;

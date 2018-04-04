@@ -1,4 +1,4 @@
-class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
+class Efl.Canvas.Image (Efl.Canvas.Image_Internal, Efl.Gfx.Buffer,
                         Efl.Image.Load, Efl.Image.Animated,
                         Efl.File)
 {
