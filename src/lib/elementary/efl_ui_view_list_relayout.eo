@@ -1,13 +1,13 @@
-import efl_ui_list_types;
+import efl_ui_view_list_types;
 
-interface Efl.Ui.List.Relayout (Efl.Interface)
+interface Efl.Ui.View.List.Relayout (Efl.Interface)
 {
    methods {
       layout_do {
          params {
-            modeler: Efl.Ui.List.Model;
+            modeler: Efl.Ui.View.List.Model;
             first: int;
-            children: Efl.Ui.List.SegArray;
+            children: Efl.Ui.View.List.SegArray;
          }
       }
       @property model {

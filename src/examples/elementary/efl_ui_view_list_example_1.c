@@ -1,4 +1,4 @@
-// gcc -o efl_ui_list_example_1 efl_ui_list_example_1.c `pkg-config --cflags --libs elementary`
+// gcc -o efl_ui_view_list_example_1 efl_ui_view_list_example_1.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
@@ -24,7 +24,7 @@ char edj_path[PATH_MAX];
 static void
 _realized_cb(void *data, const Efl_Event *event)
 {
-   Efl_Ui_List_Item_Event *ie = event->info;
+   Efl_Ui_View_List_Item_Event *ie = event->info;
    if (!ie->layout) return;
 
    Efl_Ui_Layout *layout = ie->layout;
@@ -35,7 +35,7 @@ _realized_cb(void *data, const Efl_Event *event)
 static void
 _unrealized_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Ui_List_Item_Event *ie = event->info;
+   Efl_Ui_View_List_Item_Event *ie = event->info;
 
    efl_ui_view_model_set(ie->layout, NULL);
    efl_del(ie->layout);
@@ -87,13 +87,13 @@ elm_main(int argc, char **argv)
    efl_ui_model_connect(factory, "elm.text", "name");
    efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
 
-   li = efl_add(EFL_UI_LIST_CLASS, win);
-   efl_ui_list_layout_factory_set(li, factory);
+   li = efl_add(EFL_UI_VIEW_LIST_CLASS, win);
+   efl_ui_view_list_layout_factory_set(li, factory);
    efl_ui_view_model_set(li, model);
    elm_box_pack_end(bx, li);
 
-   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);
-//   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
+   efl_event_callback_add(li, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);
+//   efl_event_callback_add(li, EFL_UI_VIEW_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
 
    elm_win_resize_object_add(win, li);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

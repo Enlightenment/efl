@@ -1,4 +1,4 @@
-// gcc -o efl_ui_list_example_2 efl_ui_list_example_2.c `pkg-config --cflags --libs elementary`
+// gcc -o efl_ui_view_list_example_2 efl_ui_view_list_example_2.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -17,7 +17,7 @@
 static void
 _realized_cb(void *data, const Efl_Event *event)
 {
-   Efl_Ui_List_Item_Event *ie = event->info;
+   Efl_Ui_View_List_Item_Event *ie = event->info;
    Eo *imf = data;
    printf("realize %d\n", ie->index);
 
@@ -48,8 +48,8 @@ elm_main(int argc, char **argv)
    efl_ui_model_connect(factory, "elm.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
 
-   li = efl_add(EFL_UI_LIST_CLASS, win);
-   efl_ui_list_layout_factory_set(li, factory);
+   li = efl_add(EFL_UI_VIEW_LIST_CLASS, win);
+   efl_ui_view_list_layout_factory_set(li, factory);
    efl_ui_view_model_set(li, model);
 
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -58,7 +58,7 @@ elm_main(int argc, char **argv)
 
    imf = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
    efl_ui_model_connect(imf, "", "path"); //connect to "path" property
-   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, imf);
+   efl_event_callback_add(li, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, _realized_cb, imf);
 
    elm_win_resize_object_add(win, li);
 

@@ -1,5 +1,5 @@
-#ifndef EFL_UI_LIST_PRIVATE_H
-#define EFL_UI_LIST_PRIVATE_H
+#ifndef EFL_UI_VIEW_LIST_PRIVATE_H
+#define EFL_UI_VIEW_LIST_PRIVATE_H
 
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
@@ -12,19 +12,19 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
+typedef struct _Efl_Ui_View_List_Data Efl_Ui_View_List_Data;
 
-int efl_ui_list_item_index_get(Efl_Ui_List_LayoutItem *item);
+int efl_ui_view_list_item_index_get(Efl_Ui_View_List_LayoutItem *item);
 
-typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
+typedef struct _Efl_Ui_View_List_Data Efl_Ui_View_List_Data;
 
-#include "efl_ui_list_segarray.h"
+#include "efl_ui_view_list_segarray.h"
 
-struct _Efl_Ui_List_Data
+struct _Efl_Ui_View_List_Data
 {
    Eo                           *obj;
    Eo                           *scrl_mgr;
-   Efl_Ui_List_Pan              *pan_obj;
+   Efl_Ui_View_List_Pan              *pan_obj;
    Efl_Model                    *model;
 
    struct {
@@ -41,7 +41,7 @@ struct _Efl_Ui_List_Data
    } weight;
 
    int segarray_first;
-   Efl_Ui_List_SegArray         *segarray;
+   Efl_Ui_View_List_SegArray         *segarray;
 
    Efl_Ui_Layout_Factory        *factory;
    Eina_List                    *selected_items;
@@ -55,7 +55,7 @@ struct _Efl_Ui_List_Data
    int                          item_count;
    Efl_Future                   *slice_future;
    Efl_Future                   *count_future;
-   Efl_Ui_List_Relayout         *relayout;
+   Efl_Ui_View_List_Relayout         *relayout;
    struct {
      int slice_start;
      int slice_count;
@@ -67,9 +67,9 @@ struct _Efl_Ui_List_Data
    Eina_Bool                    scrl_freeze : 1;
 };
 
-typedef struct _Efl_Ui_List_Pan_Data Efl_Ui_List_Pan_Data;
+typedef struct _Efl_Ui_View_List_Pan_Data Efl_Ui_View_List_Pan_Data;
 
-struct _Efl_Ui_List_Pan_Data
+struct _Efl_Ui_View_List_Pan_Data
 {
    Eo                     *wobj;
    Eina_Rect              gmt;
@@ -78,19 +78,19 @@ struct _Efl_Ui_List_Pan_Data
    Ecore_Job              *resize_job;
 };
 
-typedef struct _Efl_Ui_List_Slice Efl_Ui_List_Slice;
+typedef struct _Efl_Ui_View_List_Slice Efl_Ui_View_List_Slice;
 
-struct _Efl_Ui_List_Slice
+struct _Efl_Ui_View_List_Slice
 {
-   Efl_Ui_List_Data       *pd;
+   Efl_Ui_View_List_Data       *pd;
    int                    newstart, slicestart, newslice;
 };
 
-#define EFL_UI_LIST_DATA_GET(o, ptr) \
-  Efl_Ui_List_Data * ptr = efl_data_scope_get(o, EFL_UI_LIST_CLASS)
+#define EFL_UI_VIEW_LIST_DATA_GET(o, ptr) \
+  Efl_Ui_View_List_Data * ptr = efl_data_scope_get(o, EFL_UI_VIEW_LIST_CLASS)
 
-#define EFL_UI_LIST_DATA_GET_OR_RETURN(o, ptr)       \
-  EFL_UI_LIST_DATA_GET(o, ptr);                      \
+#define EFL_UI_VIEW_LIST_DATA_GET_OR_RETURN(o, ptr)       \
+  EFL_UI_VIEW_LIST_DATA_GET(o, ptr);                      \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        ERR("No widget data for object %p (%s)",      \
@@ -98,8 +98,8 @@ struct _Efl_Ui_List_Slice
        return;                                       \
     }
 
-#define EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  EFL_UI_LIST_DATA_GET(o, ptr);                         \
+#define EFL_UI_VIEW_LIST_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_VIEW_LIST_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
        ERR("No widget data for object %p (%s)",         \

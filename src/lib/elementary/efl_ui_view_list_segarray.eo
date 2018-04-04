@@ -1,7 +1,7 @@
 import elm_general;
-import efl_ui_list_types;
+import efl_ui_view_list_types;
 
-class Efl.Ui.List.SegArray (Efl.Object)
+class Efl.Ui.View.List.SegArray (Efl.Object)
 {
    methods {
       @property accessor {
@@ -9,7 +9,7 @@ class Efl.Ui.List.SegArray (Efl.Object)
             [[ Get a SegArray List items accessor ]]
          }
          values {
-             acc: accessor<ptr(Efl.Ui.List.LayoutItem)>;
+             acc: accessor<ptr(Efl.Ui.View.List.LayoutItem)>;
          }
       }
       @property node_accessor {
@@ -17,7 +17,7 @@ class Efl.Ui.List.SegArray (Efl.Object)
             [[ Get a SegArray node accessor ]]
          }
          values {
-             acc: accessor<ptr(Efl.Ui.List.SegArray.Node)>;
+             acc: accessor<ptr(Efl.Ui.View.List.SegArray.Node)>;
          }
       }
       insert_accessor {
@@ -52,7 +52,7 @@ class Efl.Ui.List.SegArray (Efl.Object)
           params {
               @in index: int;
           }
-          return: ptr(Efl.Ui.List.LayoutItem) @owned;
+          return: ptr(Efl.Ui.View.List.LayoutItem) @owned;
       }
    }
    implements {

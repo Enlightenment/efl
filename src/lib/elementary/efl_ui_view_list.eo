@@ -1,19 +1,19 @@
 import elm_general;
 
-struct Efl.Ui.List.Item_Event
+struct Efl.Ui.View.List.Item_Event
 {
    layout: Efl.Ui.Layout;
    child: Efl.Model;
    index: int;
 }
-class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Efl.Ui.Scrollbar,
+class Efl.Ui.View.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager.Sub,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List.Model)
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.View.List.Model)
 {
    methods {
       @property relayout {
          values {
-            object: Efl.Ui.List.Relayout;
+            object: Efl.Ui.View.List.Relayout;
          }
       }
       @property homogeneous {
@@ -50,14 +50,14 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
       }
    }
    events {
-      item,realized : Efl.Ui.List.Item_Event;
-      item,unrealized : Efl.Ui.List.Item_Event;
-      item,focused : Efl.Ui.List.Item_Event;
-      item,unfocused : Efl.Ui.List.Item_Event;
-      item,highlighted : Efl.Ui.List.Item_Event;
-      item,unhighlighted : Efl.Ui.List.Item_Event;
-      item,selected : Efl.Ui.List.Item_Event;
-      item,unselected : Efl.Ui.List.Item_Event;
+      item,realized : Efl.Ui.View.List.Item_Event;
+      item,unrealized : Efl.Ui.View.List.Item_Event;
+      item,focused : Efl.Ui.View.List.Item_Event;
+      item,unfocused : Efl.Ui.View.List.Item_Event;
+      item,highlighted : Efl.Ui.View.List.Item_Event;
+      item,unhighlighted : Efl.Ui.View.List.Item_Event;
+      item,selected : Efl.Ui.View.List.Item_Event;
+      item,unselected : Efl.Ui.View.List.Item_Event;
    }
 
    implements {
@@ -70,11 +70,11 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;
 
-      Efl.Ui.List.Model.load_range { set;}
-      Efl.Ui.List.Model.realize;
-      Efl.Ui.List.Model.unrealize;
-      Efl.Ui.List.Model.model_size { get; }
-      Efl.Ui.List.Model.min_size { get; set; }
+      Efl.Ui.View.List.Model.load_range { set;}
+      Efl.Ui.View.List.Model.realize;
+      Efl.Ui.View.List.Model.unrealize;
+      Efl.Ui.View.List.Model.model_size { get; }
+      Efl.Ui.View.List.Model.min_size { get; set; }
 
       // Widget
       Efl.Ui.Widget.focus_manager_create;

@@ -8,19 +8,19 @@
 #define EFL_UI_SCROLLBAR_PROTECTED
 #define EFL_UI_SCROLLBAR_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
-#define EFL_UI_LIST_PROTECTED
+#define EFL_UI_VIEW_LIST_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
-#include "efl_ui_list_private.h"
-#include "efl_ui_list_precise_layouter.eo.h"
+#include "efl_ui_view_list_private.h"
+#include "efl_ui_view_list_precise_layouter.eo.h"
 
 #include <assert.h>
 
-#define MY_CLASS EFL_UI_LIST_CLASS
-#define MY_CLASS_NAME "Efl.Ui.List"
+#define MY_CLASS EFL_UI_VIEW_LIST_CLASS
+#define MY_CLASS_NAME "Efl.Ui.View.List"
 
-#define MY_PAN_CLASS EFL_UI_LIST_PAN_CLASS
+#define MY_PAN_CLASS EFL_UI_VIEW_LIST_PAN_CLASS
 
 #define SIG_CHILD_ADDED "child,added"
 #define SIG_CHILD_REMOVED "child,removed"
@@ -32,9 +32,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-void _efl_ui_list_custom_layout(Efl_Ui_List *);
-void _efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem*, Eina_Bool);
-static void _layout(Efl_Ui_List_Data* pd);
+void _efl_ui_view_list_custom_layout(Efl_Ui_View_List *);
+void _efl_ui_view_list_item_select_set(Efl_Ui_View_List_LayoutItem*, Eina_Bool);
+static void _layout(Efl_Ui_View_List_Data* pd);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
@@ -48,14 +48,14 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
    evas_object_smart_changed(psd->wobj);
 }
 
 
 EOLIAN static void
-_efl_ui_list_pan_efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Eina_Position2D pos)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd, Eina_Position2D pos)
 {
    if ((pos.x == psd->gmt.x) && (pos.y == psd->gmt.y)) return;
 
@@ -67,20 +67,20 @@ _efl_ui_list_pan_efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pa
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_list_pan_efl_ui_pan_pan_position_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
    return psd->gmt.pos;
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_list_pan_efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
-   EFL_UI_LIST_DATA_GET(psd->wobj, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(psd->wobj, pd);
    Eina_Rect vgmt = {};
    Eina_Size2D min = {};
 
    vgmt = efl_ui_scrollable_viewport_geometry_get(pd->scrl_mgr);
-   min = efl_ui_list_model_min_size_get(psd->wobj);
+   min = efl_ui_view_list_model_min_size_get(psd->wobj);
 
    min.w = min.w - vgmt.w;
    if (min.w < 0) min.w = 0;
@@ -91,50 +91,50 @@ _efl_ui_list_pan_efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Lis
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_list_pan_efl_ui_pan_pan_position_min_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd EINA_UNUSED)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_min_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd EINA_UNUSED)
 {
    return EINA_POSITION2D(0, 0);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_list_pan_efl_ui_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_ui_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
    Eina_Size2D min = {};
-   min = efl_ui_list_model_min_size_get(psd->wobj);
+   min = efl_ui_view_list_model_min_size_get(psd->wobj);
 
    return min;
 }
 
 EOLIAN static void
-_efl_ui_list_pan_efl_object_destructor(Eo *obj, Efl_Ui_List_Pan_Data *psd EINA_UNUSED)
+_efl_ui_view_list_pan_efl_object_destructor(Eo *obj, Efl_Ui_View_List_Pan_Data *psd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_PAN_CLASS));
 }
 
-#include "efl_ui_list_pan.eo.c"
+#include "efl_ui_view_list_pan.eo.c"
 
 EOLIAN static void
-_efl_ui_list_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *psd, Eina_Position2D pos)
+_efl_ui_view_list_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd, Eina_Position2D pos)
 {
    efl_ui_scrollable_content_pos_set(psd->scrl_mgr, pos);
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_list_efl_ui_scrollable_interactive_content_pos_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *psd)
+_efl_ui_view_list_efl_ui_scrollable_interactive_content_pos_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
 {
    Eina_Position2D pos = efl_ui_scrollable_content_pos_get(psd->scrl_mgr);
    return pos;
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_list_efl_ui_scrollable_interactive_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *psd)
+_efl_ui_view_list_efl_ui_scrollable_interactive_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
 {
    Eina_Size2D size = efl_ui_scrollable_content_size_get(psd->scrl_mgr);
    return size;
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_list_efl_ui_scrollable_interactive_viewport_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *psd)
+_efl_ui_view_list_efl_ui_scrollable_interactive_viewport_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
 {
    Eina_Rect gmt = efl_ui_scrollable_viewport_geometry_get(psd->scrl_mgr);
    return gmt;
@@ -174,7 +174,7 @@ _list_element_focused(void *data EINA_UNUSED, const Efl_Event *ev)
 
    if (!focused) return;
 
-   EFL_UI_LIST_DATA_GET(ev->object, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(ev->object, pd);
    geom = efl_ui_focus_object_focus_geometry_get(focused);
    pos = efl_ui_scrollable_content_pos_get(pd->scrl_mgr);
 
@@ -187,18 +187,18 @@ static void
 _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   Efl_Ui_List_LayoutItem *item = data;
+   Efl_Ui_View_List_LayoutItem *item = data;
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   _efl_ui_list_item_select_set(item, EINA_TRUE);
+   _efl_ui_view_list_item_select_set(item, EINA_TRUE);
 }
 
 static void
 _count_then(void * data, Efl_Event const* event EINA_UNUSED)
 {
-   Efl_Ui_List_Data *pd = data;
+   Efl_Ui_View_List_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
    pd->count_future = NULL;
@@ -208,7 +208,7 @@ _count_then(void * data, Efl_Event const* event EINA_UNUSED)
 static void
 _count_error(void * data, Efl_Event const* event EINA_UNUSED)
 {
-   Efl_Ui_List_Data *pd = data;
+   Efl_Ui_View_List_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
    pd->count_future = NULL;
 }
@@ -216,13 +216,13 @@ _count_error(void * data, Efl_Event const* event EINA_UNUSED)
 static void
 _children_slice_error(void * data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
 {
-   Efl_Ui_List_Data *pd = data;
+   Efl_Ui_View_List_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
    pd->slice_future = NULL;
 }
 
 EOLIAN static void
-_efl_ui_list_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Elm_Object_Select_Mode mode)
+_efl_ui_view_list_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, Elm_Object_Select_Mode mode)
 {
    if (pd->select_mode == mode)
      return;
@@ -231,37 +231,37 @@ _efl_ui_list_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Elm_Obje
 }
 
 EOLIAN static Elm_Object_Select_Mode
-_efl_ui_list_select_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_select_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->select_mode;
 }
 
 EOLIAN static void
-_efl_ui_list_default_style_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Eina_Stringshare *style)
+_efl_ui_view_list_default_style_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, Eina_Stringshare *style)
 {
    eina_stringshare_replace(&pd->style, style);
 }
 
 EOLIAN static Eina_Stringshare *
-_efl_ui_list_default_style_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_default_style_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->style;
 }
 
 EOLIAN static void
-_efl_ui_list_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Eina_Bool homogeneous)
+_efl_ui_view_list_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, Eina_Bool homogeneous)
 {
    pd->homogeneous = homogeneous;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_list_homogeneous_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_homogeneous_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->homogeneous;
 }
 
 EOLIAN static void
-_efl_ui_list_efl_gfx_position_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Position2D pos)
+_efl_ui_view_list_efl_gfx_position_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
@@ -271,7 +271,7 @@ _efl_ui_list_efl_gfx_position_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Position2D
 }
 
 EOLIAN static void
-_efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D size)
+_efl_ui_view_list_efl_gfx_size_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Size2D size)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
      return;
@@ -282,22 +282,22 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D size)
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    _layout(pd);
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, Evas_Object *member)
+_efl_ui_view_list_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_View_List_Data *pd EINA_UNUSED, Evas_Object *member)
 {
    efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
 }
 
 //Scrollable Implement
 static void
-_efl_ui_list_bar_read_and_update(Eo *obj)
+_efl_ui_view_list_bar_read_and_update(Eo *obj)
 {
-   EFL_UI_LIST_DATA_GET(obj, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(obj, pd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    double vx, vy;
 
@@ -312,30 +312,30 @@ _efl_ui_list_bar_read_and_update(Eo *obj)
 }
 
 static void
-_efl_ui_list_reload_cb(void *data,
+_efl_ui_view_list_reload_cb(void *data,
                            Evas_Object *obj EINA_UNUSED,
                            const char *emission EINA_UNUSED,
                            const char *source EINA_UNUSED)
 {
-   EFL_UI_LIST_DATA_GET(data, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(data, pd);
 
    efl_ui_scrollbar_bar_visibility_update(pd->scrl_mgr);
 }
 
 static void
-_efl_ui_list_vbar_drag_cb(void *data,
+_efl_ui_view_list_vbar_drag_cb(void *data,
                               Evas_Object *obj EINA_UNUSED,
                               const char *emission EINA_UNUSED,
                               const char *source EINA_UNUSED)
 {
-   _efl_ui_list_bar_read_and_update(data);
+   _efl_ui_view_list_bar_read_and_update(data);
 
    Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
 }
 
 static void
-_efl_ui_list_vbar_press_cb(void *data,
+_efl_ui_view_list_vbar_press_cb(void *data,
                                Evas_Object *obj EINA_UNUSED,
                                const char *emission EINA_UNUSED,
                                const char *source EINA_UNUSED)
@@ -345,7 +345,7 @@ _efl_ui_list_vbar_press_cb(void *data,
 }
 
 static void
-_efl_ui_list_vbar_unpress_cb(void *data,
+_efl_ui_view_list_vbar_unpress_cb(void *data,
                                  Evas_Object *obj EINA_UNUSED,
                                  const char *emission EINA_UNUSED,
                                  const char *source EINA_UNUSED)
@@ -355,14 +355,14 @@ _efl_ui_list_vbar_unpress_cb(void *data,
 }
 
 static void
-_efl_ui_list_edje_drag_start_cb(void *data,
+_efl_ui_view_list_edje_drag_start_cb(void *data,
                                  Evas_Object *obj EINA_UNUSED,
                                  const char *emission EINA_UNUSED,
                                  const char *source EINA_UNUSED)
 {
-   EFL_UI_LIST_DATA_GET(data, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(data, pd);
 
-   _efl_ui_list_bar_read_and_update(data);
+   _efl_ui_view_list_bar_read_and_update(data);
 
    pd->scrl_freeze = efl_ui_scrollable_scroll_freeze_get(pd->scrl_mgr);
    efl_ui_scrollable_scroll_freeze_set(pd->scrl_mgr, EINA_TRUE);
@@ -370,42 +370,42 @@ _efl_ui_list_edje_drag_start_cb(void *data,
 }
 
 static void
-_efl_ui_list_edje_drag_stop_cb(void *data,
+_efl_ui_view_list_edje_drag_stop_cb(void *data,
                                 Evas_Object *obj EINA_UNUSED,
                                 const char *emission EINA_UNUSED,
                                 const char *source EINA_UNUSED)
 {
-   EFL_UI_LIST_DATA_GET(data, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(data, pd);
 
-   _efl_ui_list_bar_read_and_update(data);
+   _efl_ui_view_list_bar_read_and_update(data);
 
    efl_ui_scrollable_scroll_freeze_set(pd->scrl_mgr, pd->scrl_freeze);
    efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
-_efl_ui_list_edje_drag_cb(void *data,
+_efl_ui_view_list_edje_drag_cb(void *data,
                            Evas_Object *obj EINA_UNUSED,
                            const char *emission EINA_UNUSED,
                            const char *source EINA_UNUSED)
 {
-   _efl_ui_list_bar_read_and_update(data);
+   _efl_ui_view_list_bar_read_and_update(data);
 }
 
 static void
-_efl_ui_list_hbar_drag_cb(void *data,
+_efl_ui_view_list_hbar_drag_cb(void *data,
                          Evas_Object *obj EINA_UNUSED,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   _efl_ui_list_bar_read_and_update(data);
+   _efl_ui_view_list_bar_read_and_update(data);
 
    Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
 }
 
 static void
-_efl_ui_list_hbar_press_cb(void *data,
+_efl_ui_view_list_hbar_press_cb(void *data,
                           Evas_Object *obj EINA_UNUSED,
                           const char *emission EINA_UNUSED,
                           const char *source EINA_UNUSED)
@@ -415,7 +415,7 @@ _efl_ui_list_hbar_press_cb(void *data,
 }
 
 static void
-_efl_ui_list_hbar_unpress_cb(void *data,
+_efl_ui_view_list_hbar_unpress_cb(void *data,
                             Evas_Object *obj EINA_UNUSED,
                             const char *emission EINA_UNUSED,
                             const char *source EINA_UNUSED)
@@ -431,10 +431,10 @@ _scroll_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_ui_list_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_view_list_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
-   EFL_UI_LIST_DATA_GET(obj, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(obj, pd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    double width = 0.0, height = 0.0;
@@ -446,10 +446,10 @@ _efl_ui_list_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_ui_list_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_view_list_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
-   EFL_UI_LIST_DATA_GET(obj, pd);
+   EFL_UI_VIEW_LIST_DATA_GET(obj, pd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    double posx = 0.0, posy = 0.0;
@@ -461,7 +461,7 @@ _efl_ui_list_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_ui_list_bar_show_cb(void *data, const Efl_Event *event)
+_efl_ui_view_list_bar_show_cb(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -474,7 +474,7 @@ _efl_ui_list_bar_show_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_efl_ui_list_bar_hide_cb(void *data, const Efl_Event *event)
+_efl_ui_view_list_bar_hide_cb(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -487,7 +487,7 @@ _efl_ui_list_bar_hide_cb(void *data, const Efl_Event *event)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_list_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_efl_ui_view_list_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Eina_Bool ok;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -498,7 +498,7 @@ _efl_ui_list_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_L
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_list_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_efl_ui_view_list_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Eina_Bool ok;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -509,125 +509,125 @@ _efl_ui_list_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_L
 }
 
 static void
-_efl_ui_list_edje_object_attach(Eo *obj)
+_efl_ui_view_list_edje_object_attach(Eo *obj)
 {
    efl_layout_signal_callback_add
-     (obj, "reload", "elm", _efl_ui_list_reload_cb, obj);
+     (obj, "reload", "elm", _efl_ui_view_list_reload_cb, obj);
   //Vertical bar
    efl_layout_signal_callback_add
-     (obj, "drag", "elm.dragable.vbar", _efl_ui_list_vbar_drag_cb,
+     (obj, "drag", "elm.dragable.vbar", _efl_ui_view_list_vbar_drag_cb,
      obj);
    efl_layout_signal_callback_add
      (obj, "drag,set", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,start", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_start_cb, obj);
+     _efl_ui_view_list_edje_drag_start_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,stop", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_stop_cb, obj);
+     _efl_ui_view_list_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,step", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,page", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "elm,vbar,press", "elm",
-     _efl_ui_list_vbar_press_cb, obj);
+     _efl_ui_view_list_vbar_press_cb, obj);
    efl_layout_signal_callback_add
      (obj, "elm,vbar,unpress", "elm",
-     _efl_ui_list_vbar_unpress_cb, obj);
+     _efl_ui_view_list_vbar_unpress_cb, obj);
 
   //Horizontal bar
    efl_layout_signal_callback_add
-     (obj, "drag", "elm.dragable.hbar", _efl_ui_list_hbar_drag_cb,
+     (obj, "drag", "elm.dragable.hbar", _efl_ui_view_list_hbar_drag_cb,
      obj);
    efl_layout_signal_callback_add
      (obj, "drag,set", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,start", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_start_cb, obj);
+     _efl_ui_view_list_edje_drag_start_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,stop", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_stop_cb, obj);
+     _efl_ui_view_list_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,step", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,page", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "elm,hbar,press", "elm",
-     _efl_ui_list_hbar_press_cb, obj);
+     _efl_ui_view_list_hbar_press_cb, obj);
    efl_layout_signal_callback_add
      (obj, "elm,hbar,unpress", "elm",
-     _efl_ui_list_hbar_unpress_cb, obj);
+     _efl_ui_view_list_hbar_unpress_cb, obj);
 }
 
 static void
-_efl_ui_list_edje_object_detach(Evas_Object *obj)
+_efl_ui_view_list_edje_object_detach(Evas_Object *obj)
 {
    efl_layout_signal_callback_del
-     (obj, "reload", "elm", _efl_ui_list_reload_cb, obj);
+     (obj, "reload", "elm", _efl_ui_view_list_reload_cb, obj);
   //Vertical bar
    efl_layout_signal_callback_del
-     (obj, "drag", "elm.dragable.vbar", _efl_ui_list_vbar_drag_cb,
+     (obj, "drag", "elm.dragable.vbar", _efl_ui_view_list_vbar_drag_cb,
      obj);
    efl_layout_signal_callback_del
      (obj, "drag,set", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,start", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_start_cb, obj);
+     _efl_ui_view_list_edje_drag_start_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,stop", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_stop_cb, obj);
+     _efl_ui_view_list_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,step", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,page", "elm.dragable.vbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "elm,vbar,press", "elm",
-     _efl_ui_list_vbar_press_cb, obj);
+     _efl_ui_view_list_vbar_press_cb, obj);
    efl_layout_signal_callback_del
      (obj, "elm,vbar,unpress", "elm",
-   _efl_ui_list_vbar_unpress_cb, obj);
+   _efl_ui_view_list_vbar_unpress_cb, obj);
 
    //Horizontal bar
    efl_layout_signal_callback_del
-       (obj, "drag", "elm.dragable.hbar", _efl_ui_list_hbar_drag_cb,
+       (obj, "drag", "elm.dragable.hbar", _efl_ui_view_list_hbar_drag_cb,
      obj);
    efl_layout_signal_callback_del
      (obj, "drag,set", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,start", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_start_cb, obj);
+     _efl_ui_view_list_edje_drag_start_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,stop", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_stop_cb, obj);
+     _efl_ui_view_list_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,step", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,page", "elm.dragable.hbar",
-     _efl_ui_list_edje_drag_cb, obj);
+     _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "elm,hbar,press", "elm",
-     _efl_ui_list_hbar_press_cb, obj);
+     _efl_ui_view_list_hbar_press_cb, obj);
    efl_layout_signal_callback_del
      (obj, "elm,hbar,unpress", "elm",
-     _efl_ui_list_hbar_unpress_cb, obj);
+     _efl_ui_view_list_hbar_unpress_cb, obj);
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
-   Efl_Ui_List_Pan_Data *pan_data;
+   Efl_Ui_View_List_Pan_Data *pan_data;
    Eina_Size2D min = {};
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
@@ -638,7 +638,7 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   if (!elm_layout_theme_set(obj, "list", "base", elm_widget_style_get(obj)))
+   if (!elm_layout_theme_set(obj, "view_list", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
    pd->scrl_mgr = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj,
@@ -664,28 +664,28 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd)
 
    efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
-                         _efl_ui_list_bar_size_changed_cb, obj);
+                         _efl_ui_view_list_bar_size_changed_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED,
-                         _efl_ui_list_bar_pos_changed_cb, obj);
+                         _efl_ui_view_list_bar_pos_changed_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW,
-                         _efl_ui_list_bar_show_cb, obj);
+                         _efl_ui_view_list_bar_show_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
-                          _efl_ui_list_bar_hide_cb, obj);
+                          _efl_ui_view_list_bar_hide_cb, obj);
 
-   _efl_ui_list_edje_object_attach(obj);
+   _efl_ui_view_list_edje_object_attach(obj);
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
    ELM_SAFE_FREE(pd->pan_obj, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_list_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_view_list_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
@@ -695,7 +695,7 @@ _efl_ui_list_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List
 }
 
 EOLIAN static Eo *
-_efl_ui_list_efl_object_finalize(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_object_finalize(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
 
    if (!pd->factory)
@@ -703,15 +703,15 @@ _efl_ui_list_efl_object_finalize(Eo *obj, Efl_Ui_List_Data *pd)
 
    if(!pd->relayout)
      {
-        pd->relayout = efl_add(EFL_UI_LIST_PRECISE_LAYOUTER_CLASS, obj);
+        pd->relayout = efl_add(EFL_UI_VIEW_LIST_PRECISE_LAYOUTER_CLASS, obj);
         if (pd->model)
-          efl_ui_list_relayout_model_set(pd->relayout, pd->model);
+          efl_ui_view_list_relayout_model_set(pd->relayout, pd->model);
      }
    return obj;
 }
 
 EOLIAN static Eo *
-_efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -721,7 +721,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
-   pd->segarray = efl_add(EFL_UI_LIST_SEGARRAY_CLASS, obj, efl_ui_list_segarray_setup(efl_added, 32));
+   pd->segarray = efl_add(EFL_UI_VIEW_LIST_SEGARRAY_CLASS, obj, efl_ui_view_list_segarray_setup(efl_added, 32));
 
    manager = efl_ui_widget_focus_manager_create(obj, obj);
    efl_composite_attach(obj, manager);
@@ -744,15 +744,15 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_object_destructor(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
-   efl_ui_list_relayout_model_set(pd->relayout, NULL);
+   efl_ui_view_list_relayout_model_set(pd->relayout, NULL);
 
    efl_unref(pd->model);
    eina_stringshare_del(pd->style);
 
    efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
-   _efl_ui_list_edje_object_detach(obj);
+   _efl_ui_view_list_edje_object_detach(obj);
 
    ELM_SAFE_FREE(pd->pan_obj, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
@@ -761,7 +761,7 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_Ui_Factory *factory)
+_efl_ui_view_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, Efl_Ui_Factory *factory)
 {
    if (pd->factory)
      efl_unref(pd->factory);
@@ -771,7 +771,7 @@ _efl_ui_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_U
 }
 
 EOLIAN static void
-_efl_ui_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_Model *model)
+_efl_ui_view_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, Efl_Model *model)
 {
    if (pd->model == model)
      return;
@@ -785,8 +785,8 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Ef
    if (pd->model)
      {
         if (pd->relayout)
-          efl_ui_list_relayout_model_set(pd->relayout, NULL);
-        efl_ui_list_segarray_flush(pd->segarray);
+          efl_ui_view_list_relayout_model_set(pd->relayout, NULL);
+        efl_ui_view_list_segarray_flush(pd->segarray);
         efl_unref(pd->model);
         pd->model = NULL;
      }
@@ -796,7 +796,7 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Ef
         pd->model = model;
         efl_ref(pd->model);
         if (pd->relayout)
-          efl_ui_list_relayout_model_set(pd->relayout, model);
+          efl_ui_view_list_relayout_model_set(pd->relayout, model);
         pd->count_future = efl_model_children_count_get(pd->model);
         efl_future_then(pd->count_future, &_count_then, &_count_error, NULL, pd);
      }
@@ -805,23 +805,23 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Ef
 }
 
 EOLIAN static Efl_Model *
-_efl_ui_list_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->model;
 }
 
 EOLIAN int
-_efl_ui_list_efl_access_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_access_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return eina_list_count(pd->selected_items);
 }
 
 EOLIAN Eo*
-_efl_ui_list_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
+_efl_ui_view_list_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, int child_index)
 {
    if(child_index <  (int) eina_list_count(pd->selected_items))
      {
-        Efl_Ui_List_LayoutItem* items = eina_list_nth(pd->selected_items, child_index);
+        Efl_Ui_View_List_LayoutItem* items = eina_list_nth(pd->selected_items, child_index);
         return items[child_index].layout;
      }
    else
@@ -829,37 +829,37 @@ _efl_ui_list_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_child_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
+_efl_ui_view_list_efl_access_selection_child_select(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
+_efl_ui_view_list_efl_access_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_is_child_selected(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
+_efl_ui_view_list_efl_access_selection_is_child_selected(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
+_efl_ui_view_list_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_access_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
+_efl_ui_view_list_efl_access_selection_access_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
+_efl_ui_view_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -884,7 +884,7 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 void
-_efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem *item, Eina_Bool selected)
+_efl_ui_view_list_item_select_set(Efl_Ui_View_List_LayoutItem *item, Eina_Bool selected)
 {
    Eina_Stringshare *sprop;
    assert(item != NULL);
@@ -906,7 +906,7 @@ _efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem *item, Eina_Bool selected)
 }
 
 static void
-_efl_ui_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_List_Relayout *object)
+_efl_ui_view_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_View_List_Relayout *object)
 {
    if(pd->relayout)
      efl_unref(pd->relayout);
@@ -915,28 +915,28 @@ _efl_ui_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED,
    efl_ref(pd->relayout);
 }
 
-static Efl_Ui_List_Relayout *
-_efl_ui_list_relayout_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
+static Efl_Ui_View_List_Relayout *
+_efl_ui_view_list_relayout_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED)
 {
    return pd->relayout;
 }
 
 static void
-_layout(Efl_Ui_List_Data *pd)
+_layout(Efl_Ui_View_List_Data *pd)
 {
    if (!pd->model)
      return;
 
-   efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, pd->segarray);
+   efl_ui_view_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, pd->segarray);
 }
 
 static void
 _children_slice_then(void * data, Efl_Event const* event)
 {
-   Efl_Ui_List_Data *pd = data;
+   Efl_Ui_View_List_Data *pd = data;
    Eina_Accessor *acc = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
 
-   efl_ui_list_segarray_insert_accessor(pd->segarray, pd->outstanding_slice.slice_start, acc);
+   efl_ui_view_list_segarray_insert_accessor(pd->segarray, pd->outstanding_slice.slice_start, acc);
 
    pd->segarray_first = pd->outstanding_slice.slice_start;
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
@@ -945,13 +945,13 @@ _children_slice_then(void * data, Efl_Event const* event)
 
 /* EFL UI LIST MODEL INTERFACE */
 EOLIAN static Eina_Size2D
-_efl_ui_list_efl_ui_list_model_min_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_ui_view_list_model_min_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->min;
 }
 
 EOLIAN static void
-_efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D min)
+_efl_ui_view_list_efl_ui_view_list_model_min_size_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Size2D min)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -963,33 +963,33 @@ _efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_
 }
 
 EOLIAN static void
-_efl_ui_list_efl_ui_focus_composition_prepare(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_ui_focus_composition_prepare(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
-   Eina_List *order = efl_ui_list_relayout_elements_get(pd->relayout);
+   Eina_List *order = efl_ui_view_list_relayout_elements_get(pd->relayout);
    efl_ui_focus_composition_elements_set(obj, order);
 }
 
 EOLIAN Eina_List*
-_efl_ui_list_efl_access_access_children_get(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_access_access_children_get(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
 
-   ret = efl_ui_list_relayout_elements_get(pd->relayout);
-   ret2 = efl_access_children_get(efl_super(obj, EFL_UI_LIST_CLASS));
+   ret = efl_ui_view_list_relayout_elements_get(pd->relayout);
+   ret2 = efl_access_children_get(efl_super(obj, EFL_UI_VIEW_LIST_CLASS));
 
    return eina_list_merge(ret, ret2);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_list_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
+_efl_ui_view_list_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
-EOLIAN static Efl_Ui_List_LayoutItem *
-_efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
+EOLIAN static Efl_Ui_View_List_LayoutItem *
+_efl_ui_view_list_efl_ui_view_list_model_realize(Eo *obj, Efl_Ui_View_List_Data *pd, Efl_Ui_View_List_LayoutItem *item)
 {
-   Efl_Ui_List_Item_Event evt;
+   Efl_Ui_View_List_Item_Event evt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
@@ -1004,8 +1004,8 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 
    evt.child = item->children;
    evt.layout = item->layout;
-   evt.index = efl_ui_list_item_index_get(item);
-   efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
+   evt.index = efl_ui_view_list_item_index_get(item);
+   efl_event_callback_call(obj, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, &evt);
    efl_ui_focus_composition_dirty(obj);
 
    evas_object_show(item->layout);
@@ -1013,9 +1013,9 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 }
 
 EOLIAN static void
-_efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
+_efl_ui_view_list_efl_ui_view_list_model_unrealize(Eo *obj, Efl_Ui_View_List_Data *pd, Efl_Ui_View_List_LayoutItem *item)
 {
-   Efl_Ui_List_Item_Event evt;
+   Efl_Ui_View_List_Item_Event evt;
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
 
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
@@ -1030,8 +1030,8 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
 
    evt.child = item->children;
    evt.layout = item->layout;
-   evt.index = efl_ui_list_item_index_get(item);
-   efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
+   evt.index = efl_ui_view_list_item_index_get(item);
+   efl_event_callback_call(obj, EFL_UI_VIEW_LIST_EVENT_ITEM_UNREALIZED, &evt);
 
    evas_object_smart_member_del(item->layout);
    efl_ui_factory_release(pd->factory, item->layout);
@@ -1039,7 +1039,7 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
 }
 
 EOLIAN static void
-_efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj EINA_UNUSED, Efl_Ui_List_Data* pd, int first, int count)
+_efl_ui_view_list_efl_ui_view_list_model_load_range_set(Eo* obj EINA_UNUSED, Efl_Ui_View_List_Data* pd, int first, int count)
 {
    if(!pd->slice_future)
      {
@@ -1051,18 +1051,18 @@ _efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj EINA_UNUSED, Efl_Ui_List_D
 }
 
 EOLIAN static int
-_efl_ui_list_efl_ui_list_model_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_view_list_efl_ui_view_list_model_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
     return pd->item_count;
 }
 
-ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_list, Efl_Ui_List_Data)
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_view_list, Efl_Ui_View_List_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-#define EFL_UI_LIST_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_list)
+#define EFL_UI_VIEW_LIST_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_view_list)
 
-#include "efl_ui_list.eo.c"
-#include "efl_ui_list_relayout.eo.c"
-#include "efl_ui_list_model.eo.c"
+#include "efl_ui_view_list.eo.c"
+#include "efl_ui_view_list_relayout.eo.c"
+#include "efl_ui_view_list_model.eo.c"

@@ -1,4 +1,4 @@
-group { "efl/list";
+group { "efl/view_list";
    inherit: "elm/list/base/default";
 }
 
