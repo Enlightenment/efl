@@ -804,6 +804,29 @@ START_TEST(test_unregister_last_focused)
    elm_shutdown();
 }
 END_TEST
+
+START_TEST(test_unregister_last_focused_no_child)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *root, *c1;
+
+   char *args[] = { "exe" };
+   elm_init(1, args);
+
+   m = elm_focus_test_manager_new(&root);
+   c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
+   efl_ui_focus_manager_calc_register(m, c1, root, NULL);
+
+   efl_ui_focus_manager_focus_set(m, c1);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c1);
+   efl_ui_focus_manager_calc_unregister(m, c1);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), NULL);
+
+   efl_del(m);
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_focus(TCase *tc)
 {
     tcase_add_test(tc, focus_register_twice);
@@ -828,4 +851,5 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, test_request_subchild_child_regular_regular);
     tcase_add_test(tc, test_unregister_last_focused_no_history);
     tcase_add_test(tc, test_unregister_last_focused);
+    tcase_add_test(tc, test_unregister_last_focused_no_child);
 }
