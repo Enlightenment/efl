@@ -1,4 +1,4 @@
-class Efl.Canvas.Object.Event.Grabber (Efl.Canvas.Group)
+class Efl.Canvas.Event_Grabber (Efl.Canvas.Group)
 {
    [[Low-level rectangle object.
 
