@@ -115,6 +115,7 @@ struct _Eo_Object
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
      Eina_Bool super:1;
+     Eina_Bool invalidate:1;
 
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
@@ -247,6 +248,24 @@ _eo_condtor_reset(_Eo_Object *obj)
    obj->condtor_done = EINA_FALSE;
 }
 
+// Generate the invalidate event in all case and make sure it happens
+// before any user code can change the children invalidate state. This
+// make sure that the entire tree of object is valid at the time of
+// the invalidate event.
+static void
+_efl_invalidate(_Eo_Object *obj)
+{
+   Eo *id;
+
+   if (obj->invalidate) return;
+
+   id = _eo_obj_id_get(obj);
+
+   efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
+
+   efl_invalidate(id);
+}
+
 static inline void
 _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
 {
@@ -254,6 +273,11 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
    obj->refcount++;
 
    const _Efl_Class *klass = obj->klass;
+
+   // If the object has been invalidated yet, time to do it
+   // before any destructor kick in. This can happen when
+   // the object has no parent and get deleted by efl_unref.
+   _efl_invalidate(obj);
 
    efl_event_callback_call(_eo_obj_id_get(obj), EFL_EVENT_DEL, NULL);
 
