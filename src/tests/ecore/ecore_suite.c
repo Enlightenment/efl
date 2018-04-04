@@ -29,7 +29,7 @@ static const Efl_Test_Case etc[] = {
   { "Ecore_File", ecore_test_ecore_file },
   { "Ecore_Job", ecore_test_ecore_job },
   { "Ecore_Args", ecore_test_ecore_args },
-  { "Ecore_Promise2", ecore_test_ecore_promise2 },
+  { "Ecore_Promise", ecore_test_ecore_promise },
   { NULL, NULL }
 };
 

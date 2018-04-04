@@ -1330,7 +1330,7 @@ promise_shutdown(void)
    ecore_init();
 }
 
-void ecore_test_ecore_promise2(TCase *tc)
+void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
    tcase_add_test(tc, efl_test_timeout);
