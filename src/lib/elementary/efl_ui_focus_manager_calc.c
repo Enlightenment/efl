@@ -1516,7 +1516,7 @@ _node_depth(Node *node)
 {
   int i = 0;
 
-  while (node->tree.parent)
+  while (node && node->tree.parent)
     {
       node = node->tree.parent;
       i++;
