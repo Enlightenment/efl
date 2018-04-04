@@ -9,7 +9,7 @@
 
 static void
 _efl_canvas_vg_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
-                                                Efl_Canvas_VG_Gradient_Data *pd,
+                                                Efl_Canvas_Vg_Gradient_Data *pd,
                                                 const Efl_Gfx_Gradient_Stop *colors,
                                                 unsigned int length)
 {
@@ -28,7 +28,7 @@ _efl_canvas_vg_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
 
 static void
 _efl_canvas_vg_gradient_efl_gfx_gradient_stop_get(const Eo *obj EINA_UNUSED,
-                                                Efl_Canvas_VG_Gradient_Data *pd,
+                                                Efl_Canvas_Vg_Gradient_Data *pd,
                                                 const Efl_Gfx_Gradient_Stop **colors,
                                                 unsigned int *length)
 {
@@ -38,7 +38,7 @@ _efl_canvas_vg_gradient_efl_gfx_gradient_stop_get(const Eo *obj EINA_UNUSED,
 
 static void
 _efl_canvas_vg_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
-                                                  Efl_Canvas_VG_Gradient_Data *pd,
+                                                  Efl_Canvas_Vg_Gradient_Data *pd,
                                                   Efl_Gfx_Gradient_Spread s)
 {
    pd->s = s;
@@ -48,18 +48,18 @@ _efl_canvas_vg_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
 
 static Efl_Gfx_Gradient_Spread
 _efl_canvas_vg_gradient_efl_gfx_gradient_spread_get(const Eo *obj EINA_UNUSED,
-                                                  Efl_Canvas_VG_Gradient_Data *pd)
+                                                  Efl_Canvas_Vg_Gradient_Data *pd)
 {
    return pd->s;
 }
 
 static Eina_Bool
 _efl_canvas_vg_gradient_efl_gfx_path_interpolate(Eo *obj,
-                                         Efl_Canvas_VG_Gradient_Data *pd,
+                                         Efl_Canvas_Vg_Gradient_Data *pd,
                                          const Efl_VG *from, const Efl_VG *to,
                                          double pos_map)
 {
-   Efl_Canvas_VG_Gradient_Data *fromd, *tod;
+   Efl_Canvas_Vg_Gradient_Data *fromd, *tod;
    Efl_Gfx_Gradient_Stop *colors;
    unsigned int i;
    double from_map;
@@ -97,7 +97,7 @@ _efl_canvas_vg_gradient_efl_gfx_path_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_canvas_vg_gradient_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_VG_Gradient_Data *pd)
+_efl_canvas_vg_gradient_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Gradient_Data *pd)
 
 {
    Efl_VG *cn = NULL;

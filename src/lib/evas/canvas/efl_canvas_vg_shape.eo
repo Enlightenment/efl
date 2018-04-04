@@ -1,4 +1,4 @@
-class Efl.Canvas.VG.Shape (Efl.Canvas.VG.Node, Efl.Gfx.Shape)
+class Efl.Canvas.Vg.Shape (Efl.Canvas.Vg.Node, Efl.Gfx.Shape)
 {
    [[Efl vector graphics shape class]]
    legacy_prefix: evas_vg_shape;
@@ -10,7 +10,7 @@ class Efl.Canvas.VG.Shape (Efl.Canvas.VG.Node, Efl.Gfx.Shape)
     get {
     }
     values {
-       f: Efl.Canvas.VG.Node; [[Fill object]]
+       f: Efl.Canvas.Vg.Node; [[Fill object]]
     }
       }
       @property stroke_fill {
@@ -20,7 +20,7 @@ class Efl.Canvas.VG.Shape (Efl.Canvas.VG.Node, Efl.Gfx.Shape)
     get {
     }
     values {
-       f: Efl.Canvas.VG.Node; [[Stroke fill object]]
+       f: Efl.Canvas.Vg.Node; [[Stroke fill object]]
     }
       }
       @property stroke_marker {
@@ -30,7 +30,7 @@ class Efl.Canvas.VG.Shape (Efl.Canvas.VG.Node, Efl.Gfx.Shape)
     get {
     }
     values {
-       m: Efl.Canvas.VG.Node; [[Stroke marker object]]
+       m: Efl.Canvas.Vg.Node; [[Stroke marker object]]
     }
       }
    }

@@ -5,14 +5,14 @@
 
 #define MY_CLASS EFL_CANVAS_VG_SHAPE_CLASS
 
-typedef struct _Efl_Canvas_VG_Shape_Data Efl_Canvas_VG_Shape_Data;
-struct _Efl_Canvas_VG_Shape_Data
+typedef struct _Efl_Canvas_Vg_Shape_Data Efl_Canvas_Vg_Shape_Data;
+struct _Efl_Canvas_Vg_Shape_Data
 {
-   Efl_Canvas_VG_Node *fill;
+   Efl_Canvas_Vg_Node *fill;
 
    struct {
-      Efl_Canvas_VG_Node *fill;
-      Efl_Canvas_VG_Node *marker;
+      Efl_Canvas_Vg_Node *fill;
+      Efl_Canvas_Vg_Node *marker;
    } stroke;
 };
 
@@ -20,10 +20,10 @@ struct _Efl_Canvas_VG_Shape_Data
 
 static void
 _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
-                       Efl_Canvas_VG_Shape_Data *pd,
-                       Efl_Canvas_VG_Node *f)
+                       Efl_Canvas_Vg_Shape_Data *pd,
+                       Efl_Canvas_Vg_Node *f)
 {
-   Efl_Canvas_VG_Node *tmp = pd->fill;
+   Efl_Canvas_Vg_Node *tmp = pd->fill;
 
    pd->fill = efl_ref(f);
    efl_unref(tmp);
@@ -31,18 +31,18 @@ _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
    _efl_canvas_vg_node_changed(obj);
 }
 
-static Efl_Canvas_VG_Node *
-_efl_canvas_vg_shape_fill_get(const Eo *obj EINA_UNUSED, Efl_Canvas_VG_Shape_Data *pd)
+static Efl_Canvas_Vg_Node *
+_efl_canvas_vg_shape_fill_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Shape_Data *pd)
 {
    return pd->fill;
 }
 
 static void
 _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
-                              Efl_Canvas_VG_Shape_Data *pd,
-                              Efl_Canvas_VG_Node *f)
+                              Efl_Canvas_Vg_Shape_Data *pd,
+                              Efl_Canvas_Vg_Node *f)
 {
-   Efl_Canvas_VG_Node *tmp = pd->fill;
+   Efl_Canvas_Vg_Node *tmp = pd->fill;
 
    pd->stroke.fill = efl_ref(f);
    efl_unref(tmp);
@@ -50,19 +50,19 @@ _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
    _efl_canvas_vg_node_changed(obj);
 }
 
-static Efl_Canvas_VG_Node *
+static Efl_Canvas_Vg_Node *
 _efl_canvas_vg_shape_stroke_fill_get(const Eo *obj EINA_UNUSED,
-                              Efl_Canvas_VG_Shape_Data *pd)
+                              Efl_Canvas_Vg_Shape_Data *pd)
 {
    return pd->stroke.fill;
 }
 
 static void
 _efl_canvas_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
-                                Efl_Canvas_VG_Shape_Data *pd,
-                                Efl_Canvas_VG_Shape *m)
+                                Efl_Canvas_Vg_Shape_Data *pd,
+                                Efl_Canvas_Vg_Shape *m)
 {
-   Efl_Canvas_VG_Node *tmp = pd->stroke.marker;
+   Efl_Canvas_Vg_Node *tmp = pd->stroke.marker;
 
    pd->stroke.marker = efl_ref(m);
    efl_unref(tmp);
@@ -70,9 +70,9 @@ _efl_canvas_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
    _efl_canvas_vg_node_changed(obj);
 }
 
-static Efl_Canvas_VG_Shape *
+static Efl_Canvas_Vg_Shape *
 _efl_canvas_vg_shape_stroke_marker_get(const Eo *obj EINA_UNUSED,
-                                Efl_Canvas_VG_Shape_Data *pd)
+                                Efl_Canvas_Vg_Shape_Data *pd)
 {
    return pd->stroke.marker;
 }
@@ -82,10 +82,10 @@ _efl_canvas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
                          Eina_Matrix3 *parent,
                          Ector_Surface *s,
                          void *data,
-                         Efl_Canvas_VG_Node_Data *nd)
+                         Efl_Canvas_Vg_Node_Data *nd)
 {
-   Efl_Canvas_VG_Shape_Data *pd = data;
-   Efl_Canvas_VG_Node_Data *fill, *stroke_fill, *stroke_marker, *mask;
+   Efl_Canvas_Vg_Shape_Data *pd = data;
+   Efl_Canvas_Vg_Node_Data *fill, *stroke_fill, *stroke_marker, *mask;
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
 
@@ -118,9 +118,9 @@ _efl_canvas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_VG_Shape_Data *pd)
+_efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *pd)
 {
-   Efl_Canvas_VG_Node_Data *nd;
+   Efl_Canvas_Vg_Node_Data *nd;
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
@@ -137,7 +137,7 @@ _efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_VG_Shape_Data *p
 }
 
 static void
-_efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_VG_Shape_Data *pd EINA_UNUSED)
+_efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *pd EINA_UNUSED)
 {
    efl_gfx_path_reset(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -145,11 +145,11 @@ _efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_VG_Shape_Data *pd
 
 static Eina_Bool
 _efl_canvas_vg_shape_efl_gfx_path_interpolate(Eo *obj,
-                                      Efl_Canvas_VG_Shape_Data *pd,
-                                      const Efl_Canvas_VG_Node *from, const Efl_Canvas_VG_Node *to,
+                                      Efl_Canvas_Vg_Shape_Data *pd,
+                                      const Efl_Canvas_Vg_Node *from, const Efl_Canvas_Vg_Node *to,
                                       double pos_map)
 {
-   Efl_Canvas_VG_Shape_Data *fromd, *tod;
+   Efl_Canvas_Vg_Shape_Data *fromd, *tod;
    Eina_Bool r;
 
    fromd = efl_data_scope_get(from, EFL_CANVAS_VG_SHAPE_CLASS);
@@ -174,11 +174,11 @@ _efl_canvas_vg_shape_efl_gfx_path_interpolate(Eo *obj,
 }
 
 
-EOLIAN static Efl_Canvas_VG_Node *
-_efl_canvas_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_VG_Shape_Data *pd)
+EOLIAN static Efl_Canvas_Vg_Node *
+_efl_canvas_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Shape_Data *pd)
 {
-   Efl_Canvas_VG_Node *cn = NULL;
-   Efl_Canvas_VG_Shape_Data *cd = NULL;
+   Efl_Canvas_Vg_Node *cn = NULL;
+   Efl_Canvas_Vg_Shape_Data *cd = NULL;
 
    cn = efl_duplicate(efl_super(obj, MY_CLASS));
    cd = efl_data_scope_get(cn, MY_CLASS);
@@ -403,8 +403,8 @@ evas_vg_shape_equal_commands(Eo *obj, const Eo *with)
    return efl_gfx_path_equal_commands(obj, with);
 }
 
-EAPI Efl_Canvas_VG_Node*
-evas_vg_shape_add(Efl_Canvas_VG_Node *parent)
+EAPI Efl_Canvas_Vg_Node*
+evas_vg_shape_add(Efl_Canvas_Vg_Node *parent)
 {
    return efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
 }

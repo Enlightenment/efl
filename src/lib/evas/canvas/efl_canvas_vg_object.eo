@@ -21,7 +21,7 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.File)
+class Efl.Canvas.Vg.Object (Efl.Canvas.Object, Efl.File)
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
@@ -65,7 +65,7 @@ class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.File)
               It takes the ownership of the root node. ]]
          }
          values {
-            root: Efl.Canvas.VG.Node; [[Root node of the VG canvas.]]
+            root: Efl.Canvas.Vg.Node; [[Root node of the VG canvas.]]
          }
       }
    }

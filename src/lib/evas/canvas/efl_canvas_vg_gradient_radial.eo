@@ -1,4 +1,4 @@
-class Efl.Canvas.VG.Gradient.Radial (Efl.Canvas.VG.Gradient, Efl.Gfx.Gradient.Radial)
+class Efl.Canvas.Vg.Gradient_Radial (Efl.Canvas.Vg.Gradient, Efl.Gfx.Gradient.Radial)
 {
    [[Efl vector graphics gradient radial class]]
    legacy_prefix: evas_vg_gradient_radial;

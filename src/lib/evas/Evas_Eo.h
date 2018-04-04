@@ -7,7 +7,7 @@
 #ifndef _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
 #define _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
 
-typedef Eo Efl_Canvas_VG_Node;
+typedef Eo Efl_Canvas_Vg_Node;
 
 #endif
 
@@ -434,7 +434,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
  *
  * @{
  */
-#include "canvas/efl_canvas_vg.eo.h"
+#include "canvas/efl_canvas_vg_object.eo.h"
 /**
  * @}
  */
