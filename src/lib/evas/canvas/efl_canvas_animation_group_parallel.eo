@@ -1,6 +1,6 @@
 import efl_canvas_animation_types;
 
-class Efl.Canvas.Animation.Group.Parallel (Efl.Canvas.Animation.Group)
+class Efl.Canvas.Animation_Group_Parallel (Efl.Canvas.Animation_Group)
 {
    [[Efl group parallel animation class]]
    eo_prefix: efl_animation_group_parallel;
