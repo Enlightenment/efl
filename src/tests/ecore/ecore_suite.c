@@ -27,7 +27,6 @@ static const Efl_Test_Case etc[] = {
 #endif
   { "Ecore_Input", ecore_test_ecore_input },
   { "Ecore_File", ecore_test_ecore_file },
-  { "Ecore_Promise", ecore_test_ecore_promise },
   { "Ecore_Job", ecore_test_ecore_job },
   { "Ecore_Args", ecore_test_ecore_args },
   { "Ecore_Promise2", ecore_test_ecore_promise2 },
