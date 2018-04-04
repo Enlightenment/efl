@@ -3196,6 +3196,18 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
         Ecore_Wl2_Input *input;
         Eina_Iterator *it;
 
+        /* FIXME: Here be dragons...
+           pointer_set_cursor is totally unsynchronized, and on a cursor
+           change we get here before the new cursor is rendered.  So
+           the cursor frequently moves to its new hotspot with the old
+           cursor image, causing an ugly jump.
+           Forcing manual render causes us to render first then set the
+           cursor, which is still racey but far more likely to win the
+           race.
+           The right way to do this is to create an entirely new surface
+           on every cursor change.
+         */
+        ecore_evas_manual_render(sd->pointer.ee);
         it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(sd->wl.win));
         EINA_ITERATOR_FOREACH(it, input)
           ecore_wl2_input_pointer_set(input, sd->pointer.surf, sd->pointer.hot_x, sd->pointer.hot_y);
