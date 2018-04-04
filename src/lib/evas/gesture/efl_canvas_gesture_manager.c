@@ -47,9 +47,9 @@ _cleanup_object(Eina_List *list)
 }
 
 static void
-_hash_free_cb(Eo *obj)
+_hash_unref_cb(Eo *obj)
 {
-   efl_del(obj);
+   efl_unref(obj);
 }
 
 EOLIAN static Efl_Object *
@@ -57,9 +57,9 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   pd->m_recognizers = eina_hash_pointer_new(EINA_FREE_CB(_hash_free_cb));
+   pd->m_recognizers = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
    pd->m_gesture_contex = eina_hash_pointer_new(NULL);
-   pd->m_object_events = eina_hash_pointer_new(EINA_FREE_CB(_hash_free_cb));
+   pd->m_object_events = eina_hash_pointer_new(EINA_FREE_CB(_hash_unref_cb));
    pd->m_object_gestures = NULL;
    pd->m_gestures_to_delete = NULL;
 
@@ -144,7 +144,7 @@ _efl_canvas_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
         touch_event = eina_hash_find(pd->m_object_events, &target);
         if (!touch_event)
           {
-             touch_event = efl_add(EFL_CANVAS_GESTURE_TOUCH_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS));
+             touch_event = efl_add_ref(EFL_CANVAS_GESTURE_TOUCH_CLASS, NULL);
              eina_hash_add(pd->m_object_events, &target, touch_event);
           }
 
@@ -208,7 +208,7 @@ _efl_canvas_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
 
 EOLIAN static const Efl_Event_Description *
 _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd,
-                                            Efl_Canvas_Gesture_Recognizer *recognizer)
+                                                Efl_Canvas_Gesture_Recognizer *recognizer)
 {
    Efl_Canvas_Gesture_Recognizer_Data *rpd;
    Efl_Canvas_Gesture *dummy = efl_gesture_recognizer_create(recognizer, 0);
@@ -219,7 +219,7 @@ _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_
    const Efl_Event_Description *type = efl_gesture_type_get(dummy);
 
    // Add the recognizer to the m_recognizers
-   eina_hash_add(pd->m_recognizers, &type, recognizer);
+   eina_hash_add(pd->m_recognizers, &type, efl_ref(recognizer));
    // update the manager
    rpd = efl_data_scope_get(recognizer, EFL_CANVAS_GESTURE_RECOGNIZER_CLASS);
    rpd->manager = obj;
