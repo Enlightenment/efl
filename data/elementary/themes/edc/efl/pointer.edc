@@ -1,0 +1,27 @@
+group { "efl/pointer";
+   inherit: "elm/pointer/base/default";
+}
+
+group { "efl/pointer:bottom_right_corner";
+   inherit: "elm/pointer/base/bottom_right_corner";
+}
+
+group { "efl/pointer:bottom_left_corner";
+   inherit: "elm/pointer/base/bottom_left_corner";
+}
+
+group { "efl/pointer:bottom_side";
+   inherit: "elm/pointer/base/bottom_side";
+}
+
+group { "efl/pointer:top_right_corner";
+   inherit: "elm/pointer/base/top_right_corner";
+}
+
+group { "efl/pointer:top_left_corner";
+   inherit: "elm/pointer/base/top_left_corner";
+}
+
+group { "efl/pointer:top_side";
+   inherit: "elm/pointer/base/top_side";
+}

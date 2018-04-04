@@ -191,6 +191,7 @@ collections {
 #include "edc/efl/spin_button.edc"
 // XXX: min size calc problems - too wide! ... err ok on my 32bit box... eh?
 #include "edc/efl/cursor.edc"
+#include "edc/efl/pointer.edc"
 #include "edc/efl/textpath.edc"
 #include "edc/efl/win.edc"
 #include "edc/efl/uiclock.edc"

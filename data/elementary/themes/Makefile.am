@@ -1027,6 +1027,7 @@ elementary/themes/edc/efl/nstate.edc \
 elementary/themes/edc/efl/panes.edc \
 elementary/themes/edc/efl/photocam.edc \
 elementary/themes/edc/efl/popup.edc \
+elementary/themes/edc/efl/pointer.edc \
 elementary/themes/edc/efl/progress.edc \
 elementary/themes/edc/efl/radio.edc \
 elementary/themes/edc/efl/scroller.edc \
