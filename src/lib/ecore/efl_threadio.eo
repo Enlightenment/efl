@@ -4,14 +4,14 @@ import eina_types;
 function EFlThreadIOCall {
    [[ A Function to call on the "other end" of a thread obvject ]]
    params {
-      obj: Efl.Object; [[ ]]
+      @cref event: Efl.Event; [[ ]]
    }
 };
 
 function EFlThreadIOCallSync {
    [[ A Function to call on the "other end" of a thread obvject ]]
    params {
-      obj: Efl.Object; [[ ]]
+      @cref event: Efl.Event; [[ ]]
    }
    return: void_ptr; [[ ]]
 };

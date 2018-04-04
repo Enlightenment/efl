@@ -118,7 +118,12 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
              EFlThreadIOCall func = cmd.d.ptr[0];
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
-             if (func) func(data, obj);
+             if (func)
+               {
+                  Efl_Event event = { obj, NULL, NULL };
+
+                  func(data, &event);
+               }
              if (free_func) free_func(data);
           }
         else if (cmd.d.command == CMD_CALL_SYNC)
@@ -127,7 +132,12 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              Control_Reply *rep = cmd.d.ptr[3];
-             if (func) rep->data = func(data, obj);
+             if (func)
+               {
+                  Efl_Event event = { obj, NULL, NULL };
+
+                  rep->data = func(data, &event);
+               }
              if (free_func) free_func(data);
              eina_semaphore_release(&(rep->sem), 1);
           }
@@ -375,7 +385,12 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
              EFlThreadIOCall func = cmd.d.ptr[0];
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
-             if (func) func(data, obj);
+             if (func)
+               {
+                  Efl_Event event = { obj, NULL, NULL };
+
+                  func(data, &event);
+               }
              if (free_func) free_func(data);
           }
         else if (cmd.d.command == CMD_CALL_SYNC)
@@ -384,7 +399,12 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              Control_Reply *rep = cmd.d.ptr[3];
-             if (func) rep->data = func(data, obj);
+             if (func)
+               {
+                  Efl_Event event = { obj, NULL, NULL };
+
+                  rep->data = func(data, &event);
+               }
              if (free_func) free_func(data);
              eina_semaphore_release(&(rep->sem), 1);
           }
