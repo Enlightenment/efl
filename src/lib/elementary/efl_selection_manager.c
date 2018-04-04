@@ -729,6 +729,17 @@ _x11_data_preparer_image(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_x11_win_filter(Eo *manager, Ecore_X_Window xwin)
+{
+   Eo *win = efl_parent_get(manager);
+   if (!win) return EINA_TRUE;
+   win = efl_ui_widget_top_get(win);
+   if (!win) return EINA_TRUE;
+   if (xwin != elm_win_xwindow_get(win)) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 /*
  * Callback to handle a targets response on a selection request:
  * So pick the format we'd like; and then request it.
@@ -779,6 +790,8 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    Efl_Selection_Type type;
    Sel_Manager_Selection *sel;
 
+   if (_x11_win_filter(pd->sel_man, ev->win)) return ECORE_CALLBACK_PASS_ON;
+
    switch (ev->selection)
      {
       case ECORE_X_SELECTION_CLIPBOARD:
@@ -818,6 +831,8 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
    Sel_Manager_Selection *sel;
    Sel_Manager_Seat_Selection *seat_sel = NULL;
    int i;
+
+   if (_x11_win_filter(pd->sel_man, ev->win)) return ECORE_CALLBACK_PASS_ON;
 
    seat_sel =  _sel_manager_seat_selection_get(pd, 1);
    if (!seat_sel)
@@ -945,6 +960,8 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
    Eina_List *l, *l_next;
    Sel_Manager_Selection_Lost *sel_lost;
    unsigned int i;
+
+   if (_x11_win_filter(pd->sel_man, ev->win)) return ECORE_CALLBACK_PASS_ON;
 
    seat_sel = _sel_manager_seat_selection_get(pd, 1);
    if (!seat_sel)
