@@ -273,13 +273,15 @@ evas_free(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   efl_unref(eo_e);
+   efl_del(eo_e);
 }
 
 EOLIAN static void
-_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
+_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
 {
    evas_sync(eo_e);
+
+   e->gesture_manager = NULL;
 
    efl_invalidate(efl_super(eo_e, MY_CLASS));
 }
@@ -305,9 +307,6 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    _evas_post_event_callback_free(eo_e);
    _evas_canvas_event_shutdown(eo_e, e);
-
-   efl_del(e->gesture_manager);
-   e->gesture_manager = NULL;
 
    del = EINA_TRUE;
    e->walking_list++;
