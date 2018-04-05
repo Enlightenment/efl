@@ -157,7 +157,7 @@ enum Efl.Ui.Win.Move_Resize_Mode
 class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Access.Window,
                   Efl.Access.Component, Efl.Access.Widget.Action,
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-                  Efl.Gfx.Size.Hint, Efl.Text, Efl.Config_Global, Efl.Part,
+                  Efl.Gfx.Size_Hint, Efl.Text, Efl.Config_Global, Efl.Part,
                   Efl.Ui.Focus.Manager, Efl.Ui.Focus.Manager.Window_Root)
 {
    [[Efl UI window class]]
@@ -797,11 +797,11 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
       Efl.Screen.screen_size { get; }
-      Efl.Gfx.Size.Hint.hint_base { get; set; }
-      Efl.Gfx.Size.Hint.hint_step { get; set; }
-      Efl.Gfx.Size.Hint.hint_aspect { set; }
-      Efl.Gfx.Size.Hint.hint_weight { set; }
-      Efl.Gfx.Size.Hint.hint_max { set; }
+      Efl.Gfx.Size_Hint.hint_base { get; set; }
+      Efl.Gfx.Size_Hint.hint_step { get; set; }
+      Efl.Gfx.Size_Hint.hint_aspect { set; }
+      Efl.Gfx.Size_Hint.hint_weight { set; }
+      Efl.Gfx.Size_Hint.hint_max { set; }
       Efl.Text.text { get; set; }
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
