@@ -2972,15 +2972,15 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
                                    &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_FALSE);
    if (!pixels) return is_inside;
 
-   /* TODO: not handling o->dirty_pixels && o->pixels->func.get_pixels,
-    * should we handle it now or believe they were done in the last render?
-    */
    if (o->dirty_pixels)
      {
         if (o->pixels->func.get_pixels)
           {
-             ERR("dirty_pixels && get_pixels not supported");
-             // FIXME: no return here?
+             if (ENFN->gl_get_pixels_pre)
+               ENFN->gl_get_pixels_pre(ENC, output);
+             o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+             if (ENFN->gl_get_pixels_post)
+               ENFN->gl_get_pixels_post(ENC, output);
           }
      }
 
