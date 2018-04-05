@@ -123,7 +123,7 @@ EFL_START_TEST(eina_binshare_putstuff)
         eina_convert_xtoa(i, build + 7);
         len = strlen(build);
         tmp = eina_binshare_add_length(build, len);
-        ck_assert_ptr_nonnull(tmp);
+        ck_assert_ptr_ne(tmp, NULL);
         ck_assert_ptr_eq(tmp, eina_binshare_add_length(build, len));
         ck_assert_int_eq(len, eina_binshare_length(tmp));
         eina_binshare_del(tmp);
@@ -147,12 +147,12 @@ EFL_START_TEST(eina_binshare_collision)
         eina_convert_itoa(60000 - i, buffer);
         len = strlen(buffer);
         r = eina_binshare_add_length(buffer, len);
-        ck_assert_ptr_nonnull(r);
+        ck_assert_ptr_ne(r, NULL);
         eina_array_push(ea, r);
         r = eina_binshare_add_length(buffer, len);
-        ck_assert_ptr_nonnull(r);
+        ck_assert_ptr_ne(r, NULL);
         r = eina_binshare_add_length(buffer, len);
-        ck_assert_ptr_nonnull(r);
+        ck_assert_ptr_ne(r, NULL);
      }
 
    while (eina_array_count(ea))

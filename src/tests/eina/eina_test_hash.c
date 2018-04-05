@@ -191,7 +191,7 @@ EFL_START_TEST(eina_test_hash_extended)
    fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
 
    array = malloc(num_loops * 10);
-   ck_assert_ptr_nonnull(array);
+   ck_assert_ptr_ne(array, NULL);
 
    for (i = 0; i < num_loops; ++i)
      {
@@ -357,7 +357,7 @@ EFL_START_TEST(eina_test_hash_string_fuzze)
    hash = eina_hash_string_superfast_new(NULL);
 
    array = malloc(num_loops * 10);
-   ck_assert_ptr_nonnull(array);
+   ck_assert_ptr_ne(array, NULL);
 
    for (i = 0; i < num_loops; ++i)
      {

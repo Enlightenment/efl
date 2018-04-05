@@ -417,7 +417,7 @@ EFL_START_TEST(eina_test_list_shuffle)
              if (eina_list_data_get(cl) != p) break;
              cl = eina_list_next(cl);
           }
-        ck_assert_ptr_nonnull(item);
+        ck_assert_ptr_ne(item, NULL);
      }
 }
 EFL_END_TEST

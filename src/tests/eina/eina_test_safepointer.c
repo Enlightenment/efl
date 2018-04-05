@@ -38,7 +38,7 @@ EFL_START_TEST(eina_test_safepointer_reusable)
    for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         const void *ptr = pointers[i] = eina_safepointer_register(&test_array[i]);
-        ck_assert_ptr_nonnull(ptr);
+        ck_assert_ptr_ne(ptr, NULL);
         ck_assert_ptr_ne(ptr, &test_array[i]);
         ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(pointers[i]));
      }
@@ -46,7 +46,7 @@ EFL_START_TEST(eina_test_safepointer_reusable)
    for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array2); i++)
      {
         const void *ptr = pointers[i + EINA_C_ARRAY_LENGTH(test_array)] = eina_safepointer_register(&test_array2[i]);
-        ck_assert_ptr_nonnull(ptr);
+        ck_assert_ptr_ne(ptr, NULL);
         ck_assert_ptr_ne(ptr, &test_array2[i]);
         ck_assert_ptr_eq(&test_array2[i], eina_safepointer_get(ptr));
         eina_safepointer_unregister(ptr);
@@ -82,7 +82,7 @@ _thread1(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         const void *ptr = pointers[i] = eina_safepointer_register(&test_array[i]);
-        ck_assert_ptr_nonnull(ptr);
+        ck_assert_ptr_ne(ptr, NULL);
         ck_assert_ptr_ne(ptr, &test_array[i]);
         ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(ptr));
      }
@@ -100,7 +100,7 @@ _thread2(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array2); i++)
      {
         const void *ptr = pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] = eina_safepointer_register(&test_array2[i]);
-        ck_assert_ptr_nonnull(ptr);
+        ck_assert_ptr_ne(ptr, NULL);
         ck_assert_ptr_ne(ptr, &test_array2[i]);
         ck_assert_ptr_eq(&test_array2[i], eina_safepointer_get(ptr));
         eina_safepointer_unregister(ptr);
@@ -155,7 +155,7 @@ EFL_START_TEST(eina_test_safepointer_lowestbit)
    for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         const void *ptr = eina_safepointer_register(&test_array[i]);
-        ck_assert_ptr_nonnull(ptr);
+        ck_assert_ptr_ne(ptr, NULL);
         ck_assert_ptr_ne(ptr, &test_array[i]);
         ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(ptr));
 

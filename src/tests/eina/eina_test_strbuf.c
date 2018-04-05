@@ -392,7 +392,7 @@ EFL_START_TEST(eina_test_strbuf_append_realloc)
    ck_assert_int_eq(eina_strbuf_length_get(buf), runs * target_pattern_size);
 
    str = eina_strbuf_string_get(buf);
-   ck_assert_ptr_nonnull(str);
+   ck_assert_ptr_ne(str, NULL);
    for (i = 0; i < runs; i++, str += target_pattern_size)
      ck_assert_int_eq(memcmp(str, target_pattern, target_pattern_size), 0);
 
@@ -423,7 +423,7 @@ EFL_START_TEST(eina_test_strbuf_prepend_realloc)
    ck_assert_int_eq(eina_strbuf_length_get(buf), runs * target_pattern_size);
 
    str = eina_strbuf_string_get(buf);
-   ck_assert_ptr_nonnull(str);
+   ck_assert_ptr_ne(str, NULL);
    for (i = 0; i < runs; i++, str += target_pattern_size)
      ck_assert_int_eq(memcmp(str, target_pattern, target_pattern_size), 0);
 
