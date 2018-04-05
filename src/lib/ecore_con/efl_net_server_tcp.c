@@ -118,7 +118,7 @@ _efl_net_server_tcp_resolved(void *data, const char *host EINA_UNUSED, const cha
    Eo *o = data;
    Efl_Net_Server_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const struct addrinfo *addr;
-   Eina_Error err;
+   Eina_Error err = EINA_ERROR_NO_ERROR;
 
    pd->resolver = NULL;
 
