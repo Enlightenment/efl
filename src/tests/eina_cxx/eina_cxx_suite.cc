@@ -32,7 +32,7 @@ main(int argc, char* argv[])
    putenv(const_cast<char*>("EFL_RUN_IN_TREE=1"));
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eina C++", etc);
+                                           "Eina C++", etc, NULL, NULL);
 
    return (failed_count == 0) ? 0 : 255;
 }
