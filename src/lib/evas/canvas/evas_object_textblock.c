@@ -6536,14 +6536,17 @@ _layout_visual(Ctxt *c)
                   }
              }
 
-           c->par = (Evas_Object_Textblock_Paragraph *)
-              EINA_INLIST_GET(c->par)->next;
-           while (c->par)
+           if (c->par)
              {
-                c->par->visible = 0;
-                _paragraph_clear(c->evas, c->o, c->evas_o, c->par);
                 c->par = (Evas_Object_Textblock_Paragraph *)
                    EINA_INLIST_GET(c->par)->next;
+                while (c->par)
+                  {
+                     c->par->visible = 0;
+                     _paragraph_clear(c->evas, c->o, c->evas_o, c->par);
+                     c->par = (Evas_Object_Textblock_Paragraph *)
+                        EINA_INLIST_GET(c->par)->next;
+                  }
              }
         }
 
