@@ -745,7 +745,8 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 
    if (im->fglyph)
      {
-        im->gc->font_glyph_images = eina_list_remove(im->gc->font_glyph_images, im);
+        if (im->gc)
+          im->gc->font_glyph_images = eina_list_remove(im->gc->font_glyph_images, im);
         im->fglyph->ext_dat = NULL;
         im->fglyph->ext_dat_free = NULL;
      }
