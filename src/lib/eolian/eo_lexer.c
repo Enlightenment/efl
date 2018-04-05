@@ -291,7 +291,7 @@ doc_ref(Eo_Lexer *ls)
 {
    const char *st = ls->stream, *ste = ls->stream_end;
    size_t rlen = 0;
-   while ((st != ste) && ((*st == '.') || isalnum(*st)))
+   while ((st != ste) && ((*st == '.') || (*st == '_') || isalnum(*st)))
      {
         ++st;
         ++rlen;
