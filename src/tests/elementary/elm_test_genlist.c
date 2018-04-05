@@ -55,7 +55,6 @@ verify_group_api(Elm_Object_Item *git)
 
 EFL_START_TEST (elm_genlist_group)
 {
-   const char *type;
    Elm_Object_Item *git;
    int i;
 
