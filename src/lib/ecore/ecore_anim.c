@@ -175,7 +175,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
         timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
         if (timerfd >= 0) eina_file_close_on_exec(timerfd, EINA_TRUE);
      }
-   if (timerfd < 0)
+   if ((timerfd < 0) && (pollfd >= 0))
      {
         close(pollfd);
         pollfd = -1;
