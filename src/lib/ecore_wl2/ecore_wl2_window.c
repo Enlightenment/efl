@@ -1545,43 +1545,49 @@ _region_create(struct wl_compositor *comp, int x, int y, int w, int h)
 }
 
 static void
-_input_set(Ecore_Wl2_Window *window)
+_regions_set(Ecore_Wl2_Window *window)
 {
-   struct wl_region *region;
+   struct wl_region *region = NULL;
 
-   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
+   if (window->pending.opaque)
+     {
+        if (window->opaque_set)
+          {
+             region = _region_create(window->display->wl.compositor,
+                                     window->opaque.x, window->opaque.y,
+                                     window->opaque.w, window->opaque.h);
+             if (!region) return;
+          }
+        wl_surface_set_opaque_region(window->surface, region);
+     }
+
+   if (!window->pending.input) goto out;
+   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) goto out;
 
    if (!window->input_set)
      {
         wl_surface_set_input_region(window->surface, NULL);
-        return;
+        goto out;
      }
+
+   if (region && (window->opaque.x == window->input_rect.x) &&
+       (window->opaque.y == window->input_rect.y) &&
+       (window->opaque.w == window->input_rect.w) &&
+       (window->opaque.h == window->input_rect.h))
+     {
+        wl_surface_set_input_region(window->surface, region);
+        goto out;
+     }
+   if (region) wl_region_destroy(region);
 
    region = _region_create(window->display->wl.compositor,
                            window->input_rect.x, window->input_rect.y,
                            window->input_rect.w, window->input_rect.h);
    if (!region) return;
    wl_surface_set_input_region(window->surface, region);
-   wl_region_destroy(region);
-}
 
-static void
-_opaque_set(Ecore_Wl2_Window *window)
-{
-   struct wl_region *region;
-
-   if (!window->opaque_set)
-     {
-        wl_surface_set_opaque_region(window->surface, NULL);
-        return;
-     }
-
-   region = _region_create(window->display->wl.compositor,
-                           window->opaque.x, window->opaque.y,
-                           window->opaque.w, window->opaque.h);
-   if (!region) return;
-   wl_surface_set_opaque_region(window->surface, region);
-   wl_region_destroy(region);
+out:
+   if (region) wl_region_destroy(region);
 }
 
 EAPI void
@@ -1619,11 +1625,8 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
                                                    window->set_config.geometry.w,
                                                    window->set_config.geometry.h);
           }
-        if (window->pending.opaque)
-          _opaque_set(window);
-
-        if (window->pending.input)
-          _input_set(window);
+        if (window->pending.opaque || window->pending.input)
+          _regions_set(window);
 
         if (window->pending.maximized)
           _maximized_set(window);
