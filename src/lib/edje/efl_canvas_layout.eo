@@ -118,7 +118,7 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.File.load_error { get; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
-      Efl.Part.part; [[Returns @Efl.Canvas.Layout.Part.]]
+      Efl.Part.part; [[Returns @Efl.Canvas.Layout_Part]]
       Efl.Observer.update;
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }

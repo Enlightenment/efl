@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
+class Efl.Canvas.Layout_Part_Invalid (Efl.Canvas.Layout_Part, Efl.Content,
                                       Efl.Pack.Linear, Efl.Ui.Direction,
                                       Efl.Pack.Table, Efl.Text,
                                       Efl.Text.Markup, Efl.Text.Cursor)
@@ -17,8 +17,8 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
    data: null;
    implements {
       // Efl.Canvas.Layout.Part
-      Efl.Canvas.Layout.Part.state { get; }
-      Efl.Canvas.Layout.Part.part_type { get; }
+      Efl.Canvas.Layout_Part.state { get; }
+      Efl.Canvas.Layout_Part.part_type { get; }
       Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }
@@ -27,10 +27,10 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       Efl.Ui.Drag.drag_step_move;
       Efl.Ui.Drag.drag_page { set; get; }
       Efl.Ui.Drag.drag_page_move;
-      // Efl.Canvas.Layout.Part_Swallow & External
+      // Efl.Canvas.Layout_Part_Swallow & External
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      // Efl.Canvas.Layout.Part_Text
+      // Efl.Canvas.Layout_Part_Text
       Efl.Text.text { set; get; }
       Efl.Text.Markup.markup { get; set; }
       Efl.Text.Cursor.text_cursor { get; }
@@ -47,7 +47,7 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       Efl.Text.Cursor.cursor_content { get; }
       Efl.Text.Cursor.cursor_geometry { get; }
       Efl.Text.Markup.cursor_markup_insert;
-      // Efl.Canvas.Layout.Part_Box
+      // Efl.Canvas.Layout_Part_Box
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
@@ -64,7 +64,7 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       Efl.Pack.Linear.pack_unpack_at;
       Efl.Pack.Linear.pack_index_get;
       Efl.Ui.Direction.direction { get; [[Returns $default if unknown.]] }
-      // Efl.Canvas.Layout.Part_Table
+      // Efl.Canvas.Layout_Part_Table
       Efl.Pack.Table.pack_table;
       Efl.Pack.Table.table_content_get;
       Efl.Pack.Table.table_contents_get;

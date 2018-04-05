@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout.Part_Box (Efl.Canvas.Layout.Part, Efl.Pack.Linear,
+class Efl.Canvas.Layout_Part_Box (Efl.Canvas.Layout_Part, Efl.Pack.Linear,
                                   Efl.Ui.Direction)
 {
    [[Represents a Box created as part of a layout.
