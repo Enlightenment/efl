@@ -196,7 +196,7 @@ _efl_net_dialer_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
 {
    Eo *o = data;
    Efl_Net_Dialer_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
-   Eina_Error err;
+   Eina_Error err = EINA_ERROR_NO_ERROR;
    struct addrinfo *addr;
 
    pd->resolver.thread = NULL;
