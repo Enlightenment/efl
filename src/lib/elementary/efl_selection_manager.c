@@ -2427,13 +2427,28 @@ _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int siz
    else if ((format & EFL_SELECTION_FORMAT_MARKUP) ||
             (format & EFL_SELECTION_FORMAT_HTML))
      {
-        *data_ret = _elm_util_mkup_to_text(data);
-        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+        char *tmp = malloc(size + 1);
+        if (tmp)
+          {
+             strncpy(tmp, data, size);
+             tmp[size] = 0;
+             *data_ret = _elm_util_mkup_to_text(tmp);
+             if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+             free(tmp);
+          }
+        else return EINA_FALSE;
      }
    else if (format & EFL_SELECTION_FORMAT_TEXT)
      {
-        *data_ret = strdup(data);
-        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+        char *tmp = malloc(size + 1);
+        if (tmp)
+          {
+             strncpy(tmp, data, size);
+             tmp[size] = 0;
+             *data_ret = tmp;
+             if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+          }
+        else return EINA_FALSE;
      }
    else if (format & EFL_SELECTION_FORMAT_IMAGE)
      {
@@ -5308,7 +5323,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
 #endif
 
    pd->atom_list[SELECTION_ATOM_TEXT_PLAIN_UTF8].name = "text/plain;charset=utf-8";
-   pd->atom_list[SELECTION_ATOM_TEXT_PLAIN_UTF8].format = EFL_SELECTION_FORMAT_TEXT | EFL_SELECTION_FORMAT_MARKUP | EFL_SELECTION_FORMAT_HTML;
+   pd->atom_list[SELECTION_ATOM_TEXT_PLAIN_UTF8].format = EFL_SELECTION_FORMAT_TEXT;
 #ifdef HAVE_ELEMENTARY_X
    pd->atom_list[SELECTION_ATOM_TEXT_PLAIN_UTF8].x_converter = _x11_text_converter;
    pd->atom_list[SELECTION_ATOM_TEXT_PLAIN_UTF8].x_data_preparer = _x11_data_preparer_text;
@@ -5319,7 +5334,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
 #endif
 
    pd->atom_list[SELECTION_ATOM_TEXT_PLAIN].name = "text/plain";
-   pd->atom_list[SELECTION_ATOM_TEXT_PLAIN].format = EFL_SELECTION_FORMAT_TEXT | EFL_SELECTION_FORMAT_MARKUP | EFL_SELECTION_FORMAT_HTML;
+   pd->atom_list[SELECTION_ATOM_TEXT_PLAIN].format = EFL_SELECTION_FORMAT_TEXT;
 #ifdef HAVE_ELEMENTARY_X
    pd->atom_list[SELECTION_ATOM_TEXT_PLAIN].x_converter = _x11_text_converter;
    pd->atom_list[SELECTION_ATOM_TEXT_PLAIN].x_data_preparer = _x11_data_preparer_text;
