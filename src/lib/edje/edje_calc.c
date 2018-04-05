@@ -1548,7 +1548,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
      return;
 
    // Note: No need to add padding to that, it's already in the geometry
-   sz = efl_gfx_size_get(ep->object);
+   sz = efl_gfx_entity_size_get(ep->object);
    mw = sz.w;
    mh = sz.h;
 
@@ -1716,7 +1716,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
              evas_obj_text_style_set(ep->object, style);
              evas_obj_text_set(ep->object, text);
-             ts = efl_gfx_size_get(ep->object);
+             ts = efl_gfx_entity_size_get(ep->object);
              if (chosen_desc->text.max_x)
                {
                   int l, r;
@@ -4702,7 +4702,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_EXTERNAL:
              /* visibility and color have no meaning on SWALLOW and GROUP part. */
 #ifdef HAVE_EPHYSICS
-             efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+             efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
              if ((ep->part->physics_body) && (!ep->body))
                {
                   if (_edje_physics_world_geometry_check(ed->world))
@@ -4722,16 +4722,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                     }
                }
              else
-               efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+               efl_gfx_entity_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
 #else
-             efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-             efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+             efl_gfx_entity_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+             efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
 #endif
 
              if (ep->nested_smart) /* Move, Resize all nested parts */
                {   /* Not really needed but will improve the bounding box evaluation done by Evas */
-                  efl_gfx_position_set(ep->nested_smart, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_size_set(ep->nested_smart, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                  efl_gfx_entity_position_set(ep->nested_smart, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+                  efl_gfx_entity_size_set(ep->nested_smart, EINA_SIZE2D(pf->final.w,  pf->final.h));
                }
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                _edje_entry_real_part_configure(ed, ep);
@@ -4766,16 +4766,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 Evas_Canvas3D_Camera *camera = NULL;
                 Edje_Part_Description_Camera *pd_camera;
 
-                efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->req.w,  pf->req.h));
+                efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->req.w,  pf->req.h));
 
                 pd_camera = (Edje_Part_Description_Camera*) ep->chosen_description;
 
-                efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y)),
-                efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                efl_gfx_entity_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y)),
+                efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
 
                 viewport = evas_object_image_source_get(ep->object);
 
-                efl_gfx_size_set(viewport, EINA_SIZE2D(pf->req.w,  pf->req.h));
+                efl_gfx_entity_size_set(viewport, EINA_SIZE2D(pf->req.w,  pf->req.h));
 
                 evas_object_image_source_visible_set(ep->object, EINA_FALSE);
                 evas_object_image_source_events_set(ep->object, EINA_TRUE);
@@ -5021,9 +5021,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                   if (ep->part->type == EDJE_PART_TYPE_GROUP)
                     vis = evas_object_visible_get(ed->obj);
-                  efl_gfx_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
-                  efl_gfx_visible_set(ep->typedata.swallow->swallowed_object, vis);
+                  efl_gfx_entity_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+                  efl_gfx_entity_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                  efl_gfx_entity_visible_set(ep->typedata.swallow->swallowed_object, vis);
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;

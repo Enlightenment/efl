@@ -872,14 +872,14 @@ evas_object_textgrid_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_textgrid_efl_gfx_scale_set(Evas_Object *eo_obj, Evas_Textgrid_Data *o,
+_evas_textgrid_efl_gfx_entity_scale_set(Evas_Object *eo_obj, Evas_Textgrid_Data *o,
                                      double scale)
 {
    int font_size;
    const char *font_name;
 
-   if (EINA_DBL_EQ(efl_gfx_scale_get(eo_obj), scale)) return;
-   efl_gfx_scale_set(efl_super(eo_obj, MY_CLASS), scale);
+   if (EINA_DBL_EQ(efl_gfx_entity_scale_get(eo_obj), scale)) return;
+   efl_gfx_entity_scale_set(efl_super(eo_obj, MY_CLASS), scale);
 
    font_name = eina_stringshare_add(o->cur.font_name);
    font_size = o->cur.font_size;

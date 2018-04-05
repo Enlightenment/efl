@@ -594,7 +594,7 @@ EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    if (elm_widget_is_legacy(obj))
-     efl_event_callback_del(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
+     efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
                             _on_size_hints_changed, sd);
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
@@ -622,12 +622,12 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Position2D pos)
+_efl_ui_image_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    if ((sd->img_x == pos.x) && (sd->img_y == pos.y)) return;
    sd->img_x = pos.x;
@@ -638,7 +638,7 @@ _efl_ui_image_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Position
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
+_efl_ui_image_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -652,7 +652,7 @@ _efl_ui_image_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
    _efl_ui_image_internal_sizing_eval(obj, sd);
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void
@@ -660,10 +660,10 @@ _efl_ui_image_show(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    sd->show = EINA_TRUE;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
-   efl_gfx_visible_set(sd->img, EINA_TRUE);
+   efl_gfx_entity_visible_set(sd->img, EINA_TRUE);
    _prev_img_del(sd);
 }
 
@@ -671,13 +671,13 @@ static void
 _efl_ui_image_hide(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    sd->show = EINA_FALSE;
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
-   efl_gfx_visible_set(sd->img, EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+   efl_gfx_entity_visible_set(sd->img, EINA_FALSE);
    _prev_img_del(sd);
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_visible_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool vis)
+_efl_ui_image_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -767,7 +767,7 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
    if (sd->no_scale)
      _efl_ui_image_internal_scale_set(obj, sd, 1.0);
    else
-     _efl_ui_image_internal_scale_set(obj, sd, efl_gfx_scale_get(obj) * elm_config_scale_get());
+     _efl_ui_image_internal_scale_set(obj, sd, efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    ts = sd->scale;
    sd->scale = 1.0;
@@ -2290,7 +2290,7 @@ elm_image_add(Evas_Object *parent)
    Evas_Object *obj = elm_legacy_add(EFL_UI_IMAGE_LEGACY_CLASS, parent);
    EFL_UI_IMAGE_DATA_GET(obj, priv);
 
-   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
 
    return obj;
 }

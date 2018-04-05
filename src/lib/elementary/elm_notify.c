@@ -153,7 +153,7 @@ _elm_notify_efl_ui_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
    if (sd->block_events) _block_events_theme_apply(obj);
 
    edje_object_scale_set
-     (sd->notify, efl_gfx_scale_get(obj) * elm_config_scale_get());
+     (sd->notify, efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _sizing_eval(obj);
 
@@ -228,29 +228,29 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_size_set(Eo *obj, Elm_Notify_Data *sd, Eina_Size2D sz)
+_elm_notify_efl_gfx_entity_size_set(Eo *obj, Elm_Notify_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    if (!sd->parent && sd->content)
      {
         Eina_Position2D pos;
 
-        pos = efl_gfx_position_get(obj);
+        pos = efl_gfx_entity_position_get(obj);
         _notify_move_to_orientation(obj, pos.x, pos.y, sz.w, sz.h);
      }
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_position_set(Eo *obj, Elm_Notify_Data *sd, Eina_Position2D pos)
+_elm_notify_efl_gfx_entity_position_set(Eo *obj, Elm_Notify_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    if (!sd->parent && sd->content)
      {
@@ -295,7 +295,7 @@ _elm_notify_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    evas_object_show(sd->notify);
    if (!sd->allow_events) evas_object_show(sd->block_events);
@@ -322,7 +322,7 @@ _elm_notify_hide(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
      }
    else //for backport supporting: edc without emitting hide finished signal
      {
-        efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+        efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
         evas_object_hide(sd->notify);
         if (sd->allow_events) evas_object_hide(sd->block_events);
      }
@@ -330,7 +330,7 @@ _elm_notify_hide(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_visible_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool vis)
+_elm_notify_efl_gfx_entity_visible_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -432,7 +432,7 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   efl_gfx_visible_set(efl_super(data, MY_CLASS), EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_super(data, MY_CLASS), EINA_FALSE);
    efl_event_callback_legacy_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 

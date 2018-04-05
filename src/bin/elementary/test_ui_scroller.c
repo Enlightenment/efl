@@ -32,7 +32,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
                  efl_text_set(efl_added, "Efl Ui Scroller"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-   efl_gfx_size_set(win, EINA_SIZE2D(320, 400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
 
    sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),

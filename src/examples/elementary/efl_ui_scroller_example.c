@@ -17,7 +17,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), "TEST", ELM_WIN_BASIC,
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 400));
 
    scroller = efl_add(EFL_UI_SCROLLER_CLASS, win);
    efl_content_set(win, scroller);
@@ -25,7 +25,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
    content = efl_add(EFL_UI_IMAGE_CLASS, scroller);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_file_set(content, buf, NULL);
-   efl_gfx_size_set(content, EINA_SIZE2D(5000, 5000));
+   efl_gfx_entity_size_set(content, EINA_SIZE2D(5000, 5000));
    efl_content_set(scroller, content);
 }
 EFL_MAIN()

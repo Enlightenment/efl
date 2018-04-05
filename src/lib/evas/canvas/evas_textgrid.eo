@@ -204,6 +204,6 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
       Efl.Text.Font.font { get; set; }
       Efl.Text.Font.font_source { get; set; }
       Efl.Text.Font.font_bitmap_scalable { get; set; }
-      Efl.Gfx.scale { set; }
+      Efl.Gfx.Entity.scale { set; }
    }
 }

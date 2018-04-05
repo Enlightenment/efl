@@ -93,7 +93,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
                }
-             else if (efl_isa(elem, EFL_GFX_INTERFACE))
+             else if (efl_isa(elem, EFL_GFX_ENTITY_INTERFACE))
                {
                   o = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS), efl_ui_focus_composition_adapter_canvas_object_set(efl_added, elem));
 
@@ -102,7 +102,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
                }
              else
                {
-                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_INTERFACE or EFL_UI_WIDGET_CLASS");
+                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_ENTITY_INTERFACE or EFL_UI_WIDGET_CLASS");
                   continue;
                }
           }
@@ -210,8 +210,8 @@ _new_geom(void *data, const Efl_Event *event)
 
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
-    {EFL_GFX_EVENT_RESIZE, _new_geom},
-    {EFL_GFX_EVENT_MOVE, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_RESIZE, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_MOVE, _new_geom},
     {EFL_EVENT_DEL, _canvas_object_deleted},
 );
 
@@ -239,7 +239,7 @@ _efl_ui_focus_composition_adapter_canvas_object_get(const Eo *obj EINA_UNUSED, E
 EOLIAN static Eina_Rect
 _efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
 {
-   return efl_gfx_geometry_get(pd->object);
+   return efl_gfx_entity_geometry_get(pd->object);
 }
 
 EOLIAN static void

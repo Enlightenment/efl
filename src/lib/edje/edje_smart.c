@@ -161,14 +161,14 @@ _efl_canvas_layout_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_gfx_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
+_efl_canvas_layout_efl_gfx_entity_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
 {
    unsigned short i;
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    if ((ed->x == pos.x) && (ed->y == pos.y)) return;
    ed->x = pos.x;
@@ -264,7 +264,7 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
+_efl_canvas_layout_efl_gfx_entity_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -300,7 +300,7 @@ _efl_canvas_layout_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
    _edje_emit(ed, "resize", NULL);
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void
@@ -309,7 +309,7 @@ _edje_object_show(Eo *obj, Edje *ed)
    Eina_List *l;
    Edje *edg;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_show(ed);
@@ -336,7 +336,7 @@ _edje_object_hide(Eo *obj, Edje *ed)
    Eina_List *l;
    Edje *edg;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_hide(ed);
@@ -348,7 +348,7 @@ _edje_object_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_gfx_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
+_efl_canvas_layout_efl_gfx_entity_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;

@@ -169,13 +169,13 @@ main(void)
    /* Add evas objects. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
-   efl_gfx_size_set(background, EINA_SIZE2D(WIDTH,  HEIGHT));
-   efl_gfx_visible_set(background, EINA_TRUE);
+   efl_gfx_entity_size_set(background, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_visible_set(background, EINA_TRUE);
 
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_canvas_scene3d_set(image, scene);
-   efl_gfx_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
-   efl_gfx_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN,
                                   _on_mouse_down, NULL);
 

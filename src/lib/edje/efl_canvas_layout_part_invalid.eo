@@ -19,7 +19,7 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       // Efl.Canvas.Layout.Part
       Efl.Canvas.Layout.Part.state { get; }
       Efl.Canvas.Layout.Part.part_type { get; }
-      Efl.Gfx.geometry { get; }
+      Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }
       Efl.Ui.Drag.drag_dir { get; }

@@ -249,7 +249,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    _scene_setup(&data);
 
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
-   efl_gfx_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
 
    /* Set the image object as render target for 3D scene. */
    efl_canvas_scene3d_set(image, data.scene);

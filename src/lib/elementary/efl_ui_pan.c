@@ -22,12 +22,12 @@
     }
 
 EOLIAN static void
-_efl_ui_pan_efl_gfx_position_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Position2D pos)
+_efl_ui_pan_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    psd->x = pos.x;
    psd->y = pos.y;
@@ -36,12 +36,12 @@ _efl_ui_pan_efl_gfx_position_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Position2D 
 }
 
 EOLIAN static void
-_efl_ui_pan_efl_gfx_size_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Size2D sz)
+_efl_ui_pan_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    psd->w = sz.w;
    psd->h = sz.h;
@@ -51,13 +51,13 @@ _efl_ui_pan_efl_gfx_size_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Size2D sz)
 }
 
 EOLIAN static void
-_efl_ui_pan_efl_gfx_visible_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Bool vis)
+_efl_ui_pan_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
-   if (psd->content) efl_gfx_visible_set(psd->content, vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
+   if (psd->content) efl_gfx_entity_visible_set(psd->content, vis);
 }
 
 EOLIAN static void
@@ -138,7 +138,7 @@ _efl_ui_pan_content_resize_cb(void *data,
    Evas_Object *pobj = data;
    EFL_UI_PAN_DATA_GET_OR_RETURN(pobj, psd);
 
-   Eina_Size2D sz = efl_gfx_size_get(psd->content);
+   Eina_Size2D sz = efl_gfx_entity_size_get(psd->content);
    if ((sz.w != psd->content_w) || (sz.h != psd->content_h))
      {
         psd->content_w = sz.w;
@@ -169,7 +169,7 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
 
    psd->content = content;
    efl_canvas_group_member_add(obj, content);
-   sz = efl_gfx_size_get(psd->content);
+   sz = efl_gfx_entity_size_get(psd->content);
    psd->content_w = sz.w;
    psd->content_h = sz.h;
    evas_object_event_callback_add
@@ -192,6 +192,6 @@ end:
 EOLIAN static void
 _efl_ui_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
 {
-   efl_gfx_position_set(psd->content, EINA_POSITION2D(psd->x - psd->px, psd->y - psd->py));
+   efl_gfx_entity_position_set(psd->content, EINA_POSITION2D(psd->x - psd->px, psd->y - psd->py));
 }
 #include "efl_ui_pan.eo.c"

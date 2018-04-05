@@ -871,7 +871,7 @@ _smart_reconfigure(Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_gfx_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Position2D pos)
+_efl_ui_widget_efl_gfx_entity_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
@@ -880,11 +880,11 @@ _efl_ui_widget_efl_gfx_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *
    sd->y = pos.y;
    _smart_reconfigure(sd);
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Size2D sz)
+_efl_ui_widget_efl_gfx_entity_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -893,7 +893,7 @@ _efl_ui_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, 
    sd->h = sz.h;
    _smart_reconfigure(sd);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void
@@ -916,7 +916,7 @@ _full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vis)
+_efl_ui_widget_efl_gfx_entity_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vis)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -927,7 +927,7 @@ _efl_ui_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool
         return;
      }
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    _full_eval_children(obj, pd);
 
@@ -936,7 +936,7 @@ _efl_ui_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool
    EINA_ITERATOR_FOREACH(it, o)
      {
        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-       efl_gfx_visible_set(o, vis);
+       efl_gfx_entity_visible_set(o, vis);
      }
    eina_iterator_free(it);
 
@@ -1546,10 +1546,10 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
          * need to reset sobj's scale to 5.
          * Note that each widget's scale is 0 by default.
          */
-        double scale, pscale = efl_gfx_scale_get(sobj);
+        double scale, pscale = efl_gfx_entity_scale_get(sobj);
         Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
 
-        scale = efl_gfx_scale_get(sobj);
+        scale = efl_gfx_entity_scale_get(sobj);
         th = elm_widget_theme_get(sobj);
         mirrored = efl_ui_mirrored_get(sobj);
 
@@ -2592,7 +2592,7 @@ EOLIAN static Eina_Rect
 _efl_ui_widget_interest_region_get(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    Eina_Rect r = {};
-   r.size = efl_gfx_size_get(obj);
+   r.size = efl_gfx_entity_size_get(obj);
    return r;
 }
 
@@ -2711,7 +2711,7 @@ elm_widget_scroll_freeze_get(const Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_gfx_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
+_efl_ui_widget_efl_gfx_entity_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
 {
    if (scale < 0.0) scale = 0.0;
    if (sd->scale != scale)
@@ -2722,14 +2722,14 @@ _efl_ui_widget_efl_gfx_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scal
 }
 
 EOLIAN static double
-_efl_ui_widget_efl_gfx_scale_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    // FIXME: save walking up the tree by storing/caching parent scale
    if (sd->scale == 0.0)
      {
         if (sd->parent_obj && elm_widget_is(sd->parent_obj))
           {
-             return efl_gfx_scale_get(sd->parent_obj);
+             return efl_gfx_entity_scale_get(sd->parent_obj);
           }
         else
           {
@@ -3820,10 +3820,10 @@ static void
 _track_obj_view_del(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
-                          { EFL_GFX_EVENT_RESIZE, _track_obj_view_update },
-                          { EFL_GFX_EVENT_MOVE, _track_obj_view_update },
-                          { EFL_GFX_EVENT_SHOW, _track_obj_view_update },
-                          { EFL_GFX_EVENT_HIDE, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_RESIZE, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_MOVE, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_SHOW, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_HIDE, _track_obj_view_update },
                           { EFL_EVENT_DEL, _track_obj_view_del });
 
 static void
@@ -5507,7 +5507,7 @@ _elm_widget_item_efl_access_component_extents_get(const Eo *obj EINA_UNUSED, Elm
 
    if (!sd->view) return r;
 
-   r = efl_gfx_geometry_get(sd->view);
+   r = efl_gfx_entity_geometry_get(sd->view);
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(sd->view));
@@ -5575,7 +5575,7 @@ _efl_ui_widget_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static Eina_Rect
 _efl_ui_widget_efl_ui_focus_object_focus_geometry_get(const Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   return efl_gfx_geometry_get(obj);
+   return efl_gfx_entity_geometry_get(obj);
 }
 
 EOLIAN static void
@@ -5733,11 +5733,11 @@ _widget_shadow_event_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(widget_shadow_cb,
 { EFL_EVENT_DEL, _widget_shadow_del_cb },
-{ EFL_GFX_EVENT_MOVE, _widget_shadow_event_cb },
-{ EFL_GFX_EVENT_RESIZE, _widget_shadow_event_cb },
-{ EFL_GFX_EVENT_RESTACK, _widget_shadow_event_cb },
-{ EFL_GFX_EVENT_HIDE, _widget_shadow_event_cb },
-{ EFL_GFX_EVENT_SHOW, _widget_shadow_event_cb })
+{ EFL_GFX_ENTITY_EVENT_MOVE, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_RESIZE, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_RESTACK, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_HIDE, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_SHOW, _widget_shadow_event_cb })
 
 static Widget_Shadow *
 _widget_shadow_part_get(const Eo *part_obj)
@@ -5790,24 +5790,24 @@ _widget_shadow_update(Widget_Shadow *ws)
                               ws->name ? ws->name : "shadow");
    efl_gfx_filter_padding_get(ws->surface, &l, &r, &t, &b);
 
-   wrect = efl_gfx_geometry_get(ws->widget);
+   wrect = efl_gfx_entity_geometry_get(ws->widget);
    srect.x = wrect.x + (int) (-l + ws->props.ox);
    srect.y = wrect.y + (int) (-t + ws->props.oy);
    srect.w = wrect.w + (int) (l + r);
    srect.h = wrect.h + (int) (t + b);
 
    if ((!ws->props.a && !ws->code) ||
-       !efl_gfx_visible_get(ws->widget))
+       !efl_gfx_entity_visible_get(ws->widget))
      {
-        efl_gfx_visible_set(ws->surface, EINA_FALSE);
+        efl_gfx_entity_visible_set(ws->surface, EINA_FALSE);
         return;
      }
 
    efl_canvas_object_clip_set(ws->surface, efl_canvas_object_clip_get(ws->widget));
    efl_canvas_group_member_add(efl_canvas_object_render_parent_get(ws->widget), ws->surface);
-   efl_gfx_geometry_set(ws->surface, srect);
+   efl_gfx_entity_geometry_set(ws->surface, srect);
    efl_gfx_stack_below(ws->surface, ws->widget);
-   efl_gfx_visible_set(ws->surface, EINA_TRUE);
+   efl_gfx_entity_visible_set(ws->surface, EINA_TRUE);
 }
 
 static void
@@ -5904,14 +5904,14 @@ _efl_ui_widget_part_shadow_efl_gfx_filter_filter_program_get(const Eo *obj, void
 }
 
 EOLIAN static void
-_efl_ui_widget_part_shadow_efl_gfx_filter_filter_source_set(Eo *obj, void *_pd EINA_UNUSED, const char *name, Efl_Gfx *source)
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_source_set(Eo *obj, void *_pd EINA_UNUSED, const char *name, Efl_Gfx_Entity *source)
 {
    Widget_Shadow *ws = _widget_shadow_part_get(obj);
    _widget_shadow_update(ws);
    efl_gfx_filter_source_set(ws->surface, name, source);
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_widget_part_shadow_efl_gfx_filter_filter_source_get(const Eo *obj, void *_pd EINA_UNUSED, const char *name)
 {
    Widget_Shadow *ws = _widget_shadow_part_get(obj);

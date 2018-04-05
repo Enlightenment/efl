@@ -1687,7 +1687,7 @@ void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bo
 
 Eina_Bool _efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
 Eina_Bool _efl_canvas_object_clip_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
-Eina_Bool _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
+Eina_Bool _efl_canvas_object_efl_gfx_entity_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
 
 void _evas_focus_device_del_cb(void *data, const Efl_Event *ev);
 

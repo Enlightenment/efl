@@ -1,7 +1,7 @@
 import efl_text_types;
 import efl_canvas_animation_types;
 
-abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
+abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
                             Efl.Gfx.Map, Efl.Loop.Consumer, Efl.Ui.Base, Efl.Canvas.Pointer)
 {
@@ -597,11 +597,11 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
       Efl.Object.provider_find;
       Efl.Object.del;
       Efl.Object.debug_name_override;
-      Efl.Gfx.visible { get; set; }
+      Efl.Gfx.Entity.visible { get; set; }
       Efl.Gfx.Color.color { get; set; }
-      Efl.Gfx.geometry { get; set; }
-      Efl.Gfx.position { get; set; }
-      Efl.Gfx.size { get; set; }
+      Efl.Gfx.Entity.geometry { get; set; }
+      Efl.Gfx.Entity.position { get; set; }
+      Efl.Gfx.Entity.size { get; set; }
       Efl.Gfx.Stack.layer { get; set; }
       Efl.Gfx.Stack.below { get; }
       Efl.Gfx.Stack.above { get; }
@@ -617,7 +617,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
       Efl.Gfx.Size.Hint.hint_max { get; set; }
       Efl.Gfx.Size.Hint.hint_margin { get; set; }
       Efl.Gfx.Size.Hint.hint_weight { get; set; }
-      Efl.Gfx.scale { set; get; }
+      Efl.Gfx.Entity.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop.Consumer.loop { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }

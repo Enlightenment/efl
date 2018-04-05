@@ -39,20 +39,20 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Eina_Size2D obj
   if ((max_size.w == -1) && (max_size.h == -1))
     {
        elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-       efl_gfx_size_set(obj, size);
+       efl_gfx_entity_size_set(obj, size);
     }
   else if ((max_size.w == -1) && (max_size.h != -1))
     {
        if (max_size.h < text_min.h)
          {
             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
          }
        else
          {
             new_min.h = text_min.h;
             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(size.w, text_min.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, text_min.h));
          }
     }
   else if ((max_size.w != -1) && (max_size.h == -1))
@@ -60,13 +60,13 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Eina_Size2D obj
        if (max_size.w < text_min.w)
          {
             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
          }
        else
          {
             new_min.w = text_min.w;
             elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(text_min.w, size.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(text_min.w, size.h));
          }
     }
   else if ((max_size.w != -1) && (max_size.h != -1))
@@ -98,7 +98,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Eina_Size2D obj
          }
 
         elm_scroller_content_min_limit(pd->scroller, min_limit_w, min_limit_h);
-        efl_gfx_size_set(obj, new_size);
+        efl_gfx_entity_size_set(obj, new_size);
     }
 
     efl_gfx_size_hint_min_set(obj, new_min);
@@ -109,7 +109,7 @@ _efl_ui_popup_alert_text_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Alert
 {
    pd->size = size;
 
-   efl_gfx_size_set(obj, size);
+   efl_gfx_entity_size_set(obj, size);
 
    elm_layout_sizing_eval(obj);
 }

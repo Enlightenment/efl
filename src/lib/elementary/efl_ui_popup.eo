@@ -55,9 +55,9 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set;}
-      Efl.Gfx.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set;}
+      Efl.Gfx.Entity.visible { set; }
       Efl.Ui.Widget.widget_parent { set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;

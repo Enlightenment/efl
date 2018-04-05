@@ -37,6 +37,6 @@ class Efl.Ui.Popup_Anchor(Efl.Ui.Popup)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Gfx.position { set; }
+      Efl.Gfx.Entity.position { set; }
    }
 }

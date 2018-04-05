@@ -2074,7 +2074,7 @@ _elm_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Calendar_Item_Data
 EOLIAN static Eina_Rect
 _elm_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
 {
-   return efl_gfx_geometry_get(pd->part);
+   return efl_gfx_entity_geometry_get(pd->part);
 }
 
 #include "elm_calendar_item.eo.c"

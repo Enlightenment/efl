@@ -246,7 +246,7 @@ _efl_canvas_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, Efl_Obje
    _child_insert(pd, sub);
    efl_event_callback_add(eo_sub, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
    if (eo_sub != pd->rect)
-     efl_event_callback_add(eo_sub, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
+     efl_event_callback_add(eo_sub, EFL_GFX_ENTITY_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
 }
 
 EOLIAN static void
@@ -255,7 +255,7 @@ _efl_canvas_event_grabber_efl_canvas_group_group_member_del(Eo *eo_obj EINA_UNUS
    Evas_Object_Protected_Data *obj = efl_data_scope_get(member, EFL_CANVAS_OBJECT_CLASS);
 
    efl_event_callback_del(member, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
-   efl_event_callback_del(member, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
+   efl_event_callback_del(member, EFL_GFX_ENTITY_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
    pd->contained = eina_list_remove(pd->contained, obj);
 
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
@@ -282,27 +282,27 @@ _efl_canvas_event_grabber_efl_canvas_group_group_need_recalculate_get(const Eo *
 }
 
 EOLIAN static void
-_efl_canvas_event_grabber_efl_gfx_position_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eina_Position2D pos)
+_efl_canvas_event_grabber_efl_gfx_entity_position_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eina_Position2D pos)
 {
-   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), pos);
-   efl_gfx_position_set(pd->rect, pos);
+   efl_gfx_entity_position_set(efl_super(eo_obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(pd->rect, pos);
 }
 
 EOLIAN static void
-_efl_canvas_event_grabber_efl_gfx_size_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eina_Size2D sz)
+_efl_canvas_event_grabber_efl_gfx_entity_size_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eina_Size2D sz)
 {
-   efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), sz);
-   efl_gfx_size_set(pd->rect, sz);
+   efl_gfx_entity_size_set(efl_super(eo_obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(pd->rect, sz);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_event_grabber_efl_gfx_visible_get(const Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
+_efl_canvas_event_grabber_efl_gfx_entity_visible_get(const Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
 {
    return pd->vis;
 }
 
 EOLIAN static void
-_efl_canvas_event_grabber_efl_gfx_visible_set(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd, Eina_Bool set)
+_efl_canvas_event_grabber_efl_gfx_entity_visible_set(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd, Eina_Bool set)
 {
    if (set)
      {
@@ -313,7 +313,7 @@ _efl_canvas_event_grabber_efl_gfx_visible_set(Eo *eo_obj EINA_UNUSED, Efl_Object
           if (obj->object != pd->rect) _stacking_verify(pd, obj);
      }
    pd->vis = !!set;
-   efl_gfx_visible_set(pd->rect, set);
+   efl_gfx_entity_visible_set(pd->rect, set);
    if (pd->restack && pd->freeze && (!set))
      _full_restack(pd);
 }
@@ -350,7 +350,7 @@ _efl_canvas_event_grabber_efl_object_constructor(Eo *eo_obj, Efl_Object_Event_Gr
    obj->is_event_parent = 1;
    obj->is_smart = 0;
 
-   efl_event_callback_add(eo_obj, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_restack, pd);
+   efl_event_callback_add(eo_obj, EFL_GFX_ENTITY_EVENT_RESTACK, _efl_canvas_object_event_grabber_restack, pd);
    pd->rect = evas_object_rectangle_add(efl_parent_get(eo_obj));
    evas_object_pointer_mode_set(pd->rect, EVAS_OBJECT_POINTER_MODE_NOGRAB);
    efl_parent_set(pd->rect, eo_obj);

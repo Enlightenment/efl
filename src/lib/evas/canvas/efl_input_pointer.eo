@@ -116,7 +116,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            propagation or repetition of the event.
          ]]
          values {
-            src: Efl.Object; [[Source object: @Efl.Gfx]]
+            src: Efl.Object; [[Source object: @Efl.Gfx.Entity]]
          }
       }
       @property button_flags {

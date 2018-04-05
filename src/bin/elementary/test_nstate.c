@@ -29,5 +29,5 @@ test_nstate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_text_set(nstate, "nstate = 0");
    efl_pack(bx, nstate);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(120, 80));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(120, 80));
 }

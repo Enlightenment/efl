@@ -176,5 +176,5 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
            efl_pack(box2, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(500, 600));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 600));
 }

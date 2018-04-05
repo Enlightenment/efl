@@ -261,22 +261,22 @@ _efl_ui_view_list_homogeneous_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Da
 }
 
 EOLIAN static void
-_efl_ui_view_list_efl_gfx_position_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Position2D pos)
+_efl_ui_view_list_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    evas_object_smart_changed(pd->obj);
 }
 
 EOLIAN static void
-_efl_ui_view_list_efl_gfx_size_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Size2D size)
+_efl_ui_view_list_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_View_List_Data *pd, Eina_Size2D size)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
 
    evas_object_smart_changed(pd->obj);
 }
@@ -655,7 +655,7 @@ _efl_ui_view_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_View_List_Data *pd)
 
    pd->mode = ELM_LIST_COMPRESS;
 
-   efl_gfx_visible_set(pd->pan_obj, EINA_TRUE);
+   efl_gfx_entity_visible_set(pd->pan_obj, EINA_TRUE);
 
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 

@@ -92,7 +92,7 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
 
 #define ELM_PART_OVERRIDE_CONTENT_SET_FULL(full, type, TYPE, typedata) \
 EOLIAN static Eina_Bool \
-_ ## full ## _efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content) \
+_ ## full ## _efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity *content) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
@@ -100,7 +100,7 @@ _ ## full ## _efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *c
 }
 
 #define ELM_PART_OVERRIDE_CONTENT_GET_FULL(full, type, TYPE, typedata) \
-EOLIAN static Efl_Gfx * \
+EOLIAN static Efl_Gfx_Entity * \
 _ ## full ## _efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
@@ -109,7 +109,7 @@ _ ## full ## _efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED) \
 }
 
 #define ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(full, type, TYPE, typedata) \
-EOLIAN static Efl_Gfx * \
+EOLIAN static Efl_Gfx_Entity * \
 _ ## full ## _efl_content_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \

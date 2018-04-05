@@ -64,8 +64,8 @@ class Efl.Ui.View.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactiv
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       // Smart obj
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;

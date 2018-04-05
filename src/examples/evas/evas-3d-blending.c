@@ -126,8 +126,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
    evas_object_resize(background, w, h);
-   efl_gfx_size_set(background, EINA_SIZE2D(w,  h));
-   efl_gfx_size_set(image, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(background, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(w,  h));
 }
 
 static Eina_Bool

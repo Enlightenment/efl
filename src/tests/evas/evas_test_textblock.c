@@ -4443,7 +4443,7 @@ EFL_START_TEST(efl_canvas_text_cursor)
                    /*01234    5 6789012345678  19  01234 */
    efl_text_set(tb, "тest \u202bנסיוןabcנסיון\u202c bang");
    efl_canvas_text_size_native_get(tb, &nw, &nh);
-   efl_gfx_size_set(tb, EINA_SIZE2D(nw,  nh));
+   efl_gfx_entity_size_set(tb, EINA_SIZE2D(nw,  nh));
 
    /* Logical cursor after "test " */
    evas_textblock_cursor_pos_set(cur, 6);

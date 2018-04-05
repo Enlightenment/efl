@@ -367,7 +367,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
            efl_pack(box, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }
 
 static void
@@ -479,7 +479,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED, _cb_check_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }
 
 

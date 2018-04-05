@@ -9,7 +9,7 @@
 typedef struct _Custom_Table_Data Custom_Table_Data;
 
 static void _subobj_del_cb(void *data, const Efl_Event *event);
-static void _item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Efl_Gfx *subobj);
+static void _item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj);
 
 struct _Custom_Table_Data
 {
@@ -245,7 +245,7 @@ _subobj_del_cb(void *data, const Efl_Event *event)
 }
 
 static Eina_Bool
-_pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx *subobj,
+_pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
          int col, int row, int colspan, int rowspan, Eina_Bool linear)
 {
    Table_Item *gi = NULL;
@@ -311,7 +311,7 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx *subobj,
 
 EOLIAN static Eina_Bool
 _efl_ui_table_efl_pack_table_pack_table(Eo *obj, Efl_Ui_Table_Data *pd,
-                                     Efl_Gfx *subobj,
+                                     Efl_Gfx_Entity *subobj,
                                      int col, int row, int colspan, int rowspan)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
@@ -352,7 +352,7 @@ end:
    return ret;
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_table_efl_pack_table_table_content_get(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, int col, int row)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -361,7 +361,7 @@ _efl_ui_table_efl_pack_table_table_content_get(Eo *obj, Efl_Ui_Table_Data *pd EI
 }
 
 static void
-_item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Efl_Gfx *subobj)
+_item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
    Table_Item *gi = efl_key_data_get(subobj, TABLE_ITEM_KEY);
    Table_Item *gi2, *last = NULL;
@@ -418,7 +418,7 @@ end:
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_unpack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx *subobj)
+_efl_ui_table_efl_pack_unpack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -460,7 +460,7 @@ _efl_ui_table_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Table_Data *pd EINA
 static Eina_Bool
 _table_item_iterator_next(Table_Item_Iterator *it, void **data)
 {
-   Efl_Gfx *sub;
+   Efl_Gfx_Entity *sub;
 
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))
      return EINA_FALSE;
@@ -664,14 +664,14 @@ _efl_ui_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ta
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Efl_Gfx *subobj)
+_efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    /* this is just an alias */
    return efl_pack_end(obj, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx *subobj)
+_efl_ui_table_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
 

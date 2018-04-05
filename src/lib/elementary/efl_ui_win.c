@@ -929,7 +929,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
-   efl_event_callback_legacy_call(sd->obj, EFL_GFX_EVENT_MOVE, NULL);
+   efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
@@ -969,7 +969,7 @@ _elm_win_resize_job(void *data)
      {
         Eina_Position2D pos;
 
-        pos = efl_gfx_position_get(sd->main_menu);
+        pos = efl_gfx_entity_position_get(sd->main_menu);
         elm_menu_move(sd->main_menu, pos.x, pos.y);
      }
 
@@ -1080,9 +1080,9 @@ _elm_win_focus_highlight_anim_setup(Efl_Ui_Win_Data *sd,
    Edje_Message_Int_Set *m;
    Evas_Object *target = sd->focus_highlight.cur.target;
 
-   rp = efl_gfx_geometry_get(obj);
+   rp = efl_gfx_entity_geometry_get(obj);
    rt = elm_widget_focus_highlight_geometry_get(target);
-   efl_gfx_geometry_set(obj, rt);
+   efl_gfx_entity_geometry_set(obj, rt);
 
    if (eina_rectangle_equal(&rp.rect, &rt.rect)) return;
 
@@ -1108,7 +1108,7 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
 {
    Evas_Object *clip, *target = sd->focus_highlight.cur.target;
 
-   efl_gfx_geometry_set(obj, elm_widget_focus_highlight_geometry_get(target));
+   efl_gfx_entity_geometry_set(obj, elm_widget_focus_highlight_geometry_get(target));
 
    if (!_elm_config->focus_highlight_clip_disable)
      {
@@ -2251,7 +2251,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
          * Ugly code flow: legacy code had an early return in smart_show, ie.
          * evas object show would be processed but smart object show would be
          * aborted. This super call tries to simulate that. */
-        efl_gfx_visible_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), EINA_TRUE);
+        efl_gfx_entity_visible_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), EINA_TRUE);
         return;
      }
 
@@ -2259,7 +2259,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
      _elm_win_modality_increment(sd);
 
    if (!evas_object_visible_get(obj)) do_eval = EINA_TRUE;
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    if (sd->deferred_resize_job)
      _elm_win_resize_job(sd->obj);
@@ -2297,7 +2297,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
          * Ugly code flow: legacy code had an early return in smart_show, ie.
          * evas object show would be processed but smart object show would be
          * aborted. This super call tries to simulate that. */
-        efl_gfx_visible_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), EINA_FALSE);
+        efl_gfx_entity_visible_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), EINA_FALSE);
         return;
      }
 
@@ -2306,7 +2306,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if ((sd->modal) && (evas_object_visible_get(obj)))
      _elm_win_modality_decrement(sd);
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    TRAP(sd, hide);
 
    if (sd->frame_obj)
@@ -2336,7 +2336,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
+_efl_ui_win_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -2477,7 +2477,7 @@ _efl_ui_win_efl_canvas_scene_objects_at_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_D
    return eina_list_iterator_new(objs); // FIXME: This leaks the list!
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_win_efl_canvas_scene_object_top_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    return evas_object_top_at_xy_get(sd->evas, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
@@ -2491,7 +2491,7 @@ _efl_ui_win_efl_canvas_scene_objects_in_rectangle_get(Eo *obj EINA_UNUSED, Efl_U
    return eina_list_iterator_new(objs); // FIXME: This leaks the list!
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_win_efl_canvas_scene_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    return evas_object_top_in_rectangle_get(sd->evas, r.x, r.y, r.w, r.h, include_pass_events_objects, include_hidden_objects);
@@ -2903,7 +2903,7 @@ _elm_win_obj_intercept_show(void *data,
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Position2D pos)
+_efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
@@ -2914,7 +2914,7 @@ _efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Position2D p
           {
              sd->screen.x = pos.x;
              sd->screen.y = pos.y;
-             efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
+             efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
           }
         goto super_skip;
      }
@@ -2930,13 +2930,13 @@ _efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Position2D p
         if (!ecore_evas_override_get(sd->ee)) goto super_skip;
      }
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    if (ecore_evas_override_get(sd->ee))
      {
         sd->screen.x = pos.x;
         sd->screen.y = pos.y;
-        efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
+        efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
      }
    if (sd->frame_obj)
      {
@@ -2960,11 +2960,11 @@ super_skip:
     * Ugly code flow: legacy code had an early return in smart_move, ie.
     * evas object move would be processed but smart object move would be
     * aborted. This super call tries to simulate that. */
-   efl_gfx_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), pos);
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
+_efl_ui_win_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -2994,7 +2994,7 @@ _efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
         TRAP(sd, resize, sz.w, sz.h);
      }
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void
@@ -5691,7 +5691,7 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
    if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj, h, v)))
      return;
 
-   if (!efl_gfx_visible_get(obj))
+   if (!efl_gfx_entity_visible_get(obj))
      {
         // Chose to use env var so this will also translate more easily
         // to wayland. yes - we can get x atoms to figure out if wm is
@@ -5888,7 +5888,7 @@ _main_menu_resize_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    // After resize, the framespace size has changed, so update the win geometry
    _elm_win_resize_objects_eval(ev->object, EINA_FALSE);
-   efl_event_callback_del(ev->object, EFL_GFX_EVENT_RESIZE, _main_menu_resize_cb, NULL);
+   efl_event_callback_del(ev->object, EFL_GFX_ENTITY_EVENT_RESIZE, _main_menu_resize_cb, NULL);
 }
 
 static void
@@ -5915,7 +5915,7 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
    else
      {
         DBG("Setting menu to local mode");
-        efl_event_callback_add(sd->obj, EFL_GFX_EVENT_RESIZE, _main_menu_resize_cb, NULL);
+        efl_event_callback_add(sd->obj, EFL_GFX_ENTITY_EVENT_RESIZE, _main_menu_resize_cb, NULL);
         edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
         evas_object_show(sd->main_menu);
         if (swallow == sd->frame_obj)
@@ -6596,7 +6596,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 
    edje_object_mirrored_set(sd->legacy.edje, efl_ui_mirrored_get(obj));
    edje_object_scale_set(sd->legacy.edje,
-                         efl_gfx_scale_get(obj) * elm_config_scale_get());
+                         efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
    ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
@@ -6982,7 +6982,7 @@ _efl_ui_win_efl_access_component_extents_get(const Eo *obj, Efl_Ui_Win_Data *_pd
    Eina_Rect r;
    int ee_x, ee_y;
 
-   r = efl_gfx_geometry_get(obj);
+   r = efl_gfx_entity_geometry_get(obj);
    r.x = r.y = 0;
    if (screen_coords)
      {
@@ -7059,7 +7059,7 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
      return EINA_FALSE;
    if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg))
      return EINA_FALSE;
-   efl_gfx_visible_set(bg, 1);
+   efl_gfx_entity_visible_set(bg, 1);
    efl_gfx_size_hint_align_set(bg, -1, -1);
    efl_gfx_size_hint_weight_set(bg, 1, 1);
    efl_wref_add(bg, &sd->bg);
@@ -8307,7 +8307,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    double weight_y = EVAS_HINT_EXPAND;
 
    ELM_WIN_DATA_GET(data, sd);
-   if (sd->main_menu && efl_gfx_visible_get(sd->main_menu))
+   if (sd->main_menu && efl_gfx_entity_visible_get(sd->main_menu))
      evas_object_size_hint_combined_min_get(sd->main_menu, &menuw, NULL);
 
    EINA_LIST_FOREACH(p->children, l, opt)

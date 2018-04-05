@@ -49,7 +49,7 @@ _efl_ui_navigation_bar_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Bar_Dat
    Eo *back_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                              elm_widget_element_update(obj, efl_added, "back_button"),
                              efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _back_button_clicked_cb, obj),
-                             efl_gfx_visible_set(efl_added, EINA_FALSE));
+                             efl_gfx_entity_visible_set(efl_added, EINA_FALSE));
 
    pd->back_button = back_button;
 
@@ -66,7 +66,7 @@ ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Dat
 ELM_PART_TEXT_DEFAULT_OPS(efl_ui_navigation_bar)
 
 static Eina_Bool
-_efl_ui_navigation_bar_content_set(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA_UNUSED, const char *part, Efl_Gfx *content)
+_efl_ui_navigation_bar_content_set(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA_UNUSED, const char *part, Efl_Gfx_Entity *content)
 {
    if (eina_streq(part, "left_content"))
      {
@@ -79,13 +79,13 @@ _efl_ui_navigation_bar_content_set(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA
    return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
 }
 
-static Efl_Gfx *
+static Efl_Gfx_Entity *
 _efl_ui_navigation_bar_content_get(const Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA_UNUSED, const char *part)
 {
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
-static Efl_Gfx *
+static Efl_Gfx_Entity *
 _efl_ui_navigation_bar_content_unset(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA_UNUSED, const char *part)
 {
   if (eina_streq(part, "left_content"))
@@ -112,7 +112,7 @@ _efl_ui_navigation_bar_efl_part_part(const Eo *obj, Efl_Ui_Navigation_Bar_Data *
 }
 
 EOLIAN static void
-_efl_ui_navigation_bar_part_back_button_efl_gfx_visible_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool visible)
+_efl_ui_navigation_bar_part_back_button_efl_gfx_entity_visible_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool visible)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd);
@@ -127,7 +127,7 @@ _efl_ui_navigation_bar_part_back_button_efl_gfx_visible_set(Eo *obj, void *_pd E
    else
      {
         efl_content_unset(efl_part(efl_super(pd->obj, MY_CLASS), "back_button"));
-        efl_gfx_visible_set(ppd->back_button, visible);
+        efl_gfx_entity_visible_set(ppd->back_button, visible);
         efl_layout_signal_emit(pd->obj, "elm,state,back_button,hidden", "elm");
      }
 
@@ -135,12 +135,12 @@ _efl_ui_navigation_bar_part_back_button_efl_gfx_visible_set(Eo *obj, void *_pd E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_navigation_bar_part_back_button_efl_gfx_visible_get(const Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_navigation_bar_part_back_button_efl_gfx_entity_visible_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd, EINA_FALSE);
 
-   return efl_gfx_visible_get(ppd->back_button);
+   return efl_gfx_entity_visible_get(ppd->back_button);
 }
 
 EOLIAN static void
@@ -162,7 +162,7 @@ _efl_ui_navigation_bar_part_back_button_efl_text_text_get(const Eo *obj, void *_
 }
 
 static Eina_Bool
-_efl_ui_navigation_bar_part_back_button_efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content)
+_efl_ui_navigation_bar_part_back_button_efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity *content)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd, EINA_FALSE);
@@ -175,7 +175,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_set(Eo *obj, void *_
    return _efl_ui_navigation_bar_content_set(pd->obj, ppd, pd->part, content);
 }
 
-static Efl_Gfx*
+static Efl_Gfx_Entity*
 _efl_ui_navigation_bar_part_back_button_efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
@@ -184,7 +184,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_get(const Eo *obj, v
    return _efl_ui_navigation_bar_content_get(pd->obj, ppd, pd->part);
 }
 
-static Efl_Gfx*
+static Efl_Gfx_Entity*
 _efl_ui_navigation_bar_part_back_button_efl_content_content_unset(Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);

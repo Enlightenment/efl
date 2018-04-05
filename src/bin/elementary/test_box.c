@@ -919,5 +919,5 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                efl_file_set(efl_added, buf, NULL));
    efl_pack(bx, o);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 300));
 }

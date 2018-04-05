@@ -61,5 +61,5 @@ test_efl_gfx_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    _map_set(img);
 
    efl_content_set(win, img);
-   efl_gfx_size_set(win, EINA_SIZE2D(W, H));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(W, H));
 }

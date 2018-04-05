@@ -262,7 +262,7 @@ main(void)
 
    /* Add an image object for 3D scene rendering. */
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
-   efl_gfx_geometry_set(image, EINA_RECT(0, 0, WIDTH, HEIGHT));
+   efl_gfx_entity_geometry_set(image, EINA_RECT(0, 0, WIDTH, HEIGHT));
    evas_object_show(image);
 
    /* Set the image object as render target for 3D scene. */

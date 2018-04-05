@@ -9,14 +9,14 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
 
            Elements of the list can be either an Efl.Ui.Widget, an Efl.Ui.Focus.Object or an Efl.Gfx.
 
-           If the element is an Efl.Gfx, then the geometry is used as focus geometry, the focus property is redirected to the evas focus property. The mixin will take care of registration.
+           If the element is an Efl.Gfx.Entity, then the geometry is used as focus geometry, the focus property is redirected to the evas focus property. The mixin will take care of registration.
 
            If the element is an Efl.Ui.Focus.Object, then the mixin will take care of registering the element.
 
            If the element is a Efl.Ui.Widget nothing is done and the widget is simply part of the order.
          ]]
          values {
-            logical_order : list<Efl.Gfx> @owned; [[The order to use]]
+            logical_order : list<Efl.Gfx.Entity> @owned; [[The order to use]]
          }
       }
       dirty @protected {

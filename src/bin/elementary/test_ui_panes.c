@@ -42,6 +42,6 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_content_set(efl_part(panes_h, "second"), efl_added)
           );
 
-   efl_gfx_size_set(win, EINA_SIZE2D(320,  400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(320,  400));
 }
 

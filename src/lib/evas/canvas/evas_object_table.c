@@ -268,7 +268,7 @@ _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
   { EFL_EVENT_DEL, _on_child_del },
-  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+  { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
 static void
@@ -934,22 +934,22 @@ _evas_table_efl_canvas_group_group_del(Eo *obj, Evas_Table_Data *priv)
 }
 
 EOLIAN static void
-_evas_table_efl_gfx_size_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Size2D sz)
+_evas_table_efl_gfx_entity_size_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
    evas_object_smart_changed(obj);
 }
 
 EOLIAN static void
-_evas_table_efl_gfx_position_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Position2D pos)
+_evas_table_efl_gfx_entity_position_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    evas_object_smart_changed(obj);
 }
 

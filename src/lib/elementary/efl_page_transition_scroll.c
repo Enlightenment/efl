@@ -148,7 +148,7 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
                            spd->pager.h);
      }
 
-   efl_gfx_geometry_set(pd->foreclip, (Eina_Rect) pd->viewport);
+   efl_gfx_entity_geometry_set(pd->foreclip, (Eina_Rect) pd->viewport);
 
    // this loop resets the geometry of each page based on the geometry of
    // the pager object, the page size, and the padding size.
@@ -176,7 +176,7 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
              efl_canvas_object_clip_set(pi->obj, pd->backclip);
           }
 
-        efl_gfx_geometry_set(pi->obj, (Eina_Rect) pi->geometry);
+        efl_gfx_entity_geometry_set(pi->obj, (Eina_Rect) pi->geometry);
      }
 
    if (efl_content_count(spd->pager.obj) > 0) _content_show(pd, spd);
@@ -193,7 +193,7 @@ _resize_cb(void *data, const Efl_Event *ev)
 
    Efl_Ui_Pager *pager = ev->object;
 
-   sz = efl_gfx_size_get(pager);
+   sz = efl_gfx_entity_size_get(pager);
 
    spd->pager.w = sz.w;
    spd->pager.h = sz.h;
@@ -212,7 +212,7 @@ _move_cb(void *data, const Efl_Event *ev)
 
    Efl_Ui_Pager *pager = ev->object;
 
-   pos = efl_gfx_position_get(pager);
+   pos = efl_gfx_entity_position_get(pager);
 
    spd->pager.x = pos.x;
    spd->pager.y = pos.y;
@@ -232,8 +232,8 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
 
    if (spd->pager.obj)
      {
-        efl_event_callback_del(spd->pager.group, EFL_GFX_EVENT_RESIZE, _resize_cb, obj);
-        efl_event_callback_del(spd->pager.group, EFL_GFX_EVENT_MOVE, _move_cb, obj);
+        efl_event_callback_del(spd->pager.group, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, obj);
+        efl_event_callback_del(spd->pager.group, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, obj);
 
         _page_info_deallocate(pd);
         efl_del(pd->foreclip);
@@ -247,8 +247,8 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
         int cnt, i;
         Eo *item;
 
-        efl_event_callback_add(spd->pager.group, EFL_GFX_EVENT_RESIZE, _resize_cb, obj);
-        efl_event_callback_add(spd->pager.group, EFL_GFX_EVENT_MOVE, _move_cb, obj);
+        efl_event_callback_add(spd->pager.group, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, obj);
+        efl_event_callback_add(spd->pager.group, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, obj);
 
         pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                                evas_object_evas_get(spd->pager.obj));
@@ -257,7 +257,7 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
         pd->backclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                                evas_object_evas_get(spd->pager.obj));
         evas_object_static_clip_set(pd->backclip, EINA_TRUE);
-        efl_gfx_visible_set(pd->backclip, EINA_FALSE);
+        efl_gfx_entity_visible_set(pd->backclip, EINA_FALSE);
 
         cnt = efl_content_count(spd->pager.obj);
         for (i = 0; i < cnt; i++)
@@ -328,7 +328,7 @@ _efl_page_transition_scroll_update(Eo *obj,
                            tpi->geometry.w,
                            tpi->geometry.h);
 
-        efl_gfx_geometry_set(pi->obj, (Eina_Rect) pi->temp);
+        efl_gfx_entity_geometry_set(pi->obj, (Eina_Rect) pi->temp);
 
         if (!pi->vis_page && !tpi->vis_page) continue;
 

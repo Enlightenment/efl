@@ -15,7 +15,7 @@ _external_compose(Eo *obj, Edje *ed, const char *part)
    efl_composite_attach(obj, ext_obj);
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_canvas_layout_part_external_efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);

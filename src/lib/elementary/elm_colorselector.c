@@ -1347,7 +1347,7 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
             (wd->resize_obj, "vertical_pad");
         if (vpadstr) v_pad = atoi(vpadstr);
 
-        scale = efl_gfx_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
+        scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
         efl_pack_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
 
         EINA_LIST_FOREACH(sd->items, elist, eo_item)
@@ -1888,7 +1888,7 @@ _palette_box_prepare(Eo *o)
    efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_gfx_visible_set(o, EINA_FALSE);
+   efl_gfx_entity_visible_set(o, EINA_FALSE);
 }
 
 static void
@@ -1919,7 +1919,7 @@ _create_colorpalette(Evas_Object *obj)
    vpadstr = edje_object_data_get(wd->resize_obj, "vertical_pad");
    if (vpadstr) v_pad = atoi(vpadstr);
 
-   scale = efl_gfx_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
+   scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
    efl_pack_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
    efl_pack_align_set(sd->palette_box, 0.0, 0.0);
    if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
@@ -2248,12 +2248,12 @@ _elm_colorselector_efl_ui_widget_focus_highlight_geometry_get(const Eo *obj EINA
    if (sd->focused_item && (sd->focused == ELM_COLORSELECTOR_PALETTE))
      {
        ELM_COLOR_ITEM_DATA_GET(sd->focused_item, focus_it);
-       return efl_gfx_geometry_get(VIEW(focus_it));
+       return efl_gfx_entity_geometry_get(VIEW(focus_it));
      }
    else if(sd->focused == ELM_COLORSELECTOR_COMPONENTS)
-     return efl_gfx_geometry_get(sd->cb_data[sd->sel_color_type]->colorbar);
+     return efl_gfx_entity_geometry_get(sd->cb_data[sd->sel_color_type]->colorbar);
 
-   return efl_gfx_geometry_get(obj);
+   return efl_gfx_entity_geometry_get(obj);
 }
 
 EOLIAN static void
@@ -2707,7 +2707,7 @@ _elm_color_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Color_Item_
 EOLIAN static Eina_Rect
 _elm_color_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
 {
-   return efl_gfx_geometry_get(pd->color_obj);
+   return efl_gfx_entity_geometry_get(pd->color_obj);
 }
 
 EOLIAN static void

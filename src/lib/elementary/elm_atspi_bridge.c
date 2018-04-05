@@ -3450,7 +3450,7 @@ _component_get_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      {
         if (type)
           efl_access_component_screen_position_get(obj, &x, &y);
@@ -3478,7 +3478,7 @@ _component_get_size(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eld
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      evas_object_geometry_get(obj, NULL, NULL, &x, &y);
 
    ret = eldbus_message_method_return_new(msg);
@@ -3512,7 +3512,7 @@ _component_get_layer(const Eldbus_Service_Interface *iface EINA_UNUSED, const El
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      layer = evas_object_layer_get(obj);
 
    ret = eldbus_message_method_return_new(msg);
@@ -3559,7 +3559,7 @@ _component_get_alpha(const Eldbus_Service_Interface *iface EINA_UNUSED, const El
    if (!obj)
      return _dbus_invalid_ref_error_new(msg);
 
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      {
         evas_object_color_get(obj, NULL, NULL, NULL, &a);
         alpha = a / 255.0;
@@ -3617,7 +3617,7 @@ _component_set_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      {
         if (type)
           result = efl_access_component_screen_position_set(obj, x, y);

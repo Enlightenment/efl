@@ -99,7 +99,7 @@ _efl_canvas_layout_part_efl_object_finalize(Eo *obj EINA_UNUSED, Efl_Canvas_Layo
 }
 
 EOLIAN Eina_Rect
-_efl_canvas_layout_part_efl_gfx_geometry_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
+_efl_canvas_layout_part_efl_gfx_entity_geometry_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    Edje_Real_Part *rp = pd->rp;
    Eina_Rect r = EINA_RECT_ZERO();

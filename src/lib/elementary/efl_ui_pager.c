@@ -275,7 +275,7 @@ _resize_cb(void *data, const Efl_Event *ev)
    Efl_Ui_Pager_Data *pd = data;
    Eina_Size2D sz;
 
-   sz = efl_gfx_size_get(ev->object);
+   sz = efl_gfx_entity_size_get(ev->object);
 
    pd->w = sz.w;
    pd->h = sz.h;
@@ -287,11 +287,11 @@ _resize_cb(void *data, const Efl_Event *ev)
      efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
    else
      {
-        efl_gfx_size_set(pd->foreclip, sz);
-        efl_gfx_size_set(pd->page_box, pd->page_spec.sz);
-        efl_gfx_position_set(pd->page_box,
-                             EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
-                                             pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
+        efl_gfx_entity_size_set(pd->foreclip, sz);
+        efl_gfx_entity_size_set(pd->page_box, pd->page_spec.sz);
+        efl_gfx_entity_position_set(pd->page_box,
+                                    EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
+                                                    pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
      }
 }
 
@@ -301,15 +301,15 @@ _move_cb(void *data, const Efl_Event *ev)
    Efl_Ui_Pager_Data *pd = data;
    Eina_Position2D pos;
 
-   pos = efl_gfx_position_get(ev->object);
+   pos = efl_gfx_entity_position_get(ev->object);
 
    pd->x = pos.x;
    pd->y = pos.y;
 
    if (!pd->transition)
      {
-        efl_gfx_position_set(pd->foreclip, pos);
-        efl_gfx_position_set(pd->page_box,
+        efl_gfx_entity_position_set(pd->foreclip, pos);
+        efl_gfx_entity_position_set(pd->page_box,
                              EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
                                              pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
      }
@@ -354,8 +354,8 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
    efl_content_set(efl_part(obj, "page_root"), pd->page_root);
 
-   efl_event_callback_add(pd->page_root, EFL_GFX_EVENT_RESIZE, _resize_cb, pd);
-   efl_event_callback_add(pd->page_root, EFL_GFX_EVENT_MOVE, _move_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, pd);
 
    pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
    efl_canvas_group_member_add(pd->page_root, pd->page_box);
@@ -370,7 +370,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
                           evas_object_evas_get(obj));
    efl_canvas_group_member_add(pd->page_root, pd->backclip);
    evas_object_static_clip_set(pd->backclip, EINA_TRUE);
-   efl_gfx_visible_set(pd->backclip, EINA_FALSE);
+   efl_gfx_entity_visible_set(pd->backclip, EINA_FALSE);
 
    return obj;
 }
@@ -385,7 +385,7 @@ _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
                                          Efl_Ui_Pager_Data *pd,
-                                         Efl_Gfx *subobj)
+                                         Efl_Gfx_Entity *subobj)
 {
    efl_parent_set(subobj, obj);
    elm_widget_sub_object_add(obj, subobj);
@@ -416,7 +416,7 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
                                        Efl_Ui_Pager_Data *pd,
-                                       Efl_Gfx *subobj)
+                                       Efl_Gfx_Entity *subobj)
 {
    efl_parent_set(subobj, obj);
    elm_widget_sub_object_add(obj, subobj);
@@ -446,8 +446,8 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
                                           Efl_Ui_Pager_Data *pd,
-                                          Efl_Gfx *subobj,
-                                          const Efl_Gfx *existing)
+                                          Efl_Gfx_Entity *subobj,
+                                          const Efl_Gfx_Entity *existing)
 {
    int index;
 
@@ -476,8 +476,8 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
                                          Efl_Ui_Pager_Data *pd,
-                                         Efl_Gfx *subobj,
-                                         const Efl_Gfx *existing)
+                                         Efl_Gfx_Entity *subobj,
+                                         const Efl_Gfx_Entity *existing)
 {
    int index;
 
@@ -506,10 +506,10 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
                                       Efl_Ui_Pager_Data *pd,
-                                      Efl_Gfx *subobj,
+                                      Efl_Gfx_Entity *subobj,
                                       int index)
 {
-   Efl_Gfx *existing = NULL;
+   Efl_Gfx_Entity *existing = NULL;
 
    efl_parent_set(subobj, obj);
    elm_widget_sub_object_add(obj, subobj);
@@ -533,7 +533,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_pager_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED,
                                                Efl_Ui_Pager_Data *pd,
                                                int index)
@@ -544,7 +544,7 @@ _efl_ui_pager_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED,
 EOLIAN static int
 _efl_ui_pager_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
                                              Efl_Ui_Pager_Data *pd,
-                                             const Efl_Gfx *subobj)
+                                             const Efl_Gfx_Entity *subobj)
 {
    return eina_list_data_idx(pd->content_list, (void *)subobj);
 }
@@ -715,7 +715,7 @@ _efl_ui_pager_page_size_set(Eo *obj EINA_UNUSED,
    if (pd->transition)
      efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
    else
-     efl_gfx_size_set(pd->page_box, pd->page_spec.sz);
+     efl_gfx_entity_size_set(pd->page_box, pd->page_spec.sz);
 }
 
 EOLIAN static int
@@ -791,13 +791,13 @@ _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack(Eo *obj EINA_UNUSED,
                               Efl_Ui_Pager_Data *pd EINA_UNUSED,
-                              Efl_Gfx *subobj EINA_UNUSED)
+                              Efl_Gfx_Entity *subobj EINA_UNUSED)
 {
    ERR("Soon to be implemented");
    return EINA_FALSE;
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED,
                                              Efl_Ui_Pager_Data *pd EINA_UNUSED,
                                              int index EINA_UNUSED)

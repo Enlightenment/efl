@@ -190,5 +190,5 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_pack(bt_bx, bt);
    td->btn_stop = bt;
 
-   efl_gfx_size_set(win, EINA_SIZE2D(240, 320));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(240, 320));
 }

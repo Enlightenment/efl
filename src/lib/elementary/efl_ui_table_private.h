@@ -20,7 +20,7 @@ struct _Table_Item
 {
    EINA_INLIST;
 
-   Efl_Gfx *object;
+   Efl_Gfx_Entity *object;
    int col_span, row_span;
    int col, row;
 

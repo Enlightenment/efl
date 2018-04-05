@@ -225,7 +225,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    edje_object_mirrored_set(VIEW(it),
                             efl_ui_mirrored_get(WIDGET(it)));
    edje_object_scale_set(VIEW(it),
-                         efl_gfx_scale_get(WIDGET(it))
+                         efl_gfx_entity_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
    evas_object_hide(itc->base_view);
@@ -667,24 +667,24 @@ _elm_gengrid_pan_efl_object_destructor(Eo *obj, Elm_Gengrid_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_gengrid_pan_efl_gfx_position_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Eina_Position2D pos)
+_elm_gengrid_pan_efl_gfx_entity_position_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_PAN_CLASS), pos);
 
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
 }
 
 EOLIAN static void
-_elm_gengrid_pan_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Eina_Size2D sz)
+_elm_gengrid_pan_efl_gfx_entity_size_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), sz);
 
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
@@ -1162,7 +1162,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
      }
 
    edje_object_mirrored_set(view, efl_ui_mirrored_get(WIDGET(it)));
-   edje_object_scale_set(view, efl_gfx_scale_get(WIDGET(it)) *
+   edje_object_scale_set(view, efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_stack_below(view, sd->stack);
 }
@@ -1176,7 +1176,7 @@ _view_create(Elm_Gen_Item *it, const char *style)
    Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
    evas_object_smart_member_add(view, GG_IT(it)->wsd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), view);
-   edje_object_scale_set(view, efl_gfx_scale_get(WIDGET(it)) *
+   edje_object_scale_set(view, efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
 
    _view_style_update(it, view, style);
@@ -4140,23 +4140,23 @@ _elm_gengrid_efl_canvas_group_group_del(Eo *obj, Elm_Gengrid_Data *sd)
 }
 
 EOLIAN static void
-_elm_gengrid_efl_gfx_position_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Position2D pos)
+_elm_gengrid_efl_gfx_entity_position_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void
-_elm_gengrid_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Size2D sz)
+_elm_gengrid_efl_gfx_entity_size_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

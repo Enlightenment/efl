@@ -42,7 +42,7 @@ _efl_page_transition_bind(Eo *obj EINA_UNUSED,
 
    if (pager)
      {
-        group_rect = efl_gfx_geometry_get(group);
+        group_rect = efl_gfx_entity_geometry_get(group);
 
         pd->pager.x = group_rect.x;
         pd->pager.y = group_rect.y;

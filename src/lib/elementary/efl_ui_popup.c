@@ -27,10 +27,10 @@ _backwall_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
+_efl_ui_popup_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
 {
    pd->align = EFL_UI_POPUP_ALIGN_NONE;
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 }
 
 static void
@@ -38,9 +38,9 @@ _calc_align(Eo *obj)
 {
    Efl_Ui_Popup_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
-   Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-   Eina_Rect o_geom = efl_gfx_geometry_get(obj);
+   Eina_Rect o_geom = efl_gfx_entity_geometry_get(obj);
 
    Evas_Coord pw, ph;
    pw = p_geom.w;
@@ -53,19 +53,19 @@ _calc_align(Eo *obj)
    switch (pd->align)
      {
       case EFL_UI_POPUP_ALIGN_CENTER:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow ) / 2, (ph - oh) / 2));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow ) / 2, (ph - oh) / 2));
          break;
       case EFL_UI_POPUP_ALIGN_LEFT:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(0, (ph - oh) / 2));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(0, (ph - oh) / 2));
          break;
       case EFL_UI_POPUP_ALIGN_RIGHT:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(pw - ow, (ph - oh) / 2));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(pw - ow, (ph - oh) / 2));
          break;
       case EFL_UI_POPUP_ALIGN_TOP:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, 0));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, 0));
          break;
       case EFL_UI_POPUP_ALIGN_BOTTOM:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, ph - oh));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, ph - oh));
          break;
       default:
          break;
@@ -73,9 +73,9 @@ _calc_align(Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
+_efl_ui_popup_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
 {
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
 
    elm_layout_sizing_eval(obj);
 }
@@ -103,13 +103,13 @@ _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EIN
         return;
      }
 
-   Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-   efl_gfx_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
-   efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
+   efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
+   efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
-   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, obj);
-   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb, obj);
 }
 
 EOLIAN static void
@@ -132,13 +132,13 @@ _efl_ui_popup_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
 {
-   efl_gfx_size_set(obj, size);
+   efl_gfx_entity_size_set(obj, size);
 }
 
 EOLIAN static Eina_Size2D
 _efl_ui_popup_popup_size_get(const Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
 {
-   return efl_gfx_size_get(obj);
+   return efl_gfx_entity_size_get(obj);
 }
 
 static Eina_Bool
@@ -169,12 +169,12 @@ _timer_init(Eo *obj, Efl_Ui_Popup_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bool v)
+_efl_ui_popup_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bool v)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, v))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), v);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), v);
 
    if (v)
      {
@@ -193,7 +193,7 @@ _efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 
    _timer_del(pd);
 
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      _timer_init(obj, pd);
 }
 
@@ -240,9 +240,9 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_DEL(pd->backwall);
 
-   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb,
                           obj);
-   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb,
                           obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -259,12 +259,12 @@ _sizing_eval(Eo *obj)
       (wd->resize_obj, &minw, &minh, minw, minh);
    efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
 
-   Eina_Size2D size = efl_gfx_size_get(obj);
+   Eina_Size2D size = efl_gfx_entity_size_get(obj);
 
    Eina_Size2D new_size;
    new_size.w = (minw > size.w ? minw : size.w);
    new_size.h = (minh > size.h ? minh : size.h);
-   efl_gfx_size_set(obj, new_size);
+   efl_gfx_entity_size_set(obj, new_size);
 }
 
 EOLIAN static void
@@ -307,10 +307,10 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
              pd->needs_align_calc = EINA_FALSE;
           }
 
-        Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+        Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-        efl_gfx_position_set(pd->backwall, EINA_POSITION2D(0, 0));
-        efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
+        efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(0, 0));
+        efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
         pd->needs_group_calc = EINA_FALSE;
      }

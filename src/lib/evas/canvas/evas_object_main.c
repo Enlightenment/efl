@@ -215,7 +215,7 @@ _anim_ended_cb(void *data, const Efl_Event *ev)
    efl_event_callback_call(eo_obj, EFL_CANVAS_OBJECT_EVENT_ANIM_ENDED,
                            &event);
 
-   if (desc == EFL_GFX_EVENT_HIDE)
+   if (desc == EFL_GFX_ENTITY_EVENT_HIDE)
      {
         Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
         if (!obj) return;
@@ -238,13 +238,13 @@ _animation_intercept_hide(void *data, Evas_Object *eo_obj)
 
         efl_event_callback_add(obj->anim_player,
                                EFL_ANIMATION_PLAYER_EVENT_STARTED,
-                               _anim_started_cb, EFL_GFX_EVENT_HIDE);
+                               _anim_started_cb, EFL_GFX_ENTITY_EVENT_HIDE);
         efl_event_callback_add(obj->anim_player,
                                EFL_ANIMATION_PLAYER_EVENT_RUNNING,
-                               _anim_running_cb, EFL_GFX_EVENT_HIDE);
+                               _anim_running_cb, EFL_GFX_ENTITY_EVENT_HIDE);
         efl_event_callback_add(obj->anim_player,
                                EFL_ANIMATION_PLAYER_EVENT_ENDED,
-                               _anim_ended_cb, EFL_GFX_EVENT_HIDE);
+                               _anim_ended_cb, EFL_GFX_ENTITY_EVENT_HIDE);
 
         //Start animation
         efl_player_start(obj->anim_player);
@@ -257,7 +257,7 @@ _event_anim_free(Event_Animation *event_anim, Evas_Object_Protected_Data *obj)
    if (event_anim->anim)
      {
         //Unset callbacks for Hide event
-        if (event_anim->desc == EFL_GFX_EVENT_HIDE)
+        if (event_anim->desc == EFL_GFX_ENTITY_EVENT_HIDE)
           evas_object_intercept_hide_callback_del(obj->object,
                                                   _animation_intercept_hide);
 
@@ -1029,7 +1029,7 @@ _efl_canvas_object_efl_object_del(const Eo *eo_obj, Evas_Object_Protected_Data *
    evas_object_intercept_hide_callback_del((Eo *)eo_obj,
                                            _animation_intercept_hide);
 
-   efl_gfx_visible_set((Eo *) eo_obj, EINA_FALSE);
+   efl_gfx_entity_visible_set((Eo *) eo_obj, EINA_FALSE);
    obj->efl_del_called = EINA_TRUE;
    efl_del(efl_super(eo_obj, MY_CLASS));
 }
@@ -1169,7 +1169,7 @@ _efl_canvas_object_efl_object_event_callback_call(Eo *eo_obj,
    //Start animation corresponding to the current event
    if (desc)
      {
-        if ((desc != EFL_GFX_EVENT_HIDE) && desc != (EFL_GFX_EVENT_SHOW))
+        if ((desc != EFL_GFX_ENTITY_EVENT_HIDE) && desc != (EFL_GFX_ENTITY_EVENT_SHOW))
           {
              Event_Animation *event_anim = _event_animation_find(obj, desc);
              if (event_anim)
@@ -1208,7 +1208,7 @@ _efl_canvas_object_efl_object_event_callback_legacy_call(Eo *eo_obj,
    //Start animation corresponding to the current event
    if (desc)
      {
-        if ((desc != EFL_GFX_EVENT_HIDE) && desc != (EFL_GFX_EVENT_SHOW))
+        if ((desc != EFL_GFX_ENTITY_EVENT_HIDE) && desc != (EFL_GFX_ENTITY_EVENT_SHOW))
           {
              Event_Animation *event_anim = _event_animation_find(obj, desc);
              if (event_anim)
@@ -1359,10 +1359,10 @@ end:
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rect r)
+_efl_canvas_object_efl_gfx_entity_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rect r)
 {
-   efl_gfx_position_set(obj, r.pos);
-   efl_gfx_size_set(obj, EINA_SIZE2D(r.w,  r.h));
+   efl_gfx_entity_position_set(obj, r.pos);
+   efl_gfx_entity_size_set(obj, EINA_SIZE2D(r.w,  r.h));
 }
 
 EAPI void
@@ -1371,17 +1371,17 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   efl_gfx_geometry_set(eo_obj, EINA_RECT(x, y, w, h));
+   efl_gfx_entity_geometry_set(eo_obj, EINA_RECT(x, y, w, h));
 }
 
 EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   efl_gfx_position_set(obj, EINA_POSITION2D(x, y));
+   efl_gfx_entity_position_set(obj, EINA_POSITION2D(x, y));
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Position2D pos)
+_efl_canvas_object_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Position2D pos)
 {
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
@@ -1442,11 +1442,11 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
 EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_size_set((Evas_Object *)obj, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set((Evas_Object *)obj, EINA_SIZE2D(w,  h));
 }
 
 Eina_Bool
-_efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_efl_canvas_object_efl_gfx_entity_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                           Evas_Coord w, Evas_Coord h, Eina_Bool internal)
 {
    if (!internal && (obj->doing.in_resize > 0))
@@ -1466,7 +1466,7 @@ _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_efl_canvas_object_efl_gfx_entity_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                     Eina_Size2D sz)
 {
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
@@ -1521,7 +1521,7 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 EOLIAN Eina_Rect
-_efl_canvas_object_efl_gfx_geometry_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_entity_geometry_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return (Eina_Rect) obj->cur->geometry;
 }
@@ -1529,7 +1529,7 @@ _efl_canvas_object_efl_gfx_geometry_get(const Eo *eo_obj EINA_UNUSED, Evas_Objec
 EAPI void
 evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Eina_Rect r = efl_gfx_geometry_get(eo_obj);
+   Eina_Rect r = efl_gfx_entity_geometry_get(eo_obj);
    if (x) *x = r.x;
    if (y) *y = r.y;
    if (w) *w = r.w;
@@ -1537,7 +1537,7 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
 }
 
 EOLIAN static Eina_Position2D
-_efl_canvas_object_efl_gfx_position_get(const Eo *obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_entity_position_get(const Eo *obj EINA_UNUSED,
                                         Evas_Object_Protected_Data *pd)
 {
    if ((pd->delete_me) || (!pd->layer))
@@ -1547,8 +1547,8 @@ _efl_canvas_object_efl_gfx_position_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_object_efl_gfx_size_get(const Eo *obj EINA_UNUSED,
-                                    Evas_Object_Protected_Data *pd)
+_efl_canvas_object_efl_gfx_entity_size_get(const Eo *obj EINA_UNUSED,
+                                           Evas_Object_Protected_Data *pd)
 {
    if (pd->delete_me)
      return EINA_SIZE2D(0, 0);
@@ -1890,20 +1890,20 @@ evas_object_show(Evas_Object *eo_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   efl_gfx_visible_set(eo_obj, EINA_TRUE);
+   efl_gfx_entity_visible_set(eo_obj, EINA_TRUE);
 }
 
 EAPI void
 evas_object_hide(Evas_Object *eo_obj)
 {
    if (!eo_obj) return;
-   efl_gfx_visible_set(eo_obj, EINA_FALSE);
+   efl_gfx_entity_visible_set(eo_obj, EINA_FALSE);
 }
 
 EAPI Eina_Bool
 evas_object_visible_get(const Evas_Object *obj)
 {
-   return efl_gfx_visible_get((Evas_Object *)obj);
+   return efl_gfx_entity_visible_get((Evas_Object *)obj);
 }
 
 static void
@@ -1944,7 +1944,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_inform_call_show(eo_obj, obj);
 
-   Event_Animation *event_anim = _event_animation_find(obj, EFL_GFX_EVENT_SHOW);
+   Event_Animation *event_anim = _event_animation_find(obj, EFL_GFX_ENTITY_EVENT_SHOW);
    if (event_anim)
      {
         //Create animation object to start animation
@@ -1952,13 +1952,13 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
         efl_event_callback_add(obj->anim_player,
                                EFL_ANIMATION_PLAYER_EVENT_STARTED,
-                               _anim_started_cb, EFL_GFX_EVENT_SHOW);
+                               _anim_started_cb, EFL_GFX_ENTITY_EVENT_SHOW);
         efl_event_callback_add(obj->anim_player,
                                EFL_ANIMATION_PLAYER_EVENT_RUNNING,
-                               _anim_running_cb, EFL_GFX_EVENT_SHOW);
+                               _anim_running_cb, EFL_GFX_ENTITY_EVENT_SHOW);
         efl_event_callback_add(obj->anim_player,
                                EFL_ANIMATION_PLAYER_EVENT_ENDED,
-                               _anim_ended_cb, EFL_GFX_EVENT_SHOW);
+                               _anim_ended_cb, EFL_GFX_ENTITY_EVENT_SHOW);
 
         //Start animation
         efl_player_start(obj->anim_player);
@@ -2077,7 +2077,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_efl_canvas_object_efl_gfx_entity_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                        Eina_Bool vis)
 {
    if (!obj->legacy.visible_set)
@@ -2090,8 +2090,8 @@ _efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *o
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_efl_gfx_visible_get(const Eo *eo_obj EINA_UNUSED,
-                                       Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_entity_visible_get(const Eo *eo_obj EINA_UNUSED,
+                                              Evas_Object_Protected_Data *obj)
 {
    if (!EVAS_OBJECT_DATA_ALIVE(obj)) return EINA_FALSE;
 #if 0
@@ -2201,7 +2201,7 @@ _efl_canvas_object_anti_alias_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
+_efl_canvas_object_efl_gfx_entity_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
 {
    if (obj->delete_me) return;
    if (EINA_DBL_EQ(obj->cur->scale, scale)) return;
@@ -2216,7 +2216,7 @@ _efl_canvas_object_efl_gfx_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 EOLIAN static double
-_efl_canvas_object_efl_gfx_scale_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_entity_scale_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->delete_me) return 1.0;
    return obj->cur->scale;
@@ -2286,11 +2286,11 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    Eina_Bool repeat_event;
    Eina_Bool clipees_has;
 
-   visible = efl_gfx_visible_get(eo_obj);
+   visible = efl_gfx_entity_visible_get(eo_obj);
    layer = efl_gfx_stack_layer_get(eo_obj);
    name = efl_name_get(eo_obj); // evas_object_name_get(eo_obj);
-   geom = efl_gfx_geometry_get(eo_obj);
-   scale = efl_gfx_scale_get(eo_obj);
+   geom = efl_gfx_entity_geometry_get(eo_obj);
+   scale = efl_gfx_entity_scale_get(eo_obj);
    min = efl_gfx_size_hint_restricted_min_get(eo_obj);
    max = efl_gfx_size_hint_max_get(eo_obj);
    //efl_gfx_size_hint_request_get(eo_obj, &requestw, &requesth);
@@ -2574,7 +2574,7 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
    event_anim = calloc(1, sizeof(Event_Animation));
 
    //Set callback for Hide event
-   if (desc == EFL_GFX_EVENT_HIDE)
+   if (desc == EFL_GFX_ENTITY_EVENT_HIDE)
      {
         evas_object_intercept_hide_callback_add(eo_obj,
                                                 _animation_intercept_hide,
@@ -2731,13 +2731,13 @@ evas_object_evas_get(const Eo *eo_obj)
 EAPI void
 evas_object_scale_set(Evas_Object *obj, double scale)
 {
-   efl_gfx_scale_set(obj, scale);
+   efl_gfx_entity_scale_set(obj, scale);
 }
 
 EAPI double
 evas_object_scale_get(const Evas_Object *obj)
 {
-   return efl_gfx_scale_get(obj);
+   return efl_gfx_entity_scale_get(obj);
 }
 
 EAPI Eina_Bool

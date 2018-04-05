@@ -502,8 +502,8 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.provider_find;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;

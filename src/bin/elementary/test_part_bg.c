@@ -181,5 +181,5 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_event_callback_add(color_btn, EFL_UI_EVENT_CLICKED, _color_cb, radio_group);
    efl_event_callback_add(scale_btn, EFL_UI_EVENT_CLICKED, _scale_type_cb, radio_group);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }

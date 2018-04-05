@@ -36,7 +36,7 @@ _efl_ui_table_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSE
    e = evas_object_evas_get(obj);
    efl_event_freeze(e);
 
-   r = efl_gfx_geometry_get(obj);
+   r = efl_gfx_entity_geometry_get(obj);
    xl = r.x;
    yl = r.y;
    wl = r.w;
@@ -68,7 +68,7 @@ _efl_ui_table_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSE
           }
         y1 = yl + ((hl * (long long)gi->row) / vhl);
         y2 = yl + ((hl * (long long)(gi->row + gi->row_span)) / vhl);
-        efl_gfx_geometry_set(gi->object, EINA_RECT(x1, y1, x2 - x1, y2 - y1));
+        efl_gfx_entity_geometry_set(gi->object, EINA_RECT(x1, y1, x2 - x1, y2 - y1));
      }
 err:
    efl_event_thaw(e);

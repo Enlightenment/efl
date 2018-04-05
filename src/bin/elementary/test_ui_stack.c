@@ -60,7 +60,7 @@ _navigation_layout_create(Eo *stack, const char *text, Eo *content)
 
    Eo *bn = efl_add(EFL_UI_NAVIGATION_BAR_CLASS, nl);
    efl_text_set(bn, text);
-   efl_gfx_visible_set(efl_part(bn, "back_button"), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_part(bn, "back_button"), EINA_TRUE);
    efl_ui_navigation_layout_bar_set(nl, bn);
 
    efl_content_set(nl, content);
@@ -82,7 +82,7 @@ _bar_left_btn_set(Eo *navigation_layout, Efl_Event_Cb clicked_cb, void *data)
    efl_event_callback_add(left_btn, EFL_UI_EVENT_CLICKED, clicked_cb, data);
 
    //Positions of "left_content" and "back_button" are the same.
-   efl_gfx_visible_set(efl_part(bn, "back_button"), EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_part(bn, "back_button"), EINA_FALSE);
 }
 
 static void
@@ -211,7 +211,7 @@ test_ui_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                      efl_text_set(efl_added, "Efl.Ui.Stack"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(500, 500));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
    Eo *stack = efl_add(EFL_UI_STACK_CLASS, win);
    efl_event_callback_add(stack, EFL_UI_STACK_EVENT_LOADED,

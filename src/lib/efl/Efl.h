@@ -105,7 +105,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_animator.eo.h"
 
 /* Graphics */
-#include "interfaces/efl_gfx.eo.h"
+#include "interfaces/efl_gfx_entity.eo.h"
 #include "interfaces/efl_gfx_color.eo.h"
 #include "interfaces/efl_gfx_buffer.eo.h"
 #include "interfaces/efl_gfx_stack.eo.h"
@@ -173,7 +173,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_types.eot.h"
 #include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
-#include "interfaces/efl_gfx.eo.legacy.h"
+#include "interfaces/efl_gfx_entity.eo.legacy.h"
 #include "interfaces/efl_image.eo.legacy.h"
 #include "interfaces/efl_image_animated.eo.legacy.h"
 #include "interfaces/efl_input_device.eo.legacy.h"

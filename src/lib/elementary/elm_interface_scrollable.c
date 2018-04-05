@@ -103,12 +103,12 @@ _elm_pan_efl_canvas_group_group_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static void
-_elm_pan_efl_gfx_position_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Position2D pos)
+_elm_pan_efl_gfx_entity_position_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_PAN_CLASS), pos);
 
    psd->x = pos.x;
    psd->y = pos.y;
@@ -117,12 +117,12 @@ _elm_pan_efl_gfx_position_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Position2D 
 }
 
 EOLIAN static void
-_elm_pan_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Eina_Size2D sz)
+_elm_pan_efl_gfx_entity_size_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), sz);
 
    psd->w = sz.w;
    psd->h = sz.h;
@@ -132,13 +132,13 @@ _elm_pan_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Eina_Siz
 }
 
 EOLIAN static void
-_elm_pan_efl_gfx_visible_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Bool vis)
+_elm_pan_efl_gfx_entity_visible_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_PAN_CLASS), vis);
-   if (psd->content) efl_gfx_visible_set(psd->content, vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_PAN_CLASS), vis);
+   if (psd->content) efl_gfx_entity_visible_set(psd->content, vis);
 }
 
 EOLIAN static void
@@ -747,7 +747,7 @@ _elm_scroll_scroll_bar_auto_visibility_adjust(Elm_Scrollable_Smart_Interface_Dat
 
    w = sid->content_info.w;
    h = sid->content_info.h;
-   sz = efl_gfx_size_get(sid->edje_obj);
+   sz = efl_gfx_entity_size_get(sid->edje_obj);
 
    // Adjust when the content may fit but the bars are visible. The if() test
    // does not guarantee that the content will fit (offsets & margins depend

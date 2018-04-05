@@ -22,7 +22,7 @@ part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
 {
    if (!rp->part->use_alternate_font_metrics)
      {
-        Eina_Size2D sz = efl_gfx_size_get(rp->object);
+        Eina_Size2D sz = efl_gfx_entity_size_get(rp->object);
         if (w) *w = sz.w;
         if (h) *h = sz.h;
      }
@@ -143,7 +143,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    evas_obj_text_ellipsis_set(ep->object, params->type.text->ellipsis);
    efl_text_font_set(ep->object, font, size);
    efl_text_set(ep->object, text);
-   efl_gfx_size_set(ep->object, EINA_SIZE2D(sw,  sh));
+   efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(sw,  sh));
 
    return text;
 }
@@ -336,7 +336,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
         if (inlined_font) efl_text_font_source_set(ep->object, ed->path);
         else efl_text_font_source_set(ep->object, NULL);
 
-        if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+        if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
 
         efl_text_set(ep->object, text);
         /* the fit shoult not depend on font size, because it give the differet
@@ -366,7 +366,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
            if (inlined_font) efl_text_font_source_set(ep->object, ed->path);
            else efl_text_font_source_set(ep->object, NULL);
 
-           if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+           if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
 
            efl_text_font_set(ep->object, font, size);
            efl_text_set(ep->object, text);
@@ -389,7 +389,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                   if (inlined_font) efl_text_font_source_set(ep->object, ed->path);
                   else efl_text_font_source_set(ep->object, NULL);
 
-                  if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+                  if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
                   efl_text_font_set(ep->object, font, size);
 
                   part_get_geometry(ep, &tw, &th);
@@ -401,7 +401,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
           {
              int current;
 
-             if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+             if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
              efl_text_font_set(ep->object, font, 10);
 
              part_get_geometry(ep, &tw, &th);
@@ -423,7 +423,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                     {
                        current = (top + bottom) / 2;
 
-                       if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+                       if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
                        efl_text_font_set(ep->object, font, current);
 
                        part_get_geometry(ep, &tw, &th);
@@ -439,7 +439,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                {
                   current++;
 
-                  if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+                  if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
                   efl_text_font_set(ep->object, font, current);
 
                   part_get_geometry(ep, &tw, &th);
@@ -488,7 +488,7 @@ arrange_text:
    if (inlined_font) efl_text_font_source_set(ep->object, ed->path);
    else efl_text_font_source_set(ep->object, NULL);
 
-   if (ep->part->scale) efl_gfx_scale_set(ep->object, TO_DOUBLE(sc));
+   if (ep->part->scale) efl_gfx_entity_scale_set(ep->object, TO_DOUBLE(sc));
 
    efl_text_font_set(ep->object, font, size);
    efl_text_set(ep->object, text);
@@ -522,8 +522,8 @@ arrange_text:
         Eina_Position2D pos;
         pos.x = ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x;
         pos.y = ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y;
-        efl_gfx_position_set(ep->object, pos);
-        efl_gfx_visible_set(ep->object, params->visible);
+        efl_gfx_entity_position_set(ep->object, pos);
+        efl_gfx_entity_visible_set(ep->object, params->visible);
      }
 
    {

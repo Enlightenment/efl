@@ -42,8 +42,8 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;

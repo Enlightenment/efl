@@ -43,7 +43,7 @@ static Eina_Bool
 _timer_hide_window_cb(void *data)
 {
    Eo *win = (Eo*) data;
-   efl_gfx_visible_set(win, EINA_FALSE);
+   efl_gfx_entity_visible_set(win, EINA_FALSE);
    return EINA_FALSE;
 }
 
@@ -120,7 +120,7 @@ EFL_START_TEST (elm_win_autohide)
    if (elm_win_xwindow_get(win))
      {
         elm_win_autohide_set(win, EINA_TRUE);
-        efl_gfx_visible_set(win, EINA_TRUE);
+        efl_gfx_entity_visible_set(win, EINA_TRUE);
 
         Eina_Bool fail_flag = EINA_FALSE;
         ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
@@ -129,7 +129,7 @@ EFL_START_TEST (elm_win_autohide)
         elm_run();
 
         Eina_Bool visible;
-        visible = efl_gfx_visible_get(win);
+        visible = efl_gfx_entity_visible_get(win);
         ck_assert(visible == EINA_FALSE);
      }
 }
@@ -140,7 +140,7 @@ EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   efl_gfx_visible_set(win, EINA_TRUE);
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
    ecore_timer_add(_timeout1, _timer_hide_window_cb, win);
@@ -149,7 +149,7 @@ EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
    elm_run();
 
    Eina_Bool visible;
-   visible = efl_gfx_visible_get(win);
+   visible = efl_gfx_entity_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
    ck_assert(efl_ref_count(win) >= 1);
@@ -166,7 +166,7 @@ EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    if (elm_win_xwindow_get(win))
      {
         elm_win_autohide_set(win, EINA_TRUE);
-        efl_gfx_visible_set(win, EINA_TRUE);
+        efl_gfx_entity_visible_set(win, EINA_TRUE);
 
         Eina_Bool fail_flag = EINA_FALSE;
         ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
@@ -175,7 +175,7 @@ EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
         elm_run();
 
         Eina_Bool visible;
-        visible = efl_gfx_visible_get(win);
+        visible = efl_gfx_entity_visible_get(win);
 
         ck_assert(fail_flag == EINA_FALSE);
         ck_assert(efl_ref_count(win) >= 1);
@@ -365,8 +365,8 @@ EFL_START_TEST (efl_ui_win_multi_touch_inputs)
 
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
    elm_win_autohide_set(win, EINA_TRUE);
-   efl_gfx_visible_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, EINA_SIZE2D(100,  100));
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100,  100));
 
    ecore_timer_add(_timeout1, _inputs_timer1_cb, win);
    ecore_timer_add(_timeout2, _inputs_timer2_cb, win);

@@ -271,8 +271,8 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.size { set; }
-      Efl.Gfx.scale { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.scale { set; }
       Efl.Text.text { get; set; }
       Efl.Text.Font.font { get; set; }
       Efl.Text.Font.font_source { get; set; }

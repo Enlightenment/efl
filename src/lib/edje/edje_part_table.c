@@ -30,7 +30,7 @@ _efl_canvas_layout_part_table_efl_container_content_count(Eo *obj, void *_pd EIN
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_container_content_remove(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED EINA_UNUSED, Efl_Gfx *content)
+_efl_canvas_layout_part_table_efl_container_content_remove(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED EINA_UNUSED, Efl_Gfx_Entity *content)
 {
    return efl_pack_unpack(obj, content);
 }
@@ -50,20 +50,20 @@ _efl_canvas_layout_part_table_efl_pack_unpack_all(Eo *obj, void *_pd EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl_Gfx *subobj)
+_efl_canvas_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    PROXY_DATA_GET(obj, pd);
    return _edje_part_table_unpack(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_pack_table_pack_table(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *subobj, int col, int row, int colspan, int rowspan)
+_efl_canvas_layout_part_table_efl_pack_table_pack_table(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity *subobj, int col, int row, int colspan, int rowspan)
 {
    PROXY_DATA_GET(obj, pd);
    return _edje_part_table_pack(pd->ed, pd->part, subobj, col, row, colspan, rowspan);
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_canvas_layout_part_table_efl_pack_table_table_content_get(Eo *obj, void *_pd EINA_UNUSED, int col, int row)
 {
    PROXY_DATA_GET(obj, pd);
@@ -100,7 +100,7 @@ _efl_canvas_layout_part_table_efl_pack_table_table_rows_get(const Eo *obj, void 
 static Eina_Bool
 _table_item_iterator_next(Part_Item_Iterator *it, void **data)
 {
-   Efl_Gfx *sub;
+   Efl_Gfx_Entity *sub;
 
    if (!it->object) return EINA_FALSE;
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))
@@ -169,7 +169,7 @@ _efl_canvas_layout_part_table_efl_pack_table_table_contents_get(Eo *obj, void *_
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_pack_table_table_position_get(const Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_canvas_layout_part_table_efl_pack_table_table_position_get(const Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity * subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    unsigned short c, r, cs, rs;
    Eina_Bool ret;

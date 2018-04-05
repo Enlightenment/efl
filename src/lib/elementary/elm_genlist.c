@@ -279,12 +279,12 @@ _elm_genlist_pan_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_genlist_pan_efl_gfx_position_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Position2D pos)
+_elm_genlist_pan_efl_gfx_entity_position_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_PAN_CLASS), pos);
 
    psd->wsd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
@@ -301,7 +301,7 @@ _elm_genlist_pan_smart_resize_job(void *data)
 }
 
 EOLIAN static void
-_elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Size2D size)
+_elm_genlist_pan_efl_gfx_entity_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Size2D size)
 {
    Elm_Genlist_Data *sd = psd->wsd;
    Eina_Size2D old;
@@ -309,7 +309,7 @@ _elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Size2
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
      return;
 
-   old = efl_gfx_size_get(obj);
+   old = efl_gfx_entity_size_get(obj);
    if ((old.w == size.w) && (old.h == size.h)) goto super; // should already be intercepted above
    if ((sd->mode == ELM_LIST_COMPRESS) && (old.w != size.w))
      {
@@ -330,7 +330,7 @@ _elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Size2
      sd->calc_job = NULL;
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), size);
+   efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), size);
 }
 
 static void
@@ -569,7 +569,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
      }
 
    edje_object_mirrored_set(view, efl_ui_mirrored_get(WIDGET(it)));
-   edje_object_scale_set(view, efl_gfx_scale_get(WIDGET(it))
+   edje_object_scale_set(view, efl_gfx_entity_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
    stacking_even = edje_object_data_get(view, "stacking_even");
@@ -590,7 +590,7 @@ _view_create(Elm_Gen_Item *it, const char *style)
    Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
    evas_object_smart_member_add(view, it->item->wsd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), view);
-   edje_object_scale_set(view, efl_gfx_scale_get(WIDGET(it)) *
+   edje_object_scale_set(view, efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
 
    _view_style_update(it, view, style);
@@ -1401,7 +1401,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    if (it->item->decorate_all_item_realized) return;
 
    it->deco_all_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set(it->deco_all_view, efl_gfx_scale_get(WIDGET(it)) *
+   edje_object_scale_set(it->deco_all_view, efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_smart_member_add(it->deco_all_view, sd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), it->deco_all_view);
@@ -1638,7 +1638,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    edje_object_mirrored_set(itc->base_view,
                             efl_ui_mirrored_get(WIDGET(it)));
    edje_object_scale_set(itc->base_view,
-                         efl_gfx_scale_get(WIDGET(it))
+                         efl_gfx_entity_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
    it->spacer = NULL;
@@ -5734,26 +5734,26 @@ _elm_genlist_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Data *sd)
 }
 
 EOLIAN static void
-_elm_genlist_efl_gfx_position_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Position2D pos)
+_elm_genlist_efl_gfx_entity_position_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void
-_elm_genlist_efl_gfx_size_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Size2D sz)
+_elm_genlist_efl_gfx_entity_size_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    if ((sd->queue) && (!sd->queue_idle_enterer) && (sz.w > 0))
      _requeue_idle_enterer(sd);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

@@ -251,11 +251,11 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
    if (_is_inverted(sd->dir))
@@ -426,11 +426,11 @@ _progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
    elm_layout_sizing_eval(obj);

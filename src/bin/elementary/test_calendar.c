@@ -454,5 +454,5 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_format_cb_set(efl_added, NULL, _cal_format_cb, NULL),
            efl_pack(box, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 300));
 }

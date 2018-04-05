@@ -421,11 +421,11 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
                           _efl_ui_scroller_bar_show_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_scroller_bar_hide_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_EVENT_RESIZE,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_scroller_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
                           _efl_ui_scroller_size_hint_changed_cb, obj);
-   efl_event_callback_add(sd->pan_obj, EFL_GFX_EVENT_RESIZE,
+   efl_event_callback_add(sd->pan_obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_scroller_pan_resized_cb, obj);
 
    return obj;
@@ -445,11 +445,11 @@ _efl_ui_scroller_efl_object_destructor(Eo *obj,
                           _efl_ui_scroller_bar_show_cb, obj);
    efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_scroller_bar_hide_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_EVENT_RESIZE,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_scroller_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
                           _efl_ui_scroller_size_hint_changed_cb, obj);
-   efl_event_callback_del(sd->pan_obj, EFL_GFX_EVENT_RESIZE,
+   efl_event_callback_del(sd->pan_obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_scroller_pan_resized_cb, obj);
    efl_del(sd->pan_obj);
    sd->pan_obj = NULL;
@@ -499,7 +499,7 @@ _efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
    else if (min.h > 0)
      view.h = min.h;
 
-   if (sd->content) efl_gfx_size_set(sd->content, EINA_SIZE2D(view.w, view.h));
+   if (sd->content) efl_gfx_entity_size_set(sd->content, EINA_SIZE2D(view.w, view.h));
 
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 

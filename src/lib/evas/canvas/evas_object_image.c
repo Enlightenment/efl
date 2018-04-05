@@ -578,7 +578,7 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Dat
      {
         Eina_Size2D sz;
 
-        sz = efl_gfx_size_get(eo_obj);
+        sz = efl_gfx_entity_size_get(eo_obj);
         _evas_image_fill_set(eo_obj, o, 0, 0, sz.w, sz.h);
 
         evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
@@ -3390,7 +3390,7 @@ evas_object_image_filled_resize_listener(void *data EINA_UNUSED, Evas *e EINA_UN
    Evas_Image_Data *o = efl_data_scope_get(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Eina_Size2D sz;
 
-   sz = efl_gfx_size_get(obj);
+   sz = efl_gfx_entity_size_get(obj);
    if (sz.w < 1) sz.w = 1;
    if (sz.h < 1) sz.h = 1;
    _evas_image_fill_set(obj, o, 0, 0, sz.w, sz.h);

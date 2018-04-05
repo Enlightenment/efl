@@ -130,8 +130,8 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
       Efl.Object.destructor;
       Efl.Object.debug_name_override;
       Efl.Gfx.Color.color { set; }
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { get; set; }

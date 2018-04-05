@@ -5,8 +5,8 @@ class Efl.Ui.Image_Zoomable_Pan (Efl.Ui.Pan)
    implements {
       class.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Pan.content_size { get; }
       Efl.Ui.Pan.pan_position { get; set; }

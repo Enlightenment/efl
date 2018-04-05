@@ -364,7 +364,7 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
 }
 
 EOLIAN void
-_efl_canvas_layout_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
+_efl_canvas_layout_efl_gfx_entity_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 {
    Edje *ged;
    Evas_Object *o;
@@ -390,7 +390,7 @@ _efl_canvas_layout_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_gfx_scale_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    return TO_DOUBLE(ed->scale);
 }
@@ -2908,7 +2908,7 @@ edje_object_part_text_prediction_hint_set(Eo *obj, const char *part, const char 
 }
 
 Eina_Bool
-_edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow)
+_edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx_Entity *obj_swallow)
 {
    Edje_Real_Part *rp, *rpcur;
    Edje_User_Defined *eud = NULL;
@@ -3267,7 +3267,7 @@ _efl_canvas_layout_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, E
    return EINA_TRUE;
 }
 
-Efl_Gfx *
+Efl_Gfx_Entity *
 _edje_efl_content_content_get(Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;

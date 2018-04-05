@@ -15,7 +15,7 @@ _translation_get(Eo *target)
    _Translate_Property_Double translate;
    Eina_Rect geometry;
 
-   geometry = efl_gfx_geometry_get(target);
+   geometry = efl_gfx_entity_geometry_get(target);
 
    efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
    efl_gfx_map_coord_absolute_get(target, 2, &x2, &y2, NULL);

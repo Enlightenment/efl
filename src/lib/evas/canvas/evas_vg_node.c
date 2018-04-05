@@ -85,7 +85,7 @@ _efl_canvas_vg_node_origin_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_canvas_vg_node_efl_gfx_position_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node_Data *pd, Eina_Position2D pos)
+_efl_canvas_vg_node_efl_gfx_entity_position_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node_Data *pd, Eina_Position2D pos)
 {
    pd->x = (double) pos.x;
    pd->y = (double) pos.y;
@@ -94,14 +94,14 @@ _efl_canvas_vg_node_efl_gfx_position_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node
 }
 
 static Eina_Position2D
-_efl_canvas_vg_node_efl_gfx_position_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node_Data *pd)
+_efl_canvas_vg_node_efl_gfx_entity_position_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node_Data *pd)
 {
    // NOTE: This casts double to int!
    return EINA_POSITION2D(pd->x, pd->y);
 }
 
 static void
-_efl_canvas_vg_node_efl_gfx_visible_set(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_node_efl_gfx_entity_visible_set(Eo *obj EINA_UNUSED,
                                       Efl_Canvas_Vg_Node_Data *pd, Eina_Bool v)
 {
    pd->visibility = v;
@@ -111,7 +111,7 @@ _efl_canvas_vg_node_efl_gfx_visible_set(Eo *obj EINA_UNUSED,
 
 
 static Eina_Bool
-_efl_canvas_vg_node_efl_gfx_visible_get(const Eo *obj EINA_UNUSED,
+_efl_canvas_vg_node_efl_gfx_entity_visible_get(const Eo *obj EINA_UNUSED,
                                       Efl_Canvas_Vg_Node_Data *pd)
 {
    return pd->visibility;
@@ -185,7 +185,7 @@ _efl_canvas_vg_node_mask_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node_Data 
 }
 
 static Eina_Size2D
-_efl_canvas_vg_node_efl_gfx_size_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_entity_size_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
 
@@ -194,11 +194,11 @@ _efl_canvas_vg_node_efl_gfx_size_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd 
 }
 
 EOLIAN static Eina_Rect
-_efl_canvas_vg_node_efl_gfx_geometry_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_entity_geometry_get(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
-   r.pos = efl_gfx_position_get(obj);
-   r.size = efl_gfx_size_get(obj);
+   r.pos = efl_gfx_entity_position_get(obj);
+   r.size = efl_gfx_entity_size_get(obj);
    return r;
 }
 
@@ -756,13 +756,13 @@ _efl_canvas_vg_node_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Node_Da
 EAPI Eina_Bool
 evas_vg_node_visible_get(Eo *obj)
 {
-   return efl_gfx_visible_get(obj);
+   return efl_gfx_entity_visible_get(obj);
 }
 
 EAPI void
 evas_vg_node_visible_set(Eo *obj, Eina_Bool v)
 {
-   efl_gfx_visible_set(obj, v);
+   efl_gfx_entity_visible_set(obj, v);
 }
 
 EAPI void
@@ -781,8 +781,8 @@ EAPI void
 evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h)
 {
    Eina_Rect r;
-   r.pos = efl_gfx_position_get(obj);
-   r.size = efl_gfx_size_get(obj);
+   r.pos = efl_gfx_entity_position_get(obj);
+   r.size = efl_gfx_entity_size_get(obj);
    if (x) *x = r.x;
    if (y) *y = r.y;
    if (w) *w = r.w;
@@ -792,8 +792,8 @@ evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h)
 EAPI void
 evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h)
 {
-   efl_gfx_position_set(obj, EINA_POSITION2D(x, y));
-   efl_gfx_size_set(obj, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_position_set(obj, EINA_POSITION2D(x, y));
+   efl_gfx_entity_size_set(obj, EINA_SIZE2D(w,  h));
 }
 
 EAPI void

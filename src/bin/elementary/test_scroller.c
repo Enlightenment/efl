@@ -494,8 +494,8 @@ _bounce_cb(void *data)
    if (!bounce->y1)
      {
         elm_interface_scrollable_bounce_allow_set(bounce->scroller, 0, 1);
-        bounce->y1 = efl_gfx_position_get(bounce->it1).y;
-        bounce->y2 = efl_gfx_position_get(bounce->it2).y;
+        bounce->y1 = efl_gfx_entity_position_get(bounce->it1).y;
+        bounce->y2 = efl_gfx_entity_position_get(bounce->it2).y;
      }
 
    bounce->state++;

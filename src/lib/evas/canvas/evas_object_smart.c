@@ -309,7 +309,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
              EINA_SAFETY_ON_NULL_RETURN(clipper);
              efl_canvas_object_clip_set(eo_obj, clipper);
              if (!had_clippees && smart->cur->visible)
-               efl_gfx_visible_set(clipper, 1);
+               efl_gfx_entity_visible_set(clipper, 1);
           }
      }
 
@@ -354,7 +354,7 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
         EINA_SAFETY_ON_NULL_RETURN(clipper);
         efl_canvas_object_clip_set(eo_obj, NULL);
         if (!efl_canvas_object_clipees_has(clipper))
-          efl_gfx_visible_set(clipper, 0);
+          efl_gfx_entity_visible_set(clipper, 0);
      }
 
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
@@ -863,12 +863,12 @@ _efl_canvas_group_efl_gfx_color_color_set(Eo *eo_obj, Evas_Smart_Data *o, int r,
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_gfx_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool vis)
+_efl_canvas_group_efl_gfx_entity_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(eo_obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(eo_obj, MY_CLASS), vis);
 
    if (o->clipped)
      {
@@ -879,19 +879,19 @@ _efl_canvas_group_efl_gfx_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool 
         if (vis && !evas_object_clipees_has(clipper))
           return;
 
-        efl_gfx_visible_set(clipper, vis);
+        efl_gfx_entity_visible_set(clipper, vis);
      }
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_gfx_position_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Position2D pos)
+_efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    if (o->clipped)
      _evas_object_smart_clipped_smart_move_internal(eo_obj, pos.x, pos.y);
-   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(eo_obj, MY_CLASS), pos);
 }
 
 EOLIAN static void

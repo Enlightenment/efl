@@ -47,8 +47,8 @@ class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { get; }
       Efl.Image.image_size { get; }
       Efl.Ui.Image.icon { set; get; }

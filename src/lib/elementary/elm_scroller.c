@@ -817,23 +817,23 @@ _elm_scroller_efl_canvas_group_group_add(Eo *obj, Elm_Scroller_Data *priv)
 }
 
 EOLIAN static void
-_elm_scroller_efl_gfx_position_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Position2D pos)
+_elm_scroller_efl_gfx_entity_position_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void
-_elm_scroller_efl_gfx_size_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Size2D sz)
+_elm_scroller_efl_gfx_entity_size_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
 }
 
 EOLIAN static void
@@ -867,14 +867,14 @@ _focused_element(void *data, const Efl_Event *event)
    if (!focus) return;
 
    geom = efl_ui_focus_object_focus_geometry_get(focus);
-   pos = efl_gfx_position_get(obj);
+   pos = efl_gfx_entity_position_get(obj);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
    geom.x = geom.x + pan_x - pos.x;
    geom.y = geom.y + pan_y - pos.y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 
-   geom = efl_gfx_geometry_get(obj);
+   geom = efl_gfx_entity_geometry_get(obj);
    geom.x = geom.y = 0;
    elm_widget_show_region_set(obj, geom, EINA_TRUE);
 

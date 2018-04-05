@@ -3173,8 +3173,8 @@ Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
 /* part containers: swallow */
 Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
-Efl_Gfx *_edje_efl_content_content_get(Edje *ed, const char *part);
-Eina_Bool _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
+Efl_Gfx_Entity *_edje_efl_content_content_get(Edje *ed, const char *part);
+Eina_Bool _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx_Entity *obj_swallow);
 
 /* part containers: external */
 Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);

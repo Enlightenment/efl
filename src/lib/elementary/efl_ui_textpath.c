@@ -87,7 +87,7 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, E
    Eina_Matrix2 mat;
 
    len = w2 - w1;
-   r = efl_gfx_geometry_get(pd->text_obj);
+   r = efl_gfx_entity_geometry_get(pd->text_obj);
 
    seg_len = eina_bezier_length_get(&bezier);
    if (pd->autofit)
@@ -184,7 +184,7 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *
    sina = (y2 - y1) / len;
    cosa = (x2 - x1) / len;
 
-   r = efl_gfx_geometry_get(pd->text_obj);
+   r = efl_gfx_entity_geometry_get(pd->text_obj);
    r.h /= 2;
    evas_map_point_coord_set(map, cmp + 3, x1 - r.h * sina, y1 + r.h * cosa, 0);
    evas_map_point_coord_set(map, cmp + 2, x2 - r.h * sina, y2 + r.h * cosa, 0);
@@ -234,7 +234,7 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    int cur_map_point = 0, map_point_no;
    Eina_Size2D sz;
 
-   sz = efl_gfx_size_get(pd->text_obj);
+   sz = efl_gfx_entity_size_get(pd->text_obj);
    if (pd->autofit)
      remained_w = sz.w;
    else
@@ -298,7 +298,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
         free(seg);
      }
 
-   opos = efl_gfx_position_get(obj);
+   opos = efl_gfx_entity_position_get(obj);
 
    pd->total_length = 0;
    efl_gfx_path_get(obj, &cmd, &points);
@@ -433,7 +433,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
              w = pd->total_length;
           }
      }
-   efl_gfx_size_set(pd->text_obj, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(pd->text_obj, EINA_SIZE2D(w,  h));
    _textpath_ellipsis_set(pd, is_ellipsis);
 }
 
@@ -483,7 +483,7 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
                                elm_widget_style_get(obj));
    efl_gfx_size_hint_weight_set(priv->text_obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(priv->text_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_gfx_visible_set(priv->text_obj, EINA_TRUE);
+   efl_gfx_entity_visible_set(priv->text_obj, EINA_TRUE);
 
    evas_object_smart_member_add(priv->text_obj, obj);
    elm_widget_sub_object_add(obj, priv->text_obj);
@@ -558,17 +558,17 @@ _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_gfx_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Position2D pos)
+_efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Position2D pos)
 {
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    _path_data_get(obj, pd, EINA_FALSE);
    _text_draw(pd);
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_gfx_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Eina_Size2D sz)
+_efl_ui_textpath_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Eina_Size2D sz)
 {
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

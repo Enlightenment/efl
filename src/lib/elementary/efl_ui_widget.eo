@@ -575,10 +575,10 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Object.provider_find;
       Efl.Object.debug_name_override;
       Efl.Gfx.Color.color { set; }
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
-      Efl.Gfx.scale { set; get; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.scale { set; get; }
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.is_frame_object { set; }

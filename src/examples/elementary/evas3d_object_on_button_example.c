@@ -258,8 +258,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    /* Add an image object for 3D scene rendering. */
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
-   efl_gfx_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
-   efl_gfx_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
 
    btn = elm_button_add(win);
    evas_object_resize(btn, (WIDTH * 2) / 3, (HEIGHT * 2) / 3);

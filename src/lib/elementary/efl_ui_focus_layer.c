@@ -23,9 +23,9 @@ _efl_ui_focus_layer_efl_ui_widget_focus_manager_create(Eo *obj, Efl_Ui_Focus_Lay
 }
 
 EOLIAN static void
-_efl_ui_focus_layer_efl_gfx_visible_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v)
+_efl_ui_focus_layer_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v)
 {
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), v);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), v);
 
    if (pd->enable_on_visible)
      {

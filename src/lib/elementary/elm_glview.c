@@ -86,12 +86,12 @@ _glview_update_surface(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_efl_gfx_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
+_elm_glview_efl_gfx_entity_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    sd->resized = EINA_TRUE;
 

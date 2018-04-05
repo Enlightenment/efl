@@ -204,5 +204,5 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    efl_key_wref_set(win, "snap", snap);
    efl_key_wref_set(win, "table", table);
-   efl_gfx_size_set(win, EINA_SIZE2D(400,  400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(400,  400));
 }

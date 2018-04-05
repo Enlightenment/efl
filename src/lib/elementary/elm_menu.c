@@ -100,11 +100,11 @@ _parent_geometry_get(Elm_Menu_Data *sd, int *x, int *y, int *w, int *h)
 {
    Eina_Rect r;
 
-   r = efl_gfx_geometry_get(sd->parent);
+   r = efl_gfx_entity_geometry_get(sd->parent);
    if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         if (sd->menu_bar && efl_canvas_object_is_frame_object_get(sd->obj))
-          r.pos = efl_gfx_position_get(sd->obj);
+          r.pos = efl_gfx_entity_position_get(sd->obj);
         else
           r.pos = EINA_POSITION2D(0, 0);
      }
@@ -214,7 +214,7 @@ _sizing_eval(Evas_Object *obj)
    if (y_p + h_p + bh > y2 + h2) y_p -= y_p + h_p + bh - (y2 + h2);
    if (y_p < y2) y_p = y2;
 
-   efl_gfx_geometry_set(sd->location, EINA_RECT(x_p, y_p, bw, h_p));
+   efl_gfx_entity_geometry_set(sd->location, EINA_RECT(x_p, y_p, bw, h_p));
    evas_object_size_hint_min_set(sd->location, bw, h_p);
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
@@ -295,7 +295,7 @@ _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
              elm_wdg_item_disable(eo_item);
              /* SEOZ
              edje_object_scale_set
-               (VIEW(item), efl_gfx_scale_get(obj) *
+               (VIEW(item), efl_gfx_entity_scale_get(obj) *
                elm_config_scale_get());
                */
           }
@@ -567,13 +567,13 @@ _unblock_menu(void *_sd, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_menu_efl_gfx_visible_set(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, Eina_Bool vis)
+_elm_menu_efl_gfx_entity_visible_set(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
-   if (vis) efl_gfx_visible_set(sd->hv, EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
+   if (vis) efl_gfx_entity_visible_set(sd->hv, EINA_TRUE);
 }
 
 static void

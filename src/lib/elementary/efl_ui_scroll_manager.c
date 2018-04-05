@@ -266,7 +266,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_viewport_geometry_get(const
 {
    if (!sd->pan_obj) return EINA_RECT(0, 0, 0, 0);
 
-   return efl_gfx_geometry_get(sd->pan_obj);
+   return efl_gfx_entity_geometry_get(sd->pan_obj);
 }
 
 EOLIAN static void
@@ -623,7 +623,7 @@ _efl_ui_scroll_manager_content_region_show_internal(Evas_Object *obj,
    min = efl_ui_pan_position_min_get(sd->pan_obj);
    max = efl_ui_pan_position_max_get(sd->pan_obj);
    cur = efl_ui_pan_position_get(sd->pan_obj);
-   pan = efl_gfx_size_get(sd->pan_obj);
+   pan = efl_gfx_entity_size_get(sd->pan_obj);
 
    nx = x;
    if ((x > cur.x) && (w < pan.w))
@@ -2043,7 +2043,7 @@ _efl_ui_scroll_manager_pan_resized_cb(void *data,
    Eo *manager = data;
    EFL_UI_SCROLL_MANAGER_DATA_GET_OR_RETURN(manager, sd);
 
-   efl_gfx_size_set(sd->event_rect, efl_gfx_size_get(obj));
+   efl_gfx_entity_size_set(sd->event_rect, efl_gfx_entity_size_get(obj));
 }
 
 static void
@@ -2055,7 +2055,7 @@ _efl_ui_scroll_manager_pan_moved_cb(void *data,
    Eo *manager = data;
    EFL_UI_SCROLL_MANAGER_DATA_GET_OR_RETURN(manager, sd);
 
-   efl_gfx_position_set(sd->event_rect, efl_gfx_position_get(obj));
+   efl_gfx_entity_position_set(sd->event_rect, efl_gfx_entity_position_get(obj));
 }
 
 static void
@@ -2451,7 +2451,7 @@ _efl_ui_scroll_manager_efl_object_constructor(Eo *obj, Efl_Ui_Scroll_Manager_Dat
    efl_ui_widget_sub_object_add(sd->parent, sd->event_rect);
 
    efl_gfx_color_set(sd->event_rect, 0, 0, 0, 0);
-   efl_gfx_visible_set(sd->event_rect, EINA_TRUE);
+   efl_gfx_entity_visible_set(sd->event_rect, EINA_TRUE);
    efl_canvas_object_repeat_events_set(sd->event_rect, EINA_TRUE);
 
    _scroll_event_object_attach(obj);

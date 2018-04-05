@@ -195,8 +195,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   efl_gfx_size_set(background, EINA_SIZE2D(w,  h));
-   efl_gfx_size_set(image, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(background, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(w,  h));
 }
 
 static Eina_Bool
@@ -433,13 +433,13 @@ main(void)
    /* Add a background rectangle object. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
-   efl_gfx_size_set(background, EINA_SIZE2D(WIDTH,  HEIGHT));
-   efl_gfx_visible_set(background, EINA_TRUE);
+   efl_gfx_entity_size_set(background, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_visible_set(background, EINA_TRUE);
 
    /* Add an image object for 3D scene rendering. */
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
-   efl_gfx_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
-   efl_gfx_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
 
    evas_object_show(image),
    evas_object_focus_set(image, EINA_TRUE);

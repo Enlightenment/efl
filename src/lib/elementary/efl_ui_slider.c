@@ -654,7 +654,7 @@ _popup_update(Evas_Object *obj, Efl_Ui_Slider_Data *sd, Evas_Object *popup)
      }
    else
      elm_widget_element_update(obj, popup, PART_NAME_POPUP);
-   edje_object_scale_set(popup, efl_gfx_scale_get(obj) *
+   edje_object_scale_set(popup, efl_gfx_entity_scale_get(obj) *
                          elm_config_scale_get());
 
    if (!_is_inverted(sd->dir))
@@ -790,11 +790,11 @@ _efl_ui_slider_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
    if (sd->intvl_enable)
@@ -1060,11 +1060,11 @@ _efl_ui_slider_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
    _val_fetch(obj, EINA_FALSE);

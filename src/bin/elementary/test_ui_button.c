@@ -73,6 +73,6 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_content_set(btn, efl_added)
           );
 
-   efl_gfx_size_set(win, EINA_SIZE2D(320,  400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(320,  400));
 }
 

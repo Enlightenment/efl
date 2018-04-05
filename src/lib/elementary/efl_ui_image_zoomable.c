@@ -152,24 +152,24 @@ _calc_job_cb(void *data)
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_pan_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Eina_Position2D pos)
+_efl_ui_image_zoomable_pan_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_PAN_CLASS), pos);
 
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job_cb, psd->wobj);
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_pan_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Eina_Size2D sz)
+_efl_ui_image_zoomable_pan_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), sz);
 
    psd->wsd->resized = EINA_TRUE;
    ecore_job_del(psd->wsd->calc_job);
@@ -1761,21 +1761,21 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sdi EINA_UNUSED, Eina_Position2D pos)
+_efl_ui_image_zoomable_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sdi EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED, Eina_Size2D sz)
+_efl_ui_image_zoomable_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

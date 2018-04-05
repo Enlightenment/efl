@@ -156,12 +156,12 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D pos)
+_elm_mapbuf_efl_gfx_entity_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    _mapbuf_auto_eval(obj, sd);
    _mapbuf_auto_smooth(obj, sd);
@@ -169,26 +169,26 @@ _elm_mapbuf_efl_gfx_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D p
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_size_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Size2D sz)
+_elm_mapbuf_efl_gfx_entity_size_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
    if (sd->content)
-     efl_gfx_size_set(sd->content, sz);
+     efl_gfx_entity_size_set(sd->content, sz);
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_visible_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool vis)
+_elm_mapbuf_efl_gfx_entity_visible_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);

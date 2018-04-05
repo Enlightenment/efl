@@ -20,7 +20,7 @@ interface Efl.Ui.View.List.Relayout (Efl.Interface)
       @property elements {
          get {}
          values {
-            elements: list<Efl.Gfx>; [[The order to use]]
+            elements: list<Efl.Gfx.Entity>; [[The order to use]]
          }
       }
    }

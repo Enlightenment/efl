@@ -39,5 +39,5 @@ test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
            efl_ui_spin_button_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(180, 100));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(180, 100));
 }

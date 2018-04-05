@@ -5121,7 +5121,7 @@ typedef struct
 static Eina_Bool
 _profile_iterator_next(Profile_Iterator *it, void **data)
 {
-   Efl_Gfx *sub;
+   Efl_Gfx_Entity *sub;
 
    if (!it->object) return EINA_FALSE;
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))

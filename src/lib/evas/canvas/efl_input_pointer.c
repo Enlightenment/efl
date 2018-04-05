@@ -269,13 +269,13 @@ _efl_input_pointer_efl_input_event_device_get(const Eo *obj EINA_UNUSED, Efl_Inp
 }
 
 EOLIAN static void
-_efl_input_pointer_source_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Gfx *src)
+_efl_input_pointer_source_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Gfx_Entity *src)
 {
    /* ref? */
    pd->source = src;
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_input_pointer_source_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->source;

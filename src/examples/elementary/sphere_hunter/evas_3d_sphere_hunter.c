@@ -814,7 +814,7 @@ elm_main(int argc, char **argv)
    _scene_setup(&data, 10.0, 10);
 
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
-   efl_gfx_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
    efl_canvas_scene3d_set(image, data.scene);
 
    evas_object_size_hint_weight_set(image, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

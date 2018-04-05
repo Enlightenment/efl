@@ -195,13 +195,13 @@ EAPI const char *edje_object_language_get(const Edje_Object *obj)
 
 EAPI Eina_Bool edje_object_scale_set(Edje_Object *obj, double scale)
 {
-   efl_gfx_scale_set(obj, scale);
+   efl_gfx_entity_scale_set(obj, scale);
    return EINA_TRUE;
 }
 
 EAPI double edje_object_scale_get(const Edje_Object *obj)
 {
-   return efl_gfx_scale_get(obj);
+   return efl_gfx_entity_scale_get(obj);
 }
 
 /* Legacy part drag APIs */

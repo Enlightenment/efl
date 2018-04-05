@@ -203,8 +203,8 @@ class Evas.Table (Efl.Canvas.Group)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.size { set; }
-      Efl.Gfx.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.position { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Base.mirrored { get; set; }
    }

@@ -345,7 +345,7 @@ _visuals_refresh(Evas_Object *obj,
 
    edje_object_scale_set
      (wd->resize_obj,
-     efl_gfx_scale_get(obj) * elm_config_scale_get());
+     efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _efl_ui_layout_highlight_in_theme(obj);
 
@@ -1048,8 +1048,8 @@ _efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
-                                         Efl_Gfx *content)
+_efl_ui_layout_object_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Object_Data *sd EINA_UNUSED,
+                                         Efl_Gfx_Entity *content)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -2002,7 +2002,7 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd
          Eina_Hash_Tuple *tuple;
          Eina_Stringshare *name;
          Efl_Ui_Factory *factory;
-         Efl_Gfx *content;
+         Efl_Gfx_Entity *content;
 
          Eina_Iterator *it_p = eina_hash_iterator_tuple_new(pd->factories);
          while (eina_iterator_next(it_p, (void **)&tuple))

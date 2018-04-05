@@ -49,7 +49,7 @@ _create_indicator(void)
            efl_event_callback_add(efl_added, EFL_UI_CLOCK_EVENT_CHANGED, _changed_cb, NULL),
            efl_pack(bx, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 30));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 30));
    return win;
 }
 
@@ -97,7 +97,7 @@ test_win_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                  efl_gfx_size_hint_max_set(efl_added, EINA_SIZE2D(300, -1)),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    efl_event_callback_add(win, EFL_EVENT_DEL, _win_del, indicator);
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 360));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 360));
 
    Eo *bx = efl_add(EFL_UI_BOX_CLASS, win,
                     efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(300, 0)),

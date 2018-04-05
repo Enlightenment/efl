@@ -7,8 +7,8 @@ class Elm.Gengrid.Pan (Elm.Pan)
    implements {
       class.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_calculate;
       Elm.Pan.content_size { get; }
       Elm.Pan.pos { get; set; }

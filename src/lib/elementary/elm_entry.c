@@ -879,7 +879,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    edje_object_scale_set
      (wd->resize_obj,
-     efl_gfx_scale_get(obj) * elm_config_scale_get());
+     efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -4016,13 +4016,13 @@ _elm_entry_efl_canvas_group_group_del(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_efl_gfx_position_set(Eo *obj, Elm_Entry_Data *sd, Eina_Position2D pos)
+_elm_entry_efl_gfx_entity_position_set(Eo *obj, Elm_Entry_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 
    if (sd->hoversel) _hoversel_position(obj);
 
@@ -4031,25 +4031,25 @@ _elm_entry_efl_gfx_position_set(Eo *obj, Elm_Entry_Data *sd, Eina_Position2D pos
 }
 
 EOLIAN static void
-_elm_entry_efl_gfx_size_set(Eo *obj, Elm_Entry_Data *sd, Eina_Size2D sz)
+_elm_entry_efl_gfx_entity_size_set(Eo *obj, Elm_Entry_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    if (sd->have_selection)
      _update_selection_handler(obj);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void
-_elm_entry_efl_gfx_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool vis)
+_elm_entry_efl_gfx_entity_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    if (sd->have_selection)
      {

@@ -41,7 +41,7 @@ _image_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, 
 {
    Eina_Size2D sz;
 
-   sz = efl_gfx_size_get(obj);
+   sz = efl_gfx_entity_size_get(obj);
    _map_set(obj, sz.w, sz.h);
 }
 
@@ -69,5 +69,5 @@ test_evas_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    _map_set(img, W, H);
 
    efl_content_set(win, img);
-   efl_gfx_size_set(win, EINA_SIZE2D(W, H));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(W, H));
 }

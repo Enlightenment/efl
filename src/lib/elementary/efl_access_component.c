@@ -72,7 +72,7 @@ _efl_access_component_extents_get(const Eo *obj, void *_pd EINA_UNUSED, Eina_Boo
 {
    Eina_Rect r;
 
-   r = efl_gfx_geometry_get(obj);
+   r = efl_gfx_entity_geometry_get(obj);
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));

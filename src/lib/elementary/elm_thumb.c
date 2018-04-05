@@ -454,12 +454,12 @@ _thumb_show(Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_efl_gfx_visible_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool vis)
+_elm_thumb_efl_gfx_entity_visible_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    if (vis)
      {

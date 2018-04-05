@@ -41,9 +41,9 @@ class Efl.Canvas.Event_Grabber (Efl.Canvas.Group)
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_change;
       Efl.Canvas.Group.group_need_recalculate { get; set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
-      Efl.Gfx.visible { get; set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.visible { get; set; }
       Efl.Gfx.Stack.layer { set; }
    }
 }

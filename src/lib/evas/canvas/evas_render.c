@@ -2882,7 +2882,7 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
         obj->legacy.finalized = EINA_TRUE;
 
         if (!obj->legacy.visible_set)
-          efl_gfx_visible_set(eo_obj, EINA_TRUE);
+          efl_gfx_entity_visible_set(eo_obj, EINA_TRUE);
 
         // weight should be set during finalize()
         if (EINA_UNLIKELY(!obj->legacy.weight_set))

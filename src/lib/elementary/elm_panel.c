@@ -895,13 +895,13 @@ _elm_panel_efl_canvas_group_group_del(Eo *obj, Elm_Panel_Data *sd)
 }
 
 EOLIAN static void
-_elm_panel_efl_gfx_position_set(Eo *obj, Elm_Panel_Data *sd, Eina_Position2D pos)
+_elm_panel_efl_gfx_entity_position_set(Eo *obj, Elm_Panel_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 static void
@@ -929,16 +929,16 @@ _scrollable_layout_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord 
 }
 
 EOLIAN static void
-_elm_panel_efl_gfx_size_set(Eo *obj, Elm_Panel_Data *sd, Eina_Size2D sz)
+_elm_panel_efl_gfx_entity_size_set(Eo *obj, Elm_Panel_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    if (!sd->scrollable) return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    _scrollable_layout_resize(obj, sd, sz.w, sz.h);
 }
 

@@ -9,7 +9,7 @@ const Efl.Gfx.Size.Hint.Fill: double = -1.0;
 interface Efl.Gfx.Size.Hint
 {
    [[Efl graphics size hint interface]]
-   event_prefix: efl_gfx;
+   event_prefix: efl_gfx_entity;
    methods {
       @property hint_base {
          [[Base size for objects with sizing restrictions.

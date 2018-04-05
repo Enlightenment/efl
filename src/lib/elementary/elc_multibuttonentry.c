@@ -107,7 +107,7 @@ _elm_multibuttonentry_efl_ui_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Da
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   pad_scale = efl_gfx_scale_get(obj) * elm_config_scale_get()
+   pad_scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get()
       / edje_object_base_scale_get(elm_layout_edje_get(obj));
    elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
 
@@ -1030,7 +1030,7 @@ _entry_resize_cb(void *data,
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    if (elm_object_focus_get(sd->parent))
-     elm_widget_show_region_set(sd->entry, efl_gfx_geometry_get(sd->entry), EINA_TRUE);
+     elm_widget_show_region_set(sd->entry, efl_gfx_entity_geometry_get(sd->entry), EINA_TRUE);
 }
 
 static void
@@ -1425,7 +1425,7 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   pad_scale = efl_gfx_scale_get(obj) * elm_config_scale_get()
+   pad_scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get()
       / edje_object_base_scale_get(elm_layout_edje_get(obj));
    elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
 

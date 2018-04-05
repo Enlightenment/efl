@@ -873,7 +873,7 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    edje_object_scale_set
      (wd->resize_obj,
-     efl_gfx_scale_get(obj) * elm_config_scale_get());
+     efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -1018,7 +1018,7 @@ _layout_text_sizing_eval(Eo *obj, Evas_Coord tw, Evas_Coord th)
         evas_object_size_hint_min_set(sw, -1, -1);
 
         if (vw > minw) minw = vw;
-        efl_gfx_size_set(sd->entry_edje, EINA_SIZE2D(minw,  minh));
+        efl_gfx_entity_size_set(sd->entry_edje, EINA_SIZE2D(minw,  minh));
 
         if (!efl_text_multiline_get(sw))
           {
@@ -1089,7 +1089,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
      {
         Evas_Coord vw = 0, vh = 0;
         elm_interface_scrollable_content_viewport_geometry_get(obj, NULL, NULL, &vw, &vh);
-        efl_gfx_size_set(sd->entry_edje, EINA_SIZE2D(vw, vh));
+        efl_gfx_entity_size_set(sd->entry_edje, EINA_SIZE2D(vw, vh));
      }
    if (can_async)
      {
@@ -2928,13 +2928,13 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
+_efl_ui_text_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 
    if (sd->hoversel) _hoversel_position(obj);
 
@@ -2942,24 +2942,24 @@ _efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
+_efl_ui_text_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    _update_selection_handler(obj);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
+_efl_ui_text_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
    if (vis) _update_selection_handler(obj);
 }
 

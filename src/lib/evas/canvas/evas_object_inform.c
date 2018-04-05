@@ -9,7 +9,7 @@ evas_object_inform_call_show(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, NULL, event_id, EFL_GFX_EVENT_SHOW);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, NULL, event_id, EFL_GFX_ENTITY_EVENT_SHOW);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -18,7 +18,7 @@ evas_object_inform_call_hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HIDE, NULL, event_id, EFL_GFX_EVENT_HIDE);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HIDE, NULL, event_id, EFL_GFX_ENTITY_EVENT_HIDE);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -27,7 +27,7 @@ evas_object_inform_call_move(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOVE, NULL, event_id, EFL_GFX_EVENT_MOVE);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOVE, NULL, event_id, EFL_GFX_ENTITY_EVENT_MOVE);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -36,7 +36,7 @@ evas_object_inform_call_resize(Evas_Object *eo_obj, Evas_Object_Protected_Data *
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESIZE, NULL, event_id, EFL_GFX_EVENT_RESIZE);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESIZE, NULL, event_id, EFL_GFX_ENTITY_EVENT_RESIZE);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -45,7 +45,7 @@ evas_object_inform_call_restack(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESTACK, NULL, event_id, EFL_GFX_EVENT_RESTACK);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESTACK, NULL, event_id, EFL_GFX_ENTITY_EVENT_RESTACK);
    if (obj->layer)
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
@@ -55,7 +55,7 @@ evas_object_inform_call_changed_size_hints(Evas_Object *eo_obj, Evas_Object_Prot
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, NULL, event_id, EFL_GFX_EVENT_CHANGE_SIZE_HINTS);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, NULL, event_id, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
