@@ -12,7 +12,7 @@
 #include "interfaces/efl_control.eo.c"
 #include "interfaces/efl_duplicate.eo.c"
 #include "interfaces/efl_image.eo.c"
-#include "interfaces/efl_image_animated.eo.c"
+#include "interfaces/efl_image_animation_controller.eo.c"
 #include "interfaces/efl_image_load.eo.c"
 #include "interfaces/efl_part.eo.c"
 #include "interfaces/efl_playable.eo.c"
