@@ -96,6 +96,7 @@ _owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
                               }
                          }
                        seat_sel2->xwin = 0;
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WIN32)
                        if (seat_sel2->sel_list)
                          {
                             int i;
@@ -108,11 +109,14 @@ _owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
                                  seat_sel2->sel_list[i].active = EINA_FALSE;
                               }
                          }
+#endif
+#if defined(HAVE_ELEMENTARY_WL2) || defined(HAVE_ELEMENTARY_COCOA)
                        if (seat_sel2->sel)
                          {
                             seat_sel2->sel->xwin = 0;
                             seat_sel2->sel->active = EINA_FALSE;
                          }
+#endif
                     }
                }
           }
