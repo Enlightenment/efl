@@ -1527,6 +1527,23 @@ _fullscreen_set(Ecore_Wl2_Window *window)
      }
 }
 
+static struct wl_region *
+_region_create(struct wl_compositor *comp, int x, int y, int w, int h)
+{
+   struct wl_region *out;
+
+   out = wl_compositor_create_region(comp);
+   if (!out)
+     {
+        ERR("Failed to create region");
+        return NULL;
+     }
+
+   wl_region_add(out, x, y, w, h);
+
+   return out;
+}
+
 static void
 _input_set(Ecore_Wl2_Window *window)
 {
@@ -1540,15 +1557,10 @@ _input_set(Ecore_Wl2_Window *window)
         return;
      }
 
-   region = wl_compositor_create_region(window->display->wl.compositor);
-   if (!region)
-     {
-        ERR("Failed to create input region");
-        return;
-     }
-
-   wl_region_add(region, window->input_rect.x, window->input_rect.y,
-                 window->input_rect.w, window->input_rect.h);
+   region = _region_create(window->display->wl.compositor,
+                           window->input_rect.x, window->input_rect.y,
+                           window->input_rect.w, window->input_rect.h);
+   if (!region) return;
    wl_surface_set_input_region(window->surface, region);
    wl_region_destroy(region);
 }
@@ -1564,15 +1576,10 @@ _opaque_set(Ecore_Wl2_Window *window)
         return;
      }
 
-   region = wl_compositor_create_region(window->display->wl.compositor);
-   if (!region)
-     {
-        ERR("Failed to create opaque region");
-        return;
-     }
-
-   wl_region_add(region, window->opaque.x, window->opaque.y,
-                 window->opaque.w, window->opaque.h);
+   region = _region_create(window->display->wl.compositor,
+                           window->opaque.x, window->opaque.y,
+                           window->opaque.w, window->opaque.h);
+   if (!region) return;
    wl_surface_set_opaque_region(window->surface, region);
    wl_region_destroy(region);
 }
