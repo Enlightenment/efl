@@ -290,14 +290,14 @@ EFL_START_TEST(eina_test_hash_int32_fuzze)
      {
         unsigned int tr = rand() + 10000;
         r = eina_hash_find(hash, &tr);
-        ck_assert_ptr_null(r);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    for (i = 0; i < num_loops / 2; ++i)
      {
         unsigned int tr = (rand() % 10000) - (10000 * 2);
         r = eina_hash_find(hash, &tr);
-        ck_assert_ptr_null(r);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    eina_hash_free(hash);
@@ -328,14 +328,14 @@ EFL_START_TEST(eina_test_hash_int64_fuzze)
      {
         uint64_t tr = rand() + 10000;
         r = eina_hash_find(hash, &tr);
-        ck_assert_ptr_null(r);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    for (i = 0; i < num_loops / 2; ++i)
      {
         uint64_t tr = (rand() % 10000) - (10000 * 2);
         r = eina_hash_find(hash, &tr);
-        ck_assert_ptr_null(r);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    eina_hash_free(hash);
@@ -373,7 +373,7 @@ EFL_START_TEST(eina_test_hash_string_fuzze)
 
         eina_convert_itoa(rand() + num_loops, convert);
         r = eina_hash_find(hash, convert);
-        ck_assert_ptr_null(r);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    eina_hash_free(hash);

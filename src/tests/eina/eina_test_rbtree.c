@@ -571,8 +571,8 @@ EFL_START_TEST(eina_rbtree_fuzzy)
         int r;
 
         r = r1[i];
-        ck_assert_ptr_null(eina_rbtree_inline_lookup(root, &r, sizeof (int),
-                                                     EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key), NULL));
+        ck_assert_ptr_eq(eina_rbtree_inline_lookup(root, &r, sizeof (int),
+                                                     EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key), NULL), NULL);
      }
    free(mem);
 }
