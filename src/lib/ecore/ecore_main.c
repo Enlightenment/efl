@@ -425,6 +425,12 @@ _ecore_main_fdh_poll_del(Efl_Loop_Data *pd, Ecore_Fd_Handler *fdh)
    if (!_dl_uv_run)
 # endif
      {
+        if (!pd)
+          {
+             WRN("Efl_Loop_Data is NULL!");
+             return;
+          }
+
         if ((!fdh->file) && (pd->epoll_fd >= 0))
           {
              struct epoll_event ev;

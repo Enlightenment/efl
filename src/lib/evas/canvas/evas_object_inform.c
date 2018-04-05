@@ -46,7 +46,8 @@ evas_object_inform_call_restack(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    int event_id = _evas_object_event_new();
 
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESTACK, NULL, event_id, EFL_GFX_EVENT_RESTACK);
-   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
+   if (obj->layer)
+     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
 void
