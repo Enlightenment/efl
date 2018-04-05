@@ -1,4 +1,4 @@
-class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load)
+class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Image_Load_Controller)
 {
    [[Efl canvas video class]]
    methods {
@@ -63,7 +63,7 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
         Efl.Player.mute { get; set; }
         Efl.Player.length { get; }
         Efl.Player.seekable { get; }
-        Efl.Image.Load.load_size { get; }
+        Efl.Image_Load_Controller.load_size { get; }
         Efl.Image.ratio { get; }
         Efl.Image.smooth_scale { get; set; }
    }

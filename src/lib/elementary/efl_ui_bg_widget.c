@@ -178,19 +178,19 @@ EAPI void
 elm_bg_load_size_set(Evas_Object *obj, int w, int h)
 {
    EFL_UI_BG_WIDGET_DATA_GET_OR_RETURN(obj, sd);
-   efl_image_load_size_set(sd->img, EINA_SIZE2D(w, h));
+   efl_image_load_controller_load_size_set(sd->img, EINA_SIZE2D(w, h));
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_image_load_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, Eina_Size2D sz)
+_efl_ui_bg_widget_efl_image_load_controller_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, Eina_Size2D sz)
 {
-   efl_image_load_size_set(sd->img, sz);
+   efl_image_load_controller_load_size_set(sd->img, sz);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_bg_widget_efl_image_load_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
+_efl_ui_bg_widget_efl_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
 {
-   return efl_image_load_size_get(sd->img);
+   return efl_image_load_controller_load_size_get(sd->img);
 }
 
 EAPI Eina_Bool

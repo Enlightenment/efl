@@ -19,7 +19,7 @@ struct Efl.Ui.Image.Error
 }
 
 class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
-                 Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View,
+                 Efl.File, Efl.Image, Efl.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
@@ -97,7 +97,7 @@ class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { get; }
       Efl.Image.image_size { get; }
-      Efl.Image.Load.load_size { get; set; }
+      Efl.Image_Load_Controller.load_size { get; set; }
       Efl.Image.smooth_scale { get; set; }
       Efl.Image.scale_type { get; set; }
       Efl.Orientation.orientation { get; set; }

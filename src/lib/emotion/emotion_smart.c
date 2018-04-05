@@ -740,13 +740,13 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 {
    Eina_Size2D sz;
 
-   sz = efl_image_load_size_get(obj);
+   sz = efl_image_load_controller_load_size_get(obj);
    if (iw) *iw = sz.w;
    if (ih) *ih = sz.h;
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_video_efl_image_load_load_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    // FIXME: Shouldn't this be efl_gfx_view_size instead?
    return EINA_SIZE2D(sd->video.w, sd->video.h);

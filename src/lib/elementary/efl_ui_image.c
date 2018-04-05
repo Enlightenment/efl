@@ -1270,11 +1270,11 @@ elm_image_prescale_set(Evas_Object *obj,
                        int size)
 {
    EFL_UI_IMAGE_CHECK(obj);
-   efl_image_load_size_set(obj, EINA_SIZE2D(size, size));
+   efl_image_load_controller_load_size_set(obj, EINA_SIZE2D(size, size));
 }
 
 EOLIAN static void
-_efl_ui_image_efl_image_load_load_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
+_efl_ui_image_efl_image_load_controller_load_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
    sd->load_size = sz;
    _efl_ui_image_load_size_set_internal(obj, sd);
@@ -1286,13 +1286,13 @@ elm_image_prescale_get(const Evas_Object *obj)
    Eina_Size2D sz;
    EFL_UI_IMAGE_CHECK(obj) 0;
 
-   sz = efl_image_load_size_get(obj);
+   sz = efl_image_load_controller_load_size_get(obj);
 
    return MAX(sz.w, sz.h);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_image_load_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->load_size;
 }
