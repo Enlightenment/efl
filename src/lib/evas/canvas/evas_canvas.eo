@@ -983,6 +983,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Object.event_thaw;
       Efl.Object.event_freeze;
       Efl.Object.provider_find;

@@ -273,8 +273,15 @@ evas_free(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   evas_sync(eo_e);
    efl_unref(eo_e);
+}
+
+EOLIAN static void
+_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
+{
+   evas_sync(eo_e);
+
+   efl_invalidate(efl_super(eo_e, MY_CLASS));
 }
 
 EOLIAN static void
