@@ -27,6 +27,12 @@
 
 #endif
 
+#ifdef HAVE_GETTIMEOFDAY
+# if CHECK_MINOR_VERSION >= 11
+#  define ENABLE_TIMING_INFO
+# endif
+#endif
+
 typedef struct _Efl_Test_Case Efl_Test_Case;
 struct _Efl_Test_Case
 {
@@ -123,7 +129,7 @@ _efl_test_fork_has(SRunner *sr)
    return 0;
 }
 
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef ENABLE_TIMING_INFO
 EINA_UNUSED static double _timing_start_time;
 
 static int
@@ -198,7 +204,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    SRunner *sr;
    TCase *tc;
    int i, failed_count;
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef ENABLE_TIMING_INFO
    double tstart;
    int timing = _timing_enabled();
 
@@ -228,7 +234,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef ENABLE_TIMING_INFO
    if (timing)
      printf("SUITE TIME %s: %.5g\n", suite_name, _timing_time_get() - tstart);
 #endif
