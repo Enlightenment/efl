@@ -136,6 +136,9 @@ _eina_internal_call(void *context)
    void *r;
    pthread_t self;
 
+   // Default this thread to not cancellable as per Eina documentation
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+
    EINA_THREAD_CLEANUP_PUSH(free, c);
 
    if (c->prio == EINA_THREAD_BACKGROUND ||
