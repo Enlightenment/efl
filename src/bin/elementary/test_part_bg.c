@@ -77,7 +77,7 @@ _create_box_contents(Evas_Object *box)
 
    content = efl_add(EFL_UI_TEXT_CLASS, content,
                      efl_text_set(efl_added, "box"),
-                     efl_ui_text_interactive_editable_set(efl_added, EINA_FALSE),
+                     efl_text_interactive_editable_set(efl_added, EINA_FALSE),
                      efl_pack_end(content, efl_added));
 
    for (i = 0; i < MAX_NUM_OF_CONTENT; i++)

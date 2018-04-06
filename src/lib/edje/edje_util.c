@@ -2022,7 +2022,7 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_
 }
 
 Eina_Bool
-_edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
+_edje_efl_text_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
                    Eina_Bool legacy, Eina_Bool set_markup)
 {
    Edje_Real_Part *rp;
@@ -2045,7 +2045,7 @@ _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
 }
 
 const char *
-_edje_efl_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
+_edje_efl_text_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
                    Eina_Bool legacy, Eina_Bool get_markup)
 {
    Edje_Real_Part *rp;
@@ -6281,7 +6281,7 @@ edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *
 
    ed = _edje_fetch(obj);
 
-   _edje_efl_text_set((Eo *) obj, ed, part, text, EINA_TRUE, EINA_FALSE);
+   _edje_efl_text_text_set((Eo *) obj, ed, part, text, EINA_TRUE, EINA_FALSE);
    return EINA_TRUE;
 }
 
@@ -6299,7 +6299,7 @@ edje_object_part_text_get(const Edje_Object *obj, const char *part)
         ERR("Invalid call on a non-text or non-textblock part: '%s' in group '%s'", part, ed->group);
         return NULL;
      }
-   return _edje_efl_text_get(obj, ed, part, EINA_TRUE, EINA_FALSE);
+   return _edje_efl_text_text_get(obj, ed, part, EINA_TRUE, EINA_FALSE);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

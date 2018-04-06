@@ -1,4 +1,4 @@
-enum Efl.Text.Format.Wrap {
+enum Efl.Text_Format_Wrap {
    [[Wrap mode of the text (not in effect if not multiline)]]
    none, [[No wrapping]]
    char, [[Wrap mode character]]
@@ -7,7 +7,7 @@ enum Efl.Text.Format.Wrap {
    hyphenation [[Wrap mode hyphenation]]
 }
 
-enum Efl.Text.Format.Horizontal_Alignment_Auto_Type {
+enum Efl.Text_Format_Horizontal_Alignment_Auto_Type {
    [[Auto-horizontal alignment of the text]]
    legacy: efl_text_horizontal_alignment_auto;
    none,   [[No auto-alignment rule]]
@@ -16,7 +16,7 @@ enum Efl.Text.Format.Horizontal_Alignment_Auto_Type {
    end     [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
 }
 
-interface Efl.Text.Format {
+interface Efl.Text_Format {
    [[The look and layout of the text
 
      The text format can affect the geometry of the text object, as well as
@@ -37,7 +37,7 @@ interface Efl.Text.Format {
       @property wrap {
          [[Wrap mode for use in the text]]
          values {
-            wrap: Efl.Text.Format.Wrap; [[Wrap mode]]
+            wrap: Efl.Text_Format_Wrap; [[Wrap mode]]
          }
       }
 
@@ -51,7 +51,7 @@ interface Efl.Text.Format {
       @property halign_auto_type {
          [[Horizontal alignment of text]]
          values {
-            value: Efl.Text.Format.Horizontal_Alignment_Auto_Type; [[Alignment type]]
+            value: Efl.Text_Format_Horizontal_Alignment_Auto_Type; [[Alignment type]]
          }
       }
 

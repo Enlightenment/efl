@@ -462,7 +462,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_RESIZE, _text_resize, NULL);
       efl_text_font_set(o, "Sans:style=Bold", default_font_size);
       efl_gfx_entity_scale_set(text, elm_config_scale_get());
-      efl_text_text_set(o, "EFL");
+      efl_text_set(o, "EFL");
       efl_gfx_entity_visible_set(o, 1);
       efl_pack(box2, o);
 

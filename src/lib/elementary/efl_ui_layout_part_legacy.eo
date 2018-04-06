@@ -1,5 +1,5 @@
 class Efl.Ui.Layout.Part_Legacy (Efl.Ui.Layout.Part, Efl.Content, Efl.Text,
-                                 Efl.Text.Markup, Efl.Ui.Translatable)
+                                 Efl.Text_Markup, Efl.Ui.Translatable)
 {
    [[Elementary layout internal part class]]
    data: null;
@@ -7,7 +7,7 @@ class Efl.Ui.Layout.Part_Legacy (Efl.Ui.Layout.Part, Efl.Content, Efl.Text,
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Text.text { set; get; }
-      Efl.Text.Markup.markup { get; set; }
+      Efl.Text_Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
    }
 }

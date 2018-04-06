@@ -1,5 +1,5 @@
 class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
-                     Efl.Access.Value, Efl.Text, Efl.Text.Markup, Efl.Ui.Format,
+                     Efl.Access.Value, Efl.Text, Efl.Text_Markup, Efl.Ui.Format,
                      Efl.Ui.Translatable, Efl.Access.Widget.Action,
                      Efl.Content)
 {
@@ -27,7 +27,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Access.Value.increment { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Text.text { get; set; }
-      Efl.Text.Markup.markup { get; set; }
+      Efl.Text_Markup.markup { get; set; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
       Efl.Content.content { get; set; }

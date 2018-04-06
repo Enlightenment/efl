@@ -304,7 +304,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_win.eo.h>
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
-# include <efl_ui_text_interactive.eo.h>
+# include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_popup.eo.h>
 # include <efl_ui_popup_alert.eo.h>

@@ -581,7 +581,7 @@ _update_selection_handler(Eo *obj)
         Eina_Bool hidden = EINA_FALSE;
         Efl_Text_Cursor_Cursor *sel_start, *sel_end;
 
-        efl_ui_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
+        efl_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
 
         if (!sd->start_handler)
           _create_selection_handlers(obj, sd);
@@ -706,7 +706,7 @@ _selection_data_cb(void *data EINA_UNUSED,
    else if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
      {
         Efl_Text_Cursor_Cursor *cur, *start, *end;
-        efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+        efl_text_interactive_selection_cursors_get(obj, &start, &end);
         if (!efl_text_cursor_equal(obj, start, end))
           {
              efl_canvas_text_range_delete(obj, start, end);
@@ -1452,7 +1452,7 @@ _selection_store(Elm_Sel_Type seltype,
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+   efl_text_interactive_selection_cursors_get(obj, &start, &end);
    sel = efl_canvas_text_range_text_get(obj, start, end);
 
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
@@ -1484,7 +1484,7 @@ _cut_cb(Eo *obj)
      elm_widget_scroll_hold_pop(obj);
 
    _selection_store(ELM_SEL_TYPE_CLIPBOARD, obj);
-   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+   efl_text_interactive_selection_cursors_get(obj, &start, &end);
    efl_canvas_text_range_delete(obj, start, end);
 }
 
@@ -2745,7 +2745,7 @@ _start_handler_mouse_down_cb(void *data,
    sd->start_handler_down = EINA_TRUE;
 
    /* Get the cursors */
-   efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
    main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN);
 
    start_pos = efl_text_cursor_position_get(obj, sel_start);
@@ -2831,7 +2831,7 @@ _end_handler_mouse_down_cb(void *data,
 
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
 
-   efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
    main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN);
 
    start_pos = efl_text_cursor_position_get(obj, sel_start);
@@ -3046,7 +3046,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    // For now, set this for easier setup
    efl_text_font_set(text_obj, "Sans", 12);
    efl_text_normal_color_set(text_obj, 255, 255, 255, 255);
-   efl_ui_text_interactive_editable_set(obj, EINA_FALSE);
+   efl_text_interactive_editable_set(obj, EINA_FALSE);
 
    sd->single_line = !efl_text_multiline_get(text_obj);
 
@@ -3059,7 +3059,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
-   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+   efl_event_callback_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
@@ -3278,7 +3278,7 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
-   efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+   efl_event_callback_del(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
    efl_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
@@ -3356,7 +3356,7 @@ _efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd)
 
    if ((sd->password)) return NULL;
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &start_obj, &end_obj);
+   efl_text_interactive_selection_cursors_get(obj, &start_obj, &end_obj);
    return efl_canvas_text_range_text_get(obj, start_obj, end_obj);
 }
 
@@ -3383,9 +3383,9 @@ _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_ui_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
+_efl_ui_text_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
 {
-   efl_ui_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
+   efl_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
    if (sd->editable == editable) return;
    sd->editable = editable;
    efl_ui_widget_theme_apply(obj);
@@ -3444,7 +3444,7 @@ _efl_ui_text_select_region_set(Eo *obj, Efl_Ui_Text_Data *sd, int start, int end
 
    if ((sd->password)) return;
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
 
    efl_text_cursor_position_set(obj, sel_start, start);
    efl_text_cursor_position_set(obj, sel_end, end);
@@ -4465,7 +4465,7 @@ _efl_ui_text_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_p
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
 
-   if (efl_ui_text_interactive_editable_get(obj))
+   if (efl_text_interactive_editable_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
 
    return ret;
@@ -4527,7 +4527,7 @@ _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
    sd->cursor = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
    sd->cursor_bidi = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
 
-   if (!efl_ui_text_interactive_editable_get(obj))
+   if (!efl_text_interactive_editable_get(obj))
      {
         evas_object_hide(sd->cursor);
         evas_object_hide(sd->cursor_bidi);
@@ -4622,7 +4622,7 @@ _update_text_selection(Eo *obj, Eo *text_obj)
 
    _decoration_calc_offset(sd, &x, &y);
 
-   efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
 
    range = efl_canvas_text_range_simple_geometry_get(text_obj,
          sel_start, sel_end);
@@ -5200,7 +5200,7 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
    char *text;
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+   efl_text_interactive_selection_cursors_get(obj, &start, &end);
 
    text = efl_canvas_text_range_text_get(obj, start, end);
    if (!text || (text[0] == '\0'))
@@ -5293,7 +5293,7 @@ _efl_ui_text_editable_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_ui_text_interactive_editable_set(obj, EINA_TRUE);
+   efl_text_interactive_editable_set(obj, EINA_TRUE);
 
    return obj;
 }

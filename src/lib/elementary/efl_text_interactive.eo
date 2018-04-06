@@ -1,7 +1,7 @@
 import efl_text_types;
 
-interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
-   Efl.Text.Format, Efl.Text.Style)
+interface Efl.Text_Interactive (Efl.Text, Efl.Text_Font,
+   Efl.Text_Format, Efl.Text_Style)
 {
    [[This is an interface interactive text inputs should implement]]
    methods {
@@ -24,8 +24,8 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
          ]]
          get {}
          values {
-            start: ptr(Efl.Text.Cursor.Cursor); [[The start of the selection]]
-            end: ptr(Efl.Text.Cursor.Cursor); [[The end of the selection]]
+            start: ptr(Efl.Text_Cursor_Cursor); [[The start of the selection]]
+            end: ptr(Efl.Text_Cursor_Cursor); [[The end of the selection]]
          }
       }
       @property editable {

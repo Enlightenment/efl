@@ -2284,8 +2284,8 @@ ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_content, efl_ui_layout, EF
 ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 /* Efl.Ui.Layout.Part_Text */
-ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
@@ -2307,8 +2307,8 @@ _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_set(Eo *obj, void
 ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 

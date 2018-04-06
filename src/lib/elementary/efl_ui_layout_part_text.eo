@@ -1,11 +1,11 @@
-class Efl.Ui.Layout.Part_Text (Efl.Ui.Layout.Part, Efl.Text, Efl.Text.Markup,
+class Efl.Ui.Layout.Part_Text (Efl.Ui.Layout.Part, Efl.Text, Efl.Text_Markup,
                                Efl.Ui.Translatable)
 {
    [[Elementary layout internal part class]]
    data: null;
    implements {
       Efl.Text.text { set; get; }
-      Efl.Text.Markup.markup { get; set; }
+      Efl.Text_Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
    }
 }

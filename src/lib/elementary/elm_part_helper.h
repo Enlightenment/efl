@@ -117,7 +117,7 @@ _ ## full ## _efl_content_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
    return _ ## type ## _content_unset(pd->obj, sd, pd->part); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_SET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(full, type, TYPE, typedata) \
 EOLIAN static void \
 _ ## full ## _efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
 { \
@@ -126,7 +126,7 @@ _ ## full ## _efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text
    _ ## type ## _text_set(pd->obj, sd, pd->part, text); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_GET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(full, type, TYPE, typedata) \
 EOLIAN static const char *\
 _ ## full ## _efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
@@ -163,10 +163,10 @@ _ ## full ## _efl_text_markup_markup_set(Eo *obj, void *_pd EINA_UNUSED, const c
    ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(type ## _part, type, TYPE, typedata)
 
 #define ELM_PART_OVERRIDE_TEXT_SET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_TEXT_SET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(type ## _part, type, TYPE, typedata)
 
 #define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_TEXT_GET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(type ## _part, type, TYPE, typedata)
 
 #define ELM_PART_OVERRIDE_MARKUP_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(type ## _part, type, TYPE, typedata)

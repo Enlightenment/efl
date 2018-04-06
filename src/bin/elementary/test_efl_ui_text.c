@@ -29,7 +29,7 @@ _create_label(Eo *win, Eo *bx)
    Eo *en;
    en = efl_add(EFL_UI_TEXT_CLASS, win);
    printf("Added Efl.Ui.Text object\n");
-   efl_ui_text_interactive_editable_set(en, EINA_FALSE);
+   efl_text_interactive_editable_set(en, EINA_FALSE);
    elm_box_pack_end(bx, en);
    return en;
 }
@@ -72,7 +72,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    en = _create_label(win, bx);
    efl_text_set(en, "You can input text here.");
    efl_text_font_set(en, "Sans", 14);
-   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
@@ -80,7 +80,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    en = _create_label(win, bx);
    efl_text_set(en, "Input multiline here.");
    efl_text_font_set(en, "Sans", 14);
-   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_text_multiline_set(en, EINA_TRUE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
@@ -130,7 +130,7 @@ my_efl_ui_text_bt_3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 {
    Efl_Text_Cursor_Cursor *sel_start, *sel_end;
 
-   efl_ui_text_interactive_selection_cursors_get(data, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(data, &sel_start, &sel_end);
    const char *s = efl_canvas_text_range_text_get(data, sel_start, sel_end);
 
    printf("SELECTION REGION: %d - %d\n",
@@ -226,7 +226,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    efl_text_annotation_insert(en, main_cur, cur, "a href=#hello");
 
-   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
    elm_box_pack_end(bx, en);
    elm_object_focus_set(en, EINA_TRUE);
@@ -464,7 +464,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    efl_text_cursor_item_insert(en, cur, buf, "size=32x32");
    efl_text_cursor_position_set(en, main_cur, 5);
 
-   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
    elm_box_pack_end(bx, en);
    elm_object_focus_set(en, EINA_TRUE);

@@ -36,7 +36,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_box_stack.eo \
 	lib/elementary/efl_ui_table.eo \
 	lib/elementary/efl_ui_table_static.eo \
-	lib/elementary/efl_ui_text_interactive.eo \
+	lib/elementary/efl_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_popup.eo \
 	lib/elementary/efl_ui_popup_part.eo \

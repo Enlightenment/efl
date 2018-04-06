@@ -20,7 +20,7 @@ enum Evas.Textgrid.Font_Style {
 /* XXX: Actual definition is in C. */
 struct Evas.Textgrid.Cell; [[Evas textgrid cell data structure]]
 
-class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
+class Evas.Textgrid (Efl.Canvas.Object, Efl.Text_Font,
                      Efl.Ui.Base)
 {
    [[Evas textgrid class]]
@@ -77,7 +77,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
               $width and $height can be $null. On error, they are
               set to 0.
 
-              See also @Efl.Text.Font.font.set and @.supported_font_styles.set
+              See also @Efl.Text_Font.font.set and @.supported_font_styles.set
 
               @since 1.7]]
          }
@@ -201,9 +201,9 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Font,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Text.Font.font { get; set; }
-      Efl.Text.Font.font_source { get; set; }
-      Efl.Text.Font.font_bitmap_scalable { get; set; }
+      Efl.Text_Font.font { get; set; }
+      Efl.Text_Font.font_source { get; set; }
+      Efl.Text_Font.font_bitmap_scalable { get; set; }
       Efl.Gfx.Entity.scale { set; }
    }
 }
