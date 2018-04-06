@@ -2634,6 +2634,13 @@ evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
 EAPI Evas *
 evas_object_evas_get(const Eo *eo_obj)
 {
+   if (efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS))
+     {
+        Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
+
+        if (!obj->layer || !obj->layer->evas) return NULL;
+        return obj->layer->evas->evas;
+     }
    return efl_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
 }
 
