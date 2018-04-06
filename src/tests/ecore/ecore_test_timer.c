@@ -34,22 +34,6 @@ struct _timers           // timer struct
    double precision[3];
 };
 
-static int
-_efl_test_jenkins_run(void)
-{
-   char *jenkins_url = NULL;
-
-   jenkins_url = getenv("JENKINS_URL");
-
-   if (!jenkins_url)
-     return 0;
-
-   if (strcmp(jenkins_url, "https://build.enlightenment.org/") == 0)
-     return 1;
-   else
-     return 0;
-}
-
 static Eina_Bool
 _timer1_cb(void *data)
 {
