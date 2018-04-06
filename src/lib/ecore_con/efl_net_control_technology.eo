@@ -1,6 +1,6 @@
 import efl_net_control_access_point;
 
-enum Efl.Net.Control.Technology.Type {
+enum Efl.Net.Control.Technology_Type {
     [[Technology types
 
       @since 1.19
@@ -71,7 +71,7 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
             [[The technology type, such as "ethernet" or "wifi"]]
             get { }
             values {
-                type: Efl.Net.Control.Technology.Type; [[Technology type]]
+                type: Efl.Net.Control.Technology_Type; [[Technology type]]
             }
         }
 
