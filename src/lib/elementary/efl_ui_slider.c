@@ -28,12 +28,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
 static const char SIG_DRAG_START[] = "slider,drag,start";
@@ -1395,7 +1389,6 @@ _efl_ui_slider_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl
 
 /* Standard widget overrides */
 
-ELM_PART_TEXT_DEFAULT_GET(efl_ui_slider, _text_aliases[0].real_part)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_slider, _content_aliases[0].real_part)
@@ -1536,15 +1529,12 @@ _efl_ui_slider_part_indicator_visible_mode_get(Eo *obj, void *_pd EINA_UNUSED)
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_slider)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_slider)
 
 #define EFL_UI_SLIDER_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_slider), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_slider), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_slider), \
-   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_slider)
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_slider)
 
 #include "efl_ui_slider.eo.c"
 

@@ -42,12 +42,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static Efl_Ui_Progress_Status *
 _progress_status_new(const char *part_name, double val)
 {
@@ -685,21 +679,17 @@ _efl_ui_progressbar_part_efl_ui_range_range_min_max_get(Eo *obj, void *_pd EINA_
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
-ELM_PART_TEXT_DEFAULT_GET(efl_ui_progressbar, _text_aliases[0].real_part)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_progressbar, _content_aliases[0].real_part)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_progressbar), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar), \
-   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_progressbar), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"

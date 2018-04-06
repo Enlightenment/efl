@@ -30,12 +30,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static void
 _sizing_eval(Evas_Object *obj,
              Efl_Ui_Frame_Data *sd EINA_UNUSED)
@@ -203,7 +197,6 @@ _efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 
 /* Default text (title) and content */
 
-ELM_PART_TEXT_DEFAULT_GET(efl_ui_frame, "elm.text")
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_frame, "elm.swallow.content")
@@ -212,14 +205,11 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_frame)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_frame)
 
 #define EFL_UI_FRAME_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_frame), \
-   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_frame), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_frame), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_frame)
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_frame)
 
 #include "efl_ui_frame.eo.c"
 
