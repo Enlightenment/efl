@@ -1,4 +1,4 @@
-class Efl.Ui.Image.Factory (Efl.Object, Efl.Ui.Factory)
+class Efl.Ui.Image_Factory (Efl.Object, Efl.Ui.Factory)
 {
    [[Efl UI image factory class]]
    implements {

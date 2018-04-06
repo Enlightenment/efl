@@ -1,4 +1,4 @@
-struct Efl.Ui.Image.Progress
+struct Efl.Ui.Image_Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -8,7 +8,7 @@ struct Efl.Ui.Image.Progress
    total: double; [[Total percentage]]
 }
 
-struct Efl.Ui.Image.Error
+struct Efl.Ui.Image_Error
 {
    [[
      Structure associated with smart callback 'download,progress'.
