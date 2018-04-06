@@ -1,4 +1,4 @@
-class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
+class Efl.Net.Server.Udp_Client (Efl.Object, Efl.Net.Socket) {
     [[A UDP client child of Efl.Net.Server.Udp
 
       Unlike connection protocols such as TCP or Local, UDP doesn't
