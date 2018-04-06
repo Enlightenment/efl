@@ -1023,7 +1023,7 @@ eng_image_data_put(void *engine, void *image, DATA32 *image_data)
                         }
                       else if (im->gc->shared->info.sec_image_map)
                         {
-                           void *disp = disp = egl_display_get(engine);
+                           void *disp = egl_display_get(engine);
                            secsym_eglUnmapImageSEC(disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
                         }
                    }
