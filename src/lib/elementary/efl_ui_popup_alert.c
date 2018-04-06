@@ -140,7 +140,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
      }
    else
      {
-        cur_content = efl_add(EFL_UI_LAYOUT_CLASS, obj,
+        cur_content = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, obj,
                               efl_content_set(efl_part(obj, "buttons"), efl_added));
      }
 

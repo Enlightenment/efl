@@ -27,7 +27,7 @@ _realized_cb(void *data, const Efl_Event *event)
    Efl_Ui_View_List_Item_Event *ie = event->info;
    if (!ie->layout) return;
 
-   Efl_Ui_Layout *layout = ie->layout;
+   Efl_Ui_Layout_Object *layout = ie->layout;
    elm_object_focus_allow_set(layout, EINA_TRUE);
 }
 

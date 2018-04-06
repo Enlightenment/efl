@@ -65,17 +65,17 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/
    Eina_Bool             view_updated : 1; /**< This flag indicates to Efl.Ui.Layout don't update model in text_set */
-} Efl_Ui_Layout_Data;
+} Efl_Ui_Layout_Object_Data;
 
 /**
  * @}
  */
 
 #define EFL_UI_LAYOUT_DATA_GET(o, sd) \
-  Efl_Ui_Layout_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_CLASS)
+  Efl_Ui_Layout_Object_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_OBJECT_CLASS)
 
 #define EFL_UI_LAYOUT_CHECK(obj) \
-  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))) \
     return
 
 #endif

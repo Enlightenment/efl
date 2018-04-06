@@ -1,4 +1,4 @@
-class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
+class Efl.Ui.Video (Efl.Ui.Layout.Object, Efl.File,
                  Efl.Player, Efl.Access.Widget.Action)
 {
    [[Efl UI video class]]

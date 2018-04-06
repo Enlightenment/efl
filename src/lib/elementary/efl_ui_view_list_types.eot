@@ -1,5 +1,5 @@
 struct Efl.Ui.View.List.LayoutItem {
-   layout: Efl.Ui.Layout;
+   layout: Efl.Ui.Layout.Object;
    children: Efl.Model;
    index_offset: int;
    tree_node: void_ptr;
