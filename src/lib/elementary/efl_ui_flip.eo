@@ -26,7 +26,7 @@ enum Efl.Ui.Flip.Interaction
    page [[Page interaction]]
 }
 
-class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
+class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
 {
    [[Efl UI flip class]]
    legacy_prefix: elm_flip;
@@ -237,14 +237,14 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
       Efl.Part.part;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.Linear.pack_begin;
-      Efl.Pack.Linear.pack_end;
-      Efl.Pack.Linear.pack_before;
-      Efl.Pack.Linear.pack_after;
-      Efl.Pack.Linear.pack_at;
-      Efl.Pack.Linear.pack_content_get;
-      Efl.Pack.Linear.pack_unpack_at;
-      Efl.Pack.Linear.pack_index_get;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
    }
    events {
       animate,begin; [[Called when flip animation begins]]
