@@ -328,6 +328,7 @@ _efl_ui_table_efl_pack_table_table_position_get(Eo *obj, Efl_Ui_Table_Data *pd E
 
    if (obj != elm_widget_parent_widget_get(subobj))
      {
+        if (efl_invalidated_get(subobj)) goto end;
         ERR("%p is not a child of %p", subobj, obj);
         goto end;
      }
