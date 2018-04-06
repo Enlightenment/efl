@@ -42,7 +42,7 @@ _ecore_loop_close(void *data EINA_UNUSED)
 }
 
 static void
-_response_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_response_message_cb(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    if (timeout != NULL)
      {
