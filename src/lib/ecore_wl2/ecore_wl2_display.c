@@ -359,7 +359,6 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
                  window->xdg_surface, window->weight.w, window->weight.h);
           }
      }
-   ecore_wl2_display_flush(ewd);
 
 event:
    /* allocate space for event structure */
@@ -663,7 +662,6 @@ _ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
                                    &_zxdg_shell_listener, ewd);
         ewd->shell_done = EINA_TRUE;
      }
-   ecore_wl2_display_flush(ewd);
 }
 
 static void
@@ -681,6 +679,7 @@ _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
    _ecore_wl2_shell_bind(ewd);
 
    wl_callback_destroy(cb);
+   ecore_wl2_display_flush(ewd);
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Sync_Done));
    if (!ev) return;

@@ -621,7 +621,6 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
      }
    else
      _configure_complete(window);
-   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -1022,6 +1021,7 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
 
    eina_stringshare_replace(&window->title, title);
    if (!window->title) return;
+   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_title(window->xdg_toplevel, window->title);
@@ -1037,6 +1037,7 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
 
    eina_stringshare_replace(&window->class, clas);
    if (!window->class) return;
+   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
@@ -1361,8 +1362,9 @@ EAPI void
 ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *win, int id, const char *hint, const char *val)
 {
    if (!win) return;
-   if ((win->surface) && (win->display->wl.efl_aux_hints))
-     efl_aux_hints_add_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, hint, val);
+   if ((!win->surface) || (!win->display->wl.efl_aux_hints)) return;
+
+   efl_aux_hints_add_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, hint, val);
    ecore_wl2_display_flush(win->display);
 }
 
@@ -1370,8 +1372,9 @@ EAPI void
 ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *win, int id, const char *val)
 {
    if (!win) return;
-   if ((win->surface) && (win->display->wl.efl_aux_hints))
-     efl_aux_hints_change_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, val);
+   if ((!win->surface) && (!win->display->wl.efl_aux_hints)) return;
+
+   efl_aux_hints_change_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, val);
    ecore_wl2_display_flush(win->display);
 }
 
@@ -1379,8 +1382,9 @@ EAPI void
 ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *win, int id)
 {
    if (!win) return;
-   if ((win->surface) && (win->display->wl.efl_aux_hints))
-     efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
+   if ((!win->surface) || (!win->display->wl.efl_aux_hints)) return;
+
+   efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
    ecore_wl2_display_flush(win->display);
 }
 
