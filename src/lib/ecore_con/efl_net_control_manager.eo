@@ -15,7 +15,7 @@ enum Efl.Net.Control.State {
     online, [[At least one access point is connected and the internet has been verified]]
 }
 
-enum Efl.Net.Control.Agent_Request_Input.Field {
+enum Efl.Net.Control.Agent_Request_Input_Field {
     [[Bitwise-able fields requested to the agent.
 
       @since 1.19
@@ -27,7 +27,7 @@ enum Efl.Net.Control.Agent_Request_Input.Field {
     wps = (1 << 4), [[Use WPS authentication. If passphrase is present, this is an alternative to that.]]
 }
 
-struct Efl.Net.Control.Agent_Request_Input.Information {
+struct Efl.Net.Control.Agent_Request_Input_Information {
     [[Name-value information pair provided to the agent.
 
       @since 1.19
@@ -42,9 +42,9 @@ struct Efl.Net.Control.Agent_Request_Input {
       @since 1.19
     ]]
     access_point: Efl.Net.Control.Access_Point; [[The access point which triggered this request.]]
-    fields: Efl.Net.Control.Agent_Request_Input.Field; [[Bitwise OR of fields present in this request.]]
+    fields: Efl.Net.Control.Agent_Request_Input_Field; [[Bitwise OR of fields present in this request.]]
     passphrase_type: string; [[Extra detail for the passphrase field, such as wep, psk, response (IEEE802.X GTC/OTP), string...]]
-    informational: list<ptr(Efl.Net.Control.Agent_Request_Input.Information)>; [[Such as the previous passphrase, VPN host]]
+    informational: list<ptr(Efl.Net.Control.Agent_Request_Input_Information)>; [[Such as the previous passphrase, VPN host]]
 }
 
 struct Efl.Net.Control.Agent_Error {
@@ -208,11 +208,11 @@ class Efl.Net.Control.Manager (Efl.Loop.Consumer) {
         agent_reply {
             [[If event "agent_request_input" was emitted, this will reply with the requested data]]
             params {
-                name: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input.Field.name was present, this should contain the network name or the 'ssid' parameter should be used.]]
-                @cref ssid: Eina.Slice @nullable; [[If @Efl.Net.Control.Agent_Request_Input.Field.ssid was present, this should contain the network SSID or the 'name' parameter should be used.]]
-                username: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input.Field.username was present, this should contain the identity or username]]
-                passphrase: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input.Field.passphrase was present, this should contain the password or passphrase, more details on how it should be interpreted was given in Efl.Net.Control.Agent_Request_Input.passphrase_type.]]
-                wps: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input.Field.wps was present, this should contain the WPS PIN or an empty string "" to use the WPS push button instead.]]
+                name: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.name was present, this should contain the network name or the 'ssid' parameter should be used.]]
+                @cref ssid: Eina.Slice @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.ssid was present, this should contain the network SSID or the 'name' parameter should be used.]]
+                username: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.username was present, this should contain the identity or username]]
+                passphrase: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.passphrase was present, this should contain the password or passphrase, more details on how it should be interpreted was given in Efl.Net.Control.Agent_Request_Input.passphrase_type.]]
+                wps: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.wps was present, this should contain the WPS PIN or an empty string "" to use the WPS push button instead.]]
             }
         }
     }
