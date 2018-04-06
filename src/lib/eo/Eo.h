@@ -2047,7 +2047,7 @@ static inline void
 efl_replace(Eo **storage, Eo *new_obj)
 {
    if (!storage || *storage == new_obj) return;
-   efl_ref(new_obj);
+   if (new_obj) efl_ref(new_obj);
    efl_unref(*storage);
    *storage = new_obj;
 }
