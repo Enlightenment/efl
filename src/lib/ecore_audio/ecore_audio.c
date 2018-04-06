@@ -68,9 +68,15 @@ ecore_audio_shutdown(void)
      return _ecore_audio_init_count;
 
 #ifdef HAVE_SNDFILE
+// explicitly disabled - yes, we know to "fix a leak" you unload here, but
+// objects may still exist at this point and may access functions/symbols
+// from sndfile
 //   ecore_audio_sndfile_lib_unload();
 #endif /* HAVE_SNDFILE */
 #ifdef HAVE_PULSE
+// explicitly disabled - yes, we know to "fix a leak" you unload here, but
+// objects may still exist at this point and may access functions/symbols
+// from pulseaudio
 //   ecore_audio_pulse_lib_unload();
 #endif /* HAVE_PULSE */
 
