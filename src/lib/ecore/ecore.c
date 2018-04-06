@@ -424,6 +424,7 @@ ecore_shutdown(void)
     * It should be fine now as we do wait for thread to shutdown before
     * we try to destroy the pipe.
     */
+     _ecore_pipe_wait(_thread_call, 1, 0.1);
      p = _thread_call;
      _thread_call = NULL;
      _ecore_pipe_wait(p, 1, 0.1);
