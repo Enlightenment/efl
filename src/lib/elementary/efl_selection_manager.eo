@@ -1,6 +1,6 @@
 import efl_ui_dnd_types;
 
-class Efl.Selection.Manager (Efl.Object) {
+class Efl.Selection_Manager (Efl.Object) {
    methods {
       selection_set @beta {
          [[Set selection]]
