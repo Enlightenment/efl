@@ -68,10 +68,10 @@ ecore_audio_shutdown(void)
      return _ecore_audio_init_count;
 
 #ifdef HAVE_SNDFILE
-   ecore_audio_sndfile_lib_unload();
+//   ecore_audio_sndfile_lib_unload();
 #endif /* HAVE_SNDFILE */
 #ifdef HAVE_PULSE
-   ecore_audio_pulse_lib_unload();
+//   ecore_audio_pulse_lib_unload();
 #endif /* HAVE_PULSE */
 
    /* FIXME: Shutdown all the inputs and outputs first */
