@@ -113,7 +113,7 @@ _owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
 #if defined(HAVE_ELEMENTARY_WL2) || defined(HAVE_ELEMENTARY_COCOA)
                        if (seat_sel2->sel)
                          {
-                            seat_sel2->sel->xwin = 0;
+                            seat_sel2->sel->win = 0;
                             seat_sel2->sel->active = EINA_FALSE;
                          }
 #endif
