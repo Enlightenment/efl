@@ -305,6 +305,10 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    evas_render_idle_flush(eo_e);
 
+   efl_replace(&e->default_seat, NULL);
+   efl_replace(&e->default_mouse, NULL);
+   efl_replace(&e->default_keyboard, NULL);
+
    _evas_post_event_callback_free(eo_e);
    _evas_canvas_event_shutdown(eo_e, e);
 
@@ -1163,20 +1167,20 @@ evas_output_method_set(Evas *eo_e, int render_method)
         return;
      }
 
-   e->default_seat = evas_device_add_full(eo_e, "default", "The default seat",
-                                          NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
-                                          EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_seat = efl_ref(evas_device_add_full(eo_e, "default", "The default seat",
+                                                  NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                                                  EVAS_DEVICE_SUBCLASS_NONE));
    evas_device_seat_id_set(e->default_seat, 1);
-   e->default_mouse = evas_device_add_full(eo_e, "Mouse",
-                                           "The default mouse",
-                                           e->default_seat, NULL,
-                                           EVAS_DEVICE_CLASS_MOUSE,
-                                           EVAS_DEVICE_SUBCLASS_NONE);
-   e->default_keyboard = evas_device_add_full(eo_e, "Keyboard",
-                                              "The default keyboard",
-                                              e->default_seat, NULL,
-                                              EVAS_DEVICE_CLASS_KEYBOARD,
-                                              EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_mouse = efl_ref(evas_device_add_full(eo_e, "Mouse",
+                                                   "The default mouse",
+                                                   e->default_seat, NULL,
+                                                   EVAS_DEVICE_CLASS_MOUSE,
+                                                   EVAS_DEVICE_SUBCLASS_NONE));
+   e->default_keyboard = efl_ref(evas_device_add_full(eo_e, "Keyboard",
+                                                      "The default keyboard",
+                                                      e->default_seat, NULL,
+                                                      EVAS_DEVICE_CLASS_KEYBOARD,
+                                                      EVAS_DEVICE_SUBCLASS_NONE));
 }
 
 EAPI int
