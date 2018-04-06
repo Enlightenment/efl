@@ -1,6 +1,6 @@
 import efl_types;
 
-enum Efl.Ui.Clock.Type
+enum Efl.Ui.Clock_Type
 {
    [[Identifies a clock field, The widget supports 6 fields : Year, month,
      Date, Hour, Minute, AM/PM
@@ -179,7 +179,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
          [[ The field to be visible/not.]]
          set{} get{}
          keys {
-            fieldtype: Efl.Ui.Clock.Type; [[Type of the field. #EFL_UI_CLOCK_TYPE_YEAR etc.]]
+            fieldtype: Efl.Ui.Clock_Type; [[Type of the field. #EFL_UI_CLOCK_TYPE_YEAR etc.]]
          }
          values {
             visible: bool; [[$true field can be visible, $false otherwise.]]
@@ -213,7 +213,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
             ]]
          }
          keys {
-            fieldtype: Efl.Ui.Clock.Type; [[Type of the field. #EFL_UI_CLOCK_TYPE_YEAR etc.]]
+            fieldtype: Efl.Ui.Clock_Type; [[Type of the field. #EFL_UI_CLOCK_TYPE_YEAR etc.]]
          }
          values {
             min: int; [[Reference to field's minimum value.]]
