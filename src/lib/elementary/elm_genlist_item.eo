@@ -462,6 +462,6 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
            Elm.Widget.Item.cursor_unset;
            Efl.Access.i18n_name { get; }
            Efl.Access.state_set { get; }
-           Efl.Ui.Focus.Object.prepare_logical;
+           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
       }
 }

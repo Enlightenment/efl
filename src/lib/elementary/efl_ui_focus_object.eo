@@ -56,9 +56,13 @@ mixin Efl.Ui.Focus.Object
         }
         prepare_logical {
             [[Tells the object that its children will be queried soon by the given manager.
+              The call will be a NOP if there is already a active preprare_logical call on this object
 
               Deleting manager items in this call will result in undefied behaviour and may cause your system to crash.
             ]]
+        }
+        prepare_logical_none_recursive @protected {
+            [[]]
         }
         on_focus_update @protected @pure_virtual {
            [[Virtual function handling focus in/out events on the widget]]
@@ -67,7 +71,7 @@ mixin Efl.Ui.Focus.Object
     }
     implements {
         @empty .focus_geometry;
-        @empty .prepare_logical;
+        @empty .prepare_logical_none_recursive;
         @empty .focus_manager;
         @empty .focus_parent;
     }

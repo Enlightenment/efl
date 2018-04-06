@@ -9,6 +9,7 @@
 
 typedef struct {
   Eina_Bool old_focus;
+  Eina_Bool ongoing_prepare_call;
 } Efl_Ui_Focus_Object_Data;
 
 EOLIAN static void
@@ -25,6 +26,19 @@ _efl_ui_focus_object_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Object_Data *pd
 {
    return pd->old_focus;
 }
+
+EOLIAN static void
+_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Object_Data *pd)
+{
+  if (pd->ongoing_prepare_call) return;
+
+  pd->ongoing_prepare_call = EINA_TRUE;
+
+  efl_ui_focus_object_prepare_logical_none_recursive(obj);
+
+  pd->ongoing_prepare_call = EINA_FALSE;
+}
+
 
 
 #include "efl_ui_focus_object.eo.c"

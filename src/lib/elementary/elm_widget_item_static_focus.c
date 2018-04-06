@@ -46,12 +46,12 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
+_elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
    Eo *logical_child;
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
-   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
+   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
 
    if (!pd->realized)
      {
@@ -102,7 +102,7 @@ _elm_widget_item_static_focus_efl_object_constructor(Eo *obj, Elm_Widget_Item_St
    return ret;
 }
 
-EOLIAN static void 
+EOLIAN static void
 _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);

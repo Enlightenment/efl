@@ -5742,7 +5742,7 @@ _elm_gengrid_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_
 }
 
 EOLIAN static void
-_elm_gengrid_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
+_elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
@@ -5753,7 +5753,7 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
 }
 
 /* Standard widget overrides */
