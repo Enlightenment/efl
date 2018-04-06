@@ -184,11 +184,11 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
 
-   dev = efl_add(EFL_INPUT_DEVICE_CLASS, parent_dev ?: eo_e,
-                 efl_name_set(efl_added, name),
-                 efl_comment_set(efl_added, desc),
-                 efl_input_device_type_set(efl_added, clas),
-                 efl_input_device_source_set(efl_added, emulation_dev));
+   dev = efl_add_ref(EFL_INPUT_DEVICE_CLASS, parent_dev ?: eo_e,
+                     efl_name_set(efl_added, name),
+                     efl_comment_set(efl_added, desc),
+                     efl_input_device_type_set(efl_added, clas),
+                     efl_input_device_source_set(efl_added, emulation_dev));
 
    d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
@@ -264,8 +264,9 @@ EAPI void
 evas_device_del(Evas_Device *dev)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
-   efl_del(dev);
+   if (!efl_invalidated_get(dev))
+     efl_del(dev);
+   efl_unref(dev);
 }
 
 EAPI void
