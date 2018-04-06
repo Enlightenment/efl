@@ -94,7 +94,8 @@ class SuiteCase():
         self.testname = testname
         self.fullname = "{}_{}".format(name, testname)
         self.filename = filename
-        self.template = os.path.join(script_path, "testgenerator_suite.template")
+        self.ext = os.path.splitext(filename)[1]
+        self.template = os.path.join(script_path, "testgenerator_suite{}.template".format(self.ext))
         self.clslist = []
 
     def __del__(self):
@@ -109,9 +110,9 @@ class SuiteCase():
 
     def load(self, testdir, eofiles):
         self.clslist = []
-        self.custom = load_file(os.path.join(testdir, "{}_custom.c".format(self.name))) or ''
-        self.init = load_file(os.path.join(testdir, "{}_init.c".format(self.name))) or ''
-        self.shutdown = load_file(os.path.join(testdir, "{}_shutdown.c".format(self.name))) or ''
+        self.custom = load_file(os.path.join(testdir, "{}_custom{}".format(self.name, self.ext))) or ''
+        self.init = load_file(os.path.join(testdir, "{}_init{}".format(self.name, self.ext))) or ''
+        self.shutdown = load_file(os.path.join(testdir, "{}_shutdown{}".format(self.name, self.ext))) or ''
         for eofile in eofiles:
             cls = eolian_db.class_by_file_get(os.path.basename(eofile))
             if not cls or cls.type != cls.type.REGULAR:
@@ -121,33 +122,33 @@ class SuiteCase():
             cls.myname = os.path.splitext(cls.file)[0]
             cls.myfullname = "{}_{}".format(self.fullname, cls.myname)
             filedir = os.path.join(testdir, cls.myname)
-            cls.custom = load_file(os.path.join(filedir, "custom.c")) or ''
-            cls.init = load_file(os.path.join(filedir, "init.c"))
-            cls.shutdown = load_file(os.path.join(filedir, "shutdown.c"))
+            cls.custom = load_file(os.path.join(filedir, "custom{}".format(self.ext))) or ''
+            cls.init = load_file(os.path.join(filedir, "init{}".format(self.ext)))
+            cls.shutdown = load_file(os.path.join(filedir, "shutdown{}".format(self.ext)))
 
             cls.mlist = list(cls.methods)
             for func in cls.mlist:
-                cls.custom += load_file(os.path.join(filedir, func.name, "custom.c")) or ''
-                func.init = load_file(os.path.join(filedir, func.name, "init.c"))
-                func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown.c"))
-                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init.c")) or "/* Zero/NULL args initialized */"
-                func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown.c")) or ''
+                cls.custom += load_file(os.path.join(filedir, func.name, "custom{}".format(self.ext))) or ''
+                func.init = load_file(os.path.join(filedir, func.name, "init{}".format(self.ext)))
+                func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown{}".format(self.ext)))
+                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init{}".format(self.ext))) or "/* Zero/NULL args initialized */"
+                func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown{}".format(self.ext))) or ''
 
             cls.plist = [ p for p in cls.properties if p.getter_scope == p.getter_scope.PUBLIC or p.setter_scope == p.setter_scope.PUBLIC ]
             for func in cls.plist:
                 if func.getter_scope == func.getter_scope.PUBLIC:
-                    cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom.c")) or ""
-                    func.get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init.c"))
-                    func.get_shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown.c"))
-                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init.c")) or "/* Zero/NULL args initialized */"
-                    func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or ''
+                    cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom{}".format(self.ext))) or ""
+                    func.get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init{}".format(self.ext)))
+                    func.get_shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown{}".format(self.ext)))
+                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init{}".format(self.ext))) or "/* Zero/NULL args initialized */"
+                    func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown{}".format(self.ext))) or ''
 
                 if func.setter_scope == func.setter_scope.PUBLIC:
-                    cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom.c")) or ""
-                    func.set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init.c"))
-                    func.set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown.c"))
-                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init.c")) or "/* Zero/NULL args initialized */"
-                    func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown.c")) or ''
+                    cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom{}".format(self.ext))) or ""
+                    func.set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init{}".format(self.ext)))
+                    func.set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown{}".format(self.ext)))
+                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init{}".format(self.ext))) or "/* Zero/NULL args initialized */"
+                    func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown{}".format(self.ext))) or ''
 
 
 if __name__ == '__main__':

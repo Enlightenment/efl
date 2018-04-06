@@ -1,0 +1,56 @@
+<!--(macro newconcrete)-->${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$ obj = new ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$Concrete();<!--(end)-->
+using System;
+
+namespace TestSuite
+{
+<!--(for cls in suite.clslist)-->
+
+/**************** TEST CASE ${cls.c_name}$ ****************/
+class Test${cls.name.replace('.','')}$
+{
+ <!--(if cls.init or suite.init)-->
+    public static void SetUp()
+    {
+${suite.init}$
+${cls.init}$
+    }
+ <!--(end)-->
+ <!--(if cls.shutdown or suite.shutdown)-->
+    public static void TearDown()
+    {
+${suite.shutdown}$
+${cls.shutdown}$
+    }
+ <!--(end)-->
+
+    public static void smoke()
+    {
+        ${newconcrete}$
+    }
+
+ <!--(for func in cls.mlist)-->
+    public static void ${func.name}$()
+    {
+        ${newconcrete}$
+    }
+
+ <!--(end)-->
+ <!--(for func in cls.plist)-->
+  <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+    public static void get_${func.name}$()
+    {
+        ${newconcrete}$
+    }
+
+  <!--(end)-->
+  <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+    public static void set_${func.name}$()
+    {
+        ${newconcrete}$
+    }
+
+  <!--(end)-->
+ <!--(end)-->
+}
+<!--(end)-->
+}
