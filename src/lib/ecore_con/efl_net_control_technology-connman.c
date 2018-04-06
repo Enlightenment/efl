@@ -429,7 +429,7 @@ efl_net_connman_technology_path_get(Efl_Net_Control_Technology *o)
 }
 
 Efl_Net_Control_Technology *
-efl_net_connman_technology_new(Efl_Net_Control *ctl, const char *path, Eldbus_Message_Iter *itr)
+efl_net_connman_technology_new(Efl_Net_Control_Manager *ctl, const char *path, Eldbus_Message_Iter *itr)
 {
    Eo *o;
    Efl_Net_Control_Technology_Data *pd;

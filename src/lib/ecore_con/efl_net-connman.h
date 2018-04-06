@@ -11,7 +11,7 @@
 /**
  * @file efl_net-connman.h
  *
- * Common infrastructure to create Efl_Net_Control and Efl_Net_Session
+ * Common infrastructure to create Efl_Net_Control_Manager and Efl_Net_Session
  * based on ConnMan connection manager.
  *
  * @note Each connection manager that needs shared infra should create
@@ -64,14 +64,14 @@ Eldbus_Proxy *efl_net_connman_manager_get(void);
  *
  * @internal
  */
-Efl_Net_Control_Technology *efl_net_connman_control_find_technology_by_type(Efl_Net_Control *ctl, const char *tech_type);
+Efl_Net_Control_Technology *efl_net_connman_control_find_technology_by_type(Efl_Net_Control_Manager *ctl, const char *tech_type);
 
 /**
  * Ask Efl.Net.Control to reload access point list.
  *
  * @internal
  */
-void efl_net_connman_control_access_points_reload(Efl_Net_Control *ctl);
+void efl_net_connman_control_access_points_reload(Efl_Net_Control_Manager *ctl);
 
 
 /**
@@ -80,7 +80,7 @@ void efl_net_connman_control_access_points_reload(Efl_Net_Control *ctl);
  *
  * @internal
  */
-Efl_Net_Control_Technology *efl_net_connman_technology_new(Efl_Net_Control *parent, const char *path, Eldbus_Message_Iter *properties);
+Efl_Net_Control_Technology *efl_net_connman_technology_new(Efl_Net_Control_Manager *parent, const char *path, Eldbus_Message_Iter *properties);
 
 /**
  * Get the path of the given technology.
@@ -102,7 +102,7 @@ Efl_Net_Control_Technology_Type efl_net_connman_technology_type_from_str(const c
  *
  * @internal
  */
-Efl_Net_Control_Access_Point *efl_net_connman_access_point_new(Efl_Net_Control *parent, const char *path, Eldbus_Message_Iter *properties, unsigned int priority);
+Efl_Net_Control_Access_Point *efl_net_connman_access_point_new(Efl_Net_Control_Manager *parent, const char *path, Eldbus_Message_Iter *properties, unsigned int priority);
 
 /**
  * Get the path of the given access_point.
@@ -116,7 +116,7 @@ const char *efl_net_connman_access_point_path_get(Efl_Net_Control_Access_Point *
  *
  * @internal
  */
-void efl_net_connman_access_point_update(Efl_Net_Control *ap, Eldbus_Message_Iter *properties, unsigned int priority);
+void efl_net_connman_access_point_update(Efl_Net_Control_Manager *ap, Eldbus_Message_Iter *properties, unsigned int priority);
 
 
 #endif /* _EFL_NET_CONNMAN_H_ */

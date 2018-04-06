@@ -336,7 +336,7 @@ static void
 _ctl_access_points_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (!monitoring) return;
-   _access_points_list(efl_net_control_access_points_get(event->object));
+   _access_points_list(efl_net_control_manager_access_points_get(event->object));
 }
 
 static const char *
@@ -413,14 +413,14 @@ static void
 _ctl_radios_offline_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (!monitoring) return;
-   printf("INFO: radios_offline=%hhu\n", efl_net_control_radios_offline_get(event->object));
+   printf("INFO: radios_offline=%hhu\n", efl_net_control_manager_radios_offline_get(event->object));
 }
 
 static void
 _ctl_state_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const char *str = "???";
-   Efl_Net_Control_State state = efl_net_control_state_get(event->object);
+   Efl_Net_Control_State state = efl_net_control_manager_state_get(event->object);
    switch (state)
      {
       case EFL_NET_CONTROL_STATE_OFFLINE: str = "offline"; break;
@@ -583,7 +583,7 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
           }
      }
 
-   efl_net_control_agent_reply(ctl,
+   efl_net_control_manager_agent_reply(ctl,
                                name,
                                ssid ? &ssid_slice : NULL,
                                username,
@@ -600,7 +600,7 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
 static void
 _cmd_technologies_list(Eo *ctl, size_t argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   Eina_Iterator *it = efl_net_control_technologies_get(ctl);
+   Eina_Iterator *it = efl_net_control_manager_technologies_get(ctl);
    Eo *tech;
    Eina_Bool first = EINA_TRUE;
 
@@ -670,7 +670,7 @@ _technology_find(Eo *ctl, const char *name)
         return NULL;
      }
 
-   it = efl_net_control_technologies_get(ctl);
+   it = efl_net_control_manager_technologies_get(ctl);
    EINA_ITERATOR_FOREACH(it, child)
      {
         const char *tn = efl_name_get(child);
@@ -789,7 +789,7 @@ _cmd_technology_tethering(Eo *ctl, size_t argc, char **argv)
 static void
 _cmd_access_points_list(Eo *ctl, size_t argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   _access_points_list(efl_net_control_access_points_get(ctl));
+   _access_points_list(efl_net_control_manager_access_points_get(ctl));
 }
 
 static Eo *
@@ -808,7 +808,7 @@ _access_point_find(Eo *ctl, const char *name)
    if (name[0] == '#')
      prio = strtoul(name + 1, NULL, 10);
 
-   it = efl_net_control_access_points_get(ctl);
+   it = efl_net_control_manager_access_points_get(ctl);
    EINA_ITERATOR_FOREACH(it, child)
      {
         if (prio == UINT32_MAX)
@@ -1008,14 +1008,14 @@ _cmd_agent_set(Eo *ctl, size_t argc, char **argv)
 
    if (argc == 1)
      {
-        printf("INFO: agent is %s\n", _fmt_bool(efl_net_control_agent_enabled_get(ctl)));
+        printf("INFO: agent is %s\n", _fmt_bool(efl_net_control_manager_agent_enabled_get(ctl)));
         return;
      }
 
    if (!_parse_bool(argv[0], argv[1], &enabled))
      return;
 
-   efl_net_control_agent_enabled_set(ctl, enabled);
+   efl_net_control_manager_agent_enabled_set(ctl, enabled);
    printf("INFO: agent is now %s\n", _fmt_bool(enabled));
 }
 
@@ -1396,17 +1396,17 @@ _cmd_line(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(ctl_events_cbs,
-                           { EFL_NET_CONTROL_EVENT_ACCESS_POINT_ADD, _ctl_access_point_add },
-                           { EFL_NET_CONTROL_EVENT_ACCESS_POINT_DEL, _ctl_access_point_del },
-                           { EFL_NET_CONTROL_EVENT_ACCESS_POINTS_CHANGED, _ctl_access_points_changed },
-                           { EFL_NET_CONTROL_EVENT_TECHNOLOGY_ADD, _ctl_technology_add },
-                           { EFL_NET_CONTROL_EVENT_TECHNOLOGY_DEL, _ctl_technology_del },
-                           { EFL_NET_CONTROL_EVENT_RADIOS_OFFLINE_CHANGED, _ctl_radios_offline_changed },
-                           { EFL_NET_CONTROL_EVENT_STATE_CHANGED, _ctl_state_changed },
-                           { EFL_NET_CONTROL_EVENT_AGENT_RELEASED, _ctl_agent_released },
-                           { EFL_NET_CONTROL_EVENT_AGENT_ERROR, _ctl_agent_error },
-                           { EFL_NET_CONTROL_EVENT_AGENT_BROWSER_URL, _ctl_agent_browser_url },
-                           { EFL_NET_CONTROL_EVENT_AGENT_REQUEST_INPUT, _ctl_agent_request_input });
+                           { EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINT_ADD, _ctl_access_point_add },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINT_DEL, _ctl_access_point_del },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINTS_CHANGED, _ctl_access_points_changed },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_TECHNOLOGY_ADD, _ctl_technology_add },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_TECHNOLOGY_DEL, _ctl_technology_del },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_RADIOS_OFFLINE_CHANGED, _ctl_radios_offline_changed },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_STATE_CHANGED, _ctl_state_changed },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_AGENT_RELEASED, _ctl_agent_released },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_AGENT_ERROR, _ctl_agent_error },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_AGENT_BROWSER_URL, _ctl_agent_browser_url },
+                           { EFL_NET_CONTROL_MANAGER_EVENT_AGENT_REQUEST_INPUT, _ctl_agent_request_input });
 
 static Eo *copier = NULL;
 
@@ -1439,7 +1439,7 @@ efl_main(void *data EINA_UNUSED,
    Eo *input;
    Eina_Slice line_delimiter = EINA_SLICE_STR("\n");
 
-   ctl = efl_add(EFL_NET_CONTROL_CLASS, ev->object,
+   ctl = efl_add(EFL_NET_CONTROL_MANAGER_CLASS, ev->object,
                  efl_event_callback_array_add(efl_added, ctl_events_cbs(), NULL));
    if (!ctl)
      {

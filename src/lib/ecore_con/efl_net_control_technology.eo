@@ -20,12 +20,12 @@ enum Efl.Net.Control.Technology.Type {
 class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
     [[A technology that allows control of network access points.
 
-      The @Efl.Net.Control is composed of multiple technologies, each
+      The @Efl.Net.Control.Manager is composed of multiple technologies, each
       can be disabled/enabled with @.powered property.
 
       When powered, the technology will dynamically create and remove
       access points in
-      @Efl.Net.Control.access_points.
+      @Efl.Net.Control.Manager.access_points.
 
       @since 1.19
     ]]
@@ -80,7 +80,7 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
 
               The scan will happen asynchronously in the background,
               with the results being delivered by events in the
-              technology, @Efl.Net.Control or @Efl.Net.Control.Access_Point
+              technology, @Efl.Net.Control.Manager or @Efl.Net.Control.Access_Point
               associated with the technology. For example, a scan on
               WiFi will add and remove access points.
 

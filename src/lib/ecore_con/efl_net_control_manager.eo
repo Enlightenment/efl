@@ -5,7 +5,7 @@ import efl_net_control_technology;
 enum Efl.Net.Control.State {
     [[Provides the global network connectivity state.
 
-      For more details, use @Efl.Net.Control access points and
+      For more details, use @Efl.Net.Control.Manager access points and
       their property state.
 
       @since 1.19
@@ -65,7 +65,7 @@ struct Efl.Net.Control.Agent_Browser_Url {
     url: string; [[The URL to point the browser at.]]
 }
 
-class Efl.Net.Control (Efl.Loop.Consumer) {
+class Efl.Net.Control.Manager (Efl.Loop.Consumer) {
     [[Controls network connectivity.
 
       This class and its child objects are only useful to implement

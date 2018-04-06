@@ -26,7 +26,7 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_server_ssl.eo \
         lib/ecore_con/efl_net_control_access_point.eo \
         lib/ecore_con/efl_net_control_technology.eo \
-        lib/ecore_con/efl_net_control.eo \
+        lib/ecore_con/efl_net_control_manager.eo \
         lib/ecore_con/efl_net_session.eo \
         lib/ecore_con/efl_net_ip_address.eo \
 	lib/ecore_con/ecore_con_eet_base.eo \

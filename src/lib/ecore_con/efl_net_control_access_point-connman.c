@@ -261,7 +261,7 @@ _efl_net_control_access_point_priority_set(Eo *o, Efl_Net_Control_Access_Point_D
         return;
      }
 
-   it = efl_net_control_access_points_get(efl_parent_get(o));
+   it = efl_net_control_manager_access_points_get(efl_parent_get(o));
    EINA_ITERATOR_FOREACH(it, ap)
      {
         unsigned other_prio;
@@ -1618,7 +1618,7 @@ _efl_net_control_access_point_property_changed(void *data, const Eldbus_Message 
 }
 
 Efl_Net_Control_Access_Point *
-efl_net_connman_access_point_new(Efl_Net_Control *ctl, const char *path, Eldbus_Message_Iter *properties, unsigned int priority)
+efl_net_connman_access_point_new(Efl_Net_Control_Manager *ctl, const char *path, Eldbus_Message_Iter *properties, unsigned int priority)
 {
    Eo *o;
    Efl_Net_Control_Access_Point_Data *pd;
@@ -1676,7 +1676,7 @@ efl_net_connman_access_point_path_get(Efl_Net_Control_Access_Point *o)
 }
 
 void
-efl_net_connman_access_point_update(Efl_Net_Control *o, Eldbus_Message_Iter *properties, unsigned int priority)
+efl_net_connman_access_point_update(Efl_Net_Control_Manager *o, Eldbus_Message_Iter *properties, unsigned int priority)
 {
    Eldbus_Message_Iter *entry;
    Efl_Net_Control_Access_Point_Data *pd = efl_data_scope_get(o, MY_CLASS);

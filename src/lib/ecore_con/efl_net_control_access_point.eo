@@ -77,7 +77,7 @@ enum Efl.Net.Control.Access_Point.Proxy_Method {
 class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
     [[An access point for network connectivity.
 
-      The @Efl.Net.Control is composed of multiple technologies, each
+      The @Efl.Net.Control.Manager is composed of multiple technologies, each
       create access points to allow configuration and connection.
 
       An application requiring only a network connection can just
