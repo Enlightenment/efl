@@ -1,4 +1,4 @@
-enum Efl.Ui.Flip.Mode
+enum Efl.Ui.Flip_Mode
 {
    [[Efl UI flip mode ]]
    legacy: efl_ui_flip;
@@ -17,7 +17,7 @@ enum Efl.Ui.Flip.Mode
    cross_fade, [[Cross fade flip mode]]
 }
 
-enum Efl.Ui.Flip.Interaction
+enum Efl.Ui.Flip_Interaction
 {
    [[Efl UI flip interaction]]
    none, [[No interaction]]
@@ -56,7 +56,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
             [[Get the interactive flip mode.]]
          }
          values {
-            mode: Efl.Ui.Flip.Interaction; [[The interactive flip mode to use.]]
+            mode: Efl.Ui.Flip_Interaction; [[The interactive flip mode to use.]]
          }
       }
       @property front_visible {
@@ -172,7 +172,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
           * @image latex elm_flip.eps width=\textwidth
          */
          params {
-            @in mode: Efl.Ui.Flip.Mode; [[The mode type.]]
+            @in mode: Efl.Ui.Flip_Mode; [[The mode type.]]
          }
       }
       go_to {
@@ -222,7 +222,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
          params {
             @in front: bool; [[If $true, makes front visible, otherwise
                                makes back.]]
-            @in mode: Efl.Ui.Flip.Mode; [[The mode type.]]
+            @in mode: Efl.Ui.Flip_Mode; [[The mode type.]]
          }
       }
    }
