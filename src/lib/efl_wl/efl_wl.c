@@ -634,6 +634,7 @@ static void
 comp_surface_proxy_win_del(Ecore_Evas *ee)
 {
    Comp_Seat *s = ecore_evas_data_get(ee, "comp_seat");
+   if (!s) return;
 
    s->drag.proxy_win = NULL;
    //fprintf(stderr, "PROXY WIN DEL\n");
@@ -2314,7 +2315,12 @@ comp_surface_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    if ((!l) || (s->drag.tch && ((uint32_t)ev->device == s->drag.id)))
      {
         if (s->drag.tch)
-          wl_data_device_send_drop(data_device_find(s, cs->res));
+          {
+             res = data_device_find(s, cs->res);
+             if (!res) return;
+
+             wl_data_device_send_drop(res);
+          }
         comp_surface_input_event(&s->tch.events, ev->device, 0, ev->timestamp, 1);
         s->event_propagate = 1;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;

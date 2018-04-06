@@ -318,6 +318,7 @@ drag_grab_button(Comp_Seat *s,
 {
    Comp_Data_Device_Source *data_source = s->drag.source;
    enum wl_pointer_button_state state = state_w;
+   struct wl_resource *res;
 
    if (data_source &&
        s->drag.id == button &&
@@ -328,8 +329,12 @@ drag_grab_button(Comp_Seat *s,
             data_source->current_dnd_action)
           {
              if (s->drag.enter)
-               wl_data_device_send_drop(data_device_find(s, s->drag.enter->res));
+               {
+                  res = data_device_find(s, s->drag.enter->res);
+                  if (!res) return;
 
+                  wl_data_device_send_drop(res);
+               }
              if (wl_resource_get_version(data_source->res) >=
                  WL_DATA_SOURCE_DND_DROP_PERFORMED_SINCE_VERSION)
                wl_data_source_send_dnd_drop_performed(data_source->res);
