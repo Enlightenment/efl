@@ -20,12 +20,6 @@
 #define MY_CLASS_NAME "Elm_Inwin"
 #define MY_CLASS_NAME_LEGACY "elm_inwin"
 
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
-{
-   {"default", "elm.swallow.content"},
-   {NULL, NULL}
-};
-
 typedef struct {
 
 } Elm_Inwin_Data;
@@ -111,24 +105,6 @@ _elm_inwin_activate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
    elm_object_focus_set(obj, EINA_TRUE);
 }
 
-EOLIAN static Eina_Bool
-_elm_inwin_efl_content_content_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Gfx *content)
-{
-   return efl_content_set(efl_part(obj, _content_aliases[0].real_part), content);
-}
-
-EOLIAN static Efl_Gfx *
-_elm_inwin_efl_content_content_get(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
-{
-   return efl_content_get(efl_part(obj, _content_aliases[0].real_part));
-}
-
-EOLIAN static Efl_Gfx *
-_elm_inwin_efl_content_content_unset(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
-{
-   return efl_content_unset(efl_part(obj, _content_aliases[0].real_part));
-}
-
 EAPI void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
@@ -158,13 +134,10 @@ _elm_inwin_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_inwin)
-ELM_PART_CONTENT_DEFAULT_GET(elm_inwin, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(elm_inwin, Elm_Inwin_Data)
 
 #define ELM_INWIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(elm_inwin), \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_inwin)
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin)
 
 #include "elm_inwin.eo.c"
