@@ -41,6 +41,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+static Eina_Bool _hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -438,6 +439,15 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return NULL;
 }
 
+
+static void
+_hover_key_down(void *data, const Efl_Event *ev)
+{
+   ELM_HOVERSEL_DATA_GET(ev->object, sd);
+
+   _hoversel_efl_ui_widget_widget_event(data, sd, ev, ev->object);
+}
+
 static void
 _activate(Evas_Object *obj)
 {
@@ -459,6 +469,8 @@ _activate(Evas_Object *obj)
    sd->expanded = EINA_TRUE;
 
    sd->hover = elm_hover_add(sd->hover_parent);
+   efl_event_callback_add(sd->hover, EFL_EVENT_KEY_DOWN, _hover_key_down, obj);
+
    elm_widget_sub_object_add(obj, sd->hover);
    evas_object_layer_set(sd->hover, evas_object_layer_get(sd->hover_parent));
 
