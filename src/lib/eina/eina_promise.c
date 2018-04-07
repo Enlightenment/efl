@@ -642,9 +642,9 @@ static Eina_Value
 _future_proxy(void *data, const Eina_Value v,
               const Eina_Future *dead_future EINA_UNUSED)
 {
-   Eina_Value copy;
+   Eina_Value copy = EINA_VALUE_EMPTY;
    //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
-   if (!v.type) copy = v;
+   if (!v.type || !memcmp(&v, &copy, sizeof (Eina_Value))) copy = v;
    else if (!eina_value_copy(&v, &copy))
      {
         ERR("Value cannot be copied - unusable with Eina_Future: %p (%s)", v.type, v.type->name);
