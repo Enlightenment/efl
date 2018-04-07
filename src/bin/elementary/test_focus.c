@@ -1000,7 +1000,7 @@ struct _focus5_obj _focus5_layout_data3[] = {
    {"top R",  80,  0, 20, 10},
    {"bot L",   0, 90, 20, 10},
    {"bot R",  80, 90, 20, 10},
-   {"center", 40, 40, 20, 10},
+   {"center", 40, 45, 20, 10},
    {NULL, 0, 0, 0, 0} /* sentinel */
 };
 
