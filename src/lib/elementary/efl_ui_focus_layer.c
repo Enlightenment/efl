@@ -61,7 +61,19 @@ _efl_ui_focus_layer_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd E
 EOLIAN static Efl_Ui_Focus_Manager*
 _efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
 {
-   return elm_widget_top_get(obj);
+   if (pd->registered_manager)
+     return elm_widget_top_get(obj);
+   else
+     return NULL;
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_layer_efl_ui_focus_object_focus_parent_get(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
+{
+   if (pd->registered_manager)
+     return efl_ui_focus_manager_root_get(pd->registered_manager);
+   else
+     return NULL;
 }
 
 EOLIAN static Eina_Bool
@@ -81,6 +93,13 @@ _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
    return obj;
 }
 
+static void
+_publish_state_change(Eo *obj, Efl_Ui_Focus_Manager *omanager, Efl_Ui_Focus_Object *oobj)
+{
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, omanager);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_LOGICAL_CHANGED, oobj);
+}
+
 EOLIAN static void
 _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v)
 {
@@ -89,10 +108,14 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
         pd->registered_manager = elm_widget_top_get(obj);
 
         efl_ui_focus_manager_calc_register_logical(pd->registered_manager, obj, efl_ui_focus_manager_root_get(pd->registered_manager), obj);
+        _publish_state_change(obj, NULL, NULL);
         efl_ui_focus_manager_focus_set(pd->manager, obj);
+
      }
    else
      {
+        Eo *omanager = pd->registered_manager, *oobj = efl_ui_focus_manager_root_get(omanager);
+
         if (!pd->registered_manager) return;
 
         if (efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
@@ -100,6 +123,7 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
 
         efl_ui_focus_manager_calc_unregister(pd->registered_manager, obj);
         pd->registered_manager = NULL;
+        _publish_state_change(obj, omanager, oobj);
      }
 }
 
