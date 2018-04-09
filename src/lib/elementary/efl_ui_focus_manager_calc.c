@@ -86,22 +86,24 @@ static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
-   Eo *manager;
+   Eo *manager, *root;
 
-   EINA_SAFETY_ON_NULL_RETURN(pd->root);
+   root = efl_ui_focus_manager_root_get(obj);
+   manager = efl_ui_focus_object_focus_manager_get(pd->root->focusable);
 
-   if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
-     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_object_focus_manager_get(pd->root->focusable));
+   EINA_SAFETY_ON_NULL_RETURN(root);
+
+   if (!efl_isa(root, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE))
+     EINA_SAFETY_ON_NULL_RETURN(manager);
 
    //so we dont run infinitly this does not fix it, but at least we only have a error
-   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_object_focus_manager_get(pd->root->focusable) == obj);
+   EINA_SAFETY_ON_TRUE_RETURN(manager == obj);
 
-   manager = efl_ui_focus_object_focus_manager_get(pd->root->focusable);
    if (manager)
-     efl_ui_focus_manager_focus_set(manager, pd->root->focusable);
+     efl_ui_focus_manager_focus_set(manager, root);
    else
       DBG("No focus manager for focusable %s@%p",
-          efl_class_name_get(pd->root->focusable), pd->root->focusable);
+          efl_class_name_get(pd->root->focusable), root);
 }
 
 static Efl_Ui_Focus_Direction
