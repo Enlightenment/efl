@@ -503,7 +503,8 @@ _ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
                einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
              else
                einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
           }
      }
 }
