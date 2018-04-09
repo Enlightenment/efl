@@ -1,4 +1,4 @@
-class Efl.Ui.Popup.Part (Efl.Ui.Layout.Part, Efl.Canvas.Object, Efl.File)
+class Efl.Ui.Popup_Part (Efl.Ui.Layout.Part, Efl.Canvas.Object, Efl.File)
 {
    [[Efl UI Popup internal part class]]
    data: null;
