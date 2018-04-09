@@ -6,6 +6,9 @@ BUILT_SOURCES =
 EOLIAN_FLAGS = -I$(srcdir)
 EOLIAN_GEN_FLAGS = -S
 
+LOG_COMPILER = dbus-run-session
+AM_LOG_FLAGS = --
+
 DIST_SUBDIRS =
 SUBDIRS =
 
