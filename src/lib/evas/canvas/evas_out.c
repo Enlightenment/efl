@@ -53,6 +53,7 @@ efl_canvas_output_add(Evas *canvas)
    r->changed = EINA_TRUE;
 
    e = _efl_canvas_output_async_block(r);
+   if (!e) return NULL;
    // Track this output in Evas
    e->outputs = eina_list_append(e->outputs, r);
 

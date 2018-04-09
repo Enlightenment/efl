@@ -189,6 +189,7 @@ _animation_intercept_hide(void *data, Evas_Object *eo_obj)
 {
    Event_Animation *event_anim = data;
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   if (!obj) return;
 
    if (event_anim->anim && obj->anim_player &&
       (event_anim->anim != efl_animation_player_animation_get(obj->anim_player)))
