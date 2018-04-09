@@ -12,7 +12,7 @@
 #define TIMEOUT_2 0.02 // timer2
 #define TIMEOUT_3 0.06 // timer3
 #define TIMEOUT_4 0.1  // timer4
-#define TIMEOUT_5 1.0  // timer5 - end ecore_main_loop_begin()
+#define TIMEOUT_5 0.5  // timer5 - end ecore_main_loop_begin()
 #define SIZE 3
 
 static int freeze_thaw = 0;   // 1 - freeze timer, 0 - thaw
