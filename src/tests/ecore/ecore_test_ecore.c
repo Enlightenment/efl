@@ -124,7 +124,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer)
    double start, end, elapsed;
 
 
-   timer = ecore_timer_add(2.0, _quit_cb, &did);
+   timer = ecore_timer_add(0.1, _quit_cb, &did);
    fail_if(timer == NULL);
 
    start = ecore_time_get();
@@ -133,8 +133,8 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer)
    elapsed = end - start;
 
    fail_if(did == EINA_FALSE);
-   fail_if(elapsed < 2.0);
-   fail_if(elapsed > 3.0); /* 1 second "error margin" */
+   fail_if(elapsed < 0.05);
+   fail_if(elapsed > 0.15); /* .05 second "error margin" */
 
 }
 EFL_END_TEST
