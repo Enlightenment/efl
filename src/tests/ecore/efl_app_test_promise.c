@@ -694,7 +694,7 @@ EFL_START_TEST(efl_test_promise_future_implicit_cancel)
      The promise was resolved, but the mainloop is not running.
      Since ecore_shutdown() will be called all the futures must be cancelled
    */
-   ecore_shutdown();
+   ck_assert_int_eq(ecore_shutdown(), 0);
    //All the futures were cancelled at this point
    fail_if(cancel_count != CHAIN_SIZE);
    //Cancel should not be called, since we called eina_promise_resolve()
@@ -1334,28 +1334,42 @@ promise_shutdown(void)
 void efl_app_test_promise(TCase *tc)
 {
    tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
-   tcase_add_test(tc, efl_test_timeout);
-   tcase_add_test(tc, efl_test_job);
-   tcase_add_test(tc, efl_test_idle);
+   tcase_add_test(tc, efl_test_promise_future_convert);
+   tcase_add_test(tc, efl_test_promise_future_easy);
+   tcase_add_test(tc, efl_test_promise_future_all);
+   tcase_add_test(tc, efl_test_promise_future_race);
+   tcase_add_test(tc, efl_test_promise_future_ignore_error);
    tcase_add_test(tc, efl_test_promise_future_success);
    tcase_add_test(tc, efl_test_promise_future_failure);
+}
+
+void efl_app_test_promise_2(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
    tcase_add_test(tc, efl_test_promise_future_chain_no_error);
    tcase_add_test(tc, efl_test_promise_future_chain_error);
    tcase_add_test(tc, efl_test_promise_future_cancel);
    tcase_add_test(tc, efl_test_promise_future_implicit_cancel);
    tcase_add_test(tc, efl_test_promise_future_inner_promise);
    tcase_add_test(tc, efl_test_promise_future_inner_promise_fail);
-   tcase_add_test(tc, efl_test_promise_future_convert);
-   tcase_add_test(tc, efl_test_promise_future_easy);
-   tcase_add_test(tc, efl_test_promise_future_all);
-   tcase_add_test(tc, efl_test_promise_future_race);
-   tcase_add_test(tc, efl_test_promise_future_ignore_error);
+}
+
+void efl_app_test_promise_3(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
+   tcase_add_test(tc, efl_test_timeout);
+   tcase_add_test(tc, efl_test_job);
+   tcase_add_test(tc, efl_test_idle);
    tcase_add_test(tc, efl_test_promise_log);
    //FIXME: We should move this to EO tests, however they depend on Ecore...
    tcase_add_test(tc, efl_test_promise_eo);
    tcase_add_test(tc, efl_test_promise_eo_link);
+}
 
+void efl_app_test_promise_safety(TCase *tc)
+{
 #ifdef EINA_SAFETY_CHECKS
+   tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
    tcase_add_test(tc, efl_test_promise_null);
    tcase_add_test(tc, efl_test_promise_reject_resolve_null);
    tcase_add_test(tc, efl_test_future_null);
