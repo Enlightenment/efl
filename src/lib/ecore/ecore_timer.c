@@ -197,13 +197,13 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   legacy = calloc(1, sizeof (Ecore_Timer_Legacy));
-   if (!legacy) return NULL;
    if (!func)
      {
         ERR("Callback function must be set up for the class.");
         return NULL;
      }
+   legacy = calloc(1, sizeof (Ecore_Timer_Legacy));
+   if (!legacy) return NULL;
    legacy->func = func;
    legacy->data = data;
    timer = efl_add(MY_CLASS, efl_main_loop_get(),
