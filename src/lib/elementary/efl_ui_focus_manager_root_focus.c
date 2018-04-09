@@ -13,7 +13,6 @@
 
 typedef struct {
    Efl_Ui_Focus_Object *root;
-   Eina_List *none_logicals;
 
    Evas_Object *rect;
    Eina_Bool rect_registered;
@@ -31,38 +30,54 @@ _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
 static void
 _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   if (pd->none_logicals && pd->rect_registered)
+   Efl_Ui_Focus_Object *root;
+   Eina_Bool none_logical = EINA_FALSE;
+
+   if (pd->rect_registered)
+     efl_ui_focus_manager_calc_unregister(obj, pd->rect);
+
+   root = efl_ui_focus_manager_root_get(obj);
+   none_logical = !!efl_ui_focus_manager_request_subchild(obj, root);
+
+   if (none_logical)
+     pd->rect_registered = EINA_FALSE;
+   else
      {
-         efl_ui_focus_manager_calc_unregister(obj, pd->rect);
-         pd->rect_registered = EINA_FALSE;
-     }
-   else if (!pd->none_logicals && !pd->rect_registered)
-     {
-         efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
-         pd->rect_registered = EINA_TRUE;
+        efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
+        pd->rect_registered = EINA_TRUE;
      }
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
 {
-   Eina_Bool ret = EINA_FALSE;
    if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
-        pd->none_logicals = eina_list_append(pd->none_logicals, child);
-        ret = EINA_TRUE;
+        if (child != pd->rect)
+          _state_eval(obj, pd);
+
+        return EINA_TRUE;
      }
-   if (child != pd->rect)
-     _state_eval(obj, pd);
-   return ret;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
+{
+   if (efl_ui_focus_manager_calc_register_logical(efl_super(obj, MY_CLASS), child, parent, redirect))
+     {
+        if (redirect)
+          _state_eval(obj, pd);
+
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 EOLIAN static void
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child)
 {
    efl_ui_focus_manager_calc_unregister(efl_super(obj, MY_CLASS), child);
-
-   pd->none_logicals = eina_list_remove(pd->none_logicals, child);
 
    if (child != pd->rect)
      _state_eval(obj, pd);
@@ -105,14 +120,10 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_logical_end(Eo *obj, Efl_U
 EOLIAN static Eina_Iterator *
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   if (!!pd->none_logicals)
-     {
-        return efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_CLASS));;
-     }
-   else
-     {
-        return eina_list_iterator_new(pd->iterator_list);
-     }
+   if (pd->rect_registered)
+     return eina_list_iterator_new(pd->iterator_list);
+
+   return efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_CLASS));
 }
 
 
