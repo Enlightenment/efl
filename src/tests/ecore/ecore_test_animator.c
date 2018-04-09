@@ -28,7 +28,7 @@ EFL_START_TEST(ecore_test_animators)
    double interval2 = 0.01;
 
    ecore_animator_frametime_set(interval1);
-   animator = ecore_animator_timeline_add(1, _anim_cb, &interval1);
+   animator = ecore_animator_timeline_add(0.1, _anim_cb, &interval1);
 
    fail_if(!animator);
 
@@ -36,7 +36,7 @@ EFL_START_TEST(ecore_test_animators)
 
    ecore_animator_frametime_set(interval2);
    prev = 0;
-   animator = ecore_animator_timeline_add(1, _anim_cb, &interval2);
+   animator = ecore_animator_timeline_add(0.1, _anim_cb, &interval2);
    fail_if(!animator);
 
    ecore_main_loop_begin();
