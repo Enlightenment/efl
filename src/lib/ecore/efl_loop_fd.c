@@ -200,11 +200,11 @@ _efl_loop_fd_efl_object_parent_set(Eo *obj, Efl_Loop_Fd_Data *pd, Efl_Object *pa
 }
 
 static void
-_efl_loop_fd_efl_object_destructor(Eo *obj, Efl_Loop_Fd_Data *pd)
+_efl_loop_fd_efl_object_invalidate(Eo *obj, Efl_Loop_Fd_Data *pd)
 {
-   efl_destructor(efl_super(obj, MY_CLASS));
-
    ecore_main_fd_handler_del(pd->handler);
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 #include "efl_loop_fd.eo.c"

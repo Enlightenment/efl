@@ -40,7 +40,7 @@ class Efl.Loop_Fd (Efl.Loop_Consumer)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Object.parent { set; }
    }
 }
