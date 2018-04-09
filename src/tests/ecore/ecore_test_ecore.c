@@ -675,7 +675,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_poller)
    Eina_Bool did = EINA_FALSE;
 
    /* Check ECORE_POLLER_CORE poll interval */
-   double interval = 1.0;
+   double interval = 0.05;
    ecore_poller_poll_interval_set(ECORE_POLLER_CORE, interval);
    fail_unless(CHECK_FP(ecore_poller_poll_interval_get(ECORE_POLLER_CORE), interval));
 
@@ -687,7 +687,7 @@ EFL_START_TEST(ecore_test_ecore_main_loop_poller)
    /* Add one time processed quit poller */
    ecore_poller_add(ECORE_POLLER_CORE, 8, _quit_cb, &did);
 
-   /* Enter main loop and wait 8 seconds for quit */
+   /* Enter main loop and wait 8 intervals for quit */
    ecore_main_loop_begin();
 
    /* Check each poller poll interval */
