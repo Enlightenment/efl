@@ -139,12 +139,8 @@ endif
 EXTRA_DIST2 += \
 tests/eolian/data/object_impl_ref.c \
 tests/eolian/data/object_impl_add_ref.c \
-tests/eolian/data/typedef_ref.c \
-tests/eolian/data/typedef_ref_stub.c \
 tests/eolian/data/typedef_ref.h \
 tests/eolian/data/typedef_ref_stub.h \
-tests/eolian/data/struct_ref.c \
-tests/eolian/data/struct_ref_stub.c \
 tests/eolian/data/struct_ref.h \
 tests/eolian/data/struct_ref_stub.h \
 tests/eolian/data/owning.eo.c \
