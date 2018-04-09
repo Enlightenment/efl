@@ -48,6 +48,7 @@ void efl_test_efl_app(TCase *tc)
 static const Efl_Test_Case etc[] = {
   { "App", efl_test_efl_app },
   { "Loop", efl_app_test_efl_loop },
+  { "Loop_Timer", efl_app_test_efl_loop_timer },
   { NULL, NULL }
 };
 
