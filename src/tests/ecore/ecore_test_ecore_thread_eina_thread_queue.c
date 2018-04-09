@@ -87,8 +87,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
         if (DEBUG) printf("V: %i   [%i]\n", msg->value, eina_thread_queue_pending_get(thq2));
         if (msg->value != (val + 1))
           {
-             printf("ERRR %i not next after %i\n", msg->value, val);
-             fail();
+             ck_abort_msg("ERRR %i not next after %i\n", msg->value, val);
           }
         val = msg->value;
         eina_thread_queue_wait_done(thq2, ref);
@@ -123,7 +122,7 @@ thspeed2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
           }
         if (msgs == 1000)
           {
-             printf("msgs done\n");
+             if (DEBUG) printf("msgs done\n");
              break;
           }
      }
@@ -150,10 +149,9 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
    mcount = msgs;
    if (mcount < 1000)
      {
-        printf("ERR: not enough messages recieved -> %i\n", mcount);
-        fail();
+        ck_abort_msg("ERR: not enough messages recieved -> %i\n", mcount);
      }
-   printf("%i messages sent\n", i);
+   if (DEBUG) printf("%i messages sent\n", i);
 
 }
 EFL_END_TEST
@@ -241,8 +239,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
           {
              if ((val1 + 1) != msg->value)
                {
-                  printf("ERR: thq1 val wrong %i -> %i\n", val1, msg->value);
-                  fail();
+                  ck_abort_msg("ERR: thq1 val wrong %i -> %i\n", val1, msg->value);
                }
              val1 = msg->value;
           }
@@ -250,21 +247,19 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
           {
              if ((val2 + 1) != msg->value)
                {
-                  printf("ERR: thq2 val wrong %i -> %i\n", val2, msg->value);
-                  fail();
+                  ck_abort_msg("ERR: thq2 val wrong %i -> %i\n", val2, msg->value);
                }
              val2 = msg->value;
           }
         else
           {
-             printf("ERRR: unknown thq\n");
-             fail();
+             ck_abort_msg("ERRR: unknown thq\n");
           }
         eina_thread_queue_wait_done(thq, ref);
         cnt++;
         if (cnt == 2000) break;
      }
-   printf("enough msgs\n");
+   if (DEBUG) printf("enough msgs\n");
 
 }
 EFL_END_TEST
@@ -331,8 +326,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
           {
              if ((val2 + 1) != msg->value)
                {
-                  printf("ERR: val wrong %i -> %i\n", val2, msg->value);
-                  fail();
+                  ck_abort_msg("ERR: val wrong %i -> %i\n", val2, msg->value);
                }
              val2 = msg->value;
           }
@@ -340,8 +334,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
           {
              if ((val1 + 1) != msg->value)
                {
-                  printf("ERR: val wrong %i -> %i\n", val1, msg->value);
-                  fail();
+                  ck_abort_msg("ERR: val wrong %i -> %i\n", val1, msg->value);
                }
              val1 = msg->value;
           }
@@ -349,7 +342,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
         cnt++;
         if (cnt == 2000) break;
      }
-   printf("msgs ok\n");
+   if (DEBUG) printf("msgs ok\n");
 
 }
 EFL_END_TEST
@@ -433,8 +426,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
              if (DEBUG) printf("V: %i   [%i]\n", msg->value, eina_thread_queue_pending_get(thq2));
              if (msg->value != (val + 1))
                {
-                  printf("ERRR %i not next after %i\n", msg->value, val);
-                  fail();
+                  ck_abort_msg("ERRR %i not next after %i\n", msg->value, val);
                }
              val = msg->value;
              eina_thread_queue_wait_done(thq2, ref);
@@ -630,8 +622,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
    if (!thq1) fail();
    if (pipe(p) != 0)
      {
-        printf("ERR: pipe create fail\n");
-        fail();
+        ck_abort_msg("ERR: pipe create fail\n");
      }
    eina_thread_queue_fd_set(thq1, p[1]);
 
@@ -653,7 +644,7 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
           }
         if (msgcnt == 10000) break;
      }
-   printf("msg fd ok\n");
+   if (DEBUG) printf("msg fd ok\n");
 
 }
 EFL_END_TEST
