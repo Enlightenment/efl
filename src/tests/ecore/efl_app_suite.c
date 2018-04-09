@@ -10,38 +10,6 @@
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
-EFL_START_TEST(efl_app_test_efl_loop_register)
-{
-   Efl_Object *t, *n;
-
-   ecore_init();
-
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_CLASS);
-   fail_if(!efl_isa(t, EFL_LOOP_CLASS));
-   fail_if(!efl_isa(t, EFL_APP_CLASS));
-
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
-   fail_if(t != NULL);
-
-   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get());
-   fail_if(n != NULL);
-
-   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get(),
-               efl_loop_timer_interval_set(efl_added, 1.0));
-   efl_loop_register(efl_app_get(), EFL_LOOP_TIMER_CLASS, n);
-
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
-   fail_if(!efl_isa(t, EFL_LOOP_TIMER_CLASS));
-   fail_if(t != n);
-
-   efl_loop_unregister(efl_app_get(), EFL_LOOP_TIMER_CLASS, n);
-
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
-   fail_if(t != NULL);
-
-   ecore_shutdown();
-}
-EFL_END_TEST
 
 EFL_START_TEST(efl_app_test_efl_build_version)
 {
@@ -74,13 +42,12 @@ EFL_END_TEST
 
 void efl_test_efl_app(TCase *tc)
 {
-   tcase_add_test(tc, efl_app_test_efl_loop_register);
    tcase_add_test(tc, efl_app_test_efl_build_version);
 }
 
-
 static const Efl_Test_Case etc[] = {
-  { "Efl_App", efl_test_efl_app },
+  { "App", efl_test_efl_app },
+  { "Loop", efl_app_test_efl_loop },
   { NULL, NULL }
 };
 
