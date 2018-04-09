@@ -224,6 +224,13 @@ code_parse_internal(Code *code)
           }
      }
 
+   if (token)
+     {
+        if (token->str)
+          free(token->str);
+        free(token);
+     }
+
    eina_array_free(name_stack);
 }
 
