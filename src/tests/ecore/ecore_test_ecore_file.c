@@ -479,7 +479,7 @@ EFL_START_TEST(ecore_test_ecore_file_download)
 {
    const char *download_dir;
    const char *download_file;
-   const char *download_url = "http://www.enlightenment.org/feed.php";
+   const char *download_url = "http://example.com";
    char dest_name[MAXSIZE] = {'\0'};
    Eina_Bool res;
    Eina_Hash *headers;
@@ -491,7 +491,7 @@ EFL_START_TEST(ecore_test_ecore_file_download)
 
    download_dir = get_tmp_dir();
    fail_if(!download_dir);
-   download_file = ecore_file_file_get(download_url);
+   download_file = ecore_file_file_get(download_url); //example.com
    fail_if(!download_file);
    fail_if(!ecore_file_download_protocol_available("http://"));
    strcat(dest_name, download_dir);
@@ -522,7 +522,7 @@ EFL_START_TEST(ecore_test_ecore_file_download)
    fail_if(res != EINA_TRUE);
 
    headers = eina_hash_string_small_new(NULL);
-   eina_hash_add(headers, "Content-type", "text/xml");
+   eina_hash_add(headers, "Content-type", "text/html");
 
    res = ecore_file_download_full(download_url, dest_name, completion_cb,
                                   progress_cb, NULL, NULL, headers);
