@@ -20,7 +20,7 @@ static Eina_Bool
 _quit_cb(void *data)
 {
    Eina_Bool *val = data;
-   *val = EINA_TRUE;
+   if (val) *val = EINA_TRUE;
    ecore_main_loop_quit();
    return EINA_FALSE;
 }
@@ -717,56 +717,74 @@ Eina_Bool _poller_handler(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-Eina_Bool _poller_loop(void *data)
+static Eina_Bool
+_poller_loop_add(void *data EINA_UNUSED)
 {
-   int *res = data;
-
-   static Ecore_Poller *poll_ptr = NULL;
-   static int count = 0;
-
-   switch (count)
-      {
-      case 2:
-         poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 2, _poller_handler, res);
-         break;
-      case 6:
-         ecore_poller_poller_interval_set(poll_ptr, 1);
-         break;
-      case 10:
-         ecore_poller_del(poll_ptr);
-         break;
-      default:
-         // do nothing
-         break;
-      }
-   count++;
+   ecore_poller_add(ECORE_POLLER_CORE, 1, _quit_cb, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
-EFL_START_TEST(ecore_test_ecore_main_loop_poller_add_del)
+static Eina_Bool
+_poller_loop_fail(void *data EINA_UNUSED)
 {
-   int count_res = 0;
+   ecore_main_loop_quit();
+   ck_abort();
+   return ECORE_CALLBACK_RENEW;
+}
 
-   Eina_Bool did = EINA_FALSE;
+static Eina_Bool
+_poller_loop_del(void *data)
+{
+   static int count = 0;
 
+   if (count++ == 0)
+     ecore_poller_del(data);
+   else
+     ecore_main_loop_quit();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_poller_loop_modify(void *data)
+{
+   ecore_poller_poller_interval_set(data, 1);
+   return EINA_FALSE;
+}
+
+EFL_START_TEST(ecore_test_ecore_main_loop_poller_add)
+{
    /* Create renewable main poller */
-   Ecore_Poller *poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop, &count_res);
-
-   /* One time processed poller */
-   ecore_poller_add(ECORE_POLLER_CORE, 16, _quit_cb, &did);
+   Ecore_Poller *poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop_add, NULL);
 
    /* Enter main loop and wait for quit*/
    ecore_main_loop_begin();
 
-   fprintf(stderr, "count_res: %i\n", count_res);
-   /* Validation call counter */
-   fail_if(6 != count_res);
-
    /* Destroy renewable main poller */
    ecore_poller_del(poll_ptr);
+}
+EFL_END_TEST
 
-   fail_if(did == EINA_FALSE);
 
+EFL_START_TEST(ecore_test_ecore_main_loop_poller_del)
+{
+   /* Create renewable main poller */
+   Ecore_Poller *poller = ecore_poller_add(ECORE_POLLER_CORE, 2, _poller_loop_fail, NULL);
+   ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop_del, poller);
+
+   /* Enter main loop and wait for quit*/
+   ecore_main_loop_begin();
+}
+EFL_END_TEST
+
+EFL_START_TEST(ecore_test_ecore_main_loop_poller_modify)
+{
+   /* Create renewable main poller */
+   Ecore_Poller *poller = ecore_poller_add(ECORE_POLLER_CORE, 4, _quit_cb, NULL);
+   ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop_modify, poller);
+   ecore_poller_add(ECORE_POLLER_CORE, 4, _poller_loop_fail, NULL);
+
+   /* Enter main loop and wait for quit*/
+   ecore_main_loop_begin();
 }
 EFL_END_TEST
 
@@ -789,7 +807,9 @@ void ecore_test_ecore(TCase *tc)
 #endif
    tcase_add_test(tc, ecore_test_ecore_app);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller);
-   tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_poller_del);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_poller_modify);
    tcase_add_test(tc, ecore_test_efl_loop_fd);
    tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
 }
