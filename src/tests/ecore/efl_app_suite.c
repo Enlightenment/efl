@@ -52,6 +52,16 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(efl_app)
+{
+   ck_assert_int_eq(ecore_init(), 1);
+}
+
+SUITE_SHUTDOWN(efl_app)
+{
+   ck_assert_int_eq(ecore_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -65,7 +75,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Efl_App", etc, NULL, NULL);
+                                           "Efl_App", etc, SUITE_INIT_FN(efl_app), SUITE_SHUTDOWN_FN(efl_app));
 
    return (failed_count == 0) ? 0 : 255;
 }
