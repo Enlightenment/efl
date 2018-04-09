@@ -89,13 +89,16 @@ ecore_con_init(void)
      return --_ecore_con_init_count;
 #endif
 
-   if (!ecore_init())
-     goto ecore_err;
+   if (!eina_init())
+     goto eina_err;
 
    _ecore_con_log_dom = eina_log_domain_register
          ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
    if (_ecore_con_log_dom < 0)
      goto ecore_con_log_error;
+
+   if (!ecore_init())
+     goto ecore_err;
 
    _efl_net_proxy_helper_init();
 
@@ -125,7 +128,9 @@ ecore_con_log_error:
    EINA_LOG_ERR("Failed to create a log domain for Ecore Con.");
    ecore_shutdown();
 
-ecore_err:
+ ecore_err:
+   eina_shutdown();
+ eina_err:
 #ifdef _WIN32
    evil_shutdown();
 #endif
@@ -152,13 +157,15 @@ ecore_con_shutdown(void)
 
    ecore_con_legacy_shutdown();
 
-   eina_log_domain_unregister(_ecore_con_log_dom);
-   _ecore_con_log_dom = -1;
-
    ecore_shutdown();
 #ifdef _WIN32
    evil_shutdown();
 #endif
+
+   eina_log_domain_unregister(_ecore_con_log_dom);
+   _ecore_con_log_dom = -1;
+
+   eina_shutdown();
 
    return _ecore_con_init_count;
 }
