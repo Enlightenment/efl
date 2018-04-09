@@ -6,7 +6,7 @@ struct Efl.Ui.View.List.Item_Event
    child: Efl.Model;
    index: int;
 }
-class Efl.Ui.View.List (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Efl.Ui.Scrollbar,
+class Efl.Ui.View.List (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager.Sub,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.View.List.Model)
 {
@@ -83,10 +83,10 @@ class Efl.Ui.View.List (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable.Int
       Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.View.model { get; set; }
 
-      Efl.Ui.Scrollable.Interactive.viewport_geometry { get; }
-      Efl.Ui.Scrollable.Interactive.content_pos { get; set; }
-      Efl.Ui.Scrollable.Interactive.content_size { get; }
-//      Efl.Ui.Scrollable.Interactive.scroll;
+      Efl.Ui.Scrollable_Interactive.viewport_geometry { get; }
+      Efl.Ui.Scrollable_Interactive.content_pos { get; set; }
+      Efl.Ui.Scrollable_Interactive.content_size { get; }
+//      Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
 //      Elm.Interface.Atspi_Accessible.children { get; }

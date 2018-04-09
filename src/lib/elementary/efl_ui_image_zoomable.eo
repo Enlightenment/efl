@@ -1,5 +1,5 @@
 class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
-                             Efl.Ui.Scrollable.Interactive,
+                             Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar)
 {
    [[Elementary Image Zoomable class]]
@@ -61,7 +61,7 @@ class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Scrollable.Interactive.scroll;
+      Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
