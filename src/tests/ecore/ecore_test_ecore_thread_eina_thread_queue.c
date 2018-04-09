@@ -33,7 +33,6 @@ th1_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         Msg *msg;
         void *ref;
 
-        usleep((rand() % 10) * 1000);
         msg = eina_thread_queue_send(thq1, sizeof(Msg), &ref);
         if (!msg) fail();
         msg->value = val;
@@ -57,7 +56,6 @@ th2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg = eina_thread_queue_wait(thq1, &ref);
         if (!msg) fail();
         val = msg->value;
-        usleep((rand() % 20) * 1000);
         eina_thread_queue_wait_done(thq1, ref);
 
         msg = eina_thread_queue_send(thq2, sizeof(Msg), &ref);
@@ -93,7 +91,6 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
              fail();
           }
         val = msg->value;
-        usleep((rand() % 30) * 1000);
         eina_thread_queue_wait_done(thq2, ref);
         if (val == 1000) break;
      }
@@ -377,7 +374,6 @@ th51_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         Msg5 *msg;
         void *ref;
 
-        usleep((rand() % 10) * 1000);
         msg = eina_thread_queue_send(thq1, sizeof(Msg5), &ref);
         msg->value = val;
         eina_thread_queue_send_done(thq1, ref);
@@ -401,7 +397,6 @@ th52_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         msg = eina_thread_queue_wait(thq1, &ref);
         if (!msg) fail();
         val = msg->value;
-        usleep((rand() % 20) * 1000);
         eina_thread_queue_wait_done(thq1, ref);
 
         msg = eina_thread_queue_send(thq2, sizeof(Msg5), &ref);
@@ -442,14 +437,12 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
                   fail();
                }
              val = msg->value;
-             usleep((rand() % 10) * 1000);
              eina_thread_queue_wait_done(thq2, ref);
              if (val == 1100) break;
           }
         else
           {
              if (DEBUG) printf("V: none!\n");
-             usleep((rand() % 10) * 1000);
           }
      }
 
@@ -489,7 +482,6 @@ th61_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         fail_if(!msg);
         msg->value = val;
         eina_thread_queue_send_done(thq1, ref);
-        usleep(1);
      }
 
    eina_semaphore_release(&th6_sem, 1);
