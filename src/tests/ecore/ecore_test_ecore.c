@@ -224,92 +224,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
 }
 EFL_END_TEST
 
-static void
-_eo_read_cb(void *data, const Efl_Event *info EINA_UNUSED)
-{
-   Eina_Bool *did = data;
-
-   *did = EINA_TRUE;
-   ecore_main_loop_quit();
-}
-
-EFL_START_TEST(ecore_test_efl_loop_fd)
-{
-   Eina_Bool did = EINA_FALSE;
-   Eo *fd;
-   int comm[2];
-   int ret;
-
-   ret = pipe(comm);
-   fail_if(ret != 0);
-
-   fd = efl_add(EFL_LOOP_FD_CLASS, efl_main_loop_get(),
-               efl_loop_fd_set(efl_added, comm[0]),
-               efl_event_callback_add(efl_added, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
-   fail_if(fd == NULL);
-
-   ret = write(comm[1], &did, 1);
-   fail_if(ret != 1);
-
-   ecore_main_loop_begin();
-
-   close(comm[0]);
-   close(comm[1]);
-
-   fail_if(did == EINA_FALSE);
-
-}
-EFL_END_TEST
-
-static void
-_efl_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Eina_Bool *dead = data;
-
-   *dead = EINA_TRUE;
-}
-
-EFL_START_TEST(ecore_test_efl_loop_fd_lifecycle)
-{
-   Eina_Bool did = EINA_FALSE;
-   Eina_Bool dead = EINA_FALSE;
-   Eo *fd;
-   int comm[2];
-   int ret;
-
-   efl_object_init();
-
-   ret = pipe(comm);
-   fail_if(ret != 0);
-
-   fd = efl_add(EFL_LOOP_FD_CLASS, efl_main_loop_get(),
-               efl_loop_fd_set(efl_added, comm[0]),
-               efl_event_callback_add(efl_added, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
-               efl_event_callback_add(efl_added, EFL_EVENT_DEL, _efl_del_cb, &dead));
-   efl_ref(fd);
-   fail_if(fd == NULL);
-
-   ret = write(comm[1], &did, 1);
-   fail_if(ret != 1);
-
-   ecore_main_loop_begin();
-
-   close(comm[0]);
-   close(comm[1]);
-
-   fail_if(did == EINA_FALSE);
-   fail_if(dead == EINA_TRUE);
-
-   ecore_shutdown();
-   ecore_init();
-
-   efl_del(fd);
-   fail_if(dead == EINA_FALSE);
-
-   efl_object_shutdown();
-}
-EFL_END_TEST
-
 EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 {
    Eina_Bool did = EINA_FALSE;
@@ -788,6 +702,4 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_del);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_modify);
-   tcase_add_test(tc, ecore_test_efl_loop_fd);
-   tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
 }

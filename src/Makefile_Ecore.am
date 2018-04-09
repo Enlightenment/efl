@@ -330,6 +330,7 @@ tests_ecore_ecore_suite_DEPENDENCIES = \
 
 tests_ecore_efl_app_suite_SOURCES = \
 tests/ecore/efl_app_test_loop.c \
+tests/ecore/efl_app_test_loop_fd.c \
 tests/ecore/efl_app_test_loop_timer.c \
 tests/ecore/efl_app_suite.c \
 tests/ecore/efl_app_suite.h
