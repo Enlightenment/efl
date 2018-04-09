@@ -247,7 +247,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    int can_fork = 0;
 #ifdef ENABLE_TIMING_INFO
    double tstart;
-   int timing = _timing_enabled();
+   int timing = strcmp(suite_name, "eina_init_module") && _timing_enabled();
 
    if (timing)
      tstart = _timing_time_get();
@@ -255,7 +255,8 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    s = suite_create(suite_name);
    sr = srunner_create(s);
    do_fork = _efl_test_fork_has(sr);
-   can_fork = strcmp(suite_name, "Eldbus" /* T6848 */);
+   if (do_fork)
+     can_fork = strcmp(suite_name, "Eldbus" /* T6848 */) && strcmp(suite_name, "eina_init_module");
 
    for (i = 0; etc[i].test_case; ++i)
      {
