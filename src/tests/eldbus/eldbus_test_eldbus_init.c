@@ -34,13 +34,6 @@ EFL_START_TEST(eldbus_test_eldbus_main_loop)
 }
 EFL_END_TEST
 
-#if 0
-/* TODO: This test assumes an existing dbus-daemon running. It
- * shouldn't do this, instead we should launch dbus-daemon ourselves
- * and create our private instance, use it and then kill it
- * afterwards.
- */
-
 EFL_START_TEST(eldbus_test_eldbus_conn)
 {
    Eldbus_Connection *conn;
@@ -106,15 +99,12 @@ EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
 
 }
 EFL_END_TEST
-#endif
 
 void eldbus_test_eldbus_init(TCase *tc)
 {
    tcase_add_test(tc, eldbus_test_eldbus);
    tcase_add_test(tc, eldbus_test_eldbus_main_loop);
-#if 0
    tcase_add_test(tc, eldbus_test_eldbus_conn);
    tcase_add_test(tc, eldbus_test_eldbus_conn_object);
    tcase_add_test(tc, eldbus_test_eldbus_name_owner_changed);
-#endif
 }
