@@ -497,16 +497,6 @@ EFL_START_TEST(ecore_test_ecore_file_download)
    strcat(dest_name, download_dir);
    strcat(dest_name, "/");
    strcat(dest_name, download_file);
-   res = ecore_file_download(download_url, dest_name, completion_cb,
-                             progress_cb, NULL, &job);
-   fail_if(res != EINA_TRUE);
-   fail_if(!job);
-   ecore_main_loop_begin();
-   fprintf(stderr, "Downloaded %lld bytes\n", ecore_file_size(dest_name));
-   res = ecore_file_exists(dest_name);
-   fail_if(res != EINA_TRUE);
-   res = ecore_file_unlink(dest_name);
-   fail_if(res != EINA_TRUE);
 
    res = ecore_file_download("xxyyzz", dest_name, completion_cb,
                              progress_cb, NULL, &job);
@@ -525,8 +515,9 @@ EFL_START_TEST(ecore_test_ecore_file_download)
    eina_hash_add(headers, "Content-type", "text/html");
 
    res = ecore_file_download_full(download_url, dest_name, completion_cb,
-                                  progress_cb, NULL, NULL, headers);
+                                  progress_cb, NULL, &job, headers);
    fail_if(res != EINA_TRUE);
+   fail_if(!job);
    ecore_main_loop_begin();
    fprintf(stderr, "Downloaded %lld bytes\n", ecore_file_size(dest_name));
    res = ecore_file_exists(dest_name);
