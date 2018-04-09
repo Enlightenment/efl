@@ -13,6 +13,7 @@ void ecore_test_timer(TCase *tc);
 void ecore_test_ecore_evas(TCase *tc);
 void ecore_test_animator(TCase *tc);
 void ecore_test_ecore_thread_eina_thread_queue(TCase *tc);
+void ecore_test_ecore_thread_eina_thread_queue2(TCase *tc);
 void ecore_test_ecore_drm(TCase *tc);
 void ecore_test_ecore_fb(TCase *tc);
 void ecore_test_ecore_input(TCase *tc);

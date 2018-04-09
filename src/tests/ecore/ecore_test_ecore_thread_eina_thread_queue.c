@@ -680,6 +680,10 @@ void ecore_test_ecore_thread_eina_thread_queue(TCase *tc EINA_UNUSED)
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t1);
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t2);
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t3);
+}
+
+void ecore_test_ecore_thread_eina_thread_queue2(TCase *tc EINA_UNUSED)
+{
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t4);
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t5);
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t6);
