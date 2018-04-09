@@ -18,14 +18,12 @@ EFL_START_TEST(ecore_test_ecore_input_init)
    for (i = 1; i <= MAX_ITER; i++)
      {
         ret = ecore_event_init();
-        fprintf(stderr, "Created %d ecore input instance.\n", i);
         fail_if(ret != i);
      }
 
    for (j = MAX_ITER - 1; j >= 0; j--)
      {
         ret = ecore_event_shutdown();
-        fprintf(stderr, "Deleted %d ecore input instance.\n", MAX_ITER - j);
         fail_if(ret != j);
      }
 }
