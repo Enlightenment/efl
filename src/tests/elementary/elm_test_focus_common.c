@@ -80,6 +80,7 @@ _focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Boo
 {
    pd->focus = focus;
    printf("Object %p now focused\n", obj);
+   efl_ui_focus_object_focus_set(efl_super(obj, FOCUS_TEST_CLASS), focus);
 }
 
 EOLIAN static Eina_Rect
