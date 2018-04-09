@@ -149,29 +149,8 @@ _efl_io_buffered_stream_efl_object_finalize(Eo *o, Efl_Io_Buffered_Stream_Data *
 }
 
 EOLIAN static void
-_efl_io_buffered_stream_efl_object_destructor(Eo *o, Efl_Io_Buffered_Stream_Data *pd)
+_efl_io_buffered_stream_efl_object_invalidate(Eo *o, Efl_Io_Buffered_Stream_Data *pd)
 {
-   if (pd->incoming)
-     {
-        efl_del(pd->incoming);
-        pd->incoming = NULL;
-     }
-   if (pd->outgoing)
-     {
-        efl_del(pd->outgoing);
-        pd->outgoing = NULL;
-     }
-   if (pd->sender)
-     {
-        efl_del(pd->sender);
-        pd->sender = NULL;
-     }
-   if (pd->receiver)
-     {
-        efl_del(pd->receiver);
-        pd->receiver = NULL;
-     }
-
    if (pd->inner_io)
      {
         efl_event_callback_array_del(pd->inner_io, _efl_io_buffered_stream_inner_io_cbs(), o);
@@ -182,7 +161,19 @@ _efl_io_buffered_stream_efl_object_destructor(Eo *o, Efl_Io_Buffered_Stream_Data
         pd->inner_io = NULL;
      }
 
-   efl_destructor(efl_super(o, MY_CLASS));
+   pd->incoming = NULL;
+   pd->outgoing = NULL;
+   pd->sender = NULL;
+   pd->receiver = NULL;
+
+   if (!pd->is_finished)
+     {
+        fprintf(stderr, "forced finish\n");
+        pd->is_finished = EINA_TRUE;
+        efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
+     }
+
+   efl_invalidate(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static Eina_Error

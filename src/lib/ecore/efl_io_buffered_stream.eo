@@ -247,7 +247,7 @@ class Efl.Io.Buffered_Stream (Efl.Loop_Consumer, Efl.Io.Reader, Efl.Io.Writer, E
 
     implements {
         Efl.Object.finalize;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
