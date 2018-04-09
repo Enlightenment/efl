@@ -72,6 +72,8 @@ main(int argc, char **argv)
    if (!_efl_test_option_disp(argc, argv, etc))
      return 0;
 
+   eina_init();
+   efl_object_init();
 #ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
 #endif
@@ -79,5 +81,7 @@ main(int argc, char **argv)
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Efl_App", etc, SUITE_INIT_FN(efl_app), SUITE_SHUTDOWN_FN(efl_app));
 
+   efl_object_shutdown();
+   eina_shutdown();
    return (failed_count == 0) ? 0 : 255;
 }
