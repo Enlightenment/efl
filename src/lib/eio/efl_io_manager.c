@@ -66,7 +66,8 @@ _future_file_error_cb(void *data,
 {
    Eina_Promise *p = data;
 
-   eina_promise_reject(p, error);
+   // error == 0 -> promise was cancelled, no need to reject it anymore
+   if (error != 0) eina_promise_reject(p, error);
 }
 
 /* Basic listing callbacks */
@@ -97,6 +98,7 @@ _future_file_info_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gath
    Eio_File_Direct_Info *d;
 
    if (!info) goto end;
+   if (ecore_thread_check(handler->thread)) goto end;
 
    info(info_data, gather);
 
