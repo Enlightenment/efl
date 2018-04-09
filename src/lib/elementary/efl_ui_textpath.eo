@@ -1,4 +1,4 @@
-enum Efl.Ui.Textpath.Direction {
+enum Efl.Ui.Textpath_Direction {
     [[Textpath direction]]
     cw, [[Clockwise]]
     ccw [[Counter-clockwise]]
@@ -15,7 +15,7 @@ class Efl.Ui.Textpath (Efl.Ui.Layout.Object, Efl.Object, Efl.Text, Efl.Gfx.Path)
             @in y: double; [[Y coordinate of center]]
             @in radius: double; [[Radius of the circle]]
             @in start_angle: double; [[Start angle of the circle]]
-            @in direction: Efl.Ui.Textpath.Direction; [[Textpath direction]]
+            @in direction: Efl.Ui.Textpath_Direction; [[Textpath direction]]
          }
       }
       @property autofit {
