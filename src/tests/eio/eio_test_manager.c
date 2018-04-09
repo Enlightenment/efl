@@ -19,26 +19,19 @@ static Eina_Bool direct = EINA_FALSE;
 #define DONE_CALLED 0xdeadbeef
 
 static void
-_access_cb(void *data, Eina_Accessor *access)
+_access_cb(void *data, Eina_Array *paths)
 {
    uint64_t *number_of_listed_files = data;
-   Eina_Stringshare *s;
-   unsigned int count;
 
-   EINA_ACCESSOR_FOREACH(access, count, s)
-     {
-        (*number_of_listed_files)++;
-     }
+   *number_of_listed_files += eina_array_count(paths);
 }
 
 static void
-_progress_cb(void *data, const Efl_Event *ev)
+_progress_cb(void *data, Eina_Array *entries)
 {
-   Efl_Future_Event_Progress *p = ev->info;
-   const Eina_Array *batch = p->progress;
    uint64_t *number_of_listed_files = data;
 
-   (*number_of_listed_files) += eina_array_count(batch);
+   (*number_of_listed_files) += eina_array_count(entries);
 }
 
 static Eina_Value
@@ -71,27 +64,42 @@ _future_cb(void *data,
    return file;
 }
 
-static void
-_done_cb(void *data, const Efl_Event *ev)
+static Eina_Value
+_done_cb(void *data,
+         const Eina_Value file,
+         const Eina_Future *dead EINA_UNUSED)
 {
-   Efl_Future_Event_Success *success = ev->info;
-   uint64_t *files_count = success->value;
    uint64_t *number_of_listed_files = data;
 
-   fail_if((*number_of_listed_files) != test_count);
-   fail_if(*files_count != test_count);
-   *number_of_listed_files = DONE_CALLED;
-   ecore_main_loop_quit();
-}
+   if (eina_value_type_get(&file) == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = 0;
+        const char *msg;
 
-static void
-_error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   Efl_Future_Event_Failure *failure = ev->info;
-   const char *msg = eina_error_msg_get(failure->error);
+        eina_value_error_get(&file, &err);
+        msg = eina_error_msg_get(err);
 
-   EINA_LOG_ERR("error: %s", msg);
+        EINA_LOG_ERR("error: %s", msg);
+        abort();
+     }
+   else
+     {
+        Eina_Value convert = EINA_VALUE_EMPTY;
+        uint64_t files_count = 0;
+
+        eina_value_setup(&convert, EINA_VALUE_TYPE_ULONG);
+        eina_value_convert(&file, &convert);
+        eina_value_ulong_get(&convert, &files_count);
+
+        fail_if((*number_of_listed_files) != test_count);
+        fail_if(files_count != test_count);
+
+        *number_of_listed_files = DONE_CALLED;
+     }
+
    ecore_main_loop_quit();
+
+   return file;
 }
 
 static Eina_Value
@@ -152,29 +160,30 @@ _stat_done_cb(void *data,
 }
 
 static void
-_test_ls(Efl_Future *(*func)(Eo *obj, const char *path, Eina_Bool recursive),
+_test_ls(Eina_Future *(*func)(Eo *obj, const char *path, Eina_Bool recursive,
+                              void *info_data, EflIoDirectInfo info, Eina_Free_Cb info_free_cb),
          uint64_t expected_test_count,
          const char* test_dirname)
 {
    Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
-   Efl_Future *f = NULL;
+   Eina_Future *f = NULL;
    uint64_t main_files = 0;
 
    fail_if(!job);
 
-   f = func(job, test_dirname, EINA_FALSE);
+   f = func(job, test_dirname, EINA_FALSE, &main_files, _progress_cb, NULL);
    fail_if(!f);
    test_count = expected_test_count;
-   efl_future_then(f, &_done_cb, &_error_cb, &_progress_cb, &main_files);
+   eina_future_then(f, &_done_cb, &main_files);
 
    ecore_main_loop_begin();
 
    fail_if(main_files != DONE_CALLED);
    main_files = 0;
 
-   f = func(job, test_dirname, EINA_TRUE);
+   f = func(job, test_dirname, EINA_TRUE, &main_files, _progress_cb, NULL);
    test_count = expected_test_count + 4;
-   efl_future_then(f, &_done_cb, &_error_cb, &_progress_cb, &main_files);
+   eina_future_then(f, &_done_cb, &main_files);
 
    ecore_main_loop_begin();
 
