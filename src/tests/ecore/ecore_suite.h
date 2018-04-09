@@ -19,6 +19,5 @@ void ecore_test_ecore_input(TCase *tc);
 void ecore_test_ecore_file(TCase *tc);
 void ecore_test_ecore_job(TCase *tc);
 void ecore_test_ecore_args(TCase *tc);
-void ecore_test_ecore_promise(TCase *tc);
 
 #endif /* _ECORE_SUITE_H */

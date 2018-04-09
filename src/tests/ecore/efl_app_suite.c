@@ -50,6 +50,7 @@ static const Efl_Test_Case etc[] = {
   { "Loop", efl_app_test_efl_loop },
   { "Loop_Timer", efl_app_test_efl_loop_timer },
   { "Loop_FD", efl_app_test_efl_loop_fd },
+  { "Promise", efl_app_test_promise },
   { NULL, NULL }
 };
 

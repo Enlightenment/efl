@@ -2,14 +2,13 @@
 # include <config.h>
 #endif
 
-#include <Ecore.h>
-#include <Eina.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <time.h>
-#include <stdarg.h>
-#include <Eo.h>
-#include "ecore_suite.h"
+#include <stdio.h>
+#include <unistd.h>
+#define EFL_NOLEGACY_API_SUPPORT
+#include <Efl_Core.h>
+#include <Efl_Net.h>
+#include "efl_app_suite.h"
+#include "../efl_check.h"
 
 #define CHAIN_SIZE (3)
 #define DEFAULT_ERROR (EFBIG)
@@ -33,7 +32,7 @@
 
 typedef struct _PromiseCtx {
    Eina_Promise *p;
-   Ecore_Timer *t;
+   Efl_Object *t;
    Eina_Bool fail;
    Eina_Value *value;
 } PromiseCtx;
@@ -122,7 +121,7 @@ static void
 _cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    PromiseCtx *ctx = data;
-   if (ctx->t) ecore_timer_del(ctx->t);
+   if (ctx->t) efl_del(ctx->t);
    ctx->t = NULL;
    eina_value_free(ctx->value);
    free(ctx);
@@ -135,8 +134,8 @@ _promise_cancel_test(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
    *cancel_called = EINA_TRUE;
 }
 
-static Eina_Bool
-_simple_timeout(void *data)
+static void
+_simple_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    PromiseCtx *ctx = data;
 
@@ -149,8 +148,8 @@ _simple_timeout(void *data)
         eina_promise_resolve(ctx->p, v);
         eina_value_free(ctx->value);
      }
+   efl_del(ctx->t);
    free(ctx);
-   return EINA_FALSE;
 }
 
 static Eina_Future_Scheduler *
@@ -177,7 +176,9 @@ _future_get(PromiseCtx *ctx, double timeout)
 
    f = eina_future_new(ctx->p);
    fail_if(!f);
-   ctx->t = ecore_timer_add(timeout, _simple_timeout, ctx);
+   ctx->t = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
+               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _simple_timeout, ctx),
+               efl_loop_timer_interval_set(efl_added, timeout));
    fail_if(!ctx->t);
    return f;
 }
@@ -1330,7 +1331,7 @@ promise_shutdown(void)
    ecore_init();
 }
 
-void ecore_test_ecore_promise(TCase *tc)
+void efl_app_test_promise(TCase *tc)
 {
    tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
    tcase_add_test(tc, efl_test_timeout);
