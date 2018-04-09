@@ -290,6 +290,7 @@ struct _Elm_Config_Flags
    Eina_Bool glayer_flick_time_limit_ms : 1; // unused
    Eina_Bool glayer_long_tap_start_timeout : 1;
    Eina_Bool glayer_double_tap_timeout : 1;
+   Eina_Bool glayer_tap_finger_size : 1;
    Eina_Bool access_mode : 1;
    Eina_Bool glayer_continues_enable : 1; // unused
    Eina_Bool week_start : 1; // unused
@@ -425,6 +426,7 @@ struct _Elm_Config
    unsigned int  glayer_flick_time_limit_ms;
    double        glayer_long_tap_start_timeout;
    double        glayer_double_tap_timeout;
+   int           glayer_tap_finger_size;
    Eina_Bool     access_mode;
    unsigned char glayer_continues_enable;
    int           week_start;

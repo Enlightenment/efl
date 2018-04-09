@@ -461,6 +461,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_flick_time_limit_ms, T_INT);
    ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_double_tap_timeout, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_tap_finger_size, T_INT);
    ELM_CONFIG_VAL(D, T, access_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, selection_clear_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, glayer_continues_enable, T_UCHAR);
@@ -1796,6 +1797,7 @@ _config_load(void)
    _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
    _elm_config->glayer_double_tap_timeout = 0.25;   /* 0.25 seconds between 2 mouse downs of a tap. */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
+   _elm_config->glayer_tap_finger_size = 10;
    _elm_config->access_mode = ELM_ACCESS_MODE_OFF;
    _elm_config->selection_clear_enable = EINA_FALSE;
    _elm_config->week_start = 1; /* monday */
@@ -1955,6 +1957,7 @@ _elm_config_reload_do(void)
         KEEP_VAL(glayer_flick_time_limit_ms);
         KEEP_VAL(glayer_long_tap_start_timeout);
         KEEP_VAL(glayer_double_tap_timeout);
+        KEEP_VAL(glayer_tap_finger_size);
         KEEP_VAL(access_mode);
         KEEP_VAL(glayer_continues_enable);
         KEEP_VAL(week_start);
@@ -2812,6 +2815,9 @@ _env_get(void)
    if (s) _elm_config->popup_vertical_align = _elm_atof(s);
    s = getenv("ELM_POPUP_SCROLLABLE");
    if (s) _elm_config->popup_scrollable = atoi(s);
+
+   s = getenv("ELM_GLAYER_TAP_FINGER_SIZE");
+   if (s) _elm_config->glayer_tap_finger_size = atoi(s);
 
    s = getenv("EFL_UI_DND_DRAG_ANIM_DURATION");
    if (s) _elm_config->drag_anim_duration = _elm_atof(s);

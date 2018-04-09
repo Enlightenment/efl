@@ -72,6 +72,7 @@ group "Elm_Config" struct {
   value "glayer_long_tap_start_timeout" double: 1.2; /* sec to start long-tap */
   value "glayer_double_tap_timeout" double: 0.25; /* Timeout between two mouse dows when doing double click (and more). */
   value "glayer_continues_enable" uchar: 1;          /* Continues gesture enabled */
+  value "glayer_tap_finger_size" int: 10;
   value "week_start" int: 1;
   value "weekend_start" int: 6;
   value "weekend_len" int: 2;
