@@ -277,6 +277,7 @@ tests/ecore/ecore_suite.c \
 tests/ecore/ecore_test_ecore.c \
 tests/ecore/ecore_test_ecore_imf.c \
 tests/ecore/ecore_test_idle.c \
+tests/ecore/ecore_test_poller.c \
 tests/ecore/ecore_test_timer.c \
 tests/ecore/ecore_test_ecore_evas.c \
 tests/ecore/ecore_test_animator.c \

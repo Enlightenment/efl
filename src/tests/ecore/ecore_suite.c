@@ -9,6 +9,7 @@
 static const Efl_Test_Case etc[] = {
   { "Ecore", ecore_test_ecore },
   { "idle", ecore_test_ecore_idle },
+  { "poller", ecore_test_ecore_idle },
 #if HAVE_ECORE_X
   { "Ecore_X", ecore_test_ecore_x },
 #endif

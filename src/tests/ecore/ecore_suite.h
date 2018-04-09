@@ -5,6 +5,7 @@
 #include "../efl_check.h"
 void ecore_test_ecore(TCase *tc);
 void ecore_test_ecore_idle(TCase *tc);
+void ecore_test_ecore_poller(TCase *tc);
 void ecore_test_ecore_x(TCase *tc);
 void ecore_test_ecore_imf(TCase *tc);
 void ecore_test_ecore_audio(TCase *tc);
