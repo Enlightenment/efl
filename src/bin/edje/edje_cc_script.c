@@ -64,7 +64,7 @@ static void
 code_parse_internal(Code *code)
 {
    Code_Symbol *sym = NULL, *func = NULL;
-   Token *token, *tmp;
+   Token *token, *tmp = NULL;
    char *begin = code->shared;
    char *end = begin + strlen(begin);
    char *body;
@@ -92,7 +92,16 @@ code_parse_internal(Code *code)
                        token = tmp;
                        break;
                     }
+
+                  if (tmp->str) free(tmp->str);
+                  free(tmp);
                }
+          }
+
+        if (tmp)
+          {
+             if (tmp->str) free(tmp->str);
+             free(tmp);
           }
 
         switch (token->type)
@@ -176,6 +185,9 @@ code_parse_internal(Code *code)
                     }
                   if (!depth)
                     break;
+
+                  if (tmp->str) free(tmp->str);
+                  free(tmp);
                }
              if ((begin - 1) > body)
                {
@@ -204,6 +216,12 @@ code_parse_internal(Code *code)
         if (token->str)
           free(token->str);
         free(token);
+
+        if (tmp)
+          {
+             if (tmp->str) free(tmp->str);
+             free(tmp);
+          }
      }
 
    eina_array_free(name_stack);
