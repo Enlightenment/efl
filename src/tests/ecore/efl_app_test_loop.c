@@ -23,9 +23,6 @@ EFL_START_TEST(efl_app_test_efl_loop_register)
    t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
    fail_if(t != NULL);
 
-   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get());
-   fail_if(n != NULL);
-
    n = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get(),
                efl_loop_timer_interval_set(efl_added, 1.0));
    efl_loop_register(efl_app_get(), EFL_LOOP_TIMER_CLASS, n);

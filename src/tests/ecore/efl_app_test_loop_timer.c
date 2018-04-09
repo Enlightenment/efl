@@ -65,9 +65,18 @@ EFL_START_TEST(ecore_test_timer_lifecycle)
 EFL_END_TEST
 */
 
+EFL_START_TEST(efl_app_test_loop_timer_invalid)
+{
+   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get());
+   fail_if(t != NULL);
+}
+EFL_END_TEST
+
 void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
 {
   /* XXX: this seems a silly test - that we del the loop object?
     tcase_add_test(tc, ecore_test_timer_lifecycle);
    */
+
+   tcase_add_test(tc, efl_app_test_loop_timer_invalid);
 }
