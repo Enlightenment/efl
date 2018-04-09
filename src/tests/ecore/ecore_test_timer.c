@@ -265,6 +265,37 @@ EFL_START_TEST(ecore_test_timer_valid_callbackfunc)
 }
 EFL_END_TEST
 
+static Eina_Bool
+_quit_cb(void *data)
+{
+   Eina_Bool *val = data;
+   if (val) *val = EINA_TRUE;
+   ecore_main_loop_quit();
+   return EINA_FALSE;
+}
+
+EFL_START_TEST(ecore_test_ecore_main_loop_timer)
+{
+   Eina_Bool did = EINA_FALSE;
+   Ecore_Timer *timer;
+   double start, end, elapsed;
+
+
+   timer = ecore_timer_add(0.1, _quit_cb, &did);
+   fail_if(timer == NULL);
+
+   start = ecore_time_get();
+   ecore_main_loop_begin();
+   end = ecore_time_get();
+   elapsed = end - start;
+
+   fail_if(did == EINA_FALSE);
+   fail_if(elapsed < 0.05);
+   fail_if(elapsed > 0.15); /* .05 second "error margin" */
+
+}
+EFL_END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
@@ -273,4 +304,5 @@ void ecore_test_timer(TCase *tc)
  */
   tcase_add_test(tc, ecore_test_timer_inside_call);
   tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
+  tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
 }

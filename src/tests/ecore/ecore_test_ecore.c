@@ -117,27 +117,6 @@ EFL_START_TEST(ecore_test_ecore_main_loop_idle_exiter)
 }
 EFL_END_TEST
 
-EFL_START_TEST(ecore_test_ecore_main_loop_timer)
-{
-   Eina_Bool did = EINA_FALSE;
-   Ecore_Timer *timer;
-   double start, end, elapsed;
-
-
-   timer = ecore_timer_add(0.1, _quit_cb, &did);
-   fail_if(timer == NULL);
-
-   start = ecore_time_get();
-   ecore_main_loop_begin();
-   end = ecore_time_get();
-   elapsed = end - start;
-
-   fail_if(did == EINA_FALSE);
-   fail_if(elapsed < 0.05);
-   fail_if(elapsed > 0.15); /* .05 second "error margin" */
-
-}
-EFL_END_TEST
 
 // Disabled tests: inner main loops are not supposed to work!
 #if 0
@@ -796,7 +775,6 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_enterer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_before_enterer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_exiter);
-   tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_valid_flags);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_activate_modify);
