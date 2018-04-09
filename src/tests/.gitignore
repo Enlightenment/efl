@@ -1,4 +1,4 @@
-check-results.xml
+check-results*.xml
 *_suite
 *_suite.log
 *_suite.trs
