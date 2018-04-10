@@ -213,19 +213,21 @@ _efl_canvas_animation_player_efl_player_stop(Eo *eo_obj,
             (!(efl_animation_repeat_count_get(anim) & 1)))
           {
                pd->progress = 1.0;
+               efl_animation_apply(anim, pd->progress,
+                                   efl_animation_player_target_get(eo_obj));
           }
         else
           {
              pd->progress = 0.0;
+             efl_gfx_map_reset(efl_animation_player_target_get(eo_obj));
           }
+        efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
      }
    else
      {
          pd->progress = 0.0;
+         efl_gfx_map_reset(efl_animation_player_target_get(eo_obj));
      }
-   efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
-   if (play)
-     efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
 
    if (pd->auto_del) efl_del(eo_obj);
 }
