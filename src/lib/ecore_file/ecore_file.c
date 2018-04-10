@@ -495,7 +495,7 @@ ecore_file_mv(const char *src, const char *dst)
                     }
 
                   // Set file permissions of temp file to match src
-                  if (chmod(buf, mode) == -1)
+                  if (chmod(tmpstr, mode) == -1)
                     {
                        eina_tmpstr_del(tmpstr);
                        goto FAIL;
