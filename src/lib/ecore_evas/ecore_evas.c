@@ -59,8 +59,6 @@
 EAPI Eina_Bool _ecore_evas_app_comp_sync = EINA_FALSE;
 EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
-static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
-static Eina_Bool _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static Ecore_Idle_Exiter *ecore_evas_idle_exiter = NULL;
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
@@ -582,21 +580,6 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
      };
 }
 
-static void
-_ecore_evas_fork_cb(void *data EINA_UNUSED)
-{
-   int fd;
-   
-   if (_ecore_evas_async_events_fd)
-     ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-   fd = evas_async_events_fd_get();
-   if (fd >= 0)
-     _ecore_evas_async_events_fd = 
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ,
-                               _ecore_evas_async_events_fd_handler, NULL,
-                               NULL, NULL);
-}
-
 EAPI int
 ecore_evas_init(void)
 {
@@ -618,14 +601,6 @@ ecore_evas_init(void)
         EINA_LOG_ERR("Impossible to create a log domain for Ecore_Evas.");
         goto shutdown_ecore;
      }
-
-   ecore_fork_reset_callback_add(_ecore_evas_fork_cb, NULL);
-   fd = evas_async_events_fd_get();
-   if (fd >= 0)
-     _ecore_evas_async_events_fd = 
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ,
-                               _ecore_evas_async_events_fd_handler, NULL,
-                               NULL, NULL);
 
    ecore_evas_idle_enterer =
      ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
@@ -689,10 +664,6 @@ ecore_evas_shutdown(void)
    while (_ecore_evas_ews_shutdown());
 #endif
    _ecore_evas_engine_shutdown();
-   if (_ecore_evas_async_events_fd)
-     ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-
-   ecore_fork_reset_callback_del(_ecore_evas_fork_cb, NULL);
 
    eina_log_domain_unregister(_ecore_evas_log_dom);
    _ecore_evas_log_dom = -1;
@@ -3418,14 +3389,6 @@ _ecore_evas_cb_idle_flush(void *data)
    ee->engine.idle_flush_timer = NULL;
    evas_render_idle_flush(ee->evas);
    return ECORE_CALLBACK_CANCEL;
-}
-
-static Eina_Bool
-_ecore_evas_async_events_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
-{
-   evas_async_events_process();
-
-   return ECORE_CALLBACK_RENEW;
 }
 
 EAPI void
