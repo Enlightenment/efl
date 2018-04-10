@@ -158,6 +158,15 @@ void LottieComposition::processPaintOperatorObjects()
 }
 
 /*
+ *  returns the animation duration in millisec
+ */
+float LottieComposition::getDuration() const
+{
+    float frameDuration = mEndFrame - mStartFrame;
+    return (frameDuration / mFrameRate) * 1000;
+}
+
+/*
  * Convert the AE shape format to
  * list of bazier curves
  */

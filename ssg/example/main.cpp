@@ -130,7 +130,6 @@ main(void)
    Evas *e;
    Efl_VG *circle;
    Efl_VG *root;
-   unsigned int i;
 
    if (!ecore_evas_init())
      return -1;
@@ -171,16 +170,14 @@ main(void)
    filepath += "LightBulb.json";
    initialize(GuaranteedLogger(), "/tmp/", "ssglog", 1);
    set_log_level(LogLevel::INFO);
-   //SGJson json;
+
    std::ifstream file;
    file.open(filepath);
    std::stringstream buffer;
    buffer << file.rdbuf();
-   //std::cout <<"file size = "<< buffer.str().size()<<std::endl;
-   //std::cout << buffer.str().data();
+
    SGJson json(buffer.str().data());
    file.close();
-   std::cout<<"sizeof float :"<<sizeof(float)<<" size of double :"<<sizeof(double)<<std::endl;
 
    std::unique_ptr<VGDrawable> DrawableRoot = createCustomTree(json.mComposition);
 

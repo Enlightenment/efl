@@ -502,7 +502,9 @@ LottieParser::parseLayer()
         }else if (0 == strcmp(key, "sr")) { // "Layer Time Stretching"
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
             layer->mTimeStreatch = GetDouble();
-        } else if (0 == strcmp(key, "ip")) {
+        } else if (0 == strcmp(key, "tm")) { // time remapping
+            parseProperty(layer->mTimeRemap);
+        }else if (0 == strcmp(key, "ip")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
             layer->mStartFrame = GetDouble();
         } else if (0 == strcmp(key, "op")) {

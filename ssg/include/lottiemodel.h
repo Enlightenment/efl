@@ -61,6 +61,8 @@ public:
                      mInTangent(),
                      mOutTangent(),
                      mPathKeyFrame(false){}
+    bool containsProgress(float progress);
+
 public:
     T                   mStartValue;
     T                   mEndValue;
@@ -167,6 +169,11 @@ public:
     void accept(LottieObjectVisitor *visitor) override
     {visitor->visit(this); visitor->visitChildren(this);}
     LottieComposition():LottieGroupObject(LottieObject::Type::Composition){}
+    float getFrameDuration()const{return mEndFrame - mStartFrame;}
+    float getDuration()const;
+    long startFrame() const {return mStartFrame;}
+    long endFrame() const {return mEndFrame;}
+
 public:
     SGRect               mBound;
     bool                 mAnimation = false;
@@ -174,7 +181,6 @@ public:
     long                 mEndFrame = 0;
     float                mFrameRate;
     LottieBlendMode      mBlendMode;
-    float                mTimeStreatch;
     std::unordered_map<std::string,
                        std::shared_ptr<SGInterpolator>> mInterpolatorCache;
 };
@@ -196,6 +202,7 @@ public:
     long                 mStartTime;
     LottieBlendMode      mBlendMode;
     float                mTimeStreatch;
+    LottieAnimatable<float>     mTimeRemap;  /* "tm" */
     std::shared_ptr<LottieObject>    mTransform;
 };
 
