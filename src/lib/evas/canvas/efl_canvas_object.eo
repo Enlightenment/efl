@@ -622,4 +622,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
       Efl.Loop.Consumer.loop { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
    }
+   events {
+      anim_started; [[Animation is started.]]
+      anim_running; [[Animation is running.]]
+      anim_ended; [[Animation is ended.]]
+   }
 }
