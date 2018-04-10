@@ -107,7 +107,6 @@ _evas_async_events_fork_handle(void *data EINA_UNUSED)
 {
    ecore_pipe_del(_async_pipe);
    _async_pipe = ecore_pipe_add(_async_events_pipe_read_cb, NULL);
-   ecore_pipe_freeze(_async_pipe);
 }
 
 int
@@ -131,7 +130,6 @@ evas_async_events_init(void)
         return 0;
      }
 
-   ecore_pipe_freeze(_async_pipe);
    _read_error = EINA_FALSE;
    _write_error = EINA_FALSE;
 
@@ -181,7 +179,7 @@ evas_async_events_shutdown(void)
 EAPI int
 evas_async_events_fd_get(void)
 {
-   return ecore_pipe_read_fd(_async_pipe);
+   return -1;
 }
 
 EAPI int
