@@ -44,7 +44,7 @@ class Efl.Net.Server_Simple (Efl.Loop_Consumer, Efl.Net.Server) {
 
     implements {
         Efl.Object.finalize;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
         Efl.Net.Server.serve;
         Efl.Net.Server.client_announce;
         Efl.Net.Server.address { get; }

@@ -956,14 +956,19 @@ _efl_net_dialer_websocket_efl_object_constructor(Eo *o, Efl_Net_Dialer_Websocket
 }
 
 EOLIAN static void
+_efl_net_dialer_websocket_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
+{
+   pd->http = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
 _efl_net_dialer_websocket_efl_object_destructor(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
 {
    Eina_Stringshare *str;
 
    efl_event_callback_array_del(pd->http, _efl_net_dialer_websocket_http_cbs(), o);
-
-   efl_del(pd->http);
-   pd->http = NULL;
 
    efl_destructor(efl_super(o, MY_CLASS));
 

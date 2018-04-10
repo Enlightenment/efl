@@ -149,7 +149,6 @@ _efl_net_server_simple_efl_object_finalize(Eo *o, Efl_Net_Server_Simple_Data *pd
         DBG("created new inner server %p (%s)", server, efl_class_name_get(efl_class_get(server)));
 
         efl_net_server_simple_inner_server_set(o, server);
-        efl_unref(server);
      }
 
  end:
@@ -157,18 +156,21 @@ _efl_net_server_simple_efl_object_finalize(Eo *o, Efl_Net_Server_Simple_Data *pd
 }
 
 EOLIAN static void
-_efl_net_server_simple_efl_object_destructor(Eo *o, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_efl_object_invalidate(Eo *o, Efl_Net_Server_Simple_Data *pd)
 {
-   if (pd->inner_class) pd->inner_class = NULL;
-
    if (pd->inner_server)
      {
         efl_event_callback_array_del(pd->inner_server, _efl_net_server_simple_inner_server_cbs(), o);
         if (efl_parent_get(pd->inner_server) == o)
           efl_parent_set(pd->inner_server, NULL);
+
+        efl_unref(pd->inner_server);
+        pd->inner_server = NULL;
      }
 
-   efl_destructor(efl_super(o, MY_CLASS));
+   pd->inner_class = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static Eina_Error

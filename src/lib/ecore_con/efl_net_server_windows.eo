@@ -25,6 +25,7 @@ class Efl.Net.Server_Windows (Efl.Loop_Consumer, Efl.Net.Server) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Server.address { get; set; }
         Efl.Net.Server.clients_count { get; set; }

@@ -94,6 +94,14 @@ _efl_net_dialer_ssl_efl_object_finalize(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
 }
 
 EOLIAN static void
+_efl_net_dialer_ssl_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
+{
+   pd->sock = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
 _efl_net_dialer_ssl_efl_object_destructor(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
 {
    if (efl_io_closer_close_on_destructor_get(o) &&
@@ -102,12 +110,6 @@ _efl_net_dialer_ssl_efl_object_destructor(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
         efl_event_freeze(o);
         efl_io_closer_close(o);
         efl_event_thaw(o);
-     }
-
-   if (pd->sock)
-     {
-        efl_del(pd->sock);
-        pd->sock = NULL;
      }
 
    if (pd->ssl_ctx)

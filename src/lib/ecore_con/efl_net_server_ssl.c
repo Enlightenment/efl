@@ -149,14 +149,16 @@ _efl_net_server_ssl_ctx_del(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN void
+_efl_net_server_ssl_efl_object_invalidate(Eo *o, Efl_Net_Server_Ssl_Data *pd)
+{
+   pd->server = NULL;
+
+   efl_destructor(efl_super(o, MY_CLASS));
+}
+
+EOLIAN void
 _efl_net_server_ssl_efl_object_destructor(Eo *o, Efl_Net_Server_Ssl_Data *pd)
 {
-   if (pd->server)
-     {
-        efl_del(pd->server);
-        pd->server = NULL;
-     }
-
    if (pd->ssl_ctx)
      {
         efl_event_callback_del(pd->ssl_ctx, EFL_EVENT_DEL, _efl_net_server_ssl_ctx_del, o);

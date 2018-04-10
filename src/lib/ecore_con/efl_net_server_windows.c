@@ -277,14 +277,16 @@ _efl_net_server_windows_efl_object_constructor(Eo *o, Efl_Net_Server_Windows_Dat
 }
 
 EOLIAN static void
+_efl_net_server_windows_efl_object_invalidate(Eo *o, Efl_Net_Server_Windows_Data *pd)
+{
+   pd->next_client = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
 _efl_net_server_windows_efl_object_destructor(Eo *o, Efl_Net_Server_Windows_Data *pd)
 {
-   if (pd->next_client)
-     {
-        efl_del(pd->next_client);
-        pd->next_client = NULL;
-     }
-
    while (pd->pending_clients)
      {
         Eo *client = pd->pending_clients->data;
