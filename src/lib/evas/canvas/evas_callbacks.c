@@ -732,6 +732,10 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
    Evas_Object_Protected_Data *obj = data;
    int i;
 
+   if (!obj->layer ||
+       !obj->layer->evas)
+     return ;
+
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
