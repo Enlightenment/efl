@@ -375,6 +375,7 @@ _efl_io_queue_efl_io_writer_write(Eo *o, Efl_Io_Queue_Data *pd, Eina_Slice *slic
    int err = EINVAL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINVAL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(slice->mem, EINVAL);
    EINA_SAFETY_ON_TRUE_GOTO(efl_io_closer_closed_get(o), error);
 
    err = EBADF;
