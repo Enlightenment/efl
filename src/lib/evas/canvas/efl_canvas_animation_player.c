@@ -105,10 +105,10 @@ _animator_cb(void *data)
 
    efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
 
-   Efl_Canvas_Animation_Player_Running_Event_Info event_info;
-   event_info.progress = pd->progress;
+   Efl_Canvas_Animation_Player_Event_Running event_running;
+   event_running.progress = pd->progress;
    efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING,
-                           &event_info);
+                           &event_running);
    pd->time.prev = pd->time.current;
 
    //Not end. Keep going.

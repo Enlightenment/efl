@@ -100,8 +100,8 @@ _anim_ended_cb(void *data, const Efl_Event *event)
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Canvas_Animation_Player_Running_Event_Info *event_info = event->info;
-   double progress = event_info->progress;
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double progress = event_running->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
 

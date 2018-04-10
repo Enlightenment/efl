@@ -3445,11 +3445,6 @@ typedef Eo Efl_Animation_Group_Sequential;
 
 #endif
 
-struct _Efl_Animation_Player_Running_Event_Info
-{
-   double progress;
-};
-
 #define EFL_ANIMATION_GROUP_DURATION_NONE -1
 #define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
 

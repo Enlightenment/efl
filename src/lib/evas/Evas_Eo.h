@@ -131,7 +131,7 @@ typedef Eo Efl_Canvas_Animation_Group_Sequential;
 #define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
 
-struct _Efl_Canvas_Animation_Player_Running_Event_Info
+struct _Efl_Canvas_Animation_Player_Event_Running
 {
    double progress;
 };
