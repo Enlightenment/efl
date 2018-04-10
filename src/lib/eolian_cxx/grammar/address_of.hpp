@@ -11,6 +11,7 @@
 #include "grammar/parameter.hpp"
 #include "grammar/function_declaration.hpp"
 #include "grammar/case.hpp"
+#include "grammar/cxx_class_name.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -23,12 +24,12 @@ struct address_of_generator
 
      if(!as_generator
         (
-         scope_tab << " ::efl::eolian::address_of_operator<" << string
+         scope_tab << " ::efl::eolian::address_of_operator<" << cxx_class_name
         ).generate(sink, cls.cxx_name, context)) return false;
 
      for(auto&& i : cls.inherits)
        {
-         if(!as_generator(",  " << *("::" << lower_case[string]) << "::" << string)
+         if(!as_generator(",  " << *("::" << lower_case[string]) << "::" << cxx_class_name)
             .generate(sink, std::make_tuple(attributes::cpp_namespaces(i.namespaces), i.eolian_name), context))
            return false;
        }
@@ -40,12 +41,12 @@ struct address_of_generator
 
      if(!as_generator
         (
-         scope_tab << " ::efl::eolian::address_of_operator<" << string << " const "
+         scope_tab << " ::efl::eolian::address_of_operator<" << cxx_class_name << " const "
         ).generate(sink, cls.cxx_name, context)) return false;
 
      for(auto&& i : cls.inherits)
        {
-         if(!as_generator(",  " << *("::" << lower_case[string]) << "::" << string << " const ")
+         if(!as_generator(",  " << *("::" << lower_case[string]) << "::" << cxx_class_name << " const ")
             .generate(sink, std::make_tuple(attributes::cpp_namespaces(i.namespaces), i.eolian_name), context))
            return false;
        }

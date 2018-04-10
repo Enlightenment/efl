@@ -4,6 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/string.hpp"
+#include "grammar/cxx_class_name.hpp"
 
 namespace efl { namespace eolian { namespace grammar { namespace attributes {
 

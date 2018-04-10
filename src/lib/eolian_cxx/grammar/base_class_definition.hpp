@@ -15,6 +15,7 @@
 #include "grammar/address_of.hpp"
 #include "grammar/attribute_reorder.hpp"
 #include "grammar/part_declaration.hpp"
+#include "grammar/cxx_class_name.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -31,7 +32,7 @@ struct base_class_definition_generator
 
      if(!as_generator
         (
-         "struct " << string << " {\n"
+         "struct " << cxx_class_name << " {\n"
          ).generate(sink, cls.cxx_name, context)) return false;
 
      if(!as_generator(*(function_declaration(get_klass_name(cls))))
@@ -70,14 +71,14 @@ struct base_class_definition_generator
 
      if(!as_generator(
          scope_tab << "Eo* _eo_ptr() const { return *(reinterpret_cast<Eo **>"
-              << "(const_cast<" << string << " *>(this))); }\n"
+              << "(const_cast<" << cxx_class_name << " *>(this))); }\n"
         ).generate(sink, cls.cxx_name, context))
        return false;
 
      // operator ::ns::Class_Name() const;
      // operator ::ns::Class_Name&();
      // operator ::ns::Class_Name const&() const;
-     auto class_name = *(lit("::") << lower_case[string]) << "::" << string;
+     auto class_name = *(lit("::") << lower_case[string]) << "::" << cxx_class_name;
      if(!as_generator
         (
          attribute_reorder<0, 1, 0, 1, 0, 1, 0, 1>

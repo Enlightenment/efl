@@ -6,6 +6,7 @@
 #include "grammar/case.hpp"
 #include "grammar/container.hpp"
 #include "grammar/type.hpp"
+#include "grammar/cxx_class_name.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -263,7 +264,7 @@ struct visitor_generate
    bool operator()(attributes::klass_name klass) const
    {
      return
-       as_generator(" " << *("::" << lower_case[string]) << "::" << string)
+       as_generator(" " << *("::" << lower_case[string]) << "::" << cxx_class_name)
        .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context)
        && (!(klass.base_qualifier & qualifier_info::is_ref)
            || as_generator("&").generate(sink, attributes::unused, *context));

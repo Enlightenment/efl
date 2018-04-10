@@ -39,7 +39,7 @@ struct class_declaration_generator
 
      if(!as_generator
         (
-         "struct " << string << ";\n"
+         "struct " << cxx_class_name << ";\n"
         ).generate(sink, cls.cxx_name, context)) return false;
 
      auto close_namespace = *(lit("} ")) << "\n";
@@ -49,13 +49,13 @@ struct class_declaration_generator
        if(!as_generator
           (
            "namespace efl { namespace eo { template<> struct is_eolian_object< "
-           "::" << *(lower_case[string] << "::") << string << "> : ::std::true_type {}; } }\n"
+           "::" << *(lower_case[string] << "::") << cxx_class_name << "> : ::std::true_type {}; } }\n"
            "namespace efl { namespace eo { template<> struct is_eolian_object< "
-           "::" << *(lower_case[string] << "::") << string << "&> : ::std::true_type {}; } }\n"
+           "::" << *(lower_case[string] << "::") << cxx_class_name << "&> : ::std::true_type {}; } }\n"
            "namespace efl { namespace eo { template<> struct is_eolian_object< "
-           "::" << *(lower_case[string] << "::") << string << " const> : ::std::true_type {}; } }\n"
+           "::" << *(lower_case[string] << "::") << cxx_class_name << " const> : ::std::true_type {}; } }\n"
            "namespace efl { namespace eo { template<> struct is_eolian_object< "
-           "::" << *(lower_case[string] << "::") << string << " const&> : ::std::true_type {}; } }\n"
+           "::" << *(lower_case[string] << "::") << cxx_class_name << " const&> : ::std::true_type {}; } }\n"
            ).generate(sink, std::make_tuple
                       (
                        cpp_namespaces, cls.cxx_name, cpp_namespaces, cls.cxx_name

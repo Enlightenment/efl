@@ -24,8 +24,8 @@ struct class_implementation_generator
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& ctx) const
    {
      std::vector<std::string> cpp_namespaces = attributes::cpp_namespaces(cls.namespaces);
-     auto base_class_name = *(lower_case[string] << "::") << string;
-     auto class_name = *(lit("::") << lower_case[string]) << "::" << string;
+     auto base_class_name = *(lower_case[string] << "::") << lower_case[string];
+     auto class_name = *(lit("::") << lower_case[string]) << "::" << lower_case[string];
      std::string guard_symbol;
 
      if(!as_generator(*(string << "_") << string << "_IMPL_HH")

@@ -18,6 +18,7 @@
 #include "grammar/attribute_reorder.hpp"
 #include "grammar/type_impl.hpp"
 #include "grammar/eps.hpp"
+#include "grammar/cxx_class_name.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -71,7 +72,7 @@ struct function_definition_generator
       if (!f.is_static) const_flag = " const";
 
       if(!as_generator
-         ("inline ::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "::"
+         ("inline ::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << cxx_class_name << "::"
           << string << "(" << (parameter % ", ") << ")" << string << "\n{\n")
          .generate(sink, std::make_tuple(f.return_type, _klass_name.eolian_name,
                                          escape_keyword(f.name), f.parameters, const_flag), ctx))
