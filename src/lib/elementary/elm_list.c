@@ -1325,7 +1325,7 @@ _elm_list_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_O
                (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
                obj);
              _elm_list_item_elm_widget_item_del_pre(eo_it, it);
-             if (!sd->walking)
+             if (!sd->walking && efl_parent_get(obj))
                {
                   _items_fix(obj);
                   elm_layout_sizing_eval(obj);
