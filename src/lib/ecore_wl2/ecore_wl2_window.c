@@ -225,7 +225,6 @@ _xdg_toplevel_cb_configure(void *data, struct xdg_toplevel *xdg_toplevel EINA_UN
    Ecore_Wl2_Window *win = data;
    uint32_t *s;
 
-   win->def_config.minimized = EINA_FALSE;
    win->def_config.maximized = EINA_FALSE;
    win->def_config.fullscreen = EINA_FALSE;
    win->def_config.focused = EINA_FALSE;
@@ -248,7 +247,6 @@ _xdg_toplevel_cb_configure(void *data, struct xdg_toplevel *xdg_toplevel EINA_UN
              break;
            case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
              win->def_config.focused = EINA_TRUE;
-             win->def_config.minimized = EINA_FALSE;
            default:
              break;
           }
@@ -1092,15 +1090,10 @@ ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int
 EAPI void
 ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 {
-   Eina_Bool prev;
-
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   prev = window->set_config.minimized;
    iconified = !!iconified;
-   if (prev == iconified) return;
 
-   window->set_config.minimized = iconified;
 
    if (iconified)
      {

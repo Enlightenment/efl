@@ -31,7 +31,6 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
    Ecore_Wl2_Window *win = data;
    uint32_t *s;
 
-   win->def_config.minimized = EINA_FALSE;
    win->def_config.maximized = EINA_FALSE;
    win->def_config.fullscreen = EINA_FALSE;
    win->def_config.focused = EINA_FALSE;
@@ -54,7 +53,6 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
              break;
            case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
              win->def_config.focused = EINA_TRUE;
-             win->def_config.minimized = EINA_FALSE;
            default:
              break;
           }

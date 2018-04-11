@@ -156,7 +156,6 @@ typedef struct _Ecore_Wl2_Window_Configure_State
 {
    uint32_t serial;
    Eina_Rectangle geometry;
-   Eina_Bool minimized : 1;
    Eina_Bool maximized : 1;
    Eina_Bool fullscreen : 1;
    Eina_Bool focused : 1;
