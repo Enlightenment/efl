@@ -271,8 +271,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
              if (pid > 0)
                {
                   num_forks++;
+#ifdef ENABLE_TIMING_INFO
                   if (timing)
                     tcstart = _timing_time_get();
+#endif
                   continue;
                }
           }
