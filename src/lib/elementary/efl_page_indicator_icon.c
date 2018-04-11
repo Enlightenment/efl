@@ -110,7 +110,7 @@ _efl_page_indicator_icon_efl_object_constructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_page_indicator_icon_efl_object_destructor(Eo *obj,
+_efl_page_indicator_icon_efl_object_invalidate(Eo *obj,
                                                Efl_Page_Indicator_Icon_Data *pd)
 {
    Eo *item;
@@ -118,7 +118,7 @@ _efl_page_indicator_icon_efl_object_destructor(Eo *obj,
    EINA_LIST_FREE(pd->items, item)
       efl_del(item);
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 

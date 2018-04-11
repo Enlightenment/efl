@@ -318,7 +318,7 @@ _efl_page_transition_scroll_update(Eo *obj,
         else
           {
              tmp_id = (curr_page + pi->pos + cnt) % cnt;
-             if (pi->content)
+             if (pi->content) //FIXME if the content num is the same, do nothing
                {
                   efl_pack_unpack(pi->obj, pi->content);
                   efl_canvas_object_clip_set(pi->content, pd->backclip);
@@ -446,6 +446,37 @@ _efl_page_transition_scroll_side_page_num_get(Eo *obj EINA_UNUSED,
    return pd->side_page_num;
 }
 
+static Page_Info *
+_add_item(Efl_Page_Transition_Scroll_Data *pd, Efl_Page_Transition_Data *spd)
+{
+   Page_Info *pi;
+
+   pi = calloc(1, sizeof(*pi));
+   pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
+   efl_canvas_group_member_add(spd->pager.group, pi->obj);
+   pi->content_num = -1;
+   pi->content = NULL;
+
+   pi->next = pd->head;
+   pd->head->prev = pi;
+   pi->prev = pd->tail;
+   pd->tail->next = pi;
+
+   return pi;
+}
+
+static void
+_remove_item(Page_Info *pi, Efl_Page_Transition_Scroll_Data *pd)
+{
+   efl_canvas_object_clip_set(pi->content, pd->backclip);
+   efl_pack_unpack(pi->obj, pi->content);
+   efl_del(pi->obj);
+   pi->prev->next = pi->next;
+   pi->next->prev = pi->prev;
+   pd->page_infos = eina_list_remove(pd->page_infos, pi);
+   free(pi);
+}
+
 EOLIAN static void
 _efl_page_transition_scroll_side_page_num_set(Eo *obj,
                                               Efl_Page_Transition_Scroll_Data *pd,
@@ -468,34 +499,14 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
         // side_page_num is increased, so add boxes at both ends by the diff
         for (i = 0; i < delta; i++)
           {
-             pi = calloc(1, sizeof(*pi));
-             pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
-             efl_canvas_group_member_add(spd->pager.group, pi->obj);
-             pi->content_num = -1;
-             pi->content = NULL;
+             pi = _add_item(pd, spd);
              pd->page_infos = eina_list_prepend_relative(pd->page_infos, pi, pd->head);
-
-             pi->next = pd->head;
-             pd->head->prev = pi;
-             pi->prev = pd->tail;
-             pd->tail->next = pi;
              pd->head = pi;
-
              efl_gfx_stack_below(pi->obj, pi->next->obj);
 
-             pi = calloc(1, sizeof(*pi));
-             pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
-             efl_canvas_group_member_add(spd->pager.group, pi->obj);
-             pi->content_num = -1;
-             pi->content = NULL;
+             pi = _add_item(pd, spd);
              pd->page_infos = eina_list_append_relative(pd->page_infos, pi, pd->tail);
-
-             pi->next = pd->head;
-             pd->head->prev = pi;
-             pi->prev = pd->tail;
-             pd->tail->next = pi;
              pd->tail = pi;
-
              efl_gfx_stack_above(pi->obj, pi->prev->obj);
           }
      }
@@ -506,25 +517,11 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
           {
              pi = pd->head;
              pd->head = pi->next;
-
-             efl_canvas_object_clip_set(pi->content, pd->backclip);
-             efl_pack_unpack(pi->obj, pi->content);
-             efl_del(pi->obj);
-             pi->prev->next = pi->next;
-             pi->next->prev = pi->prev;
-             pd->page_infos = eina_list_remove(pd->page_infos, pi);
-             free(pi);
+             _remove_item(pi, pd);
 
              pi = pd->tail;
              pd->tail = pi->prev;
-
-             efl_canvas_object_clip_set(pi->content, pd->backclip);
-             efl_pack_unpack(pi->obj, pi->content);
-             efl_del(pi->obj);
-             pi->prev->next = pi->next;
-             pi->next->prev = pi->prev;
-             pd->page_infos = eina_list_remove(pd->page_infos, pi);
-             free(pi);
+             _remove_item(pi, pd);
           }
      }
 
@@ -566,7 +563,7 @@ _efl_page_transition_scroll_efl_object_constructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_page_transition_scroll_efl_object_destructor(Eo *obj,
+_efl_page_transition_scroll_efl_object_invalidate(Eo *obj,
                                                   Efl_Page_Transition_Scroll_Data *pd)
 {
    Page_Info *pi;
@@ -577,7 +574,7 @@ _efl_page_transition_scroll_efl_object_destructor(Eo *obj,
         free(pi);
      }
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 

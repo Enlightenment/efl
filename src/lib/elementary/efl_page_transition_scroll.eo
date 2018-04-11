@@ -16,7 +16,7 @@ class Efl.Page.Transition.Scroll (Efl.Page.Transition)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Page.Transition.bind;
    }
 }

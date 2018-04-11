@@ -8,6 +8,6 @@ class Efl.Page.Indicator.Icon (Efl.Page.Indicator)
    ]]
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
    }
 }

@@ -14,7 +14,6 @@ typedef struct _Efl_Ui_Pager_Data
    Eo                      *page_root;
    Eo                      *event;
    Efl_Ui_Box              *idbox;
-   Ecore_Animator          *animator;
    Ecore_Job               *job;
    Ecore_Job               *page_info_job;
 
@@ -39,14 +38,14 @@ typedef struct _Efl_Ui_Pager_Data
    } curr;
 
    struct {
-      Ecore_Animator       *animator;
       double                src;
-      double                dst;
       double                delta;
+      double                start_time;
       Eina_Bool             jump;
    } change;
 
    int                      cnt;
+   double                   mouse_up_time;
 
    Efl_Ui_Pager_Loop        loop;
    Efl_Page_Transition     *transition;
