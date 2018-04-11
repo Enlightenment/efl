@@ -51,7 +51,7 @@ struct struct_definition_generator
                documentation(1)
                << scope_tab(1) << "public " << type << " " << string << ";\n"
               )
-              .generate(sink, std::make_tuple(field, field.type, to_field_name(field.name)), context))
+              .generate(sink, std::make_tuple(field, field.type, helpers::to_field_name(field.name)), context))
             return false;
        }
 
@@ -104,7 +104,7 @@ struct struct_internal_definition_generator
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
-          auto field_name = to_field_name(field.name);
+          auto field_name = helpers::to_field_name(field.name);
           auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
           auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
 
@@ -165,7 +165,7 @@ struct to_internal_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto field_name = to_field_name(field.name);
+      auto field_name = helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
@@ -191,14 +191,14 @@ struct to_internal_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
-      else if (field.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(regular))
+      else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_internal_struct." << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
-      else if (need_struct_conversion(regular))
+      else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_internal_struct." << string << " = " << type << "_StructConversion.ToInternal(_external_struct." << string << ");\n")
@@ -259,7 +259,7 @@ struct to_external_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto field_name = to_field_name(field.name);
+      auto field_name = helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
@@ -301,14 +301,14 @@ struct to_external_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
-      else if (field.type.is_ptr && need_pointer_conversion(regular) && !need_struct_conversion(regular))
+      else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_external_struct." << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
-      else if (need_struct_conversion(regular))
+      else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToExternal(_internal_struct." << string << ");\n")
@@ -439,7 +439,7 @@ struct struct_entities_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-     if (is_struct_blacklisted(struct_))
+     if (helpers::is_struct_blacklisted(struct_))
        return true;
 
      std::vector<std::string> cpp_namespaces = escape_namespace(attributes::cpp_namespaces(struct_.namespaces));

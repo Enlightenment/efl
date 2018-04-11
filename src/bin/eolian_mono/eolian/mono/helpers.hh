@@ -12,6 +12,8 @@
 
 namespace eolian_mono {
 
+namespace helpers {
+
 namespace attributes = efl::eolian::grammar::attributes;
 
 inline std::string type_full_name(attributes::regular_type_def const& type)
@@ -140,6 +142,8 @@ inline std::string klass_get_name(attributes::klass_name const &clsname)
   return output.str();
 }
 
-}
+} // namespace helpers
+
+} // namespace eolian_mono
 
 #endif

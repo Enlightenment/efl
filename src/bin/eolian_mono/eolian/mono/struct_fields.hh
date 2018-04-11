@@ -20,7 +20,7 @@ struct field_argument_default_generator
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
        if (!as_generator(type << " " << string << "=default(" << type << ")")
-               .generate(sink, std::make_tuple(field.type, to_field_name(field.name), field.type), context))
+               .generate(sink, std::make_tuple(field.type, helpers::to_field_name(field.name), field.type), context))
            return false;
        return true;
    }
@@ -32,7 +32,7 @@ struct field_argument_assignment_generator
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
        if (!as_generator("this." << string << " = " << string)
-               .generate(sink, std::make_tuple(to_field_name(field.name), to_field_name(field.name)), context))
+               .generate(sink, std::make_tuple(helpers::to_field_name(field.name), helpers::to_field_name(field.name)), context))
            return false;
        return true;
    }

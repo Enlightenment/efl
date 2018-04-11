@@ -155,7 +155,7 @@ struct marshall_type_visitor_generate
                }}
         };
 
-        if (regular.is_struct() && !is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
+        if (regular.is_struct() && !helpers::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
           {
              if ((is_out || is_return) && is_ptr)
                  return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
@@ -177,7 +177,7 @@ struct marshall_type_visitor_generate
         {
            return *b;
         }
-      else if (is_ptr && need_pointer_conversion(&regular))
+      else if (is_ptr && helpers::need_pointer_conversion(&regular))
         {
            regular_type_def r = regular;
            r.base_type = " System.IntPtr";

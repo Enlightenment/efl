@@ -241,7 +241,9 @@ struct klass
        }
 
      for (auto &&p : cls.parts)
-       if (!as_generator( klass_name_to_csharp(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n").generate(sink, attributes::unused, iface_cxt))
+       if (!as_generator(
+              helpers::klass_name_to_csharp(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
+            ).generate(sink, attributes::unused, iface_cxt))
          return false;
 
      // End of interface declaration

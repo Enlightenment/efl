@@ -165,7 +165,7 @@ struct function_definition_generator
         << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
-        << (f.is_static ? klass_get_name(f.klass) + "()": "this.raw_handle")
+        << (f.is_static ? helpers::klass_get_name(f.klass) + "()": "this.raw_handle")
         << (do_super ? ", this.raw_klass)" : "")
         << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()

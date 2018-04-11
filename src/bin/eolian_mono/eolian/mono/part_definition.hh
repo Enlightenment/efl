@@ -17,7 +17,7 @@ struct part_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::part_def const& part, Context const& context) const
   {
-     std::string part_klass_name = klass_name_to_csharp(part.klass);
+     std::string part_klass_name = helpers::klass_name_to_csharp(part.klass);
      return as_generator(scope_tab << documentation
                        << scope_tab << "public " << part_klass_name << " " << utils::capitalize(part.name) << "\n"
                        << scope_tab << "{\n"
