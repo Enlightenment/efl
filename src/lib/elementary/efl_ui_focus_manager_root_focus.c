@@ -31,10 +31,13 @@ static void
 _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    Efl_Ui_Focus_Object *root;
-   Eina_Bool none_logical = EINA_FALSE;
+   Eina_Bool none_logical = EINA_FALSE, focused = EINA_FALSE;
 
    if (pd->rect_registered)
-     efl_ui_focus_manager_calc_unregister(obj, pd->rect);
+     {
+        focused = efl_ui_focus_object_focus_get(pd->rect);
+        efl_ui_focus_manager_calc_unregister(obj, pd->rect);
+     }
 
    root = efl_ui_focus_manager_root_get(obj);
    none_logical = !!efl_ui_focus_manager_request_subchild(obj, root);
@@ -45,6 +48,10 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
      {
         efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
         pd->rect_registered = EINA_TRUE;
+
+        if (focused)
+          efl_ui_focus_manager_focus_set(obj, pd->rect);
+
      }
 }
 
