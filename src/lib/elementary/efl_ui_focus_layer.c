@@ -68,7 +68,7 @@ _efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(Eo *obj, Efl_Ui_Focus_
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_layer_efl_ui_focus_object_focus_parent_get(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
+_efl_ui_focus_layer_efl_ui_focus_object_focus_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd)
 {
    if (pd->registered_manager)
      return efl_ui_focus_manager_root_get(pd->registered_manager);

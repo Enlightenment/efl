@@ -251,7 +251,7 @@ _efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_set(Eo *obj EINA_UNU
 }
 
 EOLIAN static void
-_efl_ui_focus_composition_adapter_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+_efl_ui_focus_composition_adapter_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
 {
    efl_ui_focus_composition_adapter_canvas_object_set(obj, NULL);
 
