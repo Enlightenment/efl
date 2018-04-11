@@ -365,6 +365,10 @@ _window_shell_surface_create(Ecore_Wl2_Window *window)
         xdg_toplevel_add_listener(window->xdg_toplevel,
                                       &_xdg_toplevel_listener, window);
 
+        if (window->deferred_minimize)
+          xdg_toplevel_set_minimized(window->xdg_toplevel);
+        window->deferred_minimize = EINA_FALSE;
+
         if (window->title)
           xdg_toplevel_set_title(window->xdg_toplevel, window->title);
         if (window->class)
@@ -1094,6 +1098,11 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 
    iconified = !!iconified;
 
+   if (!window->xdg_toplevel && !window->zxdg_toplevel)
+     {
+        window->deferred_minimize = iconified;
+        return;
+     }
 
    if (iconified)
      {

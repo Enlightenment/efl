@@ -161,6 +161,10 @@ _window_v6_shell_surface_create(Ecore_Wl2_Window *window)
         zxdg_toplevel_v6_add_listener(window->zxdg_toplevel,
                                       &_zxdg_toplevel_listener, window);
 
+        if (window->deferred_minimize)
+          zxdg_toplevel_v6_set_minimized(window->zxdg_toplevel);
+        window->deferred_minimize = EINA_FALSE;
+
         if (window->title)
           zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);
         if (window->class)
