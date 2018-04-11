@@ -70,7 +70,7 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 
-
+EOLIAN static Eina_Bool _elm_list_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item);
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
    {"select", _key_action_select},
@@ -1324,6 +1324,7 @@ _elm_list_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_O
              evas_object_event_callback_del_full
                (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
                obj);
+             _elm_list_item_elm_widget_item_del_pre(eo_it, it);
              if (!sd->walking)
                {
                   _items_fix(obj);
@@ -2026,7 +2027,7 @@ _elm_list_item_elm_widget_item_part_text_get(const Eo *eo_it, Elm_List_Item_Data
    return it->label;
 }
 
-/* FIXME: this _item_del_pre_hook is never been called at all!
+/* FIXME: this _item_del_pre_hook is called stupidly!
  To fix this,
  1. it->walking concept should be adopted.
  2. elm_widget_item_del() should be called instead of the combination of
