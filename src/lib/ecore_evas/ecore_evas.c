@@ -583,8 +583,6 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 EAPI int
 ecore_evas_init(void)
 {
-   int fd;
-
    if (++_ecore_evas_init_count != 1)
      return _ecore_evas_init_count;
 
