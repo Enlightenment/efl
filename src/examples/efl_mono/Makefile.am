@@ -4,6 +4,11 @@ include $(top_srcdir)/src/Makefile_Eolian_Helper.am
 include $(top_srcdir)/src/Makefile_Eolian_Mono_Helper.am
 include $(top_srcdir)/src/Makefile_Efl_Mono_MSBuild_Gen_Helper.am
 
+# Eolian_Files_Helper
+# Thus we need to override it here in order to make its pattern
+# rules work properly.
+_EOLIAN_GEN_DEP = ../../bin/eolian/eolian_gen${EXEEXT}
+
 SRCS = example_numberwrapper.c
 EXTRA_FILES = example_numberwrapper.eo
 EXTRA_PROGRAMS =
@@ -37,13 +42,6 @@ else
 COMMON_FLAGS += \
 -fPIC -DPIC
 endif
-
-
-# %.eo.c: %.eo
-# 	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) -gc -o c:$@ $<
-
-# %.eo.h: %.eo
-# 	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) -gh -o h:$@ $<
 
 example_numberwrapper.c: example_numberwrapper.eo.h example_numberwrapper.eo.c
 
