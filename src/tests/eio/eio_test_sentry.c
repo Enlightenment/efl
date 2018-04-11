@@ -145,7 +145,7 @@ EFL_START_TEST(eio_test_sentry_add_and_remove)
    _create_directory((void*)filename);
 
    //monitor directory
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
    fail_if(!eio_sentry_add(sentry, filename));
 
    eio_sentry_remove(sentry, filename);
@@ -166,7 +166,7 @@ EFL_START_TEST(eio_test_sentry_add_remove_add)
    _create_directory((void*)filename);
 
    //monitor directory
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
    fail_if(!eio_sentry_add(sentry, filename));
    eio_sentry_remove(sentry, filename);
 
@@ -191,7 +191,7 @@ EFL_START_TEST(eio_test_sentry_add_add_remove_remove)
    _create_directory((void*)filename1);
    _create_directory((void*)filename2);
 
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, filename1));
@@ -221,7 +221,7 @@ EFL_START_TEST(eio_test_sentry_directory_file_created_notify)
    Eo* sentry;
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_file_created_notify", dirname);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -245,7 +245,7 @@ EFL_START_TEST(eio_test_sentry_directory_file_deleted_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_file_deleted_notify", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -269,7 +269,7 @@ EFL_START_TEST(eio_test_sentry_directory_file_modified_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_file_modified_notify", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -294,7 +294,7 @@ EFL_START_TEST(eio_test_sentry_directory_file_closed_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_file_closed_notify", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -316,7 +316,7 @@ EFL_START_TEST(eio_test_sentry_directory_directory_created_notify)
    Eo *sentry;
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_directory_created_notify", dirname);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -340,7 +340,7 @@ EFL_START_TEST(eio_test_sentry_directory_directory_deleted_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_directory_deleted_notify", dirname);
    _create_directory((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -364,7 +364,7 @@ EFL_START_TEST(eio_test_sentry_directory_directory_modified_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_directory_directory_modified_notify", dirname);
    _create_directory((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -383,7 +383,7 @@ EFL_END_TEST
 EFL_START_TEST(eio_test_sentry_directory_directory_self_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
-   Eo *sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   Eo *sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -409,7 +409,7 @@ EFL_START_TEST(eio_test_sentry_file_file_modified_notify)
 
    filename = eina_stringshare_printf("%s/filecreated", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, filename));
@@ -434,7 +434,7 @@ EFL_START_TEST(eio_test_sentry_file_file_attrib_modified_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_file_file_attrib_modified_notify", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, filename));
@@ -459,7 +459,7 @@ EFL_START_TEST(eio_test_sentry_file_file_closed_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_file_file_closed_notify", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -482,7 +482,7 @@ EFL_START_TEST(eio_test_sentry_file_file_self_deleted_notify)
 
    filename = eina_stringshare_printf("%s/eio_test_sentry_file_file_self_deleted_notify", dirname);
    _create_file((void*)filename);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, filename));
@@ -508,7 +508,7 @@ EFL_START_TEST(eio_test_sentry_two_monitors_one_event)
 
    eina_file_mkdtemp("checkFileCreationXXXXXX", &dirname2);
    filename = eina_stringshare_printf("%s/eio_test_sentry_two_monitors_one_event", dirname);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -537,7 +537,7 @@ EFL_START_TEST(eio_test_sentry_two_monitors_one_removed_one_event)
 
    eina_file_mkdtemp("checkFileCreationXXXXXX", &dirname2);
    filename = eina_stringshare_printf("%s/eio_test_sentry_two_monitors_one_removed", dirname);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname2));
@@ -571,7 +571,7 @@ EFL_START_TEST(eio_test_sentry_two_monitors_one_removed_no_event)
 
    eina_file_mkdtemp("checkFileCreationXXXXXX", &dirname2);
    filename = eina_stringshare_printf("%s/eio_test_sentry_two_monitors_one_removed", dirname);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
@@ -602,7 +602,7 @@ EFL_START_TEST(eio_test_sentry_two_files_in_same_directory)
    filename2 = eina_stringshare_printf("%s/eio_test_sentry_two_files_in_same_directory_2", dirname);
    _create_file((void*)filename);
    _create_file((void*)filename2);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor file
    fail_if(!eio_sentry_add(sentry,filename));
@@ -632,7 +632,7 @@ EFL_START_TEST(eio_test_sentry_two_files_in_same_directory_one_removed)
    filename2 = eina_stringshare_printf("%s/eio_test_sentry_two_files_in_same_directory_one_removed_2", dirname);
    _create_file((void*)filename);
    _create_file((void*)filename2);
-   sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+   sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
 
    //monitor file
    fail_if(!eio_sentry_add(sentry,filename));

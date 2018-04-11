@@ -258,7 +258,7 @@ efl_main(void *data EINA_UNUSED,
     * the line_delimiter, then wait for a reply from the server, then
     * write another.
     */
-   send_queue = efl_add(EFL_IO_QUEUE_CLASS, ev->object,
+   send_queue = efl_add_ref(EFL_IO_QUEUE_CLASS, NULL,
                         efl_name_set(efl_added, "send_queue"),
                         efl_io_queue_limit_set(efl_added, buffer_limit));
    if (!send_queue)
@@ -279,7 +279,7 @@ efl_main(void *data EINA_UNUSED,
     * Our example's usage is to peek its data with slice_get() then
     * clear().
     */
-   receive_queue = efl_add(EFL_IO_QUEUE_CLASS, ev->object,
+   receive_queue = efl_add_ref(EFL_IO_QUEUE_CLASS, NULL,
                            efl_name_set(efl_added, "receive_queue"),
                            efl_io_queue_limit_set(efl_added, buffer_limit),
                            efl_event_callback_add(efl_added, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, _receiver_data, NULL));
@@ -359,9 +359,9 @@ efl_main(void *data EINA_UNUSED,
  error_sender:
    efl_del(dialer);
  error_dialer:
-   efl_del(receive_queue);
+   efl_unref(receive_queue);
  error_receive_queue:
-   efl_del(send_queue);
+   efl_unref(send_queue);
  end:
    EINA_LIST_FREE(commands, cmd)
      {

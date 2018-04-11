@@ -48,9 +48,9 @@ main(void)
    poller2 = ecore_poller_add(ECORE_POLLER_CORE, 8, _poller_print_cb, str2);
    poller3 = ecore_poller_add(ECORE_POLLER_CORE, 30, _poller_quit_cb, str3);
 
-//   poller1 = efl_add(ECORE_POLLER_CLASS, efl_main_loop_get(), //         ecore_poller_constructor(efl_added, ECORE_POLLER_CORE, 4, _poller_print_cb, str1));
-//   poller2 = efl_add(ECORE_POLLER_CLASS, efl_main_loop_get(), //         ecore_poller_constructor(efl_added, ECORE_POLLER_CORE, 8, _poller_print_cb, str2));
-//   poller3 = efl_add(ECORE_POLLER_CLASS, efl_main_loop_get(), //         ecore_poller_constructor(efl_added, ECORE_POLLER_CORE, 20, _poller_quit_cb, str3));
+//   poller1 = efl_add_ref(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(efl_added, ECORE_POLLER_CORE, 4, _poller_print_cb, str1));
+//   poller2 = efl_add_ref(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(efl_added, ECORE_POLLER_CORE, 8, _poller_print_cb, str2));
+//   poller3 = efl_add_ref(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(efl_added, ECORE_POLLER_CORE, 20, _poller_quit_cb, str3));
 
 
    ecore_main_loop_begin();
@@ -61,9 +61,9 @@ main(void)
 //   ecore_poller_interval_set(poller2, 16, NULL);
    ecore_main_loop_begin();
 
-//   efl_del(poller1);
-//   efl_del(poller2);
-//   efl_del(poller3);
+//   efl_unref(poller1);
+//   efl_unref(poller2);
+//   efl_unref(poller3);
    ecore_poller_del(poller1);
    ecore_poller_del(poller2);
    ecore_poller_del(poller3);

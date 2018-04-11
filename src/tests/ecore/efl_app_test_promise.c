@@ -872,7 +872,7 @@ EFL_START_TEST(efl_test_promise_eo)
    fail_if(!ecore_init());
 
    //Use a random object..
-   obj = efl_add(EFL_IO_BUFFER_CLASS, efl_main_loop_get());
+   obj = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
    fail_if(!obj);
    efl_key_data_set(obj, "free_called", &free_called);
    f = eina_future_chain(_int_future_get(),
@@ -931,7 +931,7 @@ EFL_START_TEST(efl_test_promise_eo_link)
    fail_if(!ecore_init());
 
    //Use a random object..
-   obj = efl_add(EFL_IO_BUFFER_CLASS, efl_main_loop_get());
+   obj = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
    fail_if(!obj);
 
    efl_key_data_set(obj, "err_called", &err_called);

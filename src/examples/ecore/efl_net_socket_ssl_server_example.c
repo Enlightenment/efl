@@ -227,7 +227,7 @@ efl_terminate(void *data EINA_UNUSED,
         efl_del(server);
         server = NULL;
 
-        efl_del(ssl_ctx);
+        efl_unref(ssl_ctx);
         ssl_ctx = NULL;
 
         EINA_LIST_FREE(certificates, str) free(str);
@@ -301,7 +301,7 @@ efl_main(void *data EINA_UNUSED,
           cipher = EFL_NET_SSL_CIPHER_TLSV1_2;
      }
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, ev->object,
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(crls)),
@@ -363,7 +363,7 @@ efl_main(void *data EINA_UNUSED,
    efl_del(server);
    server = NULL;
  end_ctx:
-   efl_del(ssl_ctx);
+   efl_unref(ssl_ctx);
 
  end:
    EINA_LIST_FREE(certificates, str) free(str);

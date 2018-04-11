@@ -431,7 +431,7 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    current_date = time(NULL) + SEC_PER_YEAR;
    localtime_r(&current_date, &max_date);
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Efl Ui Calendar"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

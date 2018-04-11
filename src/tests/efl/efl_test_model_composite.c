@@ -108,7 +108,7 @@ EFL_START_TEST(efl_test_model_composite_boolean)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
-   base_model = efl_add(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
+   base_model = efl_add_ref(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
    ck_assert(!!base_model);
 
    for (i = 0; i < child_number; ++i)
@@ -119,7 +119,7 @@ EFL_START_TEST(efl_test_model_composite_boolean)
         efl_model_property_set(child, "test_p_int", &v);
      }
 
-   model = efl_add(EFL_MODEL_COMPOSITE_BOOLEAN_CLASS, efl_main_loop_get(),
+   model = efl_add_ref(EFL_MODEL_COMPOSITE_BOOLEAN_CLASS, efl_main_loop_get(),
                   efl_ui_view_model_set(efl_added, base_model),
                   efl_model_composite_boolean_add(efl_added, "test_p_true", EINA_TRUE),
                   efl_model_composite_boolean_add(efl_added, "test_p_false", EINA_FALSE));
@@ -151,7 +151,7 @@ EFL_START_TEST(efl_test_model_composite_selection)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
-   base_model = efl_add(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
+   base_model = efl_add_ref(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
    ck_assert(!!base_model);
 
    for (i = 0; i < child_number; ++i)
@@ -162,7 +162,7 @@ EFL_START_TEST(efl_test_model_composite_selection)
         efl_model_property_set(child, "test_p_int", &v);
      }
 
-   model = efl_add(EFL_MODEL_COMPOSITE_SELECTION_CLASS, efl_main_loop_get(),
+   model = efl_add_ref(EFL_MODEL_COMPOSITE_SELECTION_CLASS, efl_main_loop_get(),
                    efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
    future = efl_model_property_set(model, "selected", eina_value_int_new(2));

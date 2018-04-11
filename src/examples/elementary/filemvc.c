@@ -35,7 +35,6 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_unref(priv->fileview);
    efl_unref(priv->treeview);
    efl_unref(priv->formview);
-   efl_unref(priv->treemodel);
 }
 
 static int
@@ -125,12 +124,12 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
    //treemodel
-   priv.treemodel = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(), eio_model_path_set(efl_added, dirname));
+   priv.treemodel = efl_add(EIO_MODEL_CLASS, win, eio_model_path_set(efl_added, dirname));
    eio_model_children_filter_set(priv.treemodel, NULL, _filter_cb, NULL);
 
    //treeview
    genlist = elm_genlist_add(win);
-   priv.treeview = efl_add(ELM_VIEW_LIST_CLASS, efl_main_loop_get(), elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_TREE, NULL));
+   priv.treeview = efl_add_ref(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_TREE, NULL));
    elm_view_list_property_connect(priv.treeview, "filename", "elm.text");
    elm_view_list_property_connect(priv.treeview, "icon", "elm.swallow.icon");
    elm_view_list_model_set(priv.treeview, priv.treemodel);
@@ -145,7 +144,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    //listview
    genlist = elm_genlist_add(win);
-   priv.fileview = efl_add(ELM_VIEW_LIST_CLASS, efl_main_loop_get(), elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
+   priv.fileview = efl_add_ref(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
    elm_view_list_property_connect(priv.fileview, "filename", "elm.text");
    elm_view_list_property_connect(priv.fileview, "mime_type", "elm.text.sub");
 
@@ -159,7 +158,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bxr = elm_box_add(win);
    _widget_init(bxr);
    elm_object_part_content_set(vpanes, "right", bxr);
-   priv.formview = efl_add(ELM_VIEW_FORM_CLASS, efl_main_loop_get());
+   priv.formview = efl_add_ref(ELM_VIEW_FORM_CLASS, NULL);
 
    /*Label widget */
    elm_view_form_widget_add(priv.formview, "filename", _label_init(win, bxr, "File Name"));

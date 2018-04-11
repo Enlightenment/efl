@@ -142,7 +142,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    content_class[16] = EFL_UI_SPIN_CLASS;
    content_class[17] = EFL_UI_SPIN_BUTTON_CLASS;
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Widget Part Background"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

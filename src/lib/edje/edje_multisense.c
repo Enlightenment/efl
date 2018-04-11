@@ -10,14 +10,14 @@ static Eina_Bool outfail = EINA_FALSE;
 static void
 _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   efl_del(event->object);
+   efl_unref(event->object);
 }
 
 static void
 _out_fail(void *data EINA_UNUSED, const Efl_Event *event)
 {
    outfail = EINA_TRUE;
-   efl_del(event->object);
+   efl_unref(event->object);
    out = NULL;
 }
 
@@ -199,15 +199,15 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
              eet_data->vio.tell = eet_snd_file_tell;
              eet_data->offset = 0;
 
-             in = efl_add(ECORE_AUDIO_IN_SNDFILE_CLASS, efl_main_loop_get(), efl_name_set(efl_added, snd_id_str), ecore_audio_obj_in_speed_set(efl_added, speed), ecore_audio_obj_vio_set(efl_added, &eet_data->vio, eet_data, _free), efl_event_callback_add(efl_added, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
+             in = efl_add_ref(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, efl_name_set(efl_added, snd_id_str), ecore_audio_obj_in_speed_set(efl_added, speed), ecore_audio_obj_vio_set(efl_added, &eet_data->vio, eet_data, _free), efl_event_callback_add(efl_added, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
              if (!out)
                {
 
 # ifdef _WIN32
-                  out = efl_add(ECORE_AUDIO_OUT_WASAPI_CLASS, efl_main_loop_get(), efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = efl_add_ref(ECORE_AUDIO_OUT_WASAPI_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 # else
 #  ifdef HAVE_PULSE
-                  out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, efl_main_loop_get(), efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = efl_add_ref(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #  endif
 # endif
                   if (out) outs++;
@@ -227,7 +227,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
 #  endif
 # endif
                     }
-                  efl_del(in);
+                  efl_unref(in);
                   return EINA_FALSE;
                }
              ret = ecore_audio_obj_out_input_attach(out, in);
@@ -240,7 +240,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
                        complained = EINA_TRUE;
                        ERR("Could not attach input");
                     }
-                  efl_del(in);
+                  efl_unref(in);
                   return EINA_FALSE;
                }
           }
@@ -283,7 +283,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
         tone = &ed->file->sound_dir->tones[i];
         if (!strcmp(tone->name, tone_name))
           {
-             in = efl_add(ECORE_AUDIO_IN_TONE_CLASS, efl_main_loop_get());
+             in = efl_add_ref(ECORE_AUDIO_IN_TONE_CLASS, NULL);
              efl_name_set(in, "tone");
              efl_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &tone->value);
              ecore_audio_obj_in_length_set(in, duration);
@@ -292,10 +292,10 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!out)
                {
 # ifdef _WIN32
-                  out = efl_add(ECORE_AUDIO_OUT_WASAPI_CLASS, efl_main_loop_get(), efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = efl_add_ref(ECORE_AUDIO_OUT_WASAPI_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 # else
 #  ifdef HAVE_PULSE
-                  out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, efl_main_loop_get(), efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = efl_add_ref(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #  endif
 # endif
                   if (out) outs++;
@@ -305,7 +305,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!ret)
                {
                   ERR("Could not attach input");
-                  efl_del(in);
+                  efl_unref(in);
                   return EINA_FALSE;
                }
           }
@@ -353,7 +353,7 @@ _edje_multisense_shutdown(void)
    if (out)
      {
         // XXX: this causes an abort inside of pa!!!!!
-        //efl_del(out);
+        //efl_unref(out);
         out = NULL;
         outs = 0;
      }

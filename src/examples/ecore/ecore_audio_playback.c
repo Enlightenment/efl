@@ -201,7 +201,7 @@ static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 
   inputs = eina_list_remove(inputs, event->object);
   ret = ecore_audio_obj_out_input_detach(out, event->object);
-  efl_del(event->object);
+  efl_unref(event->object);
 
   if (!ret)
     printf("Could not detach input %s\n", name);
@@ -252,7 +252,7 @@ main(int argc, const char *argv[])
      {
        if (!strncmp(argv[i], "tone:", 5))
          {
-            in = efl_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, efl_main_loop_get());
+            in = efl_add_ref(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
             if (!in)
               {
                  printf("error when creating ecore audio source.\n");
@@ -276,7 +276,7 @@ main(int argc, const char *argv[])
          }
        else
          {
-            in = efl_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, efl_main_loop_get());
+            in = efl_add_ref(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
             if (!in)
               {
                  printf("error when creating ecore audio source.\n");
@@ -307,7 +307,7 @@ main(int argc, const char *argv[])
 
    printf("Start: %s (%0.2fs)\n", name, length);
 
-   out = efl_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, efl_main_loop_get());
+   out = efl_add_ref(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
    ret = ecore_audio_obj_out_input_attach(out, in);
    if (!ret)
      printf("Could not attach input %s\n", name);
