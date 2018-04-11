@@ -82,6 +82,7 @@ typedef struct {
 
 static Node* _request_subchild(Node *node);
 static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
+static Node* _next(Node *node);
 
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
@@ -1012,9 +1013,10 @@ _efl_ui_focus_manager_calc_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Man
 static inline Node*
 _request_subchild_except(Node *n, Node *except)
 {
+   n = _request_subchild(n);
    do
      {
-        n = _request_subchild(n);
+        n = _next(n);
      }
    while (n == except);
 
