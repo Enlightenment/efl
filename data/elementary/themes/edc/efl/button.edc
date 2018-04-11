@@ -1,6 +1,8 @@
 group { name: "efl/button";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
+
+#undef ICON
 #define ICON     1
 #define LABEL    2
 #define MASK     3
