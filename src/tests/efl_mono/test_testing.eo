@@ -1583,6 +1583,14 @@ class Test.Testing (Efl.Object, Efl.Part) {
             @in func: Test.FormatCb;
          }
       }
+
+      @property klass_prop @class {
+         get {}
+         set {}
+         values {
+            prop: int;
+         }
+      }
    }
    implements {
       class.constructor;

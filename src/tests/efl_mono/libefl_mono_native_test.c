@@ -3763,6 +3763,30 @@ void _test_testing_call_format_cb(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_
     func_free_cb(func_data);
 }
 
+/* Class Properties */
+static int _test_testing_klass_prop = 0;
+
+int _test_testing_klass_prop_get(Eo *klass, EINA_UNUSED void *pd)
+{
+    EINA_LOG_ERR("FAIL on GET");
+   if (klass != test_testing_class_get())
+     {
+        eina_error_set(EINVAL);
+        return -1;
+     }
+   return _test_testing_klass_prop;
+}
+
+void _test_testing_klass_prop_set(Eo *klass, EINA_UNUSED void *pd, int value)
+{
+    EINA_LOG_ERR("FAIL on SET");
+   if (klass != test_testing_class_get())
+     {
+        eina_error_set(EINVAL);
+     }
+   _test_testing_klass_prop = value;
+}
+
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
 

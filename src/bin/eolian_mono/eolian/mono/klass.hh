@@ -69,12 +69,12 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
 
 /* Get the actual number of functions of a class, checking for blacklisted ones */
 static std::size_t
-get_function_count(grammar::attributes::klass_def const& cls)
+get_inheritable_function_count(grammar::attributes::klass_def const& cls)
 {
    auto methods = cls.get_all_methods();
    return std::count_if(methods.cbegin(), methods.cend(), [](grammar::attributes::function_def const& func)
      {
-        return !is_function_blacklisted(func.c_name);
+        return !is_function_blacklisted(func.c_name) && !func.is_static;
      });
 }
 
@@ -268,8 +268,9 @@ struct klass
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
              << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
+             << scope_tab << "///<summary>Returns the pointer the unerlying Eo class object. Used internally on class methods.</summary>\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
-             << ")] private static extern System.IntPtr\n"
+             << ")] public static extern System.IntPtr\n"
              << scope_tab << scope_tab << class_get_name << "();\n"
              << (class_type == "class" ? "" : "/*")
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
@@ -451,7 +452,7 @@ struct klass
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 
-     std::size_t function_count = get_function_count(cls);
+     std::size_t function_count = get_inheritable_function_count(cls);
 
      int function_registration_index = 0;
      auto index_generator = [&function_registration_index]

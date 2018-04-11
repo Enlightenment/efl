@@ -191,4 +191,21 @@ class TestEoParent
     }
 }
 
+class TestKlassMethods
+{
+    public static void basic_class_method()
+    {
+        int reference = 0xbeef;
+        test.TestingConcrete.SetKlassProp(reference);
+        Test.AssertEquals(reference, test.TestingConcrete.GetKlassProp());
+    }
+
+    public static void inherited_class_method()
+    {
+        int reference = 0xdead;
+        test.ChildConcrete.SetKlassProp(reference);
+        Test.AssertEquals(reference, test.ChildConcrete.GetKlassProp());
+    }
+}
+
 }

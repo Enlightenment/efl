@@ -11,6 +11,7 @@
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
 #include "type.hh"
+#include "helpers.hh"
 #include "function_helpers.hh"
 #include "marshall_type.hh"
 #include "parameter.hh"
@@ -28,7 +29,7 @@ struct native_function_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    if(is_function_blacklisted(f.c_name))
+    if(is_function_blacklisted(f.c_name) || f.is_static) // Only Concrete classes implement static methods.
       return true;
     else
       {
@@ -131,10 +132,11 @@ struct function_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
+    if(do_super && f.is_static) // Static methods goes only on Concrete classes.
+      return true;
     if(is_function_blacklisted(f.c_name))
       return true;
-    else
-      {
+
     if(!as_generator
        ("\n\n" << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(f.filename) << ")]\n"
         << scope_tab << eolian_mono::marshall_annotation(true)
@@ -159,11 +161,11 @@ struct function_definition_generator
       return false;
 
     if(!as_generator
-       (scope_tab << (do_super ? "virtual " : "") << "public " << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab << (do_super ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
-        << "this.raw_handle"
+        << (f.is_static ? klass_get_name(f.klass) + "()": "this.raw_handle")
         << (do_super ? ", this.raw_klass)" : "")
         << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()
@@ -172,7 +174,6 @@ struct function_definition_generator
       return false;
 
     return true;
-      }
   }
 
   bool do_super;

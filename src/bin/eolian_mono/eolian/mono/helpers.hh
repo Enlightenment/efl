@@ -125,6 +125,21 @@ inline std::string klass_name_to_csharp(attributes::klass_name const& clsname)
   return output.str();
 }
 
+inline std::string klass_get_name(attributes::klass_name const &clsname)
+{
+  std::ostringstream output;
+
+  output << klass_name_to_csharp(clsname);
+  output << "Concrete.";
+
+  for (auto namesp : clsname.namespaces)
+    output << utils::to_lowercase(namesp) << "_";
+  output << utils::to_lowercase(clsname.eolian_name);
+  output << "_class_get";
+
+  return output.str();
+}
+
 }
 
 #endif

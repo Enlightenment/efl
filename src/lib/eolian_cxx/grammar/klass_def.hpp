@@ -109,6 +109,9 @@ struct klass_name
    qualifier_def base_qualifier;
    class_type type;
 
+   klass_name() {
+   }
+
    klass_name(std::vector<std::string> namespaces
               , std::string eolian_name, qualifier_def base_qualifier
               , class_type type)
@@ -527,6 +530,7 @@ enum class function_type
 
 struct function_def
 {
+  klass_name klass;
   type_def return_type;
   std::string name;
   std::vector<parameter_def> parameters;
@@ -543,7 +547,8 @@ struct function_def
 
   friend inline bool operator==(function_def const& lhs, function_def const& rhs)
   {
-    return lhs.return_type == rhs.return_type
+    return lhs.klass == rhs.klass
+      && lhs.return_type == rhs.return_type
       && lhs.name == rhs.name
       && lhs.parameters == rhs.parameters
       && lhs.c_name == rhs.c_name
@@ -561,7 +566,8 @@ struct function_def
     return !(lhs == rhs);
   }
   function_def() = default;
-  function_def(type_def _return_type, std::string const& _name,
+  function_def(klass_name _klass,
+               type_def _return_type, std::string const& _name,
                std::vector<parameter_def> const& _parameters,
                std::string const& _c_name,
                std::string _filename,
@@ -572,8 +578,9 @@ struct function_def
                bool _is_beta = false,
                bool _is_protected = false,
                Eolian_Unit const* unit = nullptr)
-    : return_type(_return_type), name(_name), parameters(_parameters),
-      c_name(_c_name), filename(_filename), documentation(_documentation),
+    : klass(_klass), return_type(_return_type), name(_name),
+      parameters(_parameters), c_name(_c_name), filename(_filename),
+      documentation(_documentation),
       return_documentation(_return_documentation),
       property_documentation(_property_documentation),
       type(_type),
@@ -633,8 +640,10 @@ struct function_def
      c_name = eolian_function_full_c_name_get(function, type, EINA_FALSE);
      if (type != EOLIAN_FUNCTION_POINTER)
        {
-          const Eolian_Class *klass = eolian_function_class_get(function);
-          filename = eolian_object_file_get((const Eolian_Object *)klass);
+          const Eolian_Class *eolian_klass = eolian_function_class_get(function);
+          filename = eolian_object_file_get((const Eolian_Object *)eolian_klass);
+          klass = klass_name(eolian_klass,
+              {attributes::qualifier_info::is_none, std::string()});
        }
      else
        {
