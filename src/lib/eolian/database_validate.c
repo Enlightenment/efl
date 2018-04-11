@@ -655,7 +655,6 @@ end:
    return ret;
 }
 
-/* FIXME: need much better error handling here */
 static Eina_Bool
 _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
 {
@@ -685,12 +684,26 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
         else
           {
              cl->inherits = eina_list_append(cl->inherits, icl);
-             /* recursively fill so the tree is valid */
-             if (!icl->valid_impls && !_db_fill_inherits(icl, fhash))
+             /* if the inherited class is already merged outside of staging,
+              * it's ok to skip it because it's already filled and validated
+              */
+             Eolian_Class *vcl = eina_hash_find(
+               cl->base.unit->state->main.unit.classes, inn);
+             /* fill if not found, but do not return right away because
+              * the rest of the list needs to be freed in order not to
+              * leak any memory
+              */
+             if (!vcl && !_db_fill_inherits(icl, fhash))
                succ = EINA_FALSE;
           }
         eina_stringshare_del(inn);
      }
+
+   /* failed on the way, no point in filling further
+    * the failed stuff will get dropped so it's ok if it's inconsistent
+    */
+   if (!succ)
+     return EINA_FALSE;
 
    eina_hash_add(fhash, cl->base.name, cl);
 
@@ -701,8 +714,7 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
    if (!_db_fill_ctors(cl))
      return EINA_FALSE;
 
-   cl->valid_impls = EINA_TRUE;
-   return succ;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -851,18 +863,21 @@ database_validate(const Eolian_Unit *src)
 
    /* do an initial pass to refill inherits */
    Eina_Iterator *iter = eolian_unit_classes_get(src);
+   Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
-        if (cl->valid_impls)
+        /* can skip classes that have already been merged and validated */
+        Eolian_Class *vcl = eina_hash_find(
+          cl->base.unit->state->main.unit.classes, cl->base.name);
+        if (vcl)
           continue;
-        Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
         if (!_db_fill_inherits(cl, fhash))
           {
              eina_hash_free(fhash);
              return EINA_FALSE;
           }
-        eina_hash_free(fhash);
      }
+   eina_hash_free(fhash);
    eina_iterator_free(iter);
 
    iter = eolian_unit_classes_get(src);
