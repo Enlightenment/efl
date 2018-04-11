@@ -297,11 +297,13 @@ eldbus_shutdown(void)
    eldbus_signal_handler_shutdown();
    eldbus_message_shutdown();
 
+   ecore_shutdown();
+
    eina_log_domain_unregister(eldbus_model_log_dom);
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
-   ecore_shutdown();
+
    eina_shutdown();
 
    return 0;
