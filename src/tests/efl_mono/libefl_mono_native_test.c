@@ -3719,25 +3719,36 @@ void _test_testing_emit_event_with_string(Eo *obj, EINA_UNUSED Test_Testing_Data
     free(ptr);
 }
 
+void _test_testing_emit_event_with_bool(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Bool data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_BOOL, (void *) (uintptr_t) data);
+}
+
 void _test_testing_emit_event_with_int(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, int data)
 {
-    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_INT, &data);
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_INT, (void *) (uintptr_t) data);
 }
 
 void _test_testing_emit_event_with_uint(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, unsigned int data)
 {
-    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_UINT, &data);
-}
-
-void _test_testing_emit_event_with_float(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, float data)
-{
-    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_FLOAT, &data);
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_UINT, (void *) (uintptr_t) data);
 }
 
 void _test_testing_emit_event_with_obj(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eo *data)
 {
     efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_OBJ, data);
 }
+
+void _test_testing_emit_event_with_error(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Error data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_ERROR, &data);
+}
+
+void _test_testing_emit_event_with_struct(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_STRUCT, &data);
+}
+
 
 Efl_Object *_test_testing_efl_part_part(EINA_UNUSED const Eo *obj, Test_Testing_Data *pd, const char *name)
 {

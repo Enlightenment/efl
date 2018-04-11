@@ -62,6 +62,24 @@ class TestEoEvents
         Test.AssertEquals(-1984, received_int);
     }
 
+    public static void event_with_bool_payload()
+    {
+        test.Testing obj = new test.TestingConcrete();
+        bool received_bool = false;
+
+        obj.EvtWithBoolEvt += (object sender, test.EvtWithBoolEvt_Args e) => {
+            received_bool = e.arg;
+        };
+
+        obj.EmitEventWithBool(true);
+
+        Test.AssertEquals(true, received_bool);
+
+        obj.EmitEventWithBool(false);
+
+        Test.AssertEquals(false, received_bool);
+    }
+
     public static void event_with_uint_payload()
     {
         test.Testing obj = new test.TestingConcrete();
@@ -73,20 +91,6 @@ class TestEoEvents
         obj.EmitEventWithUint(0xbeef);
 
         Test.AssertEquals<uint>(0xbeef, received_uint);
-    }
-
-    public static void event_with_float_payload()
-    {
-        test.Testing obj = new test.TestingConcrete();
-        float received_float= 0;
-
-        obj.EvtWithFloatEvt += (object sender, test.EvtWithFloatEvt_Args e) => {
-            received_float = e.arg;
-        };
-
-        obj.EmitEventWithFloat(3.14f);
-
-        Test.AssertEquals(3.14f, received_float);
     }
 
     public static void event_with_object_payload()
@@ -103,6 +107,39 @@ class TestEoEvents
         obj.EmitEventWithObj(sent_obj);
 
         Test.AssertEquals(sent_obj, received_obj);
+    }
+
+    public static void event_with_error_payload()
+    {
+        test.Testing obj = new test.TestingConcrete();
+        eina.Error received_error = 0;
+
+        obj.EvtWithErrorEvt += (object sender, test.EvtWithErrorEvt_Args e) => {
+            received_error = e.arg;
+        };
+
+        eina.Error sent_error = -2001;
+
+        obj.EmitEventWithError(sent_error);
+
+        Test.AssertEquals(sent_error, received_error);
+    }
+
+    public static void event_with_struct_payload()
+    {
+        test.Testing obj = new test.TestingConcrete();
+        test.StructSimple received_struct = default(test.StructSimple);
+
+        obj.EvtWithStructEvt += (object sender, test.EvtWithStructEvt_Args e) => {
+            received_struct = e.arg;
+        };
+
+        test.StructSimple sent_struct = default(test.StructSimple);
+        sent_struct.Fstring = "Struct Event";
+
+        obj.EmitEventWithStruct(sent_struct);
+
+        Test.AssertEquals(sent_struct.Fstring, received_struct.Fstring);
     }
 }
 }

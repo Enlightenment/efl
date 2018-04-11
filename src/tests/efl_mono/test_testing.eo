@@ -1541,6 +1541,11 @@ class Test.Testing (Efl.Object, Efl.Part) {
             @in data: string;
          }
       }
+      emit_event_with_bool {
+         params {
+            @in data: bool;
+         }
+      }
       emit_event_with_int {
          params {
             @in data: int;
@@ -1551,14 +1556,21 @@ class Test.Testing (Efl.Object, Efl.Part) {
             @in data: uint;
          }
       }
-      emit_event_with_float {
-         params {
-            @in data: float;
-         }
-      }
       emit_event_with_obj {
          params {
             @in data: Test.Testing;
+         }
+      }
+
+      emit_event_with_error {
+         params {
+            @in data: Eina.Error;
+         }
+      }
+
+      emit_event_with_struct {
+         params {
+            @in data: Test.StructSimple;
          }
       }
 
@@ -1600,9 +1612,11 @@ class Test.Testing (Efl.Object, Efl.Part) {
    }
    events {
       evt,with,string @hot: string;
+      evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;
-      evt,with,float @hot: float;
       evt,with,obj @hot: Test.Testing;
+      evt,with,error @hot: Eina.Error;
+      evt,with,struct @hot: Test.StructSimple;
    }
 }
