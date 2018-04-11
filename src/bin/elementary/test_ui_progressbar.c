@@ -104,7 +104,7 @@ _win_delete_req_cb(void *d, const Efl_Event *ev EINA_UNUSED)
    pbdata *pd = d;
 
    if (pd->timer) ecore_timer_del(pd->timer);
-   efl_del(pd->win);
+   efl_unref(pd->win);
    free(pd);
 }
 
@@ -117,7 +117,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 
    pd = (pbdata *)calloc(1, sizeof(pbdata));
 
-   pd->win = win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   pd->win = win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                            efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
                            efl_text_set(efl_added, "Efl.Ui.Progressbar"),
                            efl_ui_win_autodel_set(efl_added, EINA_TRUE),

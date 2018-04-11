@@ -75,7 +75,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
     EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_unregister, _unregister),
     );
 
-   Efl_Ui_Focus_Manager *manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, efl_main_loop_get(),
+   Efl_Ui_Focus_Manager *manager = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root_manager)
    );
    //flush now all changes
@@ -85,7 +85,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_object_override(manager, &manager_tracker);
 
-   Focus_Test_Sub_Main *focus_main = efl_add(FOCUS_TEST_SUB_MAIN_CLASS, efl_main_loop_get());
+   Focus_Test_Sub_Main *focus_main = efl_add_ref(FOCUS_TEST_SUB_MAIN_CLASS, NULL);
 
    efl_key_data_set(focus_main, "__user_manager", manager);
    efl_key_data_set(focus_main, "__user_parent", root_manager);
@@ -134,11 +134,11 @@ EFL_START_TEST(correct_register)
    efl_ui_focus_manager_calc_unregister(sub, child1);
    efl_ui_focus_manager_calc_unregister(sub, child2);
    efl_ui_focus_manager_calc_unregister(sub, child3);
-   efl_del(child1);
-   efl_del(child2);
-   efl_del(child3);
-   efl_del(sub);
-   efl_del(manager);
+   efl_unref(child1);
+   efl_unref(child2);
+   efl_unref(child3);
+   efl_unref(sub);
+   efl_unref(manager);
 }
 EFL_END_TEST
 
@@ -173,12 +173,12 @@ EFL_START_TEST(correct_unregister)
    eina_list_free(unregistered);
    unregistered = NULL;
 
-   efl_del(sub);
-   efl_del(manager);
-   efl_del(root);
-   efl_del(child1);
-   efl_del(child2);
-   efl_del(child3);
+   efl_unref(sub);
+   efl_unref(manager);
+   efl_unref(root);
+   efl_unref(child1);
+   efl_unref(child2);
+   efl_unref(child3);
 }
 EFL_END_TEST
 
@@ -211,12 +211,12 @@ EFL_START_TEST(correct_un_register)
    fail_if(!_set_equal(registered, set_add));
    fail_if(!_set_equal(unregistered, set_del));
 
-   efl_del(sub);
-   efl_del(manager);
-   efl_del(root);
-   efl_del(child1);
-   efl_del(child2);
-   efl_del(child3);
+   efl_unref(sub);
+   efl_unref(manager);
+   efl_unref(root);
+   efl_unref(child1);
+   efl_unref(child2);
+   efl_unref(child3);
 }
 EFL_END_TEST
 

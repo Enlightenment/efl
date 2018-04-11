@@ -89,7 +89,7 @@ EFL_START_TEST(efl_test_model_container_values)
         cmp_str[i] = strdup(base_str[i]);
      }
 
-   model = efl_add(EFL_MODEL_CONTAINER_CLASS, efl_main_loop_get());
+   model = efl_add_ref(EFL_MODEL_CONTAINER_CLASS, NULL);
 
    efl_model_container_child_property_add(model, "test_p_int", EINA_VALUE_TYPE_INT,
                                           eina_carray_iterator_new((void**)cmp_int));

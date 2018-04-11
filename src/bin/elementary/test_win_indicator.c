@@ -14,7 +14,7 @@ _create_indicator(void)
 {
    const char *indi_name;
 
-   Eo *win = efl_add(EFL_UI_WIN_SOCKET_CLASS, efl_main_loop_get(),
+   Eo *win = efl_add_ref(EFL_UI_WIN_SOCKET_CLASS, NULL,
 		     efl_text_set(efl_added, "indicator"),
 		     efl_ui_win_autodel_set(efl_added, EINA_TRUE),
 		     efl_ui_win_alpha_set(efl_added, EINA_TRUE));
@@ -91,7 +91,7 @@ test_win_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    indicator = _create_indicator();
 
    // FIXME: Resizing window should no cause sizing issues!
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
                  efl_text_set(efl_added, "Efl.Win.Indicator"),
                  efl_gfx_size_hint_max_set(efl_added, EINA_SIZE2D(300, -1)),

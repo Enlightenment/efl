@@ -361,7 +361,7 @@ _efl_net_ssl_context_default_dialer_get(const Efl_Class *klass, void *pd EINA_UN
 {
    if (!_efl_net_ssl_context_default_dialer)
      {
-        _efl_net_ssl_context_default_dialer = efl_add_ref(klass, NULL,
+        _efl_net_ssl_context_default_dialer = efl_add(klass, efl_main_loop_get(),
                                                       efl_net_ssl_context_verify_mode_set(efl_added, EFL_NET_SSL_VERIFY_MODE_REQUIRED),
                                                       efl_net_ssl_context_hostname_verify_set(efl_added, EINA_TRUE),
                                                       efl_net_ssl_context_default_paths_load_set(efl_added, EINA_TRUE),

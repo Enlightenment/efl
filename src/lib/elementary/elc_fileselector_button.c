@@ -202,7 +202,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
-   priv->fsd.model = efl_add(EIO_MODEL_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS), eio_model_path_set(efl_added, priv->fsd.path));
+   priv->fsd.model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, priv->fsd.path));
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;

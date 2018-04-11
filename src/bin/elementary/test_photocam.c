@@ -804,7 +804,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    Eo *win, *bx, *zoomable, *rect;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Image_Zoomable animation"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));

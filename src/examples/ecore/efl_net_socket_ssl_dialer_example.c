@@ -311,7 +311,7 @@ efl_terminate(void *data EINA_UNUSED,
         efl_del(dialer);
         dialer = NULL;
 
-        efl_del(ssl_ctx);
+        efl_unref(ssl_ctx);
         ssl_ctx = NULL;
 
         EINA_LIST_FREE(pending_send, str) free(str);
@@ -456,7 +456,7 @@ efl_main(void *data EINA_UNUSED,
    /* create a new SSL context with command line configurations.
     * another option would be to use the default dialer context */
 #ifndef USE_DEFAULT_CONTEXT
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, ev->object,
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(crls)),
@@ -528,7 +528,7 @@ efl_main(void *data EINA_UNUSED,
    efl_io_closer_close(dialer); /* just del won't do as ssl has an extra ref */
    efl_del(dialer);
  no_ssl_ctx:
-   efl_del(ssl_ctx);
+   efl_unref(ssl_ctx);
 
  end:
    EINA_LIST_FREE(pending_send, str) free(str);

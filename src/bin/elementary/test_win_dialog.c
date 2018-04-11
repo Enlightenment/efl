@@ -101,7 +101,7 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 {
    Efl_Canvas_Object *dia, *lb;
 
-   dia = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   dia = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-4"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),

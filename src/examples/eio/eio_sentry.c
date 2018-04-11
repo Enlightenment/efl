@@ -27,7 +27,7 @@ void
 monitor_stuff(void *data)
 {
     const char *path = data;
-    Eio_Sentry *sentry = efl_add(EIO_SENTRY_CLASS, efl_main_loop_get());
+    Eio_Sentry *sentry = efl_add_ref(EIO_SENTRY_CLASS, NULL);
     efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CREATED, (Efl_Event_Cb)&sentry_cb, NULL);
 
     printf("Starting monitoring path %s\n", path);

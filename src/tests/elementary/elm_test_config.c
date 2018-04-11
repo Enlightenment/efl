@@ -148,14 +148,14 @@ EFL_START_TEST (elm_config_win)
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
-   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get());
+   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL);
    Eo *cfg2 = efl_provider_find(win, EFL_CONFIG_INTERFACE);
    fail_if(cfg != cfg2);
 
    elm_config_cache_flush_interval_set(42);
    fail_if(efl_config_int_get(win, "cache_flush_interval") != 42);
 
-   efl_del(win);
+   efl_unref(win);
 }
 EFL_END_TEST
 

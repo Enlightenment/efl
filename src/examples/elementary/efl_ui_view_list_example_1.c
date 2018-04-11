@@ -49,7 +49,7 @@ _make_model()
    unsigned int i, s;
    char buf[256];
 
-   model = efl_add(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
+   model = efl_add_ref(EFL_MODEL_ITEM_CLASS, NULL);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
 
    for (i = 0; i < (NUM_ITEMS); i++)

@@ -17,7 +17,7 @@ elm_focus_test_object_new(const char *name, int x, int y, int w, int h)
 {
    Efl_Ui_Focus_Object *ret;
 
-   ret = efl_add(FOCUS_TEST_CLASS, efl_main_loop_get(),
+   ret = efl_add_ref(FOCUS_TEST_CLASS, NULL,
     efl_name_set(efl_added, name)
    );
    Q(ret, x, y, w, h);
@@ -48,7 +48,7 @@ elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
    Efl_Ui_Focus_Manager *m;
 
    root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, efl_main_loop_get(),
+   m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
    if (middle)

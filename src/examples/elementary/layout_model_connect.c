@@ -111,10 +111,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    if (argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
-   priv->model = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(), eio_model_path_set(efl_added, dirname));
+   priv->model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dirname));
 
    genlist = elm_genlist_add(win);
-   priv->fileview = efl_add(ELM_VIEW_LIST_CLASS, efl_main_loop_get(), elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
+   priv->fileview = efl_add_ref(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
    elm_view_list_property_connect(priv->fileview, "filename", "elm.text");
    elm_view_list_model_set(priv->fileview, priv->model);
    _widget_init(genlist);

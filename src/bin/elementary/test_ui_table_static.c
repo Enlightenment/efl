@@ -104,7 +104,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *win, *table, *bt, *rc, *en;
    api_data *api = calloc(1, sizeof(*api));
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                 efl_ui_win_name_set(efl_added, "table"),
                 efl_text_set(efl_added, "Table"),
                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),

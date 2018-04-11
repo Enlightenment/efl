@@ -43,7 +43,7 @@ elm_main(int argc, char **argv)
    if (argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
-   model = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(), eio_model_path_set(efl_added, dirname));
+   model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dirname));
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_model_connect(factory, "efl.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");

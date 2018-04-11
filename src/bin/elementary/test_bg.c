@@ -330,7 +330,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *win, *box, *cs;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Win)"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_ui_win_alpha_set(efl_added, 1));
@@ -403,7 +403,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Evas_Object *rd, *rdg;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Bg)"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_ui_win_alpha_set(efl_added, EINA_FALSE));

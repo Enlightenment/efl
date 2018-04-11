@@ -71,7 +71,7 @@ _delete_cb(void *data, const Efl_Event *ev)
    Test_Data *td = data;
 
    pulse_stop(td, NULL);
-   efl_del(ev->object);
+   efl_unref(ev->object);
    free(td);
 }
 
@@ -85,7 +85,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    td = calloc(1, sizeof(*td));
 
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_name_set(efl_added, "shadow"),
                  efl_text_set(efl_added, "Shadow effects"));
    efl_event_callback_add(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _delete_cb, td);
