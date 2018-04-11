@@ -661,6 +661,10 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
    if (eina_hash_find(fhash, cl->base.name))
      return EINA_TRUE;
 
+   /* already merged outside of staging, therefore validated, and skipped */
+   if (eina_hash_find(cl->base.unit->state->main.unit.classes, cl->base.name))
+     return EINA_TRUE;
+
    Eina_List *il = cl->inherits;
    Eina_Stringshare *inn = NULL;
    cl->inherits = NULL;
@@ -684,16 +688,11 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
         else
           {
              cl->inherits = eina_list_append(cl->inherits, icl);
-             /* if the inherited class is already merged outside of staging,
-              * it's ok to skip it because it's already filled and validated
-              */
-             Eolian_Class *vcl = eina_hash_find(
-               cl->base.unit->state->main.unit.classes, inn);
              /* fill if not found, but do not return right away because
               * the rest of the list needs to be freed in order not to
               * leak any memory
               */
-             if (!vcl && !_db_fill_inherits(icl, fhash))
+             if (!_db_fill_inherits(icl, fhash))
                succ = EINA_FALSE;
           }
         eina_stringshare_del(inn);
@@ -866,11 +865,6 @@ database_validate(const Eolian_Unit *src)
    Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
-        /* can skip classes that have already been merged and validated */
-        Eolian_Class *vcl = eina_hash_find(
-          cl->base.unit->state->main.unit.classes, cl->base.name);
-        if (vcl)
-          continue;
         if (!_db_fill_inherits(cl, fhash))
           {
              eina_hash_free(fhash);
