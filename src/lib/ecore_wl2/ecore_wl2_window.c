@@ -1089,14 +1089,6 @@ ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int
    window->pending.geom = EINA_TRUE;
 }
 
-EAPI Eina_Bool
-ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
-
-   return window->set_config.minimized;
-}
-
 EAPI void
 ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 {

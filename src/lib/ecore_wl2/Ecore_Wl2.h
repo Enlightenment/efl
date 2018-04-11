@@ -1044,18 +1044,6 @@ EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y
 EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /**
- * Get the iconified state of a given window
- *
- * @param window The window to get the iconified state of
- *
- * @return EINA_TRUE if window is iconified, EINA_FALSE otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
-
-/**
  * Iconify a window
  *
  * @param win The window to iconifiy
