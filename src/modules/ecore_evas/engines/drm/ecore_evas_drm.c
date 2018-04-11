@@ -1390,6 +1390,10 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
 
    canvases = eina_list_append(canvases, ee);
    return ee;
+
+eng_err:
+   ecore_evas_free(ee);
+   return NULL;
 }
 
 EAPI Ecore_Evas *
