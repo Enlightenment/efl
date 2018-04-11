@@ -969,20 +969,23 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
              return 0;
           }
 
-        slice.mem = data;
-        slice.len = size;
-        err = efl_io_writer_write(svr->dialer.input, &slice, NULL);
-        if (err)
+        if ((data) && (size > 0))
           {
-             ERR("could not write queue=%p %zd bytes: %s",
-                 svr->dialer.input, slice.len, eina_error_msg_get(err));
-             return 0;
-          }
-        if (slice.len < (size_t)size)
-          {
-             ERR("only wrote %zd of %d bytes to queue %p",
-                 slice.len, size, svr->dialer.input);
-             return 0;
+             slice.mem = data;
+             slice.len = size;
+             err = efl_io_writer_write(svr->dialer.input, &slice, NULL);
+             if (err)
+               {
+                  ERR("could not write queue=%p %zd bytes: %s",
+                      svr->dialer.input, slice.len, eina_error_msg_get(err));
+                  return 0;
+               }
+             if (slice.len < (size_t)size)
+               {
+                  ERR("only wrote %zd of %d bytes to queue %p",
+                      slice.len, size, svr->dialer.input);
+                  return 0;
+               }
           }
 
         return s + size;
@@ -1188,21 +1191,23 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
                  slice.len, s, cl->socket.input);
              return 0;
           }
-
-        slice.mem = data;
-        slice.len = size;
-        err = efl_io_writer_write(cl->socket.input, &slice, NULL);
-        if (err)
+        if ((data) && (size > 0))
           {
-             ERR("could not write queue=%p %zd bytes: %s",
-                 cl->socket.input, slice.len, eina_error_msg_get(err));
-             return 0;
-          }
-        if (slice.len < (size_t)size)
-          {
-             ERR("only wrote %zd of %d bytes to queue %p",
-                 slice.len, size, cl->socket.input);
-             return 0;
+             slice.mem = data;
+             slice.len = size;
+             err = efl_io_writer_write(cl->socket.input, &slice, NULL);
+             if (err)
+               {
+                  ERR("could not write queue=%p %zd bytes: %s",
+                      cl->socket.input, slice.len, eina_error_msg_get(err));
+                  return 0;
+               }
+             if (slice.len < (size_t)size)
+               {
+                  ERR("only wrote %zd of %d bytes to queue %p",
+                      slice.len, size, cl->socket.input);
+                  return 0;
+               }
           }
 
         return s + size;
