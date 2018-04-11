@@ -4,8 +4,7 @@
 ecore_eolian_files_legacy = \
 	lib/ecore/ecore_exe.eo \
 	lib/ecore/ecore_event_message.eo \
-	lib/ecore/ecore_event_message_handler.eo \
-	lib/ecore/efl_loop_timer.eo
+	lib/ecore/ecore_event_message_handler.eo
 
 ecore_eolian_files_public = \
 	lib/ecore/efl_app.eo \
@@ -40,7 +39,8 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_interpolator_bounce.eo \
 	lib/ecore/efl_interpolator_spring.eo \
 	lib/ecore/efl_interpolator_cubic_bezier.eo \
-	lib/ecore/efl_model_composite.eo
+	lib/ecore/efl_model_composite.eo \
+	lib/ecore/efl_loop_timer.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
