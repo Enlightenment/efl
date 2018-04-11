@@ -1,5 +1,5 @@
 group { "efl/text/scroller";
-   inherit: "elm/scroller/base/default";
+   inherit: "efl/scroller";
    image: "bg_glow_in.png" COMP;
    parts {
       part { name: "elm.swallow.background"; type: SWALLOW;
