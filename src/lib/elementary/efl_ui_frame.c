@@ -24,12 +24,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
-{
-   {"default", "elm.swallow.content"},
-   {NULL, NULL}
-};
-
 static void
 _sizing_eval(Evas_Object *obj,
              Efl_Ui_Frame_Data *sd EINA_UNUSED)
@@ -195,21 +189,14 @@ _efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
    return sd->collapsed;
 }
 
-/* Default text (title) and content */
+/* Internal EO APIs and hidden overrides */
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_frame, "elm.swallow.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 
-/* Internal EO APIs and hidden overrides */
-
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_frame)
-
 #define EFL_UI_FRAME_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_frame), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_frame)
+   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame)
 
 #include "efl_ui_frame.eo.c"
 
