@@ -213,7 +213,7 @@ struct _Ecore_Evas
    short       rotation;
    Eina_Bool   shaped  : 1;
    Eina_Bool   visible : 1;
-   Eina_Bool   draw_ok : 1;
+   Eina_Bool   draw_block : 1;
    Eina_Bool   should_be_visible : 1;
    Eina_Bool   alpha  : 1;
    Eina_Bool   transparent  : 1;
