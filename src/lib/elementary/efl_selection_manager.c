@@ -1166,9 +1166,17 @@ _x11_text_converter(char *target, void *data, int size EINA_UNUSED, void **data_
    if ((sel->format & EFL_SELECTION_FORMAT_MARKUP) ||
        (sel->format & EFL_SELECTION_FORMAT_HTML))
      {
-        *data_ret = _elm_util_mkup_to_text(sel->data.mem);
-        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
-        sel_debug("markup or html: %s", (const char *)*data_ret);
+        char *tmp = malloc(size + 1);
+        if (tmp)
+          {
+             strncpy(tmp, data, size);
+             tmp[size] = 0;
+             *data_ret = _elm_util_mkup_to_text(tmp);
+             if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
+             free(tmp);
+             sel_debug("markup or html: %s", (const char *)*data_ret);
+          }
+        else return EINA_FALSE;
      }
    else if (sel->format & EFL_SELECTION_FORMAT_TEXT)
      {
