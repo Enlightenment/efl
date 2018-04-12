@@ -1014,11 +1014,10 @@ static inline Node*
 _request_subchild_except(Node *n, Node *except)
 {
    n = _request_subchild(n);
-   do
+   while (n == except)
      {
         n = _next(n);
      }
-   while (n == except);
 
    return n;
 }
