@@ -227,7 +227,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    evas_object_smart_member_add(pd->backwall, obj);
    evas_object_stack_below(pd->backwall, wd->resize_obj);
 
-   edje_object_signal_callback_add(pd->backwall, "elm,action,clicked", "*",
+   edje_object_signal_callback_add(pd->backwall, "action,clicked", "*",
                                    _backwall_clicked_cb, obj);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;
@@ -375,12 +375,12 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
         Eina_Bool ret = elm_image_file_set(image, file, group);
         if (!ret)
           {
-             edje_object_signal_emit(sd->backwall, "elm,state,image,hidden", "elm");
+             edje_object_signal_emit(sd->backwall, "state,image,hidden", "efl");
              efl_del(image);
              return EINA_FALSE;
           }
         edje_object_part_swallow(sd->backwall, "elm.swallow.image", image);
-        edje_object_signal_emit(sd->backwall, "elm,state,image,visible", "elm");
+        edje_object_signal_emit(sd->backwall, "state,image,visible", "efl");
 
         return EINA_TRUE;
      }

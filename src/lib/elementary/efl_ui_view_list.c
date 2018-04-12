@@ -468,9 +468,9 @@ _efl_ui_view_list_bar_show_cb(void *data, const Efl_Event *event)
    Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
 
    if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
-     edje_object_signal_emit(wd->resize_obj, "elm,action,show,hbar", "elm");
+     edje_object_signal_emit(wd->resize_obj, "action,show,hbar", "efl");
    else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
-     edje_object_signal_emit(wd->resize_obj, "elm,action,show,vbar", "elm");
+     edje_object_signal_emit(wd->resize_obj, "action,show,vbar", "efl");
 }
 
 static void
@@ -481,9 +481,9 @@ _efl_ui_view_list_bar_hide_cb(void *data, const Efl_Event *event)
    Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
 
    if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
-     edje_object_signal_emit(wd->resize_obj, "elm,action,hide,hbar", "elm");
+     edje_object_signal_emit(wd->resize_obj, "action,hide,hbar", "efl");
    else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
-     edje_object_signal_emit(wd->resize_obj, "elm,action,hide,vbar", "elm");
+     edje_object_signal_emit(wd->resize_obj, "action,hide,vbar", "efl");
 }
 
 EOLIAN static Eina_Bool
@@ -512,7 +512,7 @@ static void
 _efl_ui_view_list_edje_object_attach(Eo *obj)
 {
    efl_layout_signal_callback_add
-     (obj, "reload", "elm", _efl_ui_view_list_reload_cb, obj);
+     (obj, "reload", "efl", _efl_ui_view_list_reload_cb, obj);
   //Vertical bar
    efl_layout_signal_callback_add
      (obj, "drag", "elm.dragable.vbar", _efl_ui_view_list_vbar_drag_cb,
@@ -533,10 +533,10 @@ _efl_ui_view_list_edje_object_attach(Eo *obj)
      (obj, "drag,page", "elm.dragable.vbar",
      _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "elm,vbar,press", "elm",
+     (obj, "vbar,press", "efl",
      _efl_ui_view_list_vbar_press_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "elm,vbar,unpress", "elm",
+     (obj, "vbar,unpress", "efl",
      _efl_ui_view_list_vbar_unpress_cb, obj);
 
   //Horizontal bar
@@ -559,10 +559,10 @@ _efl_ui_view_list_edje_object_attach(Eo *obj)
      (obj, "drag,page", "elm.dragable.hbar",
      _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "elm,hbar,press", "elm",
+     (obj, "hbar,press", "efl",
      _efl_ui_view_list_hbar_press_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "elm,hbar,unpress", "elm",
+     (obj, "hbar,unpress", "efl",
      _efl_ui_view_list_hbar_unpress_cb, obj);
 }
 
@@ -570,7 +570,7 @@ static void
 _efl_ui_view_list_edje_object_detach(Evas_Object *obj)
 {
    efl_layout_signal_callback_del
-     (obj, "reload", "elm", _efl_ui_view_list_reload_cb, obj);
+     (obj, "reload", "efl", _efl_ui_view_list_reload_cb, obj);
   //Vertical bar
    efl_layout_signal_callback_del
      (obj, "drag", "elm.dragable.vbar", _efl_ui_view_list_vbar_drag_cb,
@@ -591,10 +591,10 @@ _efl_ui_view_list_edje_object_detach(Evas_Object *obj)
      (obj, "drag,page", "elm.dragable.vbar",
      _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "elm,vbar,press", "elm",
+     (obj, "vbar,press", "efl",
      _efl_ui_view_list_vbar_press_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "elm,vbar,unpress", "elm",
+     (obj, "vbar,unpress", "efl",
    _efl_ui_view_list_vbar_unpress_cb, obj);
 
    //Horizontal bar
@@ -617,10 +617,10 @@ _efl_ui_view_list_edje_object_detach(Evas_Object *obj)
      (obj, "drag,page", "elm.dragable.hbar",
      _efl_ui_view_list_edje_drag_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "elm,hbar,press", "elm",
+     (obj, "hbar,press", "efl",
      _efl_ui_view_list_hbar_press_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "elm,hbar,unpress", "elm",
+     (obj, "hbar,unpress", "efl",
      _efl_ui_view_list_hbar_unpress_cb, obj);
 }
 

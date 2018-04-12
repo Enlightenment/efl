@@ -54,18 +54,18 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
              // FIXME: to do animation during state change , we need different signal
              // so that we can distinguish between state change by user or state change
              // by calling state_change() api. Keep both the signal for backward compatibility
-             // and only emit "elm,state,radio,on" when activate is false  when we can break ABI.
-             if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,on", "elm");
-             elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
+             // and only emit "state,radio,on" when activate is false  when we can break ABI.
+             if (activate) elm_layout_signal_emit(obj, "activate,radio,on", "efl");
+             elm_layout_signal_emit(obj, "state,radio,on", "efl");
           }
         else
           {
              // FIXME: to do animation during state change , we need different signal
              // so that we can distinguish between state change by user or state change
              // by calling state_change() api. Keep both the signal for backward compatibility
-             // and only emit "elm,state,radio,off"when activate is false when we can break ABI.
-             if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,off", "elm");
-             elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+             // and only emit "state,radio,off"when activate is false when we can break ABI.
+             if (activate) elm_layout_signal_emit(obj, "activate,radio,off", "efl");
+             elm_layout_signal_emit(obj, "state,radio,off", "efl");
           }
         if (_elm_config->atspi_mode)
           {
@@ -138,8 +138,8 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
-   if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
-   else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+   if (sd->state) elm_layout_signal_emit(obj, "state,radio,on", "efl");
+   else elm_layout_signal_emit(obj, "state,radio,off", "efl");
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -189,7 +189,7 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    elm_layout_signal_callback_add
-     (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
+     (obj, "action,radio,toggle", "*", _radio_on_cb, obj);
 
    pd->group = calloc(1, sizeof(Group));
    pd->group->radios = eina_list_append(pd->group->radios, obj);
@@ -375,10 +375,10 @@ _icon_signal_emit(Evas_Object *obj)
 
    edje = elm_widget_resize_object_get(obj);
    if (!edje) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+   snprintf(buf, sizeof(buf), "state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
-   elm_layout_signal_emit(obj, buf, "elm");
+   elm_layout_signal_emit(obj, buf, "efl");
    edje_object_message_signal_process(edje);
    elm_layout_sizing_eval(obj);
 }

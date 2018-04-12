@@ -59,9 +59,9 @@ _activate(Evas_Object *obj)
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
-        // and remove "elm,state,check,on" signal emission when we can break ABI.
-        elm_layout_signal_emit(obj, "elm,activate,check,on", "elm");
-        elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+        // and remove "state,check,on" signal emission when we can break ABI.
+        elm_layout_signal_emit(obj, "activate,check,on", "efl");
+        elm_layout_signal_emit(obj, "state,check,on", "efl");
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
              _elm_access_say(E_("State: On"));
      }
@@ -70,9 +70,9 @@ _activate(Evas_Object *obj)
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
-        // and remove "elm,state,check,off" signal emission when we can break ABI.
-        elm_layout_signal_emit(obj, "elm,activate,check,off", "elm");
-        elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+        // and remove "state,check,off" signal emission when we can break ABI.
+        elm_layout_signal_emit(obj, "activate,check,off", "efl");
+        elm_layout_signal_emit(obj, "state,check,off", "efl");
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
              _elm_access_say(E_("State: Off"));
      }
@@ -128,9 +128,9 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (efl_ui_nstate_value_get(obj) == 0)
-     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+     elm_layout_signal_emit(obj, "state,check,off", "efl");
    else
-     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+     elm_layout_signal_emit(obj, "state,check,on", "efl");
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -195,7 +195,7 @@ _on_check_off(void *data,
    EFL_UI_CHECK_DATA_GET(obj, sd);
 
    if (sd->statep) *sd->statep = 0;
-   elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+   elm_layout_signal_emit(obj, "state,check,off", "efl");
    efl_ui_nstate_value_set(obj, 0);
 
    if (_elm_config->atspi_mode)
@@ -215,7 +215,7 @@ _on_check_on(void *data,
    EFL_UI_CHECK_DATA_GET(obj, sd);
 
    if (sd->statep) *sd->statep = 1;
-   elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+   elm_layout_signal_emit(obj, "state,check,on", "efl");
    efl_ui_nstate_value_set(obj, 1);
 
    if (_elm_config->atspi_mode)
@@ -247,9 +247,9 @@ _efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *sd, Eina_Bool value)
    if (sd->statep) *sd->statep = value;
 
    if (value == 1)
-     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+     elm_layout_signal_emit(obj, "state,check,on", "efl");
    else
-     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+     elm_layout_signal_emit(obj, "state,check,off", "efl");
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -281,11 +281,11 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    efl_layout_signal_callback_add
-     (wd->resize_obj, "elm,action,check,on", "*", _on_check_on, obj);
+     (wd->resize_obj, "action,check,on", "*", _on_check_on, obj);
    efl_layout_signal_callback_add
-     (wd->resize_obj, "elm,action,check,off", "*", _on_check_off, obj);
+     (wd->resize_obj, "action,check,off", "*", _on_check_off, obj);
    efl_layout_signal_callback_add
-     (wd->resize_obj, "elm,action,check,toggle", "*", _on_check_toggle, obj);
+     (wd->resize_obj, "action,check,toggle", "*", _on_check_toggle, obj);
 
    efl_access_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);
    _elm_access_object_register(obj, wd->resize_obj);
@@ -314,9 +314,9 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
         if (sd->statep) *sd->statep = state;
 
         if (state == 1)
-          elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+          elm_layout_signal_emit(obj, "state,check,on", "efl");
         else
-          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+          elm_layout_signal_emit(obj, "state,check,off", "efl");
         edje_object_message_signal_process(wd->resize_obj);
      }
 }
@@ -344,9 +344,9 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
      {
         nd->state = *sd->statep;
         if (nd->state == 1)
-          elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+          elm_layout_signal_emit(obj, "state,check,on", "efl");
         else
-          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+          elm_layout_signal_emit(obj, "state,check,off", "efl");
      }
 }
 
@@ -402,10 +402,10 @@ _icon_signal_emit(Evas_Object *obj)
    char buf[64];
 
    if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+   snprintf(buf, sizeof(buf), "state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
-   elm_layout_signal_emit(obj, buf, "elm");
+   elm_layout_signal_emit(obj, buf, "efl");
    edje_object_message_signal_process(wd->resize_obj);
 
    elm_layout_sizing_eval(obj);

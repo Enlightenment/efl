@@ -88,7 +88,11 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
 
    efl_event_callback_legacy_call
      (obj, EFL_UI_EVENT_CLICKED, NULL);
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   else
+     elm_layout_signal_emit(obj, "anim,activate", "efl");
 
    return EINA_TRUE;
 }
@@ -96,7 +100,11 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   else
+     elm_layout_signal_emit(obj, "anim,activate", "efl");
+
    _activate(obj);
    return EINA_TRUE;
 }
@@ -204,15 +212,30 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click", "*",
-     _on_clicked_signal, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,press", "*",
-     _on_pressed_signal, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,unpress", "*",
-     _on_unpressed_signal, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,click", "*",
+            _on_clicked_signal, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,press", "*",
+            _on_pressed_signal, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,unpress", "*",
+            _on_unpressed_signal, obj);
+     }
+   else
+   {
+      edje_object_signal_callback_add
+         (wd->resize_obj, "action,click", "*",
+          _on_clicked_signal, obj);
+      edje_object_signal_callback_add
+         (wd->resize_obj, "action,press", "*",
+          _on_pressed_signal, obj);
+      edje_object_signal_callback_add
+         (wd->resize_obj, "action,unpress", "*",
+          _on_unpressed_signal, obj);
+   }
 
    _elm_access_object_register(obj, wd->resize_obj);
    _elm_access_text_set
@@ -409,10 +432,19 @@ _icon_signal_emit(Evas_Object *obj)
    char buf[64];
 
    if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+   if (elm_widget_is_legacy(obj))
+     {
+        snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+                 elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+        elm_layout_signal_emit(obj, buf, "elm");
+     }
+   else
+     {
+        snprintf(buf, sizeof(buf), "state,content,%s",
+                 elm_layout_content_get(obj, "icon") ? "set" : "unset");
+        elm_layout_signal_emit(obj, buf, "efl");
+     }
 
-   elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_layout_sizing_eval(obj);
 }

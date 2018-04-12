@@ -226,28 +226,28 @@ group { "efl/multibuttonentry/btn";
          }
       }
       program {
-         signal: "elm,state,default";
-         source: "elm";
+         signal: "state,default";
+         source: "efl";
          action: STATE_SET "default";
          target: "glow";
       }
       program {
-         signal: "elm,state,focused";
-         source: "elm";
+         signal: "state,focused";
+         source: "efl";
          action: STATE_SET "focused";
          target: "glow";
       }
       program {
-         signal: "elm,state,enabled";
-         source: "elm";
+         signal: "state,enabled";
+         source: "efl";
          script {
             set_state(PART:"text", "default", 0.0);
             set_int(disabled , 0);
          }
       }
       program {
-         signal: "elm,state,disabled";
-         source: "elm";
+         signal: "state,disabled";
+         source: "efl";
          script {
             new st[31];
             new Float: vl;
@@ -259,8 +259,8 @@ group { "efl/multibuttonentry/btn";
          }
       }
       program {
-         signal: "elm,state,unfocused";
-         source: "elm";
+         signal: "state,unfocused";
+         source: "efl";
          action: STATE_SET "unfocused";
          target: "glow";
       }
@@ -289,7 +289,7 @@ group { "efl/multibuttonentry/btn";
       program {
          signal: "mouse,clicked,1";
          source: "del";
-         action: SIGNAL_EMIT "elm,deleted" "elm";
+         action: SIGNAL_EMIT "deleted" "efl";
       }
       program {
          signal: "mouse,down,1";

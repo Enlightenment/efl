@@ -31,12 +31,12 @@ group { name: "efl/list/item";
          }
       }
       program {
-         signal: "elm,state,odd"; source: "elm";
+         signal: "state,odd"; source: "efl";
          action: STATE_SET "odd" 1.0;
          target: "base";
       }
       program {
-         signal: "elm,state,even"; source: "elm";
+         signal: "state,even"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -88,26 +88,26 @@ group { name: "efl/list/item";
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "sel_shadow";
          target: "sel_base";
          target: "sel_bevel";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sel_shadow";
          target: "sel_base";
          target: "sel_bevel";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "event";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "event";
       }
@@ -192,28 +192,28 @@ group { name: "efl/list/item";
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
          target: "label2";
@@ -269,22 +269,22 @@ group { name: "efl/list/item";
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "sel_shine";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sel_shine";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "event_block";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "event_block";
       }

@@ -1029,11 +1029,11 @@ _elm_win_focus_highlight_visible_set(Efl_Ui_Win_Data *sd,
    if (visible)
      {
         evas_object_show(fobj);
-        edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
+        edje_object_signal_emit(fobj, "action,focus,show", "efl");
      }
    else
      {
-        edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
+        edje_object_signal_emit(fobj, "action,focus,hide", "efl");
      }
 }
 
@@ -1089,7 +1089,7 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
         if (clip) evas_object_clip_set(obj, clip);
      }
 
-   edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
+   edje_object_signal_emit(obj, "state,anim,stop", "efl");
 }
 
 static void
@@ -1131,7 +1131,7 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
            (previous, EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
         if (sd->focus_highlight.prev.in_theme)
           elm_widget_signal_emit
-             (previous, "elm,action,focus_highlight,hide", "elm");
+             (previous, "action,focus_highlight,hide", "efl");
      }
 
    if (!target)
@@ -1140,15 +1140,15 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
      {
         common_visible = EINA_FALSE;
         if (sd->focus_highlight.cur.visible)
-          sig = "elm,action,focus_highlight,show";
+          sig = "action,focus_highlight,show";
         else
-          sig = "elm,action,focus_highlight,hide";
+          sig = "action,focus_highlight,hide";
      }
    else
      common_visible = sd->focus_highlight.cur.visible;
 
    if (sig)
-     elm_widget_signal_emit(target, sig, "elm");
+     elm_widget_signal_emit(target, sig, "efl");
 
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
      {
@@ -2246,7 +2246,7 @@ _elm_win_modality_increment(Efl_Ui_Win_Data *modalsd)
         if (cursd->modal_count > 0)
           {
              Edje_Object *ed = _elm_win_modal_blocker_edje_get(cursd);
-             edje_object_signal_emit(ed, "elm,action,show_blocker", "elm");
+             edje_object_signal_emit(ed, "action,show_blocker", "efl");
              efl_event_callback_legacy_call
                    (cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL);
              _elm_win_frame_style_update(cursd, 0, 1);
@@ -2268,7 +2268,7 @@ _elm_win_modality_decrement(Efl_Ui_Win_Data *modalsd)
         if (cursd->modal_count == 0)
           {
              Edje_Object *ed = _elm_win_modal_blocker_edje_get(cursd);
-             edje_object_signal_emit(ed, "elm,action,hide_blocker", "elm");
+             edje_object_signal_emit(ed, "action,hide_blocker", "efl");
              efl_event_callback_legacy_call
                    (cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL);
              _elm_win_frame_style_update(cursd, 0, 1);
@@ -2700,7 +2700,7 @@ _elm_win_focus_highlight_shutdown(Efl_Ui_Win_Data *sd)
    if (sd->focus_highlight.cur.target)
      {
         elm_widget_signal_emit(sd->focus_highlight.cur.target,
-                               "elm,action,focus_highlight,hide", "elm");
+                               "action,focus_highlight,hide", "efl");
         _elm_win_focus_target_callbacks_del(sd);
         evas_object_event_callback_del_full
            (sd->focus_highlight.cur.target,
@@ -3860,10 +3860,10 @@ _elm_win_focus_highlight_init(Efl_Ui_Win_Data *sd)
      {
         sd->focus_highlight.fobj = edje_object_add(sd->evas);
         edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                        "elm,action,focus,hide,end", "*",
+                                        "action,focus,hide,end", "*",
                                         _elm_win_focus_highlight_hide, NULL);
         edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                        "elm,action,focus,anim,end", "*",
+                                        "action,focus,anim,end", "*",
                                         _elm_win_focus_highlight_anim_end, sd->obj);
      }
 
@@ -4398,30 +4398,30 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    evas_object_smart_calculate(sd->frame_obj);
 
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,move,start", "elm",
+     (sd->frame_obj, "action,move,start", "efl",
      _elm_win_frame_cb_move_start, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,move,stop", "elm",
+     (sd->frame_obj, "action,move,stop", "efl",
      _elm_win_frame_cb_move_stop, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,resize,show", "*",
+     (sd->frame_obj, "action,resize,show", "*",
      _elm_win_frame_cb_resize_show, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,resize,hide", "*",
+     (sd->frame_obj, "action,resize,hide", "*",
      _elm_win_frame_cb_resize_hide, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,resize,start", "*",
+     (sd->frame_obj, "action,resize,start", "*",
      _elm_win_frame_cb_resize_start, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,minimize", "elm",
+     (sd->frame_obj, "action,minimize", "efl",
      _elm_win_frame_cb_minimize, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,maximize", "elm",
+     (sd->frame_obj, "action,maximize", "efl",
      _elm_win_frame_cb_maximize, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, obj);
+     (sd->frame_obj, "action,close", "efl", _elm_win_frame_cb_close, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,menu", "elm", _elm_win_frame_cb_menu, obj);
+     (sd->frame_obj, "action,menu", "efl", _elm_win_frame_cb_menu, obj);
 
    if (!sd->pointer.obj)
      {
@@ -4517,21 +4517,21 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    if (force_emit || (state != sd->csd.cur_##state)) \
      { \
         const char *sig = state ? s1 : s2; \
-        edje_object_signal_emit(sd->frame_obj, sig, "elm"); \
+        edje_object_signal_emit(sd->frame_obj, sig, "efl"); \
         DBG("frame style emit: %p %s", sd->obj, sig); \
         sd->csd.cur_##state = state; \
         changed = EINA_TRUE; \
      } } while (0)
 
-   STATE_SET(borderless, "elm,state,borderless,on", "elm,state,borderless,off");
-   STATE_SET(shadow, "elm,state,shadow,on", "elm,state,shadow,off");
-   STATE_SET(maximized, "elm,state,maximized", "elm,state,unmaximized");
-   STATE_SET(focus, "elm,action,focus", "elm,action,unfocus");
-   STATE_SET(bg_solid, "elm,state,background,solid,on", "elm,state,background,solid,off");
-   STATE_SET(bg_standard, "elm,state,background,standard,on", "elm,state,background,standard,off");
-   STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off");
-   STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu");
-   STATE_SET(indicator, "elm,action,show_indicator", "elm,action,hide_indicator");
+   STATE_SET(borderless, "state,borderless,on", "state,borderless,off");
+   STATE_SET(shadow, "state,shadow,on", "state,shadow,off");
+   STATE_SET(maximized, "state,maximized", "state,unmaximized");
+   STATE_SET(focus, "action,focus", "action,unfocus");
+   STATE_SET(bg_solid, "state,background,solid,on", "state,background,solid,off");
+   STATE_SET(bg_standard, "state,background,standard,on", "state,background,standard,off");
+   STATE_SET(unresizable, "state,unresizable,on", "state,unresizable,off");
+   STATE_SET(menu, "action,show_menu", "action,hide_menu");
+   STATE_SET(indicator, "action,show_indicator", "action,hide_indicator");
 
 #undef STATE_SET
 
@@ -5964,9 +5964,9 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
         _elm_win_resize_objects_eval(sd->obj, EINA_FALSE);
         if (swallow != sd->frame_obj)
           {
-             // Note: Based on EFL 1.18 the signal was "elm,action,hide"
-             // and not "elm,action,hide_menu" as expected.
-             edje_object_signal_emit(swallow, "elm,action,hide", "elm");
+             // Note: Based on EFL 1.18 the signal was "action,hide"
+             // and not "action,hide_menu" as expected.
+             edje_object_signal_emit(swallow, "action,hide", "efl");
              edje_object_message_signal_recursive_process(swallow);
           }
      }
@@ -5983,7 +5983,7 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
           }
         else
           {
-             edje_object_signal_emit(swallow, "elm,action,show_menu", "elm");
+             edje_object_signal_emit(swallow, "action,show_menu", "efl");
              edje_object_message_signal_recursive_process(swallow);
           }
      }
@@ -6495,11 +6495,11 @@ _efl_ui_win_indicator_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_
    if (!sd->indicator) _indicator_add(sd);
 
    if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
-     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_opaque", "elm");
+     edje_object_signal_emit(sd->frame_obj, "action,indicator,bg_opaque", "efl");
    else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
-     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_transparent", "elm");
+     edje_object_signal_emit(sd->frame_obj, "action,indicator,bg_transparent", "efl");
    else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
-     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,hidden", "elm");
+     edje_object_signal_emit(sd->frame_obj, "action,indicator,hidden", "efl");
 
    edje_object_message_signal_process(sd->frame_obj);
    evas_object_smart_calculate(sd->frame_obj);

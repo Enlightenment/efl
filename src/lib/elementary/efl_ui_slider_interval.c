@@ -110,9 +110,9 @@ _efl_ui_slider_interval_efl_object_finalize(Eo *obj, void *sd EINA_UNUSED)
    elm_widget_theme_klass_set(obj, "slider_interval");
    efl_ui_widget_theme_apply(obj);
 
-   elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+   elm_layout_signal_emit(obj, "slider,range,enable", "efl");
    if (pd->indicator_show)
-     edje_object_signal_emit(pd->popup2, "elm,state,val,show", "elm");
+     edje_object_signal_emit(pd->popup2, "state,val,show", "efl");
 
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 

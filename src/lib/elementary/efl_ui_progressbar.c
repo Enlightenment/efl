@@ -239,15 +239,15 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->pulse)
-     elm_layout_signal_emit(obj, "elm,state,pulse", "elm");
+     elm_layout_signal_emit(obj, "state,pulse", "efl");
    else
-     elm_layout_signal_emit(obj, "elm,state,fraction", "elm");
+     elm_layout_signal_emit(obj, "state,fraction", "efl");
 
    if (sd->pulse_state)
-     elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+     elm_layout_signal_emit(obj, "state,pulse,start", "efl");
 
    if (sd->format_cb && (!sd->pulse))
-     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+     elm_layout_signal_emit(obj, "state,units,visible", "efl");
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
@@ -259,9 +259,9 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
        elm_config_scale_get());
 
    if (_is_inverted(sd->dir))
-     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+     elm_layout_signal_emit(obj, "state,inverted,on", "efl");
    else
-     elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+     elm_layout_signal_emit(obj, "state,inverted,off", "efl");
 
    _units_set(obj);
    _val_set(obj);
@@ -566,7 +566,7 @@ _efl_ui_progressbar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Progressbar_Data
    sd->format_free_cb = func_free_cb;
    if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
 
-   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   elm_layout_signal_emit(obj, "state,units,visible", "efl");
    edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
@@ -582,9 +582,9 @@ _efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool st
    sd->pulse_state = state;
 
    if (sd->pulse_state)
-     elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+     elm_layout_signal_emit(obj, "state,pulse,start", "efl");
    else
-     elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
+     elm_layout_signal_emit(obj, "state,pulse,stop", "efl");
 }
 
 EOLIAN static Eina_Bool
@@ -722,10 +722,10 @@ _icon_signal_emit(Evas_Object *obj)
    char buf[64];
 
    if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+   snprintf(buf, sizeof(buf), "state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
-   elm_layout_signal_emit(obj, buf, "elm");
+   elm_layout_signal_emit(obj, buf, "efl");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_layout_sizing_eval(obj);
 }

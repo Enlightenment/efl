@@ -388,13 +388,13 @@ _current_item_state_change(Evas_Object *obj,
    switch (state)
      {
       case MULTIBUTTONENTRY_BUTTON_STATE_SELECTED:
-        elm_layout_signal_emit(VIEW(item), "elm,state,focused", "elm");
+        elm_layout_signal_emit(VIEW(item), "state,focused", "efl");
         efl_event_callback_legacy_call
           (obj, EFL_UI_MULTIBUTTONENTRY_EVENT_ITEM_SELECTED, EO_OBJ(item));
         break;
       case MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT:
       default:
-        elm_layout_signal_emit(VIEW(item), "elm,state,default", "elm");
+        elm_layout_signal_emit(VIEW(item), "state,default", "efl");
         sd->selected_it = NULL;
         break;
      }
@@ -765,7 +765,7 @@ _item_new(Efl_Ui_Multibuttonentry_Data *sd,
    elm_layout_signal_callback_add
      (VIEW(item), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
    elm_layout_signal_callback_add
-     (VIEW(item), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
+     (VIEW(item), "item,deleted", "efl", _on_item_deleted, EO_OBJ(item));
    evas_object_smart_callback_add
      (VIEW(item), "focused", _on_item_focused, item);
    evas_object_smart_callback_add
@@ -1861,11 +1861,11 @@ _elm_multibuttonentry_item_elm_widget_item_disable(Eo *eo_it, Elm_Multibuttonent
 {
    const char* emission;
    if (elm_wdg_item_disabled_get(eo_it))
-     emission = "elm,state,disabled";
+     emission = "state,disabled";
    else
-     emission = "elm,state,enabled";
+     emission = "state,enabled";
 
-   elm_layout_signal_emit(VIEW(it), emission, "elm");
+   elm_layout_signal_emit(VIEW(it), emission, "efl");
 }
 
 EINA_DEPRECATED EAPI void *
@@ -2015,7 +2015,7 @@ static Eina_Bool
 _key_action_activate(Eo *obj, const char *params EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
-   elm_layout_signal_emit(VIEW(it), "mouse,clicked,1", "elm");
+   elm_layout_signal_emit(VIEW(it), "mouse,clicked,1", "efl");
    return EINA_TRUE;
 }
 
@@ -2023,7 +2023,7 @@ static Eina_Bool
 _key_action_delete(Eo *obj, const char *params EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
-   elm_layout_signal_emit(VIEW(it), "elm,deleted", "elm");
+   elm_layout_signal_emit(VIEW(it), "deleted", "efl");
    return EINA_TRUE;
 }
 

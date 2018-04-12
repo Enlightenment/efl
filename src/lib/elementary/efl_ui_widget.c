@@ -3097,8 +3097,8 @@ elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wnam
    if (sd->orient_mode != -1)
      {
         char buf[128];
-        snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
-        elm_widget_signal_emit(obj, buf, "elm");
+        snprintf(buf, sizeof(buf), "state,orient,%d", sd->orient_mode);
+        elm_widget_signal_emit(obj, buf, "efl");
      }
 
    return ret;
@@ -3582,8 +3582,8 @@ _efl_ui_widget_on_orientation_update(Eo *obj, Elm_Widget_Smart_Data *sd, int ori
    if (orient_mode != -1)
      {
         char buf[128];
-        snprintf(buf, sizeof(buf), "elm,state,orient,%d", orient_mode);
-        elm_widget_signal_emit(obj, buf, "elm");
+        snprintf(buf, sizeof(buf), "state,orient,%d", orient_mode);
+        elm_widget_signal_emit(obj, buf, "efl");
      }
 }
 

@@ -233,7 +233,10 @@ _units_set(Evas_Object *obj)
 
         if (!sd->units_show)
           {
-             elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+             if (elm_widget_is_legacy(obj))
+               elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+             else
+               elm_layout_signal_emit(obj, "state,units,visible", "efl");
              sd->units_show = EINA_TRUE;
           }
 
@@ -244,7 +247,10 @@ _units_set(Evas_Object *obj)
         elm_layout_text_set(obj, "elm.units", NULL);
         if (sd->units_show)
           {
-             elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
+             if (elm_widget_is_legacy(obj))
+               elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
+             else
+               elm_layout_signal_emit(obj, "state,units,hidden", "efl");
              sd->units_show = EINA_FALSE;
           }
      }
@@ -384,16 +390,20 @@ _popup_show(void *data,
         evas_object_raise(sd->popup);
         evas_object_show(sd->popup);
         sd->popup_visible = EINA_TRUE;
-        edje_object_signal_emit(sd->popup, "popup,show", "elm"); // XXX: for compat
-        edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
+        if (elm_widget_is_legacy(obj))
+          edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
+        else
+          edje_object_signal_emit(sd->popup, "popup,show", "efl");
      }
    if (sd->popup2 &&
        (sd->indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE))
      {
         evas_object_raise(sd->popup2);
         evas_object_show(sd->popup2);
-        edje_object_signal_emit(sd->popup2, "popup,show", "elm"); // XXX: for compat
-        edje_object_signal_emit(sd->popup2, "elm,popup,show", "elm");
+        if (elm_widget_is_legacy(obj))
+          edje_object_signal_emit(sd->popup2, "elm,popup,show", "elm");
+        else
+          edje_object_signal_emit(sd->popup2, "popup,show", "efl");
      }
    ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
 }
@@ -413,13 +423,17 @@ _popup_hide(void *data,
        efl_ui_focus_object_focus_get(data))
      return;
 
-   edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
-   edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
+   if (elm_widget_is_legacy(obj))
+     edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
+   else
+     edje_object_signal_emit(sd->popup, "popup,hide", "efl");
 
    if (sd->popup2)
      {
-        edje_object_signal_emit(sd->popup2, "popup,hide", "elm"); // XXX: for compat
-        edje_object_signal_emit(sd->popup2, "elm,popup,hide", "elm");
+        if (elm_widget_is_legacy(obj))
+          edje_object_signal_emit(sd->popup2, "elm,popup,hide", "elm");
+        else
+          edje_object_signal_emit(sd->popup2, "popup,hide", "efl");
      }
 }
 
@@ -657,15 +671,30 @@ _popup_update(Evas_Object *obj, Efl_Ui_Slider_Data *sd, Evas_Object *popup)
    edje_object_scale_set(popup, efl_gfx_scale_get(obj) *
                          elm_config_scale_get());
 
-   if (!_is_inverted(sd->dir))
-     edje_object_signal_emit(popup, "elm,state,inverted,off", "elm");
-   else
-     edje_object_signal_emit(popup, "elm,state,inverted,on", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!_is_inverted(sd->dir))
+          edje_object_signal_emit(popup, "elm,state,inverted,off", "elm");
+        else
+          edje_object_signal_emit(popup, "elm,state,inverted,on", "elm");
 
-   if (sd->indicator_show)
-     edje_object_signal_emit(popup, "elm,state,val,show", "elm");
+        if (sd->indicator_show)
+          edje_object_signal_emit(popup, "elm,state,val,show", "elm");
+        else
+          edje_object_signal_emit(popup, "elm,state,val,hide", "elm");
+     }
    else
-     edje_object_signal_emit(popup, "elm,state,val,hide", "elm");
+     {
+        if (!_is_inverted(sd->dir))
+          edje_object_signal_emit(popup, "state,inverted,off", "efl");
+        else
+          edje_object_signal_emit(popup, "state,inverted,on", "efl");
+
+        if (sd->indicator_show)
+          edje_object_signal_emit(popup, "state,val,show", "efl");
+        else
+          edje_object_signal_emit(popup, "state,val,hide", "efl");
+     }
 }
 
 static void
@@ -683,10 +712,16 @@ _popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
    // XXX popup needs to adapt to theme etc.
    *popup = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(*popup, obj);
-   edje_object_signal_callback_add(*popup, "popup,hide,done", "elm", // XXX: for compat
-                                   _popup_hide_done, obj);
-   edje_object_signal_callback_add(*popup, "elm,popup,hide,done", "elm",
-                                   _popup_hide_done, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_signal_callback_add(*popup, "elm,popup,hide,done", "elm",
+                                        _popup_hide_done, obj);
+     }
+   else
+     {
+        edje_object_signal_callback_add(*popup, "popup,hide,done", "efl",
+                                        _popup_hide_done, obj);
+     }
 
    _popup_update(obj, sd, *popup);
 
@@ -797,22 +832,39 @@ _efl_ui_slider_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
        (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
        elm_config_scale_get());
 
-   if (sd->intvl_enable)
-     elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
-   else
-     elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->intvl_enable)
+          elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
 
-   if (_is_inverted(sd->dir))
-     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
-   else
-     elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+        if (_is_inverted(sd->dir))
+          elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
 
-   if (sd->indicator_show)
-     elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+        if (sd->indicator_show)
+          elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+     {
+        if (sd->intvl_enable)
+          elm_layout_signal_emit(obj, "slider,range,enable", "efl");
+        else
+          elm_layout_signal_emit(obj, "slider,range,disable", "efl");
 
-  
+        if (_is_inverted(sd->dir))
+          elm_layout_signal_emit(obj, "state,inverted,on", "efl");
+        else
+          elm_layout_signal_emit(obj, "state,inverted,off", "efl");
+
+        if (sd->indicator_show)
+          elm_layout_signal_emit(obj, "state,val,show", "efl");
+        else
+          elm_layout_signal_emit(obj, "state,val,hide", "efl");
+     }
+
    if (!sd->popup)
      _popup_add(sd, obj, &sd->popup, &sd->track, sd->intvl_enable);
    else
@@ -939,7 +991,11 @@ _spacer_down_cb(void *data,
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
    efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
-   elm_layout_signal_emit(data, "elm,state,indicator,show", "elm");
+   if (elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,state,indicator,show", "elm");
+   else
+     elm_layout_signal_emit(data, "state,indicator,show", "efl");
+
 }
 
 static void
@@ -983,7 +1039,12 @@ _spacer_move_cb(void *data,
                   elm_widget_scroll_freeze_pop(data);
                   sd->frozen = EINA_FALSE;
                }
-             elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
+
+             if (elm_widget_is_legacy(data))
+               elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
+             else
+               elm_layout_signal_emit(data, "state,indicator,hide", "efl");
+
              elm_slider_value_set(data, sd->val2);
              return;
           }
@@ -1024,7 +1085,10 @@ _spacer_up_cb(void *data,
         elm_widget_scroll_freeze_pop(data);
         sd->frozen = EINA_FALSE;
      }
-   elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
+   if (elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
+   else
+     elm_layout_signal_emit(data, "state,indicator,hide", "efl");
 }
 
 static void
@@ -1152,10 +1216,10 @@ _efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
    elm_layout_signal_callback_add(obj, "drag,stop", "*", _drag_stop, obj);
    elm_layout_signal_callback_add(obj, "drag,step", "*", _drag_step, obj);
    elm_layout_signal_callback_add(obj, "drag,page", "*", _drag_stop, obj);
-   elm_layout_signal_callback_add(obj, "popup,show", "elm", _popup_show, obj); // XXX: for compat
-   elm_layout_signal_callback_add(obj, "popup,hide", "elm", _popup_hide, obj); // XXX: for compat
-   elm_layout_signal_callback_add(obj, "elm,popup,show", "elm", _popup_show, obj);
-   elm_layout_signal_callback_add(obj, "elm,popup,hide", "elm", _popup_hide, obj);
+   elm_layout_signal_callback_add(obj, "popup,show", "efl", _popup_show, obj); // XXX: for compat
+   elm_layout_signal_callback_add(obj, "popup,hide", "efl", _popup_hide, obj); // XXX: for compat
+   elm_layout_signal_callback_add(obj, "popup,show", "efl", _popup_show, obj);
+   elm_layout_signal_callback_add(obj, "popup,hide", "efl", _popup_hide, obj);
    elm_layout_signal_callback_add(obj, "*", "popup,emit", _popup_emit, obj);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
@@ -1362,12 +1426,25 @@ _efl_ui_slider_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Slider_Data *sd, void
    sd->format_free_cb = func_free_cb;
    if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
 
-   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   else
+     elm_layout_signal_emit(obj, "state,units,visible", "efl");
    edje_object_message_signal_process(wd->resize_obj);
-   if (sd->popup)
-     edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
-   if (sd->popup2)
-     edje_object_signal_emit(sd->popup2, "elm,state,units,visible", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,visible", "elm");
+     }
+   else
+     {
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "state,units,visible", "efl");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "state,units,visible", "efl");
+     }
 
    efl_canvas_group_change(obj);
 }
@@ -1400,21 +1477,43 @@ _slider_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int size)
    if (sd->size == size) return;
    sd->size = size;
 
-   if (sd->indicator_show)
+   if (elm_widget_is_legacy(obj))
      {
-        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+        if (sd->indicator_show)
+          {
+             elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
+          }
      }
    else
      {
-        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
+        if (sd->indicator_show)
+          {
+             elm_layout_signal_emit(obj, "state,val,show", "efl");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "state,val,show", "efl");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "state,val,show", "efl");
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "state,val,hide", "efl");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "state,val,hide", "efl");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "state,val,hide", "efl");
+          }
      }
 
    evas_object_smart_changed(obj);
@@ -1692,18 +1791,34 @@ elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
 
    sd->intvl_enable = enable;
    efl_ui_widget_theme_apply(obj);
-   if (sd->intvl_enable)
+   if (elm_widget_is_legacy(obj))
      {
-        elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
-        if (sd->indicator_show)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+        if (sd->intvl_enable)
+          {
+             elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+             if (sd->indicator_show)
+               edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
+             ELM_SAFE_FREE(sd->popup2, evas_object_del);
+          }
      }
    else
      {
-        elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
-        ELM_SAFE_FREE(sd->popup2, evas_object_del);
+        if (sd->intvl_enable)
+          {
+             elm_layout_signal_emit(obj, "slider,range,enable", "efl");
+             if (sd->indicator_show)
+               edje_object_signal_emit(sd->popup2, "state,val,show", "efl");
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "slider,range,disable", "efl");
+             ELM_SAFE_FREE(sd->popup2, evas_object_del);
+          }
      }
-
 }
 
 EAPI Eina_Bool
@@ -1792,23 +1907,47 @@ elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show)
 {
    EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
 
-   if (show)
+   if (elm_widget_is_legacy(obj))
      {
-        sd->indicator_show = EINA_TRUE;
-        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+        if (show)
+          {
+             sd->indicator_show = EINA_TRUE;
+             elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+          }
+        else
+          {
+             sd->indicator_show = EINA_FALSE;
+             elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
+          }
      }
    else
      {
-        sd->indicator_show = EINA_FALSE;
-        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
+        if (show)
+          {
+             sd->indicator_show = EINA_TRUE;
+             elm_layout_signal_emit(obj, "state,val,show", "efl");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "state,val,show", "efl");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "state,val,show", "efl");
+          }
+        else
+          {
+             sd->indicator_show = EINA_FALSE;
+             elm_layout_signal_emit(obj, "state,val,hide", "efl");
+             if (sd->popup)
+               edje_object_signal_emit(sd->popup, "state,val,hide", "efl");
+             if (sd->popup2)
+               edje_object_signal_emit(sd->popup2, "state,val,hide", "efl");
+          }
      }
 
    evas_object_smart_changed(obj);

@@ -108,50 +108,50 @@ group { "efl/slider/horizontal/indicator";
    }
    programs {
       program {
-         signal: "elm,popup,show"; source: "elm";
+         signal: "popup,show"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal: "elm,popup,hide"; source: "elm";
+         signal: "popup,hide"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal: "elm,popup,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide,done" "elm";
+         signal: "popup,hide"; source: "efl";
+         action:  SIGNAL_EMIT "popup,hide,done" "efl";
       }
       program {
-         signal: "elm,state,val,show"; source: "elm";
+         signal: "state,val,show"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target: "clip";
       }
       program {
-         signal: "elm,state,val,hide"; source: "elm";
+         signal: "state,val,hide"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "clip";
       }
       program {
-         signal: "elm,state,indicator,show"; source: "elm";
+         signal: "state,indicator,show"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal: "elm,state,indicator,hide"; source: "elm";
+         signal: "state,indicator,hide"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal:  "elm,state,disabled"; source: "elm";
+         signal:  "state,disabled"; source: "efl";
          action:  STATE_SET "disabled" 0.0;
          target:  "base";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target:  "base";
       }
@@ -237,50 +237,50 @@ group { "efl/slider/vertical/indicator";
    }
    programs {
       program {
-         signal: "elm,popup,show"; source: "elm";
+         signal: "popup,show"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal: "elm,popup,hide"; source: "elm";
+         signal: "popup,hide"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal: "elm,popup,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide,done" "elm";
+         signal: "popup,hide"; source: "efl";
+         action:  SIGNAL_EMIT "popup,hide,done" "efl";
       }
       program {
-         signal: "elm,state,val,show"; source: "elm";
+         signal: "state,val,show"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target: "clip";
       }
       program {
-         signal: "elm,state,val,hide"; source: "elm";
+         signal: "state,val,hide"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "clip";
       }
       program {
-         signal: "elm,state,indicator,show"; source: "elm";
+         signal: "state,indicator,show"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal: "elm,state,indicator,hide"; source: "elm";
+         signal: "state,indicator,hide"; source: "efl";
          action:  STATE_SET "visible" 0.0;
          target:  "elm.indicator";
          target:  "bevel";
       }
       program {
-         signal:  "elm,state,disabled"; source: "elm";
+         signal:  "state,disabled"; source: "efl";
          action:  STATE_SET "disabled" 0.0;
          target:  "base";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target:  "base";
       }
@@ -727,18 +727,18 @@ group { "efl/slider/horizontal";
          target: "knob";
       }
       program {
-         signal: "elm,state,indicator,show"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         signal: "state,indicator,show"; source: "efl";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program {
-         signal: "elm,state,indicator,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         signal: "state,indicator,hide"; source: "efl";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program {
          signal: "mouse,down,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program { name: "popup_show2";
@@ -747,7 +747,7 @@ group { "efl/slider/horizontal";
       }
       program {
          signal: "mouse,up,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program { name: "popup_hide2";
@@ -755,7 +755,7 @@ group { "efl/slider/horizontal";
          target: "button";
       }
       program {
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "state,elm.text,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -763,7 +763,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "state,elm.text,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -771,7 +771,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,icon,set"; source: "elm";
+         signal: "state,icon,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -779,7 +779,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,icon,unset"; source: "elm";
+         signal: "state,icon,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -787,7 +787,7 @@ group { "efl/slider/horizontal";
          }
       }
       program { name: "end_show";
-         signal: "elm,state,end,visible"; source: "elm";
+         signal: "state,end,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= END; set_int(slmode, m);
@@ -795,7 +795,7 @@ group { "efl/slider/horizontal";
          }
       }
       program { name: "end_hide";
-         signal: "elm,state,end,hidden"; source: "elm";
+         signal: "state,end,hidden"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~END; set_int(slmode, m);
@@ -803,7 +803,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
+         signal: "state,units,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= UNITS; set_int(slmode, m);
@@ -811,12 +811,12 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
-         action: SIGNAL_EMIT "limits,visible" "elm";
+         signal: "state,units,visible"; source: "efl";
+         action: SIGNAL_EMIT "limits,visible" "efl";
          target: "limits";
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
+         signal: "state,units,hidden"; source: "efl";
          action:  STATE_SET "default" 0.0;
          script {
             new m = get_int(slmode);
@@ -825,12 +825,12 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
-         action: SIGNAL_EMIT "limits,hide" "elm";
+         signal: "state,units,hidden"; source: "efl";
+         action: SIGNAL_EMIT "limits,hide" "efl";
          target: "limits";
       }
       program {
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "state,inverted,on"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= INVERT; set_int(slmode, m);
@@ -838,7 +838,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "state,inverted,off"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~INVERT; set_int(slmode, m);
@@ -846,7 +846,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
@@ -854,7 +854,7 @@ group { "efl/slider/horizontal";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -1314,18 +1314,18 @@ group { "efl/slider/vertical";
          target: "knob";
       }
       program {
-         signal: "elm,state,indicator,show"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         signal: "state,indicator,show"; source: "efl";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program {
-         signal: "elm,state,indicator,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         signal: "state,indicator,hide"; source: "efl";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program {
          signal: "mouse,down,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program { name: "popup_show2";
@@ -1334,7 +1334,7 @@ group { "efl/slider/vertical";
       }
       program {
          signal: "mouse,up,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program { name: "popup_hide2";
@@ -1342,7 +1342,7 @@ group { "efl/slider/vertical";
          target: "button";
       }
       program {
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "state,elm.text,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -1350,7 +1350,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "state,elm.text,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -1358,7 +1358,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,icon,set"; source: "elm";
+         signal: "state,icon,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -1366,7 +1366,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,icon,unset"; source: "elm";
+         signal: "state,icon,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -1374,7 +1374,7 @@ group { "efl/slider/vertical";
          }
       }
       program { name: "end_show";
-         signal: "elm,state,end,visible"; source: "elm";
+         signal: "state,end,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= END; set_int(slmode, m);
@@ -1382,7 +1382,7 @@ group { "efl/slider/vertical";
          }
       }
       program { name: "end_hide";
-         signal: "elm,state,end,hidden"; source: "elm";
+         signal: "state,end,hidden"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~END; set_int(slmode, m);
@@ -1390,7 +1390,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
+         signal: "state,units,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= UNITS; set_int(slmode, m);
@@ -1398,11 +1398,11 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,visible" "elm";
+         signal: "state,units,visible"; source: "efl";
+         action: SIGNAL_EMIT "limits:limits,visible" "efl";
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
+         signal: "state,units,hidden"; source: "efl";
          action:  STATE_SET "default" 0.0;
          script {
             new m = get_int(slmode);
@@ -1411,11 +1411,11 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,hide" "elm";
+         signal: "state,units,hidden"; source: "efl";
+         action: SIGNAL_EMIT "limits:limits,hide" "efl";
       }
       program {
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "state,inverted,on"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= INVERT; set_int(slmode, m);
@@ -1423,7 +1423,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "state,inverted,off"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~INVERT; set_int(slmode, m);
@@ -1431,7 +1431,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
@@ -1439,7 +1439,7 @@ group { "efl/slider/vertical";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -2039,8 +2039,8 @@ group { "efl/slider_interval/horizontal";
          target: "knob";
       }
       program {
-         signal: "elm,slider,range,enable";
-         source: "elm";
+         signal: "slider,range,enable";
+         source: "efl";
          script {
               set_int(range, 1);
               set_state(PART:"button2", "show", 0.0);
@@ -2054,8 +2054,8 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,slider,range,disable";
-         source: "elm";
+         signal: "slider,range,disable";
+         source: "efl";
          script {
               set_int(range, 0);
               set_state(PART:"button2", "default", 0.0);
@@ -2079,18 +2079,18 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,indicator,show"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         signal: "state,indicator,show"; source: "efl";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program {
-         signal: "elm,state,indicator,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         signal: "state,indicator,hide"; source: "efl";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program {
          signal: "mouse,down,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program { name: "popup_show2";
@@ -2099,7 +2099,7 @@ group { "efl/slider_interval/horizontal";
       }
       program {
          signal: "mouse,up,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program { name: "popup_hide2";
@@ -2108,7 +2108,7 @@ group { "efl/slider_interval/horizontal";
       }
       program {
          signal: "mouse,down,1"; source: "slideevent2";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup2_show2";
       }
       program { name: "popup2_show2";
@@ -2117,7 +2117,7 @@ group { "efl/slider_interval/horizontal";
       }
       program {
          signal: "mouse,up,1"; source: "slideevent2";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup2_hide2";
       }
       program { name: "popup2_hide2";
@@ -2125,7 +2125,7 @@ group { "efl/slider_interval/horizontal";
          target: "button2";
       }
       program {
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "state,elm.text,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -2133,7 +2133,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "state,elm.text,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -2141,7 +2141,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,icon,set"; source: "elm";
+         signal: "state,icon,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -2149,7 +2149,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,icon,unset"; source: "elm";
+         signal: "state,icon,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -2157,7 +2157,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program { name: "end_show";
-         signal: "elm,state,end,visible"; source: "elm";
+         signal: "state,end,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= END; set_int(slmode, m);
@@ -2165,7 +2165,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program { name: "end_hide";
-         signal: "elm,state,end,hidden"; source: "elm";
+         signal: "state,end,hidden"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~END; set_int(slmode, m);
@@ -2173,7 +2173,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
+         signal: "state,units,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= UNITS; set_int(slmode, m);
@@ -2181,12 +2181,12 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
-         action: SIGNAL_EMIT "limits,visible" "elm";
+         signal: "state,units,visible"; source: "efl";
+         action: SIGNAL_EMIT "limits,visible" "efl";
          target: "limits";
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
+         signal: "state,units,hidden"; source: "efl";
          action:  STATE_SET "default" 0.0;
          script {
             new m = get_int(slmode);
@@ -2195,12 +2195,12 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
-         action: SIGNAL_EMIT "limits,hide" "elm";
+         signal: "state,units,hidden"; source: "efl";
+         action: SIGNAL_EMIT "limits,hide" "efl";
          target: "limits";
       }
       program {
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "state,inverted,on"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= INVERT; set_int(slmode, m);
@@ -2208,7 +2208,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "state,inverted,off"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~INVERT; set_int(slmode, m);
@@ -2216,7 +2216,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
@@ -2224,7 +2224,7 @@ group { "efl/slider_interval/horizontal";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -2824,8 +2824,8 @@ group { "efl/slider_interval/vertical";
          target: "knob";
       }
       program {
-         signal: "elm,slider,range,enable";
-         source: "elm";
+         signal: "slider,range,enable";
+         source: "efl";
          script {
               set_int(range, 1);
               set_state(PART:"button2", "show", 0.0);
@@ -2839,8 +2839,8 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,slider,range,disable";
-         source: "elm";
+         signal: "slider,range,disable";
+         source: "efl";
          script {
               set_int(range, 0);
               set_state(PART:"button2", "default", 0.0);
@@ -2864,18 +2864,18 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,indicator,show"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         signal: "state,indicator,show"; source: "efl";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program {
-         signal: "elm,state,indicator,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         signal: "state,indicator,hide"; source: "efl";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program {
          signal: "mouse,down,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup_show2";
       }
       program { name: "popup_show2";
@@ -2884,7 +2884,7 @@ group { "efl/slider_interval/vertical";
       }
       program {
          signal: "mouse,up,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup_hide2";
       }
       program { name: "popup_hide2";
@@ -2893,7 +2893,7 @@ group { "efl/slider_interval/vertical";
       }
       program {
          signal: "mouse,down,1"; source: "slideevent2";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         action:  SIGNAL_EMIT "popup,show" "efl";
          after: "popup2_show2";
       }
       program { name: "popup2_show2";
@@ -2902,7 +2902,7 @@ group { "efl/slider_interval/vertical";
       }
       program {
          signal: "mouse,up,1"; source: "slideevent2";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         action:  SIGNAL_EMIT "popup,hide" "efl";
          after: "popup2_hide2";
       }
       program { name: "popup2_hide2";
@@ -2910,7 +2910,7 @@ group { "efl/slider_interval/vertical";
          target: "button2";
       }
       program {
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "state,elm.text,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -2918,7 +2918,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "state,elm.text,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -2926,7 +2926,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,icon,set"; source: "elm";
+         signal: "state,icon,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -2934,7 +2934,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,icon,unset"; source: "elm";
+         signal: "state,icon,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -2942,7 +2942,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program { name: "end_show";
-         signal: "elm,state,end,visible"; source: "elm";
+         signal: "state,end,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= END; set_int(slmode, m);
@@ -2950,7 +2950,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program { name: "end_hide";
-         signal: "elm,state,end,hidden"; source: "elm";
+         signal: "state,end,hidden"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~END; set_int(slmode, m);
@@ -2958,7 +2958,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
+         signal: "state,units,visible"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= UNITS; set_int(slmode, m);
@@ -2966,11 +2966,11 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,units,visible"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,visible" "elm";
+         signal: "state,units,visible"; source: "efl";
+         action: SIGNAL_EMIT "limits:limits,visible" "efl";
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
+         signal: "state,units,hidden"; source: "efl";
          action:  STATE_SET "default" 0.0;
          script {
             new m = get_int(slmode);
@@ -2979,11 +2979,11 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,units,hidden"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,hide" "elm";
+         signal: "state,units,hidden"; source: "efl";
+         action: SIGNAL_EMIT "limits:limits,hide" "efl";
       }
       program {
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "state,inverted,on"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= INVERT; set_int(slmode, m);
@@ -2991,7 +2991,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "state,inverted,off"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~INVERT; set_int(slmode, m);
@@ -2999,7 +2999,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
@@ -3007,7 +3007,7 @@ group { "efl/slider_interval/vertical";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
