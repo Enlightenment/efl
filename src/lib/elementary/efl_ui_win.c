@@ -1239,6 +1239,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
      }
 
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
+   evas_object_smart_callback_call(obj, SIG_WIDGET_FOCUSED, NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
@@ -1281,6 +1282,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
+   evas_object_smart_callback_call(obj, SIG_WIDGET_UNFOCUSED, NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
