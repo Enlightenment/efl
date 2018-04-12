@@ -1419,7 +1419,7 @@ _prev(Node *node)
 
 
 static Node*
-_logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction)
+_logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction, Eina_Bool accept_logical)
 {
    Node* (*deliver)(Node *n);
    Node *result;
@@ -1450,6 +1450,8 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
           efl_ui_focus_object_prepare_logical(result->focusable);
 
         result = deliver(result);
+        if (accept_logical)
+          break;
    } while(result && result->type != NODE_TYPE_NORMAL && !result->redirect_manager);
 
    eina_list_free(stack);
@@ -1458,7 +1460,7 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
 }
 
 static Efl_Ui_Focus_Object*
-_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper)
+_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper, Eina_Bool accept_logical)
 {
    Node *dir = NULL;
 
@@ -1478,7 +1480,7 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
 
    if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS
     || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-      dir = _logical_movement(pd, upper, direction);
+      dir = _logical_movement(pd, upper, direction, accept_logical);
    else
       dir = _coords_movement(pd, upper, direction);
 
@@ -1490,27 +1492,24 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
 {
+   Node *child_node;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
    if (pd->redirect)
-     return efl_ui_focus_manager_request_move(pd->redirect, direction);
+     return efl_ui_focus_manager_request_move(pd->redirect, direction, NULL, logical);
    else
      {
-        Node *upper = NULL;
+        if (!child)
+          child_node = eina_list_last_data_get(pd->focus_stack);
+        else
+          child_node = node_get(obj, pd, child);
 
-        upper = eina_list_last_data_get(pd->focus_stack);
+        if (!child_node)
+          return NULL;
 
-        if (!upper)
-          {
-             upper = _no_history_element(pd->node_hash);
-             if (upper)
-               return upper->focusable;
-             return NULL;
-          }
-
-        return _request_move(obj, pd, direction, upper);
+        return _request_move(obj, pd, direction, child_node, logical);
      }
 }
 
@@ -1721,7 +1720,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                {
                   // lets just take the redirect_entry
                   Node *n = node_get(obj, pd, pd->redirect_entry);
-                  new_candidate = _request_move(obj, pd, direction, n);
+                  new_candidate = _request_move(obj, pd, direction, n, EINA_FALSE);
 
                   if (new_candidate)
                     {
@@ -1747,7 +1746,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                   n = eina_hash_find(pd->node_hash, &old_candidate);
 
                   if (n)
-                    new_candidate = _request_move(obj, pd, direction, n);
+                    new_candidate = _request_move(obj, pd, direction, n, EINA_FALSE);
 
                   if (new_candidate)
                     {
@@ -1762,7 +1761,18 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
      }
    else
      {
-        candidate = efl_ui_focus_manager_request_move(obj, direction);
+        Efl_Ui_Focus_Object *child = NULL;
+
+        if (!pd->focus_stack)
+          {
+             Node *child_node;
+
+             child_node = _no_history_element(pd->node_hash);
+             if (child_node)
+               child = child_node->focusable;
+          }
+
+        candidate = efl_ui_focus_manager_request_move(obj, direction, child, EINA_FALSE);
 
         F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
 

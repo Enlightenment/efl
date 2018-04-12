@@ -49,11 +49,11 @@ interface Efl.Ui.Focus.Manager {
             return : Efl.Ui.Focus.Object; [[The element which is now focused]]
         }
         request_move {
-            [[Returns the object which would be the next object to focus in the
-              given direction.
-            ]]
+            [[Return the object next in the $direction from $child.]]
             params {
                 direction : Efl.Ui.Focus.Direction; [[Direction to move focus]]
+                child : Efl.Ui.Focus.Object; [[The child where to look from. Pass $null to indicate the last focused child.]]
+                logical : bool; [[Weather you want to have a logical node as result or a logical. Note, at a move call no logical node will get focus, and this is passed as $false there.]]
             }
             return : Efl.Ui.Focus.Object; [[Next object to focus]]
         }

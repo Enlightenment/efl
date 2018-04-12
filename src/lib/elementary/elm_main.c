@@ -1665,7 +1665,7 @@ elm_object_focus_next_object_get(const Evas_Object  *obj,
    Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
-   return efl_ui_focus_manager_request_move(top, dir);
+   return efl_ui_focus_manager_request_move(top, dir, NULL, EINA_FALSE);
 }
 
 EAPI void
