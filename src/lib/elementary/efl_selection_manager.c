@@ -2829,9 +2829,31 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
         Efl_Selection_Data sel_data;
 
         sel_data.pos.x = sel_data.pos.y = 0;
-        sel_data.format = sel->format;
-        sel_data.content.mem = ev->data;
-        sel_data.content.len = ev->len;
+        if (((sel->format & EFL_SELECTION_FORMAT_MARKUP) ||
+             (sel->format & EFL_SELECTION_FORMAT_HTML)) &&
+            (sel->want_format == EFL_SELECTION_FORMAT_TEXT))
+          {
+             char *tmp = malloc(ev->len + 1);
+             sel_data.format = sel->format;
+             sel_data.content.mem = NULL;
+             sel_data.content.len = 0;
+             if (tmp)
+               {
+                  sel_data.format = sel->want_format;
+                  strncpy(tmp, ev->data, ev->len);
+                  tmp[ev->len] = 0;
+                  sel_data.content.mem = _elm_util_mkup_to_text(tmp);
+                  if (sel_data.content.mem)
+                    sel_data.content.len = strlen(sel_data.content.mem);
+                  free(tmp);
+               }
+          }
+        else
+          {
+             sel_data.format = sel->format;
+             sel_data.content.mem = ev->data;
+             sel_data.content.len = ev->len;
+          }
         sel_data.action = _wl_to_elm(ecore_wl2_offer_action_get(sel->sel_offer));
         sel->data_func(sel->data_func_data,
                        sel->request_obj,
@@ -2893,7 +2915,7 @@ _wl_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Selection_Manag
    for (i = 0; sm_wl_convertion[i].translates; i++)
      {
        int j = 0;
-       if (!(format & sm_wl_convertion[i].format)) continue;
+//       if (!(format & sm_wl_convertion[i].format)) continue;
 
        for (j = 0; sm_wl_convertion[i].translates[j]; j++)
          {
@@ -2902,6 +2924,7 @@ _wl_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Selection_Manag
             //we have found matching mimetypes
             sel->sel_offer = offer;
             sel->format = sm_wl_convertion[i].format;
+            sel->want_format = format;
 
             sel_debug("request type: %s", (char *)sm_wl_convertion[i].translates[j]);
             evas_object_event_callback_add(sel->request_obj, EVAS_CALLBACK_DEL,
