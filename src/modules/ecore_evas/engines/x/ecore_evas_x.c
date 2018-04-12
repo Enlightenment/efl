@@ -670,7 +670,7 @@ _render_updates_process(Ecore_Evas *ee, Eina_List *updates)
                }
           }
      }
-   else if (((ee->visible) && (ee->draw_ok)) ||
+   else if (((ee->visible) && (!ee->draw_block)) ||
             ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
             ((ee->should_be_visible) && (ee->prop.override)))
      {
@@ -1067,10 +1067,10 @@ _ecore_evas_x_event_visibility_change(void *data EINA_UNUSED, int type EINA_UNUS
      {
         /* FIXME: round trip */
         if (!ecore_x_screen_is_composited(edata->screen_num))
-          ee->draw_ok = 0;
+          ee->draw_block = EINA_TRUE;
      }
    else
-     ee->draw_ok = 1;
+     ee->draw_block = EINA_FALSE;
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -4219,6 +4219,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
+   ee->draw_block = EINA_TRUE;
 
    ecore_x_input_multi_select(ee->prop.window);
    ecore_evas_done(ee, EINA_FALSE);
@@ -4435,7 +4436,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
 
-   ee->draw_ok = 1;
+   ee->draw_block = EINA_FALSE;
 
    /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
@@ -4862,6 +4863,8 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
+
+   ee->draw_block = EINA_TRUE;
 
    /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
