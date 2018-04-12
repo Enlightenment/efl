@@ -168,6 +168,7 @@ struct _Eolian_Documentation
    Eina_Stringshare *summary;
    Eina_Stringshare *description;
    Eina_Stringshare *since;
+   Eina_List *ref_dbg;
 };
 
 struct _Eolian_Class

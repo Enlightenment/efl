@@ -125,6 +125,7 @@ void database_doc_del(Eolian_Documentation *doc)
    eina_stringshare_del(doc->summary);
    eina_stringshare_del(doc->description);
    eina_stringshare_del(doc->since);
+   eina_list_free(doc->ref_dbg);
    free(doc);
 }
 

@@ -287,7 +287,7 @@ doc_ref_class(Eo_Lexer *ls, const char *cname)
 }
 
 static void
-doc_ref(Eo_Lexer *ls)
+doc_ref(Eo_Lexer *ls, Eolian_Documentation *doc)
 {
    const char *st = ls->stream, *ste = ls->stream_end;
    size_t rlen = 0;
@@ -310,6 +310,12 @@ doc_ref(Eo_Lexer *ls)
    /* actual full class name */
    doc_ref_class(ls, buf);
 
+   /* it's definitely a reference, add debug info
+    * 20 bits for line and 12 bits for column, good enough
+    */
+   doc->ref_dbg = eina_list_append(doc->ref_dbg,
+     (void *)(size_t)((ls->line_number & 0xFFFFF) | (((ls->column + 1) & 0xFFF) << 20)));
+
    /* method name at the end */
    char *end = strrchr(buf, '.');
    if (!end)
@@ -328,7 +334,7 @@ doc_ref(Eo_Lexer *ls)
 }
 
 static int
-doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
+doc_lex(Eo_Lexer *ls, Eolian_Documentation *doc, Eina_Bool *term, Eina_Bool *since)
 {
    int tokret = -1;
    eina_strbuf_reset(ls->buff);
@@ -398,7 +404,7 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
              tokret = DOC_TEXT;
              goto exit_with_token;
           }
-        doc_ref(ls);
+        doc_ref(ls, doc);
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
         /* in-class references */
@@ -453,6 +459,7 @@ void doc_error(Eo_Lexer *ls, const char *msg, Eolian_Documentation *doc, Eina_St
 {
    eina_stringshare_del(doc->summary);
    eina_stringshare_del(doc->description);
+   eina_list_free(doc->ref_dbg);
    free(doc);
    eina_strbuf_free(buf);
    eo_lexer_lex_error(ls, msg, -1);
@@ -483,7 +490,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
              term = EINA_TRUE;
           }
         else
-          read = doc_lex(ls, &term, &since);
+          read = doc_lex(ls, doc, &term, &since);
         switch (read)
           {
            case DOC_MANGLED:

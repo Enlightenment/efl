@@ -21,7 +21,8 @@ _validate(Eolian_Object *obj)
 }
 
 static Eina_Bool
-_validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str, const Eolian_Object *info)
+_validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str,
+                 const Eolian_Object *info, Eina_List **rdbg)
 {
    if (!str || !str[0]) return EINA_TRUE;
 
@@ -34,16 +35,28 @@ _validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str, const Eolian_Obj
         Eolian_Doc_Token tok;
         eolian_doc_token_init(&tok);
         while (ret && (doc = eolian_documentation_tokenize(doc, &tok)))
-          if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
-            if (eolian_doc_token_ref_resolve(&tok, src, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
-              {
-                 char *refn = eolian_doc_token_text_get(&tok);
-                 eolian_state_log_obj(info->unit->state, info,
-                                      "failed validating reference '%s'", refn);
-                 free(refn);
-                 ret = EINA_FALSE;
-                 break;
-              }
+          {
+             if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
+               {
+                  if (eolian_doc_token_ref_resolve(&tok, src, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
+                    {
+                       size_t dbgn = (size_t)eina_list_data_get(*rdbg);
+                       char *refn = eolian_doc_token_text_get(&tok);
+                       Eolian_Object tmp;
+                       memset(&tmp, 0, sizeof(Eolian_Object));
+                       tmp.unit = info->unit;
+                       tmp.file = info->file;
+                       tmp.line = (int)(dbgn & 0xFFFFF);
+                       tmp.column = (int)(dbgn >> 20);
+                       eolian_state_log_obj(info->unit->state, &tmp,
+                                            "failed validating reference '%s'", refn);
+                       free(refn);
+                       ret = EINA_FALSE;
+                       break;
+                    }
+                  *rdbg = eina_list_next(*rdbg);
+               }
+          }
         free(par);
      }
 
@@ -56,9 +69,11 @@ _validate_doc(Eolian_Documentation *doc)
    if (!doc)
      return EINA_TRUE;
 
-   if (!_validate_docstr(doc->base.unit, doc->summary, &doc->base))
+   Eina_List *rdbg = doc->ref_dbg;
+
+   if (!_validate_docstr(doc->base.unit, doc->summary, &doc->base, &rdbg))
      return EINA_FALSE;
-   if (!_validate_docstr(doc->base.unit, doc->description, &doc->base))
+   if (!_validate_docstr(doc->base.unit, doc->description, &doc->base, &rdbg))
      return EINA_FALSE;
 
    return _validate(&doc->base);
