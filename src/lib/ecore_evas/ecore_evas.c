@@ -161,7 +161,7 @@ ecore_evas_render(Ecore_Evas *ee)
 
    ecore_evas_render_prepare(ee);
 
-   if (!ee->visible)
+   if (!ee->visible || ee->draw_block)
      {
         evas_norender(ee->evas);
      }
@@ -212,6 +212,8 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
      }
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
+        if (ee->draw_block) continue;
+
         if (ee->manual_render)
           {
              if (ee->engine.func->fn_evas_changed)
