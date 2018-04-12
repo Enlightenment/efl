@@ -1,4 +1,4 @@
-class Efl.Interpolator.Linear (Efl.Interpolator)
+class Efl.Interpolator_Linear (Efl.Interpolator)
 {
    [[Efl linear interpolator class]]
    data: Efl_Interpolator_Linear_Data;
