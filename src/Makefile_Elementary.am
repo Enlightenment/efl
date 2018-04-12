@@ -17,6 +17,9 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_layout.eo \
 	lib/elementary/efl_ui_multibuttonentry.eo \
 	lib/elementary/efl_ui_nstate.eo \
+	lib/elementary/efl_ui_navigation_bar.eo \
+	lib/elementary/efl_ui_navigation_bar_part.eo \
+	lib/elementary/efl_ui_navigation_bar_part_back_button.eo \
 	lib/elementary/efl_ui_navigation_layout.eo \
 	lib/elementary/efl_ui_panes.eo \
 	lib/elementary/efl_ui_progressbar.eo \
@@ -353,6 +356,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_menu.h \
 	lib/elementary/efl_ui_multibuttonentry_private.h \
 	lib/elementary/elm_widget_naviframe.h \
+	lib/elementary/efl_ui_navigation_bar_private.h \
 	lib/elementary/efl_ui_navigation_layout_private.h \
 	lib/elementary/elm_widget_notify.h \
 	lib/elementary/elm_widget_panel.h \
@@ -630,6 +634,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elc_hoversel.c \
 	lib/elementary/efl_ui_multibuttonentry.c \
 	lib/elementary/elc_naviframe.c \
+	lib/elementary/efl_ui_navigation_bar.c \
 	lib/elementary/efl_ui_navigation_layout.c \
 	lib/elementary/elc_player.c \
 	lib/elementary/elc_popup.c \

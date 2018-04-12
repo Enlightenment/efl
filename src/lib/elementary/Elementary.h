@@ -336,6 +336,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
+# include <efl_ui_navigation_bar.eo.h>
+# include <efl_ui_navigation_bar_part.eo.h>
+# include <efl_ui_navigation_bar_part_back_button.eo.h>
 # include <efl_ui_navigation_layout.eo.h>
 # include <efl_ui_stack.eo.h>
 #endif
