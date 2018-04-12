@@ -133,6 +133,7 @@ EFL_START_TEST(child_add)
 }
 EFL_END_TEST
 
+#if 0
 EFL_START_TEST(child_del)
 {
    Eina_Future *future;
@@ -151,6 +152,7 @@ EFL_START_TEST(child_del)
    ck_assert_int_le(expected_children_count, actual_children_count);
 }
 EFL_END_TEST
+#endif
 
 void eldbus_test_eldbus_model_proxy(TCase *tc)
 {
@@ -161,5 +163,5 @@ void eldbus_test_eldbus_model_proxy(TCase *tc)
    tcase_add_test(tc, children_count);
    tcase_add_test(tc, children_slice_get);
    tcase_add_test(tc, child_add);
-   tcase_add_test(tc, child_del);
+   /* tcase_add_test(tc, child_del); */
 }
