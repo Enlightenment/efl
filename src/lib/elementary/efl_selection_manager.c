@@ -4675,82 +4675,106 @@ _efl_selection_manager_selection_get(Eo *obj EINA_UNUSED, Efl_Selection_Manager_
 }
 
 EOLIAN static void
-_efl_selection_manager_selection_clear(Eo *obj EINA_UNUSED, Efl_Selection_Manager_Data *pd,
+_efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
                                        Efl_Object *owner, Efl_Selection_Type type, unsigned int seat)
 {
    Eina_Bool local = EINA_FALSE;
    Sel_Manager_Seat_Selection *seat_sel;
-   Sel_Manager_Selection *sel;
+   Sel_Manager_Selection *sel = NULL;
 
    sel_debug("owner: %p, seat: %d, type: %d", owner, seat, type);
    seat_sel = _sel_manager_seat_selection_init(pd, seat);
 #ifdef HAVE_ELEMENTARY_X
-   sel = seat_sel->sel_list + type;
+   Ecore_X_Window xwin = _x11_xwin_get(obj);
+   if (xwin)
+     {
+        sel = seat_sel->sel_list + type;
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   sel = seat_sel->sel;
+   Ecore_Wl2_Window *win = _wl_window_get(obj);
+   if (win)
+     {
+        sel = seat_sel->sel;
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
-   sel = seat_sel->sel;
+   Ecore_Cocoa_Window *win = _cocoa_window_get(obj);
+   if (win)
+     {
+        sel = seat_sel->sel;
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
-   sel = seat_sel->sel_list + type;
+   Ecore_Win32_Window *win = _win32_window_get(obj);
+     {
+        sel = seat_sel->sel_list + type;
+     }
 #endif
+   if (!sel) return;
    if ((!sel->active) && (sel->owner != owner))
      {
         return;
      }
    sel->active = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_X
-   seat_sel->sel_list[type].data.len = 0;
-   if (seat_sel->sel_list[type].data.mem)
+   if (xwin)
      {
-        free(seat_sel->sel_list[type].data.mem);
-        seat_sel->sel_list[type].data.mem = NULL;
-     }
-   if (sel->xwin != 0)
-     local = EINA_TRUE;
-   if (!local)
-     {
-        seat_sel->sel_list[type].clear();
-     }
-   else
-     {
-        Eina_List *l, *l_next;
-        Sel_Manager_Selection_Lost *sel_lost;
-
-        EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+        seat_sel->sel_list[type].data.len = 0;
+        if (seat_sel->sel_list[type].data.mem)
           {
-             if ((sel_lost->request == sel->owner) &&
-                 (sel_lost->type == type))
-               {
-                  eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
-                  seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
-                  free(sel_lost);
-               }
+             free(seat_sel->sel_list[type].data.mem);
+             seat_sel->sel_list[type].data.mem = NULL;
           }
-        seat_sel->sel_list[type].owner = NULL;
+        if (sel->xwin != 0) local = EINA_TRUE;
+        if (!local) seat_sel->sel_list[type].clear();
+        else
+          {
+             Eina_List *l, *l_next;
+             Sel_Manager_Selection_Lost *sel_lost;
+
+             EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+               {
+                  if ((sel_lost->request == sel->owner) &&
+                      (sel_lost->type == type))
+                    {
+                       eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                       seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+                       free(sel_lost);
+                    }
+               }
+             seat_sel->sel_list[type].owner = NULL;
+          }
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_seat_get(_wl_window_get(owner), owner, seat));
+   if (win)
+     {
+        sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_seat_get(_wl_window_get(owner), owner, seat));
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
-   if (sel->owner)
-     evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
-                                         _cocoa_sel_obj_del_cb, sel);
-   if (sel->request_obj)
-     evas_object_event_callback_del_full(sel->request_obj, EVAS_CALLBACK_DEL,
-                                         _cocoa_sel_obj_del_req_cb, sel);
-   sel->owner = NULL;
-   sel->request_obj = NULL;
-   ELM_SAFE_FREE(sel->data.mem, free);
-   sel->data.len = 0;
+   if (win)
+     {
+        if (sel->owner)
+          evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
+                                              _cocoa_sel_obj_del_cb, sel);
+        if (sel->request_obj)
+          evas_object_event_callback_del_full(sel->request_obj, EVAS_CALLBACK_DEL,
+                                              _cocoa_sel_obj_del_req_cb, sel);
+        sel->owner = NULL;
+        sel->request_obj = NULL;
+        ELM_SAFE_FREE(sel->data.mem, free);
+        sel->data.len = 0;
 
-   ecore_cocoa_clipboard_clear();
+        ecore_cocoa_clipboard_clear();
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
-   _win32_efl_sel_manager_selection_clear(pd, owner, type, seat_sel);
+   if (win)
+     {
+        _win32_efl_sel_manager_selection_clear(pd, owner, type, seat_sel);
+     }
 #endif
 }
 
