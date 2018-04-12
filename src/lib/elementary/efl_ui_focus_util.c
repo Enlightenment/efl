@@ -53,4 +53,14 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
    } while (m);
 }
 
+EOLIAN static Efl_Ui_Focus_Manager*
+_efl_ui_focus_util_active_manager(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager)
+{
+   while (efl_ui_focus_manager_redirect_get(manager))
+     manager = efl_ui_focus_manager_redirect_get(manager);
+
+   return manager;
+}
+
+
 #include "efl_ui_focus_util.eo.c"
