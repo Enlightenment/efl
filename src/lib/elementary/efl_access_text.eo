@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Access.Text.Granularity
+enum Efl.Access.Text_Granularity
 {
    [[Text accessibility granularity]]
    char, [[Character granularity]]
@@ -10,7 +10,7 @@ enum Efl.Access.Text.Granularity
    paragraph [[Paragraph granularity]]
 }
 
-enum Efl.Access.Text.Clip_Type
+enum Efl.Access.Text_Clip_Type
 {
    [[Text clip type]]
    legacy: elm_atspi_text_clip;
@@ -20,14 +20,14 @@ enum Efl.Access.Text.Clip_Type
    both [[Both clip types]]
 }
 
-struct Efl.Access.Text.Attribute
+struct Efl.Access.Text_Attribute
 {
    [[Text attribute]]
    name:  string; [[Text attribute name]]
    value: string; [[Text attribute value]]
 }
 
-struct Efl.Access.Text.Range
+struct Efl.Access.Text_Range
 {
    [[Text range]]
    start_offset: int; [[Range start offset]]
@@ -35,7 +35,7 @@ struct Efl.Access.Text.Range
    content: ptr(char); [[Range content]]
 }
 
-struct Efl.Access.Text.Change_Info
+struct Efl.Access.Text_Change_Info
 {
    [[Text change information]]
    content: string; [[Change content]]
@@ -64,7 +64,7 @@ interface Efl.Access.Text ()
             [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          }
          keys {
-            granularity: Efl.Access.Text.Granularity; [[Text granularity]]
+            granularity: Efl.Access.Text_Granularity; [[Text granularity]]
             start_offset: ptr(int) @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
             end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
@@ -119,7 +119,7 @@ interface Efl.Access.Text ()
             end_offset: ptr(int); [[End offset]]
          }
          values {
-            attributes: list<ptr(Efl.Access.Text.Attribute) @owned> @owned; [[List of text attributes]]
+            attributes: list<ptr(Efl.Access.Text_Attribute) @owned> @owned; [[List of text attributes]]
          }
       }
       @property default_attributes @protected @beta {
@@ -127,7 +127,7 @@ interface Efl.Access.Text ()
          get {
          }
          values {
-            attributes: list<ptr(Efl.Access.Text.Attribute) @owned> @owned; [[List of default attributes]]
+            attributes: list<ptr(Efl.Access.Text_Attribute) @owned> @owned; [[List of default attributes]]
          }
       }
       @property character_extents @protected @beta {
@@ -171,11 +171,11 @@ interface Efl.Access.Text ()
          keys {
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
             rect: Eina.Rect; [[Bounding box]]
-            xclip: Efl.Access.Text.Clip_Type; [[xclip]]
-            yclip: Efl.Access.Text.Clip_Type; [[yclip]]
+            xclip: Efl.Access.Text_Clip_Type; [[xclip]]
+            yclip: Efl.Access.Text_Clip_Type; [[yclip]]
          }
          values {
-            ranges: list<ptr(Efl.Access.Text.Range) @owned> @owned; [[List of ranges]]
+            ranges: list<ptr(Efl.Access.Text_Range) @owned> @owned; [[List of ranges]]
          }
       }
       @property range_extents @protected @beta {
