@@ -1023,21 +1023,10 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
              n = eina_list_nth(pd->focus_stack, eina_list_count(pd->focus_stack) - 2);
              if (!n)
-               {
-                  n = _request_subchild_except(pd->root, node);
-               }
-             else if (n->type != NODE_TYPE_NORMAL)
-               {
-                  n = _request_subchild_except(n, node);
-                  if (!n)
-                    {
-                       n = _request_subchild_except(pd->root, node);
-                    }
-               }
+               n = _request_subchild_except(pd->root, node);
 
              if (n)
                efl_ui_focus_manager_focus_set(obj, n->focusable);
-
           }
      }
 
