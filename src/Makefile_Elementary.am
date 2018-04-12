@@ -939,6 +939,7 @@ bin/elementary/test_glview.c \
 bin/elementary/test_glview_manygears.c \
 bin/elementary/test_grid.c \
 bin/elementary/test_ui_table_static.c \
+bin/elementary/test_ui_stack.c \
 bin/elementary/test_hover.c \
 bin/elementary/test_hoversel.c \
 bin/elementary/test_icon.c \
