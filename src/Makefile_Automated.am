@@ -202,4 +202,32 @@ tests_automated_evas_suite_automated_LDADD = $(tests_evas_evas_suite_LDADD) \
 tests_automated_evas_suite_automated_DEPENDENCIES = $(tests_evas_evas_suite_DEPENDENCIES)
 
 
+if HAVE_CSHARP
+#### EFL MONO ####
+
+tests_efl_mono_base = \
+     tests/efl_mono/Main.cs \
+     tests/efl_mono/TestUtils.cs
+
+## Mono Ecore ##
+
+mono_ecore_automated_source = tests/automated/ecore_suite_automated.cs
+mono_ecore_automated_bin = tests/automated/efl_mono_ecore$(EXEEXT)
+
+check_PROGRAMS += $(mono_ecore_automated_bin)
+TESTS += tests/efl_mono/mono_test_driver.sh
+
+tests_automated_efl_mono_ecore_SOURCES = \
+   $(tests_efl_mono_base) \
+   $(mono_ecore_automated_source)
+
+$(mono_ecore_automated_bin): $(tests_automated_efl_mono_ecore_SOURCES) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_ecore_automated_source):
+	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(ecore_eolian_files)
+
+endif
+
 endif
