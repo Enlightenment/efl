@@ -1,7 +1,7 @@
 import efl_types;
 import eina_types;
 
-class Ecore.Event.Message.Handler (Efl.Loop.Message.Handler)
+class Ecore.Event.Message.Handler (Efl.Loop_Message_Handler)
 {
    [[ For Legacy API usage Only
       This class is rather hacky/messy as it's really internal glue
@@ -90,6 +90,6 @@ class Ecore.Event.Message.Handler (Efl.Loop.Message.Handler)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Loop.Message.Handler.message_call; [[ Sample - override this ]]
+      Efl.Loop_Message_Handler.message_call; [[ Sample - override this ]]
    }
 }

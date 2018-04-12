@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Loop.Fd (Efl.Loop.Consumer)
+class Efl.Loop_Fd (Efl.Loop_Consumer)
 {
    [[Fds are objects that watch the activity on a given
      file descriptor. This file descriptor can be a

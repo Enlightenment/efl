@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Promise (Efl.Loop.Consumer)
+class Efl.Promise (Efl.Loop_Consumer)
 {
    [[Efl promise class]]
    methods {

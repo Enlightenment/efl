@@ -1,7 +1,7 @@
 import efl_types;
 import eina_types;
 
-struct Efl.Loop.Arguments {
+struct Efl.Loop_Arguments {
    [[EFL loop arguments data structure]]
    argv: const(array<const(stringshare)>); [[Array with loop arguments]]
    initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
@@ -110,14 +110,14 @@ class Efl.Loop (Efl.Task)
             @in loop: Efl.Loop; [[The loop to get the object from.]]
             @in klass: const(Efl.Class); [[The class of the message object.]]
          }
-         return: Efl.Loop.Message.Handler; [[The message handler to use.]]
+         return: Efl.Loop_Message_Handler; [[The message handler to use.]]
       }
    }
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]
       idle,exit @restart; [[Event occurs once the main loop exits the idle state.]]
       idle @restart; [[Event occurs once the main loop is idle. If you keep listening on this event it may increase the burden on your CPU.]]
-      arguments: Efl.Loop.Arguments; [[Event happens when args are provided to the loop by args_add().]]
+      arguments: Efl.Loop_Arguments; [[Event happens when args are provided to the loop by args_add().]]
       poll,high; [[Event occurs multiple times per second. The exact tick is undefined and can be adjusted system wide.]]
       poll,medium; [[Event occurs multiple times per minute. The exact tick is undefined and can be adjusted system wide.]]
       poll,low; [[Event occurs multiple times every 15 minutes. The exact tick is undefined and can be adjusted system wide.]]

@@ -1,7 +1,7 @@
 import efl_input_types;
 
 class Evas.Canvas (Efl.Object, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
-                   Efl.Loop.Consumer, Efl.Canvas.Pointer)
+                   Efl.Loop_Consumer, Efl.Canvas.Pointer)
 {
    [[Evas canvas class]]
    legacy_prefix: evas;
@@ -987,7 +987,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interfa
       Efl.Object.event_thaw;
       Efl.Object.event_freeze;
       Efl.Object.provider_find;
-      Efl.Loop.Consumer.loop { get; }
+      Efl.Loop_Consumer.loop { get; }
       //Efl.Canvas.seats;
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.Scene.device { get; }

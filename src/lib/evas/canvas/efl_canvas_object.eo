@@ -3,7 +3,7 @@ import efl_canvas_animation_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size_Hint,
-                            Efl.Gfx.Map, Efl.Loop.Consumer, Efl.Ui.Base, Efl.Canvas.Pointer)
+                            Efl.Gfx.Map, Efl.Loop_Consumer, Efl.Ui.Base, Efl.Canvas.Pointer)
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -619,7 +619,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
       Efl.Gfx.Size_Hint.hint_weight { get; set; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
-      Efl.Loop.Consumer.loop { get; }
+      Efl.Loop_Consumer.loop { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
    }
    events {

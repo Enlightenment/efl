@@ -1,4 +1,4 @@
-class Efl.Net.Socket.Windows (Efl.Loop.Consumer, Efl.Net.Socket) {
+class Efl.Net.Socket.Windows (Efl.Loop_Consumer, Efl.Net.Socket) {
     [[A base Windows NamedPipe socket.
 
       This is the common class and takes an existing file HANDLE,
