@@ -3445,13 +3445,25 @@ _eo_value_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_T
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_eo_value_copy(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   Eo * const *src = mem;
+   Eo **dst = ptr;
+
+   if (!src || !dst) return EINA_FALSE;
+   *dst = efl_ref(*src);
+
+   return EINA_TRUE;
+}
+
 static const Eina_Value_Type _EINA_VALUE_TYPE_OBJECT = {
   .version = EINA_VALUE_TYPE_VERSION,
   .value_size = sizeof(Eo *),
   .name = "Efl_Object",
   .setup = _eo_value_setup,
   .flush = _eo_value_flush,
-  .copy = NULL,
+  .copy = _eo_value_copy,
   .compare = NULL,
   .convert_to = _eo_value_convert_to,
   .convert_from = NULL,
