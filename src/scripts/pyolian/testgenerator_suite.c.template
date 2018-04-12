@@ -2,11 +2,6 @@
    Eo *parent = NULL;
    Eo *obj = NULL;
 
-   fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
-${suite.init}$
-
   <!--(if exists("mfunc") and mfunc!= None)-->
 ${mfunc}$
   <!--(elif exists("mcls") and mcls!= None)-->
@@ -24,9 +19,6 @@ ${mfunc}$
 ${mcls}$
   <!--(end)-->
    efl_unref(obj);
-${suite.shutdown}$
-   ecore_shutdown();
-   eina_shutdown();
 <!--(end)-->
 <!--(macro arg_default)-->
  <!--(if arg.type.name == "__builtin_free_cb" or arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(elif arg.type.name in ['Eina.Slice', 'Eina.Rw_Slice', 'Eina.Position2D', 'Eina.Rect', 'Eina.Vector2'] )-->{}<!--(else)-->0<!--(end)-->;
@@ -150,6 +142,21 @@ void ${cls.myfullname}$_test(TCase *tc)
 }
 <!--(end)-->
 
+SUITE_INIT(${suite.name}$)
+{
+   fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
+   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
+${suite.init}$
+}
+
+SUITE_SHUTDOWN(${suite.name}$)
+{
+${suite.shutdown}$
+   ecore_shutdown();
+   eina_shutdown();
+}
+
 int
 main(int argc, char **argv)
 {
@@ -163,7 +170,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "${suite.fullname}$", etc);
+                                           "${suite.fullname}$", etc, SUITE_INIT_FN(${suite.name}$), SUITE_SHUTDOWN_FN(${suite.name}$));
 
    return (failed_count == 0) ? 0 : 255;
 }
