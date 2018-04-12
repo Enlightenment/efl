@@ -389,10 +389,6 @@ typedef struct _Elm_Widget_Smart_Data
    Evas_Object                  *hover_obj;
    Evas_Object                  *bg;
    Eina_List                    *tooltips, *cursors;
-   Evas_Object                  *focus_previous, *focus_next;
-   Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;
-   Elm_Object_Item              *item_focus_previous, *item_focus_next;
-   Elm_Object_Item              *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
 
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
@@ -441,7 +437,11 @@ typedef struct _Elm_Widget_Smart_Data
       Efl_Ui_Focus_Manager *manager;
       Efl_Ui_Focus_Object *provider;
    } manager;
-
+   struct {
+     Eina_List *custom_chain;
+     Evas_Object *prev, *next, *up, *down, *right, *left;
+     Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
+   } legacy_focus;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 

@@ -1744,18 +1744,27 @@ _key_action_move(Evas_Object *obj, const char *params)
      focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
    else return EINA_FALSE;
 
-   o = efl_ui_focus_manager_move(obj, focus_dir);
 
-   if (!o)
-     {
-        if (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT || focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
-          {
-             Efl_Ui_Focus_Object *root;
+  // The handling for legacy is different due to elm_object_next set
+  if (elm_widget_is_legacy(obj))
+    elm_object_focus_next(obj, focus_dir);
+  else
+    {
+       Efl_Ui_Widget *o;
 
-             root = efl_ui_focus_manager_root_get(obj);
-             efl_ui_focus_manager_setup_on_first_touch(obj, focus_dir, root);
-          }
-     }
+       o = efl_ui_focus_manager_move(obj, focus_dir);
+       if (!o)
+         {
+            if (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT || focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+              {
+                 Efl_Ui_Focus_Object *root;
+
+                 root = efl_ui_focus_manager_root_get(obj);
+                 efl_ui_focus_manager_setup_on_first_touch(obj, focus_dir, root);
+              }
+         }
+    }
+
    return EINA_TRUE;
 }
 
