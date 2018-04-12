@@ -9,6 +9,7 @@ class Efl.Ui.Navigation_Layout (Efl.Ui.Layout, Efl.Content)
    methods {
       @property bar {
          [[The bar object which is located at the top area as a title.
+           e.g. Navigation_Bar widget(Efl.Ui.Navigation_Bar) can be used as $bar.
          ]]
          set {
          }
