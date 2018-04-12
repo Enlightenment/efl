@@ -516,14 +516,17 @@ evas_common_extension_can_load_get(const char *file)
    unsigned int i;
 
    length = eina_stringshare_strlen(file) + 1;
-   if (length < 5) return EINA_FALSE;
 
    for (i = 0; i < sizeof (loaders) / sizeof (struct ext_loader_s); ++i)
      {
         if (loaders[i].length > length) continue;
 
         if (!strcasecmp(loaders[i].extension, file + length - loaders[i].length))
-          return EINA_TRUE;
+          {
+             if ((file[length - loaders[i].length] != '/') ||
+                 (length == loaders[i].length))
+               return EINA_TRUE;
+          }
      }
    return EINA_FALSE;
 }
