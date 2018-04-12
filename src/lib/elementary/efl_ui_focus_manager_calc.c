@@ -1468,20 +1468,15 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Foc
    Node *child_node;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
-   if (pd->redirect)
-     return efl_ui_focus_manager_request_move(pd->redirect, direction, NULL, logical);
+   if (!child)
+     child_node = eina_list_last_data_get(pd->focus_stack);
    else
-     {
-        if (!child)
-          child_node = eina_list_last_data_get(pd->focus_stack);
-        else
-          child_node = node_get(obj, pd, child);
+     child_node = node_get(obj, pd, child);
 
-        if (!child_node)
-          return NULL;
+   if (!child_node)
+     return NULL;
 
-        return _request_move(obj, pd, direction, child_node, logical);
-     }
+   return _request_move(obj, pd, direction, child_node, logical);
 }
 
 static int
