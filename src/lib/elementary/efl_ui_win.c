@@ -996,7 +996,6 @@ _elm_win_mouse_in(Ecore_Evas *ee)
         sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
         _elm_win_wl_cursor_set(sd->obj, NULL);
         //ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-        ecore_evas_show(sd->pointer.ee);
      }
 #endif
 }
@@ -2358,13 +2357,6 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         evas_object_hide(sd->pointer.obj);
      }
-
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->pointer.ee)
-     {
-        ecore_evas_hide(sd->pointer.ee);
-     }
-#endif
 
    if (_elm_config->atspi_mode)
      {
@@ -5397,6 +5389,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
              sd->pointer.win = ecore_evas_wayland2_window_get(sd->pointer.ee);
              ecore_wl2_window_type_set(sd->pointer.win,
                                        ECORE_WL2_WINDOW_TYPE_NONE);
+             _elm_win_wl_cursor_set(sd->obj, NULL);
+             ecore_evas_show(sd->pointer.ee);
           }
      }
 #endif
