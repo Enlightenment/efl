@@ -6,6 +6,7 @@ import datetime
 import eolian
 import pyratemp
 from copy import copy
+import itertools
 
 # Use .eo files from the source tree (not the installed ones)
 script_path = os.path.dirname(os.path.realpath(__file__))
@@ -41,6 +42,39 @@ def load_file(filename):
             return f.read()
     return None
 
+dicttypes = {}
+
+def cs_types():
+    dicttypes.update({"byte": "sbyte"
+           , "llong": "long"
+           , "int8": "sbyte"
+           , "int16": "short"
+           , "int32": "int"
+           , "int64": "long"
+           , "ssize": "long"
+           , "ubyte": "byte"
+           , "ullong": "ulong"
+           , "uint8": "byte"
+           , "uint16": "ushort"
+           , "uint32": "uint"
+           , "uint64": "ulong"
+           , "size": "ulong"
+           , "ptrdiff": "long"
+           , "intptr": "System.IntPtr"
+           , "uintptr": "System.IntPtr"
+           , "void_ptr": "System.IntPtr"
+           , "void": "System.intPtr" #only if is out/inout
+           , "Error": "eina.Error"
+           , "string": "System.String"
+           , "mstring": "System.String"
+           , "stringshare": "System.String"
+           , "any_value": "eina.Value"
+           , "any_value_ptr": "eina.Value"
+        })
+
+def type_convert(eotype):
+    return dicttypes.get(eotype.name, eotype.name)
+
 """
 It will find methods and functions with owned return and without other params
 """
@@ -75,6 +109,7 @@ class Template(pyratemp.Template):
         # Build the context for the template
         ctx = {}
         ctx['suite'] = suite
+        ctx['type_convert'] = type_convert
 
         # render with the augmented context
         output = self(**ctx)
@@ -97,6 +132,12 @@ class SuiteCase():
         self.ext = os.path.splitext(filename)[1]
         self.template = os.path.join(script_path, "testgenerator_suite{}.template".format(self.ext))
         self.clslist = []
+        self.verbs = ["add", "get", "is", "del", "thaw", "freeze", "save", "wait", "eject", "raise", "lower", "load",
+                      "dup", "reset", "unload", "close", "set", "interpolate", "has", "grab", "check", "find", "ungrab",
+                      "unset", "clear", "pop", "new", "peek", "push", "update", "show", "move", "hide", "calculate",
+                      "resize", "attach", "pack", "unpack", "emit", "call", "append"]
+        if self.ext == '.cs':
+            cs_types()
 
     def __del__(self):
         for cls in self.clslist:
@@ -131,25 +172,31 @@ class SuiteCase():
                 cls.custom += load_file(os.path.join(filedir, func.name, "custom{}".format(self.ext))) or ''
                 func.init = load_file(os.path.join(filedir, func.name, "init{}".format(self.ext)))
                 func.shutdown = load_file(os.path.join(filedir, func.name, "shutdown{}".format(self.ext)))
-                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init{}".format(self.ext))) or "/* Zero/NULL args initialized */"
+                func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init{}".format(self.ext))) or ''
                 func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown{}".format(self.ext))) or ''
 
             cls.plist = [ p for p in cls.properties if p.getter_scope == p.getter_scope.PUBLIC or p.setter_scope == p.setter_scope.PUBLIC ]
             for func in cls.plist:
                 if func.getter_scope == func.getter_scope.PUBLIC:
-                    cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom{}".format(self.ext))) or ""
+                    cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom{}".format(self.ext))) or ''
                     func.get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "init{}".format(self.ext)))
-                    func.get_shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown{}".format(self.ext)))
-                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init{}".format(self.ext))) or "/* Zero/NULL args initialized */"
+                    func.get_shutdown = load_file(os.path.join(filedir, '{}_get'.format(func.name), "shutdown{}".format(self.ext))) or ''
+                    func.arg_get_init = load_file(os.path.join(filedir, '{}_get'.format(func.name), "arg_init{}".format(self.ext))) or ''
                     func.arg_get_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown{}".format(self.ext))) or ''
 
                 if func.setter_scope == func.setter_scope.PUBLIC:
-                    cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom{}".format(self.ext))) or ""
+                    cls.custom += load_file(os.path.join(filedir, '{}_set'.format(func.name), "custom{}".format(self.ext))) or ''
                     func.set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "init{}".format(self.ext)))
-                    func.set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown{}".format(self.ext)))
-                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init{}".format(self.ext))) or "/* Zero/NULL args initialized */"
+                    func.set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "shutdown{}".format(self.ext))) or ''
+                    func.arg_set_init = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_init{}".format(self.ext))) or ''
                     func.arg_set_shutdown = load_file(os.path.join(filedir, '{}_set'.format(func.name), "arg_shutdown{}".format(self.ext))) or ''
 
+            if self.ext == ".cs":
+                for func in itertools.chain(cls.mlist, cls.plist):
+                    names = func.name.split('_')
+                    if names[-1] in self.verbs:
+                        names.insert(0, names.pop())
+                    func.csname = ''.join([ name.capitalize() for name in names ])
 
 if __name__ == '__main__':
     import argparse

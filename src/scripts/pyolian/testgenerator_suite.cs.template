@@ -1,52 +1,122 @@
-<!--(macro newconcrete)-->${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$ obj = new ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$Concrete();<!--(end)-->
+<!--(macro def_obj)-->${'.'.join(param.type.namespaces).lower()}$.${param.type.short_name}$ arg_${param.name}$;<!--(end)-->
+<!--(macro def_param)-->
+ <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param)}$<!--(else)-->${type_convert(param.type)}$ arg_${param.name}$;<!--(end)-->
+<!--(end)-->
+<!--(macro def_params)-->
+ <!--(for p in parameters)-->
+       ${def_param(param=p)}$
+ <!--(end)-->
+<!--(end)-->
 using System;
 
 namespace TestSuite
 {
-<!--(for cls in suite.clslist)-->
+<!--(if suite.custom)-->
+${suite.custom}$
 
+<!--(end)-->
+<!--(for cls in suite.clslist)-->
 /**************** TEST CASE ${cls.c_name}$ ****************/
 class Test${cls.name.replace('.','')}$
 {
- <!--(if cls.init or suite.init)-->
+
+    ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$ obj;
+ <!--(if cls.custom)-->
+${cls.custom}$
+ <!--(end)-->
+
     public static void SetUp()
     {
+ <!--(if suite.init)-->
 ${suite.init}$
-${cls.init}$
-    }
  <!--(end)-->
- <!--(if cls.shutdown or suite.shutdown)-->
+ <!--(if cls.init)-->
+${cls.init}$
+ <!--(else)-->
+        obj = new ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$Concrete();
+ <!--(end)-->
+    }
+
     public static void TearDown()
     {
+ <!--(if suite.shutdown)-->
 ${suite.shutdown}$
-${cls.shutdown}$
-    }
  <!--(end)-->
+ <!--(if cls.shutdown)-->
+${cls.shutdown}$
+ <!--(else)-->
+       obj.Dispose()
+       obj = null;
+ <!--(end)-->
+    }
 
     public static void smoke()
     {
-        ${newconcrete}$
     }
 
+#!  METHODS
  <!--(for func in cls.mlist)-->
     public static void ${func.name}$()
     {
-        ${newconcrete}$
+   <!--(if len(list(func.parameters)) > 0)-->
+${def_params(parameters=func.parameters)}$
+   <!--(end)-->
+  <!--(if func.init or func.arg_init)-->
+${func.arg_init}$
+${func.init}$
+  <!--(end)-->
+        <!--(if func.method_return_type)-->var r = <!--(end)-->obj.${func.csname}$(${', '.join(['arg_{}'.format(param.name) for param in func.parameters])}$);
+  <!--(if func.arg_shutdown or func.shutdown)-->
+${func.arg_shutdown}$
+${func.shutdown}$
+  <!--(end)-->
     }
 
  <!--(end)-->
+#!  PROPERTIES FUNCTION GET
  <!--(for func in cls.plist)-->
   <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
-    public static void get_${func.name}$()
+    public static void ${func.name}$_pget()
     {
-        ${newconcrete}$
+   <!--(if len(list(func.getter_values)) > 1)-->
+${def_params(parameters=func.getter_values)}$
+   <!--(end)-->
+   <!--(if len(list(func.getter_keys)) > 0)-->
+${def_params(parameters=func.getter_keys)}$
+   <!--(end)-->
+   <!--(if func.get_init or func.arg_get_init)-->
+${func.arg_get_init}$
+${func.get_init}$
+   <!--(end)-->
+   <!--(if len(list(func.getter_values)) == 1)-->
+        var arg_${list(func.getter_values)[0].name}$ = obj.Get${func.csname}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+   <!--(else)-->
+        obj.Get${func.csname}$(${', '.join(['&arg_{}'.format(p.name) for p in func.getter_values])}$${''.join([', arg_{}'.format(p.name) for p in func.getter_keys])}$);
+   <!--(end)-->
+   <!--(if func.arg_get_shutdown or func.get_shutdown)-->
+${func.arg_get_shutdown}$
+${func.get_shutdown}$
+   <!--(end)-->
     }
 
   <!--(end)-->
+#!  PROPERTIES FUNCTION SET
   <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
-    public static void set_${func.name}$()
+    public static void ${func.name}$_pset()
     {
-        ${newconcrete}$
+${def_params(parameters=func.setter_values)}$
+   <!--(if len(list(func.setter_keys)) > 0)-->
+${def_params(parameters=func.setter_keys)}$
+   <!--(end)-->
+   <!--(if func.set_init or func.arg_set_init)-->
+${func.arg_set_init}$
+${func.set_init}$
+   <!--(end)-->
+        obj.Set${func.csname}$(${', '.join(['arg_{}'.format(p.name) for p in func.setter_values])}$${''.join([', arg_{}'.format(p.name) for p in func.setter_keys])}$);
+   <!--(if func.arg_set_shutdown or func.set_shutdown)-->
+${func.arg_set_shutdown}$
+${func.set_shutdown}$
+   <!--(end)-->
     }
 
   <!--(end)-->
