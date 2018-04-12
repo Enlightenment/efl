@@ -234,6 +234,10 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    EvasBiDiLevel *embedding_levels = NULL;
    const FriBidiChar *ustr;
    FriBidiChar *base_ustr = NULL;
+   EvasBiDiLevel ret_level = 0;
+#if FRIBIDI_MAJOR_VERSION >= 1
+   EvasBiDiBracketType *bracket_types = NULL;
+#endif
 
    if (!eina_ustr)
       return NULL;
@@ -266,6 +270,15 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
       }
    fribidi_get_bidi_types(ustr, len, char_types);
 
+#if FRIBIDI_MAJOR_VERSION >= 1
+   bracket_types = (EvasBiDiBracketType *) malloc(sizeof(EvasBiDiBracketType) * len);
+   if (!bracket_types)
+      {
+         goto cleanup;
+      }
+   fribidi_get_bracket_types(ustr, len, char_types, bracket_types);
+#endif
+
    embedding_levels = (EvasBiDiLevel *)malloc(sizeof(EvasBiDiLevel) * len);
    if (!embedding_levels)
      {
@@ -282,10 +295,19 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
         for (itr = segment_idxs ; *itr > 0 ; itr++)
           {
              direction = base_bidi;
-             if (!fribidi_get_par_embedding_levels(char_types + pos,
-                      *itr - pos,
-                      &direction,
-                      embedding_levels + pos))
+#if FRIBIDI_MAJOR_VERSION >= 1
+             ret_level = fribidi_get_par_embedding_levels_ex(char_types + pos,
+                                                             bracket_types,
+                                                             *itr - pos,
+                                                             &direction,
+                                                             embedding_levels + pos);
+#else
+             ret_level = fribidi_get_par_embedding_levels(char_types + pos,
+                                                          *itr - pos,
+                                                          &direction,
+                                                          embedding_levels + pos);
+#endif
+             if (!ret_level)
                {
                   goto cleanup;
                }
@@ -308,10 +330,19 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
           }
 
         direction = base_bidi;
-        if (!fribidi_get_par_embedding_levels(char_types + pos,
-                 len - pos,
-                 &direction,
-                 embedding_levels + pos))
+#if FRIBIDI_MAJOR_VERSION >= 1
+        ret_level = fribidi_get_par_embedding_levels_ex(char_types + pos,
+                                                        bracket_types,
+                                                        len - pos,
+                                                        &direction,
+                                                        embedding_levels + pos);
+#else
+        ret_level = fribidi_get_par_embedding_levels(char_types + pos,
+                                                     len - pos,
+                                                     &direction,
+                                                     embedding_levels + pos);
+#endif
+        if (!ret_level)
           {
              goto cleanup;
           }
@@ -328,8 +359,19 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
      }
    else
      {
-        if (!fribidi_get_par_embedding_levels(char_types, len,
-                 &bidi_props->direction, embedding_levels))
+#if FRIBIDI_MAJOR_VERSION >= 1
+        ret_level = fribidi_get_par_embedding_levels_ex(char_types,
+                                                        bracket_types,
+                                                        len,
+                                                        &bidi_props->direction,
+                                                        embedding_levels);
+#else
+        ret_level = fribidi_get_par_embedding_levels(char_types,
+                                                     len,
+                                                     &bidi_props->direction,
+                                                     embedding_levels);
+#endif
+        if (!ret_level)
           {
              goto cleanup;
           }
@@ -352,13 +394,19 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    bidi_props->char_types = char_types;
 
    if (base_ustr) free(base_ustr);
-
+#if FRIBIDI_MAJOR_VERSION >= 1
+   /* Currently, bracket_types is not reused in other places. */
+   if (bracket_types) free(bracket_types);
+#endif
 
    return bidi_props;
 
 /* Cleanup */
 cleanup:
    if (char_types) free(char_types);
+#if FRIBIDI_MAJOR_VERSION >= 1
+   if (bracket_types) free(bracket_types);
+#endif
    if (embedding_levels) free(embedding_levels);
    if (base_ustr) free(base_ustr);
    if (bidi_props) evas_bidi_paragraph_props_unref(bidi_props); /* Clean up the bidi props */

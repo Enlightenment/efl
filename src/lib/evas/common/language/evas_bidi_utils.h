@@ -56,6 +56,9 @@ _EVAS_BIDI_TYPEDEF(ParType);
 _EVAS_BIDI_TYPEDEF(StrIndex);
 _EVAS_BIDI_TYPEDEF(Level);
 _EVAS_BIDI_TYPEDEF(JoiningType);
+#if FRIBIDI_MAJOR_VERSION >= 1
+_EVAS_BIDI_TYPEDEF(BracketType);
+#endif
 
 typedef struct _Evas_BiDi_Paragraph_Props Evas_BiDi_Paragraph_Props;
 typedef struct _Evas_BiDi_Props Evas_BiDi_Props;
