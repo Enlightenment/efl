@@ -59,7 +59,7 @@ _ecore_evas_wl_common_animator_register(Ecore_Evas *ee)
    edata->frame = ecore_wl2_window_frame_callback_add(edata->win,
                                                       _anim_cb_tick, ee);
    if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render &&
-       !ee->animator_ticked && !ee->animator_ran)
+       !ee->animator_ticked && !ee->animator_ran && !ee->draw_block)
      ecore_wl2_window_false_commit(edata->win);
    edata->ticking = EINA_TRUE;
 }
@@ -212,7 +212,7 @@ _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED
         wdata->defer_show = EINA_TRUE;
         ee->visible = EINA_FALSE;
         wdata->reset_pending = 1;
-        ecore_evas_manual_render_set(ee, 1);
+        ee->draw_block = EINA_TRUE;
         _ee_display_unset(ee);
      }
    return ECORE_CALLBACK_RENEW;
@@ -625,8 +625,8 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
      ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
 
    wdata = ee->engine.data;
+   ee->draw_block = EINA_FALSE;
    if (wdata->frame) ecore_evas_manual_render(ee);
-   ecore_evas_manual_render_set(ee, 0);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -2250,7 +2250,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
         if (wdata->reset_pending)
           {
-             ecore_evas_manual_render_set(ee, 0);
+             ee->draw_block = EINA_FALSE;
           }
         if (evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -2580,7 +2580,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    ee_list = eina_list_append(ee_list, ee);
 
-   ecore_evas_manual_render_set(ee, 1);
+   ee->draw_block = EINA_TRUE;
 
    return ee;
 
