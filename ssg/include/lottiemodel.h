@@ -113,6 +113,7 @@ class LottieObject
 public:
     enum class Type {
         Composition = 1,
+        Asset,
         Layer,
         ShapeGroup,
         Transform,
@@ -159,6 +160,16 @@ public:
     std::shared_ptr<LottieObject>    mTransform;
 };
 
+class LottieLayer;
+class LottieAsset : public LottieObject
+{
+public:
+    LottieAsset():LottieObject(LottieObject::Type::Asset){}
+    int                                         mAssetType; //lottie aset type  (precomp/char/image)
+    std::string                                 mRefId; // ref id
+    std::vector<std::shared_ptr<LottieObject>>   mLayers;
+};
+
 class LottieTransform;
 class LottieComposition : public LottieGroupObject
 {
@@ -183,6 +194,7 @@ public:
     LottieBlendMode      mBlendMode;
     std::unordered_map<std::string,
                        std::shared_ptr<SGInterpolator>> mInterpolatorCache;
+    std::vector<std::shared_ptr<LottieAsset>> mAssets;
 };
 
 class LottieLayer : public LottieGroupObject
@@ -202,6 +214,7 @@ public:
     long                 mStartTime;
     LottieBlendMode      mBlendMode;
     float                mTimeStreatch;
+    std::string          mPreCompRefId;
     LottieAnimatable<float>     mTimeRemap;  /* "tm" */
     std::shared_ptr<LottieObject>    mTransform;
 };

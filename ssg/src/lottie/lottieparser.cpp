@@ -136,6 +136,8 @@ public:
     LottieTrimObject::TrimType getTrimType();
 
     std::shared_ptr<LottieComposition> parseComposition();
+    void parseAssets(LottieComposition *comp);
+    std::shared_ptr<LottieAsset> parseAsset();
     void parseLayers(LottieComposition *comp);
     std::shared_ptr<LottieObject> parseLayer();
     void parseShapesAttr(LottieLayer *layer);
@@ -449,6 +451,8 @@ LottieParser::parseComposition()
         } else if (0 == strcmp(key, "fr")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
             comp->mFrameRate = GetDouble();
+        } else if (0 == strcmp(key, "assets")) {
+            parseAssets(comp);
         } else if (0 == strcmp(key, "layers")) {
             parseLayers(comp);
         } else {
@@ -466,6 +470,51 @@ LottieParser::parseComposition()
     comp->setStatic(staticFlag);
 
     return sharedComposition;
+}
+
+void LottieParser::parseAssets(LottieComposition *composition)
+{
+    RAPIDJSON_ASSERT(PeekType() == kArrayType);
+    EnterArray();
+    while (NextArrayValue()) {
+        std::shared_ptr<LottieAsset> asset = parseAsset();
+        composition->mAssets.push_back(asset);
+    }
+}
+
+/*
+ * https://github.com/airbnb/lottie-web/blob/master/docs/json/layers/shape.json
+ *
+ */
+std::shared_ptr<LottieAsset>
+LottieParser::parseAsset()
+{
+    RAPIDJSON_ASSERT(PeekType() == kObjectType);
+    std::shared_ptr<LottieAsset> sharedAsset = std::make_shared<LottieAsset>();
+    LottieAsset *asset = sharedAsset.get();
+    EnterObject();
+    while (const char* key = NextObjectKey()) {
+        if (0 == strcmp(key, "ty")) {    /* Type of layer: Shape. Value 4.*/
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            asset->mAssetType = GetInt();
+        } else if (0 == strcmp(key, "id")) {    /* reference id*/
+            RAPIDJSON_ASSERT(PeekType() == kStringType);
+            asset->mRefId = std::string(GetString());
+        }else if (0 == strcmp(key, "layers")) {
+            RAPIDJSON_ASSERT(PeekType() == kArrayType);
+            EnterArray();
+            while (NextArrayValue()) {
+                std::shared_ptr<LottieObject> layer = parseLayer();
+                asset->mLayers.push_back(layer);
+            }
+        } else {
+    #ifdef DEBUG_PARSER
+            sgWarning<<"Asset Attribute Skipped : "<<key;
+    #endif
+            Skip(key);
+        }
+    }
+    return sharedAsset;
 }
 
 void LottieParser::parseLayers(LottieComposition *composition)
@@ -499,6 +548,10 @@ LottieParser::parseLayer()
         } else if (0 == strcmp(key, "parent")) { /*Layer Parent. Uses "ind" of parent.*/
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
             layer->mParentId = GetInt();
+        } else if (0 == strcmp(key, "refId")) { /*preComp Layer reference id*/
+            RAPIDJSON_ASSERT(PeekType() == kStringType);
+            layer->mPreCompRefId = std::string(GetString());
+            //TODO update the children with the layer list from asset
         }else if (0 == strcmp(key, "sr")) { // "Layer Time Stretching"
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
             layer->mTimeStreatch = GetDouble();
