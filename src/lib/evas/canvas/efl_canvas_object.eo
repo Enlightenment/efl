@@ -576,16 +576,16 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
          }
       }
       @property event_animation {
-         [[Set the $animation which starts when the given $event_name happens to the object.]]
+         [[Set the $animation which starts when the given $desc happens to the object.]]
          get { legacy: null; }
          set { legacy: null; }
          keys {
-            @cref event_type: Efl.Event.Description;
+            @cref desc: Efl.Event.Description;
                [[The event description for which the given $animation is set.]]
          }
          values {
             animation: Efl.Canvas.Animation;
-               [[The animation which starts when the given $event_name
+               [[The animation which starts when the given $desc
                  happens to the object.]]
          }
       }
