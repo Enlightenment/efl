@@ -40,7 +40,10 @@ efl_model_list_value_get(Eina_List *childrens,
    Eina_List *l;
    Eo *child;
 
-   eina_value_array_setup(&v, EINA_VALUE_TYPE_OBJECT, eina_list_count(childrens));
+   if (eina_list_count(childrens) < start + count)
+     return eina_value_error_init(EFL_MODEL_ERROR_INCORRECT_VALUE);
+
+   eina_value_array_setup(&v, EINA_VALUE_TYPE_OBJECT, 4);
 
    childrens = eina_list_nth_list(childrens, start);
 
