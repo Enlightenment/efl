@@ -334,24 +334,6 @@ _focus_stack_unfocus_last(Efl_Ui_Focus_Manager_Calc_Data *pd)
    return focusable;
 }
 
-static Node*
-_focus_stack_last_regular(Efl_Ui_Focus_Manager_Calc_Data *pd)
-{
-   Eina_List *l;
-   Node *upper;
-
-   l = eina_list_last(pd->focus_stack);
-   upper = eina_list_last_data_get(pd->focus_stack);
-
-   while (upper && upper->type != NODE_TYPE_NORMAL)
-     {
-        l = eina_list_prev(l);
-        upper = eina_list_data_get(l);
-     }
-
-   return upper;
-}
-
 //CALCULATING STUFF
 
 static inline int
@@ -1465,7 +1447,7 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
    Node *dir = NULL;
 
    if (!upper)
-     upper = _focus_stack_last_regular(pd);
+     upper = eina_list_last_data_get(pd->focus_stack);
 
    if (!upper)
      {
