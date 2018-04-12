@@ -1022,6 +1022,7 @@ elementary/themes/edc/efl/uiclock.edc \
 elementary/themes/edc/efl/cursor.edc \
 elementary/themes/edc/efl/focus.edc \
 elementary/themes/edc/efl/frame.edc \
+elementary/themes/edc/efl/navigation_layout.edc \
 elementary/themes/edc/efl/multibuttonentry.edc \
 elementary/themes/edc/efl/nstate.edc \
 elementary/themes/edc/efl/panes.edc \
