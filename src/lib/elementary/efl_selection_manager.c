@@ -2384,10 +2384,15 @@ _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int 
      }
    else
      {
-        if (data)
+        if ((data) && (size > 0))
           {
-             if (data_ret) *data_ret = strdup(data);
-             if (size_ret) *size_ret = strlen(data);
+             char *tmp = malloc(size);
+             if (tmp)
+               {
+                  memcpy(tmp, data, size);
+                  if (data_ret) *data_ret = tmp;
+                  if (size_ret) *size_ret = size;
+               }
           }
         else
           {
