@@ -11,6 +11,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_check.eo \
 	lib/elementary/efl_ui_flip.eo \
 	lib/elementary/efl_ui_frame.eo \
+	lib/elementary/efl_ui_stack.eo \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/efl_ui_image_zoomable.eo \
 	lib/elementary/efl_ui_layout.eo \
@@ -326,6 +327,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_widget_flip.h \
 	lib/elementary/elm_widget_flipselector.h \
 	lib/elementary/efl_ui_widget_frame.h \
+	lib/elementary/efl_ui_stack_private.h \
 	lib/elementary/elm_widget_gengrid.h \
 	lib/elementary/elm_widget_genlist.h \
 	lib/elementary/elm_widget_glview.h \
@@ -668,6 +670,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
 	lib/elementary/efl_ui_frame.c \
+	lib/elementary/efl_ui_stack.c \
 	lib/elementary/elm_gengrid.c \
 	lib/elementary/elm_genlist.c \
 	lib/elementary/elm_gesture_layer.c \
