@@ -1,21 +1,21 @@
 import efl_canvas_gesture_types;
 
-class Efl.Canvas.Gesture.Manager (Efl.Object)
+class Efl.Canvas.Gesture_Manager (Efl.Object)
 {
    [[EFL Gesture Manager class]]
    eo_prefix: efl_gesture_manager;
    methods {
       recognizer_register {
-         [[This function is called to register a new Efl.Canvas.Gesture.Recognizer]]
+         [[This function is called to register a new Efl.Canvas.Gesture_Recognizer]]
          params {
-            @in recognizer: Efl.Canvas.Gesture.Recognizer; [[The gesture recognizer object]]
+            @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
          }
          return: ptr(const(Efl.Event.Description)); [[Returns the Efl.Event.Description type the recognizer supports]]
       }
       recognizer_unregister {
-         [[This function is called to unregister a Efl.Canvas.Gesture.Recognizer]]
+         [[This function is called to unregister a Efl.Canvas.Gesture_Recognizer]]
          params {
-            @in recognizer: Efl.Canvas.Gesture.Recognizer; [[The gesture recognizer object]]
+            @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
          }
       }
       @property config {

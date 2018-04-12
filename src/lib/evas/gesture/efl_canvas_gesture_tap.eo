@@ -1,6 +1,6 @@
 import efl_canvas_gesture_types;
 
-class Efl.Canvas.Gesture.Tap(Efl.Canvas.Gesture)
+class Efl.Canvas.Gesture_Tap(Efl.Canvas.Gesture)
 {
    [[EFL Gesture Tap class]]
    eo_prefix: efl_gesture_tap;
