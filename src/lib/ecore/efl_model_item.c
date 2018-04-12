@@ -171,7 +171,7 @@ _efl_model_item_efl_model_child_add(Eo *obj, Efl_Model_Item_Data *sd)
    sd->childrens = eina_list_append(sd->childrens, child);
 
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
-   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &cevt.index);
+   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
    return child;
 }
@@ -197,8 +197,7 @@ _efl_model_item_efl_model_child_del(Eo *obj, Efl_Model_Item_Data *sd, Eo *child)
 
              efl_parent_set(child, NULL);
 
-             i = eina_list_count(sd->childrens);
-             efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &i);
+             efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
              break;
           }

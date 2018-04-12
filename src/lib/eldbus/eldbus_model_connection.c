@@ -105,7 +105,6 @@ _eldbus_model_connection_names_list_cb(void *data,
    const char *error_name, *error_text;
    Eldbus_Message_Iter *array = NULL;
    const char *bus;
-   unsigned int count;
 
    pd->pending = NULL;
 
@@ -139,8 +138,7 @@ _eldbus_model_connection_names_list_cb(void *data,
 
    pd->is_listed = EINA_TRUE;
 
-   count = eina_list_count(pd->childrens);
-   efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &count);
+   efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
    EINA_LIST_FREE(pd->requests, slice)
      {

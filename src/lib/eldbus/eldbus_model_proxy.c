@@ -375,6 +375,8 @@ _eldbus_model_proxy_listed(Eldbus_Model_Proxy_Data *pd)
      {
         _eldbus_model_proxy_create_methods_children(pd);
         _eldbus_model_proxy_create_signals_children(pd);
+
+        efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
         pd->is_listed = EINA_TRUE;
      }
 }

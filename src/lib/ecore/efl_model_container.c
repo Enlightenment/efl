@@ -212,7 +212,7 @@ _efl_model_container_child_property_add(Eo *obj,
      }
 
    if (in_count > children_count)
-     efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &in_count);
+     efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
    return EINA_TRUE;
 

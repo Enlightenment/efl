@@ -126,6 +126,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
 
    // Notify of the new child being added
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
+   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
  end:
    eina_stringshare_del(spath);
@@ -170,6 +171,7 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
    cevt.child = mi->object;
 
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
+   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
    // Remove the entry from the files list
    pd->files = eina_list_remove_list(pd->files, l);
@@ -714,6 +716,8 @@ _eio_model_children_list(void *data, Eina_Array *entries)
 
         efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
      }
+
+   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 }
 
 static Eina_Value

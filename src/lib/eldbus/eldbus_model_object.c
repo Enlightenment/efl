@@ -242,7 +242,6 @@ _eldbus_model_object_introspect_cb(void *data,
    const char *error_text;
    const char *xml = NULL;
    const char *current_path;
-   unsigned int count;
 
    pd->pendings = eina_list_remove(pd->pendings, pending);
    object = eldbus_pending_data_get(pending, "object");
@@ -276,8 +275,7 @@ _eldbus_model_object_introspect_cb(void *data,
 
    if (eina_list_count(pd->pendings) != 0) return ;
 
-   count = eina_list_count(pd->childrens);
-   efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &count);
+   efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
    pd->is_listed = EINA_TRUE;
 
