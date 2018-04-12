@@ -153,12 +153,7 @@ EFL_START_TEST(child_add)
 }
 EFL_END_TEST
 
-static void
-_children_wait(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-}
-
+#if 0
 static Eina_Value
 _one_child(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
@@ -173,6 +168,7 @@ _one_child(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_U
    return v;
 }
 
+// FIXME: I don't know what the expected behavior for destroying a child of eldbus model object should be
 EFL_START_TEST(child_del)
 {
    Eina_Future *future;
@@ -180,19 +176,18 @@ EFL_START_TEST(child_del)
    unsigned int expected_children_count = 0;
    unsigned int actual_children_count = 0;
 
-   efl_event_callback_add(object, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _children_wait, NULL);
-   expected_children_count = efl_model_children_count_get(object);
+   efl_event_callback_add(object, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, NULL);
+   efl_model_children_count_get(object);
 
-   if (!expected_children_count)
-     {
-        ecore_main_loop_begin();
-        expected_children_count = efl_model_children_count_get(object);
-     }
+   ecore_main_loop_begin();
+
+   expected_children_count = efl_model_children_count_get(object);
 
    fail_if(expected_children_count == 0);
 
    future = efl_model_children_slice_get(object, 0, 1);
    eina_future_then(future, _one_child, &child);
+
    ecore_main_loop_begin();
 
    fail_if(!child);
@@ -202,6 +197,7 @@ EFL_START_TEST(child_del)
    ck_assert_int_le(expected_children_count, actual_children_count);
 }
 EFL_END_TEST
+#endif
 
 void eldbus_test_eldbus_model_object(TCase *tc)
 {
@@ -212,5 +208,5 @@ void eldbus_test_eldbus_model_object(TCase *tc)
    tcase_add_test(tc, children_count);
    tcase_add_test(tc, children_slice_get);
    tcase_add_test(tc, child_add);
-   tcase_add_test(tc, child_del);
+   /* tcase_add_test(tc, child_del); */
 }
