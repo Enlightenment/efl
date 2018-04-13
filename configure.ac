@@ -470,7 +470,6 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS([ \
 execinfo.h \
 mcheck.h \
-sys/inotify.h \
 sys/signalfd.h \
 sys/types.h \
 sys/param.h \
@@ -480,7 +479,8 @@ sys/auxv.h \
 asm/hwcap.h \
 ])
 
-if test "x${have_solaris}" != "xyes" ; then
+if test "x${have_linux}" = "xyes" ; then
+    AC_CHECK_HEADERS([sys/inotify.h])
     AC_CHECK_HEADERS([sys/epoll.h])
 fi
 
