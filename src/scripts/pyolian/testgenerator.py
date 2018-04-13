@@ -72,8 +72,14 @@ def cs_types():
            , "any_value_ptr": "eina.Value"
         })
 
+def to_csharp_klass_name(eo_name):
+    names = eo_name.split('.')
+    namespaces = [x.lower() for x in names[:-1]]
+    klass_name = names[-1]
+    return '.'.join(namespaces + [klass_name])
+
 def type_convert(eotype):
-    return dicttypes.get(eotype.name, eotype.name)
+    return dicttypes.get(eotype.name, to_csharp_klass_name(eotype.name))
 
 """
 It will find methods and functions with owned return and without other params
