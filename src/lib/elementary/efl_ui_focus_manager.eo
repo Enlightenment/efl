@@ -18,7 +18,7 @@ struct Efl.Ui.Focus.Relations {
     position_in_history : int; [[The position in the history stack]]
 }
 
-struct Efl.Ui.Focus.Manager.Logical_End_Detail {
+struct Efl.Ui.Focus.Manager_Logical_End_Detail {
     [[Structure holding the focus object with extra information on logical end
 
       @since 1.21
@@ -136,7 +136,7 @@ interface Efl.Ui.Focus.Manager {
 
               The returned object is the last object that would be returned if you start at the root and move the direction into next.
             ]]
-            return : Efl.Ui.Focus.Manager.Logical_End_Detail; [[Last object]]
+            return : Efl.Ui.Focus.Manager_Logical_End_Detail; [[Last object]]
         }
         reset_history {
             [[Reset the history stack of this manager object.

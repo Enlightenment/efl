@@ -1,9 +1,9 @@
-class Efl.Ui.Focus.Manager.Root_Focus(Efl.Ui.Focus.Manager.Calc) {
+class Efl.Ui.Focus.Manager_Root_Focus(Efl.Ui.Focus.Manager_Calc) {
   [[ This class ensures that the root is at least focusable, if nothing else is focusable]]
   implements {
-    Efl.Ui.Focus.Manager.Calc.register_logical;
-    Efl.Ui.Focus.Manager.Calc.register;
-    Efl.Ui.Focus.Manager.Calc.unregister;
+    Efl.Ui.Focus.Manager_Calc.register_logical;
+    Efl.Ui.Focus.Manager_Calc.register;
+    Efl.Ui.Focus.Manager_Calc.unregister;
     Efl.Ui.Focus.Manager.manager_focus {set; get;}
     Efl.Ui.Focus.Manager.fetch;
     Efl.Ui.Focus.Manager.logical_end;
