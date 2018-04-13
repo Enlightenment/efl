@@ -239,7 +239,6 @@ _mouse_up_cb(void *data,
    Efl_Input_Pointer *ev = event->info;
    Eo *obj = data;
    EFL_UI_PAGER_DATA_GET(obj, pd);
-   double time;
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
    if (!pd->down.enabled) return;
@@ -274,6 +273,13 @@ _event_handler_create(Eo *obj, Efl_Ui_Pager_Data *pd)
                           _mouse_move_cb, obj);
 }
 
+static void
+_event_handler_del(Eo *obj, Efl_Ui_Pager_Data *pd)
+{
+   efl_content_unset(efl_part(obj, "event"));
+   efl_del(pd->event);
+}
+
 EOLIAN static Eo *
 _efl_ui_pager_efl_object_constructor(Eo *obj,
                                      Efl_Ui_Pager_Data *pd)
@@ -288,9 +294,58 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->curr.page = 0;
    pd->curr.pos = 0.0;
 
+   pd->transition = NULL;
+
+   pd->page_spec.sz.w = -1;
+   pd->page_spec.sz.h = -1;
+
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    return obj;
+}
+
+static void
+_resize_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Pager_Data *pd = data;
+   Eina_Size2D sz;
+
+   sz = efl_gfx_size_get(ev->object);
+
+   pd->w = sz.w;
+   pd->h = sz.h;
+
+   if (pd->fill_width) pd->page_spec.sz.w = pd->w;
+   if (pd->fill_height) pd->page_spec.sz.h = pd->h;
+
+   if (pd->transition)
+     efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
+   else
+     {
+        efl_gfx_size_set(pd->page_box, pd->page_spec.sz);
+        efl_gfx_position_set(pd->page_box,
+                             EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
+                                             pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
+     }
+}
+
+static void
+_move_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Pager_Data *pd = data;
+   Eina_Position2D pos;
+
+   pos = efl_gfx_position_get(ev->object);
+
+   pd->x = pos.x;
+   pd->y = pos.y;
+
+   if (!pd->transition)
+     {
+        efl_gfx_position_set(pd->page_box,
+                             EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
+                                             pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
+     }
 }
 
 EOLIAN static Eo *
@@ -298,7 +353,6 @@ _efl_ui_pager_efl_object_finalize(Eo *obj,
                                   Efl_Ui_Pager_Data *pd)
 {
    Efl_Ui_Theme_Apply theme_apply;
-   Eo *page_root;
 
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
@@ -308,45 +362,26 @@ _efl_ui_pager_efl_object_finalize(Eo *obj,
    if (theme_apply == EFL_UI_THEME_APPLY_FAILED)
      CRI("Failed to set layout!");
 
-   page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
-   pd->page_root = page_root;
-   efl_content_set(efl_part(obj, "page_root"), page_root);
+   pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
+   efl_content_set(efl_part(obj, "page_root"), pd->page_root);
 
-   _event_handler_create(obj, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_EVENT_RESIZE, _resize_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_EVENT_MOVE, _move_cb, pd);
+
+   /* default setting (no transition) */
+   pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
+   efl_canvas_group_member_add(pd->page_root, pd->page_box);
+   pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
+                          evas_object_evas_get(obj));
+   evas_object_static_clip_set(pd->foreclip, EINA_TRUE);
+
+   pd->backclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
+                          evas_object_evas_get(obj));
+   evas_object_static_clip_set(pd->backclip, EINA_TRUE);
+   efl_gfx_visible_set(pd->backclip, EINA_FALSE);
+   /* default setting end */
 
    return obj;
-}
-
-EOLIAN static void
-_efl_ui_pager_efl_gfx_size_set(Eo *obj,
-                               Efl_Ui_Pager_Data *pd,
-                               Eina_Size2D sz)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
-     return;
-
-   if ((pd->w == sz.w) && (pd->h == sz.h)) return;
-
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-
-   pd->w = sz.w;
-   pd->h = sz.h;
-}
-
-EOLIAN static void
-_efl_ui_pager_efl_gfx_position_set(Eo *obj,
-                                   Efl_Ui_Pager_Data *pd,
-                                   Eina_Position2D pos)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
-     return;
-
-   if ((pd->x == pos.x) && (pd->y == pos.y)) return;
-
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-
-   pd->x = pos.x;
-   pd->y = pos.y;
 }
 
 EOLIAN static int
@@ -369,7 +404,14 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
    pd->cnt += 1;
    pd->curr.page += 1;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else
+     {
+        if (pd->cnt == 1)
+          efl_pack(pd->page_box, subobj);
+        else efl_canvas_object_clip_set(subobj, pd->backclip);
+     }
 
    if (pd->indicator)
      {
@@ -392,7 +434,14 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
 
    pd->cnt += 1;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else
+     {
+        if (pd->cnt == 1)
+          efl_pack(pd->page_box, subobj);
+        else efl_canvas_object_clip_set(subobj, pd->backclip);
+     }
 
    if (pd->indicator)
      {
@@ -420,7 +469,9 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
    pd->cnt += 1;
    if (pd->curr.page >= index) pd->curr.page += 1;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
      {
@@ -448,7 +499,9 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
    pd->cnt += 1;
    if (pd->curr.page > index) pd->curr.page += 1;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
      {
@@ -476,7 +529,9 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
    pd->cnt += 1;
    if (pd->curr.page >= index) pd->curr.page += 1;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
      {
@@ -508,10 +563,34 @@ _efl_ui_pager_current_page_set(Eo *obj,
                                Efl_Ui_Pager_Data *pd,
                                int index)
 {
-   double time;
+   if (index == pd->curr.page) return;
 
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
+
+   if (index >= pd->cnt)
+     {
+        ERR("page set fail");
+        return;
+     }
+
+   if (!pd->transition)
+     {
+        Eo *curr;
+
+        curr = eina_list_nth(pd->content_list, pd->curr.page);
+        efl_pack_unpack_all(pd->page_box);
+        efl_canvas_object_clip_set(curr, pd->backclip);
+
+        pd->curr.page = index;
+        curr = eina_list_nth(pd->content_list, pd->curr.page);
+        efl_pack(pd->page_box, curr);
+
+        if (pd->indicator)
+          efl_page_indicator_update(pd->indicator, pd->curr.pos);
+
+        return;
+     }
 
    ERR("page %d pos %lf", pd->curr.page, pd->curr.pos);
 
@@ -529,9 +608,6 @@ _efl_ui_pager_current_page_set(Eo *obj,
 
    if (pd->change.delta == 0) return;
 
-   time = fabs(pd->change.delta);
-   time /= pd->cnt; //FIXME
-
    pd->change.start_time = ecore_loop_time_get();
    efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 }
@@ -548,8 +624,27 @@ _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
                              Efl_Ui_Pager_Data *pd,
                              Efl_Page_Transition *transition)
 {
-   efl_page_transition_bind(transition, obj, pd->page_root);
    pd->transition = transition;
+
+   if (transition)
+     {
+        _event_handler_create(obj, pd);
+        efl_page_transition_bind(transition, obj, pd->page_root);
+     }
+   else
+     {
+        Eina_List *list;
+        Eo *curr;
+
+        _event_handler_del(obj, pd);
+        EINA_LIST_FOREACH(pd->content_list, list, curr)
+          {
+             efl_canvas_object_clip_set(curr, pd->backclip);
+          }
+
+        curr = eina_list_nth(pd->content_list, pd->curr.page);
+        efl_pack(pd->page_box, curr);
+     }
 }
 
 EOLIAN static void
@@ -591,11 +686,33 @@ _efl_ui_pager_page_size_set(Eo *obj EINA_UNUSED,
                             Efl_Ui_Pager_Data *pd,
                             Eina_Size2D sz)
 {
-   if (sz.w < 0 || sz.h < 0) return;
+   if (sz.w < -1 || sz.h < -1) return;
 
-   pd->page_spec.sz = sz;
+   if (sz.w == -1)
+     {
+        pd->fill_width = EINA_TRUE;
+        pd->page_spec.sz.w = pd->w;
+     }
+   else
+     {
+        pd->fill_width = EINA_FALSE;
+        pd->page_spec.sz.w = sz.w;
+     }
+   if (sz.h == -1)
+     {
+        pd->fill_height = EINA_TRUE;
+        pd->page_spec.sz.h = pd->h;
+     }
+   else
+     {
+        pd->fill_height = EINA_FALSE;
+        pd->page_spec.sz.h = sz.h;
+     }
 
-   efl_page_transition_page_size_set(pd->transition, sz);
+   if (pd->transition)
+     efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
+   else
+     efl_gfx_size_set(pd->page_box, pd->page_spec.sz);
 }
 
 EOLIAN static int

@@ -5,6 +5,8 @@ typedef struct _Efl_Page_Indicator_Icon_Data Efl_Page_Indicator_Icon_Data;
 
 struct _Efl_Page_Indicator_Icon_Data
 {
+   Eo                   *curr, *adj;
+
    Eina_List            *items;
    Eina_Value           *v;
 };

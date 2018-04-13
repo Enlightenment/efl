@@ -23,9 +23,17 @@ _efl_page_indicator_icon_update(Eo *obj,
    int page = efl_ui_pager_current_page_get(spd->pager.obj);
    double delta = fabs(pos);
 
+   if (pd->curr)
+     {
+        eina_value_set(pd->v, 0.0);
+        efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
+        if (pd->adj) efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
+     }
+
    item = eina_list_nth(pd->items, page);
    eina_value_set(pd->v, (1.0 - delta));
    efl_layout_signal_message_send(item, 1, *(pd->v));
+   pd->curr = item;
 
    if (pos < 0)
      item = eina_list_nth(pd->items, (page - 1 + spd->cnt) % spd->cnt);
@@ -34,6 +42,7 @@ _efl_page_indicator_icon_update(Eo *obj,
 
    eina_value_set(pd->v, delta);
    efl_layout_signal_message_send(item, 1, *(pd->v));
+   pd->adj = item;
 }
 
 EOLIAN static void
@@ -104,6 +113,8 @@ _efl_page_indicator_icon_efl_object_constructor(Eo *obj,
         item = eina_list_nth(pd->items, page);
         eina_value_set(pd->v, 1.0);
         efl_layout_signal_message_send(item, 1, *(pd->v));
+
+        pd->curr = item;
      }
 
    return obj;

@@ -13,6 +13,8 @@ group { "efl/pager";
       swallow { "page_root";
          scale;
          desc { "default";
+            rel1.relative: 0.0 1.0;
+            rel1.to: "indicator";
          }
       }
       swallow { "indicator";

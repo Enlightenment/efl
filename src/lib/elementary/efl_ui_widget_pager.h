@@ -11,6 +11,10 @@ typedef struct _Efl_Ui_Pager_Data
    Eina_List               *page_infos;
    Eina_List               *content_list;
 
+   Efl_Ui_Box              *page_box;
+   Eo                      *foreclip;
+   Eo                      *backclip;
+
    Eo                      *page_root;
    Eo                      *event;
    Efl_Ui_Box              *idbox;
@@ -54,6 +58,8 @@ typedef struct _Efl_Ui_Pager_Data
    Eina_Bool                move_started : 1;
    Eina_Bool                prev_block : 1;
    Eina_Bool                next_block: 1;
+   Eina_Bool                fill_width: 1;
+   Eina_Bool                fill_height: 1;
 
 } Efl_Ui_Pager_Data;
 

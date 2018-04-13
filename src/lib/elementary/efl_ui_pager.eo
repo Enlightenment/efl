@@ -27,7 +27,7 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
             [[Set a page transition effect]]
          }
          values {
-            transition: Efl.Page.Transition @nonull; [[transition effect]]
+            transition: Efl.Page.Transition @nullable; [[transition effect]]
          }
       }
       @property indicator {
@@ -86,8 +86,6 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
    implements {
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Gfx.size { set; }
-      Efl.Gfx.position { set; }
       Efl.Container.content_count;
       Efl.Pack.Linear.pack_begin;
       Efl.Pack.Linear.pack_end;

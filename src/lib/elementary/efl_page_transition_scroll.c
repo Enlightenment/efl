@@ -222,8 +222,8 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
 
    efl_page_transition_bind(efl_super(obj, MY_CLASS), pager, group);
 
-   efl_event_callback_add(spd->pager.obj, EFL_GFX_EVENT_RESIZE, _resize_cb, obj);
-   efl_event_callback_add(spd->pager.obj, EFL_GFX_EVENT_MOVE, _move_cb, obj);
+   efl_event_callback_add(spd->pager.group, EFL_GFX_EVENT_RESIZE, _resize_cb, obj);
+   efl_event_callback_add(spd->pager.group, EFL_GFX_EVENT_MOVE, _move_cb, obj);
 
    pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                           evas_object_evas_get(spd->pager.obj));
@@ -235,6 +235,7 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
    efl_gfx_visible_set(pd->backclip, EINA_FALSE);
 
    _page_info_allocate(pd, spd);
+   _content_show(pd, spd);
 }
 
 EOLIAN static void

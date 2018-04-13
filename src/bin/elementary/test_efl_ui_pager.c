@@ -196,18 +196,18 @@ void test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
    tran = efl_add(EFL_PAGE_TRANSITION_SCROLL_CLASS, pager);
    efl_ui_pager_transition_set(pager, tran);
-   efl_ui_pager_page_size_set(pager, EINA_SIZE2D(200, 300));
+   efl_ui_pager_page_size_set(pager, EINA_SIZE2D(-1, -1));
    efl_ui_pager_padding_set(pager, 20);
    efl_content_set(efl_part(panes, "second"), pager);
 
    params = calloc(1, sizeof(Params));
    params->navi = navi;
    params->pager = pager;
-   params->transition = tran;
+   //params->transition = tran;
    params->w = 200;
    params->h = 300;
    params->padding = 20;
-   params->side_page_num = efl_page_transition_scroll_side_page_num_get(tran);
+   //params->side_page_num = efl_page_transition_scroll_side_page_num_get(tran);
    params->curr_page = 0;
    params->prev_block = EINA_FALSE;
    params->next_block = EINA_FALSE;
