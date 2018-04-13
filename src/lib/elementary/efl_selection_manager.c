@@ -2707,6 +2707,9 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
    if (ev->serial != sel->drag_serial)
     return ECORE_CALLBACK_RENEW;
 
+   if (seat_sel->active_type != EFL_SELECTION_TYPE_DND)
+     return ECORE_CALLBACK_RENEW;
+
    efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_DONE, NULL);
    if (seat_sel->drag_win)
      {
