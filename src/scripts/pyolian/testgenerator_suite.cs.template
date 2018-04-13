@@ -91,7 +91,7 @@ ${func.get_init}$
    <!--(if len(list(func.getter_values)) == 1)-->
         var arg_${list(func.getter_values)[0].name}$ = obj.Get${func.csname}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
    <!--(else)-->
-        obj.Get${func.csname}$(${', '.join(['&arg_{}'.format(p.name) for p in func.getter_values])}$${''.join([', arg_{}'.format(p.name) for p in func.getter_keys])}$);
+        obj.Get${func.csname}$(${', '.join(['out arg_{}'.format(p.name) for p in list(func.getter_keys) + list(func.getter_values)])}$);
    <!--(end)-->
    <!--(if func.arg_get_shutdown or func.get_shutdown)-->
 ${func.arg_get_shutdown}$
@@ -112,7 +112,7 @@ ${def_params(parameters=func.setter_keys)}$
 ${func.arg_set_init}$
 ${func.set_init}$
    <!--(end)-->
-        obj.Set${func.csname}$(${', '.join(['arg_{}'.format(p.name) for p in func.setter_values])}$${''.join([', arg_{}'.format(p.name) for p in func.setter_keys])}$);
+        obj.Set${func.csname}$(${', '.join(['arg_{}'.format(p.name) for p in list(func.setter_keys) + list(func.setter_values)])}$);
    <!--(if func.arg_set_shutdown or func.set_shutdown)-->
 ${func.arg_set_shutdown}$
 ${func.set_shutdown}$
