@@ -17,7 +17,6 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    Domain_Public_Data *pd = class_data;
    printf("Set Begin\n");
    pd->a = a;
-   sleep(1);
    printf("Set End\n");
    printf("Call Events\n");
    efl_event_callback_legacy_call(obj, EV_DOMAIN_A_CHANGED, &pd->a);

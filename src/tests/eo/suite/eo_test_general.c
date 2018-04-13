@@ -1457,7 +1457,6 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
    int v = domain_a_get(d->obj);
    printf("........ v = %i\n", v);
    fail_if(v == 1234);
-   sleep(1);
    printf("FAAAAIL DONE\n");
 
    printf("ADOPT...\n");
@@ -1468,7 +1467,6 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
    v = domain_a_get(d->obj);
    printf("........ v = %i\n", v);
    fail_if(v != 8910);
-   sleep(1);
    printf("SUCCEED DONE\n");
 
    printf("RETURN DOMAIN DATA\n");
