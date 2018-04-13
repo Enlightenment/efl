@@ -1,4 +1,4 @@
-class Efl.Net.Server.Tcp (Efl.Net.Server.Ip) {
+class Efl.Net.Server_Tcp (Efl.Net.Server_Ip) {
     [[A TCP server.
 
       @since 1.19
@@ -7,8 +7,8 @@ class Efl.Net.Server.Tcp (Efl.Net.Server.Ip) {
     implements {
         Efl.Object.destructor;
         Efl.Net.Server.serve;
-        Efl.Net.Server.Fd.client_add;
-        Efl.Net.Server.Fd.client_reject;
-        Efl.Net.Server.Fd.socket_activate;
+        Efl.Net.Server_Fd.client_add;
+        Efl.Net.Server_Fd.client_reject;
+        Efl.Net.Server_Fd.socket_activate;
     }
 }
