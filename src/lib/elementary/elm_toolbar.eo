@@ -1,6 +1,6 @@
 import elm_general;
 
-enum Elm.Toolbar.Shrink_Mode
+enum Elm.Toolbar_Shrink_Mode
 {
    [[Set toolbar's items display behavior, it can be scrollable,
      show a menu with exceeding items, or simply hide them.
@@ -148,7 +148,7 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          get {
          }
          values {
-            shrink_mode: Elm.Toolbar.Shrink_Mode; [[Toolbar's items display behavior]]
+            shrink_mode: Elm.Toolbar_Shrink_Mode; [[Toolbar's items display behavior]]
          }
       }
       @property menu_parent {
