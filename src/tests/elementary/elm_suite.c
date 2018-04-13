@@ -7,7 +7,6 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-  { "Elementary", elm_test_init },
   { "elm_config", elm_test_config },
   { "elm_check", elm_test_check },
   { "elm_colorselector", elm_test_colorselector },
@@ -102,6 +101,12 @@ SUITE_SHUTDOWN(elm)
    ck_assert_int_eq(ecore_shutdown(), 0);
 }
 
+
+static const Efl_Test_Case etc_init[] = {
+  { "init", elm_test_init },
+  { NULL, NULL }
+};
+
 int
 main(int argc, char **argv)
 {
@@ -119,7 +124,12 @@ main(int argc, char **argv)
      putenv("TESTS_GL_DISABLED=1");
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Elementary", etc, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
+                                           "Elementary_Init", etc_init, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
+   if (!failed_count)
+     {
+        failed_count += _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                                "Elementary", etc, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
+     }
 
    return (failed_count == 0) ? 0 : 255;
 }
