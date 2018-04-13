@@ -1,4 +1,4 @@
-class Efl.Ui.View.List.Pan (Efl.Ui.Pan)
+class Efl.Ui.View_List_Pan (Efl.Ui.Pan)
 {
    [[Elementary Efl_Ui_View_List pan class]]
    implements {

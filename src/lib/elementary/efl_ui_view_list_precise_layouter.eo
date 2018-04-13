@@ -1,9 +1,9 @@
-class Efl.Ui.View.List.Precise_Layouter (Efl.Object, Efl.Ui.View.List.Relayout)
+class Efl.Ui.View_List_Precise_Layouter (Efl.Object, Efl.Ui.View_List_Relayout)
 {
    implements {
       Efl.Object.constructor;
-      Efl.Ui.View.List.Relayout.layout_do;
-      Efl.Ui.View.List.Relayout.model { set; }
-      Efl.Ui.View.List.Relayout.elements { get; }
+      Efl.Ui.View_List_Relayout.layout_do;
+      Efl.Ui.View_List_Relayout.model { set; }
+      Efl.Ui.View_List_Relayout.elements { get; }
    }
 }
