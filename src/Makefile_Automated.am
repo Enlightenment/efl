@@ -226,7 +226,7 @@ $(mono_ecore_automated_bin): $(tests_automated_efl_mono_ecore_SOURCES) lib/efl_m
 	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 $(mono_ecore_automated_source):
-	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(ecore_eolian_files)
+	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(filter-out $(ecore_eolian_blacklisted_files:%.eo.cs=%.eo),$(ecore_eolian_files_public))
 
 endif
 
