@@ -65,7 +65,7 @@ ${def_params(parameters=func.parameters)}$
 ${func.arg_init}$
 ${func.init}$
   <!--(end)-->
-        <!--(if func.method_return_type)-->var r = <!--(end)-->obj.${func.csname}$(${', '.join(['arg_{}'.format(param.name) for param in func.parameters])}$);
+        <!--(if func.method_return_type)-->var r = <!--(end)-->obj.${func.csname}$(${', '.join(['{} arg_{}'.format( param.direction.name.lower().replace('in', ''), param.name) for param in func.parameters])}$);
   <!--(if func.arg_shutdown or func.shutdown)-->
 ${func.arg_shutdown}$
 ${func.shutdown}$
@@ -91,7 +91,7 @@ ${func.get_init}$
    <!--(if len(list(func.getter_values)) == 1)-->
         var arg_${list(func.getter_values)[0].name}$ = obj.Get${func.csname}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
    <!--(else)-->
-        obj.Get${func.csname}$(${', '.join(['out arg_{}'.format(p.name) for p in list(func.getter_keys) + list(func.getter_values)])}$);
+        obj.Get${func.csname}$(${', '.join(['arg_{}'.format(p.name) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
    <!--(end)-->
    <!--(if func.arg_get_shutdown or func.get_shutdown)-->
 ${func.arg_get_shutdown}$

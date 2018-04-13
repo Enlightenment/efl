@@ -32,7 +32,7 @@ class TestMain
         var cases= GetTestCases(ckRunCase);
         foreach(var testCase in cases)
         {
-            var localTestCases = testCase.GetMethods(BindingFlags.Static | BindingFlags.Public);
+            var localTestCases = testCase.GetMethods(BindingFlags.Instance | BindingFlags.Public);
 
             var setUp = Array.Find(localTestCases, m => String.Equals(m.Name, "SetUp", StringComparison.Ordinal));
             var tearDown = Array.Find(localTestCases, m => String.Equals(m.Name, "TearDown", StringComparison.Ordinal));
@@ -42,6 +42,8 @@ class TestMain
                 if (localTestCase == setUp || localTestCase == tearDown)
                     continue;
 
+                var tmp_case = Activator.CreateInstance(testCase);
+
                 Console.WriteLine("[ RUN         ] " + testCase.Name + "." + localTestCase.Name);
                 bool caseResult = true;
 
@@ -49,7 +51,7 @@ class TestMain
                 {
                     try
                     {
-                        setUp.Invoke(null, null);
+                        setUp.Invoke(tmp_case, null);
                     }
                     catch (Exception e)
                     {
@@ -63,7 +65,7 @@ class TestMain
                 {
                     try
                     {
-                        localTestCase.Invoke(null, null);
+                        localTestCase.Invoke(tmp_case, null);
                     }
                     catch (Exception e)
                     {
@@ -77,7 +79,7 @@ class TestMain
                 {
                     try
                     {
-                        tearDown.Invoke(null, null);
+                        tearDown.Invoke(tmp_case, null);
                     }
                     catch (Exception e)
                     {

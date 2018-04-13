@@ -215,19 +215,95 @@ mono_ecore_automated_source = tests/automated/ecore_suite_automated.cs
 mono_ecore_automated_bin = tests/automated/efl_mono_ecore$(EXEEXT)
 
 check_PROGRAMS += $(mono_ecore_automated_bin)
-TESTS += tests/efl_mono/mono_test_driver.sh
+TESTS += $(mono_ecore_automated_bin)
 
-tests_automated_efl_mono_ecore_SOURCES = \
+tests_automated_efl_mono_ecore_SOURCE = \
    $(tests_efl_mono_base) \
    $(mono_ecore_automated_source)
 
-$(mono_ecore_automated_bin): $(tests_automated_efl_mono_ecore_SOURCES) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+tests/automated/efl_mono_ecore$(EXEEXT): $(tests_automated_efl_mono_ecore_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
 	@rm -f $@
 	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 $(mono_ecore_automated_source):
 	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(filter-out $(ecore_eolian_blacklisted_files:%.eo.cs=%.eo),$(ecore_eolian_files_public))
 
-endif
+## Mono Eo ##
 
+mono_eo_automated_source = tests/automated/eo_suite_automated.cs
+mono_eo_automated_bin = tests/automated/efl_mono_eo$(EXEEXT)
+
+check_PROGRAMS += $(mono_eo_automated_bin)
+TESTS += $(mono_eo_automated_bin)
+
+tests_automated_efl_mono_eo_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_eo_automated_source)
+
+tests/automated/efl_mono_eo$(EXEEXT): $(tests_automated_efl_mono_eo_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_eo_automated_source):
+	$(TEST_GEN) automated eo $(top_builddir)/src/$@ $(filter-out $(eo_eolian_blacklisted_files:%.eo.cs=%.eo),$(eo_eolian_files))
+
+## Mono Efl ##
+
+mono_efl_automated_source = tests/automated/efl_suite_automated.cs
+mono_efl_automated_bin = tests/automated/efl_mono_efl$(EXEEXT)
+
+check_PROGRAMS += $(mono_efl_automated_bin)
+TESTS += $(mono_efl_automated_bin)
+
+tests_automated_efl_mono_efl_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_efl_automated_source)
+
+tests/automated/efl_mono_efl$(EXEEXT): $(tests_automated_efl_mono_efl_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_efl_automated_source):
+	$(TEST_GEN) automated efl $(top_builddir)/src/$@ $(filter-out $(efl_eolian_blacklisted_files:%.eo.cs=%.eo),$(efl_eolian_files))
+
+## Mono Edje ##
+
+mono_edje_automated_source = tests/automated/edje_suite_automated.cs
+mono_edje_automated_bin = tests/automated/efl_mono_edje$(EXEEXT)
+
+check_PROGRAMS += $(mono_edje_automated_bin)
+TESTS += $(mono_edje_automated_bin)
+
+tests_automated_efl_mono_edje_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_edje_automated_source)
+
+tests/automated/efl_mono_edje$(EXEEXT): $(tests_automated_efl_mono_edje_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_edje_automated_source):
+	$(TEST_GEN) automated edje $(top_builddir)/src/$@ $(filter-out $(edje_eolian_blacklisted_files:%.eo.cs=%.eo),$(edje_eolian_files))
+
+## Mono Elementary ##
+
+mono_elementary_automated_source = tests/automated/elementary_suite_automated.cs
+mono_elementary_automated_bin = tests/automated/efl_mono_elementary$(EXEEXT)
+
+check_PROGRAMS += $(mono_elementary_automated_bin)
+TESTS += $(mono_elementary_automated_bin)
+
+tests_automated_efl_mono_elementary_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_elementary_automated_source)
+
+tests/automated/efl_mono_elementary$(EXEEXT): $(tests_automated_efl_mono_elementary_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_elementary_automated_source):
+	$(TEST_GEN) automated elementary $(top_builddir)/src/$@ $(filter-out $(elementary_eolian_blacklisted_files:%.eo.cs=%.eo),$(elm_public_eolian_files))
+
+
+endif
 endif

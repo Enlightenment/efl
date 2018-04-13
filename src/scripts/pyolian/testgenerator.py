@@ -44,7 +44,10 @@ def load_file(filename):
 
 dicttypes = {}
 
+keywords = []
+
 def cs_types():
+    global keywords
     dicttypes.update({"byte": "sbyte"
            , "llong": "long"
            , "int8": "sbyte"
@@ -63,22 +66,42 @@ def cs_types():
            , "intptr": "System.IntPtr"
            , "uintptr": "System.IntPtr"
            , "void_ptr": "System.IntPtr"
-           , "void": "System.intPtr" #only if is out/inout
+           , "void": "System.IntPtr" #only if is out/inout
            , "Error": "eina.Error"
            , "string": "System.String"
            , "mstring": "System.String"
            , "stringshare": "System.String"
            , "any_value": "eina.Value"
            , "any_value_ptr": "eina.Value"
-        })
+           #complex Types
+           , "list": "eina.List"
+           , "inlist": "eina.Inlist"
+           , "array": "eina.Array"
+           , "inarray": "eina.Inarray"
+           , "hash": "eina.Hash"
+           , "promise": " int"
+           , "future": " int"
+           , "iterator": "eina.Iterator"
+           , "accessor": " int"
+           })
+
+    keywords = ["delete", "do",  "lock", "event", "in",  "object",
+            "interface", "string", "internal", "fixed", "base"]
+
+def escape_keyword(key):
+    if key in keywords:
+        return "kw_{}".format(key)
+    return key
 
 def to_csharp_klass_name(eo_name):
     names = eo_name.split('.')
-    namespaces = [x.lower() for x in names[:-1]]
+    namespaces = [escape_keyword(x.lower())  for x in names[:-1]]
     klass_name = names[-1]
     return '.'.join(namespaces + [klass_name])
 
 def type_convert(eotype):
+    if eotype.type == eotype.type.VOID:
+        return 'System.IntPtr'
     return dicttypes.get(eotype.name, to_csharp_klass_name(eotype.name))
 
 """
@@ -116,6 +139,7 @@ class Template(pyratemp.Template):
         ctx = {}
         ctx['suite'] = suite
         ctx['type_convert'] = type_convert
+        ctx['keywords'] = keywords
 
         # render with the augmented context
         output = self(**ctx)
