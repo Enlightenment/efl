@@ -75,6 +75,9 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_ui_menu.eo \
       lib/efl/interfaces/efl_ui_autorepeat.eo \
       lib/efl/interfaces/efl_ui_format.eo \
+      lib/efl/interfaces/efl_ui_datetime.eo \
+      lib/efl/interfaces/efl_ui_date.eo \
+      lib/efl/interfaces/efl_ui_time.eo \
       lib/efl/interfaces/efl_gfx_color_class.eo \
       lib/efl/interfaces/efl_gfx_text_class.eo \
       lib/efl/interfaces/efl_gfx_size_class.eo \
@@ -128,6 +131,7 @@ lib/efl/interfaces/efl_io_queue.c \
 lib/efl/interfaces/efl_observer.c \
 lib/efl/interfaces/efl_file.c \
 lib/efl/interfaces/efl_ui_format.c \
+lib/efl/interfaces/efl_ui_datetime.c \
 lib/efl/interfaces/efl_gfx_color.c \
 lib/efl/interfaces/efl_text_markup_util.c \
 $(NULL)

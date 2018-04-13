@@ -854,6 +854,7 @@ group { name: "elm/entry/base-single/default";
 
 group { name: "elm/entry/base-single/spinner/default";
    alias: "elm/entry/base-single/spinner/vertical";
+   alias: "elm/entry/base-single/spinner/picker";
    alias: "elm/entry/base-single/spin_button/default";
    alias: "elm/entry/base-single/spin_button/vertical";
    inherit: "elm/entry/base-single/default";

@@ -1,0 +1,38 @@
+import efl_types;
+
+mixin Efl.Ui.Datetime
+{
+   [[interface class for Date/time picker]]
+   methods {
+      @property datetime_value {
+         [[The value of a date, time.
+            
+           The year, month, day values for date picker, hour, min values for
+           time picker.
+          ]]
+          values {
+             newtime: Efl.Time; [[Time structure containing the date, time value.]]
+          }
+      }
+      @property datetime_format {
+         [[The date, time format.
+		    
+           Default format is taken as per the system locale settings.
+         ]]
+         values {
+            fmt: string; [[The format string]]
+         }
+      }
+      @property datetime_string {
+         get {
+            [[Get the string that matches with the format.]]
+         }
+         keys {
+            fmt: string; [[The format string]]
+         }
+         values {
+            string: string; [[The format string]]
+         }
+      }
+   }
+}

@@ -1,0 +1,183 @@
+group { "efl/datepicker";
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+             min: 150 170;
+         }
+      }
+      rect { "base_bg";
+         scale;
+         desc { "default";
+            rel.to: "base";
+            color: 0 0 0 35;
+         }
+      }
+      spacer { "padding_bg_top";
+         scale;
+         desc { "default";
+            min: 0 10;
+            max: -1 10;
+            fixed: 0 1;
+            rel1 {
+               relative: 0.0 0.0;
+               to: "base_bg";
+            }
+            rel2 {
+               relative: 1.0 0.0;
+               to: "base_bg";
+            }
+            align: 0.5 0.0;
+         }
+      }
+      spacer { "padding_bg_bottom";
+         scale;
+         desc { "default";
+            min: 0 10;
+            max: -1 10;
+            fixed: 0 1;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "base_bg";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "base_bg";
+            }
+            align: 0.5 1.0;
+         }
+      }
+      spacer { "bg";
+         scale;
+         desc { "default";
+            min: 150 150;
+            max: 150 150;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "padding_bg_top";
+            }
+            rel2 {
+               relative: 1.0 0.0;
+               to: "padding_bg_bottom";
+            }
+         }
+      }
+      spacer { "padding_left";
+         scale;
+         desc { "default";
+            min: 5 0;
+            max: 5 -1;
+            fixed: 1 0;
+            rel1 {
+               relative: 0.0 0.0;
+               to: "bg";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to: "bg";
+            }
+            align: 0.0 0.0;
+         }
+      }
+      spacer { "padding_right";
+         scale;
+         desc { "default";
+            min: 5 0;
+            max: 5 -1;
+            fixed: 1 0;
+            rel2.to: "bg";
+            rel1 {
+               relative: 1.0 0.0;
+               to: "bg";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "bg";
+            }
+            align: 1.0 1.0;
+         }
+      }
+      swallow { "field0";
+         mouse;
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 40 0;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "padding_left";
+            }
+            rel2.to: "padding_left";
+            align: 0.0 0.5;
+         }
+      }
+      spacer { "padding_center1";
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 10 0;
+            max: 10 -1;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "field0";
+            }
+            rel2.to: "field0";
+            align: 0.0 0.5;
+         }
+      }
+      swallow { "field1";
+         mouse;
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 40 0;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "padding_center1";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "padding_center2";
+               to_y: "padding_center1";
+            }
+         }
+      }
+      spacer { "padding_center2";
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 10 0;
+            max: 10 -1;
+            rel1.to: "field2";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "field2";
+            }
+            align: 1.0 0.5;
+         }
+      }
+      swallow { "field2";
+         mouse;
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 40 0;
+            rel1.to: "padding_right";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "padding_right";
+            }
+            align: 1.0 0.5;
+         }
+      }
+      rect { "access";
+         repeat;
+         desc { "default";
+            fixed: 1 1;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            color: 0 0 0 0;
+         }
+      }
+   }
+}

@@ -1,0 +1,63 @@
+interface Efl.Ui.Date
+{
+   [[Efl UI date interface]]
+   methods {
+      @property min {
+         [[The lower boundary of date.
+		   
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
+
+           Month: default value range is from 0 to 11.
+
+           Day: default value range is from 1 to 31 according to the month
+           value.
+         ]]
+         set {} get{}
+         values {
+           year: int; [[The year value.]]
+           month: int; [[The month value.]]
+           day: int; [[The day value.]]
+         }
+      }
+      @property max {
+         [[The upper boundary of date.
+		   
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
+
+           Month: default value range is from 0 to 11.
+
+           Day: default value range is from 1 to 31 according to the month
+           value.
+         ]]
+         set {} get{}
+         values {
+           year: int; [[The year value.]]
+           month: int; [[The month value.]]
+           day: int; [[The day value.]]
+         }
+      }
+      @property date {
+         [[The current value of date.
+		   
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
+
+           Month: default value range is from 0 to 11.
+
+           Day: default value range is from 1 to 31 according to the month
+           value.
+         ]]
+         set {} get{}
+         values {
+           year: int; [[The year value.]]
+           month: int; [[The month value.]]
+           day: int; [[The day value.]]
+         }
+      }
+   }
+}

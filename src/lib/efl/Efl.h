@@ -95,6 +95,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_scrollable_interactive.eo.h"
 #include "interfaces/efl_ui_selectable.eo.h"
 #include "interfaces/efl_ui_zoom.eo.h"
+#include "interfaces/efl_ui_date.eo.h"
+#include "interfaces/efl_ui_time.eo.h"
 
 #include "interfaces/efl_screen.eo.h"
 
@@ -136,6 +138,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_model_connect.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
 #include "interfaces/efl_ui_format.eo.h"
+#include "interfaces/efl_ui_datetime.eo.h"
 
 /* Observable interface */
 #include "interfaces/efl_observer.eo.h"

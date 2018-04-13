@@ -781,3 +781,19 @@ group { name: "efl/button:anchor";
 #undef MASK
 #undef DISABLE
 }
+
+group { "efl/button:ampm";
+   inherit: "efl/button";
+   parts {
+      image { "base";
+         desc { "default";
+            min: 40 40;
+            max: 40 40;
+         }
+         desc { "pressed";
+            min: 40 40;
+            max: 40 40;
+         }
+      }
+   }
+}

@@ -1,0 +1,19 @@
+interface Efl.Ui.Time
+{
+   [[Efl UI Time class]]
+   methods {
+      @property time {
+         [[The current value of time
+		 
+           Hour: The value will be in terms of 24 hr format (0~23)
+
+           Minute: The range is from 0 to 59.
+         ]]
+         set {} get{}
+         values {
+            hour: int; [[The hour value.]]
+            min: int; [[The minute value.]]
+         }
+      }
+   }
+}

@@ -77,6 +77,8 @@
 #include "interfaces/efl_ui_scrollbar.eo.c"
 #include "interfaces/efl_ui_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
+#include "interfaces/efl_ui_date.eo.c"
+#include "interfaces/efl_ui_time.eo.c"
 
 EAPI void
 __efl_internal_init(void)

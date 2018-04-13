@@ -189,6 +189,8 @@ collections {
 #include "edc/efl/border.edc"
 #include "edc/efl/spin.edc"
 #include "edc/efl/spin_button.edc"
+#include "edc/efl/datepicker.edc"
+#include "edc/efl/timepicker.edc"
 // XXX: min size calc problems - too wide! ... err ok on my 32bit box... eh?
 #include "edc/efl/cursor.edc"
 #include "edc/efl/pointer.edc"

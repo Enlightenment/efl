@@ -1,0 +1,21 @@
+class Efl.Ui.Datepicker (Efl.Ui.Layout, Efl.Ui.Datetime, Efl.Ui.Date)
+{
+   [[A Datepicker
+
+     This is a widget which allows the user to pick a date using internal spinner.
+     User can use the internal spinner to select year, month, day or user can enter
+     value using internal entry.
+   ]]
+   methods {
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Ui.Date.min { get; set; }
+      Efl.Ui.Date.max { get; set; }
+      Efl.Ui.Date.date { get; set; }
+   }
+   events {
+      changed; [[Called when date value changed]]
+   }
+}
