@@ -19,7 +19,6 @@ inline std::string escape_keyword(std::string const& name)
 {
   using detail::is_iequal;
   if(is_iequal(name, "delete")
-     || is_iequal(name,  "register")
      || is_iequal(name, "do")
      || is_iequal(name,  "lock")
      || is_iequal(name, "event")
