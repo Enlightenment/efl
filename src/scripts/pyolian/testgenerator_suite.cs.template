@@ -25,7 +25,7 @@ class Test${cls.name.replace('.','')}$
 ${cls.custom}$
  <!--(end)-->
 
-    public static void SetUp()
+    public void SetUp()
     {
  <!--(if suite.init)-->
 ${suite.init}$
@@ -37,7 +37,7 @@ ${cls.init}$
  <!--(end)-->
     }
 
-    public static void TearDown()
+    public void TearDown()
     {
  <!--(if suite.shutdown)-->
 ${suite.shutdown}$
@@ -45,18 +45,18 @@ ${suite.shutdown}$
  <!--(if cls.shutdown)-->
 ${cls.shutdown}$
  <!--(else)-->
-       obj.Dispose()
+       obj.Dispose();
        obj = null;
  <!--(end)-->
     }
 
-    public static void smoke()
+    public void smoke()
     {
     }
 
 #!  METHODS
  <!--(for func in cls.mlist)-->
-    public static void ${func.name}$()
+    public void ${func.name}$()
     {
    <!--(if len(list(func.parameters)) > 0)-->
 ${def_params(parameters=func.parameters)}$
@@ -76,7 +76,7 @@ ${func.shutdown}$
 #!  PROPERTIES FUNCTION GET
  <!--(for func in cls.plist)-->
   <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
-    public static void ${func.name}$_pget()
+    public void ${func.name}$_pget()
     {
    <!--(if len(list(func.getter_values)) > 1)-->
 ${def_params(parameters=func.getter_values)}$
@@ -102,7 +102,7 @@ ${func.get_shutdown}$
   <!--(end)-->
 #!  PROPERTIES FUNCTION SET
   <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
-    public static void ${func.name}$_pset()
+    public void ${func.name}$_pset()
     {
 ${def_params(parameters=func.setter_values)}$
    <!--(if len(list(func.setter_keys)) > 0)-->
