@@ -6,7 +6,7 @@ class Efl.Net.Socket.Ssl (Efl.Loop_Consumer, Efl.Net.Socket) {
 
       Use this wrapper around an existing socket for secure
       communication. One common use is to apply it to TCP sockets
-      created with @Efl.Net.Dialer.Tcp or @Efl.Net.Server.Tcp created
+      created with @Efl.Net.Dialer_Tcp or @Efl.Net.Server.Tcp created
       with "client,add" event.
 
       @since 1.19
