@@ -74,7 +74,8 @@
        efl_del(mesh2);                                                   \
        efl_del(mesh);                                                    \
        unlink(buffer);                                                  \
-    }
+    } \
+  eina_iterator_free(it);
 
 static Evas_Canvas3D_Mesh_Frame *
 return_zero_frame(Evas_Canvas3D_Mesh_Data *pd)
@@ -149,7 +150,6 @@ EFL_START_TEST(evas_object_mesh_loader_saver)
    CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, ".eet")
    CHECK_MESHES_IN_FOLDER(TESTS_PLY_MESH_DIR, ".ply")
 
-   eina_iterator_free(it);
    unlink(tmp);
 
    evas_free(e);
