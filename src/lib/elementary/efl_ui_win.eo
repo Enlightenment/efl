@@ -1,4 +1,4 @@
-enum Efl.Ui.Win.Type
+enum Efl.Ui.Win_Type
 {
    [[Defines the types of window that can be created
 
@@ -43,7 +43,7 @@ enum Efl.Ui.Win.Type
                         ]]
 }
 
-enum Efl.Ui.Win.Keyboard_Mode
+enum Efl.Ui.Win_Keyboard_Mode
 {
    [[The different layouts that can be requested for the virtual keyboard.
 
@@ -70,7 +70,7 @@ enum Efl.Ui.Win.Keyboard_Mode
    j2me [[J2ME keyboard layout]]
 }
 
-enum Efl.Ui.Win.Indicator_Mode
+enum Efl.Ui.Win_Indicator_Mode
 {
    [[Defines the type indicator that can be shown]]
    legacy: efl_ui_win_indicator;
@@ -86,7 +86,7 @@ enum Efl.Ui.Win.Indicator_Mode
             If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
-enum Efl.Ui.Win.Keygrab_Mode
+enum Efl.Ui.Win_Keygrab_Mode
 {
    [[Define the keygrab modes of window. A window may send commands to the
      Keyrouter according this mode, and perform different actions.]]
@@ -105,7 +105,7 @@ enum Efl.Ui.Win.Keygrab_Mode
                                     window]]
 }
 
-enum Efl.Ui.Win.Modal_Mode
+enum Efl.Ui.Win_Modal_Mode
 {
    [[Defines the mode of a modal window]]
    legacy: efl_ui_win_modal;
@@ -114,7 +114,7 @@ enum Efl.Ui.Win.Modal_Mode
    modal [[The window is modal window.]]
 }
 
-enum Efl.Ui.Win.Urgent_Mode
+enum Efl.Ui.Win_Urgent_Mode
 {
    [[Defines the mode of a urgent window.]]
    legacy: efl_ui_win_urgent;
@@ -123,7 +123,7 @@ enum Efl.Ui.Win.Urgent_Mode
    urgent [[The window is a urgent window.]]
 }
 
-enum Efl.Ui.Win.Move_Resize_Mode
+enum Efl.Ui.Win_Move_Resize_Mode
 {
    [[Define the move or resize mode of window.
 
@@ -182,7 +182,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
             legacy: null;
          }
          values {
-            type: Efl.Ui.Win.Indicator_Mode; [[The mype, one of #Efl_Ui_Win_Indicator_Mode.]]
+            type: Efl.Ui.Win_Indicator_Mode; [[The mype, one of #Efl_Ui_Win_Indicator_Mode.]]
          }
       }
       @property keyboard_mode {
@@ -193,7 +193,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
             [[Get the keyboard mode of the window.]]
          }
          values {
-            mode: Efl.Ui.Win.Keyboard_Mode; [[The mode, one of #Efl_Ui_Win_Keyboard_Mode.]]
+            mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of #Efl_Ui_Win_Keyboard_Mode.]]
          }
       }
       @property wm_available_rotations {
@@ -388,7 +388,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
             legacy: null;
          }
          values {
-            urgent: Efl.Ui.Win.Urgent_Mode;
+            urgent: Efl.Ui.Win_Urgent_Mode;
                 [[The mode of a urgent window, one of #Efl_Ui_Win_Urgent_Mode.]]
          }
       }
@@ -402,7 +402,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
             legacy: null;
          }
          values {
-            modal: Efl.Ui.Win.Modal_Mode; [[The mode of a window, one of #Efl_Ui_Win_Modal_Mode.]]
+            modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of #Efl_Ui_Win_Modal_Mode.]]
          }
       }
       @property noblank {
@@ -510,7 +510,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
             legacy: elm_win_type_get;
          }
          values {
-            type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown); [[Window type]]
+            type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.unknown); [[Window type]]
          }
       }
       @property accel_preference {
@@ -698,7 +698,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
             @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
                  keys that must not be present to trigger the event. Not supported yet.]]
             @in priority: int; [[Not supported yet.]]
-            @in grab_mode: Efl.Ui.Win.Keygrab_Mode; [[Describes how the key should
+            @in grab_mode: Efl.Ui.Win_Keygrab_Mode; [[Describes how the key should
                  be grabbed, wrt. focus and stacking.]]
          }
          legacy: null;
@@ -722,7 +722,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
          [[Start moving or resizing the window.
 
            The user can request the display server to start moving or resizing
-           the window by combining modes from @Efl.Ui.Win.Move_Resize_Mode.
+           the window by combining modes from @Efl.Ui.Win_Move_Resize_Mode.
            This API can only be called if none of the following conditions is
            true:
 
@@ -741,15 +741,15 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
 
            Currently, only the following 9 combinations are allowed, and
            possibly more combinations may be added in the future:
-           1. @Efl.Ui.Win.Move_Resize_Mode.move
-           2. @Efl.Ui.Win.Move_Resize_Mode.top
-           3. @Efl.Ui.Win.Move_Resize_Mode.bottom
-           4. @Efl.Ui.Win.Move_Resize_Mode.left
-           5. @Efl.Ui.Win.Move_Resize_Mode.right
-           6. @Efl.Ui.Win.Move_Resize_Mode.top | @Efl.Ui.Win.Move_Resize_Mode.left
-           7. @Efl.Ui.Win.Move_Resize_Mode.top | @Efl.Ui.Win.Move_Resize_Mode.right
-           8. @Efl.Ui.Win.Move_Resize_Mode.bottom | @Efl.Ui.Win.Move_Resize_Mode.left
-           9. @Efl.Ui.Win.Move_Resize_Mode.bottom | @Efl.Ui.Win.Move_Resize_Mode.right
+           1. @Efl.Ui.Win_Move_Resize_Mode.move
+           2. @Efl.Ui.Win_Move_Resize_Mode.top
+           3. @Efl.Ui.Win_Move_Resize_Mode.bottom
+           4. @Efl.Ui.Win_Move_Resize_Mode.left
+           5. @Efl.Ui.Win_Move_Resize_Mode.right
+           6. @Efl.Ui.Win_Move_Resize_Mode.top | @Efl.Ui.Win_Move_Resize_Mode.left
+           7. @Efl.Ui.Win_Move_Resize_Mode.top | @Efl.Ui.Win_Move_Resize_Mode.right
+           8. @Efl.Ui.Win_Move_Resize_Mode.bottom | @Efl.Ui.Win_Move_Resize_Mode.left
+           9. @Efl.Ui.Win_Move_Resize_Mode.bottom | @Efl.Ui.Win_Move_Resize_Mode.right
 
            In particular move and resize cannot happen simultaneously.
 
@@ -762,7 +762,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
          return: bool; [[$true if the request was successfully sent to the
                          display server, $false in case of error.]]
          params {
-            @in mode: Efl.Ui.Win.Move_Resize_Mode; [[The requested move or
+            @in mode: Efl.Ui.Win_Move_Resize_Mode; [[The requested move or
                                                      resize mode.]]
          }
       }
