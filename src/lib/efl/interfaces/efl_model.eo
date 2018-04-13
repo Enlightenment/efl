@@ -1,4 +1,4 @@
-struct Efl.Model.Property_Event {
+struct Efl.Model_Property_Event {
      [[EFL model property event data structure]]
      changed_properties: array<string>; [[List of changed properties]]
      invalidated_properties: array<string>; [[Removed properties identified by name]]
@@ -144,7 +144,7 @@ interface Efl.Model ()
       }
 
    events {
-      properties,changed: Efl.Model.Property_Event; [[Event dispatched when
+      properties,changed: Efl.Model_Property_Event; [[Event dispatched when
                                                       properties list is
                                                       available.]]
       child,added: Efl.Object; [[Event dispatched when new child is added.]]

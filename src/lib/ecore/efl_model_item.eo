@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Model.Item (Efl.Object, Efl.Model)
+class Efl.Model_Item (Efl.Object, Efl.Model)
 {
    [[
      Generic model that allows any property to be manually set.

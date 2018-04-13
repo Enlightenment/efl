@@ -1,4 +1,4 @@
-class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model, Efl.Ui.View)
+class Efl.Model_Composite_Boolean (Efl.Object, Efl.Model, Efl.Ui.View)
 {
    [[Efl model composite boolean class]]
    methods {

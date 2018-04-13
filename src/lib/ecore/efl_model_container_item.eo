@@ -1,21 +1,21 @@
 import eina_types;
 
-class Efl.Model.Container.Item (Efl.Object, Efl.Model)
+class Efl.Model_Container_Item (Efl.Object, Efl.Model)
 {
    [[
-     Used as a child of @Efl.Model.Container.
+     Used as a child of @Efl.Model_Container.
 
-     Provides the @Efl.Model API for elements of @Efl.Model.Container.
+     Provides the @Efl.Model API for elements of @Efl.Model_Container.
      Should not be used in another context, so do not manually create objects
      of this class.
    ]]
    methods {
       define {
-         [[Defines @Efl.Model.Container.Item internal data.]]
+         [[Defines @Efl.Model_Container_Item internal data.]]
          params {
             parent_data: void_ptr; [[Pointer to the private data of the
-                                    @Efl.Model.Container parent object.]]
-            index: uint; [[Index of this item within the @Efl.Model.Container
+                                    @Efl.Model_Container parent object.]]
+            index: uint; [[Index of this item within the @Efl.Model_Container
                            children.]]
          }
       }
