@@ -1,6 +1,6 @@
-#include "elua_private.h"
-
+#include <limits.h>
 #include <Ecore_File.h>
+#include "elua_private.h"
 
 static Eina_Prefix *_elua_pfx = NULL;
 
@@ -70,7 +70,6 @@ EAPI Elua_State *
 elua_state_new(const char *progname)
 {
    Elua_State *ret = NULL;
-   Eina_Safepointer *sp;
    lua_State *L = luaL_newstate();
    if (!L)
      return NULL;
@@ -78,10 +77,21 @@ elua_state_new(const char *progname)
    ret->luastate = L;
    if (progname) ret->progname = eina_stringshare_add(progname);
    luaL_openlibs(L);
-   sp = (Eina_Safepointer *)eina_safepointer_register(ret);
-   ret->sp = sp;
-   lua_pushlightuserdata(L, sp);
-   lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr");
+   /* on 64-bit, split the state pointer into two and reconstruct later */
+   size_t retn = (size_t)ret;
+   if (sizeof(void *) < sizeof(lua_Number))
+     {
+        lua_pushnumber(L, 0);
+        lua_pushnumber(L, (lua_Number)retn);
+     }
+   else
+     {
+        size_t hbits = (sizeof(void *) / 2) * CHAR_BIT;
+        lua_pushnumber(L, (lua_Number)(retn >> hbits));
+        lua_pushnumber(L, (lua_Number)(retn & (((size_t)1 << hbits) - 1)));
+     }
+   lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr1");
+   lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr2");
    return ret;
 }
 
@@ -109,7 +119,6 @@ elua_state_free(Elua_State *es)
    eina_stringshare_del(es->coredir);
    eina_stringshare_del(es->moddir);
    eina_stringshare_del(es->appsdir);
-   eina_safepointer_unregister(es->sp);
    free(es);
 }
 
@@ -261,15 +270,18 @@ EAPI Elua_State *
 elua_state_from_lua_state_get(lua_State *L)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(L, NULL);
-   lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr");
-   if (!lua_isnil(L, -1))
+   lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr1");
+   lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr2");
+   if (!lua_isnil(L, -1) && !lua_isnil(L, -2))
      {
-        Eina_Safepointer *sp = lua_touserdata(L, -1);
-        void *st = eina_safepointer_get(sp);
-        lua_pop(L, 1);
-        return (Elua_State *)st;
+        size_t p1 = (size_t)lua_tonumber(L, -2),
+               p2 = (size_t)lua_tonumber(L, -1);
+        if (p2 && (sizeof(void *) >= sizeof(lua_Number)))
+          p1 |= p2 << ((sizeof(void *) / 2) * CHAR_BIT);
+        lua_pop(L, 2);
+        return (Elua_State *)p1;
      }
-   lua_pop(L, 1);
+   lua_pop(L, 2);
    return NULL;
 }
 
