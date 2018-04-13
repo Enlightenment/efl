@@ -14,5 +14,11 @@ class Efl.Ui.Focus.Util(Efl.Object) {
          }
          return: Efl.Ui.Focus.Manager;
       }
+      direction_complement @class {
+         params {
+            dir : Efl.Ui.Focus.Direction;
+         }
+         return: Efl.Ui.Focus.Direction;
+      }
    }
 }

@@ -62,5 +62,21 @@ _efl_ui_focus_util_active_manager(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl
    return manager;
 }
 
+EOLIAN static Efl_Ui_Focus_Direction
+_efl_ui_focus_util_direction_complement(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Direction dir)
+{
+  #define COMP(a,b) \
+        if (dir == a) return b; \
+        if (dir == b) return a;
+
+    COMP(EFL_UI_FOCUS_DIRECTION_RIGHT, EFL_UI_FOCUS_DIRECTION_LEFT)
+    COMP(EFL_UI_FOCUS_DIRECTION_UP, EFL_UI_FOCUS_DIRECTION_DOWN)
+    COMP(EFL_UI_FOCUS_DIRECTION_PREVIOUS, EFL_UI_FOCUS_DIRECTION_NEXT)
+
+    #undef COMP
+
+    return EFL_UI_FOCUS_DIRECTION_LAST;
+}
+
 
 #include "efl_ui_focus_util.eo.c"
