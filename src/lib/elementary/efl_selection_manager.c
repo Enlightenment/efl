@@ -1166,11 +1166,11 @@ _x11_text_converter(char *target, void *data, int size EINA_UNUSED, void **data_
    if ((sel->format & EFL_SELECTION_FORMAT_MARKUP) ||
        (sel->format & EFL_SELECTION_FORMAT_HTML))
      {
-        char *tmp = malloc(size + 1);
+        char *tmp = malloc(sel->data.len + 1);
         if (tmp)
           {
-             strncpy(tmp, data, size);
-             tmp[size] = 0;
+             strncpy(tmp, sel->data.mem, sel->data.len);
+             tmp[sel->data.len] = 0;
              *data_ret = _elm_util_mkup_to_text(tmp);
              if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
              free(tmp);
