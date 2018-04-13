@@ -6,7 +6,7 @@ function Efl.Ui.Scrollable_On_Show_Region {
    }
 };
 
-struct Efl.Ui.Widget.Focus_State {
+struct Efl.Ui.Widget_Focus_State {
    [[All relevant fields needed for the current state of focus registeration]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
    parent : Efl.Ui.Focus.Object; [[The parent the widget is using as logical parent]]
@@ -542,9 +542,9 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
            not registered.
          ]]
          params {
-            @in current_state : Efl.Ui.Widget.Focus_State;
+            @in current_state : Efl.Ui.Widget_Focus_State;
                [[The focus manager to register with.]]
-            @inout configured_state : Efl.Ui.Widget.Focus_State;
+            @inout configured_state : Efl.Ui.Widget_Focus_State;
                [[The evalulated Focus state that should be used.]]
             @in redirect : Efl.Ui.Widget;
                [[A redirect that will be set by the elm.widget implementation.]]
@@ -564,8 +564,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       }
    }
    parts {
-      shadow: Efl.Ui.Widget.Part_Shadow;
-      background: Efl.Ui.Widget.Part_Bg;
+      shadow: Efl.Ui.Widget_Part_Shadow;
+      background: Efl.Ui.Widget_Part_Bg;
    }
    implements {
       class.constructor;
@@ -601,7 +601,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
-      Efl.Part.part; [[Returns @Efl.Ui.Widget.Part.]]
+      Efl.Part.part; [[Returns @Efl.Ui.Widget_Part.]]
    }
    events {
       moved; [[Called when widget moved]]
