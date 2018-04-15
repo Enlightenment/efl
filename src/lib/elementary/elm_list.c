@@ -376,6 +376,22 @@ _elm_list_efl_ui_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction di
        (!sd->h_mode && (dir != ELM_FOCUS_UP) && (dir != ELM_FOCUS_DOWN)))
      return EINA_FALSE;
 
+   // check if list get focus at first
+   focus_only = _elm_config->item_select_on_focus_disable;
+   if (!sd->focused_item)
+     {
+        if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_UP))
+          eo_it = elm_list_last_item_get(obj);
+        else
+          eo_it = elm_list_first_item_get(obj);
+
+        if (focus_only)
+          elm_object_item_focus_set(eo_it, EINA_TRUE);
+        else
+          elm_list_item_selected_set(eo_it, EINA_TRUE);
+        return EINA_TRUE;
+     }
+
    // get content size and viewport size
    if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT))
      {
@@ -391,7 +407,6 @@ _elm_list_efl_ui_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction di
      }
 
    // move focus or selection according to the configuration
-   focus_only = _elm_config->item_select_on_focus_disable;
    if (focus_only)
      ret = _item_focused_next(obj, dir);
    else
@@ -3073,7 +3088,7 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it)
 }
 
 EOLIAN static Eina_Rect
-_elm_list_efl_ui_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
+_elm_list_efl_ui_widget_focus_highlight_geometry_get(Eo *obj, Elm_List_Data *sd)
 {
    Eina_Rect r = {};
 
@@ -3082,6 +3097,10 @@ _elm_list_efl_ui_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Li
         ELM_LIST_ITEM_DATA_GET(sd->focused_item, focus_it);
         r = _elm_list_item_coordinates_adjust(focus_it);
         elm_widget_focus_highlight_focus_part_geometry_get(VIEW(focus_it), &r.x, &r.y, &r.w, &r.h);
+     }
+   else
+     {
+        r = efl_gfx_geometry_get(obj);
      }
 
    return r;
