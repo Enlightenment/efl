@@ -320,7 +320,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
 
 #ifdef ENABLE_TIMING_INFO
    if (timing)
-     printf("SUITE TIME %s: %.5g\n", suite_name, _timing_time_get() - tstart);
+     {
+        printf("SUITE TIME(%u) %s: %.5g\n", getpid(), suite_name, _timing_time_get() - tstart);
+        fflush(stdout);
+     }
 #endif
    return failed_count;
 }
