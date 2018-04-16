@@ -2186,8 +2186,9 @@ EAPI void
 ___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable)
 {
    // Write-only property
-   EO_OBJ_POINTER(obj_id, obj);
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
    obj->auto_unref = enable ? 1 : 0;
+   EO_OBJ_DONE(obj_id);
 }
 
 EOLIAN static Eo *
