@@ -6958,12 +6958,6 @@ _elm_genlist_next_item_get_insane(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
         if (sd->filter && !_item_filtered_get(it2))
           continue;
 
-        // Insanity does not apply for group items
-        // (group and normal items was treated in a flat way)
-        if (it->item->type == ELM_GENLIST_ITEM_GROUP ||
-            it2->item->type == ELM_GENLIST_ITEM_GROUP)
-             return EO_OBJ(it2);
-
         // 1. Return next sibling in list, if any
         if (it->parent == it2->parent)
           return EO_OBJ(it2);
@@ -6987,7 +6981,7 @@ _elm_genlist_next_item_get_insane(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
           return EO_OBJ(it->parent);
      }
    /* if item is already last item, return its parent if a parent exists */
-   if (it->parent && it->parent->item->type != ELM_GENLIST_ITEM_GROUP)
+   if (it->parent)
      return EO_OBJ(it->parent);
    return EO_OBJ(it2);
 }
@@ -7001,16 +6995,6 @@ _elm_genlist_prev_item_get_insane(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
      {
         // If this item is filtered out, give up on smarts and just find
         // the previous filtered one.
-        for (it2 = ELM_GEN_ITEM_PREV(it); it2; it2 = ELM_GEN_ITEM_PREV(it2))
-          if (!sd->filter || _item_filtered_get(it2))
-            break;
-        return EO_OBJ(it2);
-     }
-
-   // Insanity does not apply for group items
-   // (group and normal items was treated in a flat way)
-   if (it->item->type == ELM_GENLIST_ITEM_GROUP)
-     {
         for (it2 = ELM_GEN_ITEM_PREV(it); it2; it2 = ELM_GEN_ITEM_PREV(it2))
           if (!sd->filter || _item_filtered_get(it2))
             break;
@@ -7036,7 +7020,7 @@ _elm_genlist_prev_item_get_insane(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
      }
 
    it2 = ELM_GEN_ITEM_PREV(it);
-   if (it2 == parent && it2->item->type != ELM_GENLIST_ITEM_GROUP)
+   if (it2 == parent)
      return _elm_genlist_prev_item_get_insane(sd, it2);
 
    return EO_OBJ(it2);
