@@ -101,6 +101,21 @@ Test_Numberwrapper **_new_obj_ref(int n)
 // Test.Testing //
 // ############ //
 
+static Efl_Object*
+_test_testing_efl_object_constructor(Eo *obj, Test_Testing_Data *pd)
+{
+   efl_constructor(efl_super(obj, TEST_TESTING_CLASS));
+
+   // To avoid an infinite loop calling the same constructor
+   if (!efl_parent_get(obj))
+     {
+        pd->part1 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part1"));
+        pd->part2 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part2"));
+     }
+
+   return obj;
+}
+
 Efl_Object *_test_testing_return_object(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return obj;
@@ -3724,24 +3739,12 @@ void _test_testing_emit_event_with_obj(Eo *obj, EINA_UNUSED Test_Testing_Data *p
     efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_OBJ, data);
 }
 
-Efl_Object *_test_testing_efl_part_part(const Eo *obj, Test_Testing_Data *pd, const char *name)
+Efl_Object *_test_testing_efl_part_part(EINA_UNUSED const Eo *obj, Test_Testing_Data *pd, const char *name)
 {
     if (!strcmp(name, "part1"))
-      {
-         if (pd->part1 == NULL)
-           {
-              pd->part1 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part1"));
-           }
-         return pd->part1;
-      }
+      return pd->part1;
     else if (!strcmp(name, "part2"))
-      {
-         if (pd->part2 == NULL)
-           {
-              pd->part2 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part2"));
-           }
-         return pd->part2;
-      }
+      return pd->part2;
     else
       return NULL;
 }

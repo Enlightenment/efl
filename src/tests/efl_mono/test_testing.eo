@@ -1595,6 +1595,7 @@ class Test.Testing (Efl.Object, Efl.Part) {
    implements {
       class.constructor;
       class.destructor;
+      Efl.Object.constructor;
       Efl.Part.part;
    }
    events {
