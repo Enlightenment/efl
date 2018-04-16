@@ -673,6 +673,7 @@ _elm_list_deletions_process(Elm_List_Data *sd)
 
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
+        efl_unref(EO_OBJ(it));
         efl_parent_set(EO_OBJ(it), NULL);
      }
 
@@ -2034,7 +2035,7 @@ _elm_list_item_elm_widget_item_part_text_get(const Eo *eo_it, Elm_List_Item_Data
  _elm_list_item_free() + elm_widget_item_free()
  */
 EOLIAN static Eina_Bool
-_elm_list_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item)
+_elm_list_item_elm_widget_item_del_pre(Eo *eo_item, Elm_List_Item_Data *item)
 {
    Evas_Object *obj = WIDGET(item);
 
@@ -2050,6 +2051,7 @@ _elm_list_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_List_Item_Da
      {
         if (item->deleted) return EINA_FALSE;
         item->deleted = EINA_TRUE;
+        efl_ref(eo_item);
         sd->to_delete = eina_list_append(sd->to_delete, item);
         return EINA_FALSE;
      }
@@ -2707,6 +2709,7 @@ _elm_list_clear(Eo *obj, Elm_List_Data *sd)
              ELM_LIST_ITEM_DATA_GET(eo_it, it);
              if (it->deleted) continue;
              it->deleted = EINA_TRUE;
+             efl_ref(eo_it);
              sd->to_delete = eina_list_append(sd->to_delete, it);
           }
         return;
