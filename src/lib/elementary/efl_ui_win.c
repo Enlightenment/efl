@@ -993,6 +993,8 @@ _elm_win_pre_render(Ecore_Evas *ee)
    if (!sd->first_draw)
      {
         sd->first_draw = EINA_TRUE;
+        edje_object_thaw(sd->frame_obj);
+        _elm_win_frame_style_update(sd, 1, 1);
         _elm_win_frame_obj_update(sd);
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
      }
@@ -4251,7 +4253,7 @@ static void
 _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
 {
    Evas_Object *obj = sd->obj;
-   int w, h, mw, mh, v;
+   int w, h, v;
    const char *version;
 
    if (sd->frame_obj) return;
@@ -4297,6 +4299,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
         free(sys_theme);
      }
 
+   edje_object_freeze(sd->frame_obj);
    /* Small hack: The special value 2 means this is the top frame object.
     * We propagate to the children now (the edc group contents), but subsequent
     * calls to smart_member_add will not propagate the flag further. Note that
@@ -4336,15 +4339,6 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-
-   _elm_win_frame_style_update(sd, 1, 0);
-
-   /* NB: Do NOT remove these calls !! Needed to calculate proper
-    * framespace on initial show of the window */
-   edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
-   evas_object_move(sd->frame_obj, 0, 0);
-   evas_object_resize(sd->frame_obj, mw, mh);
-   evas_object_smart_calculate(sd->frame_obj);
 
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,move,start", "elm",
@@ -4393,6 +4387,9 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
       efl_canvas_object_render_op_set(bgrect, EFL_GFX_RENDER_OP_COPY);
    }
 
+   if (sd->first_draw)
+     edje_object_thaw(sd->frame_obj);
+   if (!efl_finalized_get(obj)) return;
    _elm_win_frame_style_update(sd, 1, 1);
    _elm_win_frame_geometry_adjust(sd);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
