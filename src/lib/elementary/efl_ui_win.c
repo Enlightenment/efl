@@ -2818,6 +2818,8 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         if (sd->ee && (sd->type != ELM_WIN_FAKE))
           {
+             ecore_evas_manual_render_set(sd->ee, EINA_TRUE);
+             edje_object_freeze(sd->frame_obj);
              ecore_job_add(_deferred_ecore_evas_free, sd->ee);
              _elm_win_deferred_free++;
           }
