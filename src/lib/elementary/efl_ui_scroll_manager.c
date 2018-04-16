@@ -1005,11 +1005,6 @@ _efl_ui_scroll_manager_mouse_up_event_smooth(Efl_Ui_Scroll_Manager_Data *sd, dou
    if (ox) *ox = ax;
    if (oy) *oy = ay;
    if (ot) *ot = t - at;
-
-   return;
-   if (ox) *ox = (Evas_Coord)(ax / (i + 1));
-   if (oy) *oy = (Evas_Coord)(ay / (i + 1));
-   if (ot) *ot = (double)(at / (i + 1));
 }
 
 static void
