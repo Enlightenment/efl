@@ -450,12 +450,12 @@ _efl_ui_layout_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *
      {
         if (efl_ui_focus_object_focus_get(obj))
           {
-             elm_layout_signal_emit(obj, "action,focus", "elm");
+             elm_layout_signal_emit(obj, "action,focus", "efl");
              evas_object_focus_set(wd->resize_obj, EINA_TRUE);
           }
         else
           {
-             elm_layout_signal_emit(obj, "action,unfocus", "elm");
+             elm_layout_signal_emit(obj, "action,unfocus", "efl");
              evas_object_focus_set(wd->resize_obj, EINA_FALSE);
           }
      }
