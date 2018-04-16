@@ -10,7 +10,7 @@ public class Example
         button.SetText(text);
         button.SetSize(new eina.Size2D(w, h));
 
-        button.CLICKED += callback;
+        button.ClickedEvt += callback;
 
         return button;
     }
@@ -56,7 +56,7 @@ public class Example
         efl.ui.Slider slider = new efl.ui.SliderConcrete(box);
         slider.SetSize(new eina.Size2D(W, H));
 
-        slider.CHANGED += (object sender, EventArgs e) => {
+        slider.ChangedEvt += (object sender, EventArgs e) => {
             bar.SetRangeValue(slider.GetRangeValue());
         };
 

@@ -45,7 +45,7 @@ class TestMain
         bg.SetVisible(true);
         bg.SetKeyFocus(true);
 
-        bg.KEY_DOWN += On_KeyDown;
+        bg.KeyDownEvt += On_KeyDown;
 
         text = new evas.TextConcrete(canvas);
         text.SetStyle(evas.Text_Style_Type.OutlineSoftShadow);
@@ -87,7 +87,7 @@ class TestMain
 
     }
 
-    private void On_KeyDown(object sender, efl.input.KEY_DOWN_Args e)
+    private void On_KeyDown(object sender, efl.input.KeyDownEvt_Args e)
     {
         var key = e.arg.GetKey();
 

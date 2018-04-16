@@ -23,12 +23,12 @@ class TestEoEvents
         efl.Loop loop = new efl.LoopConcrete();
         loop.SetName("loop");
         TestEoEvents listener = new TestEoEvents();
-        loop.CALLBACK_ADD += listener.callback;
+        loop.CallbackAddEvt += listener.callback;
 
         Test.Assert(!listener.called);
         Test.Assert(!listener.correct_sender);
         Test.AssertEquals("loop", loop.GetName());
-        loop.IDLE += listener.another_callback;
+        loop.IdleEvt += listener.another_callback;
         Test.Assert(listener.called);
         Test.Assert(listener.correct_sender);
         Test.AssertEquals("loop_called", loop.GetName());
@@ -39,7 +39,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         string received_string = null;
 
-        obj.EVT_WITH_STRING += (object sender, test.EVT_WITH_STRING_Args e) => {
+        obj.EvtWithStringEvt += (object sender, test.EvtWithStringEvt_Args e) => {
             received_string = e.arg;
         };
 
@@ -53,7 +53,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         int received_int= 0;
 
-        obj.EVT_WITH_INT += (object sender, test.EVT_WITH_INT_Args e) => {
+        obj.EvtWithIntEvt += (object sender, test.EvtWithIntEvt_Args e) => {
             received_int = e.arg;
         };
 
@@ -66,7 +66,7 @@ class TestEoEvents
     {
         test.Testing obj = new test.TestingConcrete();
         uint received_uint = 0;
-        obj.EVT_WITH_UINT += (object sender, test.EVT_WITH_UINT_Args e) => {
+        obj.EvtWithUintEvt += (object sender, test.EvtWithUintEvt_Args e) => {
             received_uint = e.arg;
         };
 
@@ -80,7 +80,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         float received_float= 0;
 
-        obj.EVT_WITH_FLOAT += (object sender, test.EVT_WITH_FLOAT_Args e) => {
+        obj.EvtWithFloatEvt += (object sender, test.EvtWithFloatEvt_Args e) => {
             received_float = e.arg;
         };
 
@@ -94,7 +94,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         test.Testing received_obj = null;
 
-        obj.EVT_WITH_OBJ += (object sender, test.EVT_WITH_OBJ_Args e) => {
+        obj.EvtWithObjEvt += (object sender, test.EvtWithObjEvt_Args e) => {
             received_obj = e.arg;
         };
 

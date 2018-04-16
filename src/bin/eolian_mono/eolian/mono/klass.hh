@@ -173,8 +173,7 @@ struct klass
           if (!etype.is_engaged())
             continue;
 
-          std::string evt_name = utils::to_uppercase(e.name);
-          std::replace(evt_name.begin(), evt_name.end(), ',', '_');
+          std::string evt_name = name_helpers::managed_event_name(e.name);
           std::string arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
 
           if (!as_generator("///<summary>Event argument wrapper for event " << string << ".</summary>\n"
@@ -221,7 +220,7 @@ struct klass
      for (auto &&e : cls.events)
        {
           std::string wrapper_args_type;
-          std::string evt_name = utils::to_uppercase(e.name);
+          std::string evt_name = name_helpers::managed_event_name(e.name);
           std::replace(evt_name.begin(), evt_name.end(), ',', '_');
 
           efl::eina::optional<grammar::attributes::type_def> etype = e.type;
@@ -569,9 +568,7 @@ struct klass
             s << n;
             s << '_';
          }
-       std::string evt_name = utils::to_uppercase(evt.name);
-       std::replace(evt_name.begin(), evt_name.end(), ',', '_');
-       s << klass.cxx_name << '_' << evt_name;
+       s << klass.cxx_name << '_' << name_helpers::managed_event_name(evt.name);
        return s.str();
    }
 
@@ -633,8 +630,7 @@ struct klass
      // Self events
      for (auto&& e : cls.events)
        {
-           std::string upper_name = utils::to_uppercase(e.name);
-           std::replace(upper_name.begin(), upper_name.end(), ',', '_');
+           std::string upper_name = name_helpers::managed_event_name(e.name);
            std::string upper_c_name = utils::to_uppercase(e.c_name);
            std::string event_name = e.name;
            std::replace(event_name.begin(), event_name.end(), ',', '_');
@@ -720,8 +716,7 @@ struct klass
             {
 
                std::string wrapper_evt_name = translate_inherited_event_name(e, klass);
-               std::string upper_name = utils::to_uppercase(e.name);
-               std::replace(upper_name.begin(), upper_name.end(), ',', '_');
+               std::string upper_name = name_helpers::managed_event_name(e.name);
                std::string upper_c_name = utils::to_uppercase(e.c_name);
 
                std::stringstream wrapper_args_type;

@@ -23,7 +23,7 @@ public class Example
         popup.SetVisible(true);
         popup.SetButton(efl.ui.popup_alert.Button.Positive, "Ok");
         popup.SetSize(new eina.Size2D(150, 30));
-        popup.BUTTON_CLICKED += (object sender, efl.ui.BUTTON_CLICKED_Args e) => {
+        popup.ButtonClickedEvt += (object sender, efl.ui.ButtonClickedEvt_Args e) => {
             popup.SetParent(null);
             popup.Del();
         };
@@ -99,7 +99,7 @@ public class Example
         kms_box.Pack(kms_input);
         kms_box.Pack(kms_button);
 
-        kms_button.CLICKED += (object sender, EventArgs e) => {
+        kms_button.ClickedEvt += (object sender, EventArgs e) => {
             try
             {
                 string text = kms_input.GetText();
@@ -115,7 +115,7 @@ public class Example
             }
         };
 
-        miles_button.CLICKED += (object sender, EventArgs e) => {
+        miles_button.ClickedEvt += (object sender, EventArgs e) => {
             try
             {
                 string text = miles_input.GetText();

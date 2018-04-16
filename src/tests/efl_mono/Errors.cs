@@ -110,9 +110,9 @@ class TestEolianError
         // the managed code
         efl.Loop loop = new efl.LoopConcrete();
         Listener listener = new Listener();
-        loop.CALLBACK_ADD += listener.callback;
+        loop.CallbackAddEvt += listener.callback;
 
-        Test.AssertRaises<efl.EflException>(() => loop.IDLE += listener.another_callback);
+        Test.AssertRaises<efl.EflException>(() => loop.IdleEvt += listener.another_callback);
     }
 }
 }

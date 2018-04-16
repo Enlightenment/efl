@@ -39,11 +39,11 @@ inline std::string escape_keyword(std::string const& name)
 
 std::string managed_method_name(std::string const& underscore_name)
 {
-  std::vector<std::string> names = name_helpers::split(underscore_name, '_');
+  std::vector<std::string> names = utils::split(underscore_name, '_');
 
   name_helpers::reorder_verb(names);
 
-  return escape_keyword(name_helpers::pascal_case(names));
+  return escape_keyword(utils::to_pascal_case(names));
 }
 
 }

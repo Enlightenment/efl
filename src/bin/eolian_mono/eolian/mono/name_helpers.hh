@@ -7,9 +7,14 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "utils.hh"
 
 namespace eolian_mono {
 
+/* Utility functions for naming things. Compared to the utils.hh, this header has higher level
+ * functions, dealing with the knowledge of how to convert the items to the C# style we are using, for
+ * example, while being too short to be implemented as full-fledged generators.
+ */
 namespace name_helpers {
 
 static const std::vector<std::string> verbs =
@@ -103,33 +108,9 @@ void reorder_verb(std::vector<std::string> &names)
     }
 }
 
-std::vector<std::string> split(std::string const &input, char delim)
+std::string managed_event_name(std::string const& name)
 {
-  std::stringstream ss(input);
-  std::string name;
-  std::vector<std::string> names;
-
-  while (std::getline(ss, name, delim)) {
-    if (!name.empty())
-      names.push_back(name);
-  }
-  return names;
-}
-
-std::string pascal_case(const std::vector<std::string> &names)
-{
-    std::vector<std::string> outv(names.size());
-    std::stringstream osstream;
-
-    std::transform(names.begin(), names.end(), outv.begin(),
-          [](std::string name) { 
-            name[0] = std::toupper(name[0]);
-            return name;
-          });
-
-    std::copy(outv.begin(), outv.end(), std::ostream_iterator<std::string>(osstream, ""));
-
-    return osstream.str();
+   return utils::to_pascal_case(utils::split(name, ','), "") + "Evt";
 }
 
 } // namespace name_helpers

@@ -46,7 +46,7 @@ class TestEo
        bool delEventCalled = false;
        {
            test.Testing obj = new test.TestingConcrete();
-           obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
+           obj.DelEvt += (object sender, EventArgs e) => { delEventCalled = true; };
            ((IDisposable)obj).Dispose();
        }
 
