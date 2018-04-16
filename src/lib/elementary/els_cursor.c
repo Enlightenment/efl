@@ -192,6 +192,21 @@ struct _Elm_Cursor
 };
 
 static void
+_elm_cursor_obj_hints(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Cursor *cur = data;
+   int x, y;
+
+   evas_object_size_hint_min_get(cur->obj, &x, &y);
+   if ((x < 8) || (y < 8))
+     {
+        x = 8;
+        y = 8;
+     }
+   evas_object_resize(cur->obj, x, y);
+}
+
+static void
 _elm_cursor_obj_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Cursor *cur = data;
@@ -200,6 +215,8 @@ _elm_cursor_obj_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UN
      {
         evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_DEL,
                                             _elm_cursor_obj_del, cur);
+        evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _elm_cursor_obj_hints, cur);
         cur->obj = NULL;
         ELM_SAFE_FREE(cur->hotobj, evas_object_del);
      }
@@ -257,8 +274,6 @@ _elm_cursor_hot_change(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
 static Eina_Bool
 _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
 {
-   int x, y;
-
 #ifdef HAVE_ELEMENTARY_WL2
    const char *engine_name;
 
@@ -271,6 +286,8 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
 
    cur->obj = edje_object_add(cur->evas);
    if (!cur->obj) return EINA_FALSE;
+   edje_object_freeze(cur->obj);
+   edje_object_update_hints_set(cur->obj, 1);
 
    if (!elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
                              cur->style ? cur->style : "default"))
@@ -302,14 +319,10 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
 
    evas_object_event_callback_add(cur->obj, EVAS_CALLBACK_DEL,
                                   _elm_cursor_obj_del, cur);
-   edje_object_size_min_get(cur->obj, &x, &y);
-   edje_object_size_min_restricted_calc(cur->obj, &x, &y, x, y);
-   if ((x < 8) || (y < 8))
-     {
-        x = 8;
-        y = 8;
-     }
-   evas_object_resize(cur->obj, x, y);
+   evas_object_event_callback_add(cur->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _elm_cursor_obj_hints, cur);
+   edje_object_thaw(cur->obj);
+
    return EINA_TRUE;
 }
 
@@ -677,6 +690,8 @@ elm_object_cursor_unset(Evas_Object *obj)
      {
         evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_DEL,
                                             _elm_cursor_obj_del, cur);
+        evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _elm_cursor_obj_hints, cur);
         ELM_SAFE_FREE(cur->obj, evas_object_del);
      }
 
