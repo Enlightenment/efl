@@ -93,8 +93,7 @@ read_binbuf_from_disk(Eet_File      *ef,
                       Eet_File_Node *efn);
 
 static Eet_Error
-eet_internal_close(Eet_File *ef,
-                   Eina_Bool locked);
+eet_internal_close(Eet_File *ef, Eina_Bool locked, Eina_Bool shutdown);
 
 static Eina_Lock eet_cache_lock;
 
@@ -147,7 +146,7 @@ eet_test_close(int       test,
    if (test)
      {
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
      }
 
    return test;
@@ -205,7 +204,7 @@ eet_cache_add(Eet_File   *ef,
         if (del_ef)
           {
              del_ef->delete_me_now = 1;
-             eet_internal_close(del_ef, EINA_TRUE);
+             eet_internal_close(del_ef, EINA_TRUE, EINA_FALSE);
           }
      }
 
@@ -643,7 +642,7 @@ eet_shutdown(void)
         for (i = 0; i < num; i++)
           {
              ERR("File '%s' is still open %i times !", closelist[i]->path, closelist[i]->references);
-             eet_internal_close(closelist[i], EINA_TRUE);
+             eet_internal_close(closelist[i], EINA_TRUE, EINA_TRUE);
           }
      }
    eet_node_shutdown();
@@ -734,7 +733,7 @@ eet_clearcache(void)
 
         for (i = 0; i < num; i++)
           {
-             eet_internal_close(closelist[i], EINA_TRUE);
+             eet_internal_close(closelist[i], EINA_TRUE, EINA_FALSE);
           }
      }
 
@@ -1254,7 +1253,7 @@ eet_internal_read(Eet_File *ef)
 
       default:
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
         break;
      }
 
@@ -1263,7 +1262,7 @@ eet_internal_read(Eet_File *ef)
 
 static Eet_Error
 eet_internal_close(Eet_File *ef,
-                   Eina_Bool locked)
+                   Eina_Bool locked, Eina_Bool shutdown)
 {
    Eet_Error err = EET_ERROR_NONE;
 
@@ -1335,16 +1334,19 @@ eet_internal_close(Eet_File *ef,
                             if (efn->free_name)
                               free(efn->name);
 
-                            eet_file_node_mp_free(efn);
+                            if (!shutdown)
+                              eet_file_node_mp_free(efn);
                          }
                     }
                   free(ef->header->directory->nodes);
                }
 
-             eet_file_directory_mp_free(ef->header->directory);
+             if (!shutdown)
+               eet_file_directory_mp_free(ef->header->directory);
           }
 
-        eet_file_header_mp_free(ef->header);
+        if (!shutdown)
+          eet_file_header_mp_free(ef->header);
      }
 
    eet_dictionary_free(ef->ed);
@@ -1365,7 +1367,8 @@ eet_internal_close(Eet_File *ef,
 
    /* free it */
    eina_stringshare_del(ef->path);
-   eet_file_mp_free(ef);
+   if (!shutdown)
+     eet_file_mp_free(ef);
    return err;
 
 on_error:
@@ -1434,7 +1437,7 @@ eet_mmap(const Eina_File *file)
         eet_sync(ef);
         ef->references++;
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
      }
 
    ef = eet_cache_find(path, eet_readers, eet_readers_num);
@@ -1510,7 +1513,7 @@ eet_open(const char   *file,
              eet_sync(ef);
              ef->references++;
              ef->delete_me_now = 1;
-             eet_internal_close(ef, EINA_TRUE);
+             eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
           }
 
         ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
@@ -1523,7 +1526,7 @@ eet_open(const char   *file,
           {
              ef->delete_me_now = 1;
              ef->references++;
-             eet_internal_close(ef, EINA_TRUE);
+             eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
           }
 
         ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
@@ -1574,7 +1577,7 @@ open_error:
      {
         ef->delete_me_now = 1;
         ef->references++;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
         ef = NULL;
      }
 
@@ -1890,7 +1893,7 @@ eet_identity_set(Eet_File *ef,
 EAPI Eet_Error
 eet_close(Eet_File *ef)
 {
-   return eet_internal_close(ef, EINA_FALSE);
+   return eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
 }
 
 EAPI void *
