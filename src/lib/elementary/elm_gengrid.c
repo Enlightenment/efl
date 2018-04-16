@@ -3766,11 +3766,10 @@ _elm_gengrid_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *i
      }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_gengrid_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
    _item_del(it);
-   return EINA_TRUE;
 }
 
 EOLIAN static Evas_Object *

@@ -857,12 +857,12 @@ _elm_ctxpopup_item_elm_widget_item_disable(Eo *eo_ctxpopup_it,
      (ctxpopup_it->list_item, elm_wdg_item_disabled_get(eo_ctxpopup_it));
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it EINA_UNUSED,
                                            Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
    ELM_CTXPOPUP_DATA_GET(WIDGET(ctxpopup_it), sd);
-   if (!sd) return EINA_FALSE;
+   if (!sd) return ;
 
    if (ctxpopup_it->list_item)
      {
@@ -871,7 +871,7 @@ _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it EINA_UNUSED,
         ctxpopup_it->list_item = NULL;
      }
 
-   return EINA_TRUE;
+   return ;
 }
 
 EOLIAN static void

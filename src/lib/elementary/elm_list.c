@@ -70,7 +70,7 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 
-EOLIAN static Eina_Bool _elm_list_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item);
+EOLIAN static void _elm_list_item_elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_List_Item_Data *item);
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
    {"select", _key_action_select},
@@ -2034,7 +2034,7 @@ _elm_list_item_elm_widget_item_part_text_get(const Eo *eo_it, Elm_List_Item_Data
  2. elm_widget_item_del() should be called instead of the combination of
  _elm_list_item_free() + elm_widget_item_free()
  */
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_list_item_elm_widget_item_del_pre(Eo *eo_item, Elm_List_Item_Data *item)
 {
    Evas_Object *obj = WIDGET(item);
@@ -2049,11 +2049,11 @@ _elm_list_item_elm_widget_item_del_pre(Eo *eo_item, Elm_List_Item_Data *item)
 
    if (sd->walking > 0)
      {
-        if (item->deleted) return EINA_FALSE;
+        if (item->deleted) return ;
         item->deleted = EINA_TRUE;
         efl_ref(eo_item);
         sd->to_delete = eina_list_append(sd->to_delete, item);
-        return EINA_FALSE;
+        return ;
      }
 
    sd->items = eina_list_remove_list(sd->items, item->node);
@@ -2065,8 +2065,6 @@ _elm_list_item_elm_widget_item_del_pre(Eo *eo_item, Elm_List_Item_Data *item)
 
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void _elm_list_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *it,
