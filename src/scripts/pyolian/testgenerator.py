@@ -42,13 +42,9 @@ def load_file(filename):
             return f.read()
     return None
 
-dicttypes = {}
 
-keywords = []
-
-def cs_types():
-    global keywords
-    dicttypes.update({"byte": "sbyte"
+def cs_types(suite):
+    suite.dicttypes = {"byte": "sbyte"
            , "llong": "long"
            , "int8": "sbyte"
            , "int16": "short"
@@ -79,30 +75,66 @@ def cs_types():
            , "array": "eina.Array"
            , "inarray": "eina.Inarray"
            , "hash": "eina.Hash"
-           , "promise": " int"
-           , "future": " int"
+           , "promise": "int"
+           , "future": "int"
            , "iterator": "eina.Iterator"
-           , "accessor": " int"
-           })
+           , "accessor": "int"
+           }
 
-    keywords = ["delete", "do",  "lock", "event", "in",  "object",
+    suite.dictwords = {'INOUT':'ref ', 'OUT': 'out '}
+
+    suite.keywords = ["delete", "do",  "lock", "event", "in",  "object",
             "interface", "string", "internal", "fixed", "base"]
+    suite.blist_func = [
+          "efl_event_callback_array_priority_add"
+        , "efl_player_position_get"
+        , "efl_text_font_source_get"
+        , "efl_text_font_source_set"
+        , "efl_ui_focus_manager_focus_get"
+        , "efl_ui_widget_focus_set"
+        , "efl_ui_widget_focus_get"
+        , "efl_ui_text_password_get"
+        , "efl_ui_text_password_set"
+        , "elm_interface_scrollable_repeat_events_get"
+        , "elm_interface_scrollable_repeat_events_set"
+        , "elm_wdg_item_del"
+        , "elm_wdg_item_focus_get"
+        , "elm_wdg_item_focus_set"
+        , "elm_interface_scrollable_mirrored_set"
+        , "evas_obj_table_mirrored_get"
+        , "evas_obj_table_mirrored_set"
+        , "edje_obj_load_error_get"
+        , "efl_ui_focus_user_parent_get"
+        , "efl_canvas_object_scale_get" # duplicated signature
+        , "efl_canvas_object_scale_set" # duplicated signature
+        , "efl_access_parent_get"
+        , "efl_access_name_get"
+        , "efl_access_name_set"
+        , "efl_access_root_get"
+        , "efl_access_type_get"
+        , "efl_access_role_get"
+        , "efl_access_action_description_get"
+        , "efl_access_action_description_set"
+        , "efl_access_image_description_get"
+        , "efl_access_image_description_set"
+        , "efl_access_component_layer_get" # duplicated signature
+        , "efl_access_component_alpha_get"
+        , "efl_access_component_size_get"
+        , "efl_ui_spin_button_loop_get"
+        , "efl_ui_list_model_size_get"
+        , "efl_ui_list_relayout_layout_do"
+            ]
 
-def escape_keyword(key):
-    if key in keywords:
+def escape_keyword(suite, key):
+    if key in suite.keywords:
         return "kw_{}".format(key)
     return key
 
-def to_csharp_klass_name(eo_name):
+def to_csharp_klass_name(suite, eo_name):
     names = eo_name.split('.')
-    namespaces = [escape_keyword(x.lower())  for x in names[:-1]]
+    namespaces = [escape_keyword(suite, x.lower())  for x in names[:-1]]
     klass_name = names[-1]
     return '.'.join(namespaces + [klass_name])
-
-def type_convert(eotype):
-    if eotype.type == eotype.type.VOID:
-        return 'System.IntPtr'
-    return dicttypes.get(eotype.name, to_csharp_klass_name(eotype.name))
 
 """
 It will find methods and functions with owned return and without other params
@@ -138,9 +170,6 @@ class Template(pyratemp.Template):
         # Build the context for the template
         ctx = {}
         ctx['suite'] = suite
-        ctx['type_convert'] = type_convert
-        ctx['keywords'] = keywords
-
         # render with the augmented context
         output = self(**ctx)
 
@@ -166,8 +195,14 @@ class SuiteCase():
                       "dup", "reset", "unload", "close", "set", "interpolate", "has", "grab", "check", "find", "ungrab",
                       "unset", "clear", "pop", "new", "peek", "push", "update", "show", "move", "hide", "calculate",
                       "resize", "attach", "pack", "unpack", "emit", "call", "append"]
+
+        self.dicttypes = {}
+        self.dictwords = {}
+        self.blist_func = []
+        self.keywords = []
+
         if self.ext == '.cs':
-            cs_types()
+            cs_types(self)
 
     def __del__(self):
         for cls in self.clslist:
@@ -178,6 +213,29 @@ class SuiteCase():
             cls.plist = None
 
         self.clslist = None
+
+    def type_convert(self, eotype):
+        if eotype.type == eotype.type.VOID:
+            return 'System.IntPtr'
+
+        new_type = self.dicttypes.get(eotype.name, to_csharp_klass_name(self, eotype.name))
+        if new_type != 'int' and eotype.base_type:
+            new_type = "{}<{}>".format(new_type, self.dicttypes.get(eotype.base_type.name, to_csharp_klass_name(self, eotype.base_type.name)))
+
+        return new_type
+
+    def print_arg(self, eoarg):
+        r = 'arg_{}'.format(eoarg.name)
+
+        prefix = self.dictwords.get(eoarg.direction.name)
+
+        if prefix == 'out' and (eoarg.type.name == "Eina.Slice" or eoarg.type.name == "Eina.Rw_Slice"):
+            prefix = 'ref'
+
+        if not prefix and eoarg.type.is_ptr and eoarg.type.type == eoarg.type.type.REGULAR and eoarg.type.typedecl and eoarg.type.typedecl.type == eoarg.type.typedecl.type.STRUCT:
+            prefix = 'ref'
+
+        return prefix and ' '.join([prefix, r]) or r
 
     def load(self, testdir, eofiles):
         self.clslist = []
@@ -197,7 +255,7 @@ class SuiteCase():
             cls.init = load_file(os.path.join(filedir, "init{}".format(self.ext)))
             cls.shutdown = load_file(os.path.join(filedir, "shutdown{}".format(self.ext)))
 
-            cls.mlist = list(cls.methods)
+            cls.mlist =  [ m for m in cls.methods if m.full_c_method_name not in self.blist_func ]
             for func in cls.mlist:
                 cls.custom += load_file(os.path.join(filedir, func.name, "custom{}".format(self.ext))) or ''
                 func.init = load_file(os.path.join(filedir, func.name, "init{}".format(self.ext)))
@@ -205,7 +263,8 @@ class SuiteCase():
                 func.arg_init = load_file(os.path.join(filedir, func.name, "arg_init{}".format(self.ext))) or ''
                 func.arg_shutdown = load_file(os.path.join(filedir, func.name, "arg_shutdown{}".format(self.ext))) or ''
 
-            cls.plist = [ p for p in cls.properties if p.getter_scope == p.getter_scope.PUBLIC or p.setter_scope == p.setter_scope.PUBLIC ]
+            cls.plist = [ p for p in cls.properties if (p.getter_scope == p.getter_scope.PUBLIC and p.full_c_getter_name not in self.blist_func) or
+                    (p.setter_scope == p.setter_scope.PUBLIC and p.full_c_setter_name not in self.blist_func)]
             for func in cls.plist:
                 if func.getter_scope == func.getter_scope.PUBLIC:
                     cls.custom += load_file(os.path.join(filedir, '{}_get'.format(func.name), "custom{}".format(self.ext))) or ''

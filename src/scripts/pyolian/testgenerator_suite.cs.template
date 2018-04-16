@@ -1,6 +1,6 @@
 <!--(macro def_obj)-->${'.'.join(param.type.namespaces).lower()}$.${param.type.short_name}$ arg_${param.name}$ = null;<!--(end)-->
 <!--(macro def_param)-->
- <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param)}$<!--(else)-->${type_convert(param.type)}$ arg_${param.name}$ = default(${type_convert(param.type)}$);<!--(end)-->
+ <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param)}$<!--(else)-->${suite.type_convert(param.type)}$ arg_${param.name}$ = default(${suite.type_convert(param.type)}$);<!--(end)-->
 <!--(end)-->
 <!--(macro def_params)-->
  <!--(for p in parameters)-->
@@ -65,7 +65,7 @@ ${def_params(parameters=func.parameters)}$
 ${func.arg_init}$
 ${func.init}$
   <!--(end)-->
-        <!--(if func.method_return_type)-->var r = <!--(end)-->obj.${func.csname}$(${', '.join(['{} arg_{}'.format( param.direction.name.lower().replace('in', ''), param.name) for param in func.parameters])}$);
+        <!--(if func.method_return_type)-->var r = <!--(end)-->obj.${func.csname}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
   <!--(if func.arg_shutdown or func.shutdown)-->
 ${func.arg_shutdown}$
 ${func.shutdown}$
@@ -91,7 +91,7 @@ ${func.get_init}$
    <!--(if len(list(func.getter_values)) == 1)-->
         var arg_${list(func.getter_values)[0].name}$ = obj.Get${func.csname}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
    <!--(else)-->
-        obj.Get${func.csname}$(${', '.join(['arg_{}'.format(p.name) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+        obj.Get${func.csname}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
    <!--(end)-->
    <!--(if func.arg_get_shutdown or func.get_shutdown)-->
 ${func.arg_get_shutdown}$
@@ -112,7 +112,7 @@ ${def_params(parameters=func.setter_keys)}$
 ${func.arg_set_init}$
 ${func.set_init}$
    <!--(end)-->
-        obj.Set${func.csname}$(${', '.join(['arg_{}'.format(p.name) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+        obj.Set${func.csname}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
    <!--(if func.arg_set_shutdown or func.set_shutdown)-->
 ${func.arg_set_shutdown}$
 ${func.set_shutdown}$
