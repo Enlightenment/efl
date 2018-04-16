@@ -85,8 +85,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_direction.eo.h"
 #include "interfaces/efl_ui_drag.eo.h"
 #include "interfaces/efl_ui_range.eo.h"
-#include "interfaces/efl_ui_item.eo.h"
-#include "interfaces/efl_ui_menu.eo.h"
 #include "interfaces/efl_ui_autorepeat.eo.h"
 #include "interfaces/efl_ui_draggable.eo.h"
 #include "interfaces/efl_ui_clickable.eo.h"

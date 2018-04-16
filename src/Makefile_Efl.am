@@ -71,8 +71,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_io_queue.eo \
       lib/efl/interfaces/efl_observer.eo \
       lib/efl/interfaces/efl_observable.eo \
-      lib/efl/interfaces/efl_ui_item.eo \
-      lib/efl/interfaces/efl_ui_menu.eo \
       lib/efl/interfaces/efl_ui_autorepeat.eo \
       lib/efl/interfaces/efl_ui_format.eo \
       lib/efl/interfaces/efl_gfx_color_class.eo \

@@ -25,13 +25,43 @@ enum Elm.Toolbar.Shrink_Mode
 
 class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access,
-                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu, Efl.Ui.Legacy)
+                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;
    eo_prefix: elm_obj_toolbar;
    event_prefix: elm_toolbar;
    methods {
+      @property selected_item {
+         get {
+            [[Get the selected item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The selected item or $null.]]
+         }
+      }
+      @property first_item {
+         get {
+            [[Get the first item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The first item or $null.]]
+         }
+      }
+      @property last_item {
+         get {
+            [[Get the last item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The last item or $null.]]
+         }
+      }
+      @property items {
+         get {
+            [[Returns a list of the widget item.]]
+            return: iterator<Elm.Widget.Item> @owned @warn_unused; [[iterator to widget items]]
+         }
+      }
       @property homogeneous {
          [[Control homogeneous mode.
 
@@ -340,10 +370,6 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.access_selection_clear;
-      Efl.Ui.Menu.selected_item { get; }
-      Efl.Ui.Menu.first_item { get; }
-      Efl.Ui.Menu.last_item { get; }
-      Efl.Ui.Menu.items { get; }
       Efl.Ui.Focus.Composition.prepare;
    }
    events {
