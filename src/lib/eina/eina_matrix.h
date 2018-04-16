@@ -61,13 +61,13 @@ typedef enum _Eina_Matrix_Type
 
 /**
  * @typedef Eina_Matrix3
- * Floating point matrix3 handler
+ * Floating point matrix3 handler.
  */
 typedef struct _Eina_Matrix3 Eina_Matrix3;
 
 /**
  * @struct _Eina_Matrix3
- * Floating point matrix3 handler
+ * Floating point matrix3 handler.
  */
 struct _Eina_Matrix3
 {
@@ -98,13 +98,13 @@ struct _Eina_Matrix3
 
 /**
  * @typedef Eina_Matrix4
- * Floating point matrix4 handler
+ * Floating point matrix4 handler.
  */
 typedef struct _Eina_Matrix4 Eina_Matrix4;
 
 /**
  * @struct Eina_Matrix4
- * Floating point matrix4 handler
+ * Floating point matrix4 handler.
  */
 struct _Eina_Matrix4
 {
@@ -142,13 +142,13 @@ struct _Eina_Matrix4
 
 /**
  * @typedef Eina_Matrix3_F16p16
- * Fixed point matrix3 handler
+ * Fixed point matrix3 handler.
  */
 typedef struct _Eina_Matrix3_F16p16 Eina_Matrix3_F16p16;
 
 /**
  * @struct Eina_Matrix3_F16p16
- * Fixed point matrix3 handler
+ * Fixed point matrix3 handler.
  */
 struct _Eina_Matrix3_F16p16
 {
@@ -168,7 +168,7 @@ struct _Eina_Matrix3_F16p16
 /**
  * @brief Sets the given fixed point matrix to the identity matrix.
  *
- * @param[in] m The fixed point matrix to set
+ * @param[in] m The fixed point matrix to set.
  *
  * This function sets @p m to the identity matrix. No check is done on
  * @p m.
@@ -181,14 +181,14 @@ EAPI void eina_matrix3_f16p16_identity(Eina_Matrix3_F16p16 *m);
  * @brief Sets dst as the matrix multiplication (composition) of two
  * Eina_F16p16 matrices.
  *
+ * @param[in] m1 The first matrix.  Must be non-NULL.
+ * @param[in] m2 The second matrix.  Must be non-NULL.
+ * @param[out] dst The results matrix.
+ *
  * In matrix multiplication, AB, the resultant matrix is created from
  * the rows of A multiplied against the columns of B and summed.  This
  * is not a commutative; i.e.  AB != BA, so the ordering of arguments
  * @p m1 and @p m2 matters.
- *
- * @param[in] m1 The first matrix.  Must be non-NULL.
- * @param[in] m2 The second matrix.  Must be non-NULL.
- * @param[out] dst The matrix for the results to be placed.
  *
  * @since 1.14
  */
@@ -355,14 +355,14 @@ EAPI Eina_Bool eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2
 /**
  * @brief Sets dst as the matrix multiplication (composition) of two matrices.
  *
+ * @param[in] m1 The first matrix.  Must be non-NULL.
+ * @param[in] m2 The second matrix.  Must be non-NULL.
+ * @param[out] dst The results matrix.
+ *
  * In matrix multiplication, AB, the resultant matrix is created from
  * the rows of A multiplied against the columns of B and summed.  This
  * is not a commutative; i.e.  AB != BA, so the ordering of arguments
  * @p m1 and @p m2 matters.
- *
- * @param[in] m1 The first matrix.  Must be non-NULL.
- * @param[in] m2 The second matrix.  Must be non-NULL.
- * @param[out] dst The matrix for the results to be placed.
  *
  * @since 1.14
  */
@@ -372,9 +372,9 @@ EAPI void eina_matrix3_compose(const Eina_Matrix3 *m1,
 
 /**
  * @brief Sets the matrix values for a translation.
- * @param[out] m The matrix to set the translation values
- * @param[in] tx The X coordinate translate
- * @param[in] ty The Y coordinate translate
+ * @param[out] m The matrix to set the translation values.
+ * @param[in] tx The X coordinate translation.
+ * @param[in] ty The Y coordinate translation.
  *
  * @since 1.14
  */
@@ -382,9 +382,9 @@ EAPI void eina_matrix3_translate(Eina_Matrix3 *t, double tx, double ty);
 
 /**
  * @brief Sets the matrix values for a scale.
- * @param[out] m The matrix to set the scale values
- * @param[in] sx The X coordinate scale
- * @param[in] sy The Y coordinate scale
+ * @param[out] m The matrix to set the scale values.
+ * @param[in] sx The X coordinate scaling factor.
+ * @param[in] sy The Y coordinate scaling factor.
  *
  * @since 1.14
  */
@@ -392,8 +392,8 @@ EAPI void eina_matrix3_scale(Eina_Matrix3 *t, double sx, double sy);
 
 /**
  * @brief Sets the matrix values for a rotation.
- * @param[out] t The matrix to set the rotation values
- * @param[in] rad The radius to rotate the matrix
+ * @param[out] t The results matrix.
+ * @param[in] rad The radius to rotate the matrix.
  *
  * @since 1.14
  */
@@ -402,7 +402,7 @@ EAPI void eina_matrix3_rotate(Eina_Matrix3 *t, double rad);
 /**
  * @brief Sets the given floating point matrix to the identity matrix.
  *
- * @param[out] m The floating point matrix to set
+ * @param[out] m The floating point matrix to set to identity.
  *
  * This function sets @p m to the identity matrix. No check is done on
  * @p m.
@@ -584,8 +584,8 @@ EAPI Eina_Bool eina_matrix3_quad_square_map(Eina_Matrix3 *m,
 /**
  * @brief Sets array to matrix.
  *
- * @param[out] m The result matrix
- * @param[in] v The the array[9] for set
+ * @param[out] m The result matrix.
+ * @param[in] v The the array[9] for set.
  *
  * Set to matrix first 9 elements from array
  *
@@ -596,8 +596,8 @@ EAPI void eina_matrix3_array_set(Eina_Matrix3 *m, const double *v);
 /**
  * @brief Copies matrix.
  *
- * @param[out] dst The matrix copy
- * @param[in] src The matrix for copy.
+ * @param[out] dst Copy of the matrix.
+ * @param[in] src The matrix to copy.
  *
  * @since 1.16
  */
@@ -606,9 +606,9 @@ EAPI void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
 /**
  * @brief Multiplies two matrices.
  *
- * @param[out] out The resulting matrix
- * @param[in] mat_a The first member of the multiplication
- * @param[in] mat_b The second member of the multiplication
+ * @param[out] out The resulting matrix.
+ * @param[in] mat_a The first member of the multiplication.
+ * @param[in] mat_b The second member of the multiplication.
  *
  * @since 1.17
  */
@@ -618,9 +618,9 @@ EAPI void eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
 /**
  * @brief Multiplies two matrices.
  *
- * @param[out] out The resulting matrix
- * @param[in] mat_a The first member of the multiplication
- * @param[in] mat_b The second member of the multiplication
+ * @param[out] out The resulting matrix.
+ * @param[in] mat_a The first member of the multiplication.
+ * @param[in] mat_b The second member of the multiplication.
  *
  * @since 1.17
  */
@@ -630,9 +630,9 @@ EAPI void eina_matrix3_multiply_copy(Eina_Matrix3 *out, const Eina_Matrix3 *mat_
 /**
  * @brief Transforms scale of matrix.
  *
- * @param[out] out The resulting matrix
- * @param[in] s_x The scale value for x
- * @param[in] s_y The scale value for y
+ * @param[out] out The resulting matrix.
+ * @param[in] s_x The scale value for x.
+ * @param[in] s_y The scale value for y.
  *
  * @since 1.17
  */
@@ -641,9 +641,9 @@ EAPI void eina_matrix3_scale_transform_set(Eina_Matrix3 *out, double s_x, double
 /**
  * @brief Transforms position of matrix.
  *
- * @param[out] out The resulting matrix
- * @param[in] p_x The position value for x
- * @param[in] p_y The position value for y
+ * @param[out] out The resulting matrix.
+ * @param[in] p_x The position value for x.
+ * @param[in] p_y The position value for y.
  *
  * @since 1.17
  */
@@ -653,8 +653,8 @@ EAPI void eina_matrix3_position_transform_set(Eina_Matrix3 *out, const double p_
 /**
  * @brief Sets normal of the given matrix.
  *
- * @param[out] out The result matrix of normal
- * @param[in] m The matrix
+ * @param[out] out The resulting matrix.
+ * @param[in] m The matrix.
  *
  * @since 1.17
  */
@@ -779,7 +779,7 @@ EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
 /**
  * @brief Returns the determinant of the given matrix.
  *
- * @param[out] out The normalized matrix
+ * @param[out] out The normalized matrix.
  * @param[in] in The matrix.
  * @return The determinant.
  *
@@ -794,7 +794,7 @@ EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
 /**
  * @brief Returns the inverse of the given matrix.
  *
- * @param[out] out The inverse matrix
+ * @param[out] out The inverse matrix.
  * @param[in] in The matrix.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
@@ -805,7 +805,7 @@ EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 /**
  * @brief Returns the transpose of the given matrix.
  *
- * @param[out] out The transpose matrix
+ * @param[out] out The transpose matrix.
  * @param[in] in The matrix.
  *
  * Just going to swap row and column.
@@ -827,7 +827,7 @@ EAPI void eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4);
 /**
  * @brief Sets an identity matrix
  *
- * @param[out] out The matrix to set
+ * @param[out] out The matrix to set.
  *
  * @since 1.16
  */
@@ -836,9 +836,9 @@ EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
 /**
  * @brief Multiplies two matrix.
  *
- * @param[out] out The resulting matrix
- * @param[in] mat_a The first member of the multiplication
- * @param[in] mat_b The second member of the multiplication
+ * @param[out] out The resulting matrix.
+ * @param[in] mat_a The first member of the multiplication.
+ * @param[in] mat_b The second member of the multiplication.
  *
  * @since 1.17
  */
@@ -848,10 +848,10 @@ EAPI void eina_matrix4_multiply_copy(Eina_Matrix4 *out,
 /**
  * @brief Sets array to matrix.
  *
- * @param[out] m The result matrix
- * @param[in] v The the array[16] for set
+ * @param[out] m The result matrix.
+ * @param[in] v The the array[16] for set.
  *
- * Set to matrix first 16 elements from array
+ * Set to matrix first 16 elements from array.
  *
  * @since 1.17
  */
@@ -860,8 +860,8 @@ EAPI void eina_matrix4_array_set(Eina_Matrix4 *m, const double *v);
 /**
  * @brief Copies matrix.
  *
- * @param[out] dst The matrix copy
- * @param[in] src The matrix for copy.
+ * @param[out] dst The matrix copy.
+ * @param[in] src The matrix to copy.
  *
  * @since 1.17
  */
@@ -870,9 +870,9 @@ EAPI void eina_matrix4_copy(Eina_Matrix4 *dst, const Eina_Matrix4 *src);
 /**
  * @brief Multiplies two matrices with check.
  *
- * @param[out] out The resulting matrix
- * @param[in] mat_a The first member of the multiplication
- * @param[in] mat_b The second member of the multiplication
+ * @param[out] out The resulting matrix.
+ * @param[in] mat_a The first member of the multiplication.
+ * @param[in] mat_b The second member of the multiplication.
  *
  * @since 1.17
  */
@@ -882,13 +882,13 @@ EAPI void eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
 /**
  * @brief Sets orthogonality matrix.
  *
- * @param[out] m The resulting matrix
- * @param[in] right The right value
- * @param[in] left The left value
- * @param[in] bottom The bottom value
- * @param[in] top The top value
- * @param[in] dnear The dnear value
- * @param[in] dfar The dfar value
+ * @param[out] m The resulting matrix.
+ * @param[in] right The right value.
+ * @param[in] left The left value.
+ * @param[in] bottom The bottom value.
+ * @param[in] top The top value.
+ * @param[in] dnear The dnear value.
+ * @param[in] dfar The dfar value.
  *
  * @since 1.17
  */
@@ -910,13 +910,13 @@ EAPI void eina_matrix4_ortho_set(Eina_Matrix4 *m,
 
 /**
  * @typedef Eina_Matrix2
- * Floating point matrix2 handler
+ * Floating point matrix2 handler.
  */
 typedef struct _Eina_Matrix2 Eina_Matrix2;
 
 /**
  * @struct Eina_Matrix2
- * Floating point matrix2 handler
+ * Floating point matrix2 handler.
  */
 struct _Eina_Matrix2
 {
@@ -984,7 +984,7 @@ EAPI void eina_matrix2_inverse(Eina_Matrix2 *out, const Eina_Matrix2 *mat);
 /**
  * @brief Sets the given floating point matrix to the identity matrix.
  *
- * @param[out] m The floating point matrix to set
+ * @param[out] m The floating point matrix to set.
  *
  * This function sets @p m to the identity matrix. No check is done on
  * @p m.
@@ -996,8 +996,8 @@ EAPI void eina_matrix2_identity(Eina_Matrix2 *m);
 /**
  * @brief Sets array to matrix.
  *
- * @param[out] m The result matrix
- * @param[in] v The the array[4] for set
+ * @param[out] m The result matrix.
+ * @param[in] v The the array[4] for set.
  *
  * Set to matrix first 4 elements from array
  *
@@ -1008,8 +1008,8 @@ EAPI void eina_matrix2_array_set(Eina_Matrix2 *m, const double *v);
 /**
  * @brief Copies matrix.
  *
- * @param[out] dst The matrix copy
- * @param[in] src The matrix for copy.
+ * @param[out] dst The matrix copy.
+ * @param[in] src The matrix to copy.
  *
  * @since 1.17
  */
@@ -1018,9 +1018,9 @@ EAPI void eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src);
 /**
  * @brief Multiplies two matrices.
  *
- * @param[out] out The resulting matrix
- * @param[in] mat_a The first member of the multiplication
- * @param[in] mat_b The second member of the multiplication
+ * @param[out] out The resulting matrix.
+ * @param[in] mat_a The first member of the multiplication.
+ * @param[in] mat_b The second member of the multiplication.
  *
  * @since 1.17
  */
@@ -1030,9 +1030,9 @@ EAPI void eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
 /**
  * @brief Multiplies two matrices with check.
  *
- * @param[out] out The resulting matrix
- * @param[in] mat_a The first member of the multiplication
- * @param[in] mat_b The second member of the multiplication
+ * @param[out] out The resulting matrix.
+ * @param[in] mat_a The first member of the multiplication.
+ * @param[in] mat_b The second member of the multiplication.
  *
  * @since 1.17
  */
