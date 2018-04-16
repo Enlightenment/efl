@@ -16,6 +16,7 @@
 #include "keyword.hh"
 #include "using_decl.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -28,7 +29,7 @@ struct function_registration_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    if(is_function_blacklisted(f.c_name) || f.is_static) // Static methods aren't overrideable
+    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Static methods aren't overrideable
       return true;
     else
       {

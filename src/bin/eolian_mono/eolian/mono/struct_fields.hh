@@ -6,7 +6,7 @@
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
-#include "helpers.hh"
+#include "name_helpers.hh"
 #include "type.hh"
 #include "keyword.hh"
 #include "using_decl.hh"
@@ -20,7 +20,7 @@ struct field_argument_default_generator
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
        if (!as_generator(type << " " << string << "=default(" << type << ")")
-               .generate(sink, std::make_tuple(field.type, helpers::to_field_name(field.name), field.type), context))
+               .generate(sink, std::make_tuple(field.type, name_helpers::to_field_name(field.name), field.type), context))
            return false;
        return true;
    }
@@ -32,7 +32,7 @@ struct field_argument_assignment_generator
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
        if (!as_generator("this." << string << " = " << string)
-               .generate(sink, std::make_tuple(helpers::to_field_name(field.name), helpers::to_field_name(field.name)), context))
+               .generate(sink, std::make_tuple(name_helpers::to_field_name(field.name), name_helpers::to_field_name(field.name)), context))
            return false;
        return true;
    }

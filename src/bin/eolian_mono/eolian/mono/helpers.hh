@@ -2,65 +2,20 @@
 #define EOLIAN_MONO_HELPERS_HH
 
 #include "grammar/klass_def.hpp"
-#include "utils.hh"
-
-/* General helper functions for the main generators.
- *
- * These range from blacklisting structures to 'nano-generators' (functions that receive
- * a binding-specifict structure and returns a string).
- */
+#include "blacklist.hh"
+#include "name_helpers.hh"
 
 namespace eolian_mono {
 
 namespace helpers {
 
+/* General helpers, not related directly with generating strings (those go in the name_helpers.hh). */
+
 namespace attributes = efl::eolian::grammar::attributes;
-
-inline std::string type_full_name(attributes::regular_type_def const& type)
-{
-   std::string full_name;
-   for (auto& name : type.namespaces)
-     {
-        full_name += name + ".";
-     }
-   full_name += type.base_type;
-   return full_name;
-}
-
-inline std::string struct_full_name(attributes::struct_def const& struct_)
-{
-   std::string full_name;
-   for (auto& name : struct_.namespaces)
-     {
-        full_name += name + ".";
-     }
-   full_name += struct_.cxx_name;
-   return full_name;
-}
-
-// Blacklist structs that require some kind of manual binding.
-inline bool is_struct_blacklisted(std::string const& full_name)
-{
-   return full_name == "Efl.Event.Description"
-       || full_name == "Eina.Binbuf"
-       || full_name == "Eina.Strbuf"
-       || full_name == "Eina.Slice"
-       || full_name == "Eina.Rw_Slice";
-}
-
-inline bool is_struct_blacklisted(attributes::struct_def const& struct_)
-{
-   return is_struct_blacklisted(struct_full_name(struct_));
-}
-
-inline bool is_struct_blacklisted(attributes::regular_type_def const& struct_)
-{
-   return is_struct_blacklisted(type_full_name(struct_));
-}
 
 inline bool need_struct_conversion(attributes::regular_type_def const* regular)
 {
-   return regular && regular->is_struct() && !is_struct_blacklisted(*regular);
+   return regular && regular->is_struct() && !blacklist::is_struct_blacklisted(*regular);
 }
 
 inline bool need_struct_conversion(attributes::parameter_def const& param, attributes::regular_type_def const* regular)
@@ -93,7 +48,7 @@ inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
      return false;
 
    if (regular->is_enum()
-       || (regular->is_struct() && type_full_name(*regular) != "Eina.Binbuf")
+       || (regular->is_struct() && name_helpers::type_full_name(*regular) != "Eina.Binbuf")
       )
      return true;
 
@@ -108,38 +63,6 @@ inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
      return true;
 
    return false;
-}
-
-inline std::string to_field_name(std::string const& in)
-{
-  return utils::capitalize(in);
-}
-
-inline std::string klass_name_to_csharp(attributes::klass_name const& clsname)
-{
-  std::ostringstream output;
-
-  for (auto namesp : clsname.namespaces)
-    output << utils::to_lowercase(namesp) << ".";
-
-  output << clsname.eolian_name;
-
-  return output.str();
-}
-
-inline std::string klass_get_name(attributes::klass_name const &clsname)
-{
-  std::ostringstream output;
-
-  output << klass_name_to_csharp(clsname);
-  output << "Concrete.";
-
-  for (auto namesp : clsname.namespaces)
-    output << utils::to_lowercase(namesp) << "_";
-  output << utils::to_lowercase(clsname.eolian_name);
-  output << "_class_get";
-
-  return output.str();
 }
 
 } // namespace helpers

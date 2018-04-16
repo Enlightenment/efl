@@ -4,7 +4,7 @@
 #include "grammar/integral.hpp"
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
-#include "function_blacklist.hh"
+#include "blacklist.hh"
 
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
@@ -74,7 +74,7 @@ get_inheritable_function_count(grammar::attributes::klass_def const& cls)
    auto methods = cls.get_all_methods();
    return std::count_if(methods.cbegin(), methods.cend(), [](grammar::attributes::function_def const& func)
      {
-        return !is_function_blacklisted(func.c_name) && !func.is_static;
+        return !blacklist::is_function_blacklisted(func.c_name) && !func.is_static;
      });
 }
 
@@ -241,7 +241,7 @@ struct klass
 
      for (auto &&p : cls.parts)
        if (!as_generator(
-              helpers::klass_name_to_csharp(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
+              name_helpers::klass_name_to_csharp(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
             ).generate(sink, attributes::unused, iface_cxt))
          return false;
 

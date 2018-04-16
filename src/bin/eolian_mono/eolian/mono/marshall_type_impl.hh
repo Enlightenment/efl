@@ -8,6 +8,7 @@
 #include "namespace.hh"
 #include "type_impl.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -155,7 +156,7 @@ struct marshall_type_visitor_generate
                }}
         };
 
-        if (regular.is_struct() && !helpers::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
+        if (regular.is_struct() && !blacklist::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
           {
              if ((is_out || is_return) && is_ptr)
                  return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);

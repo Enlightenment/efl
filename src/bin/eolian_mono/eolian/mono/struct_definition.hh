@@ -6,12 +6,14 @@
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
+#include "name_helpers.hh"
 #include "helpers.hh"
 #include "type.hh"
 #include "keyword.hh"
 #include "using_decl.hh"
 #include "documentation.hh"
 #include "struct_fields.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -51,7 +53,7 @@ struct struct_definition_generator
                documentation(1)
                << scope_tab(1) << "public " << type << " " << string << ";\n"
               )
-              .generate(sink, std::make_tuple(field, field.type, helpers::to_field_name(field.name)), context))
+              .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
             return false;
        }
 
@@ -104,7 +106,7 @@ struct struct_internal_definition_generator
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
-          auto field_name = helpers::to_field_name(field.name);
+          auto field_name = name_helpers::to_field_name(field.name);
           auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
           auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
 
@@ -165,7 +167,7 @@ struct to_internal_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto field_name = helpers::to_field_name(field.name);
+      auto field_name = name_helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
@@ -259,7 +261,7 @@ struct to_external_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto field_name = helpers::to_field_name(field.name);
+      auto field_name = name_helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
@@ -439,7 +441,7 @@ struct struct_entities_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-     if (helpers::is_struct_blacklisted(struct_))
+     if (blacklist::is_struct_blacklisted(struct_))
        return true;
 
      std::vector<std::string> cpp_namespaces = escape_namespace(attributes::cpp_namespaces(struct_.namespaces));

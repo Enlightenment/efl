@@ -11,6 +11,7 @@
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
 #include "type.hh"
+#include "name_helpers.hh"
 #include "helpers.hh"
 #include "function_helpers.hh"
 #include "marshall_type.hh"
@@ -19,6 +20,7 @@
 #include "documentation.hh"
 #include "using_decl.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -29,7 +31,7 @@ struct native_function_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    if(is_function_blacklisted(f.c_name) || f.is_static) // Only Concrete classes implement static methods.
+    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Only Concrete classes implement static methods.
       return true;
     else
       {
@@ -134,7 +136,7 @@ struct function_definition_generator
   {
     if(do_super && f.is_static) // Static methods goes only on Concrete classes.
       return true;
-    if(is_function_blacklisted(f.c_name))
+    if(blacklist::is_function_blacklisted(f.c_name))
       return true;
 
     if(!as_generator
@@ -165,7 +167,7 @@ struct function_definition_generator
         << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
-        << (f.is_static ? helpers::klass_get_name(f.klass) + "()": "this.raw_handle")
+        << (f.is_static ? name_helpers::klass_get_name(f.klass) + "()": "this.raw_handle")
         << (do_super ? ", this.raw_klass)" : "")
         << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()

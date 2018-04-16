@@ -11,6 +11,7 @@
 #include "parameter.hh"
 #include "keyword.hh"
 #include "using_decl.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -19,7 +20,7 @@ struct function_declaration_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    if(is_function_blacklisted(f.c_name) || f.is_static)
+    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static)
       return true;
 
     if(!as_generator(documentation).generate(sink, f, context))
