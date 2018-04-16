@@ -4103,17 +4103,14 @@ _elm_widget_item_efl_object_del(const Eo *eo_item, Elm_Widget_Item_Data *item)
    item->on_deletion = EINA_TRUE;
 
    //Widget item delete callback
-   Eina_Bool del_ok;
-   del_ok = elm_wdg_item_del_pre(item->eo_obj);
-   if (del_ok)
-      efl_parent_set((Eo*)eo_item, NULL);
+   elm_wdg_item_del_pre(item->eo_obj);
+   efl_parent_set((Eo*)eo_item, NULL);
    return;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item EINA_UNUSED)
 {
-   return EINA_TRUE;
 }
 
 /**

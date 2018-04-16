@@ -497,7 +497,6 @@ class Elm.Widget.Item(Efl.Object, Efl.Access.Object,
            del_pre @protected {
               [[Delete pre widget item]]
                 legacy: null;
-                return: bool; [[$true on success, $false otherwise]]
            }
            focus_next_object_get @const {
                 [[Get the next object with specific focus direction.
