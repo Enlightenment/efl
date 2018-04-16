@@ -3601,8 +3601,6 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
    elm_wdg_item_pre_notify_del(eo_it);
    it->generation = sd->generation - 1; /* This means that the item is deleted */
 
-   if (it->walking > 0) return;
-
    if (sd->show_it == eo_it)
      {
         sd->show_it = NULL;
@@ -3637,7 +3635,6 @@ _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
    sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
-   sd->walking -= it->walking;
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->group)
      sd->group_items = eina_list_remove(sd->group_items, it);
@@ -3772,12 +3769,6 @@ _elm_gengrid_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *i
 EOLIAN static Eina_Bool
 _elm_gengrid_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
-   if (it->walking > 0)
-     {
-        _elm_gengrid_item_del_not_serious(it);
-        return EINA_FALSE;
-     }
-
    _item_del(it);
    return EINA_TRUE;
 }
@@ -3876,11 +3867,11 @@ _internal_elm_gengrid_clear(Evas_Object *obj,
              Elm_Gen_Item *itn = NULL;
 
              if (next) itn = ELM_GEN_ITEM_FROM_INLIST(next);
-             if (itn) itn->walking++;  /* prevent early death of subitem */
+             if (itn) efl_ref(EO_OBJ(itn));  /* prevent early death of subitem */
              if (VIEW(it))
                _item_mouse_callbacks_del(it, VIEW(it));
              efl_del(EO_OBJ(it));
-             if (itn) itn->walking--;
+             if (itn) efl_unref(EO_OBJ(itn));
           }
      }
    sd->clear_me = EINA_FALSE;
@@ -3928,7 +3919,7 @@ _item_select(Elm_Gen_Item *it)
      return;
 
    evas_object_ref(obj);
-   it->walking++;
+   efl_ref(eo_it);
    sd->walking++;
 
    sd->last_selected_item = eo_it;
@@ -3941,13 +3932,13 @@ _item_select(Elm_Gen_Item *it)
           efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
      }
 
-   it->walking--;
+   efl_ref(eo_it);
    sd->walking--;
    if ((sd->clear_me) && (!sd->walking))
      _internal_elm_gengrid_clear(WIDGET(it), EINA_TRUE);
    else
      {
-        if ((!it->walking) && (it->generation < sd->generation))
+        if (it->generation < sd->generation)
           {
              efl_del(eo_it);
              sd->last_selected_item = NULL;
