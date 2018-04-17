@@ -333,8 +333,7 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
 {
    char *property;
    Eldbus_Message_Iter *layout, *array, *pair, *variant;
-   Eina_List *l;
-   const Eina_List *it;
+   const Eina_List *l, *it;
    Elm_Object_Item *obj_item;
 
    layout = eldbus_message_iter_container_new(iter, 'r', NULL);
@@ -422,8 +421,7 @@ _elm_dbus_menu_add(Eo *menu)
 {
    Elm_DBus_Menu *dbus_menu;
    Elm_Object_Item *obj_item;
-   const Eina_List *it;
-   Eina_List *l;
+   const Eina_List *it, *l;
 
    ELM_MENU_CHECK(menu) NULL;
 
@@ -457,7 +455,6 @@ _elm_dbus_menu_add(Eo *menu)
    return dbus_menu;
 
 error_hash:
-   eina_iterator_free(it);
    eina_hash_free(dbus_menu->elements);
 error_menu:
    free(dbus_menu);
