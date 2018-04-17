@@ -205,13 +205,15 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
      {
         window->saved.w = window->set_config.geometry.w;
         window->saved.h = window->set_config.geometry.h;
-        _configure_complete(window);
      }
    if (window->pending.configure && window->updating)
      ERR("Window shouldn't be rendering before initial configure");
 
    if (!window->updating)
      _ecore_wl2_window_configure_send(window);
+
+   if (window->pending.configure)
+     _configure_complete(window);
 }
 
 static const struct xdg_surface_listener _xdg_surface_listener =

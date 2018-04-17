@@ -11,13 +11,15 @@ _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA
      {
         window->saved.w = window->set_config.geometry.w;
         window->saved.h = window->set_config.geometry.h;
-        _configure_complete(window);
      }
    if (window->pending.configure && window->updating)
      ERR("Window shouldn't be rendering before initial configure");
 
    if (!window->updating)
      _ecore_wl2_window_configure_send(window);
+
+   if (window->pending.configure)
+     _configure_complete(window);
 }
 
 static const struct zxdg_surface_v6_listener _zxdg_surface_listener =
