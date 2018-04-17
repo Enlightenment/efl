@@ -284,12 +284,12 @@ _elm_theme_data_find(Elm_Theme *th, const char *key)
         data = _elm_theme_find_data_try(th, etf->handle, key);
         if (data) return data;
      }
-   EINA_INLIST_FOREACH(th->overlay, etf)
+   EINA_INLIST_FOREACH(th->themes, etf)
      {
         data = _elm_theme_find_data_try(th, etf->handle, key);
         if (data) return data;
      }
-   EINA_INLIST_FOREACH(th->overlay, etf)
+   EINA_INLIST_FOREACH(th->extension, etf)
      {
         data = _elm_theme_find_data_try(th, etf->handle, key);
         if (data) return data;
