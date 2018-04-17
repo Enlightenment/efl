@@ -373,7 +373,8 @@ static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const c
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize);
-static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd);
+static void _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha);
+static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force);
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Efl_Ui_Win_Data *sd);
@@ -992,11 +993,16 @@ _elm_win_pre_render(Ecore_Evas *ee)
    _elm_win_throttle_ok = EINA_TRUE;
    if (!sd->first_draw)
      {
+        int mw, mh;
+
         edje_object_thaw(sd->frame_obj);
         evas_object_show(sd->frame_obj);
         _elm_win_frame_style_update(sd, 1, 1);
-        _elm_win_frame_obj_update(sd);
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
+
+        /* force initial sizing on frame to enable sizing of content */
+        edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
+        evas_object_resize(sd->frame_obj, mw, mh);
 
         if (sd->img_obj)
           {
@@ -1010,7 +1016,10 @@ _elm_win_pre_render(Ecore_Evas *ee)
         sd->first_draw = EINA_TRUE;
      }
    if (sd->deferred_resize_job)
-     _elm_win_resize_job(sd->obj);
+     {
+        _elm_win_resize_job(sd->obj);
+        _elm_win_frame_obj_update(sd, 1);
+     }
 }
 
 static void
@@ -1473,7 +1482,7 @@ _elm_win_framespace_set(Efl_Ui_Win_Data *sd, int x, int y, int w, int h)
 }
 
 static void
-_elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
+_elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
 {
    int ox, oy, ow, oh;
    int cx, cy, cw, ch;
@@ -1483,9 +1492,12 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
    _elm_win_frame_geometry_adjust(sd);
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
-   if (!_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch)) return;
+   if (!_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch) && (!force)) return;
    _elm_win_frame_geometry_adjust(sd);
-   evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
+   if (sd->first_draw)
+     evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
+   else
+     w = ow, h = oh;
    TRAP(sd, resize, w, h);
 }
 
@@ -3901,7 +3913,7 @@ _elm_win_frame_obj_move(void *data,
    if (!(sd = data)) return;
    if (!sd->legacy.edje) return;
 
-   _elm_win_frame_obj_update(sd);
+   _elm_win_frame_obj_update(sd, 0);
 }
 
 static void
@@ -3915,7 +3927,7 @@ _elm_win_frame_obj_resize(void *data,
    if (!(sd = data)) return;
    if (!sd->legacy.edje) return;
 
-   _elm_win_frame_obj_update(sd);
+   _elm_win_frame_obj_update(sd, 0);
 }
 
 static void
@@ -4466,7 +4478,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
           edje_object_message_signal_process(sd->frame_obj);
         if (calc)
           evas_object_smart_calculate(sd->frame_obj);
-        _elm_win_frame_obj_update(sd);
+        _elm_win_frame_obj_update(sd, 0);
+        _elm_win_opaque_update(sd, EINA_FALSE);
      }
 }
 
@@ -4611,7 +4624,7 @@ _indicator_resized(void *data, const Efl_Event *event)
    Evas_Object *indicator = event->object;
    Evas_Coord_Size *size = (Evas_Coord_Size *)event->info;
    efl_gfx_size_hint_restricted_min_set(indicator, EINA_SIZE2D(size->w, size->h));
-   _elm_win_frame_obj_update(sd);
+   _elm_win_frame_obj_update(sd, 0);
 }
 
 static Evas_Object*
@@ -6234,7 +6247,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
-   _elm_win_frame_obj_update(sd);
+   _elm_win_frame_obj_update(sd, 0);
    efl_ui_widget_on_orientation_update(obj, rotation);
    efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
@@ -6424,7 +6437,7 @@ _efl_ui_win_indicator_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_
 
    edje_object_message_signal_process(sd->frame_obj);
    evas_object_smart_calculate(sd->frame_obj);
-   _elm_win_frame_obj_update(sd);
+   _elm_win_frame_obj_update(sd, 0);
 }
 
 EOLIAN static Efl_Ui_Win_Indicator_Mode
