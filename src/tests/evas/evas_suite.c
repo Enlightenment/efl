@@ -17,6 +17,7 @@ static const Efl_Test_Case etc[] = {
   { "Render Engines", evas_test_render_engines },
   { "Filters", evas_test_filters },
   { "Images", evas_test_image_object },
+  { "Images", evas_test_image_object2 },
   { "Meshes", evas_test_mesh },
   { "Masking", evas_test_mask },
   { "Evas GL", evas_test_evasgl },
