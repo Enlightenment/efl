@@ -4104,8 +4104,7 @@ _elm_widget_item_efl_object_del(const Eo *eo_item, Elm_Widget_Item_Data *item)
 
    //Widget item delete callback
    elm_wdg_item_del_pre(item->eo_obj);
-   efl_parent_set((Eo*)eo_item, NULL);
-   return;
+   efl_del(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
 }
 
 EOLIAN static void
