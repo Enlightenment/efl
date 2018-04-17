@@ -481,6 +481,39 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
      }
 }
 
+/* auto norender withdrawn is really only for X11.
+ * On other backends like wayland, there's actually
+ * no way for a client to tell if the window is
+ * iconified or not.  You can request iconified state
+ * but there's no explicit feedback for iconification
+ * or return to normal state.
+ *
+ * So, blocking drawing based on client side thinking
+ * it's iconified, and having the compositor think
+ * the client should be drawing will lead to
+ * predictably disappointing results.
+ *
+ * If you maintain a backend that is really capable
+ * of handling this properly, feel free to extend
+ * the whitelist.
+ */
+static Eina_Bool
+_elm_win_auto_norender_withdrawn(const Evas_Object *obj)
+{
+   const char *engine;
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+
+   if (!sd)
+     return _elm_config->auto_norender_withdrawn;
+
+   engine = ecore_evas_engine_name_get(sd->ee);
+   if (!strcmp(engine, ELM_SOFTWARE_X11) || !strcmp(engine, ELM_OPENGL_X11))
+     return _elm_config->auto_norender_withdrawn;
+
+   return EINA_FALSE;
+}
+
+
 static Eina_Bool
 _elm_win_state_eval(void *data EINA_UNUSED)
 {
@@ -495,7 +528,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
      {
-        if (_elm_config->auto_norender_withdrawn)
+        if (_elm_win_auto_norender_withdrawn(obj))
           {
              if ((elm_win_withdrawn_get(obj)) ||
                  ((elm_win_iconified_get(obj) &&
@@ -5315,7 +5348,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    if (type != ELM_WIN_FAKE)
      {
         //Prohibiting auto-rendering, until elm_win is shown.
-        if (_elm_config->auto_norender_withdrawn)
+        if (_elm_win_auto_norender_withdrawn(obj))
           {
              if (elm_win_withdrawn_get(obj))
                {
