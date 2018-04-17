@@ -13,7 +13,6 @@
 #include "type.hh"
 #include "marshall_type.hh"
 #include "parameter.hh"
-#include "keyword.hh"
 #include "using_decl.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"

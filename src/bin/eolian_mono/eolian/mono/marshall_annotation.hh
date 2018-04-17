@@ -4,7 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
-#include "namespace.hh"
+#include "name_helpers.hh"
 #include "type_impl.hh"
 
 namespace eolian_mono {
@@ -144,7 +144,7 @@ struct marshall_annotation_visitor_generate
    {
      const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
      const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
-     std::vector<std::string> namespaces = escape_namespace(klass_name.namespaces);
+     std::vector<std::string> namespaces = name_helpers::escape_namespace(klass_name.namespaces);
      return as_generator
        ((is_return ? return_prefix : no_return_prefix)
         << *(lower_case[string] << ".") << string
@@ -251,7 +251,7 @@ struct marshall_native_annotation_visitor_generate
    {
      const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
      const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
-     std::vector<std::string> namespaces = escape_namespace(klass_name.namespaces);
+     std::vector<std::string> namespaces = name_helpers::escape_namespace(klass_name.namespaces);
      return as_generator
        ((is_return ? return_prefix : no_return_prefix)
         << *(lower_case[string] << ".") << string

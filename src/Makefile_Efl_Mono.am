@@ -88,6 +88,7 @@ bin_eolian_mono_eolian_mono_SOURCES = \
 	bin/eolian_mono/eolian/mono/marshall_type.hh \
 	bin/eolian_mono/eolian/mono/klass.hh \
 	bin/eolian_mono/eolian/mono/type_impl.hh \
+	bin/eolian_mono/eolian/mono/events.hh \
 	bin/eolian_mono/eolian/mono/generation_contexts.hh
 
 bin_eolian_mono_eolian_mono_CXXFLAGS = -I$(top_builddir)/src/lib/efl \

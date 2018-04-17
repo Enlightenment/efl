@@ -9,7 +9,6 @@
 #include "name_helpers.hh"
 #include "helpers.hh"
 #include "type.hh"
-#include "keyword.hh"
 #include "using_decl.hh"
 #include "documentation.hh"
 #include "struct_fields.hh"
@@ -444,7 +443,7 @@ struct struct_entities_generator
      if (blacklist::is_struct_blacklisted(struct_))
        return true;
 
-     std::vector<std::string> cpp_namespaces = escape_namespace(attributes::cpp_namespaces(struct_.namespaces));
+     std::vector<std::string> cpp_namespaces = name_helpers::escape_namespace(attributes::cpp_namespaces(struct_.namespaces));
 
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if (!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context)))

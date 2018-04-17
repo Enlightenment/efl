@@ -16,7 +16,6 @@
 #include "function_helpers.hh"
 #include "marshall_type.hh"
 #include "parameter.hh"
-#include "keyword.hh"
 #include "documentation.hh"
 #include "using_decl.hh"
 #include "generation_contexts.hh"

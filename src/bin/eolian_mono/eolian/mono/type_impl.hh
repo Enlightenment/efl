@@ -4,7 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
-#include "namespace.hh"
+#include "name_helpers.hh"
 
 namespace eolian_mono {
 
@@ -256,7 +256,7 @@ struct visitor_generate
               //     ? /*" const"*/ "" : "")
               /*<< (regular.base_qualifier & qualifier_info::is_ref? "&" : "")*/
              )
-             .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context))
+             .generate(sink, std::make_tuple(name_helpers::escape_namespace(regular.namespaces), regular.base_type), *context))
             return true;
           else
             return false;
@@ -274,7 +274,7 @@ struct visitor_generate
      //   .generate(sink, attributes::unused, *context);
      return
        as_generator(*(lower_case[string] << ".") << string)
-       .generate(sink, std::make_tuple(eolian_mono::escape_namespace(klass.namespaces), klass.eolian_name), *context)
+       .generate(sink, std::make_tuple(name_helpers::escape_namespace(klass.namespaces), klass.eolian_name), *context)
        // && (!(klass.base_qualifier & qualifier_info::is_ref)
        //     || as_generator("&").generate(sink, attributes::unused, *context))
        ;

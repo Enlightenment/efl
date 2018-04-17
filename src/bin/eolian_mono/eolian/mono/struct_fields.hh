@@ -8,7 +8,6 @@
 #include "grammar/alternative.hpp"
 #include "name_helpers.hh"
 #include "type.hh"
-#include "keyword.hh"
 #include "using_decl.hh"
 #include "documentation.hh"
 

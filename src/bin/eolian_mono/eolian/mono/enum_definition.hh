@@ -7,7 +7,7 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "type.hh"
-#include "keyword.hh"
+#include "name_helpers.hh"
 #include "using_decl.hh"
 
 namespace eolian_mono {
@@ -17,7 +17,7 @@ struct enum_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::enum_def const& enum_, Context const& context) const
   {
-     std::vector<std::string> cpp_namespaces = escape_namespace(attributes::cpp_namespaces(enum_.namespaces));
+     std::vector<std::string> cpp_namespaces = name_helpers::escape_namespace(attributes::cpp_namespaces(enum_.namespaces));
 
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;

@@ -23,6 +23,7 @@
 #include <Eina.hh>
 #include <Eolian_Cxx.hh>
 
+#include <eolian/mono/name_helpers.hh>
 #include <eolian/mono/klass.hh>
 #include <eolian/mono/enum_definition.hh>
 #include <eolian/mono/struct_definition.hh>
@@ -150,7 +151,7 @@ run(options_type const& opts)
            }
 
          if (!eolian_mono::function_pointer
-               .generate(iterator, function_def, escape_namespace(namespaces), context))
+               .generate(iterator, function_def, eolian_mono::name_helpers::escape_namespace(namespaces), context))
            {
               throw std::runtime_error("Failed to generate function pointer wrapper");
            }

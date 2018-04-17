@@ -8,8 +8,9 @@
 #include "marshall_type.hh"
 #include "type.hh"
 #include "using_decl.hh"
-#include "keyword.hh"
+#include "name_helpers.hh"
 
+using namespace eolian_mono::name_helpers;
 
 namespace eolian_mono {
     struct parameter_generator;

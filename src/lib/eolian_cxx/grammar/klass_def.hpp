@@ -787,6 +787,7 @@ struct compare_klass_name_by_name
 
 struct event_def
 {
+  klass_name klass;
   eina::optional<type_def> type;
   std::string name, c_name;
   bool beta, protect;
@@ -794,7 +795,8 @@ struct event_def
 
   friend inline bool operator==(event_def const& lhs, event_def const& rhs)
   {
-    return lhs.type == rhs.type
+    return lhs.klass == rhs.klass
+      && lhs.type == rhs.type
       && lhs.name == rhs.name
       && lhs.c_name == rhs.c_name
       && lhs.beta == rhs.beta
@@ -806,12 +808,14 @@ struct event_def
     return !(lhs == rhs);
   }
 
-  event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect,
-            documentation_def documentation)
-    : type(type), name(name), c_name(c_name), beta(beta), protect(protect)
+  event_def(klass_name _klass, type_def type, std::string name, std::string c_name,
+          bool beta, bool protect, documentation_def documentation)
+    : klass(_klass), type(type), name(name), c_name(c_name), beta(beta), protect(protect)
     , documentation(documentation) {}
-  event_def(Eolian_Event const* event, Eolian_Unit const* unit)
-    : type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit, EOLIAN_C_TYPE_DEFAULT}} : eina::optional<type_def>{})
+
+  event_def(Eolian_Event const* event, Eolian_Class const* cls, Eolian_Unit const* unit)
+    : klass(cls, {attributes::qualifier_info::is_none, std::string()})
+    , type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit, EOLIAN_C_TYPE_DEFAULT}} : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
     , c_name( ::eolian_event_c_name_get(event))
     , beta( ::eolian_event_is_beta(event))
@@ -1035,7 +1039,7 @@ struct klass_def
            , event_last; event_iterator != event_last; ++event_iterator)
        {
          try {
-           events.push_back({&*event_iterator, unit});
+           events.push_back({&*event_iterator, klass, unit});
          } catch(std::exception const&) {}
        }
 

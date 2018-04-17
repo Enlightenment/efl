@@ -9,7 +9,7 @@
 #include "grammar/alternative.hpp"
 #include "type.hh"
 #include "parameter.hh"
-#include "keyword.hh"
+#include "name_helpers.hh"
 #include "using_decl.hh"
 #include "blacklist.hh"
 
@@ -28,7 +28,7 @@ struct function_declaration_generator
 
     return as_generator
         (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
-      .generate(sink, std::make_tuple(f.return_type, managed_method_name(f.name), f.parameters), context);
+      .generate(sink, std::make_tuple(f.return_type, name_helpers::managed_method_name(f.name), f.parameters), context);
   }
 };
 

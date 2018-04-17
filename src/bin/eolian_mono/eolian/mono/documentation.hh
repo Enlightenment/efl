@@ -5,7 +5,7 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/html_escaped_string.hpp"
 #include "using_decl.hh"
-#include "keyword.hh"
+#include "name_helpers.hh"
 
 #include <Eina.h>
 
@@ -116,7 +116,7 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_parameter(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return generate_tag_param(sink, escape_keyword(param.param_name), param.documentation.summary, context);
+      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), param.documentation.summary, context);
    }
 
    template<typename OutputIterator, typename Context>

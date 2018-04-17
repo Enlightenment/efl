@@ -31,7 +31,7 @@ struct function_pointer {
    bool generate(OutputIterator sink, attributes::function_def const& f, std::vector<std::string> const &namesp, Context const& context) const
    {
       // FIXME export Typedecl in eolian_cxx API
-      std::vector<std::string> namespaces =  escape_namespace(namesp);
+      std::vector<std::string> namespaces =  name_helpers::escape_namespace(namesp);
       auto funcptr_ctx = context_add_tag(class_context{class_context::function_ptr}, context);
 
       std::string return_type;
@@ -48,16 +48,16 @@ struct function_pointer {
       if (!as_generator(documentation
                   << "public delegate " << type << " " << string
                   << "(" << (parameter % ", ") << ");\n")
-              .generate(sink, std::make_tuple(f, f.return_type, escape_keyword(f.name), f.parameters), funcptr_ctx))
+              .generate(sink, std::make_tuple(f, f.return_type, name_helpers::escape_keyword(f.name), f.parameters), funcptr_ctx))
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
       if (!as_generator(marshall_native_annotation(true)
                   << "internal delegate " << marshall_type(true) << " " << string // public?
                   << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_native_annotation << " " << marshall_parameter)) << ");\n")
-              .generate(sink, std::make_tuple(f.return_type, f.return_type, escape_keyword(f.name), f.parameters), funcptr_ctx))
+              .generate(sink, std::make_tuple(f.return_type, f.return_type, name_helpers::escape_keyword(f.name), f.parameters), funcptr_ctx))
           return false;
 
-      std::string f_name = escape_keyword(f.name);
+      std::string f_name = name_helpers::escape_keyword(f.name);
       // Wrapper type, with callback matching the Unamanaged one
       if (!as_generator("internal class " << f_name << "Wrapper\n"
                   << "{\n\n"

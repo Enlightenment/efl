@@ -5,7 +5,7 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
 #include "helpers.hh"
-#include "namespace.hh"
+#include "name_helpers.hh"
 #include "type_impl.hh"
 #include "generation_contexts.hh"
 #include "blacklist.hh"
@@ -161,7 +161,7 @@ struct marshall_type_visitor_generate
              if ((is_out || is_return) && is_ptr)
                  return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
              return as_generator(*(lower_case[string] << ".") << string << "_StructInternal")
-                    .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
+                    .generate(sink, std::make_tuple(name_helpers::escape_namespace(regular.namespaces), regular.base_type), *context);
           }
         else if (eina::optional<bool> b = call_match
          (match_table
