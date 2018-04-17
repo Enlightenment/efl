@@ -538,7 +538,7 @@ class Elm.Widget.Item(Efl.Object, Efl.Access.Object,
       implements {
            Efl.Object.constructor;
            Efl.Object.destructor;
-           Efl.Object.del;
+           Efl.Object.invalidate;
            Efl.Access.Object.state_set { get; }
            Efl.Access.Object.attributes { get; }
            Efl.Access.Component.extents { get; set; }

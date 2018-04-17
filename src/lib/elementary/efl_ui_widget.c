@@ -4096,7 +4096,7 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
  * @ingroup Widget
  */
 EOLIAN static void
-_elm_widget_item_efl_object_del(const Eo *eo_item, Elm_Widget_Item_Data *item)
+_elm_widget_item_efl_object_invalidate(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
@@ -4104,7 +4104,7 @@ _elm_widget_item_efl_object_del(const Eo *eo_item, Elm_Widget_Item_Data *item)
 
    //Widget item delete callback
    elm_wdg_item_del_pre(item->eo_obj);
-   efl_del(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
+   efl_invalidate(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
 }
 
 EOLIAN static void
