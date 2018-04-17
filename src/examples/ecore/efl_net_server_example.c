@@ -321,7 +321,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                   efl_io_copier_destination_set(efl_added, client),
                                   efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                                   efl_event_callback_array_add(efl_added, echo_copier_cbs(), client),
-                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
+                                  efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                                   );
 
         fprintf(stderr, "INFO: using an echo copier=%p for client %s\n",
@@ -362,7 +362,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                  efl_io_copier_destination_set(efl_added, client),
                                  efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                                  efl_event_callback_array_add(efl_added, send_copier_cbs(), d),
-                                 efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
+                                 efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
 
         fprintf(stderr, "INFO: using sender buffer %p with copier %p for client %s\n",
@@ -379,7 +379,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                  efl_io_copier_destination_set(efl_added, recv_buffer),
                                  efl_io_copier_timeout_inactivity_set(efl_added, 0.0), /* we'll only set an inactivity timeout once the sender is done */
                                  efl_event_callback_array_add(efl_added, recv_copier_cbs(), d),
-                                 efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
+                                 efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
 
         fprintf(stderr, "INFO: using receiver buffer %p with copier %p for client %s\n",

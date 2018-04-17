@@ -70,8 +70,6 @@ _eet_data_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, const char *protoco
    char toSend[] = SRV_MSG;
    ECE_Test *received = value;
 
-   fprintf(stderr, "id: %d\n message: %s\n",
-           received->id, received->message);
    fail_if(strcmp(received->message, CLI_MSG));
    fail_if(received->id != 1);
 

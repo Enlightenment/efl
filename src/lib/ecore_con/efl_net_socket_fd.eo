@@ -5,7 +5,7 @@ class Efl.Net.Socket_Fd (Efl.Loop_Fd, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io
       created by an dialer or server.
 
       @Efl.Io.Closer.close_on_exec and
-      @Efl.Io.Closer.close_on_destructor are respected and default to
+      @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true.
 
       @since 1.19
@@ -32,6 +32,7 @@ class Efl.Net.Socket_Fd (Efl.Loop_Fd, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io
     implements {
         Efl.Object.finalize;
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Loop_Fd.fd { set; }
         Efl.Io.Closer.close;

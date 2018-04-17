@@ -161,10 +161,8 @@ _efl_net_server_simple_efl_object_invalidate(Eo *o, Efl_Net_Server_Simple_Data *
    if (pd->inner_server)
      {
         efl_event_callback_array_del(pd->inner_server, _efl_net_server_simple_inner_server_cbs(), o);
-        if (efl_parent_get(pd->inner_server) == o)
-          efl_parent_set(pd->inner_server, NULL);
 
-        efl_unref(pd->inner_server);
+        efl_xunref(pd->inner_server, o);
         pd->inner_server = NULL;
      }
 
@@ -232,7 +230,7 @@ _efl_net_server_simple_inner_server_set(Eo *o, Efl_Net_Server_Simple_Data *pd, E
    EINA_SAFETY_ON_TRUE_RETURN(pd->inner_server != NULL);
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(server, EFL_NET_SERVER_INTERFACE));
 
-   pd->inner_server = efl_ref(server);
+   pd->inner_server = efl_xref(server, o);
    efl_event_callback_array_add(server, _efl_net_server_simple_inner_server_cbs(), o);
    DBG("%p inner_server=%p (%s)", o, server, efl_class_name_get(efl_class_get(server)));
 }

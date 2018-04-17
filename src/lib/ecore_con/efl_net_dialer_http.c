@@ -218,7 +218,7 @@ typedef struct
    Eina_Bool connected;
    Eina_Bool closed;
    Eina_Bool close_on_exec;
-   Eina_Bool close_on_destructor;
+   Eina_Bool close_on_invalidate;
    Eina_Bool pending_eos;
    Eina_Bool eos;
    Eina_Bool can_read;
@@ -1129,7 +1129,7 @@ _efl_net_dialer_http_efl_object_constructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
    if (pd->libproxy_thread)
      {
@@ -1149,7 +1149,7 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
         efl_io_closer_close(o);
         efl_event_thaw(o);
      }
-   else if (efl_io_closer_close_on_destructor_get(o) &&
+   else if (efl_io_closer_close_on_invalidate_get(o) &&
             (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
@@ -1157,6 +1157,12 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
         efl_event_thaw(o);
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
+{
    efl_net_dialer_http_response_headers_clear(o);
 
    if (pd->easy)
@@ -1806,15 +1812,15 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Ef
 }
 
 EOLIAN static void
-_efl_net_dialer_http_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool close_on_destructor)
+_efl_net_dialer_http_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool close_on_invalidate)
 {
-   pd->close_on_destructor = close_on_destructor;
+   pd->close_on_invalidate = close_on_invalidate;
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
-   return pd->close_on_destructor;
+   return pd->close_on_invalidate;
 }
 
 EOLIAN static Eina_Error

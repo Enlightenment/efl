@@ -26,10 +26,11 @@ class Efl.Net.Server_Udp_Client (Efl.Object, Efl.Net.Socket) {
 
     implements {
         Efl.Object.finalize;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Closer.close_on_exec { get; set; }
         Efl.Io.Reader.can_read { get; set; }
         Efl.Io.Reader.eos { get; set; }

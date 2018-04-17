@@ -483,12 +483,12 @@ _efl_io_queue_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Io_Qu
 }
 
 EOLIAN static void
-_efl_io_queue_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED, Eina_Bool close_on_destructor EINA_UNUSED)
+_efl_io_queue_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED, Eina_Bool close_on_invalidate EINA_UNUSED)
 {
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
+_efl_io_queue_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }

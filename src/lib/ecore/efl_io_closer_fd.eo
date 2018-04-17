@@ -20,6 +20,6 @@ mixin Efl.Io.Closer_Fd (Efl.Io.Closer, Efl.Object) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
     }
 }

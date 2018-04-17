@@ -68,7 +68,6 @@ class Efl.Net.Dialer_Ssl (Efl.Net.Socket_Ssl, Efl.Net.Dialer) {
         Efl.Object.constructor;
         Efl.Object.finalize;
         Efl.Object.invalidate;
-        Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; }
         Efl.Net.Dialer.connected { get; set; }

@@ -53,9 +53,9 @@ _efl_net_dialer_tcp_efl_object_constructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EI
 }
 
 EOLIAN static void
-_efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
+_efl_net_dialer_tcp_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
@@ -69,6 +69,12 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
         pd->connect.thread = NULL;
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
+{
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address_dial, NULL);

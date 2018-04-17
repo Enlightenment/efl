@@ -945,7 +945,7 @@ _efl_ui_image_remote_copier_cancel(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
    Eo *copier = sd->remote.copier;
 
    if (!copier) return;
-   /* copier is flagged as close_on_destructor, thus:
+   /* copier is flagged as close_on_invalidate, thus:
     * efl_del()
     *  -> efl_io_closer_close()
     *      -> "done" event
@@ -1056,7 +1056,7 @@ _efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url, const ch
 
    sd->remote.copier = efl_add(EFL_IO_COPIER_CLASS, obj,
                                efl_io_copier_source_set(efl_added, dialer),
-                               efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                               efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                                efl_event_callback_array_add(efl_added, _efl_ui_image_remote_copier_cbs(), obj));
    EINA_SAFETY_ON_NULL_GOTO(sd->remote.copier, error_copier);
    eina_stringshare_replace(&sd->remote.key, key);

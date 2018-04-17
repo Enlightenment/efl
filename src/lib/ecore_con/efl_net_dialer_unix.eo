@@ -12,6 +12,7 @@ class Efl.Net.Dialer_Unix (Efl.Net.Socket_Unix, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }

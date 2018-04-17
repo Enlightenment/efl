@@ -176,7 +176,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                   efl_io_copier_source_set(efl_added, client),
                                   efl_io_copier_destination_set(efl_added, client),
                                   efl_event_callback_array_add(efl_added, echo_copier_cbs(), client),
-                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
+                                  efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                                   );
 
         fprintf(stderr, "INFO: using an echo copier=%p for client %s\n",

@@ -48,6 +48,7 @@ static void
 _efl_net_dialer_simple_inner_io_connected(void *data, const Efl_Event *event)
 {
    Eo *o = data;
+
    efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, event->info);
 }
 
@@ -87,18 +88,9 @@ _efl_net_dialer_simple_efl_object_finalize(Eo *o, Efl_Net_Dialer_Simple_Data *pd
 }
 
 EOLIAN static void
-_efl_net_dialer_simple_efl_object_destructor(Eo *o, Efl_Net_Dialer_Simple_Data *pd)
+_efl_net_dialer_simple_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Simple_Data *pd EINA_UNUSED)
 {
    Eo *inner_io;
-
-   if (pd->inner_class) pd->inner_class = NULL;
-
-   eina_stringshare_replace(&pd->proxy_url, NULL);
-   if (pd->line_delimiter.mem)
-     {
-        free((void *)pd->line_delimiter.mem);
-        pd->line_delimiter.mem = NULL;
-     }
 
    inner_io = efl_io_buffered_stream_inner_io_get(o);
    if (inner_io)
@@ -106,6 +98,21 @@ _efl_net_dialer_simple_efl_object_destructor(Eo *o, Efl_Net_Dialer_Simple_Data *
         efl_event_callback_array_del(inner_io, _efl_net_dialer_simple_inner_io_cbs(), o);
         if (efl_parent_get(inner_io) == o)
           efl_parent_set(inner_io, NULL);
+     }
+
+   efl_invalidate(efl_super(o, EFL_NET_DIALER_SIMPLE_CLASS));
+}
+
+EOLIAN static void
+_efl_net_dialer_simple_efl_object_destructor(Eo *o, Efl_Net_Dialer_Simple_Data *pd)
+{
+   if (pd->inner_class) pd->inner_class = NULL;
+
+   eina_stringshare_replace(&pd->proxy_url, NULL);
+   if (pd->line_delimiter.mem)
+     {
+        free((void *)pd->line_delimiter.mem);
+        pd->line_delimiter.mem = NULL;
      }
 
    efl_destructor(efl_super(o, EFL_NET_DIALER_SIMPLE_CLASS));

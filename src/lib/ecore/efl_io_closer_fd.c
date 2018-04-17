@@ -15,7 +15,7 @@ typedef struct _Efl_Io_Closer_Fd_Data
    int fd;
 
    Eina_Bool close_on_exec;
-   Eina_Bool close_on_destructor;
+   Eina_Bool close_on_invalidate;
 } Efl_Io_Closer_Fd_Data;
 
 static Efl_Object *
@@ -119,15 +119,15 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_get(const Eo *o, Efl_Io_Closer_Fd_
 }
 
 EOLIAN static void
-_efl_io_closer_fd_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd, Eina_Bool close_on_destructor)
+_efl_io_closer_fd_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd, Eina_Bool close_on_invalidate)
 {
-   pd->close_on_destructor = close_on_destructor;
+   pd->close_on_invalidate = close_on_invalidate;
 }
 
 EOLIAN static Eina_Bool
-_efl_io_closer_fd_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
+_efl_io_closer_fd_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
 {
-   return pd->close_on_destructor;
+   return pd->close_on_invalidate;
 }
 
 #include "efl_io_closer_fd.eo.c"

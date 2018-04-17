@@ -258,11 +258,11 @@ _ecore_con_client_socket_close(Ecore_Con_Client *cl)
 {
    if (!cl->socket) return;
 
-   /* socket may remain alive due other references, we don't own it */
-   efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
-
    if (!efl_io_closer_closed_get(cl->socket))
      efl_io_closer_close(cl->socket);
+
+   /* socket may remain alive due other references, we don't own it */
+   efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
 }
 
 static void
@@ -278,7 +278,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->socket)
      {
         Eo *parent, *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
-        efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
+
         if (efl_isa(inner_socket, EFL_NET_SOCKET_SSL_CLASS))
           efl_event_callback_array_del(inner_socket, _ecore_con_client_socket_ssl_cbs(), cl);
 
@@ -843,11 +843,9 @@ _ecore_con_client_ssl_upgrade_job(void *data, const Eina_Value v,
 
    efl_parent_set(inner_socket, socket);
 
-   efl_unref(inner_socket); /* socket keeps it */
-
    cl->socket = socket;
    efl_io_closer_close_on_exec_set(socket, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(socket, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(socket, EINA_TRUE);
    efl_event_callback_array_del(tcp_socket, _ecore_con_client_socket_cbs(), cl);
    efl_event_callback_array_add(socket, _ecore_con_client_socket_cbs(), cl);
    efl_event_callback_array_add(inner_socket, _ecore_con_client_socket_ssl_cbs(), cl);
@@ -1626,7 +1624,6 @@ _ecore_con_server_server_ssl_job(void *data, const Eina_Value v,
    efl_parent_set(inner_server, server);
 
    efl_unref(ssl_ctx); /* inner_server keeps it */
-   efl_unref(inner_server); /* server keeps it */
 
    if (!_ecore_con_server_server_set(svr, server))
      goto error_serve;
@@ -1852,7 +1849,7 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
 
    svr->dialer = dialer;
    efl_io_closer_close_on_exec_set(dialer, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(dialer, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(dialer, EINA_TRUE);
    efl_io_buffered_stream_timeout_inactivity_set(dialer, svr->timeout);
    efl_event_callback_array_add(dialer, _ecore_con_server_dialer_cbs(), svr);
 
@@ -1993,7 +1990,6 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    efl_parent_set(inner_dialer, dialer);
 
    efl_unref(ssl_ctx); /* inner_dialer keeps it */
-   efl_unref(inner_dialer); /* dialer keeps it */
 
    if (!_ecore_con_server_dialer_set(svr, dialer))
      goto error_dial;
@@ -2092,11 +2088,10 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    efl_parent_set(inner_dialer, dialer);
 
    efl_unref(ssl_ctx); /* inner_dialer keeps it */
-   efl_unref(inner_dialer); /* dialer keeps it */
 
    svr->dialer = dialer;
    efl_io_closer_close_on_exec_set(dialer, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(dialer, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(dialer, EINA_TRUE);
    efl_event_callback_array_del(tcp_dialer, _ecore_con_server_dialer_cbs(), svr);
    efl_event_callback_array_add(dialer, _ecore_con_server_dialer_cbs(), svr);
 

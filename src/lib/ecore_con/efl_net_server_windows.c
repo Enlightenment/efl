@@ -231,7 +231,7 @@ _efl_net_server_windows_client_new(Eo *o, Efl_Net_Server_Windows_Data *pd)
      }
 
    pd->next_client = efl_add(EFL_NET_SOCKET_WINDOWS_CLASS, o,
-                             efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE));
+                             efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE));
    if (!pd->next_client)
      {
         err = ENOMEM;

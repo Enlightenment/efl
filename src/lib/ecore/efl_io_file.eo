@@ -2,7 +2,7 @@ class Efl.Io.File (Efl.Loop_Fd, Efl.File, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Ef
     [[File access (open, close, read, write, lseek, ftruncate)
 
       @Efl.Io.Closer.close_on_exec and
-      @Efl.Io.Closer.close_on_destructor are respected and default to
+      @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true. @Efl.Io.Closer.close_on_exec.set sets flag O_CLOEXEC.
 
       @since 1.19

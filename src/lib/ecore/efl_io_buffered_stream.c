@@ -227,15 +227,15 @@ _efl_io_buffered_stream_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_I
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffered_stream_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd)
+_efl_io_buffered_stream_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd)
 {
-   return efl_io_closer_close_on_destructor_get(pd->inner_io);
+   return efl_io_closer_close_on_invalidate_get(pd->inner_io);
 }
 
 EOLIAN static void
-_efl_io_buffered_stream_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, Eina_Bool value)
+_efl_io_buffered_stream_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, Eina_Bool value)
 {
-   efl_io_closer_close_on_destructor_set(pd->inner_io, value);
+   efl_io_closer_close_on_invalidate_set(pd->inner_io, value);
 }
 
 EOLIAN static Eina_Error
@@ -369,7 +369,7 @@ _efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Io_Buffered_Stream_Data *pd, Efl
                                efl_io_copier_buffer_limit_set(efl_added, 4096),
                                efl_io_copier_source_set(efl_added, io),
                                efl_io_copier_destination_set(efl_added, pd->incoming),
-                               efl_io_closer_close_on_destructor_set(efl_added, efl_io_closer_close_on_destructor_get(io)),
+                               efl_io_closer_close_on_invalidate_set(efl_added, efl_io_closer_close_on_invalidate_get(io)),
                                efl_event_callback_array_add(efl_added, _efl_io_buffered_stream_receiver_cbs(), o));
         EINA_SAFETY_ON_NULL_RETURN(pd->receiver);
      }
@@ -394,7 +394,7 @@ _efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Io_Buffered_Stream_Data *pd, Efl
                              efl_io_copier_buffer_limit_set(efl_added, 4096),
                              efl_io_copier_source_set(efl_added, pd->outgoing),
                              efl_io_copier_destination_set(efl_added, io),
-                             efl_io_closer_close_on_destructor_set(efl_added, efl_io_closer_close_on_destructor_get(io)),
+                             efl_io_closer_close_on_invalidate_set(efl_added, efl_io_closer_close_on_invalidate_get(io)),
                              efl_event_callback_array_add(efl_added, _efl_io_buffered_stream_sender_cbs(), o));
         EINA_SAFETY_ON_NULL_RETURN(pd->sender);
      }

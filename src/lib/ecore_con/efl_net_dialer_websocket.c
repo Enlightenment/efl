@@ -1374,15 +1374,15 @@ _efl_net_dialer_websocket_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_net_dialer_websocket_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd, Eina_Bool close_on_destructor)
+_efl_net_dialer_websocket_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd, Eina_Bool close_on_invalidate)
 {
-   efl_io_closer_close_on_destructor_set(pd->http, close_on_destructor);
+   efl_io_closer_close_on_invalidate_set(pd->http, close_on_invalidate);
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_websocket_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd)
+_efl_net_dialer_websocket_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd)
 {
-   return efl_io_closer_close_on_destructor_get(pd->http);
+   return efl_io_closer_close_on_invalidate_get(pd->http);
 }
 
 EOLIAN static void

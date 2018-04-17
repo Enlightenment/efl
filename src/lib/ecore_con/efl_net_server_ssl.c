@@ -89,7 +89,7 @@ _efl_net_server_ssl_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Ssl_Data 
 
    client_tcp = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
                         efl_io_closer_close_on_exec_set(efl_added, efl_net_server_fd_close_on_exec_get(o)),
-                        efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                        efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                         efl_loop_fd_set(efl_added, client_fd));
    if (!client_tcp)
      {

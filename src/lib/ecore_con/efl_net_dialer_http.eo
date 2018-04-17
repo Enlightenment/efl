@@ -393,6 +393,7 @@ class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }
@@ -409,7 +410,7 @@ class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Sizer.resize;
         Efl.Io.Sizer.size { get; }
     }

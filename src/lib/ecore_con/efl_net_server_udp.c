@@ -369,7 +369,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
      }
 
    client = efl_add(EFL_NET_SERVER_UDP_CLIENT_CLASS, o,
-                    efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                    efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
 
                     efl_net_socket_address_local_set(efl_added, efl_net_server_address_get(o)),
                     _efl_net_server_udp_client_init(efl_added, fd, (const struct sockaddr *)&addr, addrlen, str),

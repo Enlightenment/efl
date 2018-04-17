@@ -331,6 +331,6 @@ class Efl.Net.Dialer_Websocket (Efl.Loop_Consumer, Efl.Net.Dialer) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
     }
 }

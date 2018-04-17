@@ -230,14 +230,14 @@ ecore_file_download_full(const char *url,
                          efl_file_set(efl_added, dst, NULL),
                          efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT),
                          efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE),
-                         efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                         efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                          efl_io_file_mode_set(efl_added, 0644));
    EINA_SAFETY_ON_NULL_GOTO(job->output, error_output);
 
    job->copier = efl_add(EFL_IO_COPIER_CLASS, loop,
                          efl_io_copier_source_set(efl_added, job->input),
                          efl_io_copier_destination_set(efl_added, job->output),
-                         efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                         efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                          efl_event_callback_array_add(efl_added, ecore_file_download_copier_cbs(), job));
    EINA_SAFETY_ON_NULL_GOTO(job->copier, error_copier);
 

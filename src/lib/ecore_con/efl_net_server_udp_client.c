@@ -42,7 +42,7 @@ typedef struct _Efl_Net_Server_Udp_Client_Data
    struct sockaddr *addr_remote;
    socklen_t addr_remote_len;
    SOCKET fd;
-   Eina_Bool close_on_destructor;
+   Eina_Bool close_on_invalidate;
    Eina_Bool eos;
    Eina_Bool can_read;
    Eina_Bool can_write;
@@ -71,9 +71,9 @@ _efl_net_server_udp_client_cleanup(Efl_Net_Server_Udp_Client_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_server_udp_client_efl_object_destructor(Eo *o, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_object_invalidate(Eo *o, Efl_Net_Server_Udp_Client_Data *pd EINA_UNUSED)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
@@ -81,6 +81,12 @@ _efl_net_server_udp_client_efl_object_destructor(Eo *o, Efl_Net_Server_Udp_Clien
         efl_event_thaw(o);
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_server_udp_client_efl_object_destructor(Eo *o, Efl_Net_Server_Udp_Client_Data *pd)
+{
    efl_destructor(efl_super(o, MY_CLASS));
 
    _efl_net_server_udp_client_cleanup(pd);
@@ -269,15 +275,15 @@ _efl_net_server_udp_client_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl
 }
 
 EOLIAN static void
-_efl_net_server_udp_client_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd, Eina_Bool close_on_destructor)
+_efl_net_server_udp_client_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd, Eina_Bool close_on_invalidate)
 {
-   pd->close_on_destructor = close_on_destructor;
+   pd->close_on_invalidate = close_on_invalidate;
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
-   return pd->close_on_destructor;
+   return pd->close_on_invalidate;
 }
 
 EOLIAN static Eina_Bool

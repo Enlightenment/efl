@@ -57,7 +57,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
       @.source and @.destination if they implement those interfaces.
 
       @Efl.Io.Closer.close_on_exec and
-      @Efl.Io.Closer.close_on_destructor are respected and applied to
+      @Efl.Io.Closer.close_on_invalidate are respected and applied to
       both source and destination. Both default to $true.
 
       @since 1.19
@@ -107,7 +107,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
              If the source object implements @Efl.Io.Closer and it's
              not closed, it will be closed when the copier itself
              is. This may happen, for example, when the copier is
-             deleted and @Efl.Io.Closer.close_on_destructor is $true
+             deleted and @Efl.Io.Closer.close_on_invalidate is $true
              (the default).
 
              Common source classes are @Efl.Io.Buffer (if fixed data
@@ -166,7 +166,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
              If the destination object implements @Efl.Io.Closer and it's
              not closed, it will be closed when the copier itself
              is. This may happen, for example, when the copier is
-             deleted and @Efl.Io.Closer.close_on_destructor is $true
+             deleted and @Efl.Io.Closer.close_on_invalidate is $true
              (the default).
 
              Common destination classes are @Efl.Io.Buffer (better to
@@ -370,11 +370,12 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
 
     implements {
        Efl.Object.constructor;
-       Efl.Object.destructor;
        Efl.Object.finalize;
+       Efl.Object.invalidate;
+       Efl.Object.destructor;
        Efl.Io.Closer.close;
        Efl.Io.Closer.closed { get; }
        Efl.Io.Closer.close_on_exec { get; set; }
-       Efl.Io.Closer.close_on_destructor { get; set; }
+       Efl.Io.Closer.close_on_invalidate { get; set; }
     }
 }

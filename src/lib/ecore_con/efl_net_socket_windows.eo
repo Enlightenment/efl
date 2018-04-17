@@ -14,7 +14,7 @@ class Efl.Net.Socket_Windows (Efl.Loop_Consumer, Efl.Net.Socket) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { get; set; }
         Efl.Io.Reader.eos { get; set; }

@@ -445,9 +445,9 @@ _efl_net_socket_ssl_efl_object_constructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_object_invalidate(Eo *o, Efl_Net_Socket_Ssl_Data *pd EINA_UNUSED)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
@@ -455,6 +455,12 @@ _efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
         efl_event_thaw(o);
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
+{
    efl_destructor(efl_super(o, MY_CLASS));
 
    pd->torndown = EINA_TRUE;
@@ -617,15 +623,15 @@ _efl_net_socket_ssl_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl
 }
 
 EOLIAN static void
-_efl_net_socket_ssl_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Eina_Bool close_on_destructor)
+_efl_net_socket_ssl_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Eina_Bool close_on_invalidate)
 {
-   if (pd->sock) efl_io_closer_close_on_destructor_set(pd->sock, close_on_destructor);
+   if (pd->sock) efl_io_closer_close_on_invalidate_set(pd->sock, close_on_invalidate);
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
-   return pd->sock && efl_io_closer_close_on_destructor_get(pd->sock);
+   return pd->sock && efl_io_closer_close_on_invalidate_get(pd->sock);
 }
 
 EOLIAN static const char *

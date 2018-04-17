@@ -112,7 +112,7 @@ _efl_io_file_efl_object_constructor(Eo *o, Efl_Io_File_Data *pd)
    o = efl_constructor(efl_super(o, MY_CLASS));
 
    efl_io_closer_close_on_exec_set(o, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(o, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(o, EINA_TRUE);
    efl_io_positioner_fd_set(o, -1);
    efl_io_sizer_fd_set(o, -1);
    efl_io_reader_fd_set(o, -1);
@@ -125,7 +125,7 @@ _efl_io_file_efl_object_constructor(Eo *o, Efl_Io_File_Data *pd)
 EOLIAN static void
 _efl_io_file_efl_object_destructor(Eo *o, Efl_Io_File_Data *pd)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);

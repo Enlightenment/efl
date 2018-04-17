@@ -922,7 +922,7 @@ ecore_con_url_post(Ecore_Con_Url *url_con,
 
    buffer = efl_add(EFL_IO_BUFFER_CLASS, efl_loop_get(url_con->dialer),
                     efl_name_set(efl_added, "post-buffer"),
-                    efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                    efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                     efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE));
    EINA_SAFETY_ON_NULL_GOTO(buffer, error_buffer);
 
@@ -938,7 +938,7 @@ ecore_con_url_post(Ecore_Con_Url *url_con,
                     efl_name_set(efl_added, "send-copier"),
                     efl_io_copier_source_set(efl_added, buffer),
                     efl_io_copier_destination_set(efl_added, url_con->dialer),
-                    efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                    efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                     efl_event_callback_array_add(efl_added, _ecore_con_url_copier_cbs(), url_con));
    EINA_SAFETY_ON_NULL_GOTO(copier, error_copier);
 
@@ -1179,7 +1179,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
                   efl_name_set(efl_added, "upload-file"),
                   efl_file_set(efl_added, filename, NULL),
                   efl_io_file_flags_set(efl_added, O_RDONLY),
-                  efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                  efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                   efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE));
    EINA_SAFETY_ON_NULL_GOTO(file, error_file);
 
@@ -1187,7 +1187,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
                     efl_name_set(efl_added, "send-copier"),
                     efl_io_copier_source_set(efl_added, file),
                     efl_io_copier_destination_set(efl_added, url_con->dialer),
-                    efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                    efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                     efl_event_callback_array_add(efl_added, _ecore_con_url_copier_cbs(), url_con));
    EINA_SAFETY_ON_NULL_GOTO(copier, error_copier);
 

@@ -24,6 +24,7 @@ class Efl.Net.Dialer_Tcp (Efl.Net.Socket_Tcp, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }

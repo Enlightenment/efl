@@ -745,21 +745,21 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
         goto error_dialer;
      }
 
-   efl_io_closer_close_on_destructor_set(svr->dialer.dialer, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(svr->dialer.dialer, EINA_TRUE);
    efl_event_callback_array_add(svr->dialer.dialer, _ecore_ipc_dialer_cbs(), svr);
 
    svr->dialer.input = efl_add(EFL_IO_QUEUE_CLASS, loop);
    EINA_SAFETY_ON_NULL_GOTO(svr->dialer.input, error);
 
    svr->dialer.send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, svr->dialer.input),
                                      efl_io_copier_destination_set(efl_added, svr->dialer.dialer),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_dialer_copier_cbs(), svr));
    EINA_SAFETY_ON_NULL_GOTO(svr->dialer.send_copier, error);
 
    svr->dialer.recv_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, svr->dialer.dialer),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_dialer_copier_cbs(), svr),
                                      efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_DATA, _ecore_ipc_dialer_copier_data, svr));
@@ -1343,14 +1343,14 @@ _ecore_ipc_server_client_add(void *data, const Efl_Event *event)
    EINA_SAFETY_ON_NULL_GOTO(cl->socket.input, error);
 
    cl->socket.send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, cl->socket.input),
                                      efl_io_copier_destination_set(efl_added, cl->socket.socket),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_client_socket_copier_cbs(), cl));
    EINA_SAFETY_ON_NULL_GOTO(cl->socket.send_copier, error);
 
    cl->socket.recv_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, cl->socket.socket),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_client_socket_copier_cbs(), cl),
                                      efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_DATA, _ecore_ipc_client_socket_copier_data, cl));
