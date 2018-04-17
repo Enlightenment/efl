@@ -200,7 +200,7 @@ _efl_net_dialer_tcp_efl_net_dialer_address_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
 }
 
 EOLIAN static const char *
-_efl_net_dialer_tcp_efl_net_dialer_address_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
+_efl_net_dialer_tcp_efl_net_dialer_address_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
 {
    return pd->address_dial;
 }
@@ -212,7 +212,7 @@ _efl_net_dialer_tcp_efl_net_dialer_proxy_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_T
 }
 
 EOLIAN static const char *
-_efl_net_dialer_tcp_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
+_efl_net_dialer_tcp_efl_net_dialer_proxy_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
 {
    return pd->proxy;
 }
@@ -226,7 +226,7 @@ _efl_net_dialer_tcp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
 }
 
 EOLIAN static double
-_efl_net_dialer_tcp_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
+_efl_net_dialer_tcp_efl_net_dialer_timeout_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
 {
    return pd->timeout_dial;
 }
@@ -241,7 +241,7 @@ _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_tcp_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
+_efl_net_dialer_tcp_efl_net_dialer_connected_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Tcp_Data *pd)
 {
    return pd->connected;
 }

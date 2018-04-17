@@ -48,7 +48,7 @@ _efl_canvas_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_scale_scale_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_scale_scale_get(const Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Scale_Data *pd,
                                double *from_scale_x,
                                double *from_scale_y,
@@ -109,7 +109,7 @@ _efl_canvas_animation_scale_scale_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_scale_scale_absolute_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_scale_scale_absolute_get(const Eo *eo_obj EINA_UNUSED,
                                         Efl_Canvas_Animation_Scale_Data *pd,
                                         double *from_scale_x,
                                         double *from_scale_y,

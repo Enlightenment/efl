@@ -412,7 +412,7 @@ emotion_object_file_get(const Evas_Object *obj)
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, const char **file, const char **key)
+_efl_canvas_video_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, const char **file, const char **key)
 {
    if (file) *file = sd->file;
    if (key) *key = NULL;
@@ -648,7 +648,7 @@ emotion_object_play_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_play_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return sd->play;
@@ -686,7 +686,7 @@ emotion_object_position_get(const Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_pos_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_pos_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    sd->pos = emotion_engine_instance_pos_get(sd->engine_instance);
@@ -746,7 +746,7 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_video_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_image_load_load_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    // FIXME: Shouldn't this be efl_gfx_view_size instead?
    return EINA_SIZE2D(sd->video.w, sd->video.h);
@@ -771,7 +771,7 @@ emotion_object_smooth_scale_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    return evas_object_image_smooth_scale_get(sd->obj);
 }
@@ -783,7 +783,7 @@ emotion_object_ratio_get(const Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_image_ratio_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_image_ratio_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    return sd->ratio;
@@ -823,7 +823,7 @@ emotion_object_audio_volume_get(const Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_volume_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_volume_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
@@ -850,7 +850,7 @@ emotion_object_audio_mute_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_mute_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_mute_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);
@@ -1140,13 +1140,13 @@ emotion_object_progress_status_get(const Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_progress_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_progress_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    return sd->progress.stat;
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_length_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_length_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    sd->len = emotion_engine_instance_len_get(sd->engine_instance);
@@ -1154,7 +1154,7 @@ _efl_canvas_video_efl_player_length_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_seekable_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_seekable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_seekable(sd->engine_instance);

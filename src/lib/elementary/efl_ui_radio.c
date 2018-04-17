@@ -250,7 +250,7 @@ _efl_ui_radio_state_value_set(Eo *obj, Efl_Ui_Radio_Data *sd, int value)
 }
 
 EOLIAN static int
-_efl_ui_radio_state_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_state_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->value;
 }
@@ -265,7 +265,7 @@ _efl_ui_radio_efl_ui_nstate_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd
 }
 
 EOLIAN static int
-_efl_ui_radio_efl_ui_nstate_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_efl_ui_nstate_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->group->value;
 }
@@ -286,7 +286,7 @@ _efl_ui_radio_value_pointer_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int 
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_radio_selected_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_selected_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -313,7 +313,7 @@ _efl_ui_radio_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Radio_Data *_pd E
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_radio_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -323,7 +323,7 @@ _efl_ui_radio_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN Efl_Access_State_Set
-_efl_ui_radio_efl_access_state_set_get(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_efl_access_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
 

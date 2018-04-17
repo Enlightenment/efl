@@ -4962,7 +4962,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
 }
 
 EOLIAN static Eina_Value *
-_efl_config_global_efl_config_config_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+_efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
                                          const char *name)
 {
    Eina_Value *val = NULL;
@@ -5099,7 +5099,7 @@ _efl_config_global_profile_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const
 }
 
 EOLIAN static const char *
-_efl_config_global_profile_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_efl_config_global_profile_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    return elm_config_profile_get();
 }

@@ -166,7 +166,7 @@ _efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Format_Data *sd, const char *te
 }
 
 EOLIAN static const char *
-_efl_ui_format_format_string_get(Eo *obj EINA_UNUSED, Efl_Ui_Format_Data *sd)
+_efl_ui_format_format_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Format_Data *sd)
 {
    return sd->template;
 }

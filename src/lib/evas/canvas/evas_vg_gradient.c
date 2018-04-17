@@ -27,7 +27,7 @@ _efl_canvas_vg_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_canvas_vg_gradient_efl_gfx_gradient_stop_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_efl_gfx_gradient_stop_get(const Eo *obj EINA_UNUSED,
                                                 Efl_Canvas_VG_Gradient_Data *pd,
                                                 const Efl_Gfx_Gradient_Stop **colors,
                                                 unsigned int *length)
@@ -47,7 +47,7 @@ _efl_canvas_vg_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Gfx_Gradient_Spread
-_efl_canvas_vg_gradient_efl_gfx_gradient_spread_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_efl_gfx_gradient_spread_get(const Eo *obj EINA_UNUSED,
                                                   Efl_Canvas_VG_Gradient_Data *pd)
 {
    return pd->s;

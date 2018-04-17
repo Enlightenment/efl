@@ -3,13 +3,13 @@
 #define MY_CLASS EFL_CANVAS_GESTURE_CLASS
 
 EOLIAN static const Efl_Event_Description *
- _efl_canvas_gesture_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
+ _efl_canvas_gesture_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
 {
    return pd->type;
 }
 
 EOLIAN static Efl_Canvas_Gesture_State
-_efl_canvas_gesture_state_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
+_efl_canvas_gesture_state_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
 {
    return pd->state;
 }
@@ -28,7 +28,7 @@ _efl_canvas_gesture_hotspot_set(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd
 
 
 EOLIAN static Eina_Vector2
-_efl_canvas_gesture_hotspot_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
+_efl_canvas_gesture_hotspot_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
 {
    return pd->hotspot;
 }

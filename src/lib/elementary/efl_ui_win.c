@@ -2384,7 +2384,7 @@ _efl_ui_win_efl_gfx_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_win_efl_canvas_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_canvas_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Position2D pos;
    evas_pointer_canvas_xy_get(sd->evas, &pos.x, &pos.y);
@@ -2392,7 +2392,7 @@ _efl_ui_win_efl_canvas_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_canvas_pointer_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *dev)
+_efl_ui_win_efl_canvas_pointer_pointer_inside_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *dev)
 {
    return efl_canvas_pointer_inside_get(sd->evas, dev);
 }
@@ -2496,7 +2496,7 @@ _efl_ui_win_efl_canvas_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_canvas_image_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D *max)
+_efl_ui_win_efl_canvas_image_max_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D *max)
 {
    return efl_canvas_image_max_size_get(sd->evas, max);
 }
@@ -2536,13 +2536,13 @@ _efl_ui_win_efl_canvas_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_ui_win_efl_canvas_device_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *name)
+_efl_ui_win_efl_canvas_device_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *name)
 {
    return efl_canvas_device_get(sd->evas, name);
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_ui_win_efl_canvas_seat_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int id)
+_efl_ui_win_efl_canvas_seat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int id)
 {
    return efl_canvas_seat_get(sd->evas, id);
 }
@@ -5551,7 +5551,7 @@ _efl_ui_win_efl_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const ch
 }
 
 EOLIAN static const char*
-_efl_ui_win_efl_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->title;
 }
@@ -5568,7 +5568,7 @@ _efl_ui_win_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Type type)
 }
 
 EOLIAN static Efl_Ui_Win_Type
-_efl_ui_win_win_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_win_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->type;
 }
@@ -5585,7 +5585,7 @@ _efl_ui_win_win_name_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *name)
 }
 
 EOLIAN static const char *
-_efl_ui_win_win_name_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_win_name_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->name;
 }
@@ -5602,7 +5602,7 @@ _efl_ui_win_accel_preference_set(Eo *obj, Efl_Ui_Win_Data *pd, const char *accel
 }
 
 EOLIAN static const char *
-_efl_ui_win_accel_preference_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+_efl_ui_win_accel_preference_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
    return pd->accel_pref;
 }
@@ -5617,7 +5617,7 @@ _efl_ui_win_noblank_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Eina_Bool nobl
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_noblank_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+_efl_ui_win_noblank_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
    return pd->noblank;
 }
@@ -5633,7 +5633,7 @@ _efl_ui_win_win_role_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *r
 }
 
 EOLIAN static const char*
-_efl_ui_win_win_role_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_win_role_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->role;
 }
@@ -5670,7 +5670,7 @@ _efl_ui_win_icon_object_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *icon)
 }
 
 EOLIAN static const Evas_Object*
-_efl_ui_win_icon_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_icon_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->icon;
 }
@@ -5698,7 +5698,7 @@ _efl_ui_win_autohide_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool aut
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_autohide_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_autohide_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->autohide;
 }
@@ -5844,7 +5844,7 @@ _efl_ui_win_borderless_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_borderless_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_borderless_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    if (!sd->csd.need)
      return ecore_evas_borderless_get(sd->ee);
@@ -5860,7 +5860,7 @@ _efl_ui_win_alpha_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool enabled)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_alpha_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_alpha_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    if (sd->img_obj)
      {
@@ -5900,7 +5900,7 @@ _efl_ui_win_fullscreen_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool f
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_fullscreen_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_fullscreen_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    const char *engine_name = ecore_evas_engine_name_get(sd->ee);
 
@@ -5999,7 +5999,7 @@ _efl_ui_win_maximized_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool ma
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_maximized_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_maximized_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->maximized;
 }
@@ -6015,7 +6015,7 @@ _efl_ui_win_iconified_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool ic
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_iconified_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_iconified_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->iconified;
 }
@@ -6068,7 +6068,7 @@ _efl_ui_win_wm_available_profiles_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, 
 }
 
 EOLIAN static const Eina_Array *
-_efl_ui_win_wm_available_profiles_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_wm_available_profiles_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    if (ecore_evas_window_profile_supported_get(sd->ee))
      {
@@ -6117,7 +6117,7 @@ _efl_ui_win_urgent_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Urge
 }
 
 EOLIAN static Efl_Ui_Win_Urgent_Mode
-_efl_ui_win_urgent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_urgent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    if (sd->urgent) return EFL_UI_WIN_URGENT_URGENT;
    return EFL_UI_WIN_URGENT_NONE;
@@ -6143,7 +6143,7 @@ _efl_ui_win_modal_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Modal_Mode modal)
 }
 
 EOLIAN static Efl_Ui_Win_Modal_Mode
-_efl_ui_win_modal_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_modal_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    if (sd->modal) return EFL_UI_WIN_MODAL_MODAL;
    return EFL_UI_WIN_MODAL_NONE;
@@ -6201,7 +6201,7 @@ _efl_ui_win_efl_gfx_size_hint_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_win_efl_gfx_size_hint_hint_base_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_gfx_size_hint_hint_base_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return EINA_SIZE2D(sd->size_base_w, sd->size_base_h);
 }
@@ -6235,7 +6235,7 @@ _efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Si
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_win_efl_gfx_size_hint_hint_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_gfx_size_hint_hint_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return EINA_SIZE2D(sd->size_step_w, sd->size_step_h);
 }
@@ -6359,7 +6359,7 @@ _efl_ui_win_wm_available_rotations_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_wm_available_rotations_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
+_efl_ui_win_wm_available_rotations_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
                                        Eina_Bool *allow_0, Eina_Bool *allow_90,
                                        Eina_Bool *allow_180, Eina_Bool *allow_270)
 {
@@ -6449,7 +6449,7 @@ _efl_ui_win_sticky_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool stick
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_sticky_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_sticky_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->sticky;
 }
@@ -6470,7 +6470,7 @@ _efl_ui_win_keyboard_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Elm_Win_
 }
 
 EOLIAN static Elm_Win_Keyboard_Mode
-_efl_ui_win_keyboard_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_keyboard_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->kbdmode;
 }
@@ -6503,14 +6503,14 @@ _efl_ui_win_indicator_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_
 }
 
 EOLIAN static Efl_Ui_Win_Indicator_Mode
-_efl_ui_win_indicator_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_indicator_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    sd->legacy.forbidden = EINA_TRUE;
    return sd->indimode;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_focus_object_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_ui_focus_object_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    // Bypass widget implementation here.
    return ecore_evas_focus_get(sd->ee);
@@ -6523,13 +6523,13 @@ _efl_ui_win_screen_constrain_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_screen_constrain_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_screen_constrain_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->constrain;
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_win_efl_screen_screen_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_screen_screen_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Size2D sz;
    ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, &sz.w, &sz.h);
@@ -6537,13 +6537,13 @@ _efl_ui_win_efl_screen_screen_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_screen_screen_dpi_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *xdpi, int *ydpi)
+_efl_ui_win_efl_screen_screen_dpi_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *xdpi, int *ydpi)
 {
    ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
 }
 
 EOLIAN static int
-_efl_ui_win_efl_screen_screen_rotation_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_screen_screen_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    //TODO: query to wm about device's rotation
    (void)sd;
@@ -6631,7 +6631,7 @@ _efl_ui_win_efl_ui_widget_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_focus_highlight_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_ui_widget_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.enabled;
@@ -6695,7 +6695,7 @@ _efl_ui_win_efl_ui_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_
 }
 
 EOLIAN static const char*
-_efl_ui_win_efl_ui_widget_focus_highlight_style_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_ui_widget_focus_highlight_style_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.style;
@@ -6715,14 +6715,14 @@ _efl_ui_win_efl_ui_widget_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_focus_highlight_animate_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_ui_widget_focus_highlight_animate_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.animate;
 }
 
 EOLIAN static const char *
-_efl_ui_win_stack_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_stack_id_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->stack_id;
 }
@@ -6746,7 +6746,7 @@ _efl_ui_win_stack_master_id_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const 
 }
 
 EOLIAN static const char *
-_efl_ui_win_stack_master_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_stack_master_id_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->stack_master_id;
 }
@@ -6765,7 +6765,7 @@ _efl_ui_win_stack_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool b
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_stack_base_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_stack_base_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->stack_base;
 }
@@ -6994,7 +6994,7 @@ _efl_ui_win_efl_object_debug_name_override(Eo *obj, Efl_Ui_Win_Data *pd, Eina_St
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_efl_ui_win_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,previous", "move", "previous", _key_action_move},
@@ -7009,7 +7009,7 @@ _efl_ui_win_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_win_efl_access_state_set_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_state_set_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    ret = efl_access_state_set_get(efl_super(obj, MY_CLASS));
@@ -7021,7 +7021,7 @@ _efl_ui_win_efl_access_state_set_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_efl_ui_win_efl_access_i18n_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_i18n_name_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    const char *ret;
    ret = efl_access_i18n_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
@@ -7031,7 +7031,7 @@ _efl_ui_win_efl_access_i18n_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_win_efl_access_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords)
+_efl_ui_win_efl_access_component_extents_get(const Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
    Eina_Rect r;
    int ee_x, ee_y;
@@ -7052,7 +7052,7 @@ _efl_ui_win_efl_access_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+_efl_ui_win_efl_input_state_modifier_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
                                                  Efl_Input_Modifier mod, const Efl_Input_Device *seat)
 {
    const Evas_Modifier *m = evas_key_modifier_get(pd->evas);
@@ -7061,7 +7061,7 @@ _efl_ui_win_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+_efl_ui_win_efl_input_state_lock_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
                                              Efl_Input_Lock lock, const Efl_Input_Device *seat)
 {
    const Evas_Lock *m = evas_key_lock_get(pd->evas);
@@ -7339,7 +7339,7 @@ _efl_ui_win_part_efl_gfx_color_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, 
 }
 
 static void
-_efl_ui_win_part_efl_gfx_color_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+_efl_ui_win_part_efl_gfx_color_color_get(const Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
@@ -7355,7 +7355,7 @@ _efl_ui_win_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *f
 }
 
 static void
-_efl_ui_win_part_efl_file_file_get(Eo *obj, void *_pd EINA_UNUSED, const char **file, const char **key)
+_efl_ui_win_part_efl_file_file_get(const Eo *obj, void *_pd EINA_UNUSED, const char **file, const char **key)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);

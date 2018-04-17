@@ -67,13 +67,13 @@ _efl_ui_view_list_pan_efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Vi
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_view_list_pan_efl_ui_pan_pan_position_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
    return psd->gmt.pos;
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_view_list_pan_efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
    EFL_UI_VIEW_LIST_DATA_GET(psd->wobj, pd);
    Eina_Rect vgmt = {};
@@ -91,13 +91,13 @@ _efl_ui_view_list_pan_efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_view_list_pan_efl_ui_pan_pan_position_min_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd EINA_UNUSED)
+_efl_ui_view_list_pan_efl_ui_pan_pan_position_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd EINA_UNUSED)
 {
    return EINA_POSITION2D(0, 0);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_view_list_pan_efl_ui_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
+_efl_ui_view_list_pan_efl_ui_pan_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Pan_Data *psd)
 {
    Eina_Size2D min = {};
    min = efl_ui_view_list_model_min_size_get(psd->wobj);
@@ -120,21 +120,21 @@ _efl_ui_view_list_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EINA_UNU
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_view_list_efl_ui_scrollable_interactive_content_pos_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
+_efl_ui_view_list_efl_ui_scrollable_interactive_content_pos_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
 {
    Eina_Position2D pos = efl_ui_scrollable_content_pos_get(psd->scrl_mgr);
    return pos;
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_view_list_efl_ui_scrollable_interactive_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
+_efl_ui_view_list_efl_ui_scrollable_interactive_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
 {
    Eina_Size2D size = efl_ui_scrollable_content_size_get(psd->scrl_mgr);
    return size;
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_view_list_efl_ui_scrollable_interactive_viewport_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
+_efl_ui_view_list_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *psd)
 {
    Eina_Rect gmt = efl_ui_scrollable_viewport_geometry_get(psd->scrl_mgr);
    return gmt;
@@ -231,7 +231,7 @@ _efl_ui_view_list_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd
 }
 
 EOLIAN static Elm_Object_Select_Mode
-_efl_ui_view_list_select_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_select_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->select_mode;
 }
@@ -243,7 +243,7 @@ _efl_ui_view_list_default_style_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *
 }
 
 EOLIAN static Eina_Stringshare *
-_efl_ui_view_list_default_style_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_default_style_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->style;
 }
@@ -255,7 +255,7 @@ _efl_ui_view_list_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_view_list_homogeneous_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_homogeneous_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->homogeneous;
 }
@@ -805,19 +805,19 @@ _efl_ui_view_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Da
 }
 
 EOLIAN static Efl_Model *
-_efl_ui_view_list_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->model;
 }
 
 EOLIAN int
-_efl_ui_view_list_efl_access_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_efl_access_selection_selected_children_count_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return eina_list_count(pd->selected_items);
 }
 
 EOLIAN Eo*
-_efl_ui_view_list_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, int child_index)
+_efl_ui_view_list_efl_access_selection_selected_child_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd, int child_index)
 {
    if(child_index <  (int) eina_list_count(pd->selected_items))
      {
@@ -916,7 +916,7 @@ _efl_ui_view_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EI
 }
 
 static Efl_Ui_View_List_Relayout *
-_efl_ui_view_list_relayout_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED)
+_efl_ui_view_list_relayout_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED)
 {
    return pd->relayout;
 }
@@ -945,7 +945,7 @@ _children_slice_then(void * data, Efl_Event const* event)
 
 /* EFL UI LIST MODEL INTERFACE */
 EOLIAN static Eina_Size2D
-_efl_ui_view_list_efl_ui_view_list_model_min_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_efl_ui_view_list_model_min_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
    return pd->min;
 }
@@ -970,7 +970,7 @@ _efl_ui_view_list_efl_ui_focus_composition_prepare(Eo *obj, Efl_Ui_View_List_Dat
 }
 
 EOLIAN Eina_List*
-_efl_ui_view_list_efl_access_access_children_get(Eo *obj, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_efl_access_access_children_get(const Eo *obj, Efl_Ui_View_List_Data *pd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
 
@@ -1051,7 +1051,7 @@ _efl_ui_view_list_efl_ui_view_list_model_load_range_set(Eo* obj EINA_UNUSED, Efl
 }
 
 EOLIAN static int
-_efl_ui_view_list_efl_ui_view_list_model_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
+_efl_ui_view_list_efl_ui_view_list_model_model_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd)
 {
     return pd->item_count;
 }

@@ -56,7 +56,7 @@ _efl_canvas_gesture_touch_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Touc
 }
 
 EOLIAN static Efl_Canvas_Gesture_Touch_State
-_efl_canvas_gesture_touch_state_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_state_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    return pd->state;
 }
@@ -122,13 +122,13 @@ bad_fingers:
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_gesture_touch_multi_touch_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_multi_touch_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    return pd->multi_touch;
 }
 
 EOLIAN static Eina_Vector2
-_efl_canvas_gesture_touch_start_point_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+_efl_canvas_gesture_touch_start_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    int tool = 0;
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);

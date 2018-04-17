@@ -761,7 +761,7 @@ _elm_hover_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Obj
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_target_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
+_elm_hover_target_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
    return sd->target;
 }
@@ -774,7 +774,7 @@ elm_hover_parent_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_efl_ui_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
+_elm_hover_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
    return sd->parent;
 }
@@ -843,7 +843,7 @@ _action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_hover_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
+_elm_hover_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "dismiss", NULL, NULL, _action_dismiss},
@@ -853,7 +853,7 @@ _elm_hover_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hov
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_hover_efl_access_state_set_get(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
+_elm_hover_efl_access_state_set_get(const Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set states;
    states = efl_access_state_set_get(efl_super(obj, MY_CLASS));

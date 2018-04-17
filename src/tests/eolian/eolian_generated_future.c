@@ -16,12 +16,12 @@ static void _generated_future_method_progress_type(Eo *obj EINA_UNUSED, Generate
 {
 }
 
-static Efl_Future * _generated_future_prop1_get(Eo *obj EINA_UNUSED, Generated_Future_Data *pd EINA_UNUSED)
+static Efl_Future * _generated_future_prop1_get(const Eo *obj EINA_UNUSED, Generated_Future_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
-static void _generated_future_prop2_get(Eo *obj EINA_UNUSED, Generated_Future_Data *pd EINA_UNUSED, int *i EINA_UNUSED,
+static void _generated_future_prop2_get(const Eo *obj EINA_UNUSED, Generated_Future_Data *pd EINA_UNUSED, int *i EINA_UNUSED,
                                          Efl_Future **future1 EINA_UNUSED)
 {
 }

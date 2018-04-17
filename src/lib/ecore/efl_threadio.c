@@ -26,7 +26,7 @@ _efl_threadio_indata_set(Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd, void *data)
 }
 
 EOLIAN static void *
-_efl_threadio_indata_get(Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd)
+_efl_threadio_indata_get(const Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd)
 {
    return pd->indata;
 }
@@ -38,7 +38,7 @@ _efl_threadio_outdata_set(Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd, void *data
 }
 
 EOLIAN static void *
-_efl_threadio_outdata_get(Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd)
+_efl_threadio_outdata_get(const Eo *obj EINA_UNUSED, Efl_ThreadIO_Data *pd)
 {
    return pd->outdata;
 }

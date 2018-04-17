@@ -23,7 +23,7 @@ _efl_input_event_processed_set(Eo *obj, void *pd EINA_UNUSED, Eina_Bool val)
 }
 
 EOLIAN static Eina_Bool
-_efl_input_event_processed_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_input_event_processed_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return !!(efl_input_event_flags_get(obj) & EFL_INPUT_FLAGS_PROCESSED);
 }
@@ -38,13 +38,13 @@ _efl_input_event_scrolling_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Eina_B
 }
 
 EOLIAN static Eina_Bool
-_efl_input_event_scrolling_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_input_event_scrolling_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return !!(efl_input_event_flags_get(obj) & EFL_INPUT_FLAGS_SCROLLING);
 }
 
 EOLIAN static Eina_Bool
-_efl_input_event_fake_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_input_event_fake_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }

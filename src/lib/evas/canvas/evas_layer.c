@@ -268,7 +268,7 @@ evas_object_layer_get(const Evas_Object *obj)
 }
 
 EOLIAN short
-_efl_canvas_object_efl_gfx_stack_layer_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_stack_layer_get(const Eo *eo_obj EINA_UNUSED,
                                      Evas_Object_Protected_Data *obj)
 {
    if (obj->smart.parent)

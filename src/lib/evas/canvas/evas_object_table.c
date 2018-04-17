@@ -1019,7 +1019,7 @@ _evas_table_homogeneous_set(Eo *o, Evas_Table_Data *priv, Evas_Object_Table_Homo
 }
 
 EOLIAN static Evas_Object_Table_Homogeneous_Mode
-_evas_table_homogeneous_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_homogeneous_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    return priv->homogeneous;
 }
@@ -1036,7 +1036,7 @@ _evas_table_align_set(Eo *o, Evas_Table_Data *priv, double horizontal, double ve
 }
 
 EOLIAN static void
-_evas_table_align_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, double *horizontal, double *vertical)
+_evas_table_align_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, double *horizontal, double *vertical)
 {
    if (priv)
      {
@@ -1062,7 +1062,7 @@ _evas_table_padding_set(Eo *o, Evas_Table_Data *priv, Evas_Coord horizontal, Eva
 }
 
 EOLIAN static void
-_evas_table_padding_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
+_evas_table_padding_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    if (priv)
      {
@@ -1323,7 +1323,7 @@ _evas_table_clear(Eo *o, Evas_Table_Data *priv, Eina_Bool clear)
 }
 
 EOLIAN static void
-_evas_table_col_row_size_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, int *cols, int *rows)
+_evas_table_col_row_size_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, int *cols, int *rows)
 {
    if (priv)
      {
@@ -1388,7 +1388,7 @@ _evas_table_accessor_new(const Eo *o, Evas_Table_Data *priv)
 }
 
 EOLIAN static Eina_List*
-_evas_table_children_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_children_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    Eina_List *new_list = NULL, *l;
    Evas_Object_Table_Option *opt;
@@ -1406,7 +1406,7 @@ _evas_table_count(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 }
 
 EOLIAN static Evas_Object *
-_evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short col, unsigned short row)
+_evas_table_child_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short col, unsigned short row)
 {
    Eina_List *l;
    Evas_Object_Table_Option *opt;
@@ -1418,7 +1418,7 @@ _evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short c
 }
 
 EOLIAN static Eina_Bool
-_evas_table_efl_ui_base_mirrored_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_efl_ui_base_mirrored_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    return priv->is_mirrored;
 }

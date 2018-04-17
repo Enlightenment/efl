@@ -115,7 +115,7 @@ cont:
 }
 
 EOLIAN static Eina_List*
-_efl_ui_focus_composition_composition_elements_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_composition_elements_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return eina_list_clone(pd->order);
 }
@@ -173,7 +173,7 @@ _efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_C
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_composition_custom_manager_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_custom_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return pd->custom_manager;
 }
@@ -185,7 +185,7 @@ _efl_ui_focus_composition_logical_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Com
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_composition_logical_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_logical_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return pd->logical;
 }
@@ -231,13 +231,13 @@ _efl_ui_focus_composition_adapter_canvas_object_set(Eo *obj, Efl_Ui_Focus_Compos
 }
 
 EOLIAN static Efl_Canvas_Object*
-_efl_ui_focus_composition_adapter_canvas_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+_efl_ui_focus_composition_adapter_canvas_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
 {
    return pd->object;
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
+_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
 {
    return efl_gfx_geometry_get(pd->object);
 }

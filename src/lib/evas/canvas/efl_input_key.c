@@ -116,7 +116,7 @@ _efl_input_key_pressed_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_efl_input_key_pressed_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_pressed_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->pressed;
 }
@@ -128,7 +128,7 @@ _efl_input_key_key_name_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const c
 }
 
 EOLIAN static const char *
-_efl_input_key_key_name_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_key_name_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->keyname;
 }
@@ -140,7 +140,7 @@ _efl_input_key_key_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *
 }
 
 EOLIAN static const char *
-_efl_input_key_key_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_key_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->key;
 }
@@ -152,7 +152,7 @@ _efl_input_key_string_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const cha
 }
 
 EOLIAN static const char *
-_efl_input_key_string_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_string_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->string;
 }
@@ -164,7 +164,7 @@ _efl_input_key_compose_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const ch
 }
 
 EOLIAN static const char *
-_efl_input_key_compose_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_compose_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->compose;
 }
@@ -176,7 +176,7 @@ _efl_input_key_key_code_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, int val
 }
 
 EOLIAN static int
-_efl_input_key_key_code_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_key_code_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->keycode;
 }
@@ -224,7 +224,7 @@ _efl_input_key_efl_input_event_timestamp_set(Eo *obj EINA_UNUSED, Efl_Input_Key_
 }
 
 EOLIAN static double
-_efl_input_key_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_efl_input_event_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->timestamp;
 }
@@ -236,7 +236,7 @@ _efl_input_key_efl_input_event_event_flags_set(Eo *obj EINA_UNUSED, Efl_Input_Ke
 }
 
 EOLIAN static Efl_Input_Flags
-_efl_input_key_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_efl_input_event_event_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->event_flags;
 }
@@ -248,13 +248,13 @@ _efl_input_key_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Dat
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_key_efl_input_event_device_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_efl_input_event_device_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->device;
 }
 
 EOLIAN static Eina_Bool
-_efl_input_key_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd,
+_efl_input_key_efl_input_state_modifier_enabled_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd,
                                                     Efl_Input_Modifier mod, const Efl_Input_Device *seat)
 {
    const char *name;
@@ -271,7 +271,7 @@ _efl_input_key_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Inp
 }
 
 EOLIAN static Eina_Bool
-_efl_input_key_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd,
+_efl_input_key_efl_input_state_lock_enabled_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd,
                                                 Efl_Input_Lock lock, const Efl_Input_Device *seat)
 {
    const char *name;
@@ -288,7 +288,7 @@ _efl_input_key_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_K
 }
 
 EOLIAN static Eina_Bool
-_efl_input_key_efl_input_event_fake_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_efl_input_event_fake_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->fake;
 }

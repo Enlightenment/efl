@@ -407,7 +407,7 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
 }
 
 EOLIAN Evas_Object *
-_efl_canvas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clip_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    EVAS_OBJECT_DATA_ALIVE_CHECK(obj, NULL);
    if (obj->cur->clipper)
@@ -550,7 +550,7 @@ _clipee_iterator_free(Clipee_Iterator *it)
 }
 
 EOLIAN Eina_Iterator *
-_efl_canvas_object_clipees_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clipees_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Clipee_Iterator *it;
 
@@ -565,7 +565,7 @@ _efl_canvas_object_clipees_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    it->iterator.next = FUNC_ITERATOR_NEXT(_clipee_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_clipee_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_clipee_iterator_free);
-   it->object = eo_obj;
+   it->object = (Evas_Object *)eo_obj;
 
    return &it->iterator;
 }
@@ -583,7 +583,7 @@ _efl_canvas_object_no_render_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_D
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_no_render_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_no_render_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->no_render;
 }

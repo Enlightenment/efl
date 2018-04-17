@@ -247,7 +247,7 @@ _efl_loop_timer_interval_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer, do
 }
 
 EOLIAN static double
-_efl_loop_timer_interval_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_interval_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    return timer->in;
 }
@@ -301,7 +301,7 @@ _efl_loop_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 }
 
 EOLIAN static double
-_efl_loop_timer_pending_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_pending_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, ret = 0.0;
 
@@ -349,7 +349,7 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 }
 
 EOLIAN static int
-_efl_loop_timer_efl_object_event_freeze_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_efl_object_event_freeze_count_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    return timer->frozen;
 }

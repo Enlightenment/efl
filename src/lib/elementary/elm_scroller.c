@@ -686,7 +686,7 @@ _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas
 }
 
 static Evas_Object*
-_elm_scroller_content_get(Eo *obj, Elm_Scroller_Data *sd, const char *part)
+_elm_scroller_content_get(const Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default"))
      {
@@ -725,7 +725,7 @@ _elm_scroller_efl_content_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *conten
 }
 
 EOLIAN static Eo *
-_elm_scroller_efl_content_content_get(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_content_content_get(const Eo *obj, Elm_Scroller_Data *sd)
 {
    return _elm_scroller_content_get(obj, sd, "default");
 }
@@ -982,7 +982,7 @@ elm_scroller_single_direction_get(const Evas_Object *obj)
 }
 
 EOLIAN static Elm_Scroller_Single_Direction
-_elm_scroller_elm_interface_scrollable_single_direction_get(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
+_elm_scroller_elm_interface_scrollable_single_direction_get(const Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
    return elm_interface_scrollable_single_direction_get(efl_super(obj, MY_CLASS));
 }
@@ -1344,7 +1344,7 @@ _elm_scroller_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EIN
 
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_scroller_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
+_elm_scroller_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},

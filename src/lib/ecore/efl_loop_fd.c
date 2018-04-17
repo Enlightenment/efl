@@ -89,7 +89,7 @@ _efl_loop_fd_fd_set(Eo *obj, Efl_Loop_Fd_Data *pd, int fd)
 }
 
 static int
-_efl_loop_fd_fd_get(Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
+_efl_loop_fd_fd_get(const Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
 {
    return pd->file ? -1 : pd->fd;
 }
@@ -103,7 +103,7 @@ _efl_loop_fd_fd_file_set(Eo *obj, Efl_Loop_Fd_Data *pd, int fd)
 }
 
 static int
-_efl_loop_fd_fd_file_get(Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
+_efl_loop_fd_fd_file_get(const Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
 {
    return pd->file ? pd->fd : -1;
 }

@@ -2077,7 +2077,7 @@ _elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOLIAN static void
-_elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+_elm_code_widget_font_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
                           const char **name, Evas_Font_Size *size)
 {
    if (name)
@@ -2087,7 +2087,7 @@ _elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOLIAN static unsigned int
-_elm_code_widget_columns_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_columns_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->col_count;
 }
@@ -2104,7 +2104,7 @@ _elm_code_widget_code_set(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code *code)
 }
 
 EOLIAN static Elm_Code *
-_elm_code_widget_code_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_code_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->code;
 }
@@ -2117,7 +2117,7 @@ _elm_code_widget_gravity_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, doub
 }
 
 EOLIAN static void
-_elm_code_widget_gravity_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, double *x, double *y)
+_elm_code_widget_gravity_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, double *x, double *y)
 {
    *x = pd->gravity_x;
    *y = pd->gravity_y;
@@ -2130,7 +2130,7 @@ _elm_code_widget_policy_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_S
 }
 
 EOLIAN static void
-_elm_code_widget_policy_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+_elm_code_widget_policy_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
 {
    elm_scroller_policy_get(pd->scroller, policy_h, policy_v);
 }
@@ -2143,7 +2143,7 @@ _elm_code_widget_tabstop_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsi
 }
 
 EOLIAN static unsigned int
-_elm_code_widget_tabstop_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_tabstop_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->tabstop;
 }
@@ -2156,7 +2156,7 @@ _elm_code_widget_editable_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool edita
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_editable_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_editable_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->editable;
 }
@@ -2168,7 +2168,7 @@ _elm_code_widget_line_numbers_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_line_numbers_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_line_numbers_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->show_line_numbers;
 }
@@ -2181,7 +2181,7 @@ _elm_code_widget_line_width_marker_set(Eo *obj, Elm_Code_Widget_Data *pd, unsign
 }
 
 EOLIAN static unsigned int
-_elm_code_widget_line_width_marker_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_line_width_marker_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->line_width_marker;
 }
@@ -2194,7 +2194,7 @@ _elm_code_widget_show_whitespace_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_show_whitespace_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_show_whitespace_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->show_whitespace;
 }
@@ -2217,9 +2217,9 @@ _elm_code_widget_syntax_enabled_set(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_syntax_enabled_get(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED)
+_elm_code_widget_syntax_enabled_get(const Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED)
 {
-   Elm_Code_Widget *widget = obj;
+   const Elm_Code_Widget *widget = obj;
    Elm_Code *code;
 
    code = elm_code_widget_code_get(widget);
@@ -2234,7 +2234,7 @@ _elm_code_widget_tab_inserts_spaces_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Dat
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_tab_inserts_spaces_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_tab_inserts_spaces_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->tab_inserts_spaces;
 }
@@ -2246,7 +2246,7 @@ _elm_code_widget_cursor_position_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned
 }
 
 EOLIAN static void
-_elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int *row, unsigned int *col)
+_elm_code_widget_cursor_position_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int *row, unsigned int *col)
 {
    *row = pd->cursor_line;
    *col = pd->cursor_col;
@@ -2279,7 +2279,7 @@ _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static int
-_elm_code_widget_alpha_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_alpha_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->alpha;
 }

@@ -25,7 +25,7 @@ _ector_renderer_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_gradient_efl_gfx_gradient_stop_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_efl_gfx_gradient_stop_get(const Eo *obj EINA_UNUSED,
                                                                 Ector_Renderer_Gradient_Data *pd,
                                                                 const Efl_Gfx_Gradient_Stop **colors,
                                                                 unsigned int *length)
@@ -43,7 +43,7 @@ _ector_renderer_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Gfx_Gradient_Spread
-_ector_renderer_gradient_efl_gfx_gradient_spread_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_efl_gfx_gradient_spread_get(const Eo *obj EINA_UNUSED,
                                                                   Ector_Renderer_Gradient_Data *pd)
 {
    return pd->s;

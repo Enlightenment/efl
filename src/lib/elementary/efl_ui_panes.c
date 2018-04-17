@@ -471,7 +471,7 @@ _efl_ui_panes_efl_object_constructor(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static double
-_efl_ui_panes_split_ratio_get(Eo *obj, Efl_Ui_Panes_Data *sd)
+_efl_ui_panes_split_ratio_get(const Eo *obj, Efl_Ui_Panes_Data *sd)
 {
    double w, h;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0.0);
@@ -515,7 +515,7 @@ _efl_ui_panes_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_ui_panes_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
+_efl_ui_panes_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
    return sd->dir;
 }
@@ -543,7 +543,7 @@ _efl_ui_panes_fixed_set(Eo *obj, Efl_Ui_Panes_Data *sd, Eina_Bool fixed)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_panes_fixed_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
+_efl_ui_panes_fixed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
    return sd->fixed;
 }
@@ -586,7 +586,7 @@ _efl_ui_panes_part_hint_min_allow_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_panes_part_hint_min_allow_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_panes_part_hint_min_allow_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Eina_Bool ret = EINA_FALSE;
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
@@ -605,7 +605,7 @@ _efl_ui_panes_part_hint_min_allow_get(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static double
-_efl_ui_panes_part_split_ratio_min_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_panes_part_split_ratio_min_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);

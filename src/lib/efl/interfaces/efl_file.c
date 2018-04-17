@@ -43,7 +43,7 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key
 }
 
 static void
-_efl_file_file_get(Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **file, const char **key)
+_efl_file_file_get(const Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **file, const char **key)
 {
    const Eina_File *f = NULL;
 
@@ -54,7 +54,7 @@ _efl_file_file_get(Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **file, co
 }
 
 static Efl_Image_Load_Error
-_efl_file_load_error_get(Eo *obj EINA_UNUSED, Efl_File_Data *pd)
+_efl_file_load_error_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
 {
    return pd->error;
 }

@@ -227,7 +227,7 @@ _elm_mapbuf_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Obj
 }
 
 static Evas_Object*
-_elm_mapbuf_content_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
+_elm_mapbuf_content_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
    return sd->content;
@@ -253,7 +253,7 @@ _elm_mapbuf_efl_content_content_set(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *c
 }
 
 EOLIAN static Evas_Object*
-_elm_mapbuf_efl_content_content_get(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_efl_content_content_get(const Eo *obj, Elm_Mapbuf_Data *sd)
 {
    return _elm_mapbuf_content_get(obj, sd, NULL);
 }
@@ -345,7 +345,7 @@ _elm_mapbuf_enabled_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool enabled)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_enabled_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_enabled_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->enabled;
 }
@@ -360,7 +360,7 @@ _elm_mapbuf_smooth_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool smooth)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_smooth_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_smooth_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->smooth;
 }
@@ -374,7 +374,7 @@ _elm_mapbuf_alpha_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool alpha)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_alpha_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_alpha_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->alpha;
 }
@@ -398,13 +398,13 @@ _elm_mapbuf_auto_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool on)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_auto_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_auto_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->automode;
 }
 
 EOLIAN static void
-_elm_mapbuf_point_color_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, int idx, int *r, int *g, int *b, int *a)
+_elm_mapbuf_point_color_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, int idx, int *r, int *g, int *b, int *a)
 {
    if ((idx < 0) || (idx >= 4))
      {

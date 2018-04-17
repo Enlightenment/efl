@@ -244,7 +244,7 @@ _map_dirty(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool reset)
 }
 
 static Evas_Map *
-_map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
+_map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
 {
    Gfx_Map_Op *op, *first_op = pd->cow->ops, *last_op;
    Gfx_Map_Pivot *pivot;
@@ -518,7 +518,7 @@ _efl_gfx_map_map_reset(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 }
 
 EOLIAN static int
-_efl_gfx_map_map_point_count_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_point_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 {
    return pd->cow->count;
 }
@@ -560,7 +560,7 @@ _efl_gfx_map_map_point_count_set(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd, i
 }
 
 EOLIAN static Eina_Bool
-_efl_gfx_map_map_clockwise_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_clockwise_get(const Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_TRUE);
    Evas_Map *m;
@@ -581,7 +581,7 @@ _efl_gfx_map_map_smooth_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool smooth)
 }
 
 EOLIAN static Eina_Bool
-_efl_gfx_map_map_smooth_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_smooth_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 {
    return pd->cow->smooth;
 }
@@ -597,13 +597,13 @@ _efl_gfx_map_map_alpha_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool alpha)
 }
 
 EOLIAN static Eina_Bool
-_efl_gfx_map_map_alpha_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_alpha_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 {
    return pd->cow->alpha;
 }
 
 EOLIAN static void
-_efl_gfx_map_map_coord_absolute_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
+_efl_gfx_map_map_coord_absolute_get(const Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                                     int idx, double *x, double *y, double *z)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -665,7 +665,7 @@ _efl_gfx_map_map_uv_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_map_map_uv_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
+_efl_gfx_map_map_uv_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
                         int idx, double *u, double *v)
 {
    EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count)
@@ -676,7 +676,7 @@ _efl_gfx_map_map_uv_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_map_map_color_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
+_efl_gfx_map_map_color_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
                            int idx, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);

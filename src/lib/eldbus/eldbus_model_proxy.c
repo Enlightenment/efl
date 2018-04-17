@@ -108,7 +108,7 @@ _eldbus_model_proxy_efl_object_destructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 }
 
 static Eina_Array const *
-_eldbus_model_proxy_efl_model_properties_get(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                                Eldbus_Model_Proxy_Data *pd)
 {
    Eina_Bool ret;
@@ -353,7 +353,7 @@ _eldbus_model_proxy_create_signals_children(Eldbus_Model_Proxy_Data *pd)
 }
 
 static const char *
-_eldbus_model_proxy_proxy_name_get(Eo *obj EINA_UNUSED, Eldbus_Model_Proxy_Data *pd)
+_eldbus_model_proxy_proxy_name_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Proxy_Data *pd)
 {
    return pd->name;
 }

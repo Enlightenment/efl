@@ -79,7 +79,7 @@ _efl_input_focus_object_set(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd,
 }
 
 EOLIAN static Efl_Object *
-_efl_input_focus_object_get(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd)
+_efl_input_focus_object_get(const Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd)
 {
    return pd->object_wref;
 }
@@ -93,7 +93,7 @@ _efl_input_focus_efl_input_event_device_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_focus_efl_input_event_device_get(Eo *obj EINA_UNUSED,
+_efl_input_focus_efl_input_event_device_get(const Eo *obj EINA_UNUSED,
                                             Efl_Input_Focus_Data *pd)
 {
    return pd->device;
@@ -108,7 +108,7 @@ _efl_input_focus_efl_input_event_timestamp_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_input_focus_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED,
+_efl_input_focus_efl_input_event_timestamp_get(const Eo *obj EINA_UNUSED,
                                                Efl_Input_Focus_Data *pd)
 {
    return pd->timestamp;

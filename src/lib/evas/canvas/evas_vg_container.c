@@ -65,7 +65,7 @@ _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
 }
 
 static void
-_efl_canvas_vg_container_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_container_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
                                     Efl_Canvas_VG_Container_Data *pd,
                                     Eina_Rect *r)
 {

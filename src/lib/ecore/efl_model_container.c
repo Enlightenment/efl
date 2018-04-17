@@ -223,7 +223,7 @@ error:
 }
 
 static const Eina_Array *
-_efl_model_container_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd EINA_UNUSED)
+_efl_model_container_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd EINA_UNUSED)
 {
    return sd->defined_properties;
 }

@@ -398,7 +398,7 @@ _efl_canvas_layout_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_file_mmap_get(Eo *obj EINA_UNUSED, Edje *pd,
+_efl_canvas_layout_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Edje *pd,
                                const Eina_File **f, const char **key)
 {
    if (f) *f = pd->file ? pd->file->f : NULL;
@@ -485,7 +485,7 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_playable_get(Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+_efl_canvas_layout_efl_player_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -528,7 +528,7 @@ _efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool 
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_play_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_player_play_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;
@@ -545,7 +545,7 @@ _efl_canvas_layout_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , dou
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
+_efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
 {
    return 1.0/pd->duration_scale;
 }

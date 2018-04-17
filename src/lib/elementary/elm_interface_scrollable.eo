@@ -575,7 +575,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Efl.
                              scroll direction, or if an edge was reached.]]
          }
       }
-      content_pos_get {
+      content_pos_get @const {
           [[Get content position]]
          params {
             @out x: int; [[X coordinate]]

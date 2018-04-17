@@ -151,7 +151,7 @@ _elm_plug_efl_object_constructor(Eo *obj, void *sd EINA_UNUSED)
 }
 
 EOLIAN static Evas_Object*
-_elm_plug_image_object_get(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_image_object_get(const Eo *obj, void *sd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return wd->resize_obj;

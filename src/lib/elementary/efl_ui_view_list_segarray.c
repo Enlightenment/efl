@@ -336,7 +336,7 @@ _efl_ui_view_list_segarray_accessor_setup(Efl_Ui_View_List_Segarray_Eina_Accesso
 }
 
 EOLIAN static Eina_Accessor*
-_efl_ui_view_list_segarray_accessor_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
+_efl_ui_view_list_segarray_accessor_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
 {
    Efl_Ui_View_List_Segarray_Eina_Accessor* acc = calloc(1, sizeof(Efl_Ui_View_List_Segarray_Eina_Accessor));
    _efl_ui_view_list_segarray_accessor_setup(acc, pd);
@@ -435,7 +435,7 @@ _efl_ui_view_list_segarray_node_accessor_setup(Efl_Ui_View_List_Segarray_Node_Ac
 }
 
 EOLIAN static Eina_Accessor*
-_efl_ui_view_list_segarray_node_accessor_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
+_efl_ui_view_list_segarray_node_accessor_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
 {
    Efl_Ui_View_List_Segarray_Node_Accessor* acc = calloc(1, sizeof(Efl_Ui_View_List_Segarray_Node_Accessor));
    _efl_ui_view_list_segarray_node_accessor_setup(acc, pd);

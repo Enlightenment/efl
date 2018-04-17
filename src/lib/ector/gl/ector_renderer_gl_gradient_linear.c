@@ -40,7 +40,7 @@ _ector_renderer_gl_gradient_linear_ector_renderer_draw(Eo *obj, Ector_Renderer_G
 }
 
 static void
-_ector_renderer_gl_gradient_linear_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gl_gradient_linear_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_GL_Gradient_Linear_Data *pd,
                                                              Eina_Rect *r)
 {
@@ -95,7 +95,7 @@ _ector_renderer_gl_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj, Ector_Rend
 }
 
 static unsigned int
-_ector_renderer_gl_gradient_linear_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
+_ector_renderer_gl_gradient_linear_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
 {
    unsigned int crc;
 

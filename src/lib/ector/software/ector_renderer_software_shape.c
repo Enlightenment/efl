@@ -797,7 +797,7 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
 
 
 unsigned int
-_ector_renderer_software_shape_ector_renderer_crc_get(Eo *obj,
+_ector_renderer_software_shape_ector_renderer_crc_get(const Eo *obj,
                                                                    Ector_Renderer_Software_Shape_Data *pd)
 {
    unsigned int crc;

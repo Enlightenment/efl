@@ -98,7 +98,7 @@ _efl_loop_time_set(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, double t)
 }
 
 EOLIAN static double
-_efl_loop_time_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
+_efl_loop_time_get(const Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 {
    return pd->loop_time;
 }
@@ -479,7 +479,7 @@ _efl_loop_throttle_set(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, double amount)
 }
 
 EOLIAN static double
-_efl_loop_throttle_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
+_efl_loop_throttle_get(const Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 {
    return (double)(pd->throttle) / 1000000.0;
 }
@@ -868,7 +868,7 @@ _efl_loop_efl_task_env_set(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const char *v
 }
 
 EOLIAN static const char *
-_efl_loop_efl_task_env_get(Eo *obj, Efl_Loop_Data *pd, const char *var)
+_efl_loop_efl_task_env_get(const Eo *obj, Efl_Loop_Data *pd, const char *var)
 {
    Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
    if (!td) return NULL;

@@ -100,7 +100,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_set(Eo *obj,
 
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_get(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    return _trap(pd, efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS)));
 }
@@ -125,7 +125,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_logical_end(Eo *obj, Efl_U
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    if (pd->rect_registered)
      return eina_list_iterator_new(pd->iterator_list);

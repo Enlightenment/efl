@@ -517,7 +517,7 @@ static const Efl_Class_Description _efl_loop_future_class_desc = {
 EFL_DEFINE_CLASS(efl_loop_future_class_get, &_efl_loop_future_class_desc, EFL_FUTURE_CLASS, NULL);
 
 static Efl_Future *
-_efl_promise_future_get(Eo *obj, Efl_Promise_Data *pd EINA_UNUSED)
+_efl_promise_future_get(const Eo *obj, Efl_Promise_Data *pd EINA_UNUSED)
 {
    Efl_Future *f;
    Efl_Loop_Future_Data *fd;

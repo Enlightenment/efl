@@ -251,14 +251,14 @@ _efl_task_command_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, const char *comman
 }
 
 EOLIAN static const char *
-_efl_task_command_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+_efl_task_command_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
 {
    _rebuild_command(pd);
    return pd->command;
 }
 
 EOLIAN static unsigned int
-_efl_task_arg_count_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+_efl_task_arg_count_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
 {
    if (!pd->args) return 0;
    return eina_array_count(pd->args);
@@ -294,7 +294,7 @@ _efl_task_arg_value_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, unsigned int num
 }
 
 EOLIAN static const char *
-_efl_task_arg_value_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, unsigned int num)
+_efl_task_arg_value_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd, unsigned int num)
 {
    unsigned int count;
 
@@ -337,7 +337,7 @@ _efl_task_env_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, const char *var, const
 
 
 EOLIAN static const char *
-_efl_task_env_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, const char *var)
+_efl_task_env_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd, const char *var)
 {
    if ((!var) || (!pd->env)) return NULL;
    return eina_hash_find(pd->env, var);
@@ -357,13 +357,13 @@ _efl_task_priority_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, Efl_Task_Priority
 }
 
 EOLIAN static Efl_Task_Priority
-_efl_task_priority_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+_efl_task_priority_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
 {
    return pd->priority;
 }
 
 EOLIAN static int
-_efl_task_exit_code_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+_efl_task_exit_code_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
 {
    return pd->exit_code;
 }
@@ -375,7 +375,7 @@ _efl_task_flags_set(Eo *obj EINA_UNUSED, Efl_Task_Data *pd, Efl_Task_Flags flags
 }
 
 EOLIAN static Efl_Task_Flags
-_efl_task_flags_get(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
+_efl_task_flags_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
 {
    return pd->flags;
 }

@@ -13,7 +13,7 @@ _efl_canvas_animation_alpha_alpha_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_alpha_alpha_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_alpha_alpha_get(const Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Alpha_Data *pd,
                                double *from_alpha,
                                double *to_alpha)

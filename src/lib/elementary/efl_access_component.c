@@ -12,7 +12,7 @@
 
 
 EOLIAN static void
-_efl_access_component_screen_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *x, int *y)
+_efl_access_component_screen_position_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *x, int *y)
 {
    Eina_Rect r;
 
@@ -68,7 +68,7 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
 }
 
 EOLIAN static Eina_Rect
-_efl_access_component_extents_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
+_efl_access_component_extents_get(const Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
    Eina_Rect r;
 
@@ -111,7 +111,7 @@ _efl_access_component_extents_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool scre
 
 
 EOLIAN static int
-_efl_access_component_z_order_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_efl_access_component_z_order_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    // Currently not used.
    return 0;

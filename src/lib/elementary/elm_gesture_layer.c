@@ -3845,7 +3845,7 @@ _elm_gesture_layer_efl_object_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_elm_gesture_layer_hold_events_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_hold_events_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return !sd->repeat_events;
 }
@@ -3857,7 +3857,7 @@ _elm_gesture_layer_hold_events_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *
 }
 
 EOLIAN static double
-_elm_gesture_layer_zoom_step_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_zoom_step_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return sd->zoom_step;
 }
@@ -3871,7 +3871,7 @@ _elm_gesture_layer_zoom_step_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd
 }
 
 EOLIAN static double
-_elm_gesture_layer_rotate_step_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_rotate_step_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return sd->rotate_step;
 }
@@ -4162,7 +4162,7 @@ _elm_gesture_layer_tap_finger_size_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Da
 }
 
 EOLIAN static Evas_Coord
-_elm_gesture_layer_tap_finger_size_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_tap_finger_size_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return sd->tap_finger_size;
 }

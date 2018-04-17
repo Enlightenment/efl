@@ -506,7 +506,7 @@ _elm_dayselector_week_start_set(Eo *obj, Elm_Dayselector_Data *sd, Elm_Dayselect
 }
 
 EOLIAN static Elm_Dayselector_Day
-_elm_dayselector_week_start_get(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_week_start_get(const Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    return sd->week_start;
 }
@@ -521,7 +521,7 @@ _elm_dayselector_weekend_start_set(Eo *obj, Elm_Dayselector_Data *sd, Elm_Daysel
 }
 
 EOLIAN static Elm_Dayselector_Day
-_elm_dayselector_weekend_start_get(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_weekend_start_get(const Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    return sd->weekend_start;
 }
@@ -536,7 +536,7 @@ _elm_dayselector_weekend_length_set(Eo *obj, Elm_Dayselector_Data *sd, unsigned 
 }
 
 EOLIAN static unsigned int
-_elm_dayselector_weekend_length_get(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_weekend_length_get(const Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    return sd->weekend_len;
 }

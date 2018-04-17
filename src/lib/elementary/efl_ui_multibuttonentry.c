@@ -633,7 +633,7 @@ _elm_multibuttonentry_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED
 }
 
 EOLIAN static const char *
-_elm_multibuttonentry_item_elm_widget_item_part_text_get(Eo *eo_item EINA_UNUSED,
+_elm_multibuttonentry_item_elm_widget_item_part_text_get(const Eo *eo_item EINA_UNUSED,
                                                     Elm_Multibuttonentry_Item_Data *item,
                                                     const char *part)
 {
@@ -1686,13 +1686,13 @@ _efl_ui_multibuttonentry_efl_object_constructor(Eo *obj, Efl_Ui_Multibuttonentry
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_multibuttonentry_entry_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_entry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return sd->entry;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_multibuttonentry_expanded_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_expanded_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ?
           EINA_FALSE : EINA_TRUE;
@@ -1730,7 +1730,7 @@ _efl_ui_multibuttonentry_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonent
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_multibuttonentry_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_editable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return sd->editable;
 }
@@ -1760,25 +1760,25 @@ _efl_ui_multibuttonentry_item_insert_after(Eo *obj EINA_UNUSED, Efl_Ui_Multibutt
 }
 
 EOLIAN static const Eina_List*
-_efl_ui_multibuttonentry_items_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_items_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return sd->items;
 }
 
 EOLIAN static Elm_Object_Item*
-_efl_ui_multibuttonentry_first_item_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_first_item_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return eina_list_data_get(sd->items);
 }
 
 EOLIAN static Elm_Object_Item*
-_efl_ui_multibuttonentry_last_item_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_last_item_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return eina_list_data_get(eina_list_last(sd->items));
 }
 
 EOLIAN static Elm_Object_Item*
-_efl_ui_multibuttonentry_selected_item_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_selected_item_get(const Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd)
 {
    return EO_OBJ(sd->selected_it);
 }
@@ -1793,7 +1793,7 @@ _elm_multibuttonentry_item_selected_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_item_selected_get(Eo *eo_item,
+_elm_multibuttonentry_item_selected_get(const Eo *eo_item,
                                         Elm_Multibuttonentry_Item_Data *item)
 {
    EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(WIDGET(item), sd, EINA_FALSE);
@@ -1975,7 +1975,7 @@ _efl_ui_multibuttonentry_class_constructor(Efl_Class *klass EINA_UNUSED)
 }
 
 EOLIAN static Eina_List*
-_efl_ui_multibuttonentry_efl_access_access_children_get(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd)
+_efl_ui_multibuttonentry_efl_access_access_children_get(const Eo *obj, Efl_Ui_Multibuttonentry_Data *sd)
 {
    Eina_List *ret;
    ret = efl_access_children_get(efl_super(obj, EFL_UI_MULTIBUTTONENTRY_CLASS));
@@ -1983,7 +1983,7 @@ _efl_ui_multibuttonentry_efl_access_access_children_get(Eo *obj, Efl_Ui_Multibut
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
+_elm_multibuttonentry_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
 {
    const char *ret;
    ret = efl_access_i18n_name_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
@@ -1994,7 +1994,7 @@ _elm_multibuttonentry_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Multibuttonen
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_multibuttonentry_item_efl_access_state_set_get(Eo *eo_it, Elm_Multibuttonentry_Item_Data *sd EINA_UNUSED)
+_elm_multibuttonentry_item_efl_access_state_set_get(const Eo *eo_it, Elm_Multibuttonentry_Item_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    Eina_Bool sel;
@@ -2037,7 +2037,7 @@ _key_action_longpress(Eo *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_multibuttonentry_item_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Item_Data *pd EINA_UNUSED)
+_elm_multibuttonentry_item_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Item_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", NULL, NULL, _key_action_activate },

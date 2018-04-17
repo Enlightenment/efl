@@ -140,7 +140,7 @@ static Eina_List *global_callbacks;
 static Eo *root;
 
 EOLIAN static int
-_efl_access_index_in_parent_get(Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_index_in_parent_get(const Eo *obj, Efl_Access_Data *pd EINA_UNUSED)
 {
    Eina_List *l, *children = NULL;
    Eo *chld, *parent = NULL;
@@ -184,7 +184,7 @@ _efl_access_efl_object_provider_find(const Eo *obj, Efl_Access_Data *pd EINA_UNU
 }
 
 EOLIAN Eina_List*
-_efl_access_attributes_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_attributes_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    Eina_List *attr_list = NULL;
    if (pd->attr_list)
@@ -276,13 +276,13 @@ _efl_access_reading_info_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Readi
 }
 
 EOLIAN Efl_Access_Reading_Info_Type
-_efl_access_reading_info_type_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_reading_info_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
    return pd->reading_info;
 }
 
 EOLIAN static Efl_Access_Role
-_efl_access_role_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_role_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    return pd->role;
 }
@@ -298,7 +298,7 @@ _efl_access_role_set(Eo *obj, Efl_Access_Data *pd EINA_UNUSED, Efl_Access_Role r
 }
 
 EOLIAN const char *
-_efl_access_role_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_role_name_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    Efl_Access_Role role;
 
@@ -308,7 +308,7 @@ _efl_access_role_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 }
 
 EOLIAN const char *
-_efl_access_i18n_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_i18n_name_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
 #ifdef ENABLE_NLS
    if (pd->translation_domain)
@@ -323,7 +323,7 @@ _efl_access_i18n_name_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char *
    eina_stringshare_replace(&pd->name, val);
 }
 
-const char * _efl_access_description_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+const char * _efl_access_description_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
 #ifdef ENABLE_NLS
    if (pd->translation_domain)
@@ -339,7 +339,7 @@ _efl_access_description_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, const char
 }
 
 EOLIAN static const char *
-_efl_access_localized_role_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_localized_role_name_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    const char *ret = NULL;
    ret = efl_access_role_name_get(obj);
@@ -350,14 +350,15 @@ _efl_access_localized_role_name_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EIN
 }
 
 EOLIAN static Eina_List *
-_efl_access_access_children_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    Eina_List *children = NULL;
    Eina_Iterator *iter = NULL;
    Eo *chld;
 
    // By default use Efl_Object object hierarchy
-   iter = efl_children_iterator_new(obj);
+   /* XXX const */
+   iter = efl_children_iterator_new((Eo *)obj);
    if (!iter) return NULL;
 
    EINA_ITERATOR_FOREACH(iter, chld)
@@ -371,13 +372,13 @@ _efl_access_access_children_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UN
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_access_state_set_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_state_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN Efl_Access_Relation_Set
-_efl_access_relation_set_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
+_efl_access_relation_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
    return efl_access_relation_set_clone(pd->relations);
 }
@@ -466,7 +467,7 @@ _efl_access_translation_domain_set(Eo *obj EINA_UNUSED, Efl_Access_Data *pd, con
 
 
 EOLIAN const char*
-_efl_access_translation_domain_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_translation_domain_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
    return pd->translation_domain;
 }
@@ -644,7 +645,7 @@ _efl_access_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Data *sd)
 }
 
 EOLIAN Eo*
-_efl_access_access_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_access_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (!root)
      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
@@ -653,7 +654,7 @@ _efl_access_access_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN Efl_Access_Type
-_efl_access_access_type_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+_efl_access_access_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
 {
    return pd->type;
 }

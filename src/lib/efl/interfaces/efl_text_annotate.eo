@@ -33,7 +33,7 @@ interface Efl.Text.Annotate {
             format: string; [[The new format for the given annotation]]
          }
       }
-      range_annotations_get {
+      range_annotations_get @const {
          [[Returns an iterator of all the handles in a range.
 
            @since 1.18

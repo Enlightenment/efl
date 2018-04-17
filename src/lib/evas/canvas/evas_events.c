@@ -1378,7 +1378,7 @@ _evas_canvas_event_default_flags_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, 
 }
 
 EOLIAN Evas_Event_Flags
-_evas_canvas_event_default_flags_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_event_default_flags_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->default_event_flags;
 }
@@ -3708,7 +3708,7 @@ _efl_canvas_object_freeze_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_freeze_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->freeze_events;
 }
@@ -3724,7 +3724,7 @@ _efl_canvas_object_pass_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, 
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_pass_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_pass_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->pass_events;
 }
@@ -3739,7 +3739,7 @@ _efl_canvas_object_repeat_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_repeat_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_repeat_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->repeat_events;
 }
@@ -3751,7 +3751,7 @@ _efl_canvas_object_propagate_events_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_propagate_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_propagate_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return !(obj->no_propagate);
 }
@@ -3838,7 +3838,7 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
 }
 
 EOLIAN Evas_Object_Pointer_Mode
-_efl_canvas_object_pointer_mode_by_device_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_pointer_mode_by_device_get(const Eo *eo_obj EINA_UNUSED,
                                               Evas_Object_Protected_Data *obj,
                                               Efl_Input_Device *dev)
 {
@@ -3862,13 +3862,13 @@ _efl_canvas_object_pointer_mode_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 EOLIAN Evas_Object_Pointer_Mode
-_efl_canvas_object_pointer_mode_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_pointer_mode_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    return _efl_canvas_object_pointer_mode_by_device_get(eo_obj, obj, NULL);
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_efl_canvas_pointer_pointer_inside_get(Eo *eo_obj,
+_efl_canvas_object_efl_canvas_pointer_pointer_inside_get(const Eo *eo_obj,
                                                          Evas_Object_Protected_Data *obj,
                                                          Efl_Input_Device *pointer)
 {
@@ -4007,7 +4007,7 @@ evas_event_refeed_event(Eo *eo_e, void *event_copy, Evas_Callback_Type event_typ
 
 
 EOLIAN int
-_evas_canvas_event_down_count_by_device_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+_evas_canvas_event_down_count_by_device_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
                                             Efl_Input_Device *dev)
 {
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
@@ -4016,7 +4016,7 @@ _evas_canvas_event_down_count_by_device_get(Eo *eo_e EINA_UNUSED, Evas_Public_Da
 }
 
 EOLIAN int
-_evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_event_down_count_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return _evas_canvas_event_down_count_by_device_get(eo_e, e, NULL);
 }

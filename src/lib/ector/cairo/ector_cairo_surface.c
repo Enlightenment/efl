@@ -99,7 +99,7 @@ _ector_cairo_surface_context_set(Eo *obj EINA_UNUSED,
 }
 
 static cairo_t *
-_ector_cairo_surface_context_get(Eo *obj EINA_UNUSED,
+_ector_cairo_surface_context_get(const Eo *obj EINA_UNUSED,
                                  Ector_Cairo_Surface_Data *pd)
 {
    return pd->cairo;

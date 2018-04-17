@@ -222,7 +222,7 @@ _efl_ui_table_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_table_efl_pack_pack_padding_get(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, double *h, double *v, Eina_Bool *scalable)
+_efl_ui_table_efl_pack_pack_padding_get(const Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, double *h, double *v, Eina_Bool *scalable)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -320,7 +320,7 @@ _efl_ui_table_efl_pack_table_pack_table(Eo *obj, Efl_Ui_Table_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_table_table_position_get(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_table_efl_pack_table_table_position_get(const Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    int c = -1, r = -1, cs = 0, rs = 0;
    Table_Item *gi;
@@ -570,7 +570,7 @@ _efl_ui_table_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_ui_table_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
+_efl_ui_table_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
 {
    return pd->dir1;
 }
@@ -596,7 +596,7 @@ _efl_ui_table_efl_pack_table_table_direction_set(Eo *obj, Efl_Ui_Table_Data *pd,
 }
 
 EOLIAN static void
-_efl_ui_table_efl_pack_table_table_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Efl_Ui_Dir *primary, Efl_Ui_Dir *secondary)
+_efl_ui_table_efl_pack_table_table_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Efl_Ui_Dir *primary, Efl_Ui_Dir *secondary)
 {
    if (primary) *primary = pd->dir1;
    if (secondary) *secondary = pd->dir2;
@@ -615,7 +615,7 @@ _efl_ui_table_efl_pack_table_table_size_set(Eo *obj, Efl_Ui_Table_Data *pd EINA_
 }
 
 EOLIAN static void
-_efl_ui_table_efl_pack_table_table_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd EINA_UNUSED, int *cols, int *rows)
+_efl_ui_table_efl_pack_table_table_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd EINA_UNUSED, int *cols, int *rows)
 {
    if (cols) *cols = efl_pack_table_columns_get(obj);
    if (rows) *rows = efl_pack_table_rows_get(obj);
@@ -630,7 +630,7 @@ _efl_ui_table_efl_pack_table_table_columns_set(Eo *obj, Efl_Ui_Table_Data *pd, i
 }
 
 EOLIAN static int
-_efl_ui_table_efl_pack_table_table_columns_get(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
+_efl_ui_table_efl_pack_table_table_columns_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
 {
    if (!pd->req_cols)
      {
@@ -651,7 +651,7 @@ _efl_ui_table_efl_pack_table_table_rows_set(Eo *obj, Efl_Ui_Table_Data *pd, int 
 }
 
 EOLIAN static int
-_efl_ui_table_efl_pack_table_table_rows_get(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
+_efl_ui_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
 {
    if (!pd->req_rows)
      {

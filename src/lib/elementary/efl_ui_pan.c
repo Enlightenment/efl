@@ -72,13 +72,13 @@ _efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd, Eina_Pos
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_pan_pan_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
+_efl_ui_pan_pan_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
 {
    return EINA_POSITION2D(psd->px, psd->py);
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
+_efl_ui_pan_pan_position_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
 {
    Eina_Position2D pos = { 0, 0};
    if (psd->w < psd->content_w) pos.x = psd->content_w - psd->w;
@@ -88,13 +88,13 @@ _efl_ui_pan_pan_position_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_pan_pan_position_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *_pd EINA_UNUSED)
+_efl_ui_pan_pan_position_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *_pd EINA_UNUSED)
 {
    return EINA_POSITION2D(0 ,0);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
+_efl_ui_pan_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
 {
    return EINA_SIZE2D(psd->content_w, psd->content_h);
 }

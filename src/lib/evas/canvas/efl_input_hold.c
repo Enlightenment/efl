@@ -19,7 +19,7 @@ _efl_input_hold_hold_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_input_hold_hold_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_hold_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->hold;
 }
@@ -31,13 +31,13 @@ _efl_input_hold_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_D
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_hold_efl_input_event_device_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_device_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->device;
 }
 
 EOLIAN static double
-_efl_input_hold_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->timestamp;
 }
@@ -55,7 +55,7 @@ _efl_input_hold_efl_input_event_event_flags_set(Eo *obj EINA_UNUSED, Efl_Input_H
 }
 
 EOLIAN static Efl_Input_Flags
-_efl_input_hold_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_event_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->event_flags;
 }

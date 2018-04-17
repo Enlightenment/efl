@@ -281,7 +281,7 @@ _ector_software_buffer_base_ector_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Softwa
 }
 
 EOLIAN static Ector_Buffer_Flag
-_ector_software_buffer_base_ector_buffer_flags_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
+_ector_software_buffer_base_ector_buffer_flags_get(const Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
 {
    return ECTOR_BUFFER_FLAG_CPU_READABLE |
          ECTOR_BUFFER_FLAG_DRAWABLE |

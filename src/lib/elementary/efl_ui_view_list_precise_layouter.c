@@ -524,7 +524,7 @@ _efl_ui_view_list_precise_layouter_efl_object_constructor(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static Eina_List *
-_efl_ui_view_list_precise_layouter_efl_ui_view_list_relayout_elements_get(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Precise_Layouter_Data *pd)
+_efl_ui_view_list_precise_layouter_efl_ui_view_list_relayout_elements_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_Precise_Layouter_Data *pd)
 {
    Eina_List *elements_order = NULL;
    Efl_Ui_View_List_LayoutItem* layout_item;

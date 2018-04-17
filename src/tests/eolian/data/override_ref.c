@@ -1,6 +1,6 @@
 EOAPI EFL_VOID_FUNC_BODY(override_a_set);
 
-void _override_a_get(Eo *obj, Override_Data *pd);
+void _override_a_get(const Eo *obj, Override_Data *pd);
 
 EOAPI EFL_VOID_FUNC_BODY_CONST(override_a_get);
 
@@ -13,7 +13,7 @@ static void __eolian_override_b_set(Eo *obj EINA_UNUSED, Override_Data *pd, int 
 
 EOAPI EFL_VOID_FUNC_BODYV(override_b_set, EFL_FUNC_CALL(idx, a, b, c), int idx, float a, char b, int c);
 
-void _override_b_get(Eo *obj, Override_Data *pd, int idx, float *a, char *b, int *c);
+void _override_b_get(const Eo *obj, Override_Data *pd, int idx, float *a, char *b, int *c);
 
 EOAPI EFL_VOID_FUNC_BODYV_CONST(override_b_get, EFL_FUNC_CALL(idx, a, b, c), int idx, float *a, char *b, int *c);
 
@@ -21,7 +21,7 @@ void _override_c_set(Eo *obj, Override_Data *pd, int idx, int c);
 
 EOAPI EFL_VOID_FUNC_BODYV(override_c_set, EFL_FUNC_CALL(idx, c), int idx, int c);
 
-static int __eolian_override_c_get(Eo *obj EINA_UNUSED, Override_Data *pd EINA_UNUSED, int idx EINA_UNUSED)
+static int __eolian_override_c_get(const Eo *obj EINA_UNUSED, Override_Data *pd EINA_UNUSED, int idx EINA_UNUSED)
 {
    return 50;
 }
@@ -48,7 +48,7 @@ static void __eolian_override_base_z_set(Eo *obj EINA_UNUSED, Override_Data *pd,
 }
 
 
-static void __eolian_override_base_z_get(Eo *obj EINA_UNUSED, Override_Data *pd, int *a, char *b, float *c)
+static void __eolian_override_base_z_get(const Eo *obj EINA_UNUSED, Override_Data *pd, int *a, char *b, float *c)
 {
    if (a) *a = pd->a;
    if (b) *b = pd->b;

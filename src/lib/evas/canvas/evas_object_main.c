@@ -991,7 +991,7 @@ evas_object_del(Evas_Object *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_efl_input_interface_seat_event_filter_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_input_interface_seat_event_filter_get(const Eo *eo_obj EINA_UNUSED,
                                                              Evas_Object_Protected_Data *obj,
                                                              Efl_Input_Device *seat)
 {
@@ -1444,7 +1444,7 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 EOLIAN Eina_Rect
-_efl_canvas_object_efl_gfx_geometry_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_geometry_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return (Eina_Rect) obj->cur->geometry;
 }
@@ -1460,7 +1460,7 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
 }
 
 EOLIAN static Eina_Position2D
-_efl_canvas_object_efl_gfx_position_get(Eo *obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_position_get(const Eo *obj EINA_UNUSED,
                                         Evas_Object_Protected_Data *pd)
 {
    if ((pd->delete_me) || (!pd->layer))
@@ -1470,7 +1470,7 @@ _efl_canvas_object_efl_gfx_position_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_object_efl_gfx_size_get(Eo *obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_size_get(const Eo *obj EINA_UNUSED,
                                     Evas_Object_Protected_Data *pd)
 {
    if (pd->delete_me)
@@ -1525,7 +1525,7 @@ evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if ((!obj->size_hints) || obj->delete_me)
      return EINA_SIZE2D(0, 0);
@@ -1553,7 +1553,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_set(Eo *eo_obj, Evas_Ob
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_size_hint_hint_combined_min_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    Eina_Size2D sz = { 0, 0 };
 
@@ -1566,7 +1566,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSE
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_object_efl_gfx_size_hint_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_size_hint_hint_max_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if ((!obj->size_hints) || obj->delete_me)
      return EINA_SIZE2D(-1, -1);
@@ -1630,7 +1630,7 @@ evas_object_size_hint_request_set(Eo *eo_obj, Evas_Coord w, Evas_Coord h)
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_object_efl_gfx_size_hint_hint_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_size_hint_hint_min_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if ((!obj->size_hints) || obj->delete_me)
      return EINA_SIZE2D(0, 0);
@@ -1658,7 +1658,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_min_set(Eo *eo_obj, Evas_Object_Protec
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Eina_Size2D *sz)
+_efl_canvas_object_efl_gfx_size_hint_hint_aspect_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Eina_Size2D *sz)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1697,7 +1697,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Pro
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_align_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
+_efl_canvas_object_efl_gfx_size_hint_hint_align_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1733,7 +1733,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_weight_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
+_efl_canvas_object_efl_gfx_size_hint_hint_weight_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1769,7 +1769,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Pro
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_margin_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
+_efl_canvas_object_efl_gfx_size_hint_hint_margin_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -2003,7 +2003,7 @@ _efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *o
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_efl_gfx_visible_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_visible_get(const Eo *eo_obj EINA_UNUSED,
                                        Evas_Object_Protected_Data *obj)
 {
    if (!EVAS_OBJECT_DATA_ALIVE(obj)) return EINA_FALSE;
@@ -2071,7 +2071,7 @@ evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_color_color_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_color_color_get(const Eo *eo_obj EINA_UNUSED,
                                     Evas_Object_Protected_Data *obj,
                                     int *r, int *g, int *b, int *a)
 {
@@ -2107,7 +2107,7 @@ _efl_canvas_object_anti_alias_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, E
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_anti_alias_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_anti_alias_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->delete_me) return EINA_FALSE;
    return obj->cur->anti_alias;
@@ -2129,7 +2129,7 @@ _efl_canvas_object_efl_gfx_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 EOLIAN static double
-_efl_canvas_object_efl_gfx_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_scale_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->delete_me) return 1.0;
    return obj->cur->scale;
@@ -2165,7 +2165,7 @@ evas_object_render_op_set(Evas_Object *eo_obj, Evas_Render_Op render_op)
 }
 
 EOLIAN static Efl_Gfx_Render_Op
-_efl_canvas_object_render_op_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_render_op_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return _evas_to_gfx_render_op(obj->cur->render_op);
 }
@@ -2337,7 +2337,7 @@ fallback:
 }
 
 EOLIAN static Efl_Loop *
-_efl_canvas_object_efl_loop_consumer_loop_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+_efl_canvas_object_efl_loop_consumer_loop_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
    return efl_main_loop_get();
 }
@@ -2361,13 +2361,13 @@ _efl_canvas_object_precise_is_inside_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_precise_is_inside_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->precise_is_inside;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Position2D pos)
+_efl_canvas_object_coords_inside_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Position2D pos)
 {
    Eina_Rectangle c;
 
@@ -2426,13 +2426,13 @@ _efl_canvas_object_is_frame_object_set(Eo *eo_obj, Evas_Object_Protected_Data *o
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_is_frame_object_get(Eo *eo_obj  EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_is_frame_object_get(const Eo *eo_obj  EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->is_frame;
 }
 
 EOLIAN static Evas_Object *
-_efl_canvas_object_render_parent_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_render_parent_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (!obj) return NULL;
    return obj->smart.parent;
@@ -2445,7 +2445,7 @@ _efl_canvas_object_paragraph_direction_set(Eo *eo_obj EINA_UNUSED, Evas_Object_P
 }
 
 EOLIAN static Evas_BiDi_Direction
-_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+_efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
    return EVAS_BIDI_DIRECTION_NEUTRAL;
 }
@@ -2506,7 +2506,7 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
 }
 
 EOLIAN Efl_Canvas_Animation *
-_efl_canvas_object_event_animation_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_event_animation_get(const Eo *eo_obj EINA_UNUSED,
                                        Evas_Object_Protected_Data *pd,
                                        const Efl_Event_Description *desc)
 {

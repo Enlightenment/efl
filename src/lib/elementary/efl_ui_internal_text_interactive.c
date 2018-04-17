@@ -1410,13 +1410,13 @@ _efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_allowed_set(
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_allowed_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd)
+_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_allowed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd)
 {
    return pd->select_allow;
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_cursors_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Text_Cursor_Cursor **start, Evas_Textblock_Cursor **end)
+_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_cursors_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Text_Cursor_Cursor **start, Evas_Textblock_Cursor **end)
 {
    if (start) *start = pd->sel_start;
    if (end) *end = pd->sel_end;
@@ -1429,7 +1429,7 @@ _efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_set(Eo *obj E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+_efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
 {
    return sd->editable;
 }

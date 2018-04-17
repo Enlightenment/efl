@@ -533,7 +533,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(buf, func_suffix);
              /* ([const ]Eo *obj, Data_Type *pd, impl_full_params); */
              eina_strbuf_append_char(buf, '(');
-             if (eolian_function_object_is_const(fid))
+             if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
                eina_strbuf_append(buf, "const ");
              eina_strbuf_append(buf, "Eo *obj, ");
              eina_strbuf_append(buf, dt);
@@ -564,7 +564,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(buf, eolian_function_name_get(fid));
              eina_strbuf_append(buf, func_suffix);
              eina_strbuf_append_char(buf, '(');
-             if (eolian_function_object_is_const(fid))
+             if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
                eina_strbuf_append(buf, "const ");
              eina_strbuf_append(buf, "Eo *obj");
              if (is_empty || is_auto)
@@ -1147,7 +1147,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
 
    eina_strbuf_append_printf(buf, "\n%s(", fname);
 
-   if (eolian_function_object_is_const(fid))
+   if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
      eina_strbuf_append(buf, "const ");
 
    eina_strbuf_append(buf, "Eo *obj, ");

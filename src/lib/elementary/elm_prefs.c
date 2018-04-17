@@ -1155,7 +1155,7 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
 }
 
 EOLIAN static void
-_elm_prefs_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
+_elm_prefs_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
 {
    if (file) *file = sd->file;
    if (page) *page = sd->page;
@@ -1200,7 +1200,7 @@ end:
 }
 
 EOLIAN static Elm_Prefs_Data*
-_elm_prefs_data_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
+_elm_prefs_data_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
    if (!sd->root) return NULL;
    else return sd->prefs_data;
@@ -1235,7 +1235,7 @@ _elm_prefs_autosave_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, Eina_Bool auto
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_autosave_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
+_elm_prefs_autosave_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
    return sd->autosave;
 }

@@ -60,7 +60,7 @@ _efl_net_ip_address_efl_object_finalize(Eo *o, Efl_Net_Ip_Address_Data *pd)
 }
 
 EOLIAN static const char *
-_efl_net_ip_address_string_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_string_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return pd->string;
 }
@@ -85,7 +85,7 @@ _efl_net_ip_address_family_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, i
 }
 
 EOLIAN static int
-_efl_net_ip_address_family_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_family_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return pd->addr.sa_family;
 }
@@ -112,7 +112,7 @@ _efl_net_ip_address_port_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, uin
 }
 
 EOLIAN static uint16_t
-_efl_net_ip_address_port_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_port_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    const uint16_t *pport;
 
@@ -167,7 +167,7 @@ _efl_net_ip_address_address_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, 
 }
 
 EOLIAN static Eina_Slice
-_efl_net_ip_address_address_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_address_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return pd->addr_slice;
 }
@@ -197,7 +197,7 @@ _efl_net_ip_address_sockaddr_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd,
 }
 
 EOLIAN static const void *
-_efl_net_ip_address_sockaddr_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_sockaddr_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return &pd->addr;
 }

@@ -489,7 +489,7 @@ _efl_io_manager_xattr_set(Eo *obj,
 }
 
 static Eina_Future *
-_efl_io_manager_xattr_get(Eo *obj,
+_efl_io_manager_xattr_get(const Eo *obj,
                           Efl_Io_Manager_Data *pd EINA_UNUSED,
                           const char *path,
                           const char *attribute)
@@ -509,7 +509,8 @@ _efl_io_manager_xattr_get(Eo *obj,
    if (!h) goto end;
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   /* XXX const */
+   return efl_future_Eina_FutureXXX_then((Eo *)obj, future);
 
  end:
    return future;

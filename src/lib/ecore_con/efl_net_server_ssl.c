@@ -180,7 +180,7 @@ _efl_net_server_ssl_ssl_context_set(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *
 }
 
 EOLIAN static Eo *
-_efl_net_server_ssl_ssl_context_get(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd)
+_efl_net_server_ssl_ssl_context_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd)
 {
    return pd->ssl_ctx;
 }

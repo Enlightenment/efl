@@ -495,7 +495,7 @@ _elm_fileselector_entry_path_get_internal(const Evas_Object *obj)
 }
 
 EOLIAN static Efl_Model *
-_elm_fileselector_entry_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
 {
    Efl_Model *bmodel, *ret;
    Eina_Value path;
@@ -539,7 +539,7 @@ elm_fileselector_entry_expandable_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_interface_fileselector_expandable_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_elm_interface_fileselector_expandable_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
 {
    return elm_fileselector_expandable_get(sd->button);
 }
@@ -566,7 +566,7 @@ elm_fileselector_entry_folder_only_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_interface_fileselector_folder_only_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_elm_interface_fileselector_folder_only_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
 {
    return elm_fileselector_folder_only_get(sd->button);
 }
@@ -593,7 +593,7 @@ elm_fileselector_entry_is_save_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_interface_fileselector_is_save_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_elm_interface_fileselector_is_save_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
 {
    return elm_fileselector_is_save_get(sd->button);
 }

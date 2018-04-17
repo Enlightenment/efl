@@ -53,7 +53,7 @@ _efl_canvas_animation_group_parallel_efl_canvas_animation_animation_apply(Eo *eo
 }
 
 EOLIAN static double
-_efl_canvas_animation_group_parallel_efl_canvas_animation_duration_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_animation_group_parallel_efl_canvas_animation_duration_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    double child_total_duration;
    double total_duration = 0.0;

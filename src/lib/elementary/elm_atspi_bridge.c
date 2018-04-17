@@ -4728,7 +4728,7 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
 }
 
 EOLIAN Eina_Bool
-_elm_atspi_bridge_connected_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
+_elm_atspi_bridge_connected_get(const Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
 {
    return pd->connected;
 }

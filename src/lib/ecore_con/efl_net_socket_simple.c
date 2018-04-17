@@ -21,13 +21,13 @@ _efl_net_socket_simple_efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Net_Socket
 }
 
 EOLIAN static const char *
-_efl_net_socket_simple_efl_net_socket_address_local_get(Eo *o, Efl_Net_Socket_Simple_Data *pd EINA_UNUSED)
+_efl_net_socket_simple_efl_net_socket_address_local_get(const Eo *o, Efl_Net_Socket_Simple_Data *pd EINA_UNUSED)
 {
    return efl_net_socket_address_local_get(efl_io_buffered_stream_inner_io_get(o));
 }
 
 EOLIAN static const char *
-_efl_net_socket_simple_efl_net_socket_address_remote_get(Eo *o, Efl_Net_Socket_Simple_Data *pd EINA_UNUSED)
+_efl_net_socket_simple_efl_net_socket_address_remote_get(const Eo *o, Efl_Net_Socket_Simple_Data *pd EINA_UNUSED)
 {
    return efl_net_socket_address_remote_get(efl_io_buffered_stream_inner_io_get(o));
 }

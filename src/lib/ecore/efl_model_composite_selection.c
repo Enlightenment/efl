@@ -95,7 +95,7 @@ _efl_model_composite_selection_exclusive_selection_set(Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_efl_model_composite_selection_exclusive_selection_get(Eo *obj EINA_UNUSED,
+_efl_model_composite_selection_exclusive_selection_get(const Eo *obj EINA_UNUSED,
   Efl_Model_Composite_Selection_Data *pd)
 {
   return pd->is_exclusive;

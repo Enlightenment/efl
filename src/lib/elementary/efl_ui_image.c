@@ -531,7 +531,7 @@ _efl_ui_image_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->smooth;
 }
@@ -1163,7 +1163,7 @@ _efl_ui_image_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_layout_group_group_size_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
      return efl_layout_group_size_min_get(sd->img);
@@ -1172,7 +1172,7 @@ _efl_ui_image_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Im
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_layout_group_group_size_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
      return efl_layout_group_size_max_get(sd->img);
@@ -1200,7 +1200,7 @@ _efl_ui_image_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
 }
 
 EOLIAN static void
-_efl_ui_image_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char **file, const char **key)
+_efl_ui_image_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char **file, const char **key)
 {
    if (sd->async.th)
      {
@@ -1244,7 +1244,7 @@ elm_image_async_open_set(Eo *obj, Eina_Bool async)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    int tw, th;
 
@@ -1257,7 +1257,7 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
      return EINA_SIZE2D(0, 0);
@@ -1292,7 +1292,7 @@ elm_image_prescale_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_image_load_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->load_size;
 }
@@ -1310,7 +1310,7 @@ _efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Ef
 }
 
 EOLIAN static Efl_Orient
-_efl_ui_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_orientation_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->orient;
 }
@@ -1329,7 +1329,7 @@ _efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip 
 }
 
 EOLIAN static Efl_Flip
-_efl_ui_image_efl_orientation_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_orientation_flip_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->flip;
 }
@@ -1369,7 +1369,7 @@ _efl_ui_image_efl_ui_draggable_drag_target_set(Eo *obj, Efl_Ui_Image_Data *sd, E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_ui_draggable_drag_target_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->edit;
 }
@@ -1381,7 +1381,7 @@ elm_image_animated_available_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_player_playable_get(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_player_playable_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje) return EINA_TRUE;
 
@@ -1500,7 +1500,7 @@ _efl_ui_image_efl_player_play_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool play
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_player_play_get(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_player_play_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 {
    return _efl_ui_image_animated_play_get_internal(obj, sd);
 }
@@ -1516,7 +1516,7 @@ _efl_ui_image_efl_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *s
 }
 
 EOLIAN static Efl_Image_Scale_Type
-_efl_ui_image_efl_image_scale_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->scale_type;
 }
@@ -1533,7 +1533,7 @@ _efl_ui_image_scalable_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool up, Eina_Bo
 }
 
 EOLIAN static void
-_efl_ui_image_scalable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool *scale_up, Eina_Bool *scale_down)
+_efl_ui_image_scalable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool *scale_up, Eina_Bool *scale_down)
 {
    if (scale_up) *scale_up = sd->scale_up;
    if (scale_down) *scale_down = sd->scale_down;
@@ -1561,7 +1561,7 @@ _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double a
 }
 
 EOLIAN static void
-_efl_ui_image_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *align_x, double *align_y)
+_efl_ui_image_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *align_x, double *align_y)
 {
    if (align_x) *align_x = sd->align_x;
    if (align_y) *align_y = sd->align_y;
@@ -1570,7 +1570,7 @@ _efl_ui_image_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *alig
 // A11Y
 
 EOLIAN static Eina_Rect
-_efl_ui_image_efl_access_component_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
+_efl_ui_image_efl_access_component_extents_get(const Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
 {
    int ee_x, ee_y;
    Eina_Rect r;
@@ -1593,7 +1593,7 @@ _efl_ui_image_efl_access_component_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EI
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_image_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
+_efl_ui_image_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
         { "activate", "activate", NULL, _key_action_activate },
@@ -1771,7 +1771,7 @@ _efl_ui_image_icon_set(Eo *obj, Efl_Ui_Image_Data *_pd EINA_UNUSED, const char *
 }
 
 EOLIAN static const char*
-_efl_ui_image_icon_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_icon_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->stdicon;
 }
@@ -1929,7 +1929,7 @@ _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *m
 }
 
 EOLIAN static Efl_Model *
-_efl_ui_image_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+_efl_ui_image_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 {
    return pd->model;
 }

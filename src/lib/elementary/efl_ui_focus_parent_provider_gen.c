@@ -21,7 +21,7 @@ _efl_ui_focus_parent_provider_gen_content_item_map_set(Eo *obj, Efl_Ui_Focus_Par
 }
 
 EOLIAN static Eina_Hash*
-_efl_ui_focus_parent_provider_gen_content_item_map_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd)
+_efl_ui_focus_parent_provider_gen_content_item_map_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd)
 {
    return pd->map;
 }
@@ -39,7 +39,7 @@ _efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Pro
 }
 
 EOLIAN static Efl_Ui_Widget*
-_efl_ui_focus_parent_provider_gen_container_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd)
+_efl_ui_focus_parent_provider_gen_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd)
 {
    return pd->container;
 }

@@ -528,14 +528,14 @@ _efl_ui_scroller_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Scroller_Data *sd)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_scroller_efl_ui_scrollable_interactive_content_size_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_interactive_content_size_get(const Eo *obj EINA_UNUSED,
                                                             Efl_Ui_Scroller_Data *sd)
 {
    return efl_ui_scrollable_content_size_get(sd->smanager);
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_scroller_efl_ui_scrollable_interactive_viewport_geometry_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *obj EINA_UNUSED,
                                                                  Efl_Ui_Scroller_Data *sd)
 {
    return efl_ui_scrollable_viewport_geometry_get(sd->smanager);
@@ -551,7 +551,7 @@ _efl_ui_scroller_efl_ui_scrollable_interactive_bounce_enabled_set(Eo *obj EINA_U
 }
 
 EOLIAN static void
-_efl_ui_scroller_efl_ui_scrollable_interactive_bounce_enabled_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_interactive_bounce_enabled_get(const Eo *obj EINA_UNUSED,
                                                                   Efl_Ui_Scroller_Data *sd,
                                                                   Eina_Bool *horiz,
                                                                   Eina_Bool *vert)
@@ -560,7 +560,7 @@ _efl_ui_scroller_efl_ui_scrollable_interactive_bounce_enabled_get(Eo *obj EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_scroller_efl_ui_scrollable_interactive_scroll_hold_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_interactive_scroll_hold_get(const Eo *obj EINA_UNUSED,
                                                                Efl_Ui_Scroller_Data *sd)
 {
    return efl_ui_scrollable_scroll_hold_get(sd->smanager);
@@ -575,7 +575,7 @@ _efl_ui_scroller_efl_ui_scrollable_interactive_scroll_hold_set(Eo *obj EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_scroller_efl_ui_scrollable_interactive_scroll_freeze_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_interactive_scroll_freeze_get(const Eo *obj EINA_UNUSED,
                                                                  Efl_Ui_Scroller_Data *sd)
 {
    return efl_ui_scrollable_scroll_freeze_get(sd->smanager);
@@ -613,7 +613,7 @@ _efl_ui_scroller_efl_ui_scrollbar_bar_mode_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_scroller_efl_ui_scrollbar_bar_mode_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollbar_bar_mode_get(const Eo *obj EINA_UNUSED,
                                            Efl_Ui_Scroller_Data *sd,
                                            Efl_Ui_Scrollbar_Mode *hmode,
                                            Efl_Ui_Scrollbar_Mode *vmode)

@@ -35,7 +35,7 @@ _efl_canvas_animation_rotate_rotate_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_rotate_rotate_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_rotate_rotate_get(const Eo *eo_obj EINA_UNUSED,
                                  Efl_Canvas_Animation_Rotate_Data *pd,
                                  double *from_degree,
                                  double *to_degree,
@@ -82,7 +82,7 @@ _efl_canvas_animation_rotate_rotate_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_rotate_rotate_absolute_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_rotate_rotate_absolute_get(const Eo *eo_obj EINA_UNUSED,
                                           Efl_Canvas_Animation_Rotate_Data *pd,
                                           double *from_degree,
                                           double *to_degree,

@@ -55,7 +55,7 @@ _evas_canvas3d_primitive_form_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Evas_Canvas3D_Mesh_Primitive
-_evas_canvas3d_primitive_form_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_primitive_form_get(const Eo *obj EINA_UNUSED,
                             Evas_Canvas3D_Primitive_Data *pd)
 {
    return pd->form;
@@ -71,7 +71,7 @@ _evas_canvas3d_primitive_mode_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Evas_Canvas3D_Primitive_Mode
-_evas_canvas3d_primitive_mode_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_primitive_mode_get(const Eo *obj EINA_UNUSED,
                             Evas_Canvas3D_Primitive_Data *pd)
 {
    return pd->mode;
@@ -86,7 +86,7 @@ _evas_canvas3d_primitive_ratio_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Evas_Real
-_evas_canvas3d_primitive_ratio_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_primitive_ratio_get(const Eo *obj EINA_UNUSED,
                              Evas_Canvas3D_Primitive_Data *pd)
 {
    return pd->ratio;
@@ -115,7 +115,7 @@ _evas_canvas3d_primitive_precision_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static int
-_evas_canvas3d_primitive_precision_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_primitive_precision_get(const Eo *obj EINA_UNUSED,
                                  Evas_Canvas3D_Primitive_Data *pd)
 {
    return pd->precision;
@@ -140,7 +140,7 @@ _evas_canvas3d_primitive_tex_scale_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_canvas3d_primitive_tex_scale_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_primitive_tex_scale_get(const Eo *obj EINA_UNUSED,
                                  Evas_Canvas3D_Primitive_Data *pd,
                                  Evas_Real *x,
                                  Evas_Real *y)

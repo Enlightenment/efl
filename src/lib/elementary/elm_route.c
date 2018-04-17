@@ -241,14 +241,14 @@ _elm_route_emap_set(Eo *obj, Elm_Route_Data *sd, void *_emap)
 }
 
 EOLIAN static void
-_elm_route_longitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
+_elm_route_longitude_min_max_get(const Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->lon_min;
    if (max) *max = sd->lon_max;
 }
 
 EOLIAN static void
-_elm_route_latitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
+_elm_route_latitude_min_max_get(const Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->lat_min;
    if (max) *max = sd->lat_max;

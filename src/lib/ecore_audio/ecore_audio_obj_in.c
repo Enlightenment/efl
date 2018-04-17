@@ -31,7 +31,7 @@ _ecore_audio_in_speed_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj, double
 }
 
 EOLIAN static double
-_ecore_audio_in_speed_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
+_ecore_audio_in_speed_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
 {
   return obj->speed;
 }
@@ -45,7 +45,7 @@ _ecore_audio_in_samplerate_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj, i
 }
 
 EOLIAN static int
-_ecore_audio_in_samplerate_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
+_ecore_audio_in_samplerate_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
 {
   return obj->samplerate;;
 }
@@ -60,7 +60,7 @@ _ecore_audio_in_channels_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj, int
 }
 
 EOLIAN static int
-_ecore_audio_in_channels_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
+_ecore_audio_in_channels_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
 {
   return obj->channels;
 }
@@ -72,24 +72,25 @@ _ecore_audio_in_looped_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj, Eina_
 }
 
 EOLIAN static Eina_Bool
-_ecore_audio_in_looped_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
+_ecore_audio_in_looped_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
 {
   return obj->looped;
 }
 
 EOLIAN static double
-_ecore_audio_in_length_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
+_ecore_audio_in_length_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
 {
   return obj->length;;
 }
 
 EOLIAN static double
-_ecore_audio_in_remaining_get(Eo *eo_obj, Ecore_Audio_Input *obj)
+_ecore_audio_in_remaining_get(const Eo *eo_obj, Ecore_Audio_Input *obj)
 {
   if (!obj->seekable) return -1;
   else {
        double ret = 0.0;
-       ret = ecore_audio_obj_in_seek(eo_obj, 0, SEEK_CUR);
+       /* XXX const */
+       ret = ecore_audio_obj_in_seek((Eo *)eo_obj, 0, SEEK_CUR);
        return obj->length - ret;
   }
 }
@@ -134,7 +135,7 @@ _ecore_audio_in_read_internal(Eo *eo_obj, Ecore_Audio_Input *_pd EINA_UNUSED, vo
 }
 
 EOLIAN static Eo*
-_ecore_audio_in_output_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
+_ecore_audio_in_output_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj)
 {
    return obj->output;
 }

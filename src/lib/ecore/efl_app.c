@@ -108,7 +108,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_event_callback_watch,
 //////////////////////////////////////////////////////////////////////////
 
 EOLIAN static Efl_Loop *
-_efl_app_loop_main_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_app_loop_main_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (_mainloop_singleton) return _mainloop_singleton;
    _mainloop_singleton = efl_add_ref(EFL_APP_CLASS, NULL);
@@ -117,13 +117,13 @@ _efl_app_loop_main_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN static const Efl_Version *
-_efl_app_build_efl_version_get(Eo *obj EINA_UNUSED, Efl_App_Data *pd EINA_UNUSED)
+_efl_app_build_efl_version_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd EINA_UNUSED)
 {
    return &_app_efl_version;
 }
 
 EOLIAN static const Efl_Version *
-_efl_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_App_Data *pd EINA_UNUSED)
+_efl_app_efl_version_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd EINA_UNUSED)
 {
    /* vanilla EFL: flavor = NULL */
    static const Efl_Version version = {
@@ -184,7 +184,7 @@ _efl_app_efl_io_closer_close(Eo *obj, Efl_App_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_app_efl_io_closer_closed_get(Eo *obj EINA_UNUSED, Efl_App_Data *pd)
+_efl_app_efl_io_closer_closed_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd)
 {
    if ((pd->fd.in == -1) && (pd->fd.out == -1)) return EINA_TRUE;
    return EINA_FALSE;
@@ -251,7 +251,7 @@ _efl_app_efl_io_reader_can_read_set(Eo *obj, Efl_App_Data *pd, Eina_Bool can_rea
 }
 
 EOLIAN static Eina_Bool
-_efl_app_efl_io_reader_can_read_get(Eo *obj EINA_UNUSED, Efl_App_Data *pd)
+_efl_app_efl_io_reader_can_read_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd)
 {
    return pd->fd.can_read;
 }
@@ -270,7 +270,7 @@ _efl_app_efl_io_reader_eos_set(Eo *obj, Efl_App_Data *pd, Eina_Bool is_eos)
 }
 
 EOLIAN static Eina_Bool
-_efl_app_efl_io_reader_eos_get(Eo *obj EINA_UNUSED, Efl_App_Data *pd)
+_efl_app_efl_io_reader_eos_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd)
 {
    return pd->fd.eos_read;
 }
@@ -343,7 +343,7 @@ _efl_app_efl_io_writer_can_write_set(Eo *obj, Efl_App_Data *pd, Eina_Bool can_wr
 }
 
 EOLIAN static Eina_Bool
-_efl_app_efl_io_writer_can_write_get(Eo *obj EINA_UNUSED, Efl_App_Data *pd)
+_efl_app_efl_io_writer_can_write_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd)
 {
    return pd->fd.can_write;
 }
@@ -377,7 +377,7 @@ _efl_app_efl_task_priority_set(Eo *obj, Efl_App_Data *pd EINA_UNUSED, Efl_Task_P
 }
 
 EOLIAN static Efl_Task_Priority
-_efl_app_efl_task_priority_get(Eo *obj, Efl_App_Data *pd EINA_UNUSED)
+_efl_app_efl_task_priority_get(const Eo *obj, Efl_App_Data *pd EINA_UNUSED)
 {
    Efl_Task_Priority pri = EFL_TASK_PRIORITY_NORMAL;
 #ifdef _WIN32

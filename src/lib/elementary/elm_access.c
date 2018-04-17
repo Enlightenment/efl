@@ -1505,7 +1505,7 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_access_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "highlight", NULL, "highlight", _access_atspi_action_do},
@@ -1522,7 +1522,7 @@ _elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_access_efl_access_state_set_get(Eo *obj, void *pd EINA_UNUSED)
+_elm_access_efl_access_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    ret = efl_access_state_set_get(efl_super(obj, ELM_ACCESS_CLASS));

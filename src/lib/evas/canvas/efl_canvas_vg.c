@@ -132,7 +132,7 @@ evas_object_vg_add(Evas *e)
 }
 
 EOLIAN static Efl_VG *
-_efl_canvas_vg_root_node_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
+_efl_canvas_vg_root_node_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
 {
    Efl_VG *root = NULL;
 
@@ -194,7 +194,7 @@ _efl_canvas_vg_fill_mode_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Efl_Ca
 }
 
 EOLIAN static Efl_Canvas_Vg_Fill_Mode
-_efl_canvas_vg_fill_mode_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
+_efl_canvas_vg_fill_mode_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
 {
    return pd->fill_mode;
 }
@@ -227,7 +227,7 @@ _efl_canvas_vg_viewbox_set(Eo *obj, Efl_Canvas_Vg_Data *pd, Eina_Rect viewbox)
 }
 
 EOLIAN static Eina_Rect
-_efl_canvas_vg_viewbox_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
+_efl_canvas_vg_viewbox_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
 {
    return pd->viewbox;
 }
@@ -246,7 +246,7 @@ _efl_canvas_vg_viewbox_align_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, do
 }
 
 EOLIAN static void
-_efl_canvas_vg_viewbox_align_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, double *align_x, double *align_y)
+_efl_canvas_vg_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, double *align_x, double *align_y)
 {
    if (align_x) *align_x = pd->align_x;
    if (align_y) *align_y = pd->align_y;
@@ -273,7 +273,7 @@ _efl_canvas_vg_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Data *pd, const char *fi
 }
 
 EOLIAN static void
-_efl_canvas_vg_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, const char **file, const char **key)
+_efl_canvas_vg_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, const char **file, const char **key)
 {
    if (pd->vg_entry)
      {

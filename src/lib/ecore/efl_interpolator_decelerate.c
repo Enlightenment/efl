@@ -35,7 +35,7 @@ _efl_interpolator_decelerate_factor_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_interpolator_decelerate_factor_get(Eo *eo_obj EINA_UNUSED,
+_efl_interpolator_decelerate_factor_get(const Eo *eo_obj EINA_UNUSED,
                                         Efl_Interpolator_Decelerate_Data *pd EINA_UNUSED)
 {
    return pd->factor;

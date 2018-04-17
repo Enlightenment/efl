@@ -35,7 +35,7 @@ _efl_interpolator_sinusoidal_factor_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_interpolator_sinusoidal_factor_get(Eo *eo_obj EINA_UNUSED,
+_efl_interpolator_sinusoidal_factor_get(const Eo *eo_obj EINA_UNUSED,
                                         Efl_Interpolator_Sinusoidal_Data *pd EINA_UNUSED)
 {
    return pd->factor;

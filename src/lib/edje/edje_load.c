@@ -167,7 +167,7 @@ _efl_canvas_layout_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char *
 }
 
 EOLIAN Efl_Image_Load_Error
-_efl_canvas_layout_efl_file_load_error_get(Eo *obj, Edje *ed)
+_efl_canvas_layout_efl_file_load_error_get(const Eo *obj, Edje *ed)
 {
    Efl_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EFL_CANVAS_LAYOUT_CLASS));
 

@@ -1235,7 +1235,7 @@ _elm_index_autohide_disabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool disabled
 }
 
 EOLIAN static Eina_Bool
-_elm_index_autohide_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_autohide_disabled_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->autohide_disabled;
 }
@@ -1248,7 +1248,7 @@ _elm_index_item_level_set(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, int level)
 }
 
 EOLIAN static int
-_elm_index_item_level_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_item_level_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->level;
 }
@@ -1562,7 +1562,7 @@ _elm_index_indicator_disabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool disable
 }
 
 EOLIAN static Eina_Bool
-_elm_index_indicator_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_indicator_disabled_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->indicator_disabled;
 }
@@ -1588,7 +1588,7 @@ _elm_index_efl_ui_direction_direction_set(Eo *obj, Elm_Index_Data *sd, Efl_Ui_Di
 }
 
 EOLIAN static Efl_Ui_Dir
-_elm_index_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->dir;
 }
@@ -1600,7 +1600,7 @@ _elm_index_delay_change_time_set(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, double
 }
 
 EOLIAN static double
-_elm_index_delay_change_time_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_delay_change_time_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->delay_change_time;
 }
@@ -1622,7 +1622,7 @@ _elm_index_omit_enabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool enabled)
 }
 
 EOLIAN static Eina_Bool
-_elm_index_omit_enabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_omit_enabled_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->omit_enabled;
 }
@@ -1658,7 +1658,7 @@ _elm_index_standard_priority_set(Eo *obj, Elm_Index_Data *sd, int priority)
 }
 
 EOLIAN static int
-_elm_index_standard_priority_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_standard_priority_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->show_group;
 }
@@ -1677,7 +1677,7 @@ _item_action_activate(Eo *obj, const char *params EINA_UNUSED EINA_UNUSED)
 }
 
 EOLIAN static Eina_List*
-_elm_index_efl_access_access_children_get(Eo *obj, Elm_Index_Data *data)
+_elm_index_efl_access_access_children_get(const Eo *obj, Elm_Index_Data *data)
 {
    Eina_List *ret;
    ret = efl_access_children_get(efl_super(obj, ELM_INDEX_CLASS));
@@ -1685,7 +1685,7 @@ _elm_index_efl_access_access_children_get(Eo *obj, Elm_Index_Data *data)
 }
 
 EOLIAN static const char*
-_elm_index_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
+_elm_index_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Index_Item_Data *data)
 {
    const char *name;
    name = efl_access_i18n_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
@@ -1695,7 +1695,7 @@ _elm_index_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_index_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
+_elm_index_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},

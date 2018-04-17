@@ -71,7 +71,7 @@ _eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Da
 }
 
 static Eina_Array const *
-_eldbus_model_arguments_efl_model_properties_get(Eo *obj EINA_UNUSED,
+_eldbus_model_arguments_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                                       Eldbus_Model_Arguments_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
@@ -208,7 +208,7 @@ _eldbus_model_arguments_efl_model_children_count_get(Eo *obj EINA_UNUSED,
 }
 
 static const char *
-_eldbus_model_arguments_arg_name_get(Eo *obj EINA_UNUSED, Eldbus_Model_Arguments_Data *pd)
+_eldbus_model_arguments_arg_name_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Arguments_Data *pd)
 {
    return pd->name;
 }

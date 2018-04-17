@@ -146,7 +146,7 @@ _efl_canvas_layout_part_box_efl_container_content_count(Eo *obj, void *_pd EINA_
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_canvas_layout_part_box_efl_ui_direction_direction_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_canvas_layout_part_box_efl_ui_direction_direction_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
    const Edje_Part_Description_Box *desc =

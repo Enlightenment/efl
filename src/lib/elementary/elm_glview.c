@@ -375,7 +375,7 @@ _elm_glview_efl_object_finalize(Eo *obj, Elm_Glview_Data *sd)
 }
 
 EOLIAN static Evas_GL_API*
-_elm_glview_gl_api_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_gl_api_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return evas_gl_context_api_get(sd->evasgl, sd->context);
 }
@@ -515,7 +515,7 @@ _elm_glview_efl_gfx_view_view_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D
 }
 
 EOLIAN static Eina_Size2D
-_elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return EINA_SIZE2D(sd->w, sd->h);
 }
@@ -536,13 +536,13 @@ _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
 }
 
 EOLIAN static Evas_GL *
-_elm_glview_evas_gl_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_evas_gl_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return sd->evasgl;
 }
 
 EOLIAN static int
-_elm_glview_rotation_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_rotation_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return evas_gl_rotation_get(sd->evasgl);
 }

@@ -59,7 +59,7 @@ _efl_canvas_vg_node_transformation_set(Eo *obj,
 }
 
 const Eina_Matrix3 *
-_efl_canvas_vg_node_transformation_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
+_efl_canvas_vg_node_transformation_get(const Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
 {
    return pd->m;
 }
@@ -76,7 +76,7 @@ _efl_canvas_vg_node_origin_set(Eo *obj,
 }
 
 static void
-_efl_canvas_vg_node_origin_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_node_origin_get(const Eo *obj EINA_UNUSED,
                         Efl_Canvas_VG_Node_Data *pd,
                         double *x, double *y)
 {
@@ -94,7 +94,7 @@ _efl_canvas_vg_node_efl_gfx_position_set(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node
 }
 
 static Eina_Position2D
-_efl_canvas_vg_node_efl_gfx_position_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
+_efl_canvas_vg_node_efl_gfx_position_get(const Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
 {
    // NOTE: This casts double to int!
    return EINA_POSITION2D(pd->x, pd->y);
@@ -111,7 +111,7 @@ _efl_canvas_vg_node_efl_gfx_visible_set(Eo *obj EINA_UNUSED,
 
 
 static Eina_Bool
-_efl_canvas_vg_node_efl_gfx_visible_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_node_efl_gfx_visible_get(const Eo *obj EINA_UNUSED,
                                       Efl_Canvas_VG_Node_Data *pd)
 {
    return pd->visibility;
@@ -155,7 +155,7 @@ _efl_canvas_vg_node_efl_gfx_color_color_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_canvas_vg_node_efl_gfx_color_color_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_node_efl_gfx_color_color_get(const Eo *obj EINA_UNUSED,
                                     Efl_Canvas_VG_Node_Data *pd,
                                     int *r, int *g, int *b, int *a)
 {
@@ -179,13 +179,13 @@ _efl_canvas_vg_node_mask_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_VG*
-_efl_canvas_vg_node_mask_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
+_efl_canvas_vg_node_mask_get(const Eo *obj EINA_UNUSED, Efl_Canvas_VG_Node_Data *pd)
 {
    return pd->mask;
 }
 
 static Eina_Size2D
-_efl_canvas_vg_node_efl_gfx_size_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_size_get(const Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
 
@@ -194,7 +194,7 @@ _efl_canvas_vg_node_efl_gfx_size_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_U
 }
 
 EOLIAN static Eina_Rect
-_efl_canvas_vg_node_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_geometry_get(const Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
    r.pos = efl_gfx_position_get(obj);
@@ -504,10 +504,10 @@ _efl_canvas_vg_node_efl_gfx_stack_lower(Eo *obj, Efl_Canvas_VG_Node_Data *pd EIN
    ERR("Err");
 }
 
-static Eo *
-_efl_canvas_vg_node_root_parent_get(Eo *obj)
+static const Eo *
+_efl_canvas_vg_node_root_parent_get(const Eo *obj)
 {
-   Eo *parent;
+   const Eo *parent;
 
    parent = efl_parent_get(obj);
 
@@ -516,7 +516,7 @@ _efl_canvas_vg_node_root_parent_get(Eo *obj)
 }
 
 static void
-_efl_canvas_vg_node_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
+_efl_canvas_vg_node_walk_down_at(const Eo *root, Eina_Array *a, Eina_Rectangle *r)
 {
    Eina_Rect bounds;
 
@@ -538,9 +538,9 @@ _efl_canvas_vg_node_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 }
 
 static void
-_efl_canvas_vg_node_object_at(Eo *obj, Eina_Array *a, Eina_Rectangle *r)
+_efl_canvas_vg_node_object_at(const Eo *obj, Eina_Array *a, Eina_Rectangle *r)
 {
-   Eo *root;
+   const Eo *root;
 
    root = _efl_canvas_vg_node_root_parent_get(obj);
    if (!root) return ;
@@ -549,7 +549,7 @@ _efl_canvas_vg_node_object_at(Eo *obj, Eina_Array *a, Eina_Rectangle *r)
 }
 
 static Efl_Gfx_Stack *
-_efl_canvas_vg_node_efl_gfx_stack_below_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_below_get(const Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
    Eina_Array a;
@@ -579,7 +579,7 @@ _efl_canvas_vg_node_efl_gfx_stack_below_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd
 }
 
 static Efl_Gfx_Stack *
-_efl_canvas_vg_node_efl_gfx_stack_above_get(Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_above_get(const Eo *obj, Efl_Canvas_VG_Node_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
    Eina_Array a;

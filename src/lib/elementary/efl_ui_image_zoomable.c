@@ -393,13 +393,13 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoo
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
    return EINA_POSITION2D(psd->wsd->pan_x, psd->wsd->pan_y);
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_max_get(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd)
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_max_get(const Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
    Evas_Coord ow, oh;
 
@@ -413,13 +413,13 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_max_get(Eo *obj, Efl_Ui_Image
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *_pd EINA_UNUSED)
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *_pd EINA_UNUSED)
 {
    return EINA_POSITION2D(0, 0);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_pan_efl_ui_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
+_efl_ui_image_zoomable_pan_efl_ui_pan_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
    return EINA_SIZE2D(psd->wsd->minw, psd->wsd->minh);
 }
@@ -1339,7 +1339,7 @@ _efl_ui_image_zoomable_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Zoo
 }
 
 EOLIAN static Efl_Orient
-_efl_ui_image_zoomable_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_orientation_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->orient;
 }
@@ -1354,7 +1354,7 @@ _efl_ui_image_zoomable_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Zoomable_D
 }
 
 EOLIAN static Efl_Flip
-_efl_ui_image_zoomable_efl_orientation_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_orientation_flip_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->flip;
 }
@@ -1795,13 +1795,13 @@ _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Dat
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
+_efl_ui_image_zoomable_efl_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
    return EINA_SIZE2D(pd->size.imw, pd->size.imh);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_layout_group_group_size_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje)
      return efl_layout_group_size_min_get(sd->edje);
@@ -1810,7 +1810,7 @@ _efl_ui_image_zoomable_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_layout_group_group_size_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje)
      return efl_layout_group_size_max_get(sd->edje);
@@ -2219,7 +2219,7 @@ _efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, const char **file, const char **key)
+_efl_ui_image_zoomable_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, const char **file, const char **key)
 {
    if (file) *file = sd->file;
    if (key) *key = NULL;
@@ -2454,7 +2454,7 @@ done:
 }
 
 EOLIAN static double
-_efl_ui_image_zoomable_efl_ui_zoom_zoom_level_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_ui_zoom_zoom_level_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->zoom;
 }
@@ -2472,19 +2472,19 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_set(Eo *obj, Efl_Ui_Image_Zoomable_
 }
 
 EOLIAN static Elm_Photocam_Zoom_Mode
-_efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->mode;
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
+_efl_ui_image_zoomable_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
    return EINA_SIZE2D(pd->size.imw, pd->size.imh);
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_image_zoomable_image_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_image_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    Eina_Rect region = {};
 
@@ -2570,7 +2570,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_animation_set(Eo *obj, Efl_Ui_Image_Zoom
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_ui_zoom_zoom_animation_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_ui_zoom_zoom_animation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->paused;
 }
@@ -2824,19 +2824,19 @@ _efl_ui_image_zoomable_efl_ui_image_icon_set(Eo *obj, Efl_Ui_Image_Zoomable_Data
 }
 
 EOLIAN static const char *
-_efl_ui_image_zoomable_efl_ui_image_icon_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
+_efl_ui_image_zoomable_efl_ui_image_icon_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
    return pd->stdicon;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_gesture_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_gesture_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->do_gesture;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_player_playable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_player_playable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje) return EINA_TRUE;
    return evas_object_image_animated_get(sd->img);
@@ -2946,7 +2946,7 @@ _efl_ui_image_zoomable_animated_play_get_internal(const Eo *obj EINA_UNUSED, Efl
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_player_play_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_player_play_get(const Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return _efl_ui_image_zoomable_animated_play_get_internal(obj, sd);
 }
@@ -2963,7 +2963,7 @@ _efl_ui_image_zoomable_class_constructor(Efl_Class *klass EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_image_zoomable_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED)
+_efl_ui_image_zoomable_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},

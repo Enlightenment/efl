@@ -194,7 +194,7 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_ui_layout_part_box_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
+_efl_ui_layout_part_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_DIR_DEFAULT);
 
@@ -309,7 +309,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_pack_table_table_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_layout_part_table_efl_pack_table_table_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    unsigned short c, r, cs, rs;
    Eina_Bool ret;
@@ -325,14 +325,14 @@ _efl_ui_layout_part_table_efl_pack_table_table_position_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_layout_part_table_efl_pack_table_table_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int *cols, int *rows)
+_efl_ui_layout_part_table_efl_pack_table_table_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int *cols, int *rows)
 {
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
    evas_object_table_col_row_size_get(pack, cols, rows);
 }
 
 EOLIAN static int
-_efl_ui_layout_part_table_efl_pack_table_table_columns_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
+_efl_ui_layout_part_table_efl_pack_table_table_columns_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
 {
    int cols, rows;
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
@@ -341,7 +341,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_columns_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static int
-_efl_ui_layout_part_table_efl_pack_table_table_rows_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
+_efl_ui_layout_part_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
 {
    int cols, rows;
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);

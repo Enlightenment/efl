@@ -255,13 +255,13 @@ _efl_ui_scroll_manager_edge_right(Efl_Ui_Scroll_Manager_Data *sd)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return efl_ui_pan_content_size_get(sd->pan_obj);
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_viewport_geometry_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *obj EINA_UNUSED,
                                                                        Efl_Ui_Scroll_Manager_Data *sd)
 {
    if (!sd->pan_obj) return EINA_RECT(0, 0, 0, 0);
@@ -397,7 +397,7 @@ _efl_ui_scroll_manager_bounce_eval(Efl_Ui_Scroll_Manager_Data *sd)
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    if (!sd->pan_obj) return EINA_POSITION2D(0, 0);
 
@@ -594,7 +594,7 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_mode_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollbar_bar_mode_get(Eo *obj EINA_UNUSED,
+_efl_ui_scroll_manager_efl_ui_scrollbar_bar_mode_get(const Eo *obj EINA_UNUSED,
                                                      Efl_Ui_Scroll_Manager_Data *sd,
                                                      Efl_Ui_Scrollbar_Mode *hmode,
                                                      Efl_Ui_Scrollbar_Mode *vmode)
@@ -2213,7 +2213,7 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_position_set(Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollbar_bar_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *posx, double *posy)
+_efl_ui_scroll_manager_efl_ui_scrollbar_bar_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *posx, double *posy)
 {
    if (!sd->pan_obj) return;
 
@@ -2244,7 +2244,7 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_position_get(Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollbar_bar_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *width, double *height)
+_efl_ui_scroll_manager_efl_ui_scrollbar_bar_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *width, double *height)
 {
    if (!sd->pan_obj) return;
 
@@ -2301,7 +2301,7 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_hold_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_hold_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->hold;
 }
@@ -2313,7 +2313,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_hold_set(Eo *obj EIN
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_freeze_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_freeze_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->freeze;
 }
@@ -2338,7 +2338,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_bounce_enabled_set(Eo *obj 
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_bounce_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *horiz, Eina_Bool *vert)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_bounce_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *horiz, Eina_Bool *vert)
 {
    if (horiz) *horiz = sd->bounce_horiz;
    if (vert) *vert = sd->bounce_vert;
@@ -2383,7 +2383,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_set(Eo *obj EINA_UN
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *x, double *y)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *x, double *y)
 {
    if (x) *x = sd->gravity_x;
    if (y) *y = sd->gravity_y;
@@ -2396,7 +2396,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_set(Eo *obj 
 }
 
 EOLIAN static Efl_Ui_Scroll_Block
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->block;
 }
@@ -2411,7 +2411,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_looping_set(Eo *obj EINA_UN
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_looping_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_looping_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v)
 {
    *loop_h = sd->loop_h;
    *loop_v = sd->loop_v;

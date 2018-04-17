@@ -11,7 +11,7 @@ _efl_canvas_animation_duration_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_canvas_animation_duration_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
+_efl_canvas_animation_duration_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
 {
    return pd->duration;
 }
@@ -27,7 +27,7 @@ _efl_canvas_animation_final_state_keep_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_final_state_keep_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_final_state_keep_get(const Eo *eo_obj EINA_UNUSED,
                                     Efl_Canvas_Animation_Data *pd)
 {
    return pd->keep_final_state;
@@ -44,7 +44,7 @@ _efl_canvas_animation_repeat_mode_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Canvas_Animation_Repeat_Mode
-_efl_canvas_animation_repeat_mode_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
+_efl_canvas_animation_repeat_mode_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
 {
    return pd->repeat_mode;
 }
@@ -61,7 +61,7 @@ _efl_canvas_animation_repeat_count_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static int
-_efl_canvas_animation_repeat_count_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
+_efl_canvas_animation_repeat_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd)
 {
    return pd->repeat_count;
 }
@@ -77,7 +77,7 @@ _efl_canvas_animation_start_delay_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_canvas_animation_start_delay_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_start_delay_get(const Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Data *pd)
 {
    return pd->start_delay_time;
@@ -92,7 +92,7 @@ _efl_canvas_animation_interpolator_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Interpolator *
-_efl_canvas_animation_interpolator_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_interpolator_get(const Eo *eo_obj EINA_UNUSED,
                                 Efl_Canvas_Animation_Data *pd)
 {
    return pd->interpolator;
@@ -112,7 +112,7 @@ _efl_canvas_animation_animation_apply(Eo *eo_obj,
 }
 
 EOLIAN static double
-_efl_canvas_animation_efl_playable_length_get(Eo *eo_obj, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
+_efl_canvas_animation_efl_playable_length_get(const Eo *eo_obj, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
    if (efl_animation_repeat_count_get(eo_obj) == EFL_ANIMATION_REPEAT_INFINITE)
      {
@@ -124,13 +124,13 @@ _efl_canvas_animation_efl_playable_length_get(Eo *eo_obj, Efl_Canvas_Animation_D
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_efl_playable_playable_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
+_efl_canvas_animation_efl_playable_playable_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_efl_playable_seekable_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
+_efl_canvas_animation_efl_playable_seekable_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }

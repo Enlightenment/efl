@@ -122,7 +122,7 @@ _properties_names_push(const Eina_Hash *hash EINA_UNUSED,
 }
 
 static const Eina_Array*
-_efl_model_composite_boolean_children_efl_model_properties_get(Eo *obj EINA_UNUSED,
+_efl_model_composite_boolean_children_efl_model_properties_get(const Eo *obj EINA_UNUSED,
   Efl_Model_Composite_Boolean_Children_Data *pd)
 {
    Eina_Array const *composite_properties;
@@ -533,7 +533,7 @@ _efl_model_composite_boolean_efl_ui_view_model_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Model *
-_efl_model_composite_boolean_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
+_efl_model_composite_boolean_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
 {
    return pd->composite_model;
 }
@@ -550,7 +550,7 @@ _efl_model_composite_boolean_property_add(Eo *obj EINA_UNUSED, Efl_Model_Composi
 }
 
 static const Eina_Array *
-_efl_model_composite_boolean_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
+_efl_model_composite_boolean_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
 {
   if (pd->composite_model)
     return efl_model_properties_get(pd->composite_model);

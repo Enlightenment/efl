@@ -812,7 +812,7 @@ _efl_ui_spin_button_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *s
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_button_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+_efl_ui_spin_button_editable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
 {
    return sd->editable;
 }
@@ -824,13 +824,13 @@ _efl_ui_spin_button_circulate_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_button_circulate_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+_efl_ui_spin_button_circulate_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
 {
    return sd->circulate;
 }
 
 EOLIAN static const Efl_Access_Action_Data *
-_efl_ui_spin_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "toggle", "toggle", NULL, _key_action_toggle},
@@ -842,7 +842,7 @@ _efl_ui_spin_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 // A11Y Accessibility
 
 EOLIAN static void
-_efl_ui_spin_button_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double *value, const char **text)
+_efl_ui_spin_button_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double *value, const char **text)
 {
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
@@ -865,7 +865,7 @@ _efl_ui_spin_button_efl_access_value_value_and_text_set(Eo *obj, Efl_Ui_Spin_But
 }
 
 EOLIAN static void
-_efl_ui_spin_button_efl_access_value_range_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double *lower, double *upper, const char **descr)
+_efl_ui_spin_button_efl_access_value_range_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double *lower, double *upper, const char **descr)
 {
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
@@ -875,7 +875,7 @@ _efl_ui_spin_button_efl_access_value_range_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_
 }
 
 EOLIAN static double
-_efl_ui_spin_button_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
@@ -883,7 +883,7 @@ _efl_ui_spin_button_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Efl_Ui_S
 }
 
 EOLIAN static const char*
-_efl_ui_spin_button_efl_access_i18n_name_get(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_access_i18n_name_get(const Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    const char *name;
    name = efl_access_i18n_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));

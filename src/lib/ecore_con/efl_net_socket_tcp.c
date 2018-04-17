@@ -114,7 +114,7 @@ _efl_net_socket_tcp_keep_alive_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_tcp_keep_alive_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
+_efl_net_socket_tcp_keep_alive_get(const Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
    SOCKET fd;
 #ifdef _WIN32
@@ -172,7 +172,7 @@ _efl_net_socket_tcp_no_delay_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool n
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_tcp_no_delay_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
+_efl_net_socket_tcp_no_delay_get(const Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
    SOCKET fd;
 #ifdef _WIN32
@@ -246,7 +246,7 @@ _efl_net_socket_tcp_cork_set(Eo *o, Efl_Net_Socket_Tcp_Data *pd, Eina_Bool cork)
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_tcp_cork_get(Eo *o, Efl_Net_Socket_Tcp_Data *pd)
+_efl_net_socket_tcp_cork_get(const Eo *o, Efl_Net_Socket_Tcp_Data *pd)
 {
    SOCKET fd;
    int value = 0;

@@ -28,10 +28,10 @@ _already_focused(Eina_List *seats, Efl_Input_Device *seat)
 }
 
 static Efl_Input_Device *
-_default_seat_get(Eo *evas_obj)
+_default_seat_get(const Eo *evas_obj)
 {
    Evas_Public_Data *edata;
-   Evas *evas = evas_object_evas_get(evas_obj);
+   Evas *evas = evas_object_evas_get((Evas_Object *)evas_obj);
 
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (!edata) return NULL;
@@ -252,7 +252,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_seat_focus_check(Eo *eo_obj,
+_efl_canvas_object_seat_focus_check(const Eo *eo_obj,
                                     Evas_Object_Protected_Data *obj,
                                     Efl_Input_Device *seat)
 {
@@ -289,7 +289,7 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_seat_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_seat_focus_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
@@ -299,13 +299,13 @@ _efl_canvas_object_seat_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_key_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_key_focus_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    return _efl_canvas_object_seat_focus_check(eo_obj, obj, NULL);
 }
 
 EOLIAN Evas_Object *
-_evas_canvas_seat_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e,
+_evas_canvas_seat_focus_get(const Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e,
                             Efl_Input_Device *seat)
 {
    if (!seat)
@@ -315,7 +315,7 @@ _evas_canvas_seat_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e,
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_focus_get(const Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
 {
    return _evas_canvas_seat_focus_get(eo_obj, e, NULL);
 }

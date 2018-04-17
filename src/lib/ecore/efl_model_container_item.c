@@ -32,7 +32,7 @@ _efl_model_container_item_efl_object_invalidate(Eo *obj, Efl_Model_Container_Ite
 }
 
 EOLIAN static const Eina_Array *
-_efl_model_container_item_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
+_efl_model_container_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
 {
    if (!sd->parent_data)
      return NULL;

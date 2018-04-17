@@ -145,7 +145,7 @@ _efl_ui_frame_autocollapse_set(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd, Eina_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_frame_autocollapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
+_efl_ui_frame_autocollapse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 {
    return sd->collapsible;
 }
@@ -184,7 +184,7 @@ _efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
+_efl_ui_frame_collapse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 {
    return sd->collapsed;
 }

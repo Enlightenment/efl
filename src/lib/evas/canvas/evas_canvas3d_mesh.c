@@ -287,7 +287,7 @@ _evas_canvas3d_mesh_shader_mode_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data
 }
 
 EOLIAN static Evas_Canvas3D_Shader_Mode
-_evas_canvas3d_mesh_shader_mode_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_shader_mode_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->shader_mode;
 }
@@ -300,7 +300,7 @@ _evas_canvas3d_mesh_vertex_count_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, unsig
 }
 
 EOLIAN static unsigned int
-_evas_canvas3d_mesh_vertex_count_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_vertex_count_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->vertex_count;
 }
@@ -380,7 +380,7 @@ _evas_canvas3d_mesh_frame_material_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int
 }
 
 EOLIAN static Evas_Canvas3D_Material *
-_evas_canvas3d_mesh_frame_material_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame)
+_evas_canvas3d_mesh_frame_material_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame)
 {
    Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
@@ -763,7 +763,7 @@ _evas_canvas3d_mesh_vertex_assembly_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Ev
 }
 
 EOLIAN static Evas_Canvas3D_Vertex_Assembly
-_evas_canvas3d_mesh_vertex_assembly_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_vertex_assembly_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->assembly;
 }
@@ -793,7 +793,7 @@ _evas_canvas3d_mesh_fog_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_fog_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_fog_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->fog_enabled;
 }
@@ -806,7 +806,7 @@ _evas_canvas3d_mesh_blending_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Ei
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_blending_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_blending_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->blending;
 }
@@ -840,7 +840,7 @@ _evas_canvas3d_mesh_alpha_func_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Ca
 }
 
 EOLIAN static void
-_evas_canvas3d_mesh_alpha_func_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_alpha_func_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
                                    Evas_Canvas3D_Comparison *comparison,
                                    Evas_Real *ref_value)
 {
@@ -856,7 +856,7 @@ _evas_canvas3d_mesh_alpha_test_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, 
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_alpha_test_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_alpha_test_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->alpha_test_enabled;
 }
@@ -1080,7 +1080,7 @@ evas_canvas3d_mesh_interpolate_vertex_buffer_get(Evas_Canvas3D_Mesh *mesh, int f
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_color_pick_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->color_pick_enabled;
 }
@@ -1104,7 +1104,7 @@ _evas_canvas3d_mesh_shadows_edges_filtering_set(Eo *obj, Evas_Canvas3D_Mesh_Data
 }
 
 EOLIAN static void
-_evas_canvas3d_mesh_shadows_edges_filtering_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_shadows_edges_filtering_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
                                    int *blur_level, Evas_Real *edges_size)
 {
    if (blur_level) *blur_level = pd->shadows_edges_filtering_level;
@@ -1123,7 +1123,7 @@ _evas_canvas3d_mesh_shadows_constant_bias_set(Eo *obj EINA_UNUSED, Evas_Canvas3D
 }
 
 EOLIAN static Evas_Real
-_evas_canvas3d_mesh_shadows_constant_bias_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_shadows_constant_bias_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->shadows_constant_bias;
 }
@@ -1162,7 +1162,7 @@ _evas_canvas3d_mesh_lod_boundary_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Dat
 }
 
 EOLIAN static void
-_evas_canvas3d_mesh_lod_boundary_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_lod_boundary_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
                                      Evas_Real *near_lod, Evas_Real *far_lod)
 {
    *near_lod = pd->near_lod_boundary;

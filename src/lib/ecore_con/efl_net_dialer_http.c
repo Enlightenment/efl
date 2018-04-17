@@ -1442,7 +1442,7 @@ _efl_net_dialer_http_efl_net_dialer_address_dial_set(Eo *o, Efl_Net_Dialer_Http_
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_efl_net_dialer_address_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_net_dialer_address_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->address_dial;
 }
@@ -1458,7 +1458,7 @@ _efl_net_dialer_http_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Http_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_net_dialer_connected_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->connected;
 }
@@ -1477,7 +1477,7 @@ _efl_net_dialer_http_efl_net_dialer_proxy_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_net_dialer_proxy_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->proxy;
 }
@@ -1497,7 +1497,7 @@ _efl_net_dialer_http_efl_net_dialer_timeout_dial_set(Eo *o, Efl_Net_Dialer_Http_
 }
 
 EOLIAN static double
-_efl_net_dialer_http_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_net_dialer_timeout_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->timeout_dial;
 }
@@ -1509,7 +1509,7 @@ _efl_net_dialer_http_efl_net_socket_address_local_set(Eo *o EINA_UNUSED, Efl_Net
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_efl_net_socket_address_local_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_net_socket_address_local_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->address_local;
 }
@@ -1522,7 +1522,7 @@ _efl_net_dialer_http_efl_net_socket_address_remote_set(Eo *o, Efl_Net_Dialer_Htt
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_net_socket_address_remote_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->address_remote;
 }
@@ -1609,7 +1609,7 @@ _efl_net_dialer_http_efl_io_reader_read(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ein
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->can_read;
 }
@@ -1624,7 +1624,7 @@ _efl_net_dialer_http_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Http_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_reader_eos_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->eos;
 }
@@ -1697,7 +1697,7 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->can_write;
 }
@@ -1769,7 +1769,7 @@ _efl_net_dialer_http_pending_close(Eo *o, const Eina_Value value EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->closed || (!!pd->pending_close);
 }
@@ -1800,7 +1800,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->close_on_exec;
 }
@@ -1812,7 +1812,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Ef
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->close_on_destructor;
 }
@@ -1839,7 +1839,7 @@ _efl_net_dialer_http_efl_io_sizer_resize(Eo *o, Efl_Net_Dialer_Http_Data *pd, ui
 }
 
 EOLIAN static uint64_t
-_efl_net_dialer_http_efl_io_sizer_size_get(Eo *o, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_efl_io_sizer_size_get(const Eo *o, Efl_Net_Dialer_Http_Data *pd)
 {
    Efl_Net_Dialer_Http_Primary_Mode pm;
    int64_t len;
@@ -1920,7 +1920,7 @@ _efl_net_dialer_http_method_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char 
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_method_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_method_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->method;
 }
@@ -1933,7 +1933,7 @@ _efl_net_dialer_http_primary_mode_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, Efl_N
 }
 
 EOLIAN static Efl_Net_Dialer_Http_Primary_Mode
-_efl_net_dialer_http_primary_mode_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_primary_mode_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return _efl_net_dialer_http_primary_mode_effective_get(pd);
 }
@@ -1952,7 +1952,7 @@ _efl_net_dialer_http_user_agent_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const c
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_user_agent_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_user_agent_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->user_agent;
 }
@@ -1971,7 +1971,7 @@ _efl_net_dialer_http_http_version_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, Efl_N
 }
 
 EOLIAN static Efl_Net_Http_Version
-_efl_net_dialer_http_http_version_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_http_version_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->version;
 }
@@ -2009,7 +2009,7 @@ _efl_net_dialer_http_authentication_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, con
 }
 
 EOLIAN static void
-_efl_net_dialer_http_authentication_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char **username, const char **password, Efl_Net_Http_Authentication_Method *method, Eina_Bool *restricted)
+_efl_net_dialer_http_authentication_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, const char **username, const char **password, Efl_Net_Http_Authentication_Method *method, Eina_Bool *restricted)
 {
    if (username) *username = pd->authentication.username;
    if (password) *password = pd->authentication.password;
@@ -2031,13 +2031,13 @@ _efl_net_dialer_http_allow_redirects_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_http_allow_redirects_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_allow_redirects_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->allow_redirects;
 }
 
 EOLIAN static Efl_Net_Http_Status
-_efl_net_dialer_http_response_status_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_response_status_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->response.status;
 }
@@ -2167,7 +2167,7 @@ _efl_net_dialer_http_request_content_length_set(Eo *o, Efl_Net_Dialer_Http_Data 
 }
 
 EOLIAN static int64_t
-_efl_net_dialer_http_request_content_length_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_request_content_length_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->request.content_length;
 }
@@ -2187,7 +2187,7 @@ _efl_net_dialer_http_response_content_length_set(Eo *o, Efl_Net_Dialer_Http_Data
 }
 
 EOLIAN static int64_t
-_efl_net_dialer_http_response_content_length_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_response_content_length_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->response.content_length;
 }
@@ -2199,7 +2199,7 @@ _efl_net_dialer_http_response_content_type_set(Eo *o EINA_UNUSED, Efl_Net_Dialer
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_response_content_type_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_response_content_type_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->response.content_type;
 }
@@ -2233,14 +2233,14 @@ _efl_net_dialer_http_response_headers_clear(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ht
 }
 
 EOLIAN static void
-_efl_net_dialer_http_progress_download_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, uint64_t *now, uint64_t *total)
+_efl_net_dialer_http_progress_download_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, uint64_t *now, uint64_t *total)
 {
    if (now) *now = pd->progress.download.now;
    if (total) *total = pd->progress.download.total;
 }
 
 EOLIAN static void
-_efl_net_dialer_http_progress_upload_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, uint64_t *now, uint64_t *total)
+_efl_net_dialer_http_progress_upload_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, uint64_t *now, uint64_t *total)
 {
    if (now) *now = pd->progress.upload.now;
    if (total) *total = pd->progress.upload.total;
@@ -2291,7 +2291,7 @@ _efl_net_dialer_http_cookie_jar_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data 
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_cookie_jar_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_cookie_jar_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->cookie_jar;
 }
@@ -2319,7 +2319,7 @@ _efl_net_dialer_http_ssl_verify_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, Eina_Bo
 }
 
 EOLIAN static void
-_efl_net_dialer_http_ssl_verify_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool *peer, Eina_Bool *hostname)
+_efl_net_dialer_http_ssl_verify_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd, Eina_Bool *peer, Eina_Bool *hostname)
 {
    if (peer) *peer = pd->ssl.verify_peer;
    if (hostname) *hostname = pd->ssl.verify_hostname;
@@ -2344,7 +2344,7 @@ _efl_net_dialer_http_ssl_certificate_authority_set(Eo *o EINA_UNUSED, Efl_Net_Di
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_ssl_certificate_authority_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_ssl_certificate_authority_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->ssl.ca;
 }
@@ -2363,7 +2363,7 @@ _efl_net_dialer_http_ssl_certificate_revocation_list_set(Eo *o EINA_UNUSED, Efl_
 }
 
 EOLIAN static const char *
-_efl_net_dialer_http_ssl_certificate_revocation_list_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
+_efl_net_dialer_http_ssl_certificate_revocation_list_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Http_Data *pd)
 {
    return pd->ssl.crl;
 }

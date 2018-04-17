@@ -27,7 +27,7 @@ _efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_UN
 }
 
 static void
-_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_start_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_start_get(const Eo *obj EINA_UNUSED,
                                                           Efl_Canvas_VG_Gradient_Linear_Data *pd,
                                                           double *x, double *y)
 {
@@ -47,7 +47,7 @@ _efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNUS
 }
 
 static void
-_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_get(const Eo *obj EINA_UNUSED,
                                                         Efl_Canvas_VG_Gradient_Linear_Data *pd,
                                                         double *x, double *y)
 {
@@ -112,7 +112,7 @@ _efl_canvas_vg_gradient_linear_efl_object_destructor(Eo *obj, Efl_Canvas_VG_Grad
 }
 
 static void
-_efl_canvas_vg_gradient_linear_efl_gfx_path_bounds_get(Eo *obj, Efl_Canvas_VG_Gradient_Linear_Data *pd, Eina_Rect *r)
+_efl_canvas_vg_gradient_linear_efl_gfx_path_bounds_get(const Eo *obj, Efl_Canvas_VG_Gradient_Linear_Data *pd, Eina_Rect *r)
 {
    Efl_Canvas_VG_Node_Data *nd;
 

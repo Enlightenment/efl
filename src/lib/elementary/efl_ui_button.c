@@ -261,13 +261,13 @@ _internal_efl_ui_button_autorepeat_supported_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_get(Eo *obj, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_get(const Eo *obj, Efl_Ui_Button_Data *sd)
 {
    return (_AR_CAPABLE(obj) & sd->autorepeat);
 }
@@ -287,7 +287,7 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_set(Eo *obj, Efl_Ui_
 }
 
 EOLIAN static double
-_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(Eo *obj, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(const Eo *obj, Efl_Ui_Button_Data *sd)
 {
    if (!_AR_CAPABLE(obj))
       return 0.0;
@@ -311,13 +311,13 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_set(Eo *obj, Efl_Ui_Butt
 }
 
 EOLIAN static double
-_efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd)
 {
    return sd->ar_gap_timeout;
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
+_efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate },

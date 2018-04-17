@@ -1079,7 +1079,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 }
 
 EOLIAN static Efl_Ui_Focus_Manager *
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    return pd->redirect;
 }
@@ -1176,12 +1176,13 @@ _iterator_free(Border_Elements_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Border_Elements_Iterator *it;
    Node *n;
 
-   dirty_flush_all(obj, pd);
+   /* XXX const */
+   dirty_flush_all((Eo *)obj, pd);
 
    Eina_Iterator *elements = eina_hash_iterator_data_new(pd->node_hash);
    EINA_ITERATOR_FOREACH(elements, n)
@@ -1199,7 +1200,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(Eo *obj, Efl
    it->iterator.next = FUNC_ITERATOR_NEXT(_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_iterator_free);
-   it->object = obj;
+   it->object = (Eo *)obj;
 
    return (Eina_Iterator*) it;
 }
@@ -1784,7 +1785,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_root_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_root_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    if (!pd->root) return NULL;
 
@@ -1823,7 +1824,7 @@ _convert(Border b)
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Node *upper = NULL;
 

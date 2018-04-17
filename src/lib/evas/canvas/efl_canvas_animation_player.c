@@ -18,7 +18,7 @@ _efl_canvas_animation_player_target_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Canvas_Object *
-_efl_canvas_animation_player_target_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Player_Data *pd)
+_efl_canvas_animation_player_target_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->target;
 }
@@ -32,7 +32,7 @@ _efl_canvas_animation_player_auto_del_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_auto_del_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_auto_del_get(const Eo *eo_obj EINA_UNUSED,
                                    Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->auto_del;
@@ -63,7 +63,7 @@ _efl_canvas_animation_player_animation_set(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Canvas_Animation *
-_efl_canvas_animation_player_animation_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_animation_get(const Eo *eo_obj EINA_UNUSED,
                                     Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->animation;
@@ -261,14 +261,14 @@ _efl_canvas_animation_player_efl_player_play_set(Eo *eo_obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_efl_player_play_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_play_get(const Eo *eo_obj EINA_UNUSED,
                                           Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->is_play;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_efl_player_playable_get(Eo *eo_obj,
+_efl_canvas_animation_player_efl_player_playable_get(const Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    Efl_Canvas_Animation *anim = efl_animation_player_animation_get(eo_obj);
@@ -277,7 +277,7 @@ _efl_canvas_animation_player_efl_player_playable_get(Eo *eo_obj,
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_pos_get(Eo *eo_obj,
+_efl_canvas_animation_player_efl_player_pos_get(const Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    //TODO: this is not correct
@@ -303,7 +303,7 @@ _efl_canvas_animation_player_efl_player_pos_set(Eo *eo_obj,
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_progress_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_progress_get(const Eo *eo_obj EINA_UNUSED,
                                               Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->progress;
@@ -321,14 +321,14 @@ _efl_canvas_animation_player_efl_player_play_speed_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_play_speed_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_play_speed_get(const Eo *eo_obj EINA_UNUSED,
                                                 Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->play_speed;
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_length_get(Eo *eo_obj,
+_efl_canvas_animation_player_efl_player_length_get(const Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
@@ -336,7 +336,7 @@ _efl_canvas_animation_player_efl_player_length_get(Eo *eo_obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_efl_player_seekable_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_seekable_get(const Eo *eo_obj EINA_UNUSED,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);

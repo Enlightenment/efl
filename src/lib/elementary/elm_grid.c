@@ -112,7 +112,7 @@ _elm_grid_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord
 }
 
 EOLIAN static void
-_elm_grid_grid_size_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *w, Evas_Coord *h)
+_elm_grid_grid_size_get(const Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *w, Evas_Coord *h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -191,7 +191,7 @@ elm_grid_pack_get(Evas_Object *subobj,
 }
 
 EOLIAN static Eina_List*
-_elm_grid_children_get(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_children_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return evas_object_grid_children_get(wd->resize_obj);

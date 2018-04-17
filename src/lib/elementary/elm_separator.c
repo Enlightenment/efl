@@ -87,7 +87,7 @@ _elm_separator_horizontal_set(Eo *obj, Elm_Separator_Data *sd, Eina_Bool horizon
 }
 
 EOLIAN static Eina_Bool
-_elm_separator_horizontal_get(Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
+_elm_separator_horizontal_get(const Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
 {
    return sd->horizontal;
 }

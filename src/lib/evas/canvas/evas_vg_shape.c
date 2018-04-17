@@ -32,7 +32,7 @@ _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Canvas_VG_Node *
-_efl_canvas_vg_shape_fill_get(Eo *obj EINA_UNUSED, Efl_Canvas_VG_Shape_Data *pd)
+_efl_canvas_vg_shape_fill_get(const Eo *obj EINA_UNUSED, Efl_Canvas_VG_Shape_Data *pd)
 {
    return pd->fill;
 }
@@ -51,7 +51,7 @@ _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Canvas_VG_Node *
-_efl_canvas_vg_shape_stroke_fill_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_shape_stroke_fill_get(const Eo *obj EINA_UNUSED,
                               Efl_Canvas_VG_Shape_Data *pd)
 {
    return pd->stroke.fill;
@@ -71,7 +71,7 @@ _efl_canvas_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Canvas_VG_Shape *
-_efl_canvas_vg_shape_stroke_marker_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_shape_stroke_marker_get(const Eo *obj EINA_UNUSED,
                                 Efl_Canvas_VG_Shape_Data *pd)
 {
    return pd->stroke.marker;

@@ -193,7 +193,7 @@ _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_path_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_path_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                   const Efl_Gfx_Path_Command **commands,
                   const double **points)
 {
@@ -202,7 +202,7 @@ _efl_gfx_path_path_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_length_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                          unsigned int *commands, unsigned int *points)
 {
    if (commands) *commands = pd->commands_count;
@@ -210,7 +210,7 @@ _efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *r)
+_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *r)
 {
    double minx, miny, maxx, maxy;
    unsigned int i;
@@ -236,7 +236,7 @@ _efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *
 }
 
 EOLIAN static void
-_efl_gfx_path_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_current_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                            double *x, double *y)
 {
    if (x) *x = pd->current.x;
@@ -244,7 +244,7 @@ _efl_gfx_path_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_current_ctrl_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_current_ctrl_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                                 double *x, double *y)
 {
    if (x) *x = pd->current_ctrl.x;

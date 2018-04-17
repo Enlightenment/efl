@@ -1103,7 +1103,7 @@ _efl_ui_calendar_date_min_set(Eo *obj, Efl_Ui_Calendar_Data *sd, Efl_Time min)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_calendar_date_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_date_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 {
    return sd->date_min;
 }
@@ -1164,7 +1164,7 @@ _efl_ui_calendar_date_max_set(Eo *obj, Efl_Ui_Calendar_Data *sd, Efl_Time max)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_calendar_date_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_date_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 {
    return sd->date_max;
 }
@@ -1204,7 +1204,7 @@ _efl_ui_calendar_date_set(Eo *obj, Efl_Ui_Calendar_Data *sd, Efl_Time date)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_calendar_date_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_date_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 {
    return sd->date;
 }
@@ -1238,7 +1238,7 @@ _efl_ui_calendar_first_day_of_week_set(Eo *obj, Efl_Ui_Calendar_Data *sd, Efl_Ui
 }
 
 EOLIAN static Efl_Ui_Calendar_Weekday
-_efl_ui_calendar_first_day_of_week_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_first_day_of_week_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 {
    return sd->first_week_day;
 }
@@ -1253,7 +1253,7 @@ _efl_ui_calendar_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_efl_ui_calendar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd EINA_UNUSED)
+_efl_ui_calendar_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -1299,7 +1299,7 @@ _efl_ui_calendar_item_day_number_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, int
 }
 
 EOLIAN static int
-_efl_ui_calendar_item_day_number_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
+_efl_ui_calendar_item_day_number_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
 {
    return pd->v;
 }
@@ -1314,7 +1314,7 @@ _efl_ui_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Calendar_Ite
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
+_efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
 {
    return efl_gfx_geometry_get(pd->part);
 }

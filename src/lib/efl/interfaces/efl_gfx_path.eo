@@ -59,7 +59,7 @@ mixin Efl.Gfx.Path
           @in dup_from: const(Efl.Object); [[Shape object from where data will be copied.]]
         }
       }
-      bounds_get {
+      bounds_get @const {
         [[Compute and return the bounding box of the currently set path
 
           @since 1.18

@@ -819,7 +819,7 @@ _efl_thread_efl_io_closer_close(Eo *obj, Efl_Thread_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_thread_efl_io_closer_closed_get(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
+_efl_thread_efl_io_closer_closed_get(const Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
 {
    if ((pd->fd.in == -1) && (pd->fd.out == -1)) return EINA_TRUE;
    return EINA_FALSE;
@@ -889,7 +889,7 @@ _efl_thread_efl_io_reader_can_read_set(Eo *obj, Efl_Thread_Data *pd, Eina_Bool c
 }
 
 EOLIAN static Eina_Bool
-_efl_thread_efl_io_reader_can_read_get(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
+_efl_thread_efl_io_reader_can_read_get(const Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
 {
    return pd->fd.can_read;
 }
@@ -908,7 +908,7 @@ _efl_thread_efl_io_reader_eos_set(Eo *obj, Efl_Thread_Data *pd, Eina_Bool is_eos
 }
 
 EOLIAN static Eina_Bool
-_efl_thread_efl_io_reader_eos_get(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
+_efl_thread_efl_io_reader_eos_get(const Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
 {
    return pd->fd.eos_read;
 }
@@ -983,7 +983,7 @@ _efl_thread_efl_io_writer_can_write_set(Eo *obj, Efl_Thread_Data *pd, Eina_Bool 
 }
 
 EOLIAN static Eina_Bool
-_efl_thread_efl_io_writer_can_write_get(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
+_efl_thread_efl_io_writer_can_write_get(const Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
 {
    return pd->fd.can_write;
 }

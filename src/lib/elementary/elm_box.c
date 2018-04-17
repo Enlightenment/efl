@@ -391,7 +391,7 @@ _elm_box_horizontal_set(Eo *obj, Elm_Box_Data *sd, Eina_Bool horizontal)
 }
 
 EOLIAN static Eina_Bool
-_elm_box_horizontal_get(Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
+_elm_box_horizontal_get(const Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
 {
    return sd->horizontal;
 }
@@ -406,7 +406,7 @@ _elm_box_homogeneous_set(Eo *obj, Elm_Box_Data *sd, Eina_Bool homogeneous)
 }
 
 EOLIAN static Eina_Bool
-_elm_box_homogeneous_get(Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
+_elm_box_homogeneous_get(const Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
 {
    return sd->homogeneous;
 }
@@ -604,7 +604,7 @@ elm_box_transition_free(void *data)
 }
 
 EOLIAN static Eina_List*
-_elm_box_children_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_children_get(const Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return evas_object_box_children_get(wd->resize_obj);
@@ -620,7 +620,7 @@ _elm_box_padding_set(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Coord horizont
 }
 
 EOLIAN static void
-_elm_box_padding_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
+_elm_box_padding_get(const Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_box_padding_get
@@ -636,7 +636,7 @@ _elm_box_align_set(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double horizontal, do
 }
 
 EOLIAN static void
-_elm_box_align_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double *horizontal, double *vertical)
+_elm_box_align_get(const Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double *horizontal, double *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

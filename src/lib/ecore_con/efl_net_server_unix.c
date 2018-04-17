@@ -285,7 +285,7 @@ _efl_net_server_unix_unlink_before_bind_set(Eo *o EINA_UNUSED, Efl_Net_Server_Un
 }
 
 static Eina_Bool
-_efl_net_server_unix_unlink_before_bind_get(Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd)
+_efl_net_server_unix_unlink_before_bind_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd)
 {
    return pd->unlink_before_bind;
 }
@@ -299,7 +299,7 @@ _efl_net_server_unix_leading_directories_create_set(Eo *o EINA_UNUSED, Efl_Net_S
 }
 
 static void
-_efl_net_server_unix_leading_directories_create_get(Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd, Eina_Bool *do_it, unsigned int *mode)
+_efl_net_server_unix_leading_directories_create_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Unix_Data *pd, Eina_Bool *do_it, unsigned int *mode)
 {
    if (do_it) *do_it = pd->leading_directories_create;
    if (mode) *mode = pd->leading_directories_create_mode;

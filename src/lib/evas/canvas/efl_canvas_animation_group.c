@@ -42,7 +42,7 @@ _efl_canvas_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List *
-_efl_canvas_animation_group_animations_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_group_animations_get(const Eo *eo_obj EINA_UNUSED,
                                     Efl_Canvas_Animation_Group_Data *pd)
 {
    return pd->animations;

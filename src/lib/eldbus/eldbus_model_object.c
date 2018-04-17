@@ -93,7 +93,7 @@ _eldbus_model_object_efl_object_destructor(Eo *obj, Eldbus_Model_Object_Data *pd
 }
 
 static Eina_Array const *
-_eldbus_model_object_efl_model_properties_get(Eo *obj EINA_UNUSED,
+_eldbus_model_object_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                          Eldbus_Model_Object_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
@@ -226,31 +226,31 @@ _eldbus_model_object_efl_model_children_count_get(Eo *obj EINA_UNUSED,
 }
 
 static const char *
-_eldbus_model_object_address_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
+_eldbus_model_object_address_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->address;
 }
 
 static Eina_Bool
-_eldbus_model_object_private_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
+_eldbus_model_object_private_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->private;
 }
 
 static Eldbus_Connection_Type
-_eldbus_model_object_type_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
+_eldbus_model_object_type_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->type;
 }
 
 static const char *
-_eldbus_model_object_bus_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
+_eldbus_model_object_bus_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->bus;
 }
 
 static const char *
-_eldbus_model_object_path_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
+_eldbus_model_object_path_get(const Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->path;
 }

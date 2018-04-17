@@ -109,7 +109,7 @@ _efl_gfx_color_color_code_set(Eo *obj, void *_pd EINA_UNUSED, const char *colorc
 }
 
 EOLIAN static const char *
-_efl_gfx_color_color_code_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_gfx_color_color_code_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
     int r, g, b, a;
 
@@ -131,7 +131,7 @@ _efl_gfx_color_color_class_code_set(Eo *obj, void *_pd EINA_UNUSED, const char *
 }
 
 EOLIAN static const char *
-_efl_gfx_color_color_class_code_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_efl_gfx_color_color_class_code_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                                     const char *color_class, Efl_Gfx_Color_Class_Layer layer)
 {
    int r, g, b, a;

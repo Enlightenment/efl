@@ -86,7 +86,7 @@ _efl_io_file_flags_set(Eo *o, Efl_Io_File_Data *pd, uint32_t flags)
 }
 
 EOLIAN static uint32_t
-_efl_io_file_flags_get(Eo *o EINA_UNUSED, Efl_Io_File_Data *pd)
+_efl_io_file_flags_get(const Eo *o EINA_UNUSED, Efl_Io_File_Data *pd)
 {
    return pd->flags; // TODO: query from fd?
 }
@@ -99,7 +99,7 @@ _efl_io_file_mode_set(Eo *o, Efl_Io_File_Data *pd, uint32_t mode)
 }
 
 EOLIAN static uint32_t
-_efl_io_file_mode_get(Eo *o EINA_UNUSED, Efl_Io_File_Data *pd)
+_efl_io_file_mode_get(const Eo *o EINA_UNUSED, Efl_Io_File_Data *pd)
 {
    return pd->mode;
 }
@@ -174,7 +174,7 @@ _efl_io_file_efl_file_file_set(Eo *o, Efl_Io_File_Data *pd, const char *file, co
 }
 
 EOLIAN static void
-_efl_io_file_efl_file_file_get(Eo *o EINA_UNUSED, Efl_Io_File_Data *pd, const char **file, const char **key)
+_efl_io_file_efl_file_file_get(const Eo *o EINA_UNUSED, Efl_Io_File_Data *pd, const char **file, const char **key)
 {
    if (file) *file = pd->path;
    if (key) *key = NULL;

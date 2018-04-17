@@ -57,7 +57,7 @@ _efl_canvas_surface_x11_pixmap_set(Eo *eo, Efl_Canvas_Surface_X11_Data *pd EINA_
 }
 
 EOLIAN static void
-_efl_canvas_surface_x11_pixmap_get(Eo *eo EINA_UNUSED, Efl_Canvas_Surface_X11_Data *pd, void **visual, unsigned long *pixmap)
+_efl_canvas_surface_x11_pixmap_get(const Eo *eo EINA_UNUSED, Efl_Canvas_Surface_X11_Data *pd, void **visual, unsigned long *pixmap)
 {
    if (pixmap) *pixmap = pd->px.pixmap;
    if (visual) *visual = pd->px.visual;

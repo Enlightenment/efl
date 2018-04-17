@@ -263,7 +263,7 @@ _efl_net_socket_udp_cork_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool cork)
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_udp_cork_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_cork_get(const Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
    SOCKET fd;
    int value = 0;
@@ -322,7 +322,7 @@ _efl_net_socket_udp_dont_route_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_udp_dont_route_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_dont_route_get(const Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
    SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
@@ -375,7 +375,7 @@ _efl_net_socket_udp_reuse_address_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_B
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_udp_reuse_address_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_reuse_address_get(const Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
    SOCKET fd;
    int value = 0;
@@ -430,7 +430,7 @@ _efl_net_socket_udp_reuse_port_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_udp_reuse_port_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_reuse_port_get(const Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
 #ifdef SO_REUSEPORT
    SOCKET fd;
@@ -471,7 +471,7 @@ _efl_net_socket_udp_bind_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, const char *add
 }
 
 EOLIAN static const char *
-_efl_net_socket_udp_bind_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_bind_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Udp_Data *pd)
 {
    return pd->address_bind;
 }
@@ -728,7 +728,7 @@ _efl_net_socket_udp_multicast_time_to_live_set(Eo *o, Efl_Net_Socket_Udp_Data *p
 }
 
 EOLIAN static uint8_t
-_efl_net_socket_udp_multicast_time_to_live_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_multicast_time_to_live_get(const Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
    SOCKET fd = efl_loop_fd_get(o);
    Eina_Error err;
@@ -767,7 +767,7 @@ _efl_net_socket_udp_multicast_loopback_set(Eo *o, Efl_Net_Socket_Udp_Data *pd, E
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_udp_multicast_loopback_get(Eo *o, Efl_Net_Socket_Udp_Data *pd)
+_efl_net_socket_udp_multicast_loopback_get(const Eo *o, Efl_Net_Socket_Udp_Data *pd)
 {
    SOCKET fd = efl_loop_fd_get(o);
    Eina_Error err;

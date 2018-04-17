@@ -40,7 +40,7 @@ struct _Elm_Part_Data
    } \
    \
    EOLIAN static Evas_Object* \
-   _ ## type ## _efl_content_content_get(Eo *obj, typedata *sd EINA_UNUSED) \
+   _ ## type ## _efl_content_content_get(const Eo *obj, typedata *sd EINA_UNUSED) \
    { \
       return efl_content_get(efl_part(obj, efl_ui_widget_default_content_part_get(obj))); \
    } \
@@ -101,7 +101,7 @@ _ ## full ## _efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *c
 
 #define ELM_PART_OVERRIDE_CONTENT_GET_FULL(full, type, TYPE, typedata) \
 EOLIAN static Efl_Gfx * \
-_ ## full ## _efl_content_content_get(Eo *obj, void *_pd EINA_UNUSED) \
+_ ## full ## _efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
@@ -128,7 +128,7 @@ _ ## full ## _efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text
 
 #define ELM_PART_OVERRIDE_TEXT_GET_FULL(full, type, TYPE, typedata) \
 EOLIAN static const char *\
-_ ## full ## _efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
+_ ## full ## _efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
@@ -137,7 +137,7 @@ _ ## full ## _efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
 
 #define ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(full, type, TYPE, typedata) \
 EOLIAN static const char *\
-_ ## full ## _efl_text_markup_markup_get(Eo *obj, void *_pd EINA_UNUSED) \
+_ ## full ## _efl_text_markup_markup_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
@@ -181,7 +181,7 @@ _ ## type ## _efl_text_text_set(Eo *obj, typedata *sd EINA_UNUSED, const char *t
    efl_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), text); \
 } \
 EOLIAN static const char * \
-_ ## type ## _efl_text_text_get(Eo *obj, typedata *sd EINA_UNUSED) \
+_ ## type ## _efl_text_text_get(const Eo *obj, typedata *sd EINA_UNUSED) \
 { \
   return efl_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj))); \
 } \
@@ -191,14 +191,14 @@ _ ## type ## _efl_ui_translatable_translatable_text_set(Eo *obj, typedata *sd EI
    efl_ui_translatable_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), label, domain); \
 } \
 EOLIAN static const char * \
-_ ## type ## _efl_ui_translatable_translatable_text_get(Eo *obj, typedata *sd EINA_UNUSED, const char **domain) \
+_ ## type ## _efl_ui_translatable_translatable_text_get(const Eo *obj, typedata *sd EINA_UNUSED, const char **domain) \
 { \
   return efl_ui_translatable_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), domain); \
 }
 
 #define ELM_PART_MARKUP_DEFAULT_IMPLEMENT(type, typedata) \
 EOLIAN static const char * \
-_ ## type ## _efl_text_markup_markup_get(Eo *obj, typedata *sd EINA_UNUSED) \
+_ ## type ## _efl_text_markup_markup_get(const Eo *obj, typedata *sd EINA_UNUSED) \
 { \
   return efl_text_markup_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj))); \
 } \

@@ -260,7 +260,7 @@ _efl_canvas_layout_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *local
 }
 
 EOLIAN const char *
-_efl_canvas_layout_efl_ui_base_language_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_base_language_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed->language)
      return _edje_language;
@@ -390,7 +390,7 @@ _efl_canvas_layout_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_gfx_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_gfx_scale_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    return TO_DOUBLE(ed->scale);
 }
@@ -406,7 +406,7 @@ edje_object_base_scale_get(const Evas_Object *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_ui_base_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_base_mirrored_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->is_rtl;
 }
@@ -450,7 +450,7 @@ _efl_canvas_layout_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 }
 
 EOLIAN const char *
-_efl_canvas_layout_efl_layout_group_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
+_efl_canvas_layout_efl_layout_group_group_data_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 {
    if (!key) return NULL;
    if (!ed->collection) return NULL;
@@ -681,7 +681,7 @@ edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, in
 }
 
 EOLIAN Eina_Bool
-_edje_global_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_edje_global_efl_gfx_color_class_color_class_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                                                  const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
@@ -887,7 +887,7 @@ edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
+_efl_canvas_layout_efl_gfx_color_class_color_class_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
 
@@ -906,7 +906,7 @@ edje_object_color_class_description_get(const Evas_Object *obj, const char *colo
 }
 
 EOLIAN const char *
-_efl_canvas_layout_efl_gfx_color_class_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
+_efl_canvas_layout_efl_gfx_color_class_color_class_description_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
    Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
    return cc ? cc->desc : NULL;
@@ -1130,7 +1130,7 @@ edje_text_class_get(const char *text_class, const char **font, Evas_Font_Size *s
 }
 
 EOLIAN Eina_Bool
-_edje_global_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_edje_global_efl_gfx_text_class_text_class_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                                                const char *text_class, const char **font, Efl_Font_Size *size)
 {
    Edje_Text_Class *tc;
@@ -1352,7 +1352,7 @@ edje_object_text_class_get(const Evas_Object *obj, const char *text_class, const
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Efl_Font_Size *size)
+_efl_canvas_layout_efl_gfx_text_class_text_class_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Efl_Font_Size *size)
 {
    Edje_Text_Class *tc = _edje_text_class_find(ed, text_class);
 
@@ -1537,7 +1537,7 @@ edje_size_class_get(const char *size_class, Evas_Coord *minw, Evas_Coord *minh, 
 }
 
 EOLIAN Eina_Bool
-_edje_global_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *size_class,
+_edje_global_efl_gfx_size_class_size_class_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *size_class,
                                                Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje_Size_Class *sc;
@@ -1760,7 +1760,7 @@ edje_object_size_class_get(const Evas_Object *obj, const char *size_class, Evas_
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
+_efl_canvas_layout_efl_gfx_size_class_size_class_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje_Size_Class *sc = _edje_size_class_find(ed, size_class);
 
@@ -2045,7 +2045,7 @@ _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
 }
 
 const char *
-_edje_efl_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
+_edje_efl_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
                    Eina_Bool legacy, Eina_Bool get_markup)
 {
    Edje_Real_Part *rp;
@@ -3324,7 +3324,7 @@ _efl_canvas_layout_efl_part_part(Eo *obj, Edje *ed, const char *part)
 }
 
 EOLIAN Eina_Size2D
-_efl_canvas_layout_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_group_group_size_min_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if ((!ed) || (!ed->collection))
      return EINA_SIZE2D(0, 0);
@@ -3333,7 +3333,7 @@ _efl_canvas_layout_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje
 }
 
 EOLIAN Eina_Size2D
-_efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_group_group_size_max_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_Size2D sz;
 
@@ -3352,7 +3352,7 @@ _efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_layout_group_part_exist_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+_efl_canvas_layout_efl_layout_group_part_exist_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 
@@ -5075,7 +5075,7 @@ _efl_canvas_layout_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSE
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_layout_calc_calc_auto_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_calc_calc_auto_update_hints_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->update_hints;
 }
@@ -6299,7 +6299,7 @@ edje_object_part_text_get(const Edje_Object *obj, const char *part)
         ERR("Invalid call on a non-text or non-textblock part: '%s' in group '%s'", part, ed->group);
         return NULL;
      }
-   return _edje_efl_text_get((Eo *)obj, ed, part, EINA_TRUE, EINA_FALSE);
+   return _edje_efl_text_get(obj, ed, part, EINA_TRUE, EINA_FALSE);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

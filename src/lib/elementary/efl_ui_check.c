@@ -86,7 +86,7 @@ _activate(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_check_efl_access_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_efl_access_state_set_get(const Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set states = 0;
 
@@ -234,7 +234,7 @@ _on_check_toggle(void *data,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_check_selected_get(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
+_efl_ui_check_selected_get(const Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    return !!efl_ui_nstate_value_get(obj);
 }
@@ -351,7 +351,7 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_check_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
+_efl_ui_check_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_action[] = {
           { "activate", "activate", NULL, _key_action_activate },

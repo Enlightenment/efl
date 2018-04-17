@@ -155,7 +155,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
             h: int; [[The height returned.]]
          }
       }
-      range_text_get {
+      range_text_get @const {
          [[Returns the text in the range between $cur1 and $cur2.
 
            @since 1.18

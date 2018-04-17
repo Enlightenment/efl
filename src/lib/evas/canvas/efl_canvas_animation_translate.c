@@ -43,7 +43,7 @@ _efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_translate_translate_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_translate_translate_get(const Eo *eo_obj EINA_UNUSED,
                                        Efl_Canvas_Animation_Translate_Data *pd,
                                        Evas_Coord *from_x,
                                        Evas_Coord *from_y,
@@ -85,7 +85,7 @@ _efl_canvas_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_animation_translate_translate_absolute_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_translate_translate_absolute_get(const Eo *eo_obj EINA_UNUSED,
                                                 Efl_Canvas_Animation_Translate_Data *pd,
                                                 Evas_Coord *from_x,
                                                 Evas_Coord *from_y,

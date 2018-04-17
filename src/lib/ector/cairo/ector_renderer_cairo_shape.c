@@ -237,7 +237,7 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_op_fill(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_cairo_shape_efl_gfx_path_bounds_get(Eo *obj,
+_ector_renderer_cairo_shape_efl_gfx_path_bounds_get(const Eo *obj,
                                                       Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
                                                       Eina_Rect *r)
 {
@@ -317,7 +317,7 @@ _ector_renderer_cairo_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Cairo_
 }
 
 unsigned int
-_ector_renderer_cairo_shape_ector_renderer_crc_get(Eo *obj,
+_ector_renderer_cairo_shape_ector_renderer_crc_get(const Eo *obj,
                                                                 Ector_Renderer_Cairo_Shape_Data *pd)
 {
    unsigned int crc;

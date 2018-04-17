@@ -80,7 +80,7 @@ _efl_ui_dnd_drop_target_del(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format 
 }
 
 EOLIAN static double
-_efl_ui_dnd_container_drag_delay_time_get(Eo *obj EINA_UNUSED, Efl_Ui_Dnd_Container_Data *pd)
+_efl_ui_dnd_container_drag_delay_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Dnd_Container_Data *pd)
 {
     return pd->drag_delay_time;
 }

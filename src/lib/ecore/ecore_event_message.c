@@ -32,7 +32,7 @@ _ecore_event_message_data_set(Eo *obj EINA_UNUSED, Ecore_Event_Message_Data *pd,
 }
 
 EOLIAN static void
-_ecore_event_message_data_get(Eo *obj EINA_UNUSED, Ecore_Event_Message_Data *pd, int *type, void **data, void **free_func, void **free_data)
+_ecore_event_message_data_get(const Eo *obj EINA_UNUSED, Ecore_Event_Message_Data *pd, int *type, void **data, void **free_func, void **free_data)
 {
    if (type) *type = pd->type;
    if (data) *data = pd->ev;

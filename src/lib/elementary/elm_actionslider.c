@@ -571,7 +571,7 @@ _elm_actionslider_indicator_pos_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNU
 }
 
 EOLIAN static Elm_Actionslider_Pos
-_elm_actionslider_indicator_pos_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED)
+_elm_actionslider_indicator_pos_get(const Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED)
 {
    double position;
 
@@ -599,7 +599,7 @@ _elm_actionslider_magnet_pos_set(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd,
 }
 
 EOLIAN static Elm_Actionslider_Pos
-_elm_actionslider_magnet_pos_get(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
+_elm_actionslider_magnet_pos_get(const Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
 {
    return sd->magnet_position;
 }
@@ -611,13 +611,13 @@ _elm_actionslider_enabled_pos_set(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd
 }
 
 EOLIAN static Elm_Actionslider_Pos
-_elm_actionslider_enabled_pos_get(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
+_elm_actionslider_enabled_pos_get(const Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
 {
    return sd->enabled_position;
 }
 
 EOLIAN static const char*
-_elm_actionslider_selected_label_get(Eo *obj, Elm_Actionslider_Data *sd)
+_elm_actionslider_selected_label_get(const Eo *obj, Elm_Actionslider_Data *sd)
 {
    const char *ret;
    ret = NULL;

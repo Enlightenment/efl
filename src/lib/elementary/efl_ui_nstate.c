@@ -78,7 +78,7 @@ _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
 }
 
 EOLIAN static int
-_efl_ui_nstate_count_get(Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd)
+_efl_ui_nstate_count_get(const Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd)
 {
    return pd->nstate;
 }
@@ -93,7 +93,7 @@ _efl_ui_nstate_count_set(Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd, int nstate
 }
 
 EOLIAN static int
-_efl_ui_nstate_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd)
+_efl_ui_nstate_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd)
 {
    return pd->state;
 }

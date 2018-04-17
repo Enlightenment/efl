@@ -26,7 +26,7 @@ _efl_loop_message_future_data_set(Eo *obj EINA_UNUSED, Efl_Loop_Message_Future_D
 }
 
 EOLIAN static void *
-_efl_loop_message_future_data_get(Eo *obj EINA_UNUSED, Efl_Loop_Message_Future_Data *pd)
+_efl_loop_message_future_data_get(const Eo *obj EINA_UNUSED, Efl_Loop_Message_Future_Data *pd)
 {
    return pd->data;
 }

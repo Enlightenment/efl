@@ -1312,7 +1312,7 @@ _elm_entry_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Eina_Rect
-_elm_entry_efl_ui_widget_interest_region_get(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_ui_widget_interest_region_get(const Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord cx, cy, cw, ch;
    Evas_Coord edx, edy;
@@ -4165,7 +4165,7 @@ _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_single_line_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_single_line_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->single_line;
 }
@@ -4209,7 +4209,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_password_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_password_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->password;
 }
@@ -4261,7 +4261,7 @@ _elm_entry_is_empty(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Evas_Object*
-_elm_entry_textblock_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_textblock_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return (Evas_Object *)edje_object_part_object_get
         (sd->entry_edje, "elm.text");
@@ -4276,7 +4276,7 @@ _elm_entry_efl_layout_calc_calc_force(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static const char*
-_elm_entry_selection_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_selection_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    if ((sd->password)) return NULL;
    return edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
@@ -4290,7 +4290,7 @@ _elm_entry_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *s
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_selection_handler_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->sel_handler_disabled;
 }
@@ -4315,7 +4315,7 @@ _elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *sd, Elm_Wrap_Type wrap)
 }
 
 EOLIAN static Elm_Wrap_Type
-_elm_entry_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_line_wrap_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->line_wrap;
 }
@@ -4351,7 +4351,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_editable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_editable_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->editable;
 }
@@ -4420,7 +4420,7 @@ _elm_entry_select_region_set(Eo *obj, Elm_Entry_Data *sd, int start, int end)
 }
 
 EOLIAN static void
-_elm_entry_select_region_get(Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
+_elm_entry_select_region_get(const Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
 {
    if (!elm_entry_selection_get(obj))
      {
@@ -4436,7 +4436,7 @@ _elm_entry_select_region_get(Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_textblock_cursor_geometry_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_entry_textblock_cursor_geometry_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
@@ -4512,21 +4512,21 @@ _elm_entry_cursor_selection_end(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_cursor_is_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cursor_is_format_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_is_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cursor_is_visible_format_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_is_visible_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
 EOLIAN static char*
-_elm_entry_textblock_cursor_content_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_textblock_cursor_content_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_content_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
@@ -4541,7 +4541,7 @@ _elm_entry_cursor_pos_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int pos)
 }
 
 EOLIAN static int
-_elm_entry_cursor_pos_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cursor_pos_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_pos_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
@@ -4607,7 +4607,7 @@ _elm_entry_context_menu_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Ei
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_context_menu_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return !sd->context_menu;
 }
@@ -4967,7 +4967,7 @@ elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *f
 }
 
 EOLIAN static void
-_elm_entry_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **group)
+_elm_entry_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **group)
 {
    if (file) *file = sd->file;
    if (group) *group = NULL;
@@ -4989,7 +4989,7 @@ _elm_entry_autosave_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool auto_
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_autosave_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_autosave_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->auto_save;
 }
@@ -5042,7 +5042,7 @@ _elm_entry_cnp_mode_set(Eo *obj, Elm_Entry_Data *sd, Elm_Cnp_Mode cnp_mode)
 }
 
 EOLIAN static Elm_Cnp_Mode
-_elm_entry_cnp_mode_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cnp_mode_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->cnp_mode;
 }
@@ -5133,7 +5133,7 @@ _elm_entry_scrollable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool scroll)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_scrollable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_scrollable_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->scroll;
 }
@@ -5234,7 +5234,7 @@ _elm_entry_input_panel_layout_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_I
 }
 
 EOLIAN static Elm_Input_Panel_Layout
-_elm_entry_input_panel_layout_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_layout_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_layout;
 }
@@ -5253,7 +5253,7 @@ _elm_entry_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Elm_Entry_Data 
 }
 
 EOLIAN static int
-_elm_entry_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_layout_variation;
 }
@@ -5267,7 +5267,7 @@ _elm_entry_autocapital_type_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Aut
 }
 
 EOLIAN static Elm_Autocapital_Type
-_elm_entry_autocapital_type_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_autocapital_type_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->autocapital_type;
 }
@@ -5281,7 +5281,7 @@ _elm_entry_prediction_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_prediction_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_prediction_allow_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->prediction_allow;
 }
@@ -5296,7 +5296,7 @@ _elm_entry_input_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Hin
 }
 
 EOLIAN static Elm_Input_Hints
-_elm_entry_input_hint_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_hint_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_hints;
 }
@@ -5328,7 +5328,7 @@ _elm_entry_input_panel_enabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_input_panel_enabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_enabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_enable;
 }
@@ -5355,7 +5355,7 @@ _elm_entry_input_panel_language_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm
 }
 
 EOLIAN static Elm_Input_Panel_Lang
-_elm_entry_input_panel_language_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_language_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_lang;
 }
@@ -5391,7 +5391,7 @@ _elm_entry_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *
 }
 
 EOLIAN static Elm_Input_Panel_Return_Key_Type
-_elm_entry_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_return_key_type;
 }
@@ -5406,7 +5406,7 @@ _elm_entry_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_return_key_disabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_return_key_disabled;
 }
@@ -5428,13 +5428,13 @@ _elm_entry_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *s
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_show_on_demand_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_show_on_demand;
 }
 
 EOLIAN static void*
-_elm_entry_imf_context_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_imf_context_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    if (!sd) return NULL;
 
@@ -5468,7 +5468,7 @@ _elm_entry_anchor_hover_parent_set(Eo *obj, Elm_Entry_Data *sd, Evas_Object *par
 }
 
 EOLIAN static Evas_Object*
-_elm_entry_anchor_hover_parent_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_anchor_hover_parent_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->anchor_hover.hover_parent;
 }
@@ -5480,7 +5480,7 @@ _elm_entry_anchor_hover_style_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const
 }
 
 EOLIAN static const char*
-_elm_entry_anchor_hover_style_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_anchor_hover_style_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->anchor_hover.hover_style;
 }
@@ -5527,7 +5527,7 @@ _elm_entry_select_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool a
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_select_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_select_allow_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->sel_allow;
 }
@@ -5541,7 +5541,7 @@ _elm_entry_class_constructor(Efl_Class *klass)
 // ATSPI Accessibility
 
 EOLIAN static Eina_Unicode
-_elm_entry_efl_access_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
+_elm_entry_efl_access_text_character_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
 {
    char *txt;
    int idx = 0;
@@ -5563,7 +5563,7 @@ _elm_entry_efl_access_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_character_count_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    char *txt;
    int ret = -1;
@@ -5578,7 +5578,7 @@ _elm_entry_efl_access_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA
 }
 
 EOLIAN static char*
-_elm_entry_efl_access_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5663,7 +5663,7 @@ fail:
 }
 
 EOLIAN static char*
-_elm_entry_efl_access_text_access_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_efl_access_text_access_text_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5703,7 +5703,7 @@ fail:
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_caret_offset_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_caret_offset_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return elm_entry_cursor_pos_get(obj);
 }
@@ -5716,13 +5716,13 @@ _elm_entry_efl_access_text_caret_offset_set(Eo *obj, Elm_Entry_Data *_pd EINA_UN
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_selections_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_selections_count_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return elm_entry_selection_get(obj) ? 1 : 0;
 }
 
 EOLIAN static void
-_elm_entry_efl_access_text_access_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_access_selection_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
    if (selection_number != 0) return;
 
@@ -5756,13 +5756,13 @@ _elm_entry_efl_access_text_selection_add(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
+_elm_entry_efl_access_text_bounded_ranges_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
+_elm_entry_efl_access_text_offset_at_point_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur;
@@ -5796,7 +5796,7 @@ _elm_entry_efl_access_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
+_elm_entry_efl_access_text_character_extents_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur;
@@ -5828,7 +5828,7 @@ _elm_entry_efl_access_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EI
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_range_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
+_elm_entry_efl_access_text_range_extents_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5906,7 +5906,7 @@ _textblock_node_format_to_atspi_text_attr(const Evas_Object_Textblock_Node_Forma
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
+_elm_entry_efl_access_text_attribute_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5954,7 +5954,7 @@ _elm_entry_efl_access_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5996,7 +5996,7 @@ _elm_entry_efl_access_text_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_default_attributes_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    Evas_Object *txtblk;
    Eina_List *ret = NULL;
@@ -6094,7 +6094,7 @@ _elm_entry_efl_access_editable_text_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_entry_efl_access_state_set_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_state_set_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    ret = efl_access_state_set_get(efl_super(obj, ELM_ENTRY_CLASS));
@@ -6106,7 +6106,7 @@ _elm_entry_efl_access_state_set_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_elm_entry_efl_access_i18n_name_get(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_access_i18n_name_get(const Eo *obj, Elm_Entry_Data *sd)
 {
    const char *name;
    name = efl_access_i18n_name_get(efl_super(obj, ELM_ENTRY_CLASS));
@@ -6129,7 +6129,7 @@ _action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_entry_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
+_elm_entry_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _action_activate },

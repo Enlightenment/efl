@@ -1034,7 +1034,7 @@ _elm_panel_orient_set(Eo *obj, Elm_Panel_Data *sd, Elm_Panel_Orient orient)
 }
 
 EOLIAN static Elm_Panel_Orient
-_elm_panel_orient_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_orient_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->orient;
 }
@@ -1057,7 +1057,7 @@ _elm_panel_hidden_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool hidden)
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_hidden_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_hidden_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->hidden;
 }
@@ -1069,7 +1069,7 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Rect
-_elm_panel_efl_ui_widget_interest_region_get(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_ui_widget_interest_region_get(const Eo *obj, Elm_Panel_Data *sd)
 {
    Eina_Rect r = {};
 
@@ -1278,7 +1278,7 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
 }
 
 EOLIAN static double
-_elm_panel_scrollable_content_size_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_scrollable_content_size_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->content_size_ratio;
 }
@@ -1301,7 +1301,7 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_scrollable_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->scrollable;
 }
@@ -1441,7 +1441,7 @@ _elm_panel_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_panel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
+_elm_panel_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "toggle", "toggle", NULL, _key_action_toggle},

@@ -1245,7 +1245,7 @@ _evas_image_efl_file_mmap_set(Eo *obj, void *pd EINA_UNUSED, const Eina_File *f,
 }
 
 EOLIAN static void
-_evas_image_efl_file_mmap_get(Eo *obj, void *pd EINA_UNUSED, const Eina_File **f, const char **key)
+_evas_image_efl_file_mmap_get(const Eo *obj, void *pd EINA_UNUSED, const Eina_File **f, const char **key)
 {
    if (f) *f = NULL;
    if (key) *key = NULL;

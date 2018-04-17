@@ -537,7 +537,7 @@ _efl_ui_textpath_efl_text_text_set(Eo *obj, Efl_Ui_Textpath_Data *pd, const char
 }
 
 EOLIAN static const char *
-_efl_ui_textpath_efl_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 {
    return edje_object_part_text_get(pd->text_obj, "elm.text");
 }
@@ -605,7 +605,7 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_textpath_autofit_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_autofit_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 {
    return pd->autofit;
 }
@@ -619,7 +619,7 @@ _efl_ui_textpath_autofit_set(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd, Eina
 }
 
 EOLIAN static int
-_efl_ui_textpath_slice_number_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_slice_number_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 {
    return pd->slice_no;
 }
@@ -643,7 +643,7 @@ _efl_ui_textpath_ellipsis_set(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd, Ein
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_textpath_ellipsis_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_ellipsis_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 {
    return pd->ellipsis;
 }

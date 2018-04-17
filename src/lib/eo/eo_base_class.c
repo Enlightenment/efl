@@ -438,7 +438,7 @@ _efl_object_name_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *name)
 }
 
 EOLIAN static const char *
-_efl_object_name_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_name_get(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    if (!pd->ext) return NULL;
    return pd->ext->name;
@@ -619,7 +619,7 @@ _efl_object_comment_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *co
 }
 
 EOLIAN static const char *
-_efl_object_comment_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_comment_get(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    if (!pd->ext) return NULL;
    return pd->ext->comment;
@@ -733,13 +733,13 @@ err_impossible:
 }
 
 EOLIAN static Eo *
-_efl_object_parent_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_parent_get(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->parent;
 }
 
 EOLIAN static Eina_Bool
-_efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
+_efl_object_finalized_get(const Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
 {
    Eina_Bool finalized;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
@@ -749,7 +749,7 @@ _efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_object_invalidated_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_invalidated_get(const Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->invalidate;
 }
@@ -1755,7 +1755,7 @@ _efl_object_event_thaw(Eo *obj, Efl_Object_Data *pd)
 }
 
 EOLIAN static int
-_efl_object_event_freeze_count_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_event_freeze_count_get(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->event_freeze_count;
 }
@@ -1780,7 +1780,7 @@ _efl_object_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN static int
-_efl_object_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_freeze_count_get(const Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 {
    return event_freeze_count;
 }
@@ -2177,7 +2177,7 @@ _efl_object_allow_parent_unref_set(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd, 
 }
 
 EOLIAN static Eina_Bool
-_efl_object_allow_parent_unref_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
+_efl_object_allow_parent_unref_get(const Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
 {
    return pd->allow_parent_unref;
 }

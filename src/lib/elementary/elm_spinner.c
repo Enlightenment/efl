@@ -1433,7 +1433,7 @@ _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 }
 
 EOLIAN static const char*
-_elm_spinner_label_format_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_label_format_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->label;
 }
@@ -1454,7 +1454,7 @@ _elm_spinner_efl_ui_range_range_min_max_set(Eo *obj, Elm_Spinner_Data *sd, doubl
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
+_elm_spinner_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -1467,7 +1467,7 @@ _elm_spinner_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_range_range_step_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_range_range_step_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->step;
 }
@@ -1496,7 +1496,7 @@ _elm_spinner_efl_ui_range_range_value_set(Eo *obj, Elm_Spinner_Data *sd, double 
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->val;
 }
@@ -1508,7 +1508,7 @@ _elm_spinner_wrap_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool wrap)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_wrap_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_wrap_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->wrap;
 }
@@ -1587,7 +1587,7 @@ _elm_spinner_editable_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool e
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_editable_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_editable_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->editable;
 }
@@ -1599,7 +1599,7 @@ _elm_spinner_interval_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double inte
 }
 
 EOLIAN static double
-_elm_spinner_interval_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_interval_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->first_interval;
 }
@@ -1611,7 +1611,7 @@ _elm_spinner_base_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double base)
 }
 
 EOLIAN static double
-_elm_spinner_base_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_base_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->val_base;
 }
@@ -1623,7 +1623,7 @@ _elm_spinner_round_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, int rnd)
 }
 
 EOLIAN static int
-_elm_spinner_round_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_round_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->round;
 }
@@ -1638,7 +1638,7 @@ _elm_spinner_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data *
-_elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
       { "toggle", "toggle", NULL, _key_action_toggle},
@@ -1650,7 +1650,7 @@ _elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_S
 // A11Y Accessibility
 
 EOLIAN static void
-_elm_spinner_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
+_elm_spinner_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
 {
    if (value) *value = sd->val;
    if (text) *text = NULL;
@@ -1669,7 +1669,7 @@ _elm_spinner_efl_access_value_value_and_text_set(Eo *obj, Elm_Spinner_Data *sd, 
 }
 
 EOLIAN static void
-_elm_spinner_efl_access_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
+_elm_spinner_efl_access_value_range_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
 {
    if (lower) *lower = sd->val_min;
    if (upper) *upper = sd->val_max;
@@ -1677,13 +1677,13 @@ _elm_spinner_efl_access_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *s
 }
 
 EOLIAN static double
-_elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static const char*
-_elm_spinner_efl_access_i18n_name_get(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd)
 {
    const char *name, *ret;
    name = efl_access_i18n_name_get(efl_super(obj, ELM_SPINNER_CLASS));

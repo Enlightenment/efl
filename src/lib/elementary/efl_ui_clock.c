@@ -438,7 +438,7 @@ _efl_ui_clock_pause_set(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Eina_Bool pa
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_pause_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_pause_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->paused;
 }
@@ -450,7 +450,7 @@ _efl_ui_clock_edit_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_edit_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_edit_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->edit_mode;
 }
@@ -939,7 +939,7 @@ _efl_ui_clock_efl_object_constructor(Eo *obj, Efl_Ui_Clock_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static const char*
-_efl_ui_clock_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_format_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->format;
 }
@@ -959,7 +959,7 @@ _efl_ui_clock_format_set(Eo *obj, Efl_Ui_Clock_Data *sd, const char *fmt)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_field_visible_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type fieldtype)
+_efl_ui_clock_field_visible_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type fieldtype)
 {
    Clock_Field *field;
 
@@ -1031,7 +1031,7 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
 }
 
 EOLIAN static void
-_efl_ui_clock_field_limit_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type fieldtype, int *min, int *max)
+_efl_ui_clock_field_limit_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type fieldtype, int *min, int *max)
 {
    Clock_Field *field;
 
@@ -1070,7 +1070,7 @@ _efl_ui_clock_field_limit_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type 
 }
 
 EOLIAN static Efl_Time
-_efl_ui_clock_time_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->curr_time;
 }
@@ -1091,7 +1091,7 @@ _efl_ui_clock_time_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time newtime)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_clock_time_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_time_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->min_limit;
 }
@@ -1116,7 +1116,7 @@ _efl_ui_clock_time_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time mintime)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_clock_time_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_time_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->max_limit;
 }

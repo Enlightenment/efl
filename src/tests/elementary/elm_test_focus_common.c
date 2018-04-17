@@ -84,7 +84,7 @@ _focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Boo
 }
 
 EOLIAN static Eina_Rect
-_focus_test_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
 }
@@ -96,19 +96,19 @@ _focus_test_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rect rect)
 }
 
 EOLIAN static Eina_Rect
-_focus_test_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_gfx_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_efl_ui_focus_object_focus_manager_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->manager;
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_efl_ui_focus_object_focus_parent_get(Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
+_focus_test_efl_ui_focus_object_focus_parent_get(const Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
 {
    return efl_parent_get(obj);
 }

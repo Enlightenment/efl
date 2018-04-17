@@ -1010,25 +1010,25 @@ _efl_net_control_radios_offline_set(Eo *o, Efl_Net_Control_Data *pd, Eina_Bool r
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_radios_offline_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_radios_offline_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
 {
    return pd->radios_offline;
 }
 
 EOLIAN static Efl_Net_Control_State
-_efl_net_control_state_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_state_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
 {
    return pd->state;
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_points_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_access_points_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
 {
    return eina_list_iterator_new(pd->access_points);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_technologies_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_technologies_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
 {
    return eina_list_iterator_new(pd->technologies);
 }
@@ -1142,7 +1142,7 @@ _efl_net_control_agent_enabled_set(Eo *o, Efl_Net_Control_Data *pd, Eina_Bool ag
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_agent_enabled_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_agent_enabled_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
 {
    return pd->agent_enabled;
 }

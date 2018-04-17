@@ -189,19 +189,19 @@ _efl_io_queue_limit_set(Eo *o, Efl_Io_Queue_Data *pd, size_t limit)
 }
 
 EOLIAN static size_t
-_efl_io_queue_limit_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
+_efl_io_queue_limit_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
 {
    return pd->limit;
 }
 
 EOLIAN static size_t
-_efl_io_queue_usage_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
+_efl_io_queue_usage_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
 {
    return pd->position_write - pd->position_read;
 }
 
 EOLIAN static Eina_Slice
-_efl_io_queue_slice_get(Eo *o, Efl_Io_Queue_Data *pd)
+_efl_io_queue_slice_get(const Eo *o, Efl_Io_Queue_Data *pd)
 {
    Eina_Slice slice = { };
 
@@ -335,7 +335,7 @@ _efl_io_queue_discard(Eo *o, Efl_Io_Queue_Data *pd, size_t amount)
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
+_efl_io_queue_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
 {
    return pd->can_read;
 }
@@ -350,7 +350,7 @@ _efl_io_queue_efl_io_reader_can_read_set(Eo *o, Efl_Io_Queue_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
+_efl_io_queue_efl_io_reader_eos_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
 {
    return pd->eos;
 }
@@ -437,7 +437,7 @@ _efl_io_queue_efl_io_writer_write(Eo *o, Efl_Io_Queue_Data *pd, Eina_Slice *slic
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
+_efl_io_queue_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
 {
    return pd->can_write;
 }
@@ -463,7 +463,7 @@ _efl_io_queue_efl_io_closer_close(Eo *o, Efl_Io_Queue_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
+_efl_io_queue_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd)
 {
    return pd->closed;
 }
@@ -477,7 +477,7 @@ _efl_io_queue_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Io_Queue_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
+_efl_io_queue_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -488,7 +488,7 @@ _efl_io_queue_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Qu
 }
 
 EOLIAN static Eina_Bool
-_efl_io_queue_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
+_efl_io_queue_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Io_Queue_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }

@@ -33,7 +33,7 @@ _efl_io_closer_fd_closer_fd_set(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd, in
 }
 
 EOLIAN static int
-_efl_io_closer_fd_closer_fd_get(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
+_efl_io_closer_fd_closer_fd_get(const Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
 {
    return pd->fd;
 }
@@ -55,7 +55,7 @@ _efl_io_closer_fd_efl_io_closer_close(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_io_closer_fd_efl_io_closer_closed_get(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUSED)
+_efl_io_closer_fd_efl_io_closer_closed_get(const Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUSED)
 {
    return efl_io_closer_fd_get(o) < 0;
 }
@@ -92,7 +92,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_io_closer_fd_efl_io_closer_close_on_exec_get(Eo *o, Efl_Io_Closer_Fd_Data *pd)
+_efl_io_closer_fd_efl_io_closer_close_on_exec_get(const Eo *o, Efl_Io_Closer_Fd_Data *pd)
 {
 #ifdef _WIN32
    return pd->close_on_exec;
@@ -125,7 +125,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_I
 }
 
 EOLIAN static Eina_Bool
-_efl_io_closer_fd_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
+_efl_io_closer_fd_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
 {
    return pd->close_on_destructor;
 }

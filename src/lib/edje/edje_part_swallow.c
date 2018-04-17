@@ -8,7 +8,7 @@ PROXY_IMPLEMENTATION(swallow, MY_CLASS, EINA_FALSE)
 
 /* Swallow parts */
 EOLIAN static Efl_Gfx *
-_efl_canvas_layout_part_swallow_efl_content_content_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_canvas_layout_part_swallow_efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
    return _edje_efl_content_content_get(pd->ed, pd->part);

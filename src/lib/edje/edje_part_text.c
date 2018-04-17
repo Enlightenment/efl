@@ -15,7 +15,7 @@ _efl_canvas_layout_part_text_efl_text_text_set(Eo *obj,
 }
 
 EOLIAN static const char *
-_efl_canvas_layout_part_text_efl_text_text_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_text_get(const Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
@@ -23,7 +23,7 @@ _efl_canvas_layout_part_text_efl_text_text_get(Eo *obj,
 }
 
 EOLIAN static const char *
-_efl_canvas_layout_part_text_efl_text_markup_markup_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_markup_markup_get(const Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
@@ -40,7 +40,7 @@ _efl_canvas_layout_part_text_efl_text_markup_markup_set(Eo *obj,
 
 
 EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_canvas_layout_part_text_efl_text_cursor_text_cursor_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_text_cursor_get(const Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor_Get_Type get_type)
 {
    PROXY_DATA_GET(obj, pd);
@@ -72,7 +72,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_position_set(Eo *obj,
 }
 
 EOLIAN static int
-_efl_canvas_layout_part_text_efl_text_cursor_cursor_position_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_position_get(const Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -146,7 +146,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_copy(Eo *obj,
 }
 
 EOLIAN static Eina_Unicode
-_efl_canvas_layout_part_text_efl_text_cursor_cursor_content_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_content_get(const Eo *obj,
       void *_pd EINA_UNUSED,
       const Efl_Text_Cursor_Cursor *cur)
 {
@@ -168,7 +168,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_content_get(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_geometry_get(const Eo *obj,
       void *_pd EINA_UNUSED,
       const Efl_Text_Cursor_Cursor *cur EINA_UNUSED,
       Efl_Text_Cursor_Cursor_Type ctype EINA_UNUSED,

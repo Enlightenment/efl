@@ -174,7 +174,7 @@ _efl_input_pointer_action_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, E
 }
 
 EOLIAN static Efl_Pointer_Action
-_efl_input_pointer_action_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_action_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->action;
 }
@@ -187,7 +187,7 @@ _efl_input_pointer_button_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, i
 }
 
 EOLIAN static int
-_efl_input_pointer_button_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_button_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->button;
 }
@@ -205,7 +205,7 @@ _efl_input_pointer_button_pressed_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_button_pressed_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int button)
+_efl_input_pointer_button_pressed_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int button)
 {
    if (button < 0) return EINA_FALSE;
    if (button > 31) return EINA_FALSE;
@@ -222,7 +222,7 @@ _efl_input_pointer_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd,
 }
 
 EOLIAN static Eina_Position2D
-_efl_input_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return EINA_POSITION2D((int) pd->cur.x, (int) pd->cur.y);
 }
@@ -236,7 +236,7 @@ _efl_input_pointer_precise_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_D
 }
 
 EOLIAN static Eina_Vector2
-_efl_input_pointer_precise_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_precise_position_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->cur;
 }
@@ -251,7 +251,7 @@ _efl_input_pointer_previous_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_
 }
 
 EOLIAN static Eina_Position2D
-_efl_input_pointer_previous_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_previous_position_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return EINA_POSITION2D((int) pd->prev.x, (int) pd->prev.y);
 }
@@ -263,7 +263,7 @@ _efl_input_pointer_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Poi
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_pointer_efl_input_event_device_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_efl_input_event_device_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->device;
 }
@@ -276,7 +276,7 @@ _efl_input_pointer_source_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, E
 }
 
 EOLIAN static Efl_Gfx *
-_efl_input_pointer_source_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_source_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->source;
 }
@@ -288,7 +288,7 @@ _efl_input_pointer_button_flags_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data 
 }
 
 EOLIAN static Efl_Pointer_Flags
-_efl_input_pointer_button_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_button_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->button_flags;
 }
@@ -300,7 +300,7 @@ _efl_input_pointer_efl_input_event_event_flags_set(Eo *obj EINA_UNUSED, Efl_Inpu
 }
 
 EOLIAN static Efl_Input_Flags
-_efl_input_pointer_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_efl_input_event_event_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->event_flags;
 }
@@ -313,7 +313,7 @@ _efl_input_pointer_efl_input_event_timestamp_set(Eo *obj EINA_UNUSED, Efl_Input_
 }
 
 EOLIAN static double
-_efl_input_pointer_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_efl_input_event_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return (double) pd->timestamp;
 }
@@ -326,7 +326,7 @@ _efl_input_pointer_wheel_horizontal_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_D
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_wheel_horizontal_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_wheel_horizontal_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->wheel.horizontal;
 }
@@ -339,13 +339,13 @@ _efl_input_pointer_wheel_delta_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *
 }
 
 EOLIAN static int
-_efl_input_pointer_wheel_delta_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_wheel_delta_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->wheel.z;
 }
 
 EOLIAN static int
-_efl_input_pointer_tool_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_tool_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return pd->tool;
 }
@@ -358,7 +358,7 @@ _efl_input_pointer_tool_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd,
+_efl_input_pointer_efl_input_state_modifier_enabled_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd,
                                                         Efl_Input_Modifier mod, const Efl_Input_Device *seat)
 {
    const char *name;
@@ -375,7 +375,7 @@ _efl_input_pointer_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd,
+_efl_input_pointer_efl_input_state_lock_enabled_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd,
                                                     Efl_Input_Lock lock, const Efl_Input_Device *seat)
 {
    const char *name;
@@ -401,7 +401,7 @@ _efl_input_pointer_double_click_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_double_click_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_double_click_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return !!(pd->button_flags & EFL_POINTER_FLAGS_DOUBLE_CLICK);
 }
@@ -416,20 +416,20 @@ _efl_input_pointer_triple_click_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_triple_click_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_triple_click_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    return !!(pd->button_flags & EFL_POINTER_FLAGS_TRIPLE_CLICK);
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_efl_input_event_fake_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_efl_input_event_fake_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    // read-only
    return pd->fake;
 }
 
 EOLIAN static Eina_Bool
-_efl_input_pointer_value_has_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
+_efl_input_pointer_value_has_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {
    if (!pd || (key <= EFL_INPUT_VALUE_NONE) || (key > EFL_INPUT_VALUE_SLIDER))
      return EINA_FALSE;
@@ -547,7 +547,7 @@ _efl_input_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
 }
 
 EOLIAN static double
-_efl_input_pointer_value_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
+_efl_input_pointer_value_get(const Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {
    switch (key)
      {

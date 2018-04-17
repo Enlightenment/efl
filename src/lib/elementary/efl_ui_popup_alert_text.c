@@ -210,7 +210,7 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
 }
 
 const char *
-_efl_ui_popup_alert_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part)
+_efl_ui_popup_alert_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part)
 {
    if (part && !strcmp(part, "elm.text"))
      {
@@ -230,7 +230,7 @@ _efl_ui_popup_alert_text_efl_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data
 }
 
 EOLIAN static const char*
-_efl_ui_popup_alert_text_efl_text_text_get(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
+_efl_ui_popup_alert_text_efl_text_text_get(const Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
 {
    return _efl_ui_popup_alert_text_text_get(obj, pd, "elm.text");
 }

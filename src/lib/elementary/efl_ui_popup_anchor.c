@@ -253,7 +253,7 @@ _efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *ancho
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_popup_anchor_anchor_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Anchor_Data *pd)
+_efl_ui_popup_anchor_anchor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Anchor_Data *pd)
 {
    return pd->anchor;
 }
@@ -275,7 +275,7 @@ _efl_ui_popup_anchor_align_priority_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_align_priority_get(Eo *obj EINA_UNUSED,
+_efl_ui_popup_anchor_align_priority_get(const Eo *obj EINA_UNUSED,
                                         Efl_Ui_Popup_Anchor_Data *pd,
                                         Efl_Ui_Popup_Align *first,
                                         Efl_Ui_Popup_Align *second,

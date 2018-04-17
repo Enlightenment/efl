@@ -1678,7 +1678,7 @@ _evas_box_align_set(Eo *o, Evas_Object_Box_Data *priv, double horizontal, double
 }
 
 EOLIAN static void
-_evas_box_align_get(Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, double *horizontal, double *vertical)
+_evas_box_align_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, double *horizontal, double *vertical)
 {
    if (priv)
      {
@@ -1703,7 +1703,7 @@ _evas_box_padding_set(Eo *o, Evas_Object_Box_Data *priv, Evas_Coord horizontal, 
 }
 
 EOLIAN static void
-_evas_box_padding_get(Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
+_evas_box_padding_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    if (priv)
      {

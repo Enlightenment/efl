@@ -26,7 +26,7 @@ _elm_atspi_app_object_efl_object_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_O
 }
 
 EOLIAN static Eina_List*
-_elm_atspi_app_object_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+_elm_atspi_app_object_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *win;
@@ -45,7 +45,7 @@ _elm_atspi_app_object_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_At
 }
 
 EOLIAN static const char*
-_elm_atspi_app_object_efl_access_i18n_name_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+_elm_atspi_app_object_efl_access_i18n_name_get(const Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    const char *ret;
    ret = elm_app_name_get();
@@ -53,7 +53,7 @@ _elm_atspi_app_object_efl_access_i18n_name_get(Eo *obj EINA_UNUSED, Elm_Atspi_Ap
 }
 
 EOLIAN static const char*
-_elm_atspi_app_object_efl_access_description_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
+_elm_atspi_app_object_efl_access_description_get(const Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
 {
    return _pd->descr;
 }
@@ -65,7 +65,7 @@ _elm_atspi_app_object_efl_access_description_set(Eo *obj EINA_UNUSED, Elm_Atspi_
 }
 
 EOLIAN static Efl_Access_Role
-_elm_atspi_app_object_efl_access_role_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+_elm_atspi_app_object_efl_access_role_get(const Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    return EFL_ACCESS_ROLE_APPLICATION;
 }

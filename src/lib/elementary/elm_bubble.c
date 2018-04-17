@@ -216,7 +216,7 @@ _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
 }
 
 EOLIAN static Elm_Bubble_Pos
-_elm_bubble_pos_get(Eo *obj EINA_UNUSED, Elm_Bubble_Data *sd)
+_elm_bubble_pos_get(const Eo *obj EINA_UNUSED, Elm_Bubble_Data *sd)
 {
    return sd->pos;
 }

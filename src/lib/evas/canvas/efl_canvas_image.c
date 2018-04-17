@@ -48,7 +48,7 @@ _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key)
 }
 
 EOLIAN static void
-_efl_canvas_image_efl_file_mmap_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED,
+_efl_canvas_image_efl_file_mmap_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED,
                                     const Eina_File **f, const char **key)
 {
    _evas_image_mmap_get(eo_obj, f, key);
@@ -65,7 +65,7 @@ _evas_image_load_error_get(const Eo *eo_obj)
 }
 
 EOLIAN static Efl_Image_Load_Error
-_efl_canvas_image_efl_file_load_error_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_file_load_error_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_load_error_get(eo_obj);
 }
@@ -169,7 +169,7 @@ _evas_image_load_dpi_get(const Eo *eo_obj)
 }
 
 EOLIAN static double
-_efl_canvas_image_efl_image_load_load_dpi_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_dpi_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_load_dpi_get(eo_obj);
 }
@@ -216,7 +216,7 @@ _evas_image_load_size_get(const Eo *eo_obj, int *w, int *h)
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_image_efl_image_load_load_size_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_size_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    Eina_Size2D sz;
    _evas_image_load_size_get(eo_obj, &sz.w, &sz.h);
@@ -260,7 +260,7 @@ _evas_image_load_scale_down_get(const Eo *eo_obj)
 }
 
 EOLIAN static int
-_efl_canvas_image_efl_image_load_load_scale_down_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_scale_down_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_load_scale_down_get(eo_obj);
 }
@@ -286,7 +286,7 @@ _evas_image_load_head_skip_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_efl_image_load_load_skip_header_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_skip_header_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_load_head_skip_get(eo_obj);
 }
@@ -337,7 +337,7 @@ _evas_image_load_region_get(const Eo *eo_obj, int *x, int *y, int *w, int *h)
 }
 
 EOLIAN static Eina_Rect
-_efl_canvas_image_efl_image_load_load_region_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_region_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    Eina_Rect r;
    _evas_image_load_region_get(eo_obj, &r.x, &r.y, &r.w, &r.h);
@@ -373,7 +373,7 @@ _evas_image_load_orientation_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_efl_image_load_load_orientation_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_orientation_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_load_orientation_get(eo_obj);
 }
@@ -388,7 +388,7 @@ _evas_image_load_region_support_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_efl_image_load_load_region_support_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_load_load_region_support_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_load_region_support_get(eo_obj);
 }
@@ -407,7 +407,7 @@ _evas_image_animated_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_efl_image_animated_animated_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_animated_animated_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_animated_get(eo_obj);
 }
@@ -427,7 +427,7 @@ _evas_image_animated_frame_count_get(const Eo *eo_obj)
 }
 
 EOLIAN static int
-_efl_canvas_image_efl_image_animated_animated_frame_count_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_animated_animated_frame_count_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_animated_frame_count_get(eo_obj);
 }
@@ -446,7 +446,7 @@ _evas_image_animated_loop_type_get(const Eo *eo_obj)
 }
 
 EOLIAN static Efl_Image_Animated_Loop_Hint
-_efl_canvas_image_efl_image_animated_animated_loop_type_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_animated_animated_loop_type_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_animated_loop_type_get(eo_obj);
 }
@@ -465,7 +465,7 @@ _evas_image_animated_loop_count_get(const Eo *eo_obj)
 }
 
 EOLIAN static int
-_efl_canvas_image_efl_image_animated_animated_loop_count_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_animated_animated_loop_count_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_animated_loop_count_get(eo_obj);
 }
@@ -489,7 +489,7 @@ _evas_image_animated_frame_duration_get(const Eo *eo_obj, int start_frame, int f
 }
 
 EOLIAN static double
-_efl_canvas_image_efl_image_animated_animated_frame_duration_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int start_frame, int frame_num)
+_efl_canvas_image_efl_image_animated_animated_frame_duration_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int start_frame, int frame_num)
 {
    return _evas_image_animated_frame_duration_get(eo_obj, start_frame, frame_num);
 }
@@ -547,13 +547,13 @@ _evas_image_animated_frame_get(const Eo *eo_obj)
 }
 
 EOLIAN static int
-_efl_canvas_image_efl_image_animated_animated_frame_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_image_animated_animated_frame_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_animated_frame_get(eo_obj);
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_image_efl_gfx_buffer_buffer_size_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_gfx_buffer_buffer_size_get(const Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 

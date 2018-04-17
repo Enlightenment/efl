@@ -131,7 +131,7 @@ _efl_net_dialer_ssl_ssl_context_set(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, Eo *ssl_
 }
 
 EOLIAN static Eo *
-_efl_net_dialer_ssl_ssl_context_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_ssl_context_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return pd->ssl_ctx;
 }
@@ -174,7 +174,7 @@ _efl_net_dialer_ssl_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, cons
 }
 
 EOLIAN static const char *
-_efl_net_dialer_ssl_efl_net_dialer_address_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_efl_net_dialer_address_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return efl_net_dialer_address_dial_get(pd->sock);
 }
@@ -186,7 +186,7 @@ _efl_net_dialer_ssl_efl_net_dialer_proxy_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_S
 }
 
 EOLIAN static const char *
-_efl_net_dialer_ssl_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_efl_net_dialer_proxy_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return efl_net_dialer_proxy_get(pd->sock);
 }
@@ -202,7 +202,7 @@ _efl_net_dialer_ssl_efl_net_dialer_timeout_dial_set(Eo *o, Efl_Net_Dialer_Ssl_Da
 }
 
 EOLIAN static double
-_efl_net_dialer_ssl_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_efl_net_dialer_timeout_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return efl_net_dialer_timeout_dial_get(pd->sock);
 }
@@ -218,7 +218,7 @@ _efl_net_dialer_ssl_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Ssl_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_ssl_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_efl_net_dialer_connected_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return pd->connected;
 }
@@ -237,7 +237,7 @@ _efl_net_dialer_ssl_keep_alive_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *p
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_ssl_keep_alive_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_keep_alive_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return efl_net_socket_tcp_keep_alive_get(pd->sock);
 }
@@ -249,7 +249,7 @@ _efl_net_dialer_ssl_no_delay_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_ssl_no_delay_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
+_efl_net_dialer_ssl_no_delay_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd)
 {
    return efl_net_socket_tcp_no_delay_get(pd->sock);
 }

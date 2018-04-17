@@ -374,7 +374,7 @@ _efl_canvas_object_efl_gfx_stack_below_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_object_bottom_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_object_bottom_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    if (e->layers)
      {
@@ -391,7 +391,7 @@ _evas_canvas_object_bottom_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_object_top_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_object_top_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    Evas_Object_Protected_Data *obj = NULL;
    Eina_Inlist *list;

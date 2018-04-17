@@ -152,7 +152,7 @@ _elm_table_homogeneous_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool homogeneous
 }
 
 EOLIAN static Eina_Bool
-_elm_table_homogeneous_get(Eo *obj, void *_pd EINA_UNUSED)
+_elm_table_homogeneous_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    return evas_object_table_homogeneous_get(wd->resize_obj);
@@ -168,7 +168,7 @@ _elm_table_padding_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord horizontal, Ev
 }
 
 EOLIAN static void
-_elm_table_padding_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
+_elm_table_padding_get(const Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -186,7 +186,7 @@ _elm_table_align_set(Eo *obj, void *_pd EINA_UNUSED, double horizontal, double v
 }
 
 EOLIAN static void
-_elm_table_align_get(Eo *obj, void *_pd EINA_UNUSED, double *horizontal, double *vertical)
+_elm_table_align_get(const Eo *obj, void *_pd EINA_UNUSED, double *horizontal, double *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

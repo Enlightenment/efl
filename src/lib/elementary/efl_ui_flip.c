@@ -1874,7 +1874,7 @@ _efl_ui_flip_efl_object_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_front_visible_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
+_efl_ui_flip_front_visible_get(const Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
 {
    return sd->state;
 }
@@ -2029,7 +2029,7 @@ _efl_ui_flip_interaction_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Flip_Interact
 }
 
 EOLIAN static Efl_Ui_Flip_Interaction
-_efl_ui_flip_interaction_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
+_efl_ui_flip_interaction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
 {
    return sd->intmode;
 }

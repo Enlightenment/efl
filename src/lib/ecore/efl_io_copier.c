@@ -389,7 +389,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(source_cbs,
                           { EFL_IO_READER_EVENT_EOS, _efl_io_copier_source_eos });
 
 EOLIAN static Efl_Io_Reader *
-_efl_io_copier_source_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_source_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->source;
 }
@@ -481,7 +481,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(destination_cbs,
                           { EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, _efl_io_copier_destination_can_write_changed });
 
 EOLIAN static Efl_Io_Writer *
-_efl_io_copier_destination_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_destination_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->destination;
 }
@@ -541,7 +541,7 @@ _efl_io_copier_buffer_limit_set(Eo *o, Efl_Io_Copier_Data *pd, size_t size)
 }
 
 EOLIAN static size_t
-_efl_io_copier_buffer_limit_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_buffer_limit_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->buffer_limit;
 }
@@ -569,7 +569,7 @@ _efl_io_copier_line_delimiter_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, Ein
 }
 
 EOLIAN static Eina_Slice
-_efl_io_copier_line_delimiter_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_line_delimiter_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->line_delimiter;
 }
@@ -585,7 +585,7 @@ _efl_io_copier_read_chunk_size_set(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, si
 }
 
 EOLIAN static size_t
-_efl_io_copier_read_chunk_size_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_read_chunk_size_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->read_chunk_size > 0 ? pd->read_chunk_size : DEF_READ_CHUNK_SIZE;
 }
@@ -680,13 +680,13 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_io_copier_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->closed;
 }
 
 EOLIAN static void
-_efl_io_copier_progress_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, uint64_t *read, uint64_t *written, uint64_t *total)
+_efl_io_copier_progress_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd, uint64_t *read, uint64_t *written, uint64_t *total)
 {
    if (read) *read = pd->progress.read;
    if (written) *written = pd->progress.written;
@@ -709,7 +709,7 @@ _efl_io_copier_timeout_inactivity_set(Eo *o, Efl_Io_Copier_Data *pd, double seco
 }
 
 EOLIAN static double
-_efl_io_copier_timeout_inactivity_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_timeout_inactivity_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->timeout_inactivity;
 }
@@ -768,13 +768,13 @@ _efl_io_copier_flush(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool may_block, Eina_Bo
 }
 
 EOLIAN static size_t
-_efl_io_copier_pending_size_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_pending_size_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->buf ? eina_binbuf_length_get(pd->buf) : 0;
 }
 
 EOLIAN static Eina_Bool
-_efl_io_copier_done_get(Eo *o, Efl_Io_Copier_Data *pd)
+_efl_io_copier_done_get(const Eo *o, Efl_Io_Copier_Data *pd)
 {
    DBG("%p done=%d pending=%zd source={%p %s, eos=%d, closed=%d}, destination={%p %s, closed=%d}",
        o, pd->done,
@@ -889,7 +889,7 @@ _efl_io_copier_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Io_Copier_
 }
 
 EOLIAN static Eina_Bool
-_efl_io_copier_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->close_on_exec;
 }
@@ -908,7 +908,7 @@ _efl_io_copier_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_C
 }
 
 EOLIAN static Eina_Bool
-_efl_io_copier_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
+_efl_io_copier_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
 {
    return pd->close_on_destructor;
 }

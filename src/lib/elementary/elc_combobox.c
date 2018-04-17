@@ -347,7 +347,7 @@ _elm_combobox_efl_gfx_visible_set(Eo *obj, Elm_Combobox_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static Eina_Bool
-_elm_combobox_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED,
+_elm_combobox_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED,
                                                          Elm_Combobox_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
@@ -466,7 +466,7 @@ _elm_combobox_hover_end(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_combobox_expanded_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
+_elm_combobox_expanded_get(const Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
    return sd->expanded;
 }
@@ -521,7 +521,7 @@ _elm_combobox_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_combobox_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
+_elm_combobox_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED,
                                                                 Elm_Combobox_Data *pd
                                                                 EINA_UNUSED)
 {

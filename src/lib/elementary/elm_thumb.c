@@ -635,7 +635,7 @@ _elm_thumb_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char
 }
 
 EOLIAN static void
-_elm_thumb_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
+_elm_thumb_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
 {
    if (file)
      *file = sd->file;
@@ -679,7 +679,7 @@ _elm_thumb_efl_ui_draggable_drag_target_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_elm_thumb_efl_ui_draggable_drag_target_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+_elm_thumb_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
 {
    return sd->edit;
 }

@@ -551,7 +551,7 @@ _elm_hoversel_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
 }
 
 static const char *
-_elm_hoversel_item_elm_widget_item_part_text_get(Eo *eo_it EINA_UNUSED,
+_elm_hoversel_item_elm_widget_item_part_text_get(const Eo *eo_it EINA_UNUSED,
                                             Elm_Hoversel_Item_Data *it,
                                             const char *part)
 {
@@ -577,7 +577,7 @@ _elm_hoversel_item_elm_widget_item_style_set(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static const char *
-_elm_hoversel_item_elm_widget_item_style_get(Eo *eo_it EINA_UNUSED,
+_elm_hoversel_item_elm_widget_item_style_get(const Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it)
 {
    return elm_object_style_get(VIEW(it));
@@ -592,7 +592,7 @@ _elm_hoversel_item_elm_widget_item_item_focus_set(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_item_elm_widget_item_item_focus_get(Eo *eo_it EINA_UNUSED,
+_elm_hoversel_item_elm_widget_item_item_focus_get(const Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it)
 {
    return efl_ui_focus_object_focus_get(VIEW(it));
@@ -687,7 +687,7 @@ _elm_hoversel_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EI
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
+_elm_hoversel_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -737,7 +737,7 @@ _elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *pare
 }
 
 EOLIAN static Evas_Object*
-_elm_hoversel_hover_parent_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_hover_parent_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->hover_parent;
 }
@@ -767,7 +767,7 @@ _elm_hoversel_horizontal_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bool horizonta
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_horizontal_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_horizontal_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->horizontal;
 }
@@ -801,7 +801,7 @@ _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_expanded_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_expanded_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return (sd->hover) ? EINA_TRUE : EINA_FALSE;
 }
@@ -819,7 +819,7 @@ _elm_hoversel_clear(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elm_hoversel_items_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_items_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->items;
 }
@@ -897,7 +897,7 @@ _elm_hoversel_item_icon_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_hoversel_item_icon_get(Eo *eo_item EINA_UNUSED,
+_elm_hoversel_item_icon_get(const Eo *eo_item EINA_UNUSED,
                             Elm_Hoversel_Item_Data *item,
                             const char **icon_file,
                             const char **icon_group,
@@ -1027,7 +1027,7 @@ _elm_hoversel_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_hoversel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd EINA_UNUSED)
+_elm_hoversel_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -1042,7 +1042,7 @@ _elm_hoversel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_
 }
 
 EOLIAN Eina_List*
-_elm_hoversel_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd)
+_elm_hoversel_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd)
 {
 	return eina_list_clone(pd->items);
 }
@@ -1054,7 +1054,7 @@ _elm_hoversel_auto_update_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_B
 }
 
 EOLIAN Eina_Bool
-_elm_hoversel_auto_update_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_auto_update_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->auto_update;
 }

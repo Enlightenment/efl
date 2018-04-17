@@ -717,7 +717,7 @@ _ecore_con_eet_base_server_set(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd,
 }
 
 EOLIAN static Ecore_Con_Server *
-_ecore_con_eet_base_server_get(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd)
+_ecore_con_eet_base_server_get(const Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd)
 {
    return pd->server;
 }

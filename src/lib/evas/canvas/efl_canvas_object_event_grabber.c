@@ -276,7 +276,7 @@ _efl_canvas_object_event_grabber_efl_canvas_group_group_need_recalculate_set(Eo 
 {}
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_event_grabber_efl_canvas_group_group_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd EINA_UNUSED)
+_efl_canvas_object_event_grabber_efl_canvas_group_group_need_recalculate_get(const Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -296,7 +296,7 @@ _efl_canvas_object_event_grabber_efl_gfx_size_set(Eo *eo_obj, Efl_Object_Event_G
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_event_grabber_efl_gfx_visible_get(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
+_efl_canvas_object_event_grabber_efl_gfx_visible_get(const Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
 {
    return pd->vis;
 }
@@ -395,7 +395,7 @@ _efl_canvas_object_event_grabber_freeze_when_visible_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_event_grabber_freeze_when_visible_get(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
+_efl_canvas_object_event_grabber_freeze_when_visible_get(const Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
 {
    return pd->freeze;
 }

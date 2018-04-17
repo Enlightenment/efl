@@ -24,7 +24,7 @@ efl_ui_win_inlined_parent_set(Eo *obj, Efl_Canvas_Object *parent)
 }
 
 EOLIAN static Efl_Canvas_Object *
-_efl_ui_win_inlined_inlined_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Inlined_Data *pd)
+_efl_ui_win_inlined_inlined_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Inlined_Data *pd)
 {
    return pd->parent;
 }

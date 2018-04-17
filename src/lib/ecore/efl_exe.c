@@ -324,7 +324,7 @@ _efl_exe_exe_flags_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Exe_Flags flag
 }
 
 EOLIAN static Efl_Exe_Flags
-_efl_exe_exe_flags_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_exe_flags_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    return pd->flags;
 }
@@ -348,7 +348,7 @@ _efl_exe_efl_task_priority_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Task_P
 }
 
 EOLIAN static Efl_Task_Priority
-_efl_exe_efl_task_priority_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_task_priority_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    Efl_Task_Priority pri = EFL_TASK_PRIORITY_NORMAL;
 
@@ -586,7 +586,7 @@ _efl_exe_efl_task_end(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 }
 
 EOLIAN static int
-_efl_exe_exit_signal_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_exit_signal_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    return pd->exit_signal;
 }
@@ -658,7 +658,7 @@ _efl_exe_efl_io_closer_close(Eo *obj, Efl_Exe_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_exe_efl_io_closer_closed_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_io_closer_closed_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
    return EINA_FALSE;
@@ -736,7 +736,7 @@ _efl_exe_efl_io_reader_can_read_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_rea
 }
 
 EOLIAN static Eina_Bool
-_efl_exe_efl_io_reader_can_read_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_io_reader_can_read_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    return pd->fd.can_read;
 }
@@ -755,7 +755,7 @@ _efl_exe_efl_io_reader_eos_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool is_eos)
 }
 
 EOLIAN static Eina_Bool
-_efl_exe_efl_io_reader_eos_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_io_reader_eos_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    return pd->fd.eos_read;
 }
@@ -834,7 +834,7 @@ _efl_exe_efl_io_writer_can_write_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_wr
 }
 
 EOLIAN static Eina_Bool
-_efl_exe_efl_io_writer_can_write_get(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_io_writer_can_write_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 {
    return pd->fd.can_write;
 }

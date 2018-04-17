@@ -18,7 +18,7 @@ abstract Efl.Canvas.Animation.Group (Efl.Canvas.Animation)
             @in animation: Efl.Canvas.Animation; [[The animation which needs to be deleted from the animation group]]
          }
       }
-      animations_get {
+      animations_get @const {
          [[Get the animations of the animation group.]]
          return: list<Efl.Canvas.Animation>; [[The animations of the animation group]]
       }

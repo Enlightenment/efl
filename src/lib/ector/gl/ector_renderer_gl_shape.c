@@ -110,7 +110,7 @@ _ector_renderer_gl_shape_ector_renderer_gl_op_fill(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_gl_shape_efl_gfx_path_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rect *r)
+_ector_renderer_gl_shape_efl_gfx_path_bounds_get(const Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rect *r)
 {
    efl_gfx_path_bounds_get(obj, r);
 
@@ -119,7 +119,7 @@ _ector_renderer_gl_shape_efl_gfx_path_bounds_get(Eo *obj, Ector_Renderer_GL_Shap
 }
 
 static unsigned int
-_ector_renderer_gl_shape_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
+_ector_renderer_gl_shape_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
    unsigned int crc;
 

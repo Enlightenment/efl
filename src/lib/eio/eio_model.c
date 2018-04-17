@@ -280,7 +280,7 @@ _eio_error_unlink_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int 
  * Interfaces impl.
  */
 static Eina_Array const *
-_eio_model_efl_model_properties_get(Eo *obj EINA_UNUSED, Eio_Model_Data *_pd)
+_eio_model_efl_model_properties_get(const Eo *obj EINA_UNUSED, Eio_Model_Data *_pd)
 {
    Eio_Model_Data *priv = _pd;
 
@@ -798,7 +798,7 @@ _eio_model_efl_object_destructor(Eo *obj , Eio_Model_Data *priv)
 }
 
 static Eo *
-_eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
+_eio_model_efl_object_parent_get(const Eo *obj , Eio_Model_Data *priv)
 {
    Eo *model = efl_parent_get(efl_super(obj, MY_CLASS));
 

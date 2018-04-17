@@ -70,7 +70,7 @@ _evas_image_proxy_source_get(const Eo *eo_obj)
 }
 
 EOLIAN static Evas_Object *
-_efl_canvas_proxy_source_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_proxy_source_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_get(eo_obj);
 }
@@ -107,7 +107,7 @@ _evas_image_proxy_source_clip_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_clip_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_proxy_source_clip_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_clip_get(eo_obj);
 }
@@ -144,7 +144,7 @@ _evas_image_proxy_source_events_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_events_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+_efl_canvas_proxy_source_events_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_events_get(eo_obj);
 }

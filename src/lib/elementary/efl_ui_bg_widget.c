@@ -127,7 +127,7 @@ _efl_ui_bg_widget_efl_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget
 }
 
 EOLIAN static Efl_Image_Scale_Type
-_efl_ui_bg_widget_efl_image_scale_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
+_efl_ui_bg_widget_efl_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
 {
    return efl_image_scale_type_get(sd->img);
 }
@@ -166,7 +166,7 @@ elm_bg_color_get(const Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_gfx_color_color_get(Eo *obj, Efl_Ui_Bg_Widget_Data *sd, int *r, int *g, int *b, int *a)
+_efl_ui_bg_widget_efl_gfx_color_color_get(const Eo *obj, Efl_Ui_Bg_Widget_Data *sd, int *r, int *g, int *b, int *a)
 {
    if (!sd->rect)
      efl_gfx_color_get(efl_super(obj, MY_CLASS), r, g, b, a);
@@ -188,7 +188,7 @@ _efl_ui_bg_widget_efl_image_load_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Wi
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_bg_widget_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
+_efl_ui_bg_widget_efl_image_load_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
 {
    return efl_image_load_size_get(sd->img);
 }
@@ -214,7 +214,7 @@ elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_file_file_get(Eo *obj, Efl_Ui_Bg_Widget_Data *sd, const char **file, const char **key)
+_efl_ui_bg_widget_efl_file_file_get(const Eo *obj, Efl_Ui_Bg_Widget_Data *sd, const char **file, const char **key)
 {
    if (elm_widget_is_legacy(obj))
      {
@@ -234,7 +234,7 @@ _efl_ui_bg_widget_efl_file_mmap_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_file_mmap_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd,
+_efl_ui_bg_widget_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd,
                              const Eina_File **file, const char **key)
 {
    efl_file_mmap_get(sd->img, file, key);

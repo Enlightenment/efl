@@ -535,7 +535,7 @@ _evas_canvas_coord_world_y_to_screen(const Eo *eo_e EINA_UNUSED, Evas_Public_Dat
 }
 
 EOLIAN static Efl_Input_Device *
-_evas_canvas_default_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_default_device_get(const Eo *eo_e EINA_UNUSED,
                                 Evas_Public_Data *e,
                                 Efl_Input_Device_Type klass)
 {
@@ -595,7 +595,7 @@ evas_object_image_extension_can_load_fast_get(const char *file)
 }
 
 EOLIAN static void
-_evas_canvas_pointer_output_xy_by_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_pointer_output_xy_by_device_get(const Eo *eo_e EINA_UNUSED,
                                              Evas_Public_Data *e,
                                              Efl_Input_Device *dev,
                                              int *x, int *y)
@@ -616,7 +616,7 @@ _evas_canvas_pointer_output_xy_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_canvas_pointer_canvas_xy_by_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_pointer_canvas_xy_by_device_get(const Eo *eo_e EINA_UNUSED,
                                              Evas_Public_Data *e,
                                              Efl_Input_Device *dev,
                                              int *x, int *y)
@@ -636,7 +636,7 @@ _evas_canvas_pointer_canvas_xy_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static unsigned int
-_evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_pointer_button_down_mask_by_device_get(const Eo *eo_e EINA_UNUSED,
                                                     Evas_Public_Data *e,
                                                     Efl_Input_Device *dev)
 {
@@ -646,7 +646,7 @@ _evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_efl_canvas_pointer_pointer_inside_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_efl_canvas_pointer_pointer_inside_get(const Eo *eo_e EINA_UNUSED,
                                                    Evas_Public_Data *e,
                                                    Efl_Input_Device *dev)
 {
@@ -656,19 +656,19 @@ _evas_canvas_efl_canvas_pointer_pointer_inside_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_canvas_pointer_output_xy_get(Eo *eo_e, Evas_Public_Data *e, int *x, int *y)
+_evas_canvas_pointer_output_xy_get(const Eo *eo_e, Evas_Public_Data *e, int *x, int *y)
 {
    return _evas_canvas_pointer_output_xy_by_device_get(eo_e, e, NULL, x, y);
 }
 
 EOLIAN static void
-_evas_canvas_pointer_canvas_xy_get(Eo *eo_e, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
+_evas_canvas_pointer_canvas_xy_get(const Eo *eo_e, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
 {
    return _evas_canvas_pointer_canvas_xy_by_device_get(eo_e, e, NULL, x, y);
 }
 
 EOLIAN static unsigned int
-_evas_canvas_pointer_button_down_mask_get(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_pointer_button_down_mask_get(const Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_pointer_button_down_mask_by_device_get(eo_e, e, NULL);
 }
@@ -680,7 +680,7 @@ _evas_canvas_data_attach_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, void *da
 }
 
 EOLIAN static void*
-_evas_canvas_data_attach_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_data_attach_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->attach_data;
 }
@@ -734,7 +734,7 @@ _evas_canvas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_seat_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+_evas_canvas_seat_focus_state_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
                                   Efl_Input_Device *seat)
 {
    if (!seat) seat = e->default_seat;
@@ -742,13 +742,13 @@ _evas_canvas_seat_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_focus_state_get(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_focus_state_get(const Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_seat_focus_state_get(eo_e, e, NULL);
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_changed_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_changed_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->changed;
 }
@@ -855,7 +855,7 @@ _evas_canvas_efl_object_provider_find(const Eo *eo_e,
 }
 
 EOLIAN static Efl_Loop *
-_evas_canvas_efl_loop_consumer_loop_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EINA_UNUSED)
+_evas_canvas_efl_loop_consumer_loop_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EINA_UNUSED)
 {
    return efl_main_loop_get();
 }
@@ -1047,7 +1047,7 @@ _evas_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size
 }
 
 EOLIAN static int
-_evas_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_image_cache_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    if (_evas_engine_context(e))
      return e->engine.func->image_cache_get(_evas_engine_context(e));
@@ -1055,7 +1055,7 @@ _evas_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_efl_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
+_evas_canvas_efl_canvas_image_max_size_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
 {
    int w = 0, h = 0;
 
@@ -1733,7 +1733,7 @@ _evas_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 }
 
 EOLIAN static int
-_evas_canvas_font_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_font_cache_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    if (_evas_engine_context(e))
      return e->engine.func->font_cache_get(_evas_engine_context(e));
@@ -1824,7 +1824,7 @@ evas_smart_objects_calculate(Eo *eo_e)
 }
 
 EOLIAN Eina_Bool
-_evas_canvas_efl_canvas_smart_objects_calculating_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_efl_canvas_smart_objects_calculating_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return !!e->in_smart_calc;
 }
@@ -1836,7 +1836,7 @@ evas_smart_objects_calculating_get(const Eo *obj)
 }
 
 EOLIAN int
-_evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_smart_objects_calculate_count_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->smart_calc_count;
 }

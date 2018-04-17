@@ -61,7 +61,7 @@ _efl_model_item_efl_object_destructor(Eo *obj, Efl_Model_Item_Data *sd)
 }
 
 EOLIAN static const Eina_Array *
-_efl_model_item_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd)
+_efl_model_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd)
 {
    return sd->defined_properties;
 }

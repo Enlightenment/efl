@@ -17,7 +17,7 @@ _ector_renderer_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_U
 }
 
 static void
-_ector_renderer_gradient_linear_efl_gfx_gradient_linear_start_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_linear_efl_gfx_gradient_linear_start_get(const Eo *obj EINA_UNUSED,
                                                                           Ector_Renderer_Gradient_Linear_Data *pd,
                                                                           double *x, double *y)
 {
@@ -35,7 +35,7 @@ _ector_renderer_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNU
 }
 
 static void
-_ector_renderer_gradient_linear_efl_gfx_gradient_linear_end_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_linear_efl_gfx_gradient_linear_end_get(const Eo *obj EINA_UNUSED,
                                                                         Ector_Renderer_Gradient_Linear_Data *pd,
                                                                         double *x, double *y)
 {

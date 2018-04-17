@@ -217,7 +217,7 @@ _efl_net_server_udp_client_efl_io_writer_write(Eo *o, Efl_Net_Server_Udp_Client_
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->can_read;
 }
@@ -232,7 +232,7 @@ _efl_net_server_udp_client_efl_io_reader_can_read_set(Eo *o, Efl_Net_Server_Udp_
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_io_reader_eos_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->eos;
 }
@@ -248,7 +248,7 @@ _efl_net_server_udp_client_efl_io_reader_eos_set(Eo *o, Efl_Net_Server_Udp_Clien
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->can_write;
 }
@@ -263,7 +263,7 @@ _efl_net_server_udp_client_efl_io_writer_can_write_set(Eo *o, Efl_Net_Server_Udp
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->fd == INVALID_SOCKET;
 }
@@ -275,7 +275,7 @@ _efl_net_server_udp_client_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->close_on_destructor;
 }
@@ -293,7 +293,7 @@ _efl_net_server_udp_client_efl_io_closer_close_on_exec_set(Eo *o, Efl_Net_Server
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_client_efl_io_closer_close_on_exec_get(Eo *o, Efl_Net_Server_Udp_Client_Data *pd EINA_UNUSED)
+_efl_net_server_udp_client_efl_io_closer_close_on_exec_get(const Eo *o, Efl_Net_Server_Udp_Client_Data *pd EINA_UNUSED)
 {
    return efl_net_server_fd_close_on_exec_get(efl_parent_get(o));
 }
@@ -305,7 +305,7 @@ _efl_net_server_udp_client_efl_net_socket_address_local_set(Eo *o EINA_UNUSED, E
 }
 
 EOLIAN static const char *
-_efl_net_server_udp_client_efl_net_socket_address_local_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_net_socket_address_local_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->address_local;
 }
@@ -317,7 +317,7 @@ _efl_net_server_udp_client_efl_net_socket_address_remote_set(Eo *o EINA_UNUSED, 
 }
 
 EOLIAN static const char *
-_efl_net_server_udp_client_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
+_efl_net_server_udp_client_efl_net_socket_address_remote_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Udp_Client_Data *pd)
 {
    return pd->address_remote;
 }

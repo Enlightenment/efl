@@ -240,7 +240,7 @@ _efl_ui_popup_alert_scroll_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Aler
 }
 
 static Eina_Size2D
-_efl_ui_popup_alert_scroll_expandable_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd)
+_efl_ui_popup_alert_scroll_expandable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd)
 {
    return pd->max_size;
 }

@@ -26,7 +26,7 @@ _efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_center_set(Eo *obj EINA_U
 }
 
 static void
-_efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_center_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_center_get(const Eo *obj EINA_UNUSED,
                                                            Efl_Canvas_VG_Gradient_Radial_Data *pd,
                                                            double *x, double *y)
 {
@@ -45,7 +45,7 @@ _efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_radius_set(Eo *obj EINA_U
 }
 
 static double
-_efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_radius_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_radius_get(const Eo *obj EINA_UNUSED,
                                                            Efl_Canvas_VG_Gradient_Radial_Data *pd)
 {
    return pd->radius;
@@ -63,7 +63,7 @@ _efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_focal_set(Eo *obj EINA_UN
 }
 
 static void
-_efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_focal_get(Eo *obj EINA_UNUSED,
+_efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_focal_get(const Eo *obj EINA_UNUSED,
                                                           Efl_Canvas_VG_Gradient_Radial_Data *pd,
                                                           double *x, double *y)
 {
@@ -129,7 +129,7 @@ _efl_canvas_vg_gradient_radial_efl_object_destructor(Eo *obj,
 }
 
 static void
-_efl_canvas_vg_gradient_radial_efl_gfx_path_bounds_get(Eo *obj, Efl_Canvas_VG_Gradient_Radial_Data *pd, Eina_Rect *r)
+_efl_canvas_vg_gradient_radial_efl_gfx_path_bounds_get(const Eo *obj, Efl_Canvas_VG_Gradient_Radial_Data *pd, Eina_Rect *r)
 {
    Efl_Canvas_VG_Node_Data *nd;
 

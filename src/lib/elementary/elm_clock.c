@@ -825,7 +825,7 @@ _elm_clock_time_set(Eo *obj, Elm_Clock_Data *sd, int hrs, int min, int sec)
 }
 
 EOLIAN static void
-_elm_clock_time_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, int *hrs, int *min, int *sec)
+_elm_clock_time_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, int *hrs, int *min, int *sec)
 {
    if (hrs) *hrs = sd->hrs;
    if (min) *min = sd->min;
@@ -845,7 +845,7 @@ _elm_clock_edit_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool edit)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_edit_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_edit_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->edit;
 }
@@ -861,7 +861,7 @@ _elm_clock_edit_mode_set(Eo *obj, Elm_Clock_Data *sd, Elm_Clock_Edit_Mode digedi
 }
 
 EOLIAN static Elm_Clock_Edit_Mode
-_elm_clock_edit_mode_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_edit_mode_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->digedit;
 }
@@ -874,7 +874,7 @@ _elm_clock_show_am_pm_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool am_pm)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_show_am_pm_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_show_am_pm_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->am_pm;
 }
@@ -887,7 +887,7 @@ _elm_clock_show_seconds_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool seconds)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_show_seconds_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_show_seconds_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->seconds;
 }
@@ -899,7 +899,7 @@ _elm_clock_first_interval_set(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, double in
 }
 
 EOLIAN static double
-_elm_clock_first_interval_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_first_interval_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->first_interval;
 }
@@ -921,7 +921,7 @@ _elm_clock_pause_set(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, Eina_Bool paused)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_pause_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_pause_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->paused;
 }

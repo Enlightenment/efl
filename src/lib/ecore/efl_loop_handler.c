@@ -227,7 +227,7 @@ _efl_loop_handler_active_set(Eo *obj, Efl_Loop_Handler_Data *pd, Efl_Loop_Handle
 }
 
 static Efl_Loop_Handler_Flags
-_efl_loop_handler_active_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_active_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    return pd->flags;
 }
@@ -242,7 +242,7 @@ _efl_loop_handler_fd_set(Eo *obj, Efl_Loop_Handler_Data *pd, int fd)
 }
 
 static int
-_efl_loop_handler_fd_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_fd_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    if (pd->win32) return -1;
    return pd->file ? -1 : pd->fd;
@@ -258,7 +258,7 @@ _efl_loop_handler_fd_file_set(Eo *obj, Efl_Loop_Handler_Data *pd, int fd)
 }
 
 static int
-_efl_loop_handler_fd_file_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_fd_file_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    if (pd->win32) return -1;
    return pd->file ? pd->fd : -1;
@@ -274,7 +274,7 @@ _efl_loop_handler_win32_set(Eo *obj, Efl_Loop_Handler_Data *pd, void *handle)
 }
 
 static void *
-_efl_loop_handler_win32_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_win32_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    return pd->win32;
 }

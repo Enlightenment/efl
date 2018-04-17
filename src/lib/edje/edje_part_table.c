@@ -71,14 +71,14 @@ _efl_canvas_layout_part_table_efl_pack_table_table_content_get(Eo *obj, void *_p
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_table_efl_pack_table_table_size_get(Eo *obj, void *_pd EINA_UNUSED, int *cols, int *rows)
+_efl_canvas_layout_part_table_efl_pack_table_table_size_get(const Eo *obj, void *_pd EINA_UNUSED, int *cols, int *rows)
 {
    PROXY_DATA_GET(obj, pd);
    _edje_part_table_col_row_size_get(pd->ed, pd->part, cols, rows);
 }
 
 EOLIAN static int
-_efl_canvas_layout_part_table_efl_pack_table_table_columns_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_canvas_layout_part_table_efl_pack_table_table_columns_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
    int cols = 0, rows = 0;
@@ -87,7 +87,7 @@ _efl_canvas_layout_part_table_efl_pack_table_table_columns_get(Eo *obj, void *_p
 }
 
 EOLIAN static int
-_efl_canvas_layout_part_table_efl_pack_table_table_rows_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_canvas_layout_part_table_efl_pack_table_table_rows_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
    int cols = 0, rows = 0;
@@ -169,7 +169,7 @@ _efl_canvas_layout_part_table_efl_pack_table_table_contents_get(Eo *obj, void *_
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_pack_table_table_position_get(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_canvas_layout_part_table_efl_pack_table_table_position_get(const Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    unsigned short c, r, cs, rs;
    Eina_Bool ret;

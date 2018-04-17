@@ -86,7 +86,7 @@ _ecore_exe_command_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char *cmd,
 }
 
 EOLIAN static void
-_ecore_exe_command_get(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd, Ecore_Exe_Flags *flags)
+_ecore_exe_command_get(const Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd, Ecore_Exe_Flags *flags)
 {
    if (cmd) *cmd = pd->cmd;
    if (flags) *flags = pd->flags;

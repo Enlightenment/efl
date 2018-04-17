@@ -178,13 +178,13 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
 *============================================================================*/
 
 EOLIAN Eina_Stringshare*
-_efl_canvas_layout_seat_name_get(Eo *obj EINA_UNUSED, Edje *ed, Efl_Input_Device *device)
+_efl_canvas_layout_seat_name_get(const Eo *obj EINA_UNUSED, Edje *ed, Efl_Input_Device *device)
 {
    return _edje_seat_name_get(ed, device);
 }
 
 EOLIAN Efl_Input_Device *
-_efl_canvas_layout_seat_get(Eo *obj EINA_UNUSED, Edje *ed, Eina_Stringshare *name)
+_efl_canvas_layout_seat_get(const Eo *obj EINA_UNUSED, Edje *ed, Eina_Stringshare *name)
 {
    return _edje_seat_get(ed, name);
 }
@@ -356,7 +356,7 @@ break_prog:
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_animation_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;

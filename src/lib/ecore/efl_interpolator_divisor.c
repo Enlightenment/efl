@@ -36,7 +36,7 @@ _efl_interpolator_divisor_factors_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_interpolator_divisor_factors_get(Eo *eo_obj EINA_UNUSED,
+_efl_interpolator_divisor_factors_get(const Eo *eo_obj EINA_UNUSED,
                                       Efl_Interpolator_Divisor_Data *pd,
                                       double *factor1, double *factor2)
 {

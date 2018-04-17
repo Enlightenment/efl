@@ -1077,7 +1077,7 @@ _evas_canvas3d_node_efl_object_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd E
 }
 
 EOLIAN static Evas_Canvas3D_Node_Type
-_evas_canvas3d_node_node_type_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_node_type_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->type;
 }
@@ -1316,19 +1316,19 @@ _evas_canvas3d_node_scale_inherit_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Eina
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_node_position_inherit_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_position_inherit_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->position_inherit;
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_node_orientation_inherit_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_orientation_inherit_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->orientation_inherit;
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_node_scale_inherit_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_scale_inherit_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->scale_inherit;
 }
@@ -1480,7 +1480,7 @@ _evas_canvas3d_node_camera_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
 }
 
 EOLIAN static Evas_Canvas3D_Camera *
-_evas_canvas3d_node_camera_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_camera_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->data.camera.camera;
 }
@@ -1515,7 +1515,7 @@ _evas_canvas3d_node_light_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3
 }
 
 EOLIAN static Evas_Canvas3D_Light *
-_evas_canvas3d_node_light_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_light_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->data.light.light;
 }
@@ -1613,7 +1613,7 @@ _evas_canvas3d_node_mesh_frame_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Ca
 }
 
 EOLIAN static int
-_evas_canvas3d_node_mesh_frame_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Mesh *mesh)
+_evas_canvas3d_node_mesh_frame_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Mesh *mesh)
 {
    Evas_Canvas3D_Node_Mesh *nm = NULL;
 
@@ -1672,7 +1672,7 @@ _evas_canvas3d_node_billboard_target_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node
 }
 
 EOLIAN static Evas_Canvas3D_Node *
-_evas_canvas3d_node_billboard_target_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_billboard_target_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->billboard_target;
 }
@@ -1686,7 +1686,7 @@ _evas_canvas3d_node_lod_enable_set(Eo *obj, Evas_Canvas3D_Node_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_node_lod_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_lod_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->lod;
 }

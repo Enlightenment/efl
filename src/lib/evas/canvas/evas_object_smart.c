@@ -1140,7 +1140,7 @@ _efl_canvas_group_group_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Ein
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_group_group_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_group_need_recalculate_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->need_recalculate;
 }
@@ -1819,13 +1819,13 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Sma
 }
 
 EOLIAN static Evas_BiDi_Direction
-_efl_canvas_group_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->paragraph_direction;
 }
 
 EOLIAN static const Eo *
-_efl_canvas_group_group_clipper_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_group_clipper_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    // NOTE: This may be NULL until all EO smart objects are clipped!
    return _smart_clipper_get(o);

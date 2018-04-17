@@ -124,7 +124,7 @@ _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup
 }
 
 EOLIAN static Efl_Ui_Popup_Align
-_efl_ui_popup_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->align;
 }
@@ -136,7 +136,7 @@ _efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Si
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_popup_popup_size_get(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
+_efl_ui_popup_popup_size_get(const Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
 {
    return efl_gfx_size_get(obj);
 }
@@ -198,7 +198,7 @@ _efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 }
 
 EOLIAN static double
-_efl_ui_popup_timeout_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->timeout;
 }
@@ -345,7 +345,7 @@ _efl_ui_popup_part_efl_canvas_object_repeat_events_set(Eo *obj, void *_pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_popup_part_efl_canvas_object_repeat_events_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_popup_part_efl_canvas_object_repeat_events_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);

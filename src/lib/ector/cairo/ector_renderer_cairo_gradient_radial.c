@@ -136,7 +136,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_cairo_op_fill(Eo *obj,
 }
 
 static void
-_ector_renderer_cairo_gradient_radial_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
+_ector_renderer_cairo_gradient_radial_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
                                                                 Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
                                                                 Eina_Rect *r)
 {
@@ -198,7 +198,7 @@ _ector_renderer_cairo_gradient_radial_efl_gfx_gradient_stop_set(Eo *obj,
 }
 
 static unsigned int
-_ector_renderer_cairo_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
+_ector_renderer_cairo_gradient_radial_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
 {
    Ector_Renderer_Gradient_Radial_Data *grd;
    Ector_Renderer_Gradient_Data *gd;

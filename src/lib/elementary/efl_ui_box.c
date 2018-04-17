@@ -488,7 +488,7 @@ _efl_ui_box_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Ui_
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_ui_box_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
+_efl_ui_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
 {
    return pd->dir;
 }
@@ -514,7 +514,7 @@ _efl_ui_box_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, do
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_padding_get(Eo *obj, Efl_Ui_Box_Data *pd, double *h, double *v, Eina_Bool *scalable)
+_efl_ui_box_efl_pack_pack_padding_get(const Eo *obj, Efl_Ui_Box_Data *pd, double *h, double *v, Eina_Bool *scalable)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -540,7 +540,7 @@ _efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, doub
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
+_efl_ui_box_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
 {
    if (h) *h = pd->align.h;
    if (v) *v = pd->align.v;

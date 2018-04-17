@@ -282,14 +282,14 @@ _efl_ui_video_efl_file_file_set(Eo *obj, Efl_Ui_Video_Data *sd, const char *file
 }
 
 EOLIAN static void
-_efl_ui_video_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
+_efl_ui_video_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
 {
    if (filename)
      *filename = emotion_object_file_get(sd->emotion);
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_video_emotion_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_emotion_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return sd->emotion;
 }
@@ -340,13 +340,13 @@ _efl_ui_video_efl_player_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_efl_player_play_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_play_get(sd->emotion);
 }
 
 EOLIAN static const char*
-_efl_ui_video_title_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_title_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_title_get(sd->emotion);
 }
@@ -358,13 +358,13 @@ _efl_ui_video_remember_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd, 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_remember_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_remember_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return sd->remember;
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_video_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
+_efl_ui_video_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},

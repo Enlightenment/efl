@@ -547,13 +547,13 @@ _elm_slideshow_previous(Eo *obj, Elm_Slideshow_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elm_slideshow_transitions_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_transitions_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->transitions;
 }
 
 EOLIAN static const Eina_List*
-_elm_slideshow_layouts_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_layouts_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->layout.list;
 }
@@ -565,7 +565,7 @@ _elm_slideshow_transition_set(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, const
 }
 
 EOLIAN static const char*
-_elm_slideshow_transition_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_transition_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->transition;
 }
@@ -581,7 +581,7 @@ _elm_slideshow_timeout_set(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, double t
 }
 
 EOLIAN static double
-_elm_slideshow_timeout_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_timeout_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->timeout;
 }
@@ -594,7 +594,7 @@ _elm_slideshow_items_loop_set(Eo *obj, Elm_Slideshow_Data *sd, Eina_Bool loop)
 }
 
 EOLIAN static const char*
-_elm_slideshow_layout_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_layout_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->layout.current;
 }
@@ -614,7 +614,7 @@ _elm_slideshow_layout_set(Eo *obj, Elm_Slideshow_Data *sd, const char *layout)
 }
 
 EOLIAN static Eina_Bool
-_elm_slideshow_items_loop_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_items_loop_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->loop;
 }
@@ -632,13 +632,13 @@ _elm_slideshow_clear(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elm_slideshow_items_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_items_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->items;
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_slideshow_item_current_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_item_current_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return EO_OBJ(sd->current);
 }
@@ -650,7 +650,7 @@ _elm_slideshow_item_object_get(const Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item
 }
 
 EOLIAN static int
-_elm_slideshow_cache_before_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_cache_before_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->count_item_pre_before;
 }
@@ -664,7 +664,7 @@ _elm_slideshow_cache_before_set(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, int
 }
 
 EOLIAN static int
-_elm_slideshow_cache_after_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_cache_after_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return sd->count_item_pre_after;
 }
@@ -683,7 +683,7 @@ _elm_slideshow_item_nth_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, u
 }
 
 EOLIAN static unsigned int
-_elm_slideshow_count_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
+_elm_slideshow_count_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
    return eina_list_count(sd->items);
 }
@@ -695,7 +695,7 @@ _elm_slideshow_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_slideshow_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd EINA_UNUSED)
+_elm_slideshow_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},

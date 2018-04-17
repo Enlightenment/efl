@@ -73,7 +73,7 @@ _efl_canvas_gesture_manager_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_M
 
 
 EOLIAN static Eina_Value *
-_efl_canvas_gesture_manager_config_get(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const char *name)
+_efl_canvas_gesture_manager_config_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Manager_Data *pd, const char *name)
 {
    return eina_hash_find(pd->m_config, name);
 }

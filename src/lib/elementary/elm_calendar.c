@@ -1636,7 +1636,7 @@ _elm_calendar_weekdays_names_set(Eo *obj, Elm_Calendar_Data *sd, const char **we
 }
 
 EOLIAN static const char**
-_elm_calendar_weekdays_names_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_weekdays_names_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->weekdays;
 }
@@ -1648,7 +1648,7 @@ _elm_calendar_interval_set(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, double in
 }
 
 EOLIAN static double
-_elm_calendar_interval_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_interval_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->first_interval;
 }
@@ -1754,7 +1754,7 @@ _elm_calendar_date_min_set(Eo *obj, Elm_Calendar_Data *sd, const struct tm *min)
 }
 
 EOLIAN static const struct tm *
-_elm_calendar_date_min_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_date_min_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return &(sd->date_min);
 }
@@ -1807,7 +1807,7 @@ _elm_calendar_date_max_set(Eo *obj, Elm_Calendar_Data *sd, const struct tm *max)
 }
 
 EOLIAN static const struct tm *
-_elm_calendar_date_max_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_date_max_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return &(sd->date_max);
 }
@@ -1928,7 +1928,7 @@ _elm_calendar_marks_clear(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elm_calendar_marks_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_marks_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->marks;
 }
@@ -1951,7 +1951,7 @@ _elm_calendar_first_day_of_week_set(Eo *obj, Elm_Calendar_Data *sd, Elm_Calendar
 }
 
 EOLIAN static Elm_Calendar_Weekday
-_elm_calendar_first_day_of_week_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_first_day_of_week_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->first_week_day;
 }
@@ -1975,7 +1975,7 @@ _elm_calendar_select_mode_set(Eo *obj, Elm_Calendar_Data *sd, Elm_Calendar_Selec
 }
 
 EOLIAN static Elm_Calendar_Select_Mode
-_elm_calendar_select_mode_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_select_mode_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->select_mode;
 }
@@ -1987,7 +1987,7 @@ _elm_calendar_selectable_set(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, Elm_Cal
 }
 
 EOLIAN static Elm_Calendar_Selectable
-_elm_calendar_selectable_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_selectable_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->selectable;
 }
@@ -2010,7 +2010,7 @@ _elm_calendar_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_calendar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd EINA_UNUSED)
+_elm_calendar_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -2057,7 +2057,7 @@ _elm_calendar_item_day_number_set(Eo *obj, Elm_Calendar_Item_Data *pd, int i)
 }
 
 EOLIAN static int
-_elm_calendar_item_day_number_get(Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
+_elm_calendar_item_day_number_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
 {
    return pd->v;
 }
@@ -2072,7 +2072,7 @@ _elm_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Calendar_Item_Data
 }
 
 EOLIAN static Eina_Rect
-_elm_calendar_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
+_elm_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
 {
    return efl_gfx_geometry_get(pd->part);
 }

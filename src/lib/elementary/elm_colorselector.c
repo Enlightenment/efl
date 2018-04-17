@@ -2243,7 +2243,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static Eina_Rect
-_elm_colorselector_efl_ui_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_ui_widget_focus_highlight_geometry_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    if (sd->focused_item && (sd->focused == ELM_COLORSELECTOR_PALETTE))
      {
@@ -2288,7 +2288,7 @@ _elm_colorselector_picked_color_set(Eo *obj, Elm_Colorselector_Data *_pd EINA_UN
 }
 
 EOLIAN static void
-_elm_colorselector_picked_color_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd, int *r, int *g, int *b, int *a)
+_elm_colorselector_picked_color_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd, int *r, int *g, int *b, int *a)
 {
    if (r) *r = sd->r;
    if (g) *g = sd->g;
@@ -2377,7 +2377,7 @@ _elm_colorselector_mode_set(Eo *obj, Elm_Colorselector_Data *sd, Elm_Colorselect
 }
 
 EOLIAN static Elm_Colorselector_Mode
-_elm_colorselector_mode_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_mode_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    return sd->mode;
 }
@@ -2393,7 +2393,7 @@ elm_colorselector_palette_item_color_get(const Elm_Object_Item *it,
 }
 
 EOLIAN static void
-_elm_color_item_color_get(Eo *eo_item EINA_UNUSED,
+_elm_color_item_color_get(const Eo *eo_item EINA_UNUSED,
                           Elm_Color_Item_Data *item,
                           int *r,
                           int *g,
@@ -2482,7 +2482,7 @@ _elm_colorselector_palette_clear(Eo *obj, Elm_Colorselector_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elm_colorselector_palette_items_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_palette_items_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    return sd->items;
 }
@@ -2543,7 +2543,7 @@ elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it)
 }
 
 EOLIAN static Eina_Bool
-_elm_color_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Color_Item_Data *item)
+_elm_color_item_selected_get(const Eo *eo_item EINA_UNUSED, Elm_Color_Item_Data *item)
 {
    Eo *eo_temp_item;
 
@@ -2555,7 +2555,7 @@ _elm_color_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Color_Item_Data *item)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_colorselector_palette_selected_item_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_palette_selected_item_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    return eina_list_data_get(sd->selected);
 }
@@ -2573,7 +2573,7 @@ _elm_colorselector_palette_name_set(Eo *obj, Elm_Colorselector_Data *sd, const c
 }
 
 EOLIAN static const char*
-_elm_colorselector_palette_name_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_palette_name_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    return sd->palette_name;
 }
@@ -2588,7 +2588,7 @@ _elm_colorselector_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_colorselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
+_elm_colorselector_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
@@ -2601,7 +2601,7 @@ _elm_colorselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List*
-_elm_colorselector_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_access_access_children_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    Eina_List *ret = NULL;
 
@@ -2615,7 +2615,7 @@ _elm_colorselector_efl_access_access_children_get(Eo *obj EINA_UNUSED, Elm_Color
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_color_item_efl_access_state_set_get(Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
+_elm_color_item_efl_access_state_set_get(const Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
    Eina_Bool sel;
@@ -2657,7 +2657,7 @@ _elm_color_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Color_Item_Data *i
 }
 
 EOLIAN static Eina_Bool
-_elm_color_item_elm_widget_item_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *it)
+_elm_color_item_elm_widget_item_item_focus_get(const Eo *eo_it, Elm_Color_Item_Data *it)
 {
    Evas_Object *obj = WIDGET(it);
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
@@ -2668,7 +2668,7 @@ _elm_color_item_elm_widget_item_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *i
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_color_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
+_elm_color_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},
@@ -2678,7 +2678,7 @@ _elm_color_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, 
 }
 
 EOLIAN static const char*
-_elm_color_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
+_elm_color_item_efl_access_i18n_name_get(const Eo *eo_it, Elm_Color_Item_Data *it)
 {
    Eina_Strbuf *buf;
    const char *color_name = NULL;
@@ -2705,7 +2705,7 @@ _elm_color_item_efl_access_i18n_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
 }
 
 EOLIAN static Eina_Rect
-_elm_color_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
+_elm_color_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
 {
    return efl_gfx_geometry_get(pd->color_obj);
 }

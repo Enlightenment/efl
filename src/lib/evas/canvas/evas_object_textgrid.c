@@ -959,7 +959,7 @@ _evas_textgrid_grid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
 }
 
 EOLIAN static void
-_evas_textgrid_grid_size_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int *w, int *h)
+_evas_textgrid_grid_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int *w, int *h)
 {
    if (w) *w = o->cur.w;
    if (h) *h = o->cur.h;
@@ -984,7 +984,7 @@ _evas_textgrid_efl_text_font_font_source_set(Eo *eo_obj, Evas_Textgrid_Data *o, 
 }
 
 EOLIAN static const char*
-_evas_textgrid_efl_text_font_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
+_evas_textgrid_efl_text_font_font_source_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
 {
    return o->cur.font_source;
 }
@@ -1258,14 +1258,14 @@ _evas_textgrid_efl_text_font_font_set(Eo *eo_obj,
 }
 
 EOLIAN static void
-_evas_textgrid_efl_text_font_font_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, const char **font_name, Evas_Font_Size *font_size)
+_evas_textgrid_efl_text_font_font_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, const char **font_name, Evas_Font_Size *font_size)
 {
    if (font_name) *font_name = o->cur.font_name;
    if (font_size) *font_size = o->cur.font_size;
 }
 
 EOLIAN static void
-_evas_textgrid_cell_size_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int *w, int *h)
+_evas_textgrid_cell_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int *w, int *h)
 {
    if (w) *w = o->cur.char_width;
    if (h) *h = o->cur.char_height;
@@ -1406,7 +1406,7 @@ _evas_textgrid_supported_font_styles_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas
 }
 
 EOLIAN static Evas_Textgrid_Font_Style
-_evas_textgrid_supported_font_styles_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o EINA_UNUSED)
+_evas_textgrid_supported_font_styles_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o EINA_UNUSED)
 {
    /* FIXME: to do */
    return EVAS_TEXTGRID_FONT_STYLE_NORMAL;
@@ -1523,7 +1523,7 @@ _evas_textgrid_efl_text_font_font_bitmap_scalable_set(Eo *eo_obj, Evas_Textgrid_
 }
 
 EOLIAN static Efl_Text_Font_Bitmap_Scalable
-_evas_textgrid_efl_text_font_font_bitmap_scalable_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
+_evas_textgrid_efl_text_font_font_bitmap_scalable_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
 {
    return o->cur.bitmap_scalable;
 }

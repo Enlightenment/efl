@@ -26,7 +26,7 @@ _ecore_audio_paused_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_ecore_audio_paused_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj)
+_ecore_audio_paused_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj)
 {
   return obj->paused;
 }
@@ -38,7 +38,7 @@ _ecore_audio_volume_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj, double 
 }
 
 EOLIAN static double
-_ecore_audio_volume_get(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj)
+_ecore_audio_volume_get(const Eo *eo_obj EINA_UNUSED, Ecore_Audio_Object *obj)
 {
   return obj->volume;
 }
