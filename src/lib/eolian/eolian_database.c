@@ -845,6 +845,23 @@ _state_clean(Eolian_State *state)
    _hashlist_free_buckets(st->objects_f);
 }
 
+static Eina_Bool _parse_deferred(Eolian_Unit *parent);
+
+typedef struct _Defer_Data
+{
+   Eolian_Unit *parent;
+   Eina_Bool succ;
+} Defer_Data;
+
+static Eina_Bool
+_defer_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+               void *data, void *fdata)
+{
+   Defer_Data *d = fdata;
+   Eolian_Unit *pdep = _eolian_file_parse_nodep(d->parent, data);
+   return (d->succ = (pdep && _parse_deferred(pdep)));
+}
+
 static Eina_Bool
 _parse_deferred(Eolian_Unit *parent)
 {
@@ -853,22 +870,12 @@ _parse_deferred(Eolian_Unit *parent)
      return EINA_TRUE;
    /* clean room for more deps for later parsing */
    parent->state->defer = eina_hash_string_small_new(NULL);
-   Eina_Iterator *itr = eina_hash_iterator_data_new(defer);
-   const char *dep;
-   EINA_ITERATOR_FOREACH(itr, dep)
-     {
-        Eolian_Unit *pdep = _eolian_file_parse_nodep(parent, dep);
-        if (!pdep || !_parse_deferred(pdep))
-          {
-             eina_iterator_free(itr);
-             eina_hash_free_buckets(parent->state->defer);
-             eina_hash_free(defer);
-             return EINA_FALSE;
-          }
-     }
-   eina_iterator_free(itr);
+   Defer_Data d = { parent, EINA_FALSE };
+   eina_hash_foreach(defer, _defer_hash_cb, &d);
+   if (!d.succ)
+     eina_hash_free_buckets(parent->state->defer);
    eina_hash_free(defer);
-   return EINA_TRUE;
+   return d.succ;
 }
 
 static Eina_Bool
