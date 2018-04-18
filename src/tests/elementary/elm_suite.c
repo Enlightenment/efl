@@ -155,6 +155,8 @@ main(int argc, char **argv)
    /* preload default theme */
    failed_count += !elm_theme_group_path_find(NULL, "elm/button/base/default");
    EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
+   failed_count += !elm_theme_group_path_find(NULL, "elm/border/base/default");
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
    failed_count += !elm_theme_group_path_find(NULL, "elm/win/base/default");
    EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
 
