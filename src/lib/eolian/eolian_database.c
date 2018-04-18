@@ -890,8 +890,8 @@ _defer_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key,
    Defer_Data *d = fdata;
    Eolian_Unit *parent = d->parent;
    /* not a dependency; parse standalone */
-   if ((size_t)data <= 1)
-     parent = &parent->state->staging.unit;
+   /*if ((size_t)data <= 1)
+     parent = &parent->state->staging.unit;*/
    Eolian_Unit *pdep = _eolian_file_parse_nodep(parent, key);
    return (d->succ = (pdep && _parse_deferred(pdep)));
 }
