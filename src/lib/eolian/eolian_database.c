@@ -392,8 +392,8 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
 }
 
 static Eolian_Object_Type
-_resolve_event(const Eolian_Unit *src, char *name, const Eolian_Object **data,
-               const Eolian_Object **data2)
+_resolve_event(char *name, const Eolian_Unit *unit1, const Eolian_Unit *unit2,
+               const Eolian_Object **data1, const Eolian_Object **data2)
 {
    /* never trust the user */
    if (name[0] == ',')
@@ -404,7 +404,9 @@ _resolve_event(const Eolian_Unit *src, char *name, const Eolian_Object **data,
      return EOLIAN_OBJECT_UNKNOWN;
 
    *evname++ = '\0';
-   const Eolian_Class *cl = eolian_unit_class_by_name_get(src, name);
+   const Eolian_Class *cl = eolian_unit_class_by_name_get(unit1, name);
+   if (!cl && unit2)
+     cl = eolian_unit_class_by_name_get(unit2, name);
    if (!cl)
      return EOLIAN_OBJECT_UNKNOWN;
 
@@ -412,14 +414,15 @@ _resolve_event(const Eolian_Unit *src, char *name, const Eolian_Object **data,
    if (!ev)
      return EOLIAN_OBJECT_UNKNOWN;
 
-   if (data) *data = &cl->base;
+   if (data1) *data1 = &cl->base;
    if (data2) *data2 = &ev->base;
    return EOLIAN_OBJECT_EVENT;
 }
 
-EAPI Eolian_Object_Type
-eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *unit,
-                             const Eolian_Object **data, const Eolian_Object **data2)
+Eolian_Object_Type
+database_doc_token_ref_resolve(const Eolian_Doc_Token *tok,
+                               const Eolian_Unit *unit1, const Eolian_Unit *unit2,
+                               const Eolian_Object **data1, const Eolian_Object **data2)
 {
    if (tok->type != EOLIAN_DOC_TOKEN_REF)
      return EOLIAN_OBJECT_UNKNOWN;
@@ -434,17 +437,19 @@ eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *uni
         char *ename = alloca(elen + 1);
         memcpy(ename, tok->text + 1, elen);
         ename[elen] = '\0';
-        return _resolve_event(unit, ename, data, data2);
+        return _resolve_event(ename, unit1, unit2, data1, data2);
      }
 
    char *name = alloca(nlen + 1);
    memcpy(name, tok->text, nlen);
    name[nlen] = '\0';
 
-   const Eolian_Object *decl = eolian_unit_object_by_name_get(unit, name);
+   const Eolian_Object *decl = eolian_unit_object_by_name_get(unit1, name);
+   if (!decl && unit2)
+     decl = eolian_unit_object_by_name_get(unit2, name);
    if (decl)
      {
-       if (data) *data = decl;
+       if (data1) *data1 = decl;
        Eolian_Object_Type tp = eolian_object_type_get(decl);
        switch (tp)
          {
@@ -469,27 +474,31 @@ eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *uni
    *suffix++ = '\0';
 
    /* try a struct field */
-   const Eolian_Typedecl *tpd = eolian_unit_struct_by_name_get(unit, name);
+   const Eolian_Typedecl *tpd = eolian_unit_struct_by_name_get(unit1, name);
+   if (!tpd && unit2)
+     tpd = eolian_unit_struct_by_name_get(unit2, name);
    if (tpd)
      {
         const Eolian_Struct_Type_Field *fld = eolian_typedecl_struct_field_get(tpd, suffix);
         /* field itself is invalid */
         if (!fld)
           return EOLIAN_OBJECT_UNKNOWN;
-        if (data) *data = &tpd->base;
+        if (data1) *data1 = &tpd->base;
         if (data2) *data2 = &fld->base;
         return EOLIAN_OBJECT_STRUCT_FIELD;
      }
 
    /* try an enum field */
-   tpd = eolian_unit_enum_by_name_get(unit, name);
+   tpd = eolian_unit_enum_by_name_get(unit1, name);
+   if (!tpd && unit2)
+     tpd = eolian_unit_enum_by_name_get(unit2, name);
    if (tpd)
      {
         const Eolian_Enum_Type_Field *fld = eolian_typedecl_enum_field_get(tpd, suffix);
         /* field itself is invalid */
         if (!fld)
           return EOLIAN_OBJECT_UNKNOWN;
-        if (data) *data = &tpd->base;
+        if (data1) *data1 = &tpd->base;
         if (data2) *data2 = &fld->base;
         return EOLIAN_OBJECT_ENUM_FIELD;
      }
@@ -512,7 +521,9 @@ eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *uni
         *suffix++ = '\0';
      }
 
-   const Eolian_Class *cl = eolian_unit_class_by_name_get(unit, name);
+   const Eolian_Class *cl = eolian_unit_class_by_name_get(unit1, name);
+   if (!cl && unit2)
+     cl = eolian_unit_class_by_name_get(unit2, name);
    if (!cl)
      return EOLIAN_OBJECT_UNKNOWN;
 
@@ -521,9 +532,16 @@ eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *uni
      return EOLIAN_OBJECT_UNKNOWN;
 
    /* got a func */
-   if (data) *data = &cl->base;
+   if (data1) *data1 = &cl->base;
    if (data2) *data2 = &fid->base;
    return EOLIAN_OBJECT_FUNCTION;
+}
+
+EAPI Eolian_Object_Type
+eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_State *state,
+                             const Eolian_Object **data, const Eolian_Object **data2)
+{
+   return database_doc_token_ref_resolve(tok, (const Eolian_Unit *)state, NULL, data, data2);
 }
 
 void
@@ -872,8 +890,8 @@ _defer_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key,
    Defer_Data *d = fdata;
    Eolian_Unit *parent = d->parent;
    /* not a dependency; parse standalone */
-   //if ((size_t)data <= 1)
-   //  parent = parent->state;
+   if ((size_t)data <= 1)
+     parent = &parent->state->staging.unit;
    Eolian_Unit *pdep = _eolian_file_parse_nodep(parent, key);
    return (d->succ = (pdep && _parse_deferred(pdep)));
 }
@@ -1000,7 +1018,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
      return NULL;
 
    _state_clean(state);
-   Eolian_Unit *ret = _eolian_file_parse_nodep((Eolian_Unit *)state, filepath);
+   Eolian_Unit *ret = _eolian_file_parse_nodep(&state->staging.unit, filepath);
    if (!ret)
      return NULL;
    if (!_parse_deferred(ret))
@@ -1023,7 +1041,7 @@ static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key
    Parse_Data *pd = fdata;
    Eolian_Unit *unit = NULL;
    if (pd->ret)
-     unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_TRUE);
+     unit = eo_parser_database_fill(&pd->state->staging.unit, data, EINA_TRUE);
    pd->ret = !!unit;
    if (pd->ret) pd->ret = _parse_deferred(unit);
    if (pd->ret) _merge_units(unit);
@@ -1054,7 +1072,7 @@ static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key 
    Parse_Data *pd = fdata;
    Eolian_Unit *unit = NULL;
    if (pd->ret)
-     unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_FALSE);
+     unit = eo_parser_database_fill(&pd->state->staging.unit, data, EINA_FALSE);
    pd->ret = !!unit;
    if (pd->ret) pd->ret = _parse_deferred(unit);
    if (pd->ret) _merge_units(unit);

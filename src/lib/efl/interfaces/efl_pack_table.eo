@@ -1,4 +1,5 @@
 import efl_gfx_types;
+import efl_ui_direction;
 
 interface Efl.Pack.Table (Efl.Pack.Linear)
 {

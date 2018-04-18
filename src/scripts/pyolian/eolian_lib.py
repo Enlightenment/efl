@@ -714,7 +714,7 @@ lib.eolian_doc_token_type_get.restype = c_int
 lib.eolian_doc_token_text_get.argtypes = (c_void_p,)
 lib.eolian_doc_token_text_get.restype = c_void_p  # char* TO BE FREED
 
-# EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_Unit *unit, const Eolian_Object **data, const Eolian_Object **data2);
+# EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_State *state, const Eolian_Object **data, const Eolian_Object **data2);
 #  lib.eolian_doc_token_ref_resolve.argtypes = (c_void_p, c_void_p, ???, ???)
 #  lib.eolian_doc_token_ref_resolve.restype = c_int
 

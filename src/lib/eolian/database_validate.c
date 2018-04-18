@@ -37,7 +37,12 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
           {
              if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
                {
-                  if (eolian_doc_token_ref_resolve(&tok, info->unit, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
+                  /* check staging first, then main */
+                  Eolian_Object_Type tp = database_doc_token_ref_resolve(&tok,
+                    &info->unit->state->staging.unit,
+                    &info->unit->state->main.unit,
+                    NULL, NULL);
+                  if (tp == EOLIAN_OBJECT_UNKNOWN)
                     {
                        size_t dbgn = (size_t)eina_list_data_get(*rdbg);
                        char *refn = eolian_doc_token_text_get(&tok);

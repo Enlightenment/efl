@@ -387,6 +387,12 @@ void database_doc_del(Eolian_Documentation *doc);
 void database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file);
 void database_unit_del(Eolian_Unit *unit);
 
+Eolian_Object_Type database_doc_token_ref_resolve(const Eolian_Doc_Token *tok,
+                                                  const Eolian_Unit *unit1,
+                                                  const Eolian_Unit *unit2,
+                                                  const Eolian_Object **data1,
+                                                  const Eolian_Object **data2);
+
 /* types */
 
 void database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp);

@@ -1348,7 +1348,7 @@ M.DocTokenizer = util.Object:clone {
 
     ref_resolve = function(self, root)
         -- FIXME: unit
-        local tp, d1, d2 = self.tok:ref_resolve(eos:unit_get())
+        local tp, d1, d2 = self.tok:ref_resolve(eos)
         local reft = eolian.doc_ref_type
         local ret = {}
         if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then
