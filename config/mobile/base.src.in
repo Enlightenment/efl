@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131087;
+  value "config_version" int: 131088;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -2280,7 +2280,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elm_Slider";
+        value "name" string: "Efl.Ui.Slider";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
