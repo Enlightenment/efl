@@ -38,7 +38,7 @@ _ns_colourablesquare_size_constructor(Eo *obj EINA_UNUSED, ColourableSquare_Data
 }
 
 static int
-_ns_colourablesquare_size_get(Eo *obj EINA_UNUSED, ColourableSquare_Data *self)
+_ns_colourablesquare_size_get(const Eo *obj EINA_UNUSED, ColourableSquare_Data *self)
 {
    DBG("_ns_colourablesquare_size_get() => %d\n", self->size);
    return self->size;
