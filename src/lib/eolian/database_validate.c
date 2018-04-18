@@ -21,8 +21,7 @@ _validate(Eolian_Object *obj)
 }
 
 static Eina_Bool
-_validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str,
-                 const Eolian_Object *info, Eina_List **rdbg)
+_validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **rdbg)
 {
    if (!str || !str[0]) return EINA_TRUE;
 
@@ -38,7 +37,7 @@ _validate_docstr(const Eolian_Unit *src, Eina_Stringshare *str,
           {
              if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
                {
-                  if (eolian_doc_token_ref_resolve(&tok, src, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
+                  if (eolian_doc_token_ref_resolve(&tok, info->unit, NULL, NULL) == EOLIAN_OBJECT_UNKNOWN)
                     {
                        size_t dbgn = (size_t)eina_list_data_get(*rdbg);
                        char *refn = eolian_doc_token_text_get(&tok);
@@ -71,9 +70,9 @@ _validate_doc(Eolian_Documentation *doc)
 
    Eina_List *rdbg = doc->ref_dbg;
 
-   if (!_validate_docstr(doc->base.unit, doc->summary, &doc->base, &rdbg))
+   if (!_validate_docstr(doc->summary, &doc->base, &rdbg))
      return EINA_FALSE;
-   if (!_validate_docstr(doc->base.unit, doc->description, &doc->base, &rdbg))
+   if (!_validate_docstr(doc->description, &doc->base, &rdbg))
      return EINA_FALSE;
 
    return _validate(&doc->base);
