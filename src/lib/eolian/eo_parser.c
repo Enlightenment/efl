@@ -753,11 +753,10 @@ parse_type_void(Eo_Lexer *ls)
              fnm = database_class_to_filename(nm);
              if (!compare_class_file(bnm, fnm))
                {
-                  const char *fname = eina_hash_find(ls->state->filenames_eo, fnm);
                   eina_stringshare_del(bnm);
-                  if (fname)
+                  if (eina_hash_find(ls->state->filenames_eo, fnm))
                     {
-                       eina_hash_set(ls->state->defer, fnm, fname);
+                       database_defer(ls->state, fnm, EINA_TRUE);
                        def->type = EOLIAN_TYPE_CLASS;
                     }
                   free(fnm);
@@ -1459,8 +1458,7 @@ parse_part(Eo_Lexer *ls)
    parse_name(ls, buf);
    const char *nm = eina_strbuf_string_get(buf);
    char *fnm = database_class_to_filename(nm);
-   const char *fname = eina_hash_find(ls->state->filenames_eo, fnm);
-   if (!fname)
+   if (!eina_hash_find(ls->state->filenames_eo, fnm))
      {
         free(fnm);
         char ebuf[PATH_MAX];
@@ -1469,7 +1467,7 @@ parse_part(Eo_Lexer *ls)
         eo_lexer_syntax_error(ls, ebuf);
         return;
      }
-   eina_hash_set(ls->state->defer, fnm, fname);
+   database_defer(ls->state, fnm, EINA_TRUE);
    free(fnm);
    part->klass_name = eina_stringshare_add(nm);
    eo_lexer_dtor_pop(ls);
@@ -1947,7 +1945,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 static void
 _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
-   const char *fname, *iname;
+   const char *iname;
    char *fnm;
    eina_strbuf_reset(buf);
    eo_lexer_context_push(ls);
@@ -1964,8 +1962,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
         eo_lexer_syntax_error(ls, ebuf);
         return; /* unreachable (longjmp above), make static analysis shut up */
      }
-   fname = eina_hash_find(ls->state->filenames_eo, fnm);
-   if (!fname)
+   if (!eina_hash_find(ls->state->filenames_eo, fnm))
      {
         char ebuf[PATH_MAX];
         free(fnm);
@@ -1991,7 +1988,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
              return;
           }
      }
-   eina_hash_set(ls->state->defer, fnm, fname);
+   database_defer(ls->state, fnm, EINA_TRUE);
    ls->klass->inherits = eina_list_append(ls->klass->inherits, inames);
    free(fnm);
    eo_lexer_context_pop(ls);
@@ -2079,17 +2076,16 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         {
            Eina_Strbuf *buf = eina_strbuf_new();
            eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
-           const char *found = NULL;
            char errbuf[PATH_MAX];
            eo_lexer_get(ls);
            check(ls, TOK_VALUE);
            eina_strbuf_append(buf, ls->t.value.s);
            eina_strbuf_append(buf, ".eot");
-           if (!(found = eina_hash_find(ls->state->filenames_eot, eina_strbuf_string_get(buf))))
+           if (!eina_hash_find(ls->state->filenames_eot, eina_strbuf_string_get(buf)))
              {
                 size_t buflen = eina_strbuf_length_get(buf);
                 eina_strbuf_remove(buf, buflen - 1, buflen);
-                if (!(found = eina_hash_find(ls->state->filenames_eo, eina_strbuf_string_get(buf))))
+                if (!eina_hash_find(ls->state->filenames_eo, eina_strbuf_string_get(buf)))
                   {
                      eo_lexer_dtor_pop(ls);
                      snprintf(errbuf, sizeof(errbuf),
@@ -2097,7 +2093,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                      eo_lexer_syntax_error(ls, errbuf);
                   }
              }
-           eina_hash_set(ls->state->defer, eina_strbuf_string_get(buf), found);
+           database_defer(ls->state, eina_strbuf_string_get(buf), EINA_TRUE);
            eo_lexer_dtor_pop(ls);
            eo_lexer_get(ls);
            check_next(ls, ';');

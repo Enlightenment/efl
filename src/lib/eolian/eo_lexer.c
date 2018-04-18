@@ -280,10 +280,10 @@ doc_ref_class(Eo_Lexer *ls, const char *cname)
           *p = tolower(*p);
      }
    memcpy(buf + clen, ".eo", sizeof(".eo"));
-   const char *eop = eina_hash_find(ls->state->filenames_eo, buf);
-   if (!eop)
+   if (!eina_hash_find(ls->state->filenames_eo, buf))
      return;
-   eina_hash_set(ls->state->defer, buf, eop);
+   /* ref'd classes do not become dependencies */
+   database_defer(ls->state, buf, EINA_FALSE);
 }
 
 static void

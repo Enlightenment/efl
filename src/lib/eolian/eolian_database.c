@@ -845,6 +845,18 @@ _state_clean(Eolian_State *state)
    _hashlist_free_buckets(st->objects_f);
 }
 
+void
+database_defer(Eolian_State *state, const char *fname, Eina_Bool isdep)
+{
+   void *nval = (void *)((size_t)isdep + 1);
+   size_t found = (size_t)eina_hash_find(state->defer, fname);
+   /* add if not found or upgrade to dep if requested */
+   if (!found)
+     eina_hash_add(state->defer, fname, nval);
+   else if ((found <= 1) && isdep)
+     eina_hash_set(state->defer, fname, nval);
+}
+
 static Eina_Bool _parse_deferred(Eolian_Unit *parent);
 
 typedef struct _Defer_Data
@@ -854,11 +866,15 @@ typedef struct _Defer_Data
 } Defer_Data;
 
 static Eina_Bool
-_defer_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-               void *data, void *fdata)
+_defer_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key,
+               void *data EINA_UNUSED, void *fdata)
 {
    Defer_Data *d = fdata;
-   Eolian_Unit *pdep = _eolian_file_parse_nodep(d->parent, data);
+   Eolian_Unit *parent = d->parent;
+   /* not a dependency; parse standalone */
+   //if ((size_t)data <= 1)
+   //  parent = parent->state;
+   Eolian_Unit *pdep = _eolian_file_parse_nodep(parent, key);
    return (d->succ = (pdep && _parse_deferred(pdep)));
 }
 
