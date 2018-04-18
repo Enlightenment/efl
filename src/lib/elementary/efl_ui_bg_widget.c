@@ -38,13 +38,26 @@ _efl_ui_bg_widget_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Widget_Data *pd)
                                        elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
-   pd->rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
-                      efl_gfx_color_set(efl_added, 0, 0, 0, 0),
-                      efl_content_set(efl_part(obj, "elm.swallow.rectangle"), efl_added));
+   if (elm_widget_is_legacy(obj))
+     {
+        pd->rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
+                           efl_gfx_color_set(efl_added, 0, 0, 0, 0),
+                           efl_content_set(efl_part(obj, "elm.swallow.rectangle"), efl_added));
 
-   pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
-                     efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
-                     efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
+        pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
+                          efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                          efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
+     }
+   else
+     {
+        pd->rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
+                           efl_gfx_color_set(efl_added, 0, 0, 0, 0),
+                           efl_content_set(efl_part(obj, "rectangle"), efl_added));
+
+        pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
+                          efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                          efl_content_set(efl_part(obj, "bg"), efl_added));
+     }
    pd->file = NULL;
    pd->key = NULL;
 

@@ -41,7 +41,7 @@
             color: 0 0 0 0;\
          }\
       }\
-      part { name: "elm,calendar,button"#_sufix",left";\
+      part { name: "calendar,button"#_sufix",left";\
          type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\
@@ -55,7 +55,7 @@
             rel2.to: "right_bt"#_sufix;\
          }\
       }\
-      part { name: "elm,calendar,button"#_sufix",right";\
+      part { name: "calendar,button"#_sufix",right";\
          type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\

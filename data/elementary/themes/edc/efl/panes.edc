@@ -18,9 +18,9 @@
 group { name: "efl/panes/vertical";
    images.image: "holes_vert.png" COMP;
    parts {
-      //TODO: remove elm.swallow.left/right 
-      alias: "first" "elm.swallow.left";
-      alias: "second" "elm.swallow.right";
+      //TODO: remove left/right
+      alias: "first" "left";
+      alias: "second" "right";
 
       part { name: "whole"; type: SPACER;
          description { state: "default" 0.0;
@@ -54,35 +54,35 @@ group { name: "efl/panes/vertical";
       }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
-            rel2.to_x: "elm.bar";
+            rel2.to_x: "bar";
             rel2.relative: 1.0 1.0;
             rel2.offset: -4 -1;
          }
       }
       part { name: "whole_right"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to_x: "elm.bar";
+            rel1.to_x: "bar";
             rel1.relative: 0.0 0.0;
             rel1.offset: 3 0;
          }
       }
-      part { name: "elm.swallow.left"; type: SWALLOW;
+      part { name: "left"; type: SWALLOW;
          clip_to: "whole_left";
          description { state: "default" 0.0;
-            rel2.to_x: "elm.bar";
+            rel2.to_x: "bar";
             rel2.relative: 1.0 1.0;
             rel2.offset: -4 -1;
          }
       }
-      part { name: "elm.swallow.right"; type: SWALLOW;
+      part { name: "right"; type: SWALLOW;
          clip_to: "whole_right";
          description { state: "default" 0.0;
-            rel1.to_x: "elm.bar";
+            rel1.to_x: "bar";
             rel1.relative: 0.0 0.0;
             rel1.offset: 3 0;
          }
       }
-      part { name: "elm.bar"; type: SPACER;
+      part { name: "bar"; type: SPACER;
          dragable { confine: "sub_whole";
             x: 1 1 1;
             y: 0 0 0;
@@ -98,28 +98,28 @@ group { name: "efl/panes/vertical";
       part { name: "dots"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "holes_vert.png";
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel1.to: "bar";
+            rel2.to: "bar";
             FIXED_SIZE(4, 14)
          }
       }
-      part { name: "elm.swallow.event"; type: SWALLOW;
+      part { name: "event"; type: SWALLOW;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN PANEMIN2;
             fixed: 1 1;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel1.to: "bar";
+            rel2.to: "bar";
          }
       }
-      part { name: "bar"; type: RECT;
-         dragable.events: "elm.bar";
+      part { name: "rect.bar"; type: RECT;
+         dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEMIN PANEWID;
             max: 99999 99999;
             fixed: 1 1;
-            rel1.to_x: "elm.swallow.event";
-            rel2.to_x: "elm.swallow.event";
+            rel1.to_x: "event";
+            rel2.to_x: "event";
             color: 0 0 0 0;
          }
          description { state: "disabled" 0.0;
@@ -129,27 +129,27 @@ group { name: "efl/panes/vertical";
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
    }
 }
@@ -157,9 +157,9 @@ group { name: "efl/panes/vertical";
 group { name: "efl/panes/horizontal";
    images.image: "holes_horiz.png" COMP;
    parts {
-      //TODO: remove elm.swallow.left/right 
-      alias: "first" "elm.swallow.left";
-      alias: "second" "elm.swallow.right";
+      //TODO: remove left/right
+      alias: "first" "left";
+      alias: "second" "right";
 
       part { name: "whole"; type: SPACER;
          description { state: "default" 0.0;
@@ -193,35 +193,35 @@ group { name: "efl/panes/horizontal";
       }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
-            rel2.to_y: "elm.bar";
+            rel2.to_y: "bar";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -4;
          }
       }
       part { name: "whole_right"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to_y: "elm.bar";
+            rel1.to_y: "bar";
             rel1.relative: 0.0 0.0;
             rel1.offset: 0 3;
          }
       }
-      part { name: "elm.swallow.left"; type: SWALLOW;
+      part { name: "left"; type: SWALLOW;
          clip_to: "whole_left";
          description { state: "default" 0.0;
-            rel2.to_y: "elm.bar";
+            rel2.to_y: "bar";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -4;
          }
       }
-      part { name: "elm.swallow.right"; type: SWALLOW;
+      part { name: "right"; type: SWALLOW;
          clip_to: "whole_right";
          description { state: "default" 0.0;
-            rel1.to_y: "elm.bar";
+            rel1.to_y: "bar";
             rel1.relative: 0.0 0.0;
             rel1.offset: 0 3;
          }
       }
-      part { name: "elm.bar"; type: SPACER;
+      part { name: "bar"; type: SPACER;
          dragable { confine: "sub_whole";
             x: 0 0 0;
             y: 1 1 1;
@@ -237,28 +237,28 @@ group { name: "efl/panes/horizontal";
       part { name: "dots"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "holes_horiz.png";
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel1.to: "bar";
+            rel2.to: "bar";
             FIXED_SIZE(14, 4)
          }
       }
-      part { name: "elm.swallow.event"; type: SWALLOW;
+      part { name: "event"; type: SWALLOW;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN2 PANEMIN;
             fixed: 1 1;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel1.to: "bar";
+            rel2.to: "bar";
          }
       }
-      part { name: "bar"; type: RECT;
-         dragable.events: "elm.bar";
+      part { name: "rect.bar"; type: RECT;
+         dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEWID PANEMIN;
             max: 99999 99999;
             fixed: 1 1;
-            rel1.to_y: "elm.swallow.event";
-            rel2.to_y: "elm.swallow.event";
+            rel1.to_y: "event";
+            rel2.to_y: "event";
             color: 0 0 0 0;
          }
          description { state: "disabled" 0.0;
@@ -268,27 +268,27 @@ group { name: "efl/panes/horizontal";
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
    }
 }
@@ -329,33 +329,33 @@ group { name: "efl/panes/vertical:flush";
       }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
-            rel2.to_x: "elm.bar";
+            rel2.to_x: "bar";
             rel2.relative: 1.0 1.0;
          }
       }
       part { name: "whole_right"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to_x: "elm.bar";
+            rel1.to_x: "bar";
             rel1.relative: 0.0 0.0;
          }
       }
-      part { name: "elm.swallow.left"; type: SWALLOW;
+      part { name: "left"; type: SWALLOW;
          clip_to: "whole_left";
          description { state: "default" 0.0;
-            rel2.to_x: "elm.bar";
+            rel2.to_x: "bar";
             rel2.relative: 1.0 1.0;
             fixed: 1 0;
          }
       }
-      part { name: "elm.swallow.right"; type: SWALLOW;
+      part { name: "right"; type: SWALLOW;
          clip_to: "whole_right";
          description { state: "default" 0.0;
-            rel1.to_x: "elm.bar";
+            rel1.to_x: "bar";
             rel1.relative: 0.0 0.0;
             fixed: 1 0;
          }
       }
-      part { name: "elm.bar"; type: SPACER;
+      part { name: "bar"; type: SPACER;
          dragable { confine: "sub_whole";
             x: 1 1 1;
             y: 0 0 0;
@@ -368,24 +368,24 @@ group { name: "efl/panes/vertical:flush";
             rel2.relative: 1.0 0.5;
          }
       }
-      part { name: "elm.swallow.event"; type: SWALLOW;
+      part { name: "event"; type: SWALLOW;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN PANEMIN2;
             fixed: 1 1;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel1.to: "bar";
+            rel2.to: "bar";
          }
       }
-      part { name: "bar"; type: RECT;
-         dragable.events: "elm.bar";
+      part { name: "rect.bar"; type: RECT;
+         dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEMIN PANEWID;
             max: 99999 99999;
             fixed: 1 1;
-            rel1.to_x: "elm.swallow.event";
+            rel1.to_x: "event";
             rel1.relative: 0.0 0.25;
-            rel2.to_x: "elm.swallow.event";
+            rel2.to_x: "event";
             rel2.relative: 1.0 0.75;
             color: 0 0 0 0;
          }
@@ -399,7 +399,7 @@ group { name: "efl/panes/vertical:flush";
             image.normal: "downlight_glow_left.png";
             image.border: 0 3 0 0;
             max: 32 99999;
-            rel2.to_x: "elm.bar";
+            rel2.to_x: "bar";
             color: 255 255 255 0;
             align: 1.0 0.5;
          }
@@ -412,7 +412,7 @@ group { name: "efl/panes/vertical:flush";
          description { state: "default" 0.0;
             image.normal: "downlight_glow_right.png";
             max: 4 99999;
-            rel1.to_x: "elm.bar";
+            rel1.to_x: "bar";
             color: 255 255 255 0;
             align: 0.0 0.5;
          }
@@ -425,7 +425,7 @@ group { name: "efl/panes/vertical:flush";
          description { state: "default" 0.0;
             image.normal: "downlight_glow_left.png";
             max: 4 99999;
-            rel2.to_x: "elm.bar";
+            rel2.to_x: "bar";
             color: 255 255 255 0;
             align: 1.0 0.5;
          }
@@ -439,7 +439,7 @@ group { name: "efl/panes/vertical:flush";
             image.normal: "downlight_glow_right.png";
             image.border: 3 0 0 0;
             max: 32 99999;
-            rel1.to_x: "elm.bar";
+            rel1.to_x: "bar";
             color: 255 255 255 0;
             align: 0.0 0.5;
          }
@@ -451,8 +451,8 @@ group { name: "efl/panes/vertical:flush";
       part { name: "bar1"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bar";
-            rel2.to: "bar";
+            rel1.to: "rect.bar";
+            rel2.to: "rect.bar";
             rel2.relative: 0.5 1.0;
             color: 0 0 0 0;
          }
@@ -460,35 +460,35 @@ group { name: "efl/panes/vertical:flush";
       part { name: "bar2"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bar";
+            rel1.to: "rect.bar";
             rel1.relative: 0.5 0.0;
-            rel2.to: "bar";
+            rel2.to: "rect.bar";
             color: 0 0 0 0;
          }
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
       program {
          signal: "mouse,in"; source: "bar1";
@@ -557,33 +557,33 @@ group { name: "efl/panes/horizontal:flush";
       }
       part { name: "whole_left"; type: RECT;
          description { state: "default" 0.0;
-            rel2.to_y: "elm.bar";
+            rel2.to_y: "bar";
             rel2.relative: 1.0 1.0;
          }
       }
       part { name: "whole_right"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to_y: "elm.bar";
+            rel1.to_y: "bar";
             rel1.relative: 0.0 0.0;
          }
       }
-      part { name: "elm.swallow.left"; type: SWALLOW;
+      part { name: "left"; type: SWALLOW;
          clip_to: "whole_left";
          description { state: "default" 0.0;
-            rel2.to_y: "elm.bar";
+            rel2.to_y: "bar";
             rel2.relative: 1.0 1.0;
             fixed: 0 1;
          }
       }
-      part { name: "elm.swallow.right"; type: SWALLOW;
+      part { name: "right"; type: SWALLOW;
          clip_to: "whole_right";
          description { state: "default" 0.0;
-            rel1.to_y: "elm.bar";
+            rel1.to_y: "bar";
             rel1.relative: 0.0 0.0;
             fixed: 0 1;
          }
       }
-      part { name: "elm.bar"; type: SPACER;
+      part { name: "bar"; type: SPACER;
          dragable { confine: "sub_whole";
             x: 0 0 0;
             y: 1 1 1;
@@ -596,24 +596,24 @@ group { name: "efl/panes/horizontal:flush";
             rel2.relative: 0.5 1.0;
          }
       }
-      part { name: "elm.swallow.event"; type: SWALLOW;
+      part { name: "event"; type: SWALLOW;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN2 PANEMIN;
             fixed: 1 1;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel1.to: "bar";
+            rel2.to: "bar";
          }
       }
-      part { name: "bar"; type: RECT;
-         dragable.events: "elm.bar";
+      part { name: "rect.bar"; type: RECT;
+         dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEWID PANEMIN;
             max: 99999 99999;
             fixed: 1 1;
-            rel1.to_y: "elm.swallow.event";
+            rel1.to_y: "event";
             rel1.relative: 0.25 0.0;
-            rel2.to_y: "elm.swallow.event";
+            rel2.to_y: "event";
             rel2.relative: 0.75 1.0;
             color: 0 0 0 0;
          }
@@ -627,7 +627,7 @@ group { name: "efl/panes/horizontal:flush";
             image.normal: "downlight_glow_up.png";
             image.border: 0 0 0 3;
             max: 99999 32;
-            rel2.to_y: "elm.bar";
+            rel2.to_y: "bar";
             color: 255 255 255 0;
             align: 0.5 1.0;
          }
@@ -640,7 +640,7 @@ group { name: "efl/panes/horizontal:flush";
          description { state: "default" 0.0;
             image.normal: "downlight_glow.png";
             max: 99999 4;
-            rel1.to_y: "elm.bar";
+            rel1.to_y: "bar";
             color: 255 255 255 0;
             align: 0.5 0.0;
          }
@@ -653,7 +653,7 @@ group { name: "efl/panes/horizontal:flush";
          description { state: "default" 0.0;
             image.normal: "downlight_glow_up.png";
             max: 99999 4;
-            rel2.to_y: "elm.bar";
+            rel2.to_y: "bar";
             color: 255 255 255 0;
             align: 0.5 1.0;
          }
@@ -667,7 +667,7 @@ group { name: "efl/panes/horizontal:flush";
             image.normal: "downlight_glow.png";
             image.border: 0 0 3 0;
             max: 99999 32;
-            rel1.to_y: "elm.bar";
+            rel1.to_y: "bar";
             color: 255 255 255 0;
             align: 0.5 0.0;
          }
@@ -679,8 +679,8 @@ group { name: "efl/panes/horizontal:flush";
       part { name: "bar1"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bar";
-            rel2.to: "bar";
+            rel1.to: "rect.bar";
+            rel2.to: "rect.bar";
             rel2.relative: 1.0 0.5;
             color: 0 0 0 0;
          }
@@ -688,9 +688,9 @@ group { name: "efl/panes/horizontal:flush";
       part { name: "bar2"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bar";
+            rel1.to: "rect.bar";
             rel1.relative: 0.0 0.5;
-            rel2.to: "bar";
+            rel2.to: "rect.bar";
             color: 0 0 0 0;
          }
       }
@@ -724,27 +724,27 @@ group { name: "efl/panes/horizontal:flush";
          target: "glow2a";
          target: "glow2b";
       }
-      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "bar";
+         target: "rect.bar";
       }
    }
 }
@@ -796,15 +796,15 @@ group { name: "efl/panes/vertical:left-fold";
                new Float: dx;
                new Float: dy;
                set_int(open, 0);
-               get_drag(PART:"elm.bar", dx, dy);
+               get_drag(PART:"bar", dx, dy);
                set_float(drag_x, dx);
-               set_drag(PART:"elm.bar", 0.0, 0.5);
+               set_drag(PART:"bar", 0.0, 0.5);
                set_state(PART:"dots", "closed", 0.0);
             }
             else if (get_int(open) == 0)
             {
                set_int(open, 1);
-               set_drag(PART:"elm.bar", get_float(drag_x), 0.5);
+               set_drag(PART:"bar", get_float(drag_x), 0.5);
                set_state(PART:"dots", "default", 0.0);
             }
          }
@@ -859,15 +859,15 @@ group { name: "efl/panes/vertical:right-fold";
                new Float: dx;
                new Float: dy;
                set_int(open, 0);
-               get_drag(PART:"elm.bar", dx, dy);
+               get_drag(PART:"bar", dx, dy);
                set_float(drag_x, dx);
-               set_drag(PART:"elm.bar", 1.0, 0.5);
+               set_drag(PART:"bar", 1.0, 0.5);
                set_state(PART:"dots", "closed", 0.0);
             }
             else if (get_int(open) == 0)
             {
                set_int(open, 1);
-               set_drag(PART:"elm.bar", get_float(drag_x), 0.5);
+               set_drag(PART:"bar", get_float(drag_x), 0.5);
                set_state(PART:"dots", "default", 0.0);
             }
          }
@@ -922,15 +922,15 @@ group { name: "efl/panes/horizontal:up-fold";
                new Float: dx;
                new Float: dy;
                set_int(open, 0);
-               get_drag(PART:"elm.bar", dx, dy);
+               get_drag(PART:"bar", dx, dy);
                set_float(drag_y, dy);
-               set_drag(PART:"elm.bar", 0.5, 0.0);
+               set_drag(PART:"bar", 0.5, 0.0);
                set_state(PART:"dots", "closed", 0.0);
             }
             else if (get_int(open) == 0)
             {
                set_int(open, 1);
-               set_drag(PART:"elm.bar", 0.5, get_float(drag_y));
+               set_drag(PART:"bar", 0.5, get_float(drag_y));
                set_state(PART:"dots", "default", 0.0);
             }
          }
@@ -985,15 +985,15 @@ group { name: "efl/panes/horizontal:down-fold";
                new Float: dx;
                new Float: dy;
                set_int(open, 0);
-               get_drag(PART:"elm.bar", dx, dy);
+               get_drag(PART:"bar", dx, dy);
                set_float(drag_y, dy);
-               set_drag(PART:"elm.bar", 0.5, 1.0);
+               set_drag(PART:"bar", 0.5, 1.0);
                set_state(PART:"dots", "closed", 0.0);
             }
             else if (get_int(open) == 0)
             {
                set_int(open, 1);
-               set_drag(PART:"elm.bar", 0.5, get_float(drag_y));
+               set_drag(PART:"bar", 0.5, get_float(drag_y));
                set_state(PART:"dots", "default", 0.0);
             }
          }

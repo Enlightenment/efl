@@ -318,7 +318,7 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
 
 /* Standard widget overrides */
 
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "elm.swallow.content")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
 
 EOLIAN static Eo *
@@ -364,7 +364,7 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
 
    if (eina_streq(pd->part, "backwall"))
      {
-        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "elm.swallow.image");
+        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "image");
         if (prev_obj)
           {
              edje_object_part_unswallow(sd->backwall, prev_obj);
@@ -379,7 +379,7 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
              efl_del(image);
              return EINA_FALSE;
           }
-        edje_object_part_swallow(sd->backwall, "elm.swallow.image", image);
+        edje_object_part_swallow(sd->backwall, "image", image);
         edje_object_signal_emit(sd->backwall, "elm,state,image,visible", "elm");
 
         return EINA_TRUE;

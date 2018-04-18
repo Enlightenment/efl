@@ -293,6 +293,10 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
      edje_object_part_swallow(cur->obj, "elm.swallow.hotspot", cur->hotobj);
    else if (edje_object_part_exists(cur->obj, "elm.content.hotspot"))
      edje_object_part_swallow(cur->obj, "elm.content.hotspot", cur->hotobj);
+   else if (edje_object_part_exists(cur->obj, "hotspot"))
+     edje_object_part_swallow(cur->obj, "hotspot", cur->hotobj);
+   else if (edje_object_part_exists(cur->obj, "content.hotspot"))
+     edje_object_part_swallow(cur->obj, "content.hotspot", cur->hotobj);
    else
      {
         ELM_SAFE_FREE(cur->hotobj, evas_object_del);
