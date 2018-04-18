@@ -538,7 +538,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * @see #Efl_Future_Cb_Desc
  * @see efl_key_data_set()
  */
-EOAPI Eina_Future_Desc efl_future_cb_from_desc(Eo *obj, const Efl_Future_Cb_Desc desc) EINA_ARG_NONNULL(1);
+EOAPI Eina_Future_Desc efl_future_cb_from_desc(const Eo *obj, const Efl_Future_Cb_Desc desc) EINA_ARG_NONNULL(1);
 
 /**
  * Syntax suger over efl_future_cb_from_desc()

@@ -87,7 +87,7 @@ typedef struct
 typedef struct _Efl_Future_Pending
 {
    EINA_INLIST;
-   Eo *o;
+   const Eo *o;
    Eina_Future *future;
    Efl_Future_Cb_Desc desc;
 } Efl_Future_Pending;
@@ -1977,7 +1977,7 @@ _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_futur
 {
    Efl_Future_Pending *pending = data;
    Eina_Value ret = value;
-   Eo *o;
+   const Eo *o;
    Efl_Object_Data *pd;
 
    EINA_SAFETY_ON_NULL_GOTO(pending, err);
@@ -1988,7 +1988,7 @@ _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_futur
    pd->pending_futures = eina_inlist_remove(pd->pending_futures,
                                             EINA_INLIST_GET(pending));
    efl_ref(o);
-   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, o);
+   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, (void*) o);
    efl_unref(o);
    _efl_pending_future_free(pending);
 
@@ -2001,7 +2001,7 @@ _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_futur
 }
 
 EOAPI Eina_Future_Desc
-efl_future_cb_from_desc(Eo *o, const Efl_Future_Cb_Desc desc)
+efl_future_cb_from_desc(const Eo *o, const Efl_Future_Cb_Desc desc)
 {
    Efl_Future_Pending *pending = NULL;
    Eina_Future **storage = NULL;
