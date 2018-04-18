@@ -119,6 +119,8 @@ SUITE_SHUTDOWN(elm)
    ck_assert_int_eq(elm_shutdown(), 0);
    /* verify that ecore was de-initialized completely */
    ck_assert_int_eq(ecore_init(), 1);
+   /* avoid slowdowns in fork mode */
+   if (getpid() != main_pid) return;
    ck_assert_int_eq(ecore_shutdown(), 0);
 }
 
