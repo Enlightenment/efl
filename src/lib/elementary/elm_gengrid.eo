@@ -1,5 +1,4 @@
 import elm_general;
-import elm_gengrid_item;
 
 type @extern Ecore_Pos_Map: __undefined_type; [[External ecore position map]]
 

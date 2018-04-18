@@ -1,4 +1,4 @@
-import elm_genlist_item;
+import elm_general;
 
 class Elm.View.List (Efl.Object)
 {

@@ -1,43 +1,5 @@
 import elm_general;
 
-type @extern Elm.Genlist.Item.Class: __undefined_type; [[External elm genlist item class]]
-
-enum Elm.Genlist.Item.Type
-{
-   [[Defines if the item is of any special type (has subitems or it's the
-     index of a group), or is just a simple item.
-   ]]
-   legacy: elm_genlist_item;
-   none = 0, [[Simple item.]]
-   tree = (1 << 0), [[This may be expanded and have child items.]]
-   group = (1 << 1), [[An index item of a group of items. this item can have child items.]]
-   max = (1 << 2) [[Sentinel value to indicate last enum field during iteration]]
-}
-
-enum Elm.Genlist.Item.Field_Type
-{
-   [[Defines the type of the item part
-     Used while updating item's parts
-     It can be used at updating multi fields.
-   ]]
-   legacy: elm_genlist_item_field;
-   all = 0, [[Type all]]
-   text = (1 << 0), [[Type text]]
-   content = (1 << 1), [[Type content]]
-   state = (1 << 2) [[Type state]]
-}
-
-enum Elm.Genlist.Item.Scrollto_Type
-{
-   [[Defines where to position the item in the genlist.]]
-   legacy: elm_genlist_item_scrollto;
-   none = 0,   [[Nothing will happen, Don't use this value.]]
-   in = (1 << 0),   [[To the nearest viewport.]]
-   top = (1 << 1),   [[To the top of viewport.]]
-   middle = (1 << 2),   [[To the middle of viewport.]]
-   bottom = (1 << 3)   [[To the bottom of viewport.]]
-}
-
 class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
 {
    [[Elementary genlist item class]]

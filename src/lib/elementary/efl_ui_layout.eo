@@ -1,3 +1,5 @@
+import efl_ui;
+
 class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Factory,
                      Efl.Layout.Calc, Efl.Layout.Signal,

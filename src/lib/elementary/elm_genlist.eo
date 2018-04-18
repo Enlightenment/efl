@@ -1,6 +1,4 @@
 import elm_general;
-import elm_list;
-import elm_genlist_item;
 
 class Elm.Genlist (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Efl.Access.Widget.Action, Efl.Access.Selection,
