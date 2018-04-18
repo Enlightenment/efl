@@ -108,7 +108,7 @@ _future_file_info_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gath
 
 /* Method implementations */
 static Eina_Future *
-_efl_io_manager_direct_ls(Eo *obj,
+_efl_io_manager_direct_ls(const Eo *obj,
                           Efl_Io_Manager_Data *pd EINA_UNUSED,
                           const char *path,
                           Eina_Bool recursive,
@@ -151,7 +151,7 @@ _efl_io_manager_direct_ls(Eo *obj,
 }
 
 static Eina_Future *
-_efl_io_manager_stat_ls(Eo *obj,
+_efl_io_manager_stat_ls(const Eo *obj,
                         Efl_Io_Manager_Data *pd EINA_UNUSED,
                         const char *path,
                         Eina_Bool recursive,
@@ -194,7 +194,7 @@ _efl_io_manager_stat_ls(Eo *obj,
 }
 
 static Eina_Future *
-_efl_io_manager_ls(Eo *obj,
+_efl_io_manager_ls(const Eo *obj,
                    Efl_Io_Manager_Data *pd EINA_UNUSED,
                    const char *path,
                    void *paths_data, EflIoPath paths, Eina_Free_Cb paths_free_cb)
@@ -247,7 +247,7 @@ _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st
 }
 
 static Eina_Future *
-_efl_io_manager_stat(Eo *obj,
+_efl_io_manager_stat(const Eo *obj,
                      Efl_Io_Manager_Data *pd EINA_UNUSED,
                      const char *path)
 {
@@ -275,7 +275,7 @@ _efl_io_manager_stat(Eo *obj,
 /* eXtended attribute manipulation */
 
 static Eina_Future *
-_efl_io_manager_xattr_ls(Eo *obj,
+_efl_io_manager_xattr_ls(const Eo *obj,
                          Efl_Io_Manager_Data *pd EINA_UNUSED,
                          const char *path,
                          void *paths_data, EflIoPath paths, Eina_Free_Cb paths_free_cb)
@@ -395,7 +395,7 @@ _future_file_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
 }
 
 static Eina_Future *
-_efl_io_manager_open(Eo *obj,
+_efl_io_manager_open(const Eo *obj,
                      Efl_Io_Manager_Data *pd EINA_UNUSED,
                      const char *path,
                      Eina_Bool shared)
@@ -422,7 +422,7 @@ _efl_io_manager_open(Eo *obj,
 }
 
 static Eina_Future *
-_efl_io_manager_close(Eo *obj,
+_efl_io_manager_close(const Eo *obj,
                       Efl_Io_Manager_Data *pd EINA_UNUSED,
                       Eina_File *file)
 {

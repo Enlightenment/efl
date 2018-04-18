@@ -26,18 +26,18 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
   [[Class representing an asynchronous file operation.]]
 
   methods {
-    ls {
+    ls @const {
       [[Lists entries in a given path.
         See \@ref eina_file_ls().
       ]]
       params {
         @in path: string; [[Path we want to list entries for]]
-   paths: EflIoPath; [[Callback called for each packet of files found]]
+        paths: EflIoPath; [[Callback called for each packet of files found]]
       }
       return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
     }
 
-    direct_ls {
+    direct_ls @const {
       [[Lists entries in a given path with more information.]]
       params {
         @in path: string;[[Path we want to list entries for]]
@@ -47,7 +47,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
       return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
     }
 
-    stat_ls {
+    stat_ls @const {
       [[Lists entries in a given path with stat information.]]
       params {
         @in path: string;[[Path we want to list entries for]]
@@ -58,16 +58,16 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
     }
 
     // Extended attributes
-    xattr_ls {
+    xattr_ls @const {
       [[Lists all extended attributes asynchronously.]]
       params {
          @in path: string; [[Path we want to list entries for]]
-    paths: EflIoPath; [[Callback called for each packet of extended attributes found.]]
+         paths: EflIoPath; [[Callback called for each packet of extended attributes found.]]
       }
       return: ptr(Eina.Future) @owned; [[Amount of extended attributes found]]
     }
 
-    stat {
+    stat @const {
       [[Get stat info on a given file/directory.]]
       params {
         @in path: string; [[Path we want to get stat information for]]
@@ -95,7 +95,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
     }
 
     // helper api
-    open {
+    open @const {
       [[Opens a file.
 
       The fulfilled value in the promise will be the Eina.File*.]]
@@ -105,7 +105,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
       }
       return: ptr(Eina.Future) @owned; [[Eina file handle]]
     }
-    close {
+    close @const {
       [[Closes an open Eina.File.]]
       params {
         @in file: ptr(Eina.File); [[Eina file handle]]
