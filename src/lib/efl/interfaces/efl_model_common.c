@@ -23,36 +23,24 @@ static const char EFL_MODEL_ERROR_PERMISSION_DENIED_STR[] = "Permission denied";
 static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
 static const char EFL_MODEL_ERROR_INVALID_OBJECT_STR[]    = "Object is invalid";
 
+#define _ERROR(Name) EFL_MODEL_ERROR_##Name = eina_error_msg_static_register(EFL_MODEL_ERROR_##Name##_STR);
 
 EAPI int
 efl_model_init(void)
 {
-   EFL_MODEL_ERROR_INCORRECT_VALUE = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_INCORRECT_VALUE_STR);
-
-   EFL_MODEL_ERROR_UNKNOWN = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_UNKNOWN_STR);
-
-   EFL_MODEL_ERROR_NOT_SUPPORTED = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_NOT_SUPPORTED_STR);
-
-   EFL_MODEL_ERROR_NOT_FOUND = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_NOT_FOUND_STR);
-
-   EFL_MODEL_ERROR_READ_ONLY = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_READ_ONLY_STR);
-
-   EFL_MODEL_ERROR_INIT_FAILED = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_INIT_FAILED_STR);
-
-   EFL_MODEL_ERROR_PERMISSION_DENIED = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_PERMISSION_DENIED_STR);
-
-   EFL_MODEL_ERROR_INVALID_OBJECT = eina_error_msg_static_register(
-                   EFL_MODEL_ERROR_INVALID_OBJECT_STR);
+   _ERROR(INCORRECT_VALUE);
+   _ERROR(UNKNOWN);
+   _ERROR(NOT_SUPPORTED);
+   _ERROR(NOT_FOUND);
+   _ERROR(READ_ONLY);
+   _ERROR(INIT_FAILED);
+   _ERROR(PERMISSION_DENIED);
+   _ERROR(INVALID_OBJECT);
 
    return EINA_TRUE;
 }
+
+#undef _ERROR
 
 EAPI void
 _efl_model_properties_changed_internal(const Efl_Model *model, ...)
