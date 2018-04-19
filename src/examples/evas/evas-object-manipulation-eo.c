@@ -220,8 +220,8 @@ main(void)
      }
    else
      {
-        efl_image_border_set(d.clipper_border, 3, 3, 3, 3);
-        efl_image_border_center_fill_set(d.clipper_border, EFL_GFX_BORDER_FILL_MODE_NONE);
+        efl_gfx_image_border_set(d.clipper_border, 3, 3, 3, 3);
+        efl_gfx_image_border_center_fill_set(d.clipper_border, EFL_GFX_BORDER_FILL_MODE_NONE);
         efl_gfx_entity_position_set(d.clipper_border, EINA_POSITION2D((WIDTH / 4) -3, (HEIGHT / 4) - 3));
         efl_gfx_entity_size_set(d.clipper_border, EINA_SIZE2D((WIDTH / 2) + 6,  (HEIGHT / 2) + 6));
         efl_gfx_entity_visible_set(d.clipper_border, EINA_TRUE);

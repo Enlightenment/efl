@@ -1,19 +1,19 @@
 /* FIXME: invalid type from evas/emile! */
 /* type @extern Evas.Animated_Loop_Hint: int; */
 
-enum Efl.Image_Animation_Controller_Loop_Hint {
+enum Efl.Gfx.Image_Animation_Controller_Loop_Hint {
    [[Image animation loop modes]]
    none = 0,       [[No looping order specified.]]
    loop = 1,       [[Standard loop: 1->2->3->1->2->3->1]]
    pingpong = 2    [[Ping-pong bouncing loop: 1->2->3->2->1->2->3->1]]
 }
 
-/* FIXME: rename to Efl.Image_Animation_Controller when eo/eolian are fixed */
+/* FIXME: rename to Efl.Gfx.Image_Animation_Controller when eo/eolian are fixed */
 
-interface Efl.Image_Animation_Controller ()
+interface Efl.Gfx.Image_Animation_Controller ()
 {
    [[Efl animated image interface]]
-   eo_prefix: efl_image;
+   eo_prefix: efl_gfx_image;
 
    methods {
       @property animated {
@@ -65,18 +65,18 @@ interface Efl.Image_Animation_Controller ()
 
               This returns the kind of looping the image object wants to do.
 
-              If it returns @Efl.Image_Animation_Controller_Loop_Hint.loop, you should
+              If it returns @Efl.Gfx.Image_Animation_Controller_Loop_Hint.loop, you should
               display frames in a sequence like: 1->2->3->1->2->3->1...
 
-              If it returns @Efl.Image_Animation_Controller_Loop_Hint.pingpong, it is
+              If it returns @Efl.Gfx.Image_Animation_Controller_Loop_Hint.pingpong, it is
               better to display frames in a sequence like:
               1->2->3->2->1->2->3->1...
 
-              The default type is @Efl.Image_Animation_Controller_Loop_Hint.loop.
+              The default type is @Efl.Gfx.Image_Animation_Controller_Loop_Hint.loop.
 
               @since 1.1
             ]]
-            return: Efl.Image_Animation_Controller_Loop_Hint; [[Loop type of the image object.]]
+            return: Efl.Gfx.Image_Animation_Controller_Loop_Hint; [[Loop type of the image object.]]
          }
       }
       @property animated_loop_count {

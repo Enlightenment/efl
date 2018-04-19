@@ -2,18 +2,18 @@ import eina_types;
 import efl_gfx_types;
 
 /*
-enum Efl.Image_Load_Controller_State
+enum Efl.Gfx.Image_Load_Controller_State
 {
    none = 0,      [[Not loading any image.]]
    loaded = 1,    [[Image data is loaded, nothing is pending.]]
    pending = 2,   [[The image has been queued for load, but actual loading may not have started yet.]]
    loading = 3,   [[The image is currently loading.]]
-   error = 4,     [[Image load has failed. Call @Efl.Image_Load_Controller.load_error.get to know why.]]
+   error = 4,     [[Image load has failed. Call @Efl.Gfx.Image_Load_Controller.load_error.get to know why.]]
    cancelled = 5  [[Image load has been cancelled.]]
 }
 */
 
-interface Efl.Image_Load_Controller ()
+interface Efl.Gfx.Image_Load_Controller ()
 {
    [[Common APIs for all loadable 2D images.]]
 
@@ -44,7 +44,7 @@ interface Efl.Image_Load_Controller ()
             ]]
          }
          values {
-            state: Efl.Image_Load_Controller_State; [[Image loading status]]
+            state: Efl.Gfx.Image_Load_Controller_State; [[Image loading status]]
          }
       }
       */
@@ -182,7 +182,7 @@ interface Efl.Image_Load_Controller ()
    }
    events {
       load,done; [[Called when he image was loaded]]
-      load,error: Efl.Image.Load.Error; [[Called when an error happened during image loading]]
+      load,error: Efl.Gfx.Image_Load_Error; [[Called when an error happened during image loading]]
       load,cancelled; [[Called when the image loading was cancelled]]
    }
 }

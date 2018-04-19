@@ -99,14 +99,14 @@ im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 }
 
 static const struct {
-   Efl_Image_Scale_Type scale_type;
+   Efl_Gfx_Image_Scale_Type scale_type;
    const char *name;
 } images_scale_type[] = {
-  { EFL_IMAGE_SCALE_TYPE_NONE, "None" },
-  { EFL_IMAGE_SCALE_TYPE_FILL, "Fill" },
-  { EFL_IMAGE_SCALE_TYPE_FIT_INSIDE, "Fit Inside" },
-  { EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE, "Fit Outside" },
-  { EFL_IMAGE_SCALE_TYPE_TILE, "Tile" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_NONE, "None" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_FILL, "Fill" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE, "Fit Inside" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE, "Fit Outside" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_TILE, "Tile" },
   { 0, NULL }
 };
 
@@ -118,9 +118,9 @@ my_im_scale_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
    Evas_Object *rdg = evas_object_data_get(win, "rdg");
    int v = elm_radio_value_get(rdg);
 
-   efl_image_scale_type_set(im, images_scale_type[v].scale_type);
+   efl_gfx_image_scale_type_set(im, images_scale_type[v].scale_type);
    fprintf(stderr, "Set %d[%s] and got %d\n",
-   images_scale_type[v].scale_type, images_scale_type[v].name, efl_image_scale_type_get(im));
+   images_scale_type[v].scale_type, images_scale_type[v].name, efl_gfx_image_scale_type_get(im));
 }
 
 void

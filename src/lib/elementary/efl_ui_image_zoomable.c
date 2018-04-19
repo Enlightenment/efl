@@ -1795,7 +1795,7 @@ _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Dat
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
+_efl_ui_image_zoomable_efl_gfx_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
    return EINA_SIZE2D(pd->size.imw, pd->size.imh);
 }

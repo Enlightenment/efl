@@ -118,42 +118,42 @@ EAPI void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
    EVAS_IMAGE_API(obj);
-   efl_image_border_set(obj, l, r, t, b);
+   efl_gfx_image_border_set(obj, l, r, t, b);
 }
 
 EAPI void
 evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    EVAS_IMAGE_API(obj);
-   efl_image_border_get(obj, l, r, t, b);
+   efl_gfx_image_border_get(obj, l, r, t, b);
 }
 
 EAPI void
 evas_object_image_border_scale_set(Evas_Object *obj, double scale)
 {
    EVAS_IMAGE_API(obj);
-   efl_image_border_scale_set(obj, scale);
+   efl_gfx_image_border_scale_set(obj, scale);
 }
 
 EAPI double
 evas_object_image_border_scale_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 1.0);
-   return efl_image_border_scale_get(obj);
+   return efl_gfx_image_border_scale_get(obj);
 }
 
 EAPI void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
 {
    EVAS_IMAGE_API(obj);
-   efl_image_border_center_fill_set(obj, (Efl_Gfx_Border_Fill_Mode) fill);
+   efl_gfx_image_border_center_fill_set(obj, (Efl_Gfx_Border_Fill_Mode) fill);
 }
 
 EAPI Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_BORDER_FILL_DEFAULT);
-   return (Evas_Border_Fill_Mode) efl_image_border_center_fill_get(obj);
+   return (Evas_Border_Fill_Mode) efl_gfx_image_border_center_fill_get(obj);
 }
 
 EAPI void
@@ -370,14 +370,14 @@ EAPI void
 evas_object_image_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth_scale)
 {
    EVAS_IMAGE_API(obj);
-   efl_image_smooth_scale_set(obj, smooth_scale);
+   efl_gfx_image_smooth_scale_set(obj, smooth_scale);
 }
 
 EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
-   return efl_image_smooth_scale_get(obj);
+   return efl_gfx_image_smooth_scale_get(obj);
 }
 
 EAPI void
@@ -475,28 +475,28 @@ EAPI void
 evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint)
 {
    EVAS_IMAGE_API(obj);
-   return efl_image_content_hint_set(obj, hint);
+   return efl_gfx_image_content_hint_set(obj, hint);
 }
 
 EAPI Evas_Image_Content_Hint
 evas_object_image_content_hint_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_CONTENT_HINT_NONE);
-   return efl_image_content_hint_get(obj);
+   return efl_gfx_image_content_hint_get(obj);
 }
 
 EAPI void
 evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
 {
    EVAS_IMAGE_API(obj);
-   return efl_image_scale_hint_set(obj, (Efl_Image_Scale_Hint) hint);
+   return efl_gfx_image_scale_hint_set(obj, (Efl_Gfx_Image_Scale_Hint) hint);
 }
 
 EAPI Evas_Image_Scale_Hint
 evas_object_image_scale_hint_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_SCALE_HINT_NONE);
-   return (Evas_Image_Scale_Hint) efl_image_scale_hint_get(obj);
+   return (Evas_Image_Scale_Hint) efl_gfx_image_scale_hint_get(obj);
 }
 
 EAPI void

@@ -72,7 +72,7 @@ evas_object_inform_call_image_preloaded(Evas_Object *eo_obj)
    _evas_object_image_preloading_set(eo_obj, 0);
 
    event_id = _evas_object_event_new();
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, event_id, EFL_IMAGE_EVENT_PRELOAD);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, event_id, EFL_GFX_IMAGE_EVENT_PRELOAD);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -82,7 +82,7 @@ evas_object_inform_call_image_unloaded(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_UNLOADED, NULL, event_id, EFL_IMAGE_EVENT_UNLOAD);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_UNLOADED, NULL, event_id, EFL_GFX_IMAGE_EVENT_UNLOAD);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -92,6 +92,6 @@ evas_object_inform_call_image_resize(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_RESIZE, NULL, event_id, EFL_IMAGE_EVENT_RESIZE);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_RESIZE, NULL, event_id, EFL_GFX_IMAGE_EVENT_RESIZE);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }

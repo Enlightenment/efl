@@ -246,10 +246,10 @@ typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source
 /* Opaque types */
 typedef Eo                               Evas_Device; /**< A source device handle - where the event came from */
 
-typedef Efl_Image_Content_Hint           Evas_Image_Content_Hint;
-#define EVAS_IMAGE_CONTENT_HINT_NONE     EFL_IMAGE_CONTENT_HINT_NONE
-#define EVAS_IMAGE_CONTENT_HINT_DYNAMIC  EFL_IMAGE_CONTENT_HINT_DYNAMIC
-#define EVAS_IMAGE_CONTENT_HINT_STATIC   EFL_IMAGE_CONTENT_HINT_STATIC
+typedef Efl_Gfx_Image_Content_Hint           Evas_Image_Content_Hint;
+#define EVAS_IMAGE_CONTENT_HINT_NONE     EFL_GFX_IMAGE_CONTENT_HINT_NONE
+#define EVAS_IMAGE_CONTENT_HINT_DYNAMIC  EFL_GFX_IMAGE_CONTENT_HINT_DYNAMIC
+#define EVAS_IMAGE_CONTENT_HINT_STATIC   EFL_GFX_IMAGE_CONTENT_HINT_STATIC
 
 typedef enum _Evas_Alloc_Error
 {

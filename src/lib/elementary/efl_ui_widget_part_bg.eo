@@ -6,6 +6,6 @@ class Efl.Ui.Widget.Part_Bg (Efl.Ui.Widget.Part, Efl.Gfx.Color, Efl.Ui.Bg)
       Efl.File.file { get; set; }
       //Efl.File.mmap { get; set; }
       Efl.Gfx.Color.color { set; get; }
-      Efl.Image.scale_type { get; set; }
+      Efl.Gfx.Image.scale_type { get; set; }
    }
 }

@@ -43,7 +43,7 @@ _efl_ui_bg_widget_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Widget_Data *pd)
                       efl_content_set(efl_part(obj, "elm.swallow.rectangle"), efl_added));
 
    pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
-                     efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                     efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
                      efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
    pd->file = NULL;
    pd->key = NULL;
@@ -67,51 +67,51 @@ _efl_ui_bg_widget_efl_object_destructor(Eo *obj, Efl_Ui_Bg_Widget_Data *sd)
 EAPI void
 elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 {
-   Efl_Image_Scale_Type type;
+   Efl_Gfx_Image_Scale_Type type;
 
    switch (option)
      {
        case ELM_BG_OPTION_CENTER:
-         type = EFL_IMAGE_SCALE_TYPE_NONE;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_NONE;
          break;
        case ELM_BG_OPTION_SCALE:
-         type = EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
          break;
        case ELM_BG_OPTION_TILE:
-         type = EFL_IMAGE_SCALE_TYPE_TILE;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_TILE;
          break;
        case ELM_BG_OPTION_STRETCH:
-         type = EFL_IMAGE_SCALE_TYPE_FILL;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
          break;
        case ELM_BG_OPTION_LAST:
        default:
-         type = EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
      }
-   efl_image_scale_type_set(obj, type);
+   efl_gfx_image_scale_type_set(obj, type);
 }
 
 EAPI Elm_Bg_Option
 elm_bg_option_get(const Evas_Object *obj)
 {
-   Efl_Image_Scale_Type type;
+   Efl_Gfx_Image_Scale_Type type;
    Elm_Bg_Option option = ELM_BG_OPTION_LAST;
 
-   type = efl_image_scale_type_get(obj);
+   type = efl_gfx_image_scale_type_get(obj);
    switch (type)
      {
-       case EFL_IMAGE_SCALE_TYPE_NONE:
+       case EFL_GFX_IMAGE_SCALE_TYPE_NONE:
          option = ELM_BG_OPTION_CENTER;
         break;
-       case EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
+       case EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
          option = ELM_BG_OPTION_SCALE;
         break;
-       case EFL_IMAGE_SCALE_TYPE_TILE:
+       case EFL_GFX_IMAGE_SCALE_TYPE_TILE:
          option = ELM_BG_OPTION_TILE;
          break;
-       case EFL_IMAGE_SCALE_TYPE_FILL:
+       case EFL_GFX_IMAGE_SCALE_TYPE_FILL:
          option = ELM_BG_OPTION_STRETCH;
          break;
-       case EFL_IMAGE_SCALE_TYPE_FIT_INSIDE:
+       case EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE:
        default:
          ERR("Scale type %d cannot be converted to Elm_Bg_Option", type);
          break;
@@ -121,15 +121,15 @@ elm_bg_option_get(const Evas_Object *obj)
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, Efl_Image_Scale_Type scale_type)
+_efl_ui_bg_widget_efl_gfx_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, Efl_Gfx_Image_Scale_Type scale_type)
 {
-   efl_image_scale_type_set(sd->img, scale_type);
+   efl_gfx_image_scale_type_set(sd->img, scale_type);
 }
 
-EOLIAN static Efl_Image_Scale_Type
-_efl_ui_bg_widget_efl_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
+EOLIAN static Efl_Gfx_Image_Scale_Type
+_efl_ui_bg_widget_efl_gfx_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
 {
-   return efl_image_scale_type_get(sd->img);
+   return efl_gfx_image_scale_type_get(sd->img);
 }
 
 EAPI void
@@ -178,19 +178,19 @@ EAPI void
 elm_bg_load_size_set(Evas_Object *obj, int w, int h)
 {
    EFL_UI_BG_WIDGET_DATA_GET_OR_RETURN(obj, sd);
-   efl_image_load_controller_load_size_set(sd->img, EINA_SIZE2D(w, h));
+   efl_gfx_image_load_controller_load_size_set(sd->img, EINA_SIZE2D(w, h));
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_image_load_controller_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, Eina_Size2D sz)
+_efl_ui_bg_widget_efl_gfx_image_load_controller_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, Eina_Size2D sz)
 {
-   efl_image_load_controller_load_size_set(sd->img, sz);
+   efl_gfx_image_load_controller_load_size_set(sd->img, sz);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_bg_widget_efl_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
+_efl_ui_bg_widget_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd)
 {
-   return efl_image_load_controller_load_size_get(sd->img);
+   return efl_gfx_image_load_controller_load_size_get(sd->img);
 }
 
 EAPI Eina_Bool

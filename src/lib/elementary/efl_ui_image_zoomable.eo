@@ -50,7 +50,7 @@ class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { get; }
-      Efl.Image.image_size { get; }
+      Efl.Gfx.Image.image_size { get; }
       Efl.Ui.Image.icon { set; get; }
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }

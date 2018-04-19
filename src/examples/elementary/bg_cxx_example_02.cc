@@ -30,7 +30,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
      path = "performance/background.png";
 
    efl::ui::Bg_Widget bg(instantiate, win);
-   bg.scale_type_set(EFL_IMAGE_SCALE_TYPE_FILL);
+   bg.scale_type_set(EFL_GFX_IMAGE_SCALE_TYPE_FILL);
    bg.file_set(path, nullptr);
    win.content_set(bg);
 

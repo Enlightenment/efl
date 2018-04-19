@@ -7,7 +7,7 @@
 typedef struct _Efl_File_Data Efl_File_Data;
 struct _Efl_File_Data
 {
-   Efl_Image_Load_Error error;
+   Efl_Gfx_Image_Load_Error error;
 };
 
 static Eina_Bool
@@ -17,7 +17,7 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key
    Eina_File *f = NULL;
    Eina_Bool r = EINA_FALSE;
 
-   pd->error = EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+   pd->error = EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 
    tmp = (char*)(file);
    if (tmp)
@@ -31,7 +31,7 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key
         if (!f) goto on_error;
      }
 
-   pd->error = EFL_IMAGE_LOAD_ERROR_NONE;
+   pd->error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 
    r = efl_file_mmap_set(obj, f, key);
    if (f) eina_file_close(f);
@@ -53,7 +53,7 @@ _efl_file_file_get(const Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **fi
    else if (file) *file = NULL;
 }
 
-static Efl_Image_Load_Error
+static Efl_Gfx_Image_Load_Error
 _efl_file_load_error_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
 {
    return pd->error;

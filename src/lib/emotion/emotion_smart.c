@@ -740,13 +740,13 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 {
    Eina_Size2D sz;
 
-   sz = efl_image_load_controller_load_size_get(obj);
+   sz = efl_gfx_image_load_controller_load_size_get(obj);
    if (iw) *iw = sz.w;
    if (ih) *ih = sz.h;
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_video_efl_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    // FIXME: Shouldn't this be efl_gfx_view_size instead?
    return EINA_SIZE2D(sd->video.w, sd->video.h);
@@ -755,11 +755,11 @@ _efl_canvas_video_efl_image_load_controller_load_size_get(const Eo *obj EINA_UNU
 EAPI void
 emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
-   efl_image_smooth_scale_set(obj, smooth);
+   efl_gfx_image_smooth_scale_set(obj, smooth);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool smooth)
+_efl_canvas_video_efl_gfx_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool smooth)
 {
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
@@ -767,11 +767,11 @@ _efl_canvas_video_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vid
 EAPI Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
-   return efl_image_smooth_scale_get(obj);
+   return efl_gfx_image_smooth_scale_get(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    return evas_object_image_smooth_scale_get(sd->obj);
 }
@@ -779,11 +779,11 @@ _efl_canvas_video_efl_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_Canv
 EAPI double
 emotion_object_ratio_get(const Evas_Object *obj)
 {
-   return efl_image_ratio_get(obj);
+   return efl_gfx_image_ratio_get(obj);
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_image_ratio_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_image_ratio_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    return sd->ratio;

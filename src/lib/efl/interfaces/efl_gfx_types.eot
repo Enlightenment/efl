@@ -188,7 +188,7 @@ enum Efl.Gfx.Size_Hint_Aspect
               aspect.]]
 }
 
-enum Efl.Image.Load.Error
+enum Efl.Gfx.Image_Load_Error
 {
    [[Image or Edje load error type]]
    none = 0,                       [[No error on load]]

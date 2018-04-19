@@ -138,7 +138,7 @@ evas_vg_save_file_svg(Vg_File_Data *evg_data, const char *file, const char *key 
    if (!f)
      {
         ERR("Cannot open file '%s' for SVG save", file);
-        return EFL_IMAGE_LOAD_ERROR_GENERIC;
+        return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 
    root = vg_common_create_svg_node(evg_data);

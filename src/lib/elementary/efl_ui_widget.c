@@ -6045,19 +6045,19 @@ _efl_ui_widget_part_bg_efl_gfx_color_color_get(const Eo *obj, void *pd EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_widget_part_bg_efl_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Image_Scale_Type scale_type)
+_efl_ui_widget_part_bg_efl_gfx_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Image_Scale_Type scale_type)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   efl_image_scale_type_set(bg_obj, scale_type);
+   efl_gfx_image_scale_type_set(bg_obj, scale_type);
 }
 
-EOLIAN static Efl_Image_Scale_Type
-_efl_ui_widget_part_bg_efl_image_scale_type_get(const Eo *obj, void *pd EINA_UNUSED)
+EOLIAN static Efl_Gfx_Image_Scale_Type
+_efl_ui_widget_part_bg_efl_gfx_image_scale_type_get(const Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   return efl_image_scale_type_get(bg_obj);
+   return efl_gfx_image_scale_type_get(bg_obj);
 }
 
 #include "efl_ui_widget_part_bg.eo.c"
