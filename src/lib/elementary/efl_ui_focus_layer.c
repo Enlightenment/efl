@@ -103,6 +103,8 @@ _publish_state_change(Eo *obj, Efl_Ui_Focus_Manager *omanager, Efl_Ui_Focus_Obje
 EOLIAN static void
 _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v)
 {
+   if (!elm_object_tree_focus_allow_get(obj))
+     v = EINA_FALSE;
    if (v)
      {
         pd->registered_manager = elm_widget_top_get(obj);
