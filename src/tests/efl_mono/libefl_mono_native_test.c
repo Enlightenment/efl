@@ -3611,7 +3611,7 @@ void _test_numberwrapper_number_set(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data
    pd->number = n;
 }
 
-int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd)
+int _test_numberwrapper_number_get(EINA_UNUSED const Eo *obj, Test_Numberwrapper_Data *pd)
 {
    return pd->number;
 }
@@ -3766,7 +3766,7 @@ void _test_testing_call_format_cb(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_
 /* Class Properties */
 static int _test_testing_klass_prop = 0;
 
-int _test_testing_klass_prop_get(Eo *klass, EINA_UNUSED void *pd)
+int _test_testing_klass_prop_get(const Eo *klass, EINA_UNUSED void *pd)
 {
     EINA_LOG_ERR("FAIL on GET");
    if (klass != test_testing_class_get())
