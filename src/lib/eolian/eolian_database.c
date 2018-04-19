@@ -876,6 +876,7 @@ database_defer(Eolian_State *state, const char *fname, Eina_Bool isdep)
 }
 
 static Eina_Bool _parse_deferred(Eolian_Unit *parent);
+static void _merge_units(Eolian_Unit *unit);
 
 typedef struct _Defer_Data
 {
@@ -885,15 +886,22 @@ typedef struct _Defer_Data
 
 static Eina_Bool
 _defer_hash_cb(const Eina_Hash *hash EINA_UNUSED, const void *key,
-               void *data EINA_UNUSED, void *fdata)
+               void *data, void *fdata)
 {
    Defer_Data *d = fdata;
+   Eina_Bool alone = ((size_t)data <= 1);
    Eolian_Unit *parent = d->parent;
    /* not a dependency; parse standalone */
-   /*if ((size_t)data <= 1)
-     parent = &parent->state->staging.unit;*/
+   if (alone)
+     parent = &parent->state->staging.unit;
    Eolian_Unit *pdep = _eolian_file_parse_nodep(parent, key);
-   return (d->succ = (pdep && _parse_deferred(pdep)));
+   d->succ = (pdep && _parse_deferred(pdep));
+   /* standalone-parsed stuff forms its own dependency trees,
+    * so we have to merge the units manually and separately
+    */
+   if (d->succ && alone)
+     _merge_units(pdep);
+   return d->succ;
 }
 
 static Eina_Bool
