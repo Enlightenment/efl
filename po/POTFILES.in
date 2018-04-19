@@ -97,7 +97,7 @@ src/lib/elementary/elc_fileselector.c
 src/lib/elementary/elc_fileselector_button.c
 src/lib/elementary/elc_fileselector_entry.c
 src/lib/elementary/elc_hoversel.c
-src/lib/elementary/efl_ui_multibuttonentry.c
+src/lib/elementary/elc_multibuttonentry.c
 src/lib/elementary/elc_naviframe.c
 src/lib/elementary/elc_player.c
 src/lib/elementary/elc_popup.c

@@ -14,7 +14,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/efl_ui_image_zoomable.eo \
 	lib/elementary/efl_ui_layout.eo \
-	lib/elementary/efl_ui_multibuttonentry.eo \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/efl_ui_panes.eo \
 	lib/elementary/efl_ui_progressbar.eo \
@@ -75,7 +74,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_view_list_pan.eo \
 	lib/elementary/efl_ui_view_list_segarray.eo \
 	lib/elementary/efl_ui_view_list_relayout.eo \
-	lib/elementary/efl_ui_multibuttonentry_part.eo \
 	lib/elementary/efl_ui_panes_part.eo \
 	lib/elementary/efl_ui_progressbar_part.eo \
 	lib/elementary/efl_ui_slider_part_indicator.eo \
@@ -150,7 +148,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_slider_legacy.eo \
 	lib/elementary/efl_ui_panes_legacy.eo \
 	lib/elementary/efl_ui_image_zoomable_legacy.eo \
-	lib/elementary/efl_ui_multibuttonentry_legacy.eo \
 	lib/elementary/efl_ui_flip_legacy.eo \
 	lib/elementary/efl_ui_win_legacy.eo \
 	lib/elementary/efl_ui_image_legacy.eo \
@@ -182,6 +179,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_map.eo \
 	lib/elementary/elm_map_pan.eo \
 	lib/elementary/elm_menu.eo \
+	lib/elementary/elm_multibuttonentry.eo \
 	lib/elementary/elm_notify.eo \
 	lib/elementary/elm_panel.eo \
 	lib/elementary/elm_player.eo \
@@ -197,6 +195,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_dayselector_item.eo \
 	lib/elementary/elm_flipselector_item.eo \
 	lib/elementary/elm_menu_item.eo \
+	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_ctxpopup_item.eo \
 	lib/elementary/elm_index_item.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
@@ -348,7 +347,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_map.h \
 	lib/elementary/elm_widget_mapbuf.h \
 	lib/elementary/elm_widget_menu.h \
-	lib/elementary/efl_ui_multibuttonentry_private.h \
+	lib/elementary/elm_widget_multibuttonentry.h \
 	lib/elementary/elm_widget_naviframe.h \
 	lib/elementary/elm_widget_notify.h \
 	lib/elementary/elm_widget_panel.h \
@@ -389,7 +388,6 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_file.h \
 	lib/elementary/elm_code_parse.h \
 	lib/elementary/elm_code_syntax.h \
-	lib/elementary/efl_ui_multibuttonentry.h \
 	lib/elementary/efl_ui_widget_scroller.h \
 	lib/elementary/efl_ui_widget_scroll_manager.h \
 	lib/elementary/efl_ui_widget_pan.h \
@@ -416,7 +414,6 @@ includesub_HEADERS = \
 	lib/elementary/elc_hoversel.h \
 	lib/elementary/elc_hoversel_legacy.h \
 	lib/elementary/elc_multibuttonentry.h \
-	lib/elementary/efl_ui_multibuttonentry_eo.h \
 	lib/elementary/elc_multibuttonentry_legacy.h \
 	lib/elementary/elc_multibuttonentry_common.h \
 	lib/elementary/elc_naviframe.h \
@@ -624,7 +621,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elc_fileselector_button.c \
 	lib/elementary/elc_fileselector_entry.c \
 	lib/elementary/elc_hoversel.c \
-	lib/elementary/efl_ui_multibuttonentry.c \
+	lib/elementary/elc_multibuttonentry.c \
 	lib/elementary/elc_naviframe.c \
 	lib/elementary/elc_player.c \
 	lib/elementary/elc_popup.c \
