@@ -115,7 +115,7 @@ struct visitor_generate
                       r.base_type = " void";
                   return r;
               }}
-           , {"Error", nullptr, [&] // Eina.Error
+           , {"Eina.Error", nullptr, [&] // Eina.Error
               {
                 return regular_type_def{" eina.Error", regular.base_qualifier, {}};
               }} // TODO
@@ -164,11 +164,12 @@ struct visitor_generate
       //        .generate(sink, attributes::unused, *context);
       //   }
       // else
+        std::string full_type_name = name_helpers::type_full_name(regular);
         if(eina::optional<bool> b = call_match
          (match_table
           , [&] (match const& m)
           {
-            return (!m.name || *m.name == regular.base_type)
+            return (!m.name || *m.name == regular.base_type || *m.name == full_type_name)
             && (!m.has_own || *m.has_own == (bool)(regular.base_qualifier & qualifier_info::is_own))
             ;
           }

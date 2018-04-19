@@ -1,32 +1,73 @@
 #ifndef EOLIAN_MONO_EVENTS_HH
 #define EOLINA_MONO_EVENTS_HH
 
+#include <iterator>
+
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
+#include "type_impl.hh" // For call_match
 #include "name_helpers.hh"
 #include "using_decl.hh"
 
 namespace eolian_mono {
 
-struct get_event_args_visitor
+template<typename OutputIterator, typename Context>
+struct unpack_event_args_visitor
 {
+   mutable OutputIterator sink;
+   Context const* context;
    std::string arg_type;
+   attributes::type_def const& type;
 
-   typedef get_event_args_visitor visitor_type;
-   typedef std::string result_type;
-   std::string operator()(grammar::attributes::regular_type_def const&) const
+   typedef unpack_event_args_visitor<OutputIterator, Context> visitor_type;
+   typedef bool result_type;
+   bool operator()(grammar::attributes::regular_type_def const& regular) const
    {
-      if (arg_type == "string")
-        return "eina.StringConversion.NativeUtf8ToManagedString(evt.Info)";
-      return "(" + arg_type + ")Marshal.PtrToStructure(evt.Info, typeof(" + arg_type + "))";
+      std::string const& arg = "evt.Info";
+
+      // Structs are usually passed by pointer to events, like having a ptr<> modifier
+      if (type.is_ptr || regular.is_struct())
+        return as_generator("(" + arg_type + ")Marshal.PtrToStructure(" + arg + ", typeof(" + arg_type + "))")
+                 .generate(sink, attributes::unused, *context);
+
+      using attributes::regular_type_def;
+      struct match
+      {
+         eina::optional<std::string> name;
+         std::function<std::string()> function;
+      }
+      const match_table [] =
+        {
+           {"bool", [&arg] { return arg + " != IntPtr.Zero"; }}
+           , {"int", [&arg] { return arg + ".ToInt32()"; }}
+           , {"uint", [&arg] { return "(uint)" + arg + ".ToInt32()";}}
+           , {"string", [&arg] { return "eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
+           , {"Eina.Error", [&arg] { return "(eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(eina.Error))"; }}
+        };
+
+      std::string full_type_name = name_helpers::type_full_name(regular);
+      auto filter_func = [&regular, &full_type_name] (match const& m)
+        {
+           return (!m.name || *m.name == regular.base_type || *m.name == full_type_name);
+        };
+
+      auto accept_func = [&](std::string const& conversion)
+        {
+           return as_generator(conversion).generate(sink, attributes::unused, *context);
+        };
+
+      if (eina::optional<bool> b = call_match(match_table, filter_func, accept_func))
+        return *b;
+      else
+        return as_generator("default(" + arg_type + ")").generate(sink, attributes::unused, *context);
    }
-   std::string operator()(grammar::attributes::klass_name const&) const
+   bool operator()(grammar::attributes::klass_name const&) const
    {
-      return "new " + arg_type + "Concrete(evt.Info)";
+      return as_generator("new " + arg_type + "Concrete(evt.Info)").generate(sink, attributes::unused, *context);
    }
-   std::string operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const&) const
    {
-      return "UNSUPPORTED";
+      return as_generator("UNSUPPORTED").generate(sink, attributes::unused, *context);
    }
 };
 
@@ -138,7 +179,15 @@ struct event_definition_generator
            wrapper_args_template = "<" + wrapper_args_type + ">";
            std::string arg_type = wrapper_args_type + " args = new " + wrapper_args_type + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
            std::string actual_arg_type = (*etype).original_type.visit(name_helpers::get_csharp_type_visitor{});
-           arg_type += "      args.arg = " + (*etype).original_type.visit(get_event_args_visitor{actual_arg_type}) + ";\n";
+
+           arg_type += "      args.arg = ";
+
+           auto arg_type_sink = std::back_inserter(arg_type);
+
+           if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_type_sink), Context>{arg_type_sink, &context, actual_arg_type, *etype}))
+             return false;
+
+           arg_type += ";\n";
 
            event_args = arg_type;
         }
