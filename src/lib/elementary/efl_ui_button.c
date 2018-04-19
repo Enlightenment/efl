@@ -335,14 +335,8 @@ _efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSE
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
-static const char * _efl_ui_button_default_text_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
-{
-   if (elm_widget_is_legacy(obj))
-     return "elm.text";
-   else
-     return "text";
-}
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
+
 static const char * _efl_ui_button_default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
 {
    if (elm_widget_is_legacy(obj))
@@ -350,6 +344,7 @@ static const char * _efl_ui_button_default_content_part_get(const Eo *obj EINA_U
    else
      return "content";
 }
+
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 EAPI void
@@ -391,14 +386,11 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button), \
-   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_button), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"

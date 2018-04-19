@@ -222,7 +222,7 @@ group { "efl/progressbar/horizontal";
             image.border_scale_by: 0.25; image.border_scale: 1;
          }
       }
-      part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
+      part { name: "bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "inside";
             rel2.to: "inside";
@@ -259,7 +259,7 @@ group { "efl/progressbar/horizontal";
             align: 1.0 0.5;
          }
       }
-      part { name: "bar_internal";
+      part { name: "image_bar";
          clip_to: "fract_clip";
          scale: 1;
          description { state: "default" 0.0;
@@ -315,10 +315,10 @@ group { "efl/progressbar/horizontal";
             min: 64 24;
             max: 64 24;
             rel1.to_x: "insidep0";
-            rel1.to_y: "bar_internal";
+            rel1.to_y: "image_bar";
             rel1.relative: 0.0 0.0;
             rel2.to_x: "insidep1";
-            rel2.to_y: "bar_internal";
+            rel2.to_y: "image_bar";
             rel2.relative: 1.0 1.0;
             image.normal: "inset_bar_horiz_glow_mid_base.png";
             align: 0.0 0.5;
@@ -372,11 +372,11 @@ group { "efl/progressbar/horizontal";
          scale: 1;
          description { state: "default" 0.0;
             max: 36 11;
-            rel1.to_x: "bar_internal";
-            rel1.to_y: "bar_internal";
+            rel1.to_x: "image_bar";
+            rel1.to_y: "image_bar";
             rel1.relative: 0.0 (26/96);
             rel2.to_x: "barend";
-            rel2.to_y: "bar_internal";
+            rel2.to_y: "image_bar";
             rel2.relative: 0.2 ((26+44)/96);
             align: 1.0 0.0;
             image.normal: "inset_bar_horiz_glow_light.png";
@@ -387,10 +387,10 @@ group { "efl/progressbar/horizontal";
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
             rel1.to_x: "barend";
-            rel1.to_y: "bar_internal";
+            rel1.to_y: "image_bar";
             rel1.relative: 0.8 (26/96);
-            rel2.to_x: "bar_internal";
-            rel2.to_y: "bar_internal";
+            rel2.to_x: "image_bar";
+            rel2.to_y: "image_bar";
             rel2.relative: 1.0 ((26+44)/96);
             align: 0.0 0.0;
             image.normal: "inset_bar_horiz_glow_inv_light.png";
@@ -402,14 +402,14 @@ group { "efl/progressbar/horizontal";
       program { name: "inverted-on";
          signal: "elm,state,inverted,on"; source: "elm";
          action:  STATE_SET "inv" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "barend";
          target: "light";
       }
       program { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "barend";
          target: "light";
       }
@@ -419,7 +419,7 @@ group { "efl/progressbar/horizontal";
             new a, Float:dx, Float:dy, Float:vl, st[20];
 
             get_drag(PART:"cur.progressbar", dx, dy);
-            get_state(PART:"bar_internal", st, 19, vl);
+            get_state(PART:"image_bar", st, 19, vl);
             if (!strcmp(st, "inv")) {
                a = round(((1.0 - dx) * 255) / 0.2);
                custom_state(PART:"light", "inv", 0.0);
@@ -504,7 +504,7 @@ group { "efl/progressbar/horizontal";
          target: "text.status";
       }
       program { name: "text-visible";
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -512,7 +512,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "text-hidden";
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -782,7 +782,7 @@ group { "efl/progressbar/vertical";
             image.border_scale_by: 0.25; image.border_scale: 1;
          }
       }
-      part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
+      part { name: "bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "inside";
             rel2.to: "inside";
@@ -819,7 +819,7 @@ group { "efl/progressbar/vertical";
             align: 0.5 1.0;
          }
       }
-      part { name: "bar_internal";
+      part { name: "image_bar";
          clip_to: "fract_clip";
          scale: 1;
          description { state: "default" 0.0;
@@ -875,10 +875,10 @@ group { "efl/progressbar/vertical";
             min: 24 64;
             max: 24 64;
             rel1.to_y: "insidep0";
-            rel1.to_x: "bar_internal";
+            rel1.to_x: "image_bar";
             rel1.relative: 0.0 0.0;
             rel2.to_y: "insidep1";
-            rel2.to_x: "bar_internal";
+            rel2.to_x: "image_bar";
             rel2.relative: 1.0 1.0;
             image.normal: "inset_bar_vert_glow_mid_base.png";
             align: 0.5 0.0;
@@ -945,11 +945,11 @@ group { "efl/progressbar/vertical";
          scale: 1;
          description { state: "default" 0.0;
             max: 11 36;
-            rel1.to_y: "bar_internal";
-            rel1.to_x: "bar_internal";
+            rel1.to_y: "image_bar";
+            rel1.to_x: "image_bar";
             rel1.relative: (26/96) 0.0;
             rel2.to_y: "barend";
-            rel2.to_x: "bar_internal";
+            rel2.to_x: "image_bar";
             rel2.relative: ((26+44)/96) 0.2;
             align: 0.0 1.0;
             image.normal: "inset_bar_vert_glow_light.png";
@@ -960,10 +960,10 @@ group { "efl/progressbar/vertical";
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
             rel1.to_y: "barend";
-            rel1.to_x: "bar_internal";
+            rel1.to_x: "image_bar";
             rel1.relative: (26/96) 0.8;
-            rel2.to_y: "bar_internal";
-            rel2.to_x: "bar_internal";
+            rel2.to_y: "image_bar";
+            rel2.to_x: "image_bar";
             rel2.relative: ((26+44)/96) 1.0;
             align: 0.0 0.0;
             image.normal: "inset_bar_vert_glow_inv_light.png";
@@ -975,14 +975,14 @@ group { "efl/progressbar/vertical";
       program { name: "inverted-on";
          signal: "elm,state,inverted,on"; source: "elm";
          action:  STATE_SET "inv" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "barend";
          target: "light";
       }
       program { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "barend";
          target: "light";
       }
@@ -992,7 +992,7 @@ group { "efl/progressbar/vertical";
             new a, Float:dx, Float:dy, Float:vl, st[20];
 
             get_drag(PART:"cur.progressbar", dx, dy);
-            get_state(PART:"bar_internal", st, 19, vl);
+            get_state(PART:"image_bar", st, 19, vl);
             if (!strcmp(st, "inv")) {
                a = round(((1.0 - dy) * 255) / 0.2);
                custom_state(PART:"light", "inv", 0.0);
@@ -1077,7 +1077,7 @@ group { "efl/progressbar/vertical";
          target: "text.status";
       }
       program { name: "text-visible";
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -1085,7 +1085,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "text-hidden";
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -1136,7 +1136,7 @@ group { "efl/progressbar/horizontal:wheel";
    images.image: "knob_round_busy.png" COMP;
    images.image: "glow_round_corners.png" COMP;
    parts {
-      part { name: "elm.swallow.bar" ; type: SWALLOW; mouse_events: 0;
+      part { name: "bar" ; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             min: 0 0;
             max: 0 0;
@@ -1294,7 +1294,7 @@ group { "efl/progressbar/horizontal:double";
       program { name: "inverted-on";
          signal: "elm,state,inverted,on"; source: "elm";
          action:  STATE_SET "inv" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "bar1";
          target: "barend";
          target: "barend1";
@@ -1304,7 +1304,7 @@ group { "efl/progressbar/horizontal:double";
        { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "bar1";
          target: "barend";
          target: "barend1";
@@ -1383,7 +1383,7 @@ group { "efl/progressbar/vertical:double";
       program { name: "inverted-on";
          signal: "elm,state,inverted,on"; source: "elm";
          action:  STATE_SET "inv" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "barend";
          target: "light";
          target: "bar1";
@@ -1392,7 +1392,7 @@ group { "efl/progressbar/vertical:double";
       program { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
-         target: "bar_internal";
+         target: "image_bar";
          target: "barend";
          target: "light";
          target: "bar1";

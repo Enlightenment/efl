@@ -125,17 +125,17 @@ group { "efl/popup/backwall";
          desc { "default";
             color: 0 0 0 64;
          }
-         desc { "show_image";
+         desc { "content_visible";
             inherit: "default";
             hid;
          }
       }
-      swallow { "image";
+      swallow { "content";
          desc { "default";
             rel.to: "base";
             hid;
          }
-         desc { "show_image";
+         desc { "content_visible";
             inherit: "default";
             vis;
          }
@@ -150,16 +150,16 @@ group { "efl/popup/backwall";
 
    programs {
       program {
-         signal: "elm,state,image,visible"; source: "elm";
-         action: STATE_SET "show_image" 0.0;
+         signal: "elm,state,content,set"; source: "elm";
+         action: STATE_SET "content_visible" 0.0;
          target: "base";
-         target: "image";
+         target: "content";
       }
       program {
-         signal: "elm,state,image,hidden"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "image";
+         target: "content";
       }
       program {
          signal: "mouse,clicked,1"; source: "block";

@@ -1480,19 +1480,19 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
 
    if (elm_widget_is_legacy(sd->obj))
      {
-       edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
-                                   &ox, &oy, &ow, &oh);
-       edje_object_part_geometry_get(sd->frame_obj, "elm.swallow.client",
-                                 &wdata->content.x, &wdata->content.y,
-                                 &wdata->content.w, &wdata->content.h);
+        edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                      &ox, &oy, &ow, &oh);
+        edje_object_part_geometry_get(sd->frame_obj, "elm.swallow.client",
+                                      &wdata->content.x, &wdata->content.y,
+                                      &wdata->content.w, &wdata->content.h);
      }
    else
      {
-       edje_object_part_geometry_get(sd->frame_obj, "spacer.opaque",
-                                   &ox, &oy, &ow, &oh);
-       edje_object_part_geometry_get(sd->frame_obj, "client",
-                                 &wdata->content.x, &wdata->content.y,
-                                 &wdata->content.w, &wdata->content.h);
+        edje_object_part_geometry_get(sd->frame_obj, "spacer.opaque",
+                                      &ox, &oy, &ow, &oh);
+        edje_object_part_geometry_get(sd->frame_obj, "client",
+                                      &wdata->content.x, &wdata->content.y,
+                                      &wdata->content.w, &wdata->content.h);
      }
 
    if (!alpha)
@@ -3995,19 +3995,19 @@ _resize_info_get(Evas_Object *obj, int rotation, Efl_Ui_Win_Move_Resize_Mode mod
 
    if (elm_widget_is_legacy(obj))
      {
-       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos_legacy); k++)
-         {
+        for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos_legacy); k++)
+          {
              if (_resize_infos_legacy[k].mode == mode)
                return &_resize_infos_legacy[k];
-         }
+          }
      }
    else
      {
-       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos); k++)
-         {
+        for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos); k++)
+          {
              if (_resize_infos[k].mode == mode)
                return &_resize_infos[k];
-         }
+          }
      }
 
    return NULL;

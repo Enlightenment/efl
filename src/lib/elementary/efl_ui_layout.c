@@ -171,14 +171,13 @@ _signals_emit(Eo *obj,
      {
         snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "visible" : "hidden");
-        efl_layout_signal_emit(obj, buf, "elm");
      }
    else
      {
-        snprintf(buf, sizeof(buf), "state,%s,%s", type,
+        snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "set" : "unset");
-        efl_layout_signal_emit(obj, buf, "efl");
      }
+    efl_layout_signal_emit(obj, buf, "elm");
 }
 
 static inline void
@@ -205,7 +204,8 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
           }
      }
 
-   if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
+   if (elm_widget_is_legacy(sd->obj) &&
+       !strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
      type = sub_d->part + strlen("elm.swallow.");
    else
      type = sub_d->part;
@@ -231,12 +231,7 @@ _text_signal_emit(Efl_Ui_Layout_Data *sd,
      {
         if (elm_widget_is_legacy(sd->obj) &&
             !((!strcmp("elm.text", sub_d->part)) ||
-            (!strncmp("elm.text.", sub_d->part, 9))))
-          {
-             return;
-          }
-        else if(!((!strcmp("text", sub_d->part)) ||
-                (!strncmp("text.", sub_d->part, 5))))
+              (!strncmp("elm.text.", sub_d->part, 9))))
           {
              return;
           }
@@ -526,10 +521,13 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj,
 
    if (!elm_widget_is_legacy(obj))
      {
-        if (is_text)
-          *part = efl_ui_default_text;
-        else
-          *part = efl_ui_default_content;
+        if (!*part)
+          {
+             if (is_text)
+               *part = efl_ui_default_text;
+             else
+               *part = efl_ui_default_content;
+          }
         return EINA_TRUE;
      }
 

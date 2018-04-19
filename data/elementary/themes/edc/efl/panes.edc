@@ -112,7 +112,7 @@ group { name: "efl/panes/vertical";
             rel2.to: "bar";
          }
       }
-      part { name: "rect.bar"; type: RECT;
+      part { name: "rect_bar"; type: RECT;
          dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEMIN PANEWID;
@@ -129,27 +129,27 @@ group { name: "efl/panes/vertical";
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect_bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect_bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect_bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect_bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
    }
 }
@@ -251,7 +251,7 @@ group { name: "efl/panes/horizontal";
             rel2.to: "bar";
          }
       }
-      part { name: "rect.bar"; type: RECT;
+      part { name: "rect_bar"; type: RECT;
          dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEWID PANEMIN;
@@ -268,27 +268,27 @@ group { name: "efl/panes/horizontal";
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect_bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect_bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect_bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect_bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
    }
 }
@@ -377,7 +377,7 @@ group { name: "efl/panes/vertical:flush";
             rel2.to: "bar";
          }
       }
-      part { name: "rect.bar"; type: RECT;
+      part { name: "rect_bar"; type: RECT;
          dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEMIN PANEWID;
@@ -451,8 +451,8 @@ group { name: "efl/panes/vertical:flush";
       part { name: "bar1"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "rect.bar";
-            rel2.to: "rect.bar";
+            rel1.to: "rect_bar";
+            rel2.to: "rect_bar";
             rel2.relative: 0.5 1.0;
             color: 0 0 0 0;
          }
@@ -460,35 +460,35 @@ group { name: "efl/panes/vertical:flush";
       part { name: "bar2"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "rect.bar";
+            rel1.to: "rect_bar";
             rel1.relative: 0.5 0.0;
-            rel2.to: "rect.bar";
+            rel2.to: "rect_bar";
             color: 0 0 0 0;
          }
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect_bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect_bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect_bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect_bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
       program {
          signal: "mouse,in"; source: "bar1";
@@ -605,7 +605,7 @@ group { name: "efl/panes/horizontal:flush";
             rel2.to: "bar";
          }
       }
-      part { name: "rect.bar"; type: RECT;
+      part { name: "rect_bar"; type: RECT;
          dragable.events: "bar";
          description { state: "default" 0.0;
             min: PANEWID PANEMIN;
@@ -679,8 +679,8 @@ group { name: "efl/panes/horizontal:flush";
       part { name: "bar1"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "rect.bar";
-            rel2.to: "rect.bar";
+            rel1.to: "rect_bar";
+            rel2.to: "rect_bar";
             rel2.relative: 1.0 0.5;
             color: 0 0 0 0;
          }
@@ -688,9 +688,9 @@ group { name: "efl/panes/horizontal:flush";
       part { name: "bar2"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "rect.bar";
+            rel1.to: "rect_bar";
             rel1.relative: 0.0 0.5;
-            rel2.to: "rect.bar";
+            rel2.to: "rect_bar";
             color: 0 0 0 0;
          }
       }
@@ -724,27 +724,27 @@ group { name: "efl/panes/horizontal:flush";
          target: "glow2a";
          target: "glow2b";
       }
-      program {signal: "mouse,down,1"; source: "rect.bar"; // for "press" smart callback
+      program {signal: "mouse,down,1"; source: "rect_bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
-      program { signal: "mouse,up,1"; source: "rect.bar"; // for "unpress" smart callback
+      program { signal: "mouse,up,1"; source: "rect_bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
       }
-      program { signal: "mouse,clicked,1"; source: "rect.bar"; // for "clicked" smart callback
+      program { signal: "mouse,clicked,1"; source: "rect_bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program { signal: "mouse,down,1,double"; source: "rect.bar"; // for "clicked,double" smart callback
+      program { signal: "mouse,down,1,double"; source: "rect_bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,fixed"; source: "elm";
          action: STATE_SET "disabled" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
       program { // for elm_panes_fixed_set()
          signal: "elm,panes,unfixed"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "rect.bar";
+         target: "rect_bar";
       }
    }
 }

@@ -1366,10 +1366,20 @@ _efl_ui_image_zoomable_bar_read_and_update(Eo *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    double vx, vy;
 
-   edje_object_part_drag_value_get
-      (wd->resize_obj, "elm.dragable.vbar", NULL, &vy);
-   edje_object_part_drag_value_get
-      (wd->resize_obj, "elm.dragable.hbar", &vx, NULL);
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_part_drag_value_get
+           (wd->resize_obj, "elm.dragable.vbar", NULL, &vy);
+        edje_object_part_drag_value_get
+           (wd->resize_obj, "elm.dragable.hbar", &vx, NULL);
+     }
+   else
+     {
+        edje_object_part_drag_value_get
+           (wd->resize_obj, "dragable.vbar", NULL, &vy);
+        edje_object_part_drag_value_get
+           (wd->resize_obj, "dragable.hbar", &vx, NULL);
+     }
    efl_ui_scrollbar_bar_position_set(sd->smanager, vx, vy);
 }
 
@@ -1496,8 +1506,17 @@ _efl_ui_image_zoomable_bar_size_changed_cb(void *data, const Efl_Event *event EI
    double width = 0.0, height = 0.0;
 
    efl_ui_scrollbar_bar_size_get(sd->smanager, &width, &height);
-   edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.hbar", width, 1.0);
-   edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.vbar", 1.0, height);
+
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.hbar", width, 1.0);
+        edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.vbar", 1.0, height);
+     }
+   else
+     {
+        edje_object_part_drag_size_set(wd->resize_obj, "dragable.hbar", width, 1.0);
+        edje_object_part_drag_size_set(wd->resize_obj, "dragable.vbar", 1.0, height);
+     }
 }
 
 static void
@@ -1510,8 +1529,17 @@ _efl_ui_image_zoomable_bar_pos_changed_cb(void *data, const Efl_Event *event EIN
    double posx = 0.0, posy = 0.0;
 
    efl_ui_scrollbar_bar_position_get(sd->smanager, &posx, &posy);
-   edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.hbar", posx, 0.0);
-   edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.vbar", 0.0, posy);
+
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.hbar", posx, 0.0);
+        edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.vbar", 0.0, posy);
+     }
+   else
+     {
+        edje_object_part_drag_value_set(wd->resize_obj, "dragable.hbar", posx, 0.0);
+        edje_object_part_drag_value_set(wd->resize_obj, "dragable.vbar", 0.0, posy);
+     }
 }
 
 static void
@@ -1543,111 +1571,223 @@ _efl_ui_image_zoomable_bar_hide_cb(void *data, const Efl_Event *event)
 static void
 _efl_ui_image_zoomable_edje_object_attach(Eo *obj)
 {
-   efl_layout_signal_callback_add
-     (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag", "elm.dragable.vbar", _efl_ui_image_zoomable_vbar_drag_cb,
-     obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,set", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,start", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,stop", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,step", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,page", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "elm,vbar,press", "elm",
-     _efl_ui_image_zoomable_vbar_press_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "elm,vbar,unpress", "elm",
-     _efl_ui_image_zoomable_vbar_unpress_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag", "elm.dragable.hbar", _efl_ui_image_zoomable_hbar_drag_cb,
-     obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,set", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,start", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,stop", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,step", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "drag,page", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "elm,hbar,press", "elm",
-     _efl_ui_image_zoomable_hbar_press_cb, obj);
-   efl_layout_signal_callback_add
-     (obj, "elm,hbar,unpress", "elm",
-     _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        efl_layout_signal_callback_add
+           (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_vbar_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,set", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,start", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,stop", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,step", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,page", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,vbar,press", "elm",
+            _efl_ui_image_zoomable_vbar_press_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,vbar,unpress", "elm",
+            _efl_ui_image_zoomable_vbar_unpress_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_hbar_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,set", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,start", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,stop", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,step", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,page", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,hbar,press", "elm",
+            _efl_ui_image_zoomable_hbar_press_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,hbar,unpress", "elm",
+            _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+     }
+   else
+     {
+        efl_layout_signal_callback_add
+           (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag", "dragable.vbar", _efl_ui_image_zoomable_vbar_drag_cb,
+            obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,set", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,start", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,stop", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,step", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,page", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,vbar,press", "elm",
+            _efl_ui_image_zoomable_vbar_press_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,vbar,unpress", "elm",
+            _efl_ui_image_zoomable_vbar_unpress_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag", "dragable.hbar", _efl_ui_image_zoomable_hbar_drag_cb,
+            obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,set", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,start", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,stop", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,step", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "drag,page", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,hbar,press", "elm",
+            _efl_ui_image_zoomable_hbar_press_cb, obj);
+        efl_layout_signal_callback_add
+           (obj, "elm,hbar,unpress", "elm",
+            _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+     }
 }
 
 static void
 _efl_ui_image_zoomable_edje_object_detach(Evas_Object *obj)
 {
-   efl_layout_signal_callback_del
-     (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag", "elm.dragable.vbar", _efl_ui_image_zoomable_vbar_drag_cb,
-     obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,set", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,start", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,stop", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,step", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,page", "elm.dragable.vbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "elm,vbar,press", "elm",
-     _efl_ui_image_zoomable_vbar_press_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "elm,vbar,unpress", "elm",
-     _efl_ui_image_zoomable_vbar_unpress_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag", "elm.dragable.hbar", _efl_ui_image_zoomable_hbar_drag_cb,
-     obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,set", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,start", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,stop", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,step", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "drag,page", "elm.dragable.hbar",
-     _efl_ui_image_zoomable_edje_drag_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "elm,hbar,press", "elm",
-     _efl_ui_image_zoomable_hbar_press_cb, obj);
-   efl_layout_signal_callback_del
-     (obj, "elm,hbar,unpress", "elm",
-     _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        efl_layout_signal_callback_del
+           (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_vbar_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,set", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,start", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,stop", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,step", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,page", "elm.dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,vbar,press", "elm",
+            _efl_ui_image_zoomable_vbar_press_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,vbar,unpress", "elm",
+            _efl_ui_image_zoomable_vbar_unpress_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_hbar_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,set", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,start", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,stop", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,step", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,page", "elm.dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,hbar,press", "elm",
+            _efl_ui_image_zoomable_hbar_press_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,hbar,unpress", "elm",
+            _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+     }
+   else
+     {
+        efl_layout_signal_callback_del
+           (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag", "dragable.vbar", _efl_ui_image_zoomable_vbar_drag_cb,
+            obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,set", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,start", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,stop", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,step", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,page", "dragable.vbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,vbar,press", "elm",
+            _efl_ui_image_zoomable_vbar_press_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,vbar,unpress", "elm",
+            _efl_ui_image_zoomable_vbar_unpress_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag", "dragable.hbar", _efl_ui_image_zoomable_hbar_drag_cb,
+            obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,set", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,start", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,stop", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,step", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "drag,page", "dragable.hbar",
+            _efl_ui_image_zoomable_edje_drag_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,hbar,press", "elm",
+            _efl_ui_image_zoomable_hbar_press_cb, obj);
+        efl_layout_signal_callback_del
+           (obj, "elm,hbar,unpress", "elm",
+            _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+     }
 }
 
 EOLIAN static void
@@ -1678,7 +1818,10 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    priv->pan_obj = efl_add(MY_PAN_CLASS, obj);
 
    efl_ui_scroll_manager_pan_set(priv->smanager, priv->pan_obj);
-   edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
+   if (elm_widget_is_legacy(obj))
+     edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
+   else
+     edje_object_part_swallow(edje, "content", priv->pan_obj);
 
    pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    efl_data_ref(obj, MY_CLASS);

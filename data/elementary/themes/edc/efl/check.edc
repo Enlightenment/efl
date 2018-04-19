@@ -354,8 +354,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
                set_state(PART:"event2", "default", 0.0);
-               set_state(PART:"elm.ontext", "default", 0.0);
-               set_state(PART:"elm.offtext", "default", 0.0);
+               set_state(PART:"on", "default", 0.0);
+               set_state(PART:"off", "default", 0.0);
                set_state(PART:"onrect", "default", 0.0);
                set_state(PART:"offrect", "default", 0.0);
             } else {
@@ -366,8 +366,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
                set_state(PART:"event2", "disabled", 0.0);
-               set_state(PART:"elm.ontext", "disabled", 0.0);
-               set_state(PART:"elm.offtext", "disabled", 0.0);
+               set_state(PART:"on", "disabled", 0.0);
+               set_state(PART:"off", "disabled", 0.0);
                set_state(PART:"onrect", "disabled", 0.0);
                set_state(PART:"offrect", "disabled", 0.0);
             }
@@ -380,8 +380,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
                set_state(PART:"event2", "default", 0.0);
-               set_state(PART:"elm.ontext", "default", 0.0);
-               set_state(PART:"elm.offtext", "default", 0.0);
+               set_state(PART:"on", "default", 0.0);
+               set_state(PART:"off", "default", 0.0);
                set_state(PART:"onrect", "default", 0.0);
                set_state(PART:"offrect", "default", 0.0);
             } else {
@@ -392,8 +392,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
                set_state(PART:"event2", "disabled", 0.0);
-               set_state(PART:"elm.ontext", "disabled", 0.0);
-               set_state(PART:"elm.offtext", "disabled", 0.0);
+               set_state(PART:"on", "disabled", 0.0);
+               set_state(PART:"off", "disabled", 0.0);
                set_state(PART:"onrect", "disabled", 0.0);
                set_state(PART:"offrect", "disabled", 0.0);
             }
@@ -406,8 +406,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
                set_state(PART:"event2", "default", 0.0);
-               set_state(PART:"elm.ontext", "default", 0.0);
-               set_state(PART:"elm.offtext", "default", 0.0);
+               set_state(PART:"on", "default", 0.0);
+               set_state(PART:"off", "default", 0.0);
                set_state(PART:"onrect", "default", 0.0);
                set_state(PART:"offrect", "default", 0.0);
             } else {
@@ -418,8 +418,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
                set_state(PART:"event2", "disabled", 0.0);
-               set_state(PART:"elm.ontext", "disabled", 0.0);
-               set_state(PART:"elm.offtext", "disabled", 0.0);
+               set_state(PART:"on", "disabled", 0.0);
+               set_state(PART:"off", "disabled", 0.0);
                set_state(PART:"onrect", "disabled", 0.0);
                set_state(PART:"offrect", "disabled", 0.0);
             }
@@ -432,8 +432,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
                set_state(PART:"event2", "default", 0.0);
-               set_state(PART:"elm.ontext", "default", 0.0);
-               set_state(PART:"elm.offtext", "default", 0.0);
+               set_state(PART:"on", "default", 0.0);
+               set_state(PART:"off", "default", 0.0);
                set_state(PART:"onrect", "default", 0.0);
                set_state(PART:"offrect", "default", 0.0);
             } else {
@@ -444,8 +444,8 @@ group { "efl/check:toggle";
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
                set_state(PART:"event2", "disabled", 0.0);
-               set_state(PART:"elm.ontext", "disabled", 0.0);
-               set_state(PART:"elm.offtext", "disabled", 0.0);
+               set_state(PART:"on", "disabled", 0.0);
+               set_state(PART:"off", "disabled", 0.0);
                set_state(PART:"onrect", "disabled", 0.0);
                set_state(PART:"offrect", "disabled", 0.0);
             }
@@ -495,7 +495,7 @@ group { "efl/check:toggle";
             color: 64 64 64 255;
          }
       }
-      part { name: "elm.offtext"; type: TEXT; mouse_events:  0;
+      part { name: "off"; type: TEXT; mouse_events:  0;
          effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "tog_clip";
@@ -519,7 +519,7 @@ group { "efl/check:toggle";
             color3: 255 255 255 255;
          }
       }
-      part { name: "elm.ontext"; type: TEXT; mouse_events:  0;
+      part { name: "on"; type: TEXT; mouse_events:  0;
          effect: GLOW;
          scale: 1;
          clip_to: "tog_clip";
@@ -870,7 +870,7 @@ group { "efl/check:toggle";
          target: "glow_but";
       }
       program {
-         signal: "state,text,set"; source: "efl";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -878,7 +878,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "state,text,unset"; source: "efl";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -886,7 +886,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "state,content,set"; source: "efl";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -894,7 +894,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "state,content,unset"; source: "efl";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);

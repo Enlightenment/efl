@@ -375,13 +375,8 @@ _icon_signal_emit(Evas_Object *obj)
 
    edje = elm_widget_resize_object_get(obj);
    if (!edje) return;
-
-   if (elm_widget_is_legacy(obj))
-     snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-              elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-   else
-     snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-              elm_layout_content_get(obj, "content") ? "visible" : "hidden");
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(edje);

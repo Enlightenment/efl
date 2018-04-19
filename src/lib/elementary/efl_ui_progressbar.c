@@ -42,12 +42,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static Efl_Ui_Progress_Status *
 _progress_status_new(const char *part_name, double val)
 {
@@ -477,10 +471,21 @@ _progress_part_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *par
         WRN("min is greater than max.");
      }
 
-   if (!strcmp(part_name, "elm.cur.progressbar") || !strcmp(part_name, "cur.progressbar"))
+   if (elm_widget_is_legacy(obj))
      {
-        sd->val_min = min;
-        sd->val_max = max;
+        if (!strcmp(part_name, "elm.cur.progressbar"))
+          {
+             sd->val_min = min;
+             sd->val_max = max;
+          }
+     }
+   else
+     {
+        if (!strcmp(part_name, "cur.progressbar"))
+          {
+             sd->val_min = min;
+             sd->val_max = max;
+          }
      }
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
@@ -516,8 +521,16 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    if (val < min) val = min;
    if (val > max) val = max;
 
-   if (!strcmp(part_name, "elm.cur.progressbar") || !strcmp(part_name, "cur.progressbar"))
-     sd->val = val;
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!strcmp(part_name, "elm.cur.progressbar"))
+          sd->val = val;
+     }
+   else
+     {
+        if (!strcmp(part_name, "cur.progressbar"))
+          sd->val = val;
+     }
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
      {
@@ -711,15 +724,9 @@ _efl_ui_progressbar_part_efl_ui_range_range_min_max_get(const Eo *obj, void *_pd
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
-static const char * _efl_ui_progressbar_default_text_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
-{
-   if (elm_widget_is_legacy(obj))
-     return "elm.text";
-   else
-     return "text";
-}
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
+
 static const char * _efl_ui_progressbar_default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
 {
    if (elm_widget_is_legacy(obj))
@@ -727,17 +734,15 @@ static const char * _efl_ui_progressbar_default_content_part_get(const Eo *obj E
    else
      return "content";
 }
+
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_progressbar), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar), \
-   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_progressbar), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"

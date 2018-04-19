@@ -237,7 +237,7 @@ group { "efl/radio";
          target: "indicator";
       }
       program {
-         signal: "state,text,set"; source: "efl";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -245,7 +245,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "state,text,unset"; source: "efl";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -253,7 +253,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "state,content,set"; source: "efl";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -261,7 +261,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "state,content,unset"; source: "efl";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);

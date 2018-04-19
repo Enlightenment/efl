@@ -364,9 +364,10 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
 
    if (eina_streq(pd->part, "backwall"))
      {
-        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "image");
+        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "content");
         if (prev_obj)
           {
+             edje_object_signal_emit(sd->backwall, "elm,state,content,unset", "elm");
              edje_object_part_unswallow(sd->backwall, prev_obj);
              efl_del(prev_obj);
           }
@@ -375,12 +376,11 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
         Eina_Bool ret = elm_image_file_set(image, file, group);
         if (!ret)
           {
-             edje_object_signal_emit(sd->backwall, "elm,state,image,hidden", "elm");
              efl_del(image);
              return EINA_FALSE;
           }
-        edje_object_part_swallow(sd->backwall, "image", image);
-        edje_object_signal_emit(sd->backwall, "elm,state,image,visible", "elm");
+        edje_object_part_swallow(sd->backwall, "content", image);
+        edje_object_signal_emit(sd->backwall, "elm,state,content,set", "elm");
 
         return EINA_TRUE;
      }

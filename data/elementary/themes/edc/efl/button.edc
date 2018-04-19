@@ -336,7 +336,7 @@ group { name: "efl/button";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name: "button_text_visible";
-         signal: "state,text,set"; source: "efl";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -344,7 +344,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_text_hidden";
-         signal: "state,text,unset"; source: "efl";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -352,7 +352,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_icon_visible";
-         signal: "state,content,set"; source: "efl";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -360,7 +360,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_icon_hidden";
-         signal: "state,content,unset"; source: "efl";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -718,7 +718,7 @@ group { name: "efl/button:anchor";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name: "button_text_visible";
-         signal: "state,text,set"; source: "efl";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -726,7 +726,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_text_hidden";
-         signal: "state,text,unset"; source: "efl";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -734,7 +734,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_icon_visible";
-         signal: "state,content,set"; source: "efl";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -742,7 +742,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_icon_hidden";
-         signal: "state,content,unset"; source: "efl";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
