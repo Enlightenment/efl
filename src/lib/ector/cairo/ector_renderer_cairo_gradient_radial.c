@@ -60,7 +60,7 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 {
    Ector_Renderer_Data *pd = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
    cairo_pattern_t *pat;
-   cairo_matrix_t *pd_m;
+   cairo_matrix_t pd_m;
 
    pat = cairo_pattern_create_radial(grd->focal.x, grd->focal.y, 0,
                                      grd->radial.x, grd->radial.y, grd->radius);
@@ -70,14 +70,13 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
 
-   pd_m = malloc(sizeof (cairo_matrix_t));
    if (pd->m)
      {
-        cairo_matrix_init(pd_m,
+        cairo_matrix_init(&pd_m,
                           pd->m->xx, pd->m->yx,
                           pd->m->xy, pd->m->yy,
                           pd->m->xz, pd->m->yz);
-        cairo_pattern_set_matrix(pat, pd_m);
+        cairo_pattern_set_matrix(pat, &pd_m);
      }
 
    return pat;
