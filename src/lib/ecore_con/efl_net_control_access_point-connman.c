@@ -676,7 +676,6 @@ _efl_net_control_access_point_configuration_proxy_set(Eo *o, Efl_Net_Control_Acc
 
    switch (method)
      {
-      case EFL_NET_CONTROL_ACCESS_POINT_PROXY_METHOD_UNSET: goto error_send;
       case EFL_NET_CONTROL_ACCESS_POINT_PROXY_METHOD_OFF:
          _append_dict_entry(array, "Method", "s", "direct");
          break;
