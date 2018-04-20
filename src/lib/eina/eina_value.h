@@ -383,6 +383,14 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_VALUE;
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR;
 
 /**
+ * @var EINA_VALUE_TYPE_UCHAR
+ * manages unsigned char type.
+ *
+ * @since 1.21
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BOOL;
+
+/**
  * @var EINA_VALUE_TYPE_USHORT
  * manages unsigned short type.
  *

@@ -330,7 +330,7 @@ eina_value_bool_new(Eina_Bool b)
 {
    Eina_Value *v;
 
-   v = eina_value_new(EINA_VALUE_TYPE_UCHAR);
+   v = eina_value_new(EINA_VALUE_TYPE_BOOL);
    if (v) eina_value_set(v, b);
    return v;
 }
@@ -602,7 +602,7 @@ eina_value_bool_init(Eina_Bool b)
 {
    Eina_Value v = EINA_VALUE_EMPTY;
 
-   if (eina_value_setup(&v, EINA_VALUE_TYPE_UCHAR))
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_BOOL))
      eina_value_set(&v, b);
    return v;
 }
@@ -900,7 +900,7 @@ eina_value_bool_get(const Eina_Value *v, Eina_Bool *b)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(b, EINA_FALSE);
    *b = EINA_FALSE;
-   if (v && v->type == EINA_VALUE_TYPE_UCHAR)
+   if (v && v->type == EINA_VALUE_TYPE_BOOL)
      return eina_value_get(v, b);
    return EINA_FALSE;
 }
