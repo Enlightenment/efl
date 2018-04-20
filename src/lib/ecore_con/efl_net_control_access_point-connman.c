@@ -518,7 +518,6 @@ _efl_net_control_access_point_configuration_ipv4_set(Eo *o, Efl_Net_Control_Acce
 
    switch (method)
      {
-      case EFL_NET_CONTROL_ACCESS_POINT_IPV4_METHOD_UNSET: goto error_send;
       case EFL_NET_CONTROL_ACCESS_POINT_IPV4_METHOD_OFF:
          _append_dict_entry(array, "Method", "s", "off");
          break;
@@ -533,6 +532,8 @@ _efl_net_control_access_point_configuration_ipv4_set(Eo *o, Efl_Net_Control_Acce
            _append_dict_entry(array, "Netmask", "s", netmask);
          if (gateway)
            _append_dict_entry(array, "Gateway", "s", gateway);
+         break;
+      default:
          break;
      }
 
@@ -594,9 +595,6 @@ _efl_net_control_access_point_configuration_ipv6_set(Eo *o, Efl_Net_Control_Acce
 
    switch (method)
      {
-      case EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_UNSET: goto error_send;
-      case EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_FIXED: goto error_send;
-      case EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_TUNNEL6TO4: goto error_send;
       case EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_OFF:
          _append_dict_entry(array, "Method", "s", "off");
          break;
@@ -622,6 +620,8 @@ _efl_net_control_access_point_configuration_ipv6_set(Eo *o, Efl_Net_Control_Acce
       case EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_TEMPORARY:
          _append_dict_entry(array, "Method", "s", "auto");
          _append_dict_entry(array, "Privacy", "s", "preferred");
+         break;
+      default:
          break;
      }
 
