@@ -252,6 +252,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    if (timing)
      tcstart = tstart = _timing_time_get();
 #endif
+   fflush(stdout);
    s = suite_create(suite_name);
    sr = srunner_create(s);
    do_fork = _efl_test_fork_has(sr);
