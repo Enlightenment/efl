@@ -315,7 +315,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    Dnd_Drag_Accept *accept = calloc(1, sizeof(Dnd_Drag_Accept));
    Dnd_Drag_Done *done = calloc(1, sizeof(Dnd_Drag_Done));
    Dnd_Icon_Create *ic = calloc(1, sizeof(Dnd_Icon_Create));
-   if (!pos || !accept || !done || !ic) return EINA_FALSE;
+   if (!pos || !accept || !done || !ic) goto on_error;
 
    pos->pos_data = drag_pos_data;
    pos->pos_cb = drag_pos_cb;
@@ -344,6 +344,14 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                                     ic, _dnd_icon_create_cb, NULL, seatid);
 
    return EINA_TRUE;
+
+on_error:
+   if (pos) free(pos);
+   if (accept) free(accept);
+   if (done) free(done);
+   if (ic) free(ic);
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
