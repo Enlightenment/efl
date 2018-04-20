@@ -691,6 +691,8 @@ _efl_net_control_access_point_configuration_proxy_set(Eo *o, Efl_Net_Control_Acc
          if (excludes)
            _append_dict_entry_string_array(array, "Excludes", excludes);
          break;
+      default:
+         break;
      }
 
    eldbus_message_iter_container_close(var, array);
