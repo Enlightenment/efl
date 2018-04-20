@@ -3744,6 +3744,7 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
         if (!pd->drop_list)
           {
              free(dropable);
+             free(df);
              return EINA_FALSE;
           }
         dropable->obj = target_obj;
