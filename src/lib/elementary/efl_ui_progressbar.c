@@ -841,17 +841,16 @@ elm_progressbar_part_value_get(const Evas_Object *obj, const char *part)
 EAPI Eina_Bool
 elm_progressbar_horizontal_get(const Evas_Object *obj)
 {
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
-   return _is_horizontal(dir);
+   return _is_horizontal(sd->dir);
 }
 
 EAPI void
 elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    Efl_Ui_Dir dir;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
 
    dir = _direction_get(_is_horizontal(sd->dir), inverted);
 
@@ -861,17 +860,16 @@ elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 EAPI Eina_Bool
 elm_progressbar_inverted_get(const Evas_Object *obj)
 {
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
-   return _is_inverted(dir);
+   return _is_inverted(sd->dir);
 }
 
 EAPI void
 elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Efl_Ui_Dir dir;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
 
    dir = _direction_get(horizontal, _is_inverted(sd->dir));
 
