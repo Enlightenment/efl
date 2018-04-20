@@ -7,7 +7,7 @@ class Efl.Ui.Navigation_Bar (Efl.Ui.Layout.Object, Efl.Content, Efl.Text, Efl.Ui
      content in the stack.
    ]]
    parts {
-      back_button: Efl.Ui.Navigation_Bar.Part_Back_Button;
+      back_button: Efl.Ui.Navigation_Bar_Part_Back_Button;
          [[Back button to navigate to the previous content in the stack.
 
            The back button works only if the Navigation_Bar widget is contained
