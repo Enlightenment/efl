@@ -246,9 +246,46 @@ EFL_START_TEST(elm_atspi_children_events_del2)
 }
 EFL_END_TEST
 
+static int it_del = 0;
+
+static void
+_gl_destroy()
+{
+   ck_assert_int_eq(it_del, 2);
+}
+
+static void
+_it_destroy()
+{
+   it_del++;
+}
+
+static void
+_it_del()
+{
+   it_del = 1;
+}
+
+EFL_START_TEST(elm_genlist_item_destroy)
+{
+   Elm_Object_Item *git;
+
+   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+
+   genlist = elm_genlist_add(win);
+   efl_event_callback_add(genlist, EFL_EVENT_DESTRUCT, _gl_destroy, NULL);
+
+   git = elm_genlist_item_append(genlist, &itc, NULL, NULL, 0, NULL, NULL);
+   efl_event_callback_add(git, EFL_EVENT_DEL, _it_del, NULL);
+   efl_event_callback_add(git, EFL_EVENT_DESTRUCT, _it_destroy, NULL);
+
+}
+EFL_END_TEST
+
 void elm_test_genlist(TCase *tc)
 {
    tcase_add_test(tc, elm_genlist_legacy_type_check);
+   tcase_add_test(tc, elm_genlist_item_destroy);
    tcase_add_test(tc, elm_genlist_group);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_atspi_children_get1);
