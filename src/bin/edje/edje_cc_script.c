@@ -89,6 +89,9 @@ code_parse_internal(Code *code)
                   if ((tmp->type == TOKEN_TYPE_COMMA) ||
                       (tmp->type == TOKEN_TYPE_SEMICOLON))
                     {
+                       if (token->str) free(token->str);
+                       free(token);
+
                        token = tmp;
                        break;
                     }
