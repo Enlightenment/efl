@@ -60,7 +60,9 @@ inline bool is_struct_blacklisted(std::string const& full_name)
        || full_name == "Eina.Binbuf"
        || full_name == "Eina.Strbuf"
        || full_name == "Eina.Slice"
-       || full_name == "Eina.Rw_Slice";
+       || full_name == "Eina.Rw_Slice"
+       || full_name == "Eina.Promise"
+       || full_name == "Eina.Future";
 }
 
 inline bool is_struct_blacklisted(attributes::struct_def const& struct_)

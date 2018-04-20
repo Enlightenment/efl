@@ -19,6 +19,7 @@ public struct Error : IComparable<Error>
     public static Error NO_ERROR = new Error(0);
     public static Error EPERM = new Error(1);
     public static Error ENOENT = new Error(2);
+    public static Error ECANCELED = new Error(125);
 
     public Error(int value) { code = value; }
     static public implicit operator Error(int val)

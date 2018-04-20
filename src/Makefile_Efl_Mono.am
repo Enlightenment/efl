@@ -22,6 +22,7 @@ efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_stringshare.cs \
 	bindings/mono/eina_mono/eina_error.cs \
 	bindings/mono/eina_mono/eina_value.cs \
+	bindings/mono/eina_mono/eina_promises.cs \
 	bindings/mono/eina_mono/eina_strbuf.cs
 
 efl_eldbus_mono_files = \
@@ -439,6 +440,7 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/FunctionPointers.cs \
      tests/efl_mono/FunctionPointerMarshalling.cs \
      tests/efl_mono/Parts.cs \
+     tests/efl_mono/Promises.cs \
      tests/efl_mono/Strbuf.cs \
      tests/efl_mono/Strings.cs \
      tests/efl_mono/Structs.cs \
