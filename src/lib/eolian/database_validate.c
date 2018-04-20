@@ -317,9 +317,9 @@ _validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
 {
    Eolian_Value val;
    if (tp)
-     val = database_expr_eval_type(expr->base.unit, expr, tp);
+     val = database_expr_eval_type(expr->base.unit, expr, tp, NULL, NULL);
    else
-     val = database_expr_eval(expr->base.unit, expr, msk);
+     val = database_expr_eval(expr->base.unit, expr, msk, NULL, NULL);
 
    if (val.type == EOLIAN_EXPR_UNKNOWN)
      return EINA_FALSE;

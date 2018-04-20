@@ -410,8 +410,10 @@ Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *t
 
 /* expressions */
 
-Eolian_Value database_expr_eval(const Eolian_Unit *unit, Eolian_Expression *expr, Eolian_Expression_Mask mask);
-Eolian_Value database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr, const Eolian_Type *type);
+typedef void (*Expr_Obj_Cb)(const Eolian_Object *obj, void *data);
+
+Eolian_Value database_expr_eval(const Eolian_Unit *unit, Eolian_Expression *expr, Eolian_Expression_Mask mask, Expr_Obj_Cb cb, void *data);
+Eolian_Value database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr, const Eolian_Type *type, Expr_Obj_Cb cb, void *data);
 void database_expr_del(Eolian_Expression *expr);
 void database_expr_print(Eolian_Expression *expr);
 
