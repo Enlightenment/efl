@@ -115,13 +115,20 @@ _elm_multibuttonentry_efl_ui_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Da
      {
         ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
         if (VIEW(item))
-          if (!elm_widget_element_update(obj, VIEW(item), PART_NAME_BUTTON))
+          if (!elm_layout_theme_set(VIEW(item), "multibuttonentry",
+                                    PART_NAME_BUTTON, elm_widget_style_get(obj)))
             CRI("Failed to set layout!");
      }
 
-   elm_widget_element_update(obj, sd->label, PART_NAME_LABEL);
-   elm_widget_element_update(obj, sd->end, PART_NAME_CLOSED_BUTTON);
-   elm_widget_element_update(obj, sd->guide_text, PART_NAME_GUIDE_TEXT);
+   elm_widget_theme_object_set
+      (obj, sd->label, "multibuttonentry", PART_NAME_LABEL,
+       elm_widget_style_get(obj));
+   elm_widget_theme_object_set
+      (obj, sd->end, "multibuttonentry", PART_NAME_CLOSED_BUTTON,
+       elm_widget_style_get(obj));
+   elm_widget_theme_object_set
+      (obj,sd->guide_text, "multibuttonentry", PART_NAME_GUIDE_TEXT,
+       elm_widget_style_get(obj));
 
    elm_layout_sizing_eval(obj);
 
@@ -748,13 +755,14 @@ _item_new(Elm_Multibuttonentry_Data *sd,
 
    efl_access_type_set(VIEW(item), EFL_ACCESS_TYPE_DISABLED);
 
-   if (!elm_widget_element_update(obj, VIEW(item), PART_NAME_BUTTON))
+   if (!elm_layout_theme_set(VIEW(item), "multibuttonentry", PART_NAME_BUTTON,
+                             elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
    elm_object_part_text_set(VIEW(item), "elm.btn.text", str);
 
    //entry is cleared when text is made to button
-   efl_text_set(sd->entry, "");
+   elm_object_text_set(sd->entry, "");
 
    elm_layout_signal_callback_add
      (VIEW(item), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
@@ -1055,7 +1063,7 @@ _entry_focus_changed_cb(void *data, const Efl_Event *event)
      {
         const char *str;
 
-        str = efl_text_get(sd->entry);
+        str = elm_object_text_get(sd->entry);
         if (str && str[0])
           _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
      }
@@ -1228,7 +1236,9 @@ _guide_text_set(Evas_Object *obj,
 
    if (sd->guide_text)
      {
-        elm_widget_element_update(obj, sd->guide_text, PART_NAME_GUIDE_TEXT);
+        elm_widget_theme_object_set(obj, sd->guide_text, "multibuttonentry",
+                                    PART_NAME_GUIDE_TEXT,
+                                    elm_widget_style_get(obj));
         evas_object_size_hint_weight_set
           (sd->guide_text, 0.0, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set
@@ -1425,7 +1435,9 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 
    sd->label = edje_object_add(evas_object_evas_get(obj));
    if (!sd->label) return;
-   elm_widget_element_update(obj, sd->label, PART_NAME_LABEL);
+   elm_widget_theme_object_set
+      (obj, sd->label, "multibuttonentry", PART_NAME_LABEL,
+       elm_widget_style_get(obj));
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -1451,7 +1463,9 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 
         sd->end = edje_object_add(evas_object_evas_get(obj));
         if (!sd->end) return;
-        elm_widget_element_update(obj, sd->end, PART_NAME_CLOSED_BUTTON);
+        elm_widget_theme_object_set
+           (obj, sd->end, "multibuttonentry", PART_NAME_CLOSED_BUTTON,
+            elm_widget_style_get(obj));
 
         edje_object_size_min_calc(sd->end, &button_min_width, &button_min_height);
         elm_coords_finger_size_adjust(1, &button_min_width, 1, &button_min_height);
@@ -1472,7 +1486,7 @@ _elm_multibuttonentry_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSE
         if (label) _guide_text_set(obj, label);
      }
    else
-     efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
+     elm_object_part_text_set(obj, part, label);
 }
 
 EOLIAN static const char*
@@ -1489,7 +1503,7 @@ _elm_multibuttonentry_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd, const cha
         text = sd->guide_text_str;
      }
    else
-     text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
+     text = elm_object_part_text_get(obj, part);
 
    return text;
 }
@@ -1667,6 +1681,7 @@ EOLIAN static Eo *
 _elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
