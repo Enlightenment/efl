@@ -1899,7 +1899,6 @@ eng_image_data_slice_add(void *engdata, void *image,
              for (int y = 0; y < (h / 2); y++)
                cs_data[h + (h / 2) + y] = slice->bytes + (y * stride);
           }
-        else goto fail;
         evas_common_image_colorspace_dirty(im);
         break;
 
