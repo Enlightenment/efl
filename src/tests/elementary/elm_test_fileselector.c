@@ -46,6 +46,8 @@ _ready_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED
 {
     Eina_Bool *ret = data;
     *ret = EINA_TRUE;
+
+    ecore_main_loop_quit();
 }
 
 EFL_START_TEST (elm_fileselector_selected)
