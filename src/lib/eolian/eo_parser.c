@@ -2073,7 +2073,9 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         parse_class(ls, EOLIAN_CLASS_INTERFACE);
         goto found_class;
       case KW_import:
+      case KW_parse:
         {
+           Eina_Bool isdep = (ls->t.kw == KW_import);
            Eina_Strbuf *buf = eina_strbuf_new();
            eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
            char errbuf[PATH_MAX];
@@ -2093,7 +2095,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                      eo_lexer_syntax_error(ls, errbuf);
                   }
              }
-           database_defer(ls->state, eina_strbuf_string_get(buf), EINA_TRUE);
+           database_defer(ls->state, eina_strbuf_string_get(buf), isdep);
            eo_lexer_dtor_pop(ls);
            eo_lexer_get(ls);
            check_next(ls, ';');
