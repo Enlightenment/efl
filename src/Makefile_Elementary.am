@@ -422,6 +422,7 @@ includesub_HEADERS = \
 	lib/elementary/elc_hoversel.h \
 	lib/elementary/elc_hoversel_legacy.h \
 	lib/elementary/elc_multibuttonentry.h \
+	lib/elementary/elc_multibuttonentry_eo.h \
 	lib/elementary/elc_multibuttonentry_legacy.h \
 	lib/elementary/elc_multibuttonentry_common.h \
 	lib/elementary/elc_naviframe.h \
@@ -533,6 +534,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_menu.h \
 	lib/elementary/elm_menu_legacy.h \
 	lib/elementary/elm_mirroring.h \
+	lib/elementary/elm_multibuttonentry.eo.h \
 	lib/elementary/elm_need.h \
 	lib/elementary/elm_notify.h \
 	lib/elementary/elm_notify_common.h \
