@@ -731,6 +731,7 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
 
 /* DO NOT USE THIS this is only for performance optimization! */
 void                 _elm_widget_full_eval(Eo *obj);
+void                 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *pd);
 
 EOAPI void			 efl_page_transition_page_size_set(Eo *obj, Eina_Size2D sz);
 EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);

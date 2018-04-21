@@ -345,6 +345,32 @@ _tree_unfocusable(Eo *obj)
 }
 
 static Eina_Bool
+_tree_custom_chain_missing(Eo *obj)
+{
+   Efl_Ui_Widget *wid = obj;
+
+   while (elm_widget_parent_get(wid))
+     {
+        Efl_Ui_Widget *parent = elm_widget_parent_get(wid);
+        ELM_WIDGET_DATA_GET(parent, parent_pd);
+        Eina_List *lst = parent_pd->legacy_focus.custom_chain;
+
+        if (lst)
+          {
+             if (!eina_list_data_find(lst, wid))
+               {
+                  WRN("Widget %p disabled due to custom chain of %p", wid, parent);
+                  return EINA_TRUE;
+               }
+          }
+
+        wid = parent;
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _tree_disabled(Eo *obj)
 {
    Efl_Ui_Widget *wid = obj;
@@ -467,6 +493,7 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
         (!pd->parent_obj) ||
         (_tree_unfocusable(obj)) ||
         (_tree_disabled(obj)) ||
+        (_tree_custom_chain_missing(obj)) ||
         (!evas_object_visible_get(obj)))
       return;
 
@@ -896,8 +923,8 @@ _efl_ui_widget_efl_gfx_entity_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Dat
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
-static void
-_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
+void
+_elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    Eina_List *l;
    Eo *child;
@@ -911,7 +938,7 @@ _full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
         if (!efl_isa(child, EFL_UI_WIDGET_CLASS)) continue;
 
         sd_child = efl_data_scope_get(child, EFL_UI_WIDGET_CLASS);
-        _full_eval_children(child, sd_child);
+        _elm_widget_full_eval_children(child, sd_child);
      }
 }
 
@@ -923,13 +950,13 @@ _efl_ui_widget_efl_gfx_entity_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      {
-        _full_eval_children(obj, pd);
+        _elm_widget_full_eval_children(obj, pd);
         return;
      }
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   _full_eval_children(obj, pd);
+   _elm_widget_full_eval_children(obj, pd);
 
 
    it = evas_object_smart_iterator_new(obj);
@@ -1831,7 +1858,7 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
    _elm_widget_focus_tree_unfocusable_handle(obj);
 
    //focus state eval on all children
-   _full_eval_children(obj, sd);
+   _elm_widget_full_eval_children(obj, sd);
 }
 
 /**
@@ -2506,7 +2533,7 @@ _efl_ui_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabl
    elm_widget_disabled_internal(obj, disabled);
 
    if (efl_finalized_get(obj))
-     _full_eval_children(obj, sd);
+     _elm_widget_full_eval_children(obj, sd);
 }
 
 EOLIAN static Eina_Bool

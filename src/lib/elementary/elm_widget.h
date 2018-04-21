@@ -438,6 +438,7 @@ typedef struct _Elm_Widget_Smart_Data
       Efl_Ui_Focus_Object *provider;
    } manager;
    struct {
+     Eina_Bool listen_to_manager;
      Eina_List *custom_chain;
      Evas_Object *prev, *next, *up, *down, *right, *left;
      Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
