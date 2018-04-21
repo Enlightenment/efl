@@ -2092,10 +2092,56 @@ gl9_con_req(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_genlist_item_expanded_set(glit, EINA_FALSE);
 }
 
+static void
+gl9_item_next(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_selected_item_get(api->gl);
+   it = elm_genlist_item_next_get(it);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("Next item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
+static void
+gl9_item_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_selected_item_get(api->gl);
+   it = elm_genlist_item_prev_get(it);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("Prev item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
+static void
+gl9_item_first(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_first_item_get(api->gl);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("First item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
+static void
+gl9_item_last(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_last_item_get(api->gl);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("Last item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
 void
 test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *gl, *bx;
+   Evas_Object *win, *gl, *bx, *bx2, *bt;
    Elm_Object_Item *git;
 
    api_data *api = calloc(1, sizeof(api_data));
@@ -2135,7 +2181,6 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    git = elm_genlist_item_append(gl, api->itc2,
                                  (void *)0/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
-   elm_genlist_item_select_mode_set(git, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 
    elm_genlist_item_append(gl, api->itc1,
                            (void *)1/* item data */, git/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
@@ -2149,7 +2194,6 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    git = elm_genlist_item_append(gl, api->itc2,
                                  (void *)4/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
-   elm_genlist_item_select_mode_set(git, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 
    elm_genlist_item_append(gl, api->itc1,
                            (void *)5/* item data */, git/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
@@ -2167,6 +2211,36 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(gl, "contract,request", gl9_con_req, api);
    evas_object_smart_callback_add(gl, "expanded", gl9_exp, api);
    evas_object_smart_callback_add(gl, "contracted", gl9_con, api);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "First item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_first, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Next item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_next, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   bt = elm_button_add(bx2);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Prev item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_prev, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Last item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_last, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
 
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
