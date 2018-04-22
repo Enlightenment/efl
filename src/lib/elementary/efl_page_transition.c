@@ -33,20 +33,26 @@ _efl_page_transition_bind(Eo *obj EINA_UNUSED,
                           Eo *pager,
                           Efl_Canvas_Group *group)
 {
-   EFL_UI_PAGER_DATA_GET(pager, ppd);
+   Eina_Rect group_rect;
+
+   if (pd->pager.obj == pager) return;
 
    pd->pager.obj = pager;
    pd->pager.group = group;
 
-   pd->pager.x = ppd->x;
-   pd->pager.y = ppd->y;
-   pd->pager.w = ppd->w;
-   pd->pager.h = ppd->h;
+   if (pager)
+     {
+        group_rect = efl_gfx_geometry_get(group);
 
-   pd->page_spec.sz = ppd->page_spec.sz;
-   pd->page_spec.padding = ppd->page_spec.padding;
+        pd->pager.x = group_rect.x;
+        pd->pager.y = group_rect.y;
+        pd->pager.w = group_rect.w;
+        pd->pager.h = group_rect.h;
 
-   pd->loop = ppd->loop;
+        pd->page_spec.sz = efl_ui_pager_page_size_get(pager);
+        pd->page_spec.padding = efl_ui_pager_padding_get(pager);
+        pd->loop = efl_ui_pager_loop_mode_get(pager);
+     }
 }
 
 EOLIAN static void

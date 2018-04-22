@@ -278,6 +278,7 @@ _event_handler_del(Eo *obj, Efl_Ui_Pager_Data *pd)
 {
    efl_content_unset(efl_part(obj, "event"));
    efl_del(pd->event);
+   pd->event = NULL;
 }
 
 EOLIAN static Eo *
@@ -322,6 +323,7 @@ _resize_cb(void *data, const Efl_Event *ev)
      efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
    else
      {
+        efl_gfx_size_set(pd->foreclip, sz);
         efl_gfx_size_set(pd->page_box, pd->page_spec.sz);
         efl_gfx_position_set(pd->page_box,
                              EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
@@ -342,6 +344,7 @@ _move_cb(void *data, const Efl_Event *ev)
 
    if (!pd->transition)
      {
+        efl_gfx_position_set(pd->foreclip, pos);
         efl_gfx_position_set(pd->page_box,
                              EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
                                              pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
@@ -371,12 +374,16 @@ _efl_ui_pager_efl_object_finalize(Eo *obj,
    /* default setting (no transition) */
    pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
    efl_canvas_group_member_add(pd->page_root, pd->page_box);
+
    pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                           evas_object_evas_get(obj));
+   efl_canvas_group_member_add(pd->page_root, pd->foreclip);
    evas_object_static_clip_set(pd->foreclip, EINA_TRUE);
+   efl_canvas_object_clip_set(pd->page_box, pd->foreclip);
 
    pd->backclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                           evas_object_evas_get(obj));
+   efl_canvas_group_member_add(pd->page_root, pd->backclip);
    evas_object_static_clip_set(pd->backclip, EINA_TRUE);
    efl_gfx_visible_set(pd->backclip, EINA_FALSE);
    /* default setting end */
@@ -579,7 +586,7 @@ _efl_ui_pager_current_page_set(Eo *obj,
         Eo *curr;
 
         curr = eina_list_nth(pd->content_list, pd->curr.page);
-        efl_pack_unpack_all(pd->page_box);
+        efl_pack_unpack(pd->page_box, curr);
         efl_canvas_object_clip_set(curr, pd->backclip);
 
         pd->curr.page = index;
@@ -613,23 +620,36 @@ _efl_ui_pager_current_page_set(Eo *obj,
 }
 
 EOLIAN static int
-_efl_ui_pager_current_page_get(Eo *obj EINA_UNUSED,
+_efl_ui_pager_current_page_get(const Eo *obj EINA_UNUSED,
                                Efl_Ui_Pager_Data *pd)
 {
    return pd->curr.page;
 }
 
 EOLIAN static void
-_efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
+_efl_ui_pager_transition_set(Eo *obj,
                              Efl_Ui_Pager_Data *pd,
                              Efl_Page_Transition *transition)
 {
+   if (pd->transition == transition) return;
+
+   if (pd->transition)
+     efl_page_transition_bind(pd->transition, NULL, NULL);
+   else
+     {
+        Eo *curr;
+
+        curr = eina_list_nth(pd->content_list, pd->curr.page);
+        efl_pack_unpack(pd->page_box, curr);
+        efl_canvas_object_clip_set(pd->page_box, pd->backclip);
+     }
+
    pd->transition = transition;
 
-   if (transition)
+   if (pd->transition)
      {
-        _event_handler_create(obj, pd);
-        efl_page_transition_bind(transition, obj, pd->page_root);
+        if (!pd->event) _event_handler_create(obj, pd);
+        efl_page_transition_bind(pd->transition, obj, pd->page_root);
      }
    else
      {
@@ -637,6 +657,9 @@ _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
         Eo *curr;
 
         _event_handler_del(obj, pd);
+
+        efl_canvas_object_clip_set(pd->page_box, pd->foreclip);
+
         EINA_LIST_FOREACH(pd->content_list, list, curr)
           {
              efl_canvas_object_clip_set(curr, pd->backclip);
@@ -675,7 +698,7 @@ _efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN Eina_Size2D
-_efl_ui_pager_page_size_get(Eo *obj EINA_UNUSED,
+_efl_ui_pager_page_size_get(const Eo *obj EINA_UNUSED,
                             Efl_Ui_Pager_Data *pd)
 {
    return pd->page_spec.sz;
@@ -716,7 +739,7 @@ _efl_ui_pager_page_size_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static int
-_efl_ui_pager_padding_get(Eo *obj EINA_UNUSED,
+_efl_ui_pager_padding_get(const Eo *obj EINA_UNUSED,
                           Efl_Ui_Pager_Data *pd)
 {
    return pd->page_spec.padding;
@@ -733,7 +756,7 @@ _efl_ui_pager_padding_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_pager_scroll_block_get(Eo *obj EINA_UNUSED,
+_efl_ui_pager_scroll_block_get(const Eo *obj EINA_UNUSED,
                                Efl_Ui_Pager_Data *pd,
                                Eina_Bool *prev,
                                Eina_Bool *next)
@@ -763,7 +786,7 @@ _efl_ui_pager_loop_mode_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Ui_Pager_Loop
-_efl_ui_pager_loop_mode_get(Eo *obj EINA_UNUSED,
+_efl_ui_pager_loop_mode_get(const Eo *obj EINA_UNUSED,
                             Efl_Ui_Pager_Data *pd)
 {
    return pd->loop;
