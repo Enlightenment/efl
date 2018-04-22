@@ -1257,10 +1257,9 @@ EAPI void
 ecore_main_loop_quit(void)
 {
    Eina_Value v = EINA_VALUE_EMPTY;
-   int val = 0;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-   eina_value_set(&v, &val);
+   eina_value_set(&v, 0);
    EINA_MAIN_LOOP_CHECK_RETURN;
    efl_loop_quit(ML_OBJ, v);
 }
