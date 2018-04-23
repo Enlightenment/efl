@@ -218,8 +218,8 @@ _efl_ui_bg_widget_efl_file_file_get(const Eo *obj, Efl_Ui_Bg_Widget_Data *sd, co
 {
    if (elm_widget_is_legacy(obj))
      {
-        *file = sd->file;
-        *key = sd->key;
+        if (file) *file = sd->file;
+        if (key) *key = sd->key;
         return;
      }
 
