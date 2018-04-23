@@ -204,11 +204,20 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
           }
      }
 
-   if (elm_widget_is_legacy(sd->obj) &&
-       !strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
-     type = sub_d->part + strlen("elm.swallow.");
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
+          type = sub_d->part + strlen("elm.swallow.");
+        else
+          type = sub_d->part;
+     }
    else
-     type = sub_d->part;
+     {
+        if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
+          type = sub_d->part + strlen("efl.");
+        else
+          type = sub_d->part;
+     }
 
    _signals_emit(sd->obj, type, visible);
 
@@ -239,10 +248,20 @@ _text_signal_emit(Efl_Ui_Layout_Data *sd,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
-   if (!strncmp(sub_d->part, "elm.text.", strlen("elm.text.")))
-     type = sub_d->part + strlen("elm.text.");
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        if (!strncmp(sub_d->part, "elm.text.", strlen("elm.text.")))
+          type = sub_d->part + strlen("elm.text.");
+        else
+          type = sub_d->part;
+     }
    else
-     type = sub_d->part;
+     {
+        if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
+          type = sub_d->part + strlen("efl.");
+        else
+          type = sub_d->part;
+     }
 
    _signals_emit(sd->obj, type, visible);
 
@@ -2183,8 +2202,8 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, 
 
    if (eina_streq(part, "background"))
      {
-        if (efl_layout_group_part_exist_get(wd->resize_obj, part))
-          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
+        if (efl_layout_group_part_exist_get(wd->resize_obj, "efl.background"))
+          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, "efl.background"));
         if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
           {
              if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&

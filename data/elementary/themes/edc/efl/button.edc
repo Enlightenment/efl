@@ -336,7 +336,7 @@ group { name: "efl/button";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name: "button_text_visible";
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -344,7 +344,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_text_hidden";
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -352,7 +352,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_icon_visible";
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -360,7 +360,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_icon_hidden";
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -368,7 +368,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_background_visible";
-         signal: "elm,state,efl.background,set"; source: "elm";
+         signal: "elm,state,background,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= BACKGROUND; set_int(btmode, m);
@@ -376,7 +376,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_background_hidden";
-         signal: "elm,state,efl.background,unset"; source: "elm";
+         signal: "elm,state,background,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~BACKGROUND; set_int(btmode, m);
@@ -718,7 +718,7 @@ group { name: "efl/button:anchor";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name: "button_text_visible";
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -726,7 +726,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_text_hidden";
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -734,7 +734,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_icon_visible";
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -742,7 +742,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_icon_hidden";
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -750,12 +750,12 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_background_visible";
-         signal: "elm,state,efl.background,set"; source: "elm";
+         signal: "elm,state,background,set"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "efl.background";
       }
       program { name: "button_background_hidden";
-         signal: "elm,state,efl.background,unset"; source: "elm";
+         signal: "elm,state,background,unset"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "efl.background";
       }

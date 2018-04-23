@@ -59,7 +59,7 @@ _efl_ui_navigation_bar_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Bar_Dat
 
 /* Standard widget overrides */
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Data)
-ELM_PART_TEXT_DEFAULT_GET(efl_ui_navigation_bar, "text")
+ELM_PART_TEXT_DEFAULT_GET(efl_ui_navigation_bar, "efl.text")
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Data)
 
 #define EFL_UI_NAVIGATION_BAR_EXTRA_OPS \
@@ -71,17 +71,29 @@ _efl_ui_navigation_bar_content_set(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA
    if (eina_streq(part, "left_content"))
      {
         if (content)
-          efl_layout_signal_emit(obj, "elm,state,left_content,visible", "elm");
+          efl_layout_signal_emit(obj, "elm,state,left_content,set", "elm");
         else
-          efl_layout_signal_emit(obj, "elm,state,left_content,hidden", "elm");
+          efl_layout_signal_emit(obj, "elm,state,left_content,unset", "elm");
         efl_layout_signal_process(obj, EINA_FALSE);
+
+        return efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"), content);
      }
+   else if (eina_streq(part, "right_content"))
+     {
+        return efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.right_content"), content);
+     }
+
    return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
 }
 
 static Efl_Gfx *
 _efl_ui_navigation_bar_content_get(const Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA_UNUSED, const char *part)
 {
+  if (eina_streq(part, "left_content"))
+   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"));
+  else if (eina_streq(part, "right_content"))
+   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), "efl.right_content"));
+
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
@@ -90,9 +102,16 @@ _efl_ui_navigation_bar_content_unset(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EI
 {
   if (eina_streq(part, "left_content"))
     {
-       efl_layout_signal_emit(obj, "elm,state,left_content,hidden", "elm");
+       efl_layout_signal_emit(obj, "elm,state,left_content,unset", "elm");
        efl_layout_signal_process(obj, EINA_FALSE);
+
+       return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"));
     }
+  else if (eina_streq(part, "right_content"))
+    {
+       return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), "efl.right_content"));
+    }
+
    return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
@@ -119,16 +138,16 @@ _efl_ui_navigation_bar_part_back_button_efl_gfx_visible_set(Eo *obj, void *_pd E
 
    if (visible)
      {
-        if (!efl_content_set(efl_part(efl_super(pd->obj, MY_CLASS), "back_button"), ppd->back_button))
+        if (!efl_content_set(efl_part(efl_super(pd->obj, MY_CLASS), "efl.back_button"), ppd->back_button))
           ERR("Part for back button(i.e. \"back_button\") does not exist!");
         else
-          efl_layout_signal_emit(pd->obj, "elm,state,back_button,visible", "elm");
+          efl_layout_signal_emit(pd->obj, "elm,state,back_button,set", "elm");
      }
    else
      {
         efl_content_unset(efl_part(efl_super(pd->obj, MY_CLASS), "back_button"));
         efl_gfx_visible_set(ppd->back_button, visible);
-        efl_layout_signal_emit(pd->obj, "elm,state,back_button,hidden", "elm");
+        efl_layout_signal_emit(pd->obj, "elm,state,back_button,unset", "elm");
      }
 
      efl_layout_signal_process(pd->obj, EINA_FALSE);
@@ -172,7 +191,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_set(Eo *obj, void *_
    efl_event_callback_add(content, EFL_UI_EVENT_CLICKED, _back_button_clicked_cb, pd->obj);
    ppd->back_button = content;
 
-   return _efl_ui_navigation_bar_content_set(pd->obj, ppd, pd->part, content);
+   return _efl_ui_navigation_bar_content_set(pd->obj, ppd, "efl.back_button", content);
 }
 
 static Efl_Gfx*
@@ -181,7 +200,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_get(const Eo *obj, v
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd, NULL);
 
-   return _efl_ui_navigation_bar_content_get(pd->obj, ppd, pd->part);
+   return _efl_ui_navigation_bar_content_get(pd->obj, ppd, "efl.back_button");
 }
 
 static Efl_Gfx*
@@ -193,7 +212,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_unset(Eo *obj, void 
    efl_event_callback_del(ppd->back_button, EFL_UI_EVENT_CLICKED, _back_button_clicked_cb, pd->obj);
    ppd->back_button = NULL;
 
-   return _efl_ui_navigation_bar_content_unset(pd->obj, ppd, pd->part);
+   return _efl_ui_navigation_bar_content_unset(pd->obj, ppd, "efl.back_button");
 }
 
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_navigation_bar, EFL_UI_NAVIGATION_BAR, Efl_Ui_Navigation_Bar_Data)

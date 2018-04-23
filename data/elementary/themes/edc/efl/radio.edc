@@ -237,7 +237,7 @@ group { "efl/radio";
          target: "indicator";
       }
       program {
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -245,7 +245,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);

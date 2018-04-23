@@ -150,13 +150,13 @@ group { "efl/popup/backwall";
 
    programs {
       program {
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          action: STATE_SET "content_visible" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "efl.content";

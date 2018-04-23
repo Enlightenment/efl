@@ -56,7 +56,7 @@ _efl_ui_bg_widget_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Widget_Data *pd)
 
         pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
                           efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
-                          efl_content_set(efl_part(obj, "efl.bg"), efl_added));
+                          efl_content_set(efl_part(obj, "efl.background"), efl_added));
      }
    pd->file = NULL;
    pd->key = NULL;

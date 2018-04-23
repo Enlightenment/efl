@@ -504,7 +504,7 @@ group { "efl/progressbar/horizontal";
          target: "efl.text.status";
       }
       program { name: "text-visible";
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -512,7 +512,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "text-hidden";
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -520,7 +520,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "icon-visible";
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -528,7 +528,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "icon-hidden";
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -1077,7 +1077,7 @@ group { "efl/progressbar/vertical";
          target: "efl.text.status";
       }
       program { name: "text-visible";
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -1085,7 +1085,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "text-hidden";
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -1093,7 +1093,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "icon-visible";
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -1101,7 +1101,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "icon-hidden";
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);

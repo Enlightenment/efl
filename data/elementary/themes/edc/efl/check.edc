@@ -271,7 +271,7 @@ group { "efl/check";
          target: "indicator";
       }
       program {
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -279,7 +279,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -287,7 +287,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -295,7 +295,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -870,7 +870,7 @@ group { "efl/check:toggle";
          target: "glow_but";
       }
       program {
-         signal: "elm,state,efl.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -878,7 +878,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,efl.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -886,7 +886,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,efl.content,set"; source: "elm";
+         signal: "elm,state,content,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -894,7 +894,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,efl.content,unset"; source: "elm";
+         signal: "elm,state,content,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);

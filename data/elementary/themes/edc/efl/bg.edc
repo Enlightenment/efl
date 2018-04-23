@@ -24,7 +24,7 @@ group { "efl/bg";
          description { state: "default" 0.0;
          }
       }
-      part { name: "efl.bg"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
