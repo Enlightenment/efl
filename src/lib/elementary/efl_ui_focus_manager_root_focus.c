@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FOCUS_COMPOSITION_ADAPTER_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
@@ -43,11 +44,18 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
    none_logical = !!efl_ui_focus_manager_request_subchild(obj, root);
 
    if (none_logical)
-     pd->rect_registered = EINA_FALSE;
+     {
+        pd->rect_registered = EINA_FALSE;
+        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, NULL);
+        efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, NULL);
+     }
    else
      {
         efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
         pd->rect_registered = EINA_TRUE;
+
+        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, pd->root);
+        efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, obj);
 
         if (focused)
           efl_ui_focus_manager_focus_set(obj, pd->rect);

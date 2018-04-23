@@ -43,6 +43,12 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
                safed = eina_list_append(safed, o);
              else
                efl_ui_focus_manager_calc_unregister(manager, o);
+
+             if (efl_isa(o, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+               {
+                  efl_ui_focus_composition_adapter_focus_manager_parent_set(o, NULL);
+                  efl_ui_focus_composition_adapter_focus_manager_object_set(o, NULL);
+               }
           }
         pd->registered_targets = safed;
 
@@ -54,6 +60,13 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
                efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
              else
                efl_ui_focus_manager_calc_register_logical(manager, o, obj, NULL);
+
+             if (efl_isa(o, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+               {
+                  efl_ui_focus_composition_adapter_focus_manager_parent_set(o, obj);
+                  efl_ui_focus_composition_adapter_focus_manager_object_set(o, manager);
+               }
+
              pd->registered_targets = eina_list_append(pd->registered_targets, o);
           }
 
@@ -194,6 +207,8 @@ _efl_ui_focus_composition_logical_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Foc
 
 typedef struct {
    Evas_Object *object;
+   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Object *parent;
 }  Efl_Ui_Focus_Composition_Adapter_Data;
 
 static void
@@ -256,6 +271,30 @@ _efl_ui_focus_composition_adapter_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Co
    efl_ui_focus_composition_adapter_canvas_object_set(obj, NULL);
 
    efl_destructor(efl_super(obj, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_focus_manager_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Ui_Focus_Manager *v)
+{
+   pd->manager = v;
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_focus_manager_parent_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Ui_Focus_Object *parent)
+{
+   pd->parent = parent;
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+{
+   return pd->parent;
+}
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+{
+   return pd->manager;
 }
 
 

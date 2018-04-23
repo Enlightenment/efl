@@ -10,6 +10,7 @@
 #define MY_CLASS EFL_UI_FOCUS_LAYER_MIXIN
 
 typedef struct {
+   Efl_Ui_Focus_Object *old_focus;
    Efl_Ui_Focus_Manager *registered_manager;
    Efl_Ui_Focus_Manager *manager;
    Eina_Bool cycle;
@@ -107,20 +108,42 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
      v = EINA_FALSE;
    if (v)
      {
+        Efl_Ui_Focus_Manager *manager;
+
         pd->registered_manager = elm_widget_top_get(obj);
+        manager = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, pd->registered_manager);
 
         efl_ui_focus_manager_calc_register_logical(pd->registered_manager, obj, efl_ui_focus_manager_root_get(pd->registered_manager), obj);
         _publish_state_change(obj, NULL, NULL);
+
+        pd->old_focus = efl_ui_focus_manager_focus_get(manager);
         efl_ui_focus_manager_focus_set(pd->manager, obj);
 
      }
    else
      {
+        Eina_Bool fallback = EINA_TRUE;
+
         Eo *omanager = pd->registered_manager, *oobj = efl_ui_focus_manager_root_get(omanager);
 
         if (!pd->registered_manager) return;
 
-        if (efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
+        //restore old focus
+        if (pd->old_focus)
+          {
+             Efl_Ui_Focus_Manager *manager;
+
+             manager = efl_ui_focus_object_focus_manager_get(pd->old_focus);
+             if (manager)
+               {
+                  efl_ui_focus_manager_focus_set(manager, pd->old_focus);
+                  fallback = EINA_FALSE;
+               }
+          }
+
+        pd->old_focus = NULL;
+
+        if (fallback && efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
           efl_ui_focus_manager_redirect_set(pd->registered_manager, NULL);
 
         efl_ui_focus_manager_calc_unregister(pd->registered_manager, obj);

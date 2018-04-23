@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FOCUS_COMPOSITION_ADAPTER_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define MY_CLASS ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS
 
@@ -67,6 +68,8 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
           {
              // parent has to stay the object, since this is used to get the item of a adapter
              pd->adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, obj);
+             efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->adapter, wpd->widget);
+             efl_ui_focus_composition_adapter_focus_manager_object_set(pd->adapter, wpd->widget);
              efl_wref_add(pd->adapter, &pd->adapter);
              efl_ui_focus_manager_calc_register(wpd->widget, pd->adapter, obj, NULL);
           }
