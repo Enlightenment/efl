@@ -87,6 +87,9 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Container.content_count;
+      Efl.Pack.pack_clear;             //TODO
+      Efl.Pack.unpack_all;             //TODO
+      Efl.Pack.unpack;                 //TODO
       Efl.Pack.Linear.pack_begin;
       Efl.Pack.Linear.pack_end;
       Efl.Pack.Linear.pack_before;
@@ -94,5 +97,6 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
       Efl.Pack.Linear.pack_at;
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_index_get;
+      Efl.Pack.Linear.pack_unpack_at;  //TODO
    }
 }

@@ -799,5 +799,40 @@ _efl_ui_pager_loop_mode_get(const Eo *obj EINA_UNUSED,
    return pd->loop;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
+                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
+{
+   ERR("Soon to be implemented");
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
+                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
+{
+   ERR("Soon to be implemented");
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_unpack(Eo *obj EINA_UNUSED,
+                              Efl_Ui_Pager_Data *pd EINA_UNUSED,
+                              Efl_Gfx *subobj EINA_UNUSED)
+{
+   ERR("Soon to be implemented");
+   return EINA_FALSE;
+}
+
+EOLIAN static Efl_Gfx *
+_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED,
+                                             Efl_Ui_Pager_Data *pd EINA_UNUSED,
+                                             int index EINA_UNUSED)
+{
+   ERR("Soon to be implemented");
+   return NULL;
+}
+
+
 
 #include "efl_ui_pager.eo.c"
