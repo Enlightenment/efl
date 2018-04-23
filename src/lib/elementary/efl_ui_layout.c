@@ -38,6 +38,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static const char efl_ui_default_text[] = "efl.text";
+static const char efl_ui_default_content[] = "efl.content";
+
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
    {"default", "elm.text"},
@@ -174,7 +177,7 @@ _signals_emit(Eo *obj,
         snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "set" : "unset");
      }
-   efl_layout_signal_emit(obj, buf, "elm");
+    efl_layout_signal_emit(obj, buf, "elm");
 }
 
 static inline void
@@ -201,7 +204,8 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
           }
      }
 
-   if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
+   if (elm_widget_is_legacy(sd->obj) &&
+       !strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
      type = sub_d->part + strlen("elm.swallow.");
    else
      type = sub_d->part;
@@ -222,10 +226,16 @@ _text_signal_emit(Efl_Ui_Layout_Data *sd,
 
    //FIXME: Don't limit to "elm.text" prefix.
    //Send signals for all text parts after elm 2.0
-   if ((sub_d->type != TEXT) ||
-       (!((!strcmp("elm.text", sub_d->part)) ||
-          (!strncmp("elm.text.", sub_d->part, 9)))))
-     return;
+
+   if (sub_d->type != TEXT)
+     {
+        if (elm_widget_is_legacy(sd->obj) &&
+            !((!strcmp("elm.text", sub_d->part)) ||
+              (!strncmp("elm.text.", sub_d->part, 9))))
+          {
+             return;
+          }
+     }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
@@ -508,6 +518,18 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                Eina_Bool is_text)
 {
    const Elm_Layout_Part_Alias_Description *aliases = NULL;
+
+   if (!elm_widget_is_legacy(obj))
+     {
+        if (!*part)
+          {
+             if (is_text)
+               *part = efl_ui_default_text;
+             else
+               *part = efl_ui_default_content;
+          }
+        return EINA_TRUE;
+     }
 
    if (is_text)
      aliases = elm_layout_text_aliases_get(obj);
@@ -2341,7 +2363,7 @@ _efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
    pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    sd = efl_data_scope_get(pd->obj, MY_CLASS);
    bg = _efl_ui_widget_bg_get(pd->obj);
-   if (!_efl_ui_layout_content_set(pd->obj, sd, "background", bg))
+   if (!_efl_ui_layout_content_set(pd->obj, sd, "efl.background", bg))
      {
         ERR("Failed to swallow new background object!");
         // Shouldn't happen. What now? del bg? call super? return null?

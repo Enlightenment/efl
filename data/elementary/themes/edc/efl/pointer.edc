@@ -38,7 +38,7 @@ group { name: "efl/pointer";
          }
       }
       part {
-         name: "elm.swallow.hotspot";
+         name: "efl.hotspot";
          /* this is a "fake" swallow part
           * that is used by e to determine
           * the pointer hotspot - or where

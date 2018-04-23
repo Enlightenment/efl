@@ -800,8 +800,16 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         double vx = 0.0, vy = 0.0, size;
 
         edje_object_calc_force(sid->edje_obj);
-        edje_object_part_geometry_get
-          (sid->edje_obj, "elm.swallow.content", NULL, NULL, &vw, &vh);
+        if (elm_widget_is_legacy(sid->obj))
+          {
+             edje_object_part_geometry_get
+               (sid->edje_obj, "elm.swallow.content", NULL, NULL, &vw, &vh);
+          }
+        else
+          {
+             edje_object_part_geometry_get
+               (sid->edje_obj, "content", NULL, NULL, &vw, &vh);
+          }
         w = sid->content_info.w;
         if (w < 1) w = 1;
         size = (double)vw / (double)w;
@@ -3986,7 +3994,11 @@ _elm_interface_scrollable_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_I
           (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
         evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb, sid);
-        edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
+
+        if (elm_widget_is_legacy(obj))
+          edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
+        else
+          edje_object_part_swallow(sid->edje_obj, "efl.content", o);
      }
 
    evas_object_event_callback_add
@@ -4041,8 +4053,17 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
      (sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
    evas_object_event_callback_add(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_scroll_pan_resized_cb, sid);
-   edje_object_part_swallow
-     (sid->edje_obj, "elm.swallow.content", sid->pan_obj);
+
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_part_swallow
+        (sid->edje_obj, "elm.swallow.content", sid->pan_obj);
+     }
+   else
+     {
+        edje_object_part_swallow
+        (sid->edje_obj, "efl.content", sid->pan_obj);
+     }
 }
 
 EOLIAN static void

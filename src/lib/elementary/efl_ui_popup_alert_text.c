@@ -189,7 +189,7 @@ _efl_ui_popup_alert_text_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd
 static Eina_Bool
 _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part, const char *label)
 {
-   if (part && !strcmp(part, "elm.text"))
+   if (part && !strcmp(part, "efl.text"))
      {
         if (!pd->message)
           {
@@ -212,7 +212,7 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
 const char *
 _efl_ui_popup_alert_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part)
 {
-   if (part && !strcmp(part, "elm.text"))
+   if (part && !strcmp(part, "efl.text"))
      {
         if (pd->message)
           return elm_object_text_get(pd->message);
@@ -226,13 +226,13 @@ _efl_ui_popup_alert_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_
 EOLIAN static void
 _efl_ui_popup_alert_text_efl_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, const char *label)
 {
-   _efl_ui_popup_alert_text_text_set(obj, pd, "elm.text", label);
+   _efl_ui_popup_alert_text_text_set(obj, pd, "efl.text", label);
 }
 
 EOLIAN static const char*
 _efl_ui_popup_alert_text_efl_text_text_get(const Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
 {
-   return _efl_ui_popup_alert_text_text_get(obj, pd, "elm.text");
+   return _efl_ui_popup_alert_text_text_get(obj, pd, "efl.text");
 }
 
 static void
@@ -279,7 +279,7 @@ _efl_ui_popup_alert_text_efl_object_constructor(Eo *obj,
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_OFF,
                            ELM_SCROLLER_POLICY_AUTO);
 
-   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"),
+   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);
 
    pd->size = EINA_SIZE2D(0, 0);

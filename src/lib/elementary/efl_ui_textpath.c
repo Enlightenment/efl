@@ -406,10 +406,10 @@ _sizing_eval(Efl_Ui_Textpath_Data *pd)
 static void
 _textpath_ellipsis_set(Efl_Ui_Textpath_Data *pd, Eina_Bool enabled)
 {
-   edje_object_part_text_style_user_pop(pd->text_obj, "elm.text");
+   edje_object_part_text_style_user_pop(pd->text_obj, "efl.text");
 
    if (enabled)
-     edje_object_part_text_style_user_push(pd->text_obj, "elm.text",
+     edje_object_part_text_style_user_push(pd->text_obj, "efl.text",
                                            "DEFAULT='ellipsis=1.0'");
 }
 
@@ -422,7 +422,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
    Eina_Bool is_ellipsis = EINA_FALSE;
    const Evas_Object *tb;
 
-   tb = edje_object_part_object_get(pd->text_obj, "elm.text");
+   tb = edje_object_part_object_get(pd->text_obj, "efl.text");
    evas_object_textblock_size_native_get(tb, &w, &h);
    evas_object_size_hint_min_set(pd->text_obj, w, h);
    if (pd->ellipsis)
@@ -533,13 +533,13 @@ _efl_ui_textpath_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd, const c
 EOLIAN static void
 _efl_ui_textpath_efl_text_text_set(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *text)
 {
-   _textpath_text_set_internal(obj, pd, "elm.text", text);
+   _textpath_text_set_internal(obj, pd, "efl.text", text);
 }
 
 EOLIAN static const char *
 _efl_ui_textpath_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 {
-   return edje_object_part_text_get(pd->text_obj, "elm.text");
+   return edje_object_part_text_get(pd->text_obj, "efl.text");
 }
 
 EOLIAN static Efl_Ui_Theme_Apply

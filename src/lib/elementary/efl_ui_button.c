@@ -40,6 +40,12 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"default", "elm.text"},
+   {NULL, NULL}
+};
+
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
@@ -330,7 +336,15 @@ _efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSE
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_button, _content_aliases[0].real_part)
+
+static const char * _efl_ui_button_default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
+{
+   if (elm_widget_is_legacy(obj))
+     return "elm.swallow.content";
+   else
+     return "efl.content";
+}
+
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 EAPI void

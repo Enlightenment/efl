@@ -95,14 +95,15 @@ _label_write(Evas_Object *obj)
 
         buf = eina_strbuf_string_get(sd->format_strbuf);
         eina_value_flush(&val);
-        elm_layout_text_set(obj, "elm.text", buf);
+        elm_layout_text_set(obj, "efl.text", buf);
         sd->templates = buf;
      }
    else
      {
         char buf[1024];
         snprintf(buf, sizeof(buf), "%.0f", sd->val);
-        elm_layout_text_set(obj, "elm.text", buf);
+        elm_layout_text_set(obj, "efl.text", buf);
+        evas_object_show(obj);
      }
 }
 

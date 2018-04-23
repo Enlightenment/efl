@@ -8,7 +8,7 @@ group { name: "efl/video";
             color: 128 128 128 255;
          }
       }
-      part { name: "elm.swallow.video"; type: SWALLOW;  mouse_events: 1;
+      part { name: "efl.video"; type: SWALLOW;  mouse_events: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
