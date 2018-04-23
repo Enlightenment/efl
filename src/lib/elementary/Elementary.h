@@ -324,6 +324,13 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_item.eo.h>
+# include <efl_ui_list_item.eo.h>
+# include <efl_ui_list_default_item_part_icon.eo.h>
+# include <efl_ui_list_default_item_part_end.eo.h>
+# include <efl_ui_list_default_item.eo.h>
+# include <efl_ui_list_empty_item.eo.h>
+# include <efl_ui_list.eo.h>
 # include <efl_ui_view_list_types.eot.h>
 # include <efl_ui_view_list_segarray.h>
 # include <efl_ui_view_list_segarray.eo.h>

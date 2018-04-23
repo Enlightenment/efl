@@ -85,7 +85,7 @@ elm_main(int argc, char **argv)
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_model_connect(factory, "signal/elm,state,%v", "odd_style");
    efl_ui_model_connect(factory, "elm.text", "name");
-   efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
+   efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
    li = efl_add(EFL_UI_VIEW_LIST_CLASS, win);
    efl_ui_view_list_layout_factory_set(li, factory);

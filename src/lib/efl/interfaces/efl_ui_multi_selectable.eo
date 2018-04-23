@@ -1,0 +1,28 @@
+enum Efl.Ui.Select_Mode {
+   [[Type of multi selectable object.]]
+   legacy: efl_ui_select;
+   single, [[Only single child is selected. if the child is selected,
+             previous selected child will be unselected.]]
+   single_always, [[Same as single select except, this will be selected
+                    in every select calls though child is already been selected.]]
+   multi, [[allow multiple selection of children.]]
+   none [[Last value of select mode. child cannot be selected at all.]]
+}
+
+interface Efl.Ui.Multi_Selectable ()
+{
+   [[Efl UI Multi selectable interface.
+     The container have to control select property of multiple chidren.]]
+   eo_prefix: efl_ui;
+   methods
+   {
+      @property select_mode {
+         [[The mode type for children selection.]]
+         set {}
+         get {}
+         values {
+            mode: Efl.Ui.Select_Mode; [[Type of selection of children]]
+         }
+      }
+   }
+}

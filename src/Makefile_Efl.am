@@ -12,6 +12,7 @@ efl_eolian_legacy_files = \
         lib/efl/interfaces/efl_ui_scrollable_interactive.eo \
         lib/efl/interfaces/efl_ui_scrollbar.eo \
         lib/efl/interfaces/efl_ui_selectable.eo \
+        lib/efl/interfaces/efl_ui_multi_selectable.eo \
         lib/efl/interfaces/efl_ui_zoom.eo \
 	$(NULL)
 
