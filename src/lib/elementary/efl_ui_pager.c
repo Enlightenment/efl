@@ -281,30 +281,6 @@ _event_handler_del(Eo *obj, Efl_Ui_Pager_Data *pd)
    pd->event = NULL;
 }
 
-EOLIAN static Eo *
-_efl_ui_pager_efl_object_constructor(Eo *obj,
-                                     Efl_Ui_Pager_Data *pd)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-
-   elm_widget_sub_object_parent_add(obj);
-
-   pd->cnt = 0;
-   pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
-
-   pd->curr.page = 0;
-   pd->curr.pos = 0.0;
-
-   pd->transition = NULL;
-
-   pd->page_spec.sz.w = -1;
-   pd->page_spec.sz.h = -1;
-
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-
-   return obj;
-}
-
 static void
 _resize_cb(void *data, const Efl_Event *ev)
 {
@@ -352,18 +328,37 @@ _move_cb(void *data, const Efl_Event *ev)
 }
 
 EOLIAN static Eo *
-_efl_ui_pager_efl_object_finalize(Eo *obj,
-                                  Efl_Ui_Pager_Data *pd)
+_efl_ui_pager_efl_object_constructor(Eo *obj,
+                                     Efl_Ui_Pager_Data *pd)
 {
-   Efl_Ui_Theme_Apply theme_apply;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "pager");
 
-   theme_apply = efl_ui_layout_theme_set(obj, "pager", "base",
-                                         efl_ui_widget_style_get(obj));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (theme_apply == EFL_UI_THEME_APPLY_FAILED)
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                    elm_widget_theme_klass_get(obj),
+                                    elm_widget_theme_element_get(obj),
+                                    elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
+
+   elm_widget_sub_object_parent_add(obj);
+
+   pd->cnt = 0;
+   pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
+
+   pd->curr.page = 0;
+   pd->curr.pos = 0.0;
+
+   pd->transition = NULL;
+   pd->indicator = NULL;
+
+   pd->page_spec.sz.w = -1;
+   pd->page_spec.sz.h = -1;
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
    efl_content_set(efl_part(obj, "page_root"), pd->page_root);
@@ -371,7 +366,6 @@ _efl_ui_pager_efl_object_finalize(Eo *obj,
    efl_event_callback_add(pd->page_root, EFL_GFX_EVENT_RESIZE, _resize_cb, pd);
    efl_event_callback_add(pd->page_root, EFL_GFX_EVENT_MOVE, _move_cb, pd);
 
-   /* default setting (no transition) */
    pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
    efl_canvas_group_member_add(pd->page_root, pd->page_box);
 
@@ -386,7 +380,6 @@ _efl_ui_pager_efl_object_finalize(Eo *obj,
    efl_canvas_group_member_add(pd->page_root, pd->backclip);
    evas_object_static_clip_set(pd->backclip, EINA_TRUE);
    efl_gfx_visible_set(pd->backclip, EINA_FALSE);
-   /* default setting end */
 
    return obj;
 }

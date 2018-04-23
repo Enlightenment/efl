@@ -85,7 +85,6 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.finalize;
       Efl.Container.content_count;
       Efl.Pack.pack_clear;             //TODO
       Efl.Pack.unpack_all;             //TODO
