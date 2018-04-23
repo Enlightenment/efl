@@ -115,7 +115,7 @@ _efl_net_dialer_windows_efl_net_dialer_address_dial_set(Eo *o EINA_UNUSED, Efl_N
 }
 
 EOLIAN static const char *
-_efl_net_dialer_windows_efl_net_dialer_address_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Windows_Data *pd)
+_efl_net_dialer_windows_efl_net_dialer_address_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Windows_Data *pd)
 {
    return pd->address_dial + strlen(PIPE_NS);
 }
@@ -129,7 +129,7 @@ _efl_net_dialer_windows_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Windo
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_windows_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Windows_Data *pd)
+_efl_net_dialer_windows_efl_net_dialer_connected_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Windows_Data *pd)
 {
    return pd->connected;
 }
@@ -141,7 +141,7 @@ _efl_net_dialer_windows_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_N
 }
 
 EOLIAN static double
-_efl_net_dialer_windows_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Windows_Data *pd)
+_efl_net_dialer_windows_efl_net_dialer_timeout_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Windows_Data *pd)
 {
    return pd->timeout_dial;
 }

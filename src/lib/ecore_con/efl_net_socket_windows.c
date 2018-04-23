@@ -728,7 +728,7 @@ _efl_net_socket_windows_efl_io_closer_close(Eo *o, Efl_Net_Socket_Windows_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_windows_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->handle == INVALID_HANDLE_VALUE;
 }
@@ -742,7 +742,7 @@ _efl_net_socket_windows_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_N
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_windows_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->close_on_exec;
 }
@@ -754,7 +754,7 @@ _efl_net_socket_windows_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_windows_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_io_closer_close_on_destructor_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->close_on_destructor;
 }
@@ -814,7 +814,7 @@ _efl_net_socket_windows_efl_io_reader_can_read_set(Eo *o, Efl_Net_Socket_Windows
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_windows_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->can_read;
 }
@@ -829,7 +829,7 @@ _efl_net_socket_windows_efl_io_reader_eos_set(Eo *o, Efl_Net_Socket_Windows_Data
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_windows_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_io_reader_eos_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->eos;
 }
@@ -897,7 +897,7 @@ _efl_net_socket_windows_efl_io_writer_can_write_set(Eo *o, Efl_Net_Socket_Window
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_windows_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->can_write;
 }
@@ -909,7 +909,7 @@ _efl_net_socket_windows_efl_net_socket_address_local_set(Eo *o EINA_UNUSED, Efl_
 }
 
 EOLIAN static const char *
-_efl_net_socket_windows_efl_net_socket_address_local_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_net_socket_address_local_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->address_local;
 }
@@ -921,7 +921,7 @@ _efl_net_socket_windows_efl_net_socket_address_remote_set(Eo *o EINA_UNUSED, Efl
 }
 
 EOLIAN static const char *
-_efl_net_socket_windows_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
+_efl_net_socket_windows_efl_net_socket_address_remote_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Windows_Data *pd)
 {
    return pd->address_remote;
 }
