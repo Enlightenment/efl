@@ -3,12 +3,12 @@
 # This file is put in the public domain.
 # Thiep Ha <thiepha@gmail.com>, 2015.
 #
-#: src/lib/elementary/elm_config.c:4097
+#: src/lib/elementary/elm_config.c:4150
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-03-12 21:08+0900\n"
+"POT-Creation-Date: 2018-04-23 19:19+0900\n"
 "PO-Revision-Date: 2015-09-29 18:06+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: General\n"
@@ -261,28 +261,28 @@ msgstr "Đồng Ý"
 msgid "Cancel"
 msgstr "Hủy"
 
-#: src/lib/elementary/elc_hoversel.c:436 src/lib/elementary/efl_ui_button.c:198
+#: src/lib/elementary/elc_hoversel.c:437 src/lib/elementary/efl_ui_button.c:192
 #: src/lib/elementary/efl_ui_check.c:159 src/lib/elementary/elm_gengrid.c:1503
-#: src/lib/elementary/elm_genlist.c:1751 src/lib/elementary/elm_list.c:2157
+#: src/lib/elementary/elm_genlist.c:1751 src/lib/elementary/elm_list.c:2172
 #: src/lib/elementary/efl_ui_radio.c:176
 #: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1032 src/lib/elementary/elm_toolbar.c:2276
+#: src/lib/elementary/elm_spinner.c:1032 src/lib/elementary/elm_toolbar.c:2278
 msgid "State: Disabled"
 msgstr "Trạng Thái: Không Khả Dụng"
 
-#: src/lib/elementary/elc_hoversel.c:638
+#: src/lib/elementary/elc_hoversel.c:650
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_multibuttonentry.c:674
+#: src/lib/elementary/elc_multibuttonentry.c:676
 msgid "multi button entry label"
 msgstr "Nhãn Của Bộ Nhập Nhiều Nút"
 
-#: src/lib/elementary/efl_ui_multibuttonentry.c:696
+#: src/lib/elementary/elc_multibuttonentry.c:698
 msgid "multi button entry item"
 msgstr "Mục Của Bộ Nhập Nhiều Nút"
 
-#: src/lib/elementary/efl_ui_multibuttonentry.c:1578
+#: src/lib/elementary/elc_multibuttonentry.c:1579
 msgid "multi button entry"
 msgstr "Bộ Nhập Nhiều Nút"
 
@@ -313,7 +313,7 @@ msgstr "Tiêu Đề Hộp Thoại"
 msgid "Popup Body Text"
 msgstr "Văn Bản Thân Hộp Thoại"
 
-#: src/lib/elementary/elc_popup.c:1820
+#: src/lib/elementary/elc_popup.c:1817
 msgid "Alert"
 msgstr ""
 
@@ -321,11 +321,11 @@ msgstr ""
 msgid "Bubble"
 msgstr "Bubble"
 
-#: src/lib/elementary/efl_ui_button.c:68
+#: src/lib/elementary/efl_ui_button.c:62
 msgid "Clicked"
 msgstr "Đã Nhấp"
 
-#: src/lib/elementary/efl_ui_button.c:225
+#: src/lib/elementary/efl_ui_button.c:219
 msgid "Button"
 msgstr "Nút"
 
@@ -439,7 +439,7 @@ msgstr "Mục Của Bảng Chọn Màu"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4120
+#: src/lib/elementary/elm_config.c:4173
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -467,7 +467,7 @@ msgstr "Dán"
 msgid "Select"
 msgstr "Chọn"
 
-#: src/lib/elementary/elm_entry.c:3884
+#: src/lib/elementary/elm_entry.c:3892
 msgid "Entry"
 msgstr "Bộ Nhập"
 
@@ -507,7 +507,7 @@ msgstr "Nhấn kép để đóng bảng chọn"
 msgid "panel button"
 msgstr "Nút Bảng"
 
-#: src/lib/elementary/efl_ui_progressbar.c:359
+#: src/lib/elementary/efl_ui_progressbar.c:353
 msgid "progressbar"
 msgstr "Thanh Trạng Thái"
 
@@ -516,7 +516,7 @@ msgid "Radio"
 msgstr "Đài"
 
 #: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2278
+#: src/lib/elementary/elm_toolbar.c:2280
 msgid "State: Selected"
 msgstr "Trạng Thái: Đã Chọn"
 
@@ -528,7 +528,7 @@ msgstr "Trạng Thái: Chưa Chọn"
 msgid "Segment Control Item"
 msgstr "Mục Điều Khiển Đoạn"
 
-#: src/lib/elementary/efl_ui_slider.c:1192
+#: src/lib/elementary/efl_ui_slider.c:1186
 msgid "slider"
 msgstr "Thanh Trượt"
 
@@ -556,22 +556,22 @@ msgstr "Nút Giảm Bộ Xoay"
 msgid "spinner text"
 msgstr "Văn Bản Bộ Xoay"
 
-#: src/lib/elementary/elm_toolbar.c:1733 src/lib/elementary/elm_toolbar.c:2335
+#: src/lib/elementary/elm_toolbar.c:1735 src/lib/elementary/elm_toolbar.c:2337
 msgid "Selected"
 msgstr "Đã Chọn"
 
-#: src/lib/elementary/elm_toolbar.c:2274
+#: src/lib/elementary/elm_toolbar.c:2276
 msgid "Separator"
 msgstr "Bộ Tách"
 
-#: src/lib/elementary/elm_toolbar.c:2280
+#: src/lib/elementary/elm_toolbar.c:2282
 msgid "Has menu"
 msgstr "Có Bảng Chọn"
 
-#: src/lib/elementary/elm_toolbar.c:2330
+#: src/lib/elementary/elm_toolbar.c:2332
 msgid "Unselected"
 msgstr "Không Chọn"
 
-#: src/lib/elementary/elm_toolbar.c:2347
+#: src/lib/elementary/elm_toolbar.c:2349
 msgid "Toolbar Item"
 msgstr "Mục Của Thanh Công Cụ"
