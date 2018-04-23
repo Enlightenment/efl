@@ -9,7 +9,8 @@ addons:
   sonarcloud:
     organization: "stefan-schmidt-github"
 script:
-  - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+  - ./autogen.sh
+  - build-wrapper-linux-x86-64 --out-dir bw-output make
   - sonar-scanner
 cache:
   directories:
