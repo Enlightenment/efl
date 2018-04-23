@@ -77,23 +77,6 @@ public static class TestEinaValueEolian {
         }
     }
 
-    public static void TestEolianEinaValueInReturnByValue()
-    {
-        test.ITesting obj = new test.Testing();
-
-        using (eina.Value v = new eina.Value(eina.ValueType.Int32)) {
-            v.Set(42);
-            obj.SetValue(v);
-            Test.AssertEquals(eina.Ownership.Managed, v.Ownership);
-
-            // Using get_value_ptr while get_value() is not supported.
-            eina.Value v_received = obj.GetValuePtrOwn();
-            Test.AssertEquals(eina.Ownership.Managed, v_received.Ownership);
-            Test.AssertEquals(v, v_received);
-            v_received.Dispose();
-        }
-    }
-
     public static void TestEolianEinaValueOutByValue()
     {
         test.ITesting obj = new test.Testing();

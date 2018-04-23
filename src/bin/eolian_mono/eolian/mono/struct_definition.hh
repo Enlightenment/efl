@@ -240,7 +240,7 @@ struct to_internal_field_convert_generator
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".Handle;\n"
+                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".NativeHandle;\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }

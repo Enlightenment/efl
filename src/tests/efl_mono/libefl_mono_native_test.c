@@ -3680,14 +3680,6 @@ Eina_Value *_test_testing_get_value_ptr(EINA_UNUSED Eo *obj, Test_Testing_Data *
     return pd->stored_value;
 }
 
-/* Currently the Eolian declaration FUNC_BODY in the .eo.c file seems to be broken for
- * generic value.
- */
-/* Eina_Value _test_testing_get_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
-{
-    return *pd->stored_value;
-}*/
-
 void _test_testing_clear_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
     if (pd->stored_value) {

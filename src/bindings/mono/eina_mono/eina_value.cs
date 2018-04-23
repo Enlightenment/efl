@@ -325,7 +325,7 @@ static internal class UnsafeNativeMethods {
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref eina.EinaNative.Value_List ptr);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_copy(IntPtr src, IntPtr dest);
 
@@ -379,6 +379,10 @@ static internal class UnsafeNativeMethods {
     // Optional
     [DllImport(efl.Libs.CustomExports)]
     internal static extern IntPtr type_optional();
+
+    // Error
+    [DllImport(efl.Libs.CustomExports)]
+    internal static extern IntPtr type_error();
 }
 }
 
@@ -386,8 +390,8 @@ static internal class UnsafeNativeMethods {
 [StructLayout(LayoutKind.Sequential)]
 public struct Value_Native
 {
-    IntPtr type;
-    IntPtr value; // Atually an Eina_Value_Union, but it is padded to 8 bytes.
+    public IntPtr Type;
+    public IntPtr Value; // Atually an Eina_Value_Union, but it is padded to 8 bytes.
 }
 
 
@@ -470,6 +474,10 @@ public enum ValueType {
     Hash,
     /// <summary>Optional (aka empty) values.</summary>
     Optional,
+    /// <summary>Error values.</summary>
+    Error,
+    /// <summary>Empty values.</summary>
+    Empty,
 }
 
 static class ValueTypeMethods {
@@ -519,6 +527,11 @@ static class ValueTypeMethods {
     public static bool IsOptional(this ValueType val)
     {
         return val == ValueType.Optional;
+    }
+
+    public static bool IsError(this ValueType val)
+    {
+        return val == ValueType.Error;
     }
 
     /// <summary>Returns the Marshal.SizeOf for the given ValueType native structure.</summary>
@@ -608,6 +621,12 @@ static class ValueTypeBridge
         ManagedToNative.Add(ValueType.Optional, type_optional());
         NativeToManaged.Add(type_optional(), ValueType.Optional);
 
+        ManagedToNative.Add(ValueType.Error, type_error());
+        NativeToManaged.Add(type_error(), ValueType.Error);
+
+        ManagedToNative.Add(ValueType.Empty, IntPtr.Zero);
+        NativeToManaged.Add(IntPtr.Zero, ValueType.Empty);
+
         TypesLoaded = true;
     }
 }
@@ -647,10 +666,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     // EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct -- FIXME
 
 
-    public IntPtr Handle { get; protected set;}
+    internal IntPtr Handle { get; set;}
+    /// <summary> Whether this wrapper owns (can free) the native value. </summary>
     public Ownership Ownership { get; protected set;}
     private bool Disposed;
+    /// <summary> Whether this wrapper has already freed the native value. </summary>
     public bool Flushed { get; protected set;}
+    /// <summary> Whether this is an Optional value (meaning it can have a value or not). </summary>
     public bool Optional {
         get {
             return GetValueType() == eina.ValueType.Optional;
@@ -663,7 +685,16 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             // }
          } */
     }
+    /// <summary> Whether this wrapper is actually empty/uninitialized (zeroed). This is different from an empty optional value. </summary>
     public bool Empty {
+        get {
+            SanityChecks();
+            return GetValueType() == eina.ValueType.Empty;
+        }
+    }
+
+    /// <summary> Whether this optional value is empty. </summary>
+    public bool OptionalEmpty {
         get {
             OptionalSanityChecks();
             bool empty;
@@ -690,7 +721,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (type.IsContainer())
             throw new ArgumentException("To use container types you must provide a subtype");
+
         this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        if (this.Handle == IntPtr.Zero)
+            throw new OutOfMemoryException("Failed to allocate memory for eina.Value");
+
+        // Initialize to EINA_VALUE_EMPTY before performing any other operation on this value.
+        MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
+
         this.Ownership = Ownership.Managed;
         Setup(type);
     }
@@ -710,12 +748,22 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
     public Value(Value_Native value)
     {
-        this.Handle = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
         IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
         try {
             Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
-            if (!eina_value_copy(tmp, this.Handle))
-                throw new System.InvalidOperationException("Failed to copy value to managed memory.");
+            if (value.Type == IntPtr.Zero) // Got an EINA_VALUE_EMPTY by value.
+            {
+                this.Handle = tmp;
+                tmp = IntPtr.Zero;
+            }
+            else
+            {
+                this.Handle = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+
+                // Copy is used to deep copy the pointed payload (e.g. strings) inside this struct, so we can own this value.
+                if (!eina_value_copy(tmp, this.Handle))
+                    throw new System.InvalidOperationException("Failed to copy value to managed memory.");
+            }
         } catch {
             MemoryNative.Free(this.Handle);
             throw;
@@ -786,7 +834,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
 
         if (!Disposed && (Handle != IntPtr.Zero)) {
-            if (!Flushed)
+            if (!Flushed && !Empty)
                 eina_value_flush_wrapper(this.Handle);
 
             MemoryNative.Free(this.Handle);
@@ -801,11 +849,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Returns the native handle wrapped by this object.</summary>
-    public IntPtr NativeHandle()
-    {
-        if (Disposed)
-            throw new ObjectDisposedException(base.GetType().Name);
-        return this.Handle;
+    public IntPtr NativeHandle {
+        get {
+            if (Disposed)
+                throw new ObjectDisposedException(base.GetType().Name);
+            return this.Handle;
+        }
     }
 
     /// <summary>Converts this storage to type 'type'</summary>
@@ -813,6 +862,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (Disposed)
             throw new ObjectDisposedException(base.GetType().Name);
+
+        // Can't call setup with Empty value type (would give an eina error)
+        if (type == eina.ValueType.Empty)
+        {
+            // Need to cleanup as it may point to payload outside the underlying Eina_Value (like arrays and strings).
+            if (!Empty)
+                eina_value_flush_wrapper(this.Handle);
+
+            MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
+
+            return true;
+        }
 
         if (type.IsContainer())
             throw new ArgumentException("To setup a container you must provide a subtype.");
@@ -1075,6 +1136,21 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_set_wrapper_string(this.Handle, value);
     }
 
+    /// <summary>Stores the given error value.</summary>
+    public bool Set(eina.Error value)
+    {
+        SanityChecks();
+
+        int error_code = value;
+
+        if (this.Optional)
+            return eina_value_optional_pset(this.Handle,
+                                            ValueTypeBridge.GetNative(ValueType.Error),
+                                            ref error_code);
+
+        return eina_value_set_wrapper_int(this.Handle, error_code);
+    }
+
     /// <summary>Stores the given value into this value. The target value must be an optional.</summary>
     public bool Set(Value value)
     {
@@ -1226,6 +1302,22 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
         value = StringConversion.NativeUtf8ToManagedString(output);
         return true;
+    }
+
+    /// <summary>Gets the currently stored value as an eina.Error.</summary>
+    public bool Get(out eina.Error value)
+    {
+        SanityChecks();
+        bool ret;
+        int intermediate; // It seems out doesn't play well with implicit operators...
+        if (this.Optional)
+            ret = eina_value_optional_pget(this.Handle, out intermediate);
+        else
+            ret = eina_value_get_wrapper(this.Handle, out intermediate);
+
+        value = intermediate;
+
+        return ret;
     }
 
     /// <summary>Gets the currently stored value as an complex (e.g. container) eina.Value.</summary>

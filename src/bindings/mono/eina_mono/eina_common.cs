@@ -23,6 +23,8 @@ internal static class NativeCustomExportFunctions
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_alloc(uint count);
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+        efl_mono_native_memset(IntPtr ptr, uint fill, uint count);
+    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_alloc_copy(IntPtr val, uint size);
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_strdup(string str);
@@ -54,6 +56,11 @@ public static class MemoryNative {
     public static IntPtr Alloc(int count)
     {
         return NativeCustomExportFunctions.efl_mono_native_alloc(Convert.ToUInt32(count));
+    }
+
+    public static void Memset(IntPtr ptr, int fill, int count)
+    {
+        NativeCustomExportFunctions.efl_mono_native_memset(ptr, Convert.ToUInt32(fill), Convert.ToUInt32(count));
     }
 
     public static IntPtr AllocCopy(IntPtr ptr, int count)
