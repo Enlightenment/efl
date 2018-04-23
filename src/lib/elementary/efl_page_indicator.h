@@ -7,6 +7,7 @@ struct _Efl_Page_Indicator_Data
 {
    struct {
       Efl_Object           *obj;
+      Efl_Object           *group;
       Evas_Coord            x, y, w, h;
    } pager;
 

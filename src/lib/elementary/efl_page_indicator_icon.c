@@ -79,45 +79,55 @@ _efl_page_indicator_icon_pack(Eo *obj,
      }
 }
 
-EOLIAN static Eo *
-_efl_page_indicator_icon_efl_object_constructor(Eo *obj,
-                                                Efl_Page_Indicator_Icon_Data *pd)
+EOLIAN static void
+_efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
+                                                 Efl_Page_Indicator_Icon_Data *pd,
+                                                 Eo *pager,
+                                                 Efl_Canvas_Group *idbox)
 {
-   ERR("call");
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
    Eo *item;
    int i, page;
 
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-
-   efl_ui_direction_set(spd->idbox, EFL_UI_DIR_HORIZONTAL);
-   efl_pack_padding_set(spd->idbox, 15, 15, EINA_TRUE);
-
-   pd->v = eina_value_float_new(0.0);
-
-   if (spd->cnt != 0)
+   if (spd->pager.obj)
      {
-        for (i = 0; i < spd->cnt; i++)
+        EINA_LIST_FREE(pd->items, item)
           {
-             item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
-             pd->items = eina_list_append(pd->items, item);
-
-             elm_widget_theme_object_set(spd->idbox, item,
-                                         "pager", "indicator", "default");
-             efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-             efl_gfx_size_hint_weight_set(item, 0, 0);
-             efl_pack_end(spd->idbox, item);
+             efl_del(item);
           }
-
-        page = efl_ui_pager_current_page_get(spd->pager.obj);
-        item = eina_list_nth(pd->items, page);
-        eina_value_set(pd->v, 1.0);
-        efl_layout_signal_message_send(item, 1, *(pd->v));
-
-        pd->curr = item;
      }
 
-   return obj;
+   efl_page_indicator_bind(efl_super(obj, MY_CLASS), pager, idbox);
+
+   if (spd->pager.obj)
+     {
+        efl_ui_direction_set(spd->idbox, EFL_UI_DIR_HORIZONTAL);
+        efl_pack_padding_set(spd->idbox, 15, 15, EINA_TRUE);
+
+        pd->v = eina_value_float_new(0.0);
+
+        if (spd->cnt != 0)
+          {
+             for (i = 0; i < spd->cnt; i++)
+               {
+                  item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
+                  pd->items = eina_list_append(pd->items, item);
+
+                  elm_widget_theme_object_set(spd->idbox, item,
+                                              "pager", "indicator", "default");
+                  efl_gfx_size_hint_align_set(item, 0.5, 0.5);
+                  efl_gfx_size_hint_weight_set(item, 0, 0);
+                  efl_pack_end(spd->idbox, item);
+               }
+
+             page = efl_ui_pager_current_page_get(spd->pager.obj);
+             item = eina_list_nth(pd->items, page);
+             eina_value_set(pd->v, 1.0);
+             efl_layout_signal_message_send(item, 1, *(pd->v));
+
+             pd->curr = item;
+          }
+     }
 }
 
 EOLIAN static void

@@ -25,24 +25,23 @@ _efl_page_indicator_pack(Eo *obj EINA_UNUSED,
                          Efl_Page_Indicator_Data *pd,
                          int index EINA_UNUSED)
 {
-   ERR("called");
    pd->cnt++;
 }
 
-EOLIAN static Eo *
-_efl_page_indicator_efl_object_constructor(Eo *obj,
-                                           Efl_Page_Indicator_Data *pd)
+EOLIAN static void
+_efl_page_indicator_bind(Eo *obj EINA_UNUSED,
+                         Efl_Page_Indicator_Data *pd,
+                         Eo *pager,
+                         Efl_Canvas_Group *idbox)
 {
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   if (pd->pager.obj == pager) return;
 
-   pd->idbox = efl_parent_get(obj);
-   pd->pager.obj = efl_parent_get(pd->idbox);
+   pd->pager.obj = pager;
+   pd->idbox = idbox;
 
-   pd->cnt = efl_content_count(pd->pager.obj);
-
-   return obj;
+   if (pager)
+     pd->cnt = efl_content_count(pd->pager.obj);
 }
-
 
 
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_indicator_update,

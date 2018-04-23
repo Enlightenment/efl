@@ -40,7 +40,7 @@ class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
             [[Set a page indicator]]
          }
          values {
-            klass: const(Efl.Class) @nullable; [[indicator class]]
+            indicator: Efl.Page.Indicator @nullable; [[indicator class]]
          }
       }
       @property current_page {

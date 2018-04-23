@@ -6,7 +6,13 @@ class Efl.Page.Indicator (Efl.Object)
      It is located on the top layer of pager widget and helps users to know
      the number of pages and the current page's index without scrolling.
    ]]
-   implements {
-      Efl.Object.constructor;
+   methods {
+      bind {
+         [[set object]]
+         params {
+            @in pager: Efl.Ui.Pager; [[pager object]]
+            @in group: Efl.Canvas.Group; [[a dummy object for layer adjustment]]
+         }
+      }
    }
 }

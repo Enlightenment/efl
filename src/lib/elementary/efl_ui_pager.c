@@ -673,18 +673,25 @@ _efl_ui_pager_transition_set(Eo *obj,
 EOLIAN static void
 _efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
                             Efl_Ui_Pager_Data *pd,
-                            const Efl_Class *klass)
+                            Efl_Page_Indicator *indicator)
 {
+   if (pd->indicator == indicator) return;
+
    if (pd->indicator)
      {
-        efl_del(pd->indicator);
+        efl_page_indicator_bind(pd->indicator, NULL, NULL);
         pd->indicator = NULL;
      }
 
-   if (!klass)
+   pd->indicator = indicator;
+
+   if (!pd->indicator)
      {
-        efl_del(pd->idbox);
-        pd->idbox = NULL;
+        if (pd->idbox)
+          {
+             efl_del(pd->idbox);
+             pd->idbox = NULL;
+          }
         return;
      }
 
@@ -694,7 +701,7 @@ _efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
         efl_content_set(efl_part(obj, "indicator"), pd->idbox);
      }
 
-   pd->indicator = efl_add(klass, pd->idbox);
+   efl_page_indicator_bind(pd->indicator, obj, pd->idbox);
 }
 
 EOLIAN Eina_Size2D
