@@ -39,6 +39,7 @@ typedef struct _Params {
    Evas_Object *navi;
    Eo *pager;
    Eo *transition;
+   Eo *indicator;
    int w, h;
    int padding;
    int side_page_num;
@@ -65,7 +66,7 @@ static void loop_cb(void *data, Evas_Object *obj, void *event_info);
 static void current_page_cb(void *data, Evas_Object *obj, void *event_info);
 static void scroll_block_cb(void *data, Evas_Object *obj, void *event_info);
 static void indicator_cb(void *data, Evas_Object *obj, void *event_info);
-//static void transition_cb(void *data, Evas_Object *obj, void *event_info); //TODO
+static void transition_cb(void *data, Evas_Object *obj, void *event_info);
 static void win_del_cb(void *data, const Efl_Event *ev);
 
 static char *text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
@@ -130,15 +131,14 @@ Eo *page_add(Page_Type p, Eo *parent)
 void test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win, *panes, *navi, *list, *pager, *page;
-   Efl_Page_Transition *tran;
    Params *params = NULL;
    int i;
 
-   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
-                     efl_text_set(efl_added, "Pager"),
-                     efl_ui_win_autodel_set(efl_added, EINA_TRUE),
-                     efl_event_callback_add(efl_added, EFL_EVENT_DEL, win_del_cb, params));
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_text_set(efl_added, "Pager"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
+                 efl_event_callback_add(efl_added, EFL_EVENT_DEL, win_del_cb, params));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
                    efl_gfx_size_hint_weight_set(efl_added, 1, 1),
@@ -194,8 +194,6 @@ void test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    pager = efl_add(EFL_UI_PAGER_CLASS, win);
    evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   tran = efl_add(EFL_PAGE_TRANSITION_SCROLL_CLASS, pager);
-   efl_ui_pager_transition_set(pager, tran);
    efl_ui_pager_page_size_set(pager, EINA_SIZE2D(-1, -1));
    efl_ui_pager_padding_set(pager, 20);
    efl_content_set(efl_part(panes, "second"), pager);
@@ -203,7 +201,8 @@ void test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    params = calloc(1, sizeof(Params));
    params->navi = navi;
    params->pager = pager;
-   //params->transition = tran;
+   params->transition = NULL;
+   params->indicator = NULL;
    params->w = 200;
    params->h = 300;
    params->padding = 20;
@@ -216,13 +215,13 @@ void test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 #else
    elm_list_item_append(list, "Page Size", NULL, NULL, page_size_cb, params);
    elm_list_item_append(list, "Padding", NULL, NULL, padding_cb, params);
-   elm_list_item_append(list, "Side Page Num", NULL, NULL, side_page_num_cb, params);
+   //elm_list_item_append(list, "Side Page Num", NULL, NULL, side_page_num_cb, params);
    elm_list_item_append(list, "Pack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Loop", NULL, NULL, loop_cb, params);
    elm_list_item_append(list, "Current Page", NULL, NULL, current_page_cb, params);
    elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
-   //elm_list_item_append(list, "Transition", NULL, NULL, transition_cb, params); //TODO
+   elm_list_item_append(list, "Transition", NULL, NULL, transition_cb, params);
 
    elm_list_go(list);
 #endif
@@ -389,14 +388,30 @@ static void next_block_check_cb(void *data, const Efl_Event *ev)
 
 static void indicator_icon_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Eo *pager = data;
-   efl_ui_pager_indicator_set(pager, EFL_PAGE_INDICATOR_ICON_CLASS);
+   Params *params = data;
+
+   params->indicator = efl_add(EFL_PAGE_INDICATOR_ICON_CLASS, params->pager);
+   efl_ui_pager_indicator_set(params->pager, params->indicator);
 }
 
 static void indicator_none_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Eo *pager = data;
-   efl_ui_pager_indicator_set(pager, NULL);
+   Params *params = data;
+   efl_ui_pager_indicator_set(params->pager, NULL);
+}
+
+static void transition_scroll_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Params *params = data;
+
+   params->transition = efl_add(EFL_PAGE_TRANSITION_SCROLL_CLASS, params->pager);
+   efl_ui_pager_transition_set(params->pager, params->transition);
+}
+
+static void transition_none_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Params *params = data;
+   efl_ui_pager_transition_set(params->pager, NULL);
 }
 
 static void page_size_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -670,7 +685,6 @@ static void indicator_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 {
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
-   Eo *pager = params->pager;
    Eo *btn, *box;
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
@@ -679,24 +693,41 @@ static void indicator_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
-		 elm_naviframe_item_push(navi, "Indicator", btn, NULL, efl_added, NULL));
+                 elm_naviframe_item_push(navi, "Indicator", btn, NULL, efl_added, NULL));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Icon Type"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, indicator_icon_btn_cb, pager),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, indicator_icon_btn_cb, params),
                  efl_pack_end(box, efl_added));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "None"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, indicator_none_btn_cb, pager),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, indicator_none_btn_cb, params),
                  efl_pack_end(box, efl_added));
 }
 
-
-/** TODO
-  *
 static void transition_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Params *params = (Params *)data;
+   Evas_Object *navi = params->navi;
+   Eo *btn, *box;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
+                 efl_text_set(efl_added, "Back"),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, btn_cb, navi));
+
+   box = efl_add(EFL_UI_BOX_CLASS, navi,
+                 efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 elm_naviframe_item_push(navi, "Transition", btn, NULL, efl_added, NULL));
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, box,
+                 efl_text_set(efl_added, "Scroll"),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, transition_scroll_btn_cb, params),
+                 efl_pack_end(box, efl_added));
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, box,
+                 efl_text_set(efl_added, "None"),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, transition_none_btn_cb, params),
+                 efl_pack_end(box, efl_added));
 
 }
-*/
