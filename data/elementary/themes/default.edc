@@ -196,4 +196,5 @@ collections {
 #include "edc/efl/textpath.edc"
 #include "edc/efl/win.edc"
 #include "edc/efl/uiclock.edc"
+#include "edc/efl/pager.edc"
 }
