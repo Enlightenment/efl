@@ -794,11 +794,14 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create a Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
+
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    bdata->pixels = bdata->alloc_func(bdata->data, w * h * sizeof(int));
 
