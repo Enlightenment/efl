@@ -3964,6 +3964,11 @@ _edje_lua2_script_init(Edje *ed) // Stack usage [-63, +99, em]
    _elua_init(); // This is actually truly pointless, even if raster remembers.
 #endif
    L = ed->L = luaL_newstate();
+   if (!L)
+     {
+        ERR("Lua state assign failed");
+        return;
+     }
    al = lua_newuserdata(L, sizeof(Edje_Lua_Allocator));
    al->ref = luaL_ref(L, LUA_REGISTRYINDEX);
    al->func = lua_getallocf(L, &(al->ud));
