@@ -138,6 +138,8 @@ static void
 _efl_object_invalidate(Eo *obj, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
+
+   if (pd->invalidate) return ;
    efl_parent_set(obj, NULL);
    pd->invalidate = EINA_TRUE;
 }
@@ -713,8 +715,10 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
      }
    else
      {
-        pd->parent = NULL;
+        pd->invalidate = EINA_TRUE;
         if (prev_parent) _efl_invalidate(obj);
+
+        pd->parent = NULL;
         if (prev_parent && !eo_obj->del_triggered) efl_unref(obj);
      }
 
