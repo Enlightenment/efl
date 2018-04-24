@@ -15,7 +15,7 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
            without showing the precise progress rate. In the default theme, it will
            animate the bar with content, switching constantly between filling it and back
            to non-filled in a loop. To start and stop this pulsing
-           animation you need to explicitly call elm_progressbar_pulse().
+           animation you need to explicitly call efl_ui_progressbar_pulse_set().
 
            @since 1.20
          ]]
