@@ -424,6 +424,42 @@ _efl_ui_clock_efl_ui_translatable_translation_update(Eo *obj, Efl_Ui_Clock_Data 
    efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
 }
 
+static Eina_List *
+_clock_items_get(const Evas_Object *obj)
+{
+   Eina_List *items = NULL;
+   Clock_Field *field;
+   unsigned int idx;
+   Clock_Field *sorted_fields[EFL_UI_CLOCK_TYPE_COUNT];
+
+   EFL_UI_CLOCK_DATA_GET(obj, sd);
+
+   for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
+     {
+        field = sd->field_list + idx;
+        sorted_fields[field->location] = field;
+     }
+
+   for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
+     {
+        field = sorted_fields[idx];
+        if (field->fmt_exist && field->visible)
+          items = eina_list_append(items, field->item_obj);
+     }
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     items = eina_list_append(items, sd->access_obj);
+
+   return items;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_clock_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 EOLIAN static void
 _efl_ui_clock_pause_set(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Eina_Bool paused)
 {
@@ -456,6 +492,34 @@ _efl_ui_clock_edit_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 }
 
 EOLIAN static Eina_Bool
+_efl_ui_clock_efl_ui_widget_focus_next(Eo *obj, Efl_Ui_Clock_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   const Eina_List *items;
+   Eina_List *(*list_free)(Eina_List *list);
+   void *(*list_data_get)(const Eina_List *list);
+
+   Eina_Bool int_ret;
+
+   if ((items = efl_ui_widget_focus_custom_chain_get(obj)))
+     {
+        list_data_get = eina_list_data_get;
+        list_free = NULL;
+     }
+   else
+     {
+        items = _clock_items_get(obj);
+        list_data_get = eina_list_data_get;
+        list_free = eina_list_free;
+        if (!items) return EINA_FALSE;
+     }
+
+   int_ret = efl_ui_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
+   if (list_free) list_free((Eina_List *)items);
+
+   return int_ret;
+}
+
+EOLIAN static Eina_Bool
 _efl_ui_clock_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
@@ -463,7 +527,12 @@ _efl_ui_clock_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd
    int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (!efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_is_legacy(obj))
+     int_ret = elm_widget_focus_get(obj);
+   else
+     int_ret =efl_ui_focus_object_focus_get(obj);
+
+   if (!int_ret)
      {
         Clock_Mod_Api *dt_mod = _dt_mod_init();
         if ((dt_mod) && (dt_mod->obj_hide))
