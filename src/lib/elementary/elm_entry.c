@@ -862,6 +862,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    const char *style = elm_widget_style_get(obj);
    Efl_Ui_Theme_Apply theme_apply;
    int cursor_pos;
+   Eina_Bool focused;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
@@ -935,7 +936,12 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (cursor_pos) elm_entry_cursor_pos_set(obj, cursor_pos);
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_is_legacy(obj))
+     focused = elm_widget_focus_get(obj);
+   else
+     focused = efl_ui_focus_object_focus_get(obj);
+
+   if (focused)
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
         if (sd->scroll)
@@ -1254,13 +1260,18 @@ static void
 _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Object *top;
-   Eina_Bool top_is_win = EINA_FALSE;
+   Eina_Bool top_is_win = EINA_FALSE, focused;
 
    top = elm_widget_top_get(obj);
    if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (efl_ui_focus_object_focus_get(obj) && sd->editable)
+   if (elm_widget_is_legacy(obj))
+     focused = elm_widget_focus_get(obj);
+   else
+     focused = efl_ui_focus_object_focus_get(obj);
+
+   if (focused && sd->editable)
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
@@ -2442,11 +2453,18 @@ _entry_cursor_changed_signal_cb(void *data,
                                 const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   Eina_Bool focused;
+
    if (!sd) return;
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
-   if (efl_ui_focus_object_focus_get(data))
+
+   if (elm_widget_is_legacy(data))
+     focused = elm_widget_focus_get(data);
+   else
+     focused = efl_ui_focus_object_focus_get(data);
+   if (focused)
      edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
    _cursor_geometry_recalc(data);
 
@@ -4326,14 +4344,17 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
    if (sd->editable == editable) return;
    sd->editable = editable;
    efl_ui_widget_theme_apply(obj);
-   _elm_entry_focus_update(obj, sd);
 
-   //legacy focus event emission
-   if (efl_ui_focus_object_focus_get(obj))
-     evas_object_smart_callback_call(obj, "focused", NULL);
-   else
-     evas_object_smart_callback_call(obj, "unfocused", NULL);
+   if (!elm_widget_is_legacy(obj))
+     {
+        _elm_entry_focus_update(obj, sd);
 
+        //legacy focus event emission
+        if (efl_ui_focus_object_focus_get(obj))
+          evas_object_smart_callback_call(obj, "focused", NULL);
+        else
+          evas_object_smart_callback_call(obj, "unfocused", NULL);
+     }
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
@@ -5515,6 +5536,18 @@ _elm_entry_efl_ui_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UN
    _activate(obj);
 
    return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 EOLIAN static void
