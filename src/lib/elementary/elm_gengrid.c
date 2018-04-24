@@ -3518,13 +3518,16 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_gengrid_efl_ui_widget_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item *item)
+_elm_gengrid_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
+
+   //Fallback Legacy Focus
+   if (!elm_widget_is_legacy(obj)) return EINA_TRUE;
 
    if (elm_widget_focus_get(obj) && (sd->selected) &&
        (!sd->last_selected_item))
@@ -3535,16 +3538,13 @@ _elm_gengrid_efl_ui_widget_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd, Elm_Ob
 
    if (elm_widget_focus_get(obj) && !sd->mouse_down)
      {
-        if (item) eo_it = item;
-        else
-          {
-             if (sd->last_focused_item)
-               eo_it = sd->last_focused_item;
-             else if (sd->last_selected_item)
-               eo_it = sd->last_selected_item;
-             else if (_elm_config->first_item_focus_on_first_focus_in)
-               eo_it = elm_gengrid_first_item_get(obj);
-          }
+        if (sd->last_focused_item)
+          eo_it = sd->last_focused_item;
+        else if (sd->last_selected_item)
+          eo_it = sd->last_selected_item;
+        else if (_elm_config->first_item_focus_on_first_focus_in)
+          eo_it = elm_gengrid_first_item_get(obj);
+
         if (eo_it)
           {
              eo_it = _elm_gengrid_nearest_visible_item_get(obj, eo_it);
@@ -3599,9 +3599,11 @@ end:
 static Eina_Bool _elm_gengrid_smart_focus_next_enable = EINA_FALSE;
 
 EOLIAN static Eina_Bool
-_elm_gengrid_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
+_elm_gengrid_efl_ui_widget_focus_next_manager_is(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
-   return _elm_gengrid_smart_focus_next_enable;
+   //Fallback Legacy Focus
+   if (elm_widget_is_legacy(obj)) return _elm_gengrid_smart_focus_next_enable;
+   else return efl_ui_widget_focus_next_manager_is(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -3609,6 +3611,10 @@ _elm_gengrid_efl_ui_widget_focus_next(Eo *obj, Elm_Gengrid_Data *sd, Elm_Focus_D
 {
    Eina_List *items = NULL;
    Elm_Gen_Item *it;
+
+   //Fallback Legacy Focus
+   if (!elm_widget_is_legacy(obj))
+     return efl_ui_widget_focus_next(efl_super(obj, MY_CLASS), dir, next, next_item);
 
    EINA_INLIST_FOREACH(sd->items, it)
      {
@@ -3623,7 +3629,10 @@ _elm_gengrid_efl_ui_widget_focus_next(Eo *obj, Elm_Gengrid_Data *sd, Elm_Focus_D
 EOLIAN static Eina_Bool
 _elm_gengrid_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
-   return EINA_TRUE;
+   //Fallback Legacy Focus
+   if (!elm_widget_is_legacy(obj))
+     return efl_ui_widget_focus_direction_manager_is(efl_super(obj, MY_CLASS));
+   else return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -3633,6 +3642,10 @@ _elm_gengrid_efl_ui_widget_focus_direction(Eo *obj, Elm_Gengrid_Data *sd EINA_UN
    Elm_Object_Item *eo_item = NULL;
    Eina_Bool ret = EINA_FALSE;
    double c_weight = 0.0;
+
+   //Fallback Legacy Focus
+   if (!elm_widget_is_legacy(obj))
+     return efl_ui_widget_focus_direction(efl_super(obj, MY_CLASS), base, degree, direction, direction_item, weight);
 
    items = elm_gengrid_realized_items_get(obj);
    eo_item = elm_object_focused_item_get(base);
@@ -3939,8 +3952,9 @@ _elm_gengrid_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
                _elm_gengrid_item_unfocused(sd->focused_item);
              _elm_gengrid_item_focused(eo_it);
           }
-
-        efl_ui_focus_manager_focus_set(obj, eo_it);
+        //Fallback Legacy Focus
+        if (!elm_widget_is_legacy(obj))
+          efl_ui_focus_manager_focus_set(obj, eo_it);
      }
    else
      {
@@ -4319,6 +4333,9 @@ EOLIAN static void
 _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *entry EINA_UNUSED)
 {
    Elm_Object_Item *eo_it = NULL;
+  
+   //Fallback Legacy Focus
+   if (elm_widget_is_legacy(obj)) return;
 
    if (direction == EFL_UI_FOCUS_DIRECTION_LAST && entry == NULL) return;
 
@@ -4380,12 +4397,19 @@ EOLIAN static Eo *
 _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 {
    sd->content_item_map = eina_hash_pointer_new(NULL);
-   sd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_GEN_CLASS, obj,
-    efl_ui_focus_parent_provider_gen_container_set(efl_added, obj),
-    efl_ui_focus_parent_provider_gen_content_item_map_set(efl_added, sd->content_item_map));
 
-   efl_ui_focus_composition_custom_manager_set(obj, obj);
-   efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
+   //Fallback Legacy Focus
+   if (!elm_widget_is_legacy(obj))
+     {
+        sd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_GEN_CLASS, obj,
+         efl_ui_focus_parent_provider_gen_container_set(efl_added, obj),
+         efl_ui_focus_parent_provider_gen_content_item_map_set(efl_added, sd->content_item_map));
+
+        efl_ui_focus_composition_custom_manager_set(obj, obj);
+        efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
+
+        efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _gengrid_element_focused, obj);
+     }
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
@@ -4393,8 +4417,6 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
-
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _gengrid_element_focused, obj);
 
    return obj;
 }
@@ -5842,6 +5864,9 @@ _elm_gengrid_efl_ui_focus_composition_prepare(Eo *obj, Elm_Gengrid_Data *pd)
    Elm_Gen_Item *item;
    Eina_List *order = NULL;
 
+//Fallback Legacy Focus
+if (elm_widget_is_legacy(obj)) return;
+
    EINA_INLIST_FOREACH(pd->items, item)
      {
         if (item->base->disabled)
@@ -5856,6 +5881,9 @@ _elm_gengrid_efl_ui_focus_composition_prepare(Eo *obj, Elm_Gengrid_Data *pd)
 EOLIAN static Eina_Bool
 _elm_gengrid_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
+   //Fallback Legacy Focus
+   if (elm_widget_is_legacy(obj)) return EINA_FALSE;
+
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
@@ -5864,6 +5892,9 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, El
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
+
+   //Fallback Legacy Focus
+   if (elm_widget_is_legacy(obj)) return;
 
    EINA_LIST_FOREACH(pd->contents, n, wid)
      {

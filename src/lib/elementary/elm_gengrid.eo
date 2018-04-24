@@ -511,7 +511,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.focus_next;
       Efl.Ui.Widget.focus_direction;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
