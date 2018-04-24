@@ -51,6 +51,8 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_direction_manager_is;
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Range.range_min_max {get; set; }
       Efl.Ui.Direction.direction { get; set; }

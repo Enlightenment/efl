@@ -548,6 +548,65 @@ _efl_ui_panes_fixed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
    return sd->fixed;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_panes_efl_ui_widget_focus_next(Eo *obj, Efl_Ui_Panes_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   double w, h;
+   unsigned char i;
+   Evas_Object *to_focus;
+   Evas_Object *chain[2];
+   Evas_Object *left, *right;
+   Elm_Object_Item *to_focus_item;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   edje_object_part_drag_value_get
+     (wd->resize_obj, "elm.bar", &w, &h);
+
+   left = elm_layout_content_get(obj, "left");
+   right = elm_layout_content_get(obj, "right");
+
+   if (((sd->dir == EFL_UI_DIR_HORIZONTAL) && (EINA_DBL_EQ(h, 0.0))) ||
+       ((sd->dir == EFL_UI_DIR_VERTICAL) && (EINA_DBL_EQ(w, 0.0))))
+     {
+       return efl_ui_widget_focus_next_get(right, dir, next, next_item);
+     }
+
+   /* Direction */
+   if (dir == ELM_FOCUS_PREVIOUS)
+     {
+        chain[0] = right;
+        chain[1] = left;
+     }
+   else if (dir == ELM_FOCUS_NEXT)
+     {
+        chain[0] = left;
+        chain[1] = right;
+     }
+   else return EINA_FALSE;
+
+   i = elm_widget_focus_get(chain[1]);
+
+   if (efl_ui_widget_focus_next_get(chain[i], dir, next, next_item)) return EINA_TRUE;
+
+   i = !i;
+
+   if (efl_ui_widget_focus_next_get(chain[i], dir, &to_focus, &to_focus_item))
+     {
+        *next = to_focus;
+        *next_item = to_focus_item;
+        return !!i;
+     }
+
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_panes_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 /* Efl.Part begin */
 
 static Eina_Bool

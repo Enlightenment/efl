@@ -51,6 +51,8 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_next;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Efl.Part.part;
    }

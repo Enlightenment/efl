@@ -615,6 +615,18 @@ _elm_label_slide_duration_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
    return sd->slide_duration;
 }
 
+EOLIAN static Eina_Bool
+_elm_label_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Label_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_label_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Label_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 EOLIAN static void
 _elm_label_class_constructor(Efl_Class *klass)
 {

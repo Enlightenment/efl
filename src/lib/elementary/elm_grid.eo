@@ -59,5 +59,9 @@ class Elm.Grid (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Composition.prepare;
+      Efl.Ui.Widget.focus_direction;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_next;
+      Efl.Ui.Widget.focus_direction_manager_is;
    }
 }

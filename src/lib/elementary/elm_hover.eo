@@ -69,6 +69,8 @@ class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.widget_parent { get; set; }
       Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.focus_direction_manager_is;
+      Efl.Ui.Widget.focus_next_manager_is;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.state_set { get; }
       Efl.Part.part;

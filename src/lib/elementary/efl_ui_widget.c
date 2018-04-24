@@ -6450,13 +6450,7 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 static void
 _focus_event_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Eina_Bool focused;
-   
-   if (elm_widget_is_legacy(event->object))
-     focused = elm_widget_focus_get(event->object);
-   else
-     focused = efl_ui_focus_object_focus_get(event->object);
-   if (focused)
+   if (efl_ui_focus_object_focus_get(event->object))
      evas_object_smart_callback_call(event->object, "focused", NULL);
    else
      evas_object_smart_callback_call(event->object, "unfocused", NULL);

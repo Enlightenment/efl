@@ -56,6 +56,10 @@ class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text.Markup,
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
+      Efl.Ui.Widget.focus_direction;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_next;
+      Efl.Ui.Widget.focus_direction_manager_is;
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }

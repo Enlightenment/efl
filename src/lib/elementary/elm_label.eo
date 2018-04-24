@@ -124,6 +124,8 @@ class Elm.Label (Efl.Ui.Layout, Efl.Ui.Legacy)
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_direction_manager_is;
       Efl.Ui.Widget.theme_apply;
       Efl.Part.part;
    }

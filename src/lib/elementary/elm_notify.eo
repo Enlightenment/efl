@@ -86,6 +86,10 @@ class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part, Efl.
       Efl.Ui.Widget.widget_parent { get; set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.focus_direction;
+      Efl.Ui.Widget.focus_direction_manager_is;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_next;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part;
