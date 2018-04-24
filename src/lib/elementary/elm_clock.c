@@ -4,10 +4,12 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_ADAPTER_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
+#include "efl_ui_focus_composition_adapter.eo.h"
 
 #define MY_CLASS ELM_CLOCK_CLASS
 
@@ -340,17 +342,27 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
 }
 
 static Evas_Object*
-_part_get(Evas_Object *part, const char *part_name)
+_focus_part_get(Evas_Object *part, const char *part_name)
 {
-   Evas_Object *po;
+   Evas_Object *po, *adapter;
 
    po = (Evas_Object *)edje_object_part_object_get
           (part, part_name);
 
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_ON)
-     return po;
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     po = evas_object_data_get(po, "_part_access_obj");
 
-   return evas_object_data_get(po, "_part_access_obj");
+
+   adapter = evas_object_data_get(po, "_focus_adapter_object");
+
+   if (!adapter)
+     {
+        adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, po);
+        efl_ui_focus_composition_adapter_canvas_object_set(adapter, part);
+        evas_object_data_set(po, "_focus_adapter_object", adapter);
+     }
+
+   return adapter;
 }
 
 static void
@@ -366,15 +378,15 @@ _flush_clock_composite_elements(Evas_Object *obj, Elm_Clock_Data *sd)
              if ((!sd->seconds) && (i >= 4)) break;
              if (sd->digedit & (1 << i))
                {
-                  items = eina_list_append(items, _part_get(sd->digit[i], "access.t"));
-                  items = eina_list_append(items, _part_get(sd->digit[i], "access.b"));
+                  items = eina_list_append(items, _focus_part_get(sd->digit[i], "access.t"));
+                  items = eina_list_append(items, _focus_part_get(sd->digit[i], "access.b"));
                }
           }
 
         if (sd->am_pm)
           {
-             items = eina_list_append(items, _part_get(sd->am_pm_obj, "access.t"));
-             items = eina_list_append(items, _part_get(sd->am_pm_obj, "access.b"));
+             items = eina_list_append(items, _focus_part_get(sd->am_pm_obj, "access.t"));
+             items = eina_list_append(items, _focus_part_get(sd->am_pm_obj, "access.b"));
           }
      }
 

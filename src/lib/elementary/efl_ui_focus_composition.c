@@ -106,13 +106,6 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
                }
-             else if (efl_isa(elem, EFL_GFX_ENTITY_INTERFACE))
-               {
-                  o = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, efl_provider_find(obj, EFL_LOOP_CLASS), efl_ui_focus_composition_adapter_canvas_object_set(efl_added, elem));
-
-                  pd->adapters = eina_list_append(pd->adapters, o);
-                  pd->register_target = eina_list_append(pd->register_target , o);
-               }
              else
                {
                   EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_ENTITY_INTERFACE or EFL_UI_WIDGET_CLASS");
