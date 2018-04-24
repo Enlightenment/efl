@@ -615,21 +615,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         fh = wdata->win->set_config.geometry.h - contenth;
      }
    if ((!nw) && (!nh))
-     {
-        if ((wdata->win->set_config.serial != wdata->win->req_config.serial) &&
-            wdata->win->req_config.serial && wdata->win->surface &&
-            ((!state_change) || ((pfw == fw) && (pfh == fh))))
-          {
-             if (wdata->win->xdg_configure_ack)
-               wdata->win->xdg_configure_ack(wdata->win->xdg_surface,
-                                              wdata->win->req_config.serial);
-             if (wdata->win->zxdg_configure_ack)
-               wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
-                                              wdata->win->req_config.serial);
-             wdata->win->set_config.serial = wdata->win->req_config.serial;
-          }
-        return ECORE_CALLBACK_RENEW;
-     }
+     return ECORE_CALLBACK_RENEW;
 
    if (!ee->prop.borderless)
      {
