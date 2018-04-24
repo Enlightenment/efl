@@ -3106,40 +3106,11 @@ _key_action_move(Evas_Object *obj, const char *params)
          (obj, NULL, NULL, &v_w, &v_h);
 
    _elm_widget_focus_auto_show(obj);
-   if (!strcmp(dir, "left"))
-     {
-        x -= step_x;
 
-        Elm_Object_Item *eo_gt = elm_genlist_selected_item_get(obj);
-        ELM_GENLIST_ITEM_DATA_GET(eo_gt, gt);
-        _elm_genlist_item_content_focus_set(gt, ELM_FOCUS_LEFT);
-
-        return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "right"))
-     {
-        x += step_x;
-
-        Elm_Object_Item *eo_gt = elm_genlist_selected_item_get(obj);
-        ELM_GENLIST_ITEM_DATA_GET(eo_gt, gt);
-        _elm_genlist_item_content_focus_set(gt, ELM_FOCUS_RIGHT);
-
-        return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "up"))
-     {
-        if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
-        else return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "up_multi"))
+   if (!strcmp(dir, "up_multi"))
      {
         if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_TRUE)) return EINA_TRUE;
         else if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
-        else return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "down"))
-     {
-        if (_key_action_move_dir(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "down_multi"))
