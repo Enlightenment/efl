@@ -1732,6 +1732,10 @@ EAPI Evas_Object *
 elm_object_focused_object_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+
+   if (elm_widget_is_legacy(obj))
+     return efl_ui_widget_focused_object_get(obj);
+
    Efl_Ui_Focus_Manager *man = elm_object_top_widget_get(obj);
 
    while(efl_ui_focus_manager_redirect_get(man))
