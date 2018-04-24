@@ -160,7 +160,7 @@ _stat_done_cb(void *data,
 }
 
 static void
-_test_ls(Eina_Future *(*func)(Eo *obj, const char *path, Eina_Bool recursive,
+_test_ls(Eina_Future *(*func)(const Eo *obj, const char *path, Eina_Bool recursive,
                               void *info_data, EflIoDirectInfo info, Eina_Free_Cb info_free_cb),
          uint64_t expected_test_count,
          const char* test_dirname)
