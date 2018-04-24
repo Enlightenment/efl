@@ -316,6 +316,18 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(const Eo *obj EINA_U
    return sd->ar_gap_timeout;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_button_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_button_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 EOLIAN const Efl_Access_Action_Data *
 _efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {

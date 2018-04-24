@@ -1526,6 +1526,9 @@ elm_object_focus_get(const Evas_Object *obj)
    if (!elm_widget_is(obj))
      return evas_object_focus_get(obj);
 
+   if (elm_widget_is_legacy(obj))
+     return elm_widget_focus_get(obj);
+
    m = efl_ui_focus_object_focus_manager_get(obj);
 
    //no manager means not registered
@@ -1571,6 +1574,17 @@ elm_object_focus_set(Evas_Object *obj,
      }
    else if (elm_widget_is(obj))
      {
+        if (elm_widget_is_legacy(obj))
+          {
+             if (focus == elm_widget_focus_get(obj)) return;
+
+             if (focus)
+               efl_ui_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+             else
+               efl_ui_widget_focused_object_clear(obj);
+             return;
+          }
+
         if (focus)
           efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
         else
@@ -1652,10 +1666,29 @@ EAPI void
 elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
 {
-   Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(obj);
+   
+   Evas_Object *target = NULL;
+   Elm_Object_Item *target_item = NULL;
+   if (!elm_widget_is(obj))
+     return;
+   efl_ui_widget_focus_next_get(obj, dir, &target, &target_item);
+   if (target)
+     {
+        /* access */
+        if (_elm_config->access_mode)
+          {
+             /* highlight cycle does not steal a focus, only after window gets
+                the ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE message,
+                target will steal focus, or focus its own job. */
+             if (!_elm_access_auto_highlight_get())
+               efl_ui_widget_focus_steal(target, target_item);
 
-   efl_ui_focus_manager_move(top, dir);
+             _elm_access_highlight_set(target);
+             elm_widget_focus_region_show(target);
+          }
+        else efl_ui_widget_focus_steal(target, target_item);
+     }
 }
 
 EAPI Evas_Object *

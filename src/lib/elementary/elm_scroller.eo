@@ -49,6 +49,10 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Content.content_unset;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_direction_manager_is;
+      Efl.Ui.Widget.focus_next;
+      Efl.Ui.Widget.focus_direction;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Elm.Interface_Scrollable.page_size { set; }

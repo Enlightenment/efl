@@ -27,6 +27,9 @@ _efl_ui_focus_layer_efl_gfx_visible_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Ei
 {
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), v);
 
+   if (elm_widget_is_legacy(obj))
+     return;
+
    if (pd->enable_on_visible)
      {
         efl_ui_focus_layer_enable_set(obj, v);
@@ -54,7 +57,9 @@ _efl_ui_focus_layer_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Layer_Data *
 EOLIAN static void
 _efl_ui_focus_layer_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
 {
-   efl_ui_focus_layer_enable_set(obj, EINA_FALSE);
+   if (!elm_widget_is_legacy(obj))
+     efl_ui_focus_layer_enable_set(obj, EINA_FALSE);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -86,6 +91,9 @@ EOLIAN static Efl_Object*
 _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   if (elm_widget_is_legacy(obj))
+     return obj;
+
    pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
    efl_composite_attach(obj, pd->manager);
    pd->enable_on_visible = EINA_TRUE;

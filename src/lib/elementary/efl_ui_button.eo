@@ -21,5 +21,7 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
       Efl.Content.content_unset;
       Efl.Text.text { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_direction_manager_is;
    }
 }

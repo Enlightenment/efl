@@ -85,9 +85,12 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
 
 EOLIAN static Efl_Object*
 _elm_widget_item_static_focus_efl_object_constructor(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
-{
+{   
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
    Eo *ret = efl_constructor(efl_super(obj, MY_CLASS));
+
+   if (elm_widget_is_legacy(wpd->widget))
+     goto end;
 
    if (efl_isa(wpd->widget, ELM_GENLIST_CLASS))
      {
@@ -99,6 +102,7 @@ _elm_widget_item_static_focus_efl_object_constructor(Eo *obj, Elm_Widget_Item_St
         efl_event_callback_add(wpd->widget, ELM_GENGRID_EVENT_REALIZED, _realized_cb, obj);
         efl_event_callback_add(wpd->widget, ELM_GENGRID_EVENT_UNREALIZED, _unrealized_cb, obj);
      }
+end:
    return ret;
 }
 
@@ -106,6 +110,10 @@ EOLIAN static void
 _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+   
+   if (elm_widget_is_legacy(wpd->widget))
+     goto end;
+
    if (efl_isa(wpd->widget, ELM_GENLIST_CLASS))
      {
         efl_event_callback_del(wpd->widget, ELM_GENLIST_EVENT_REALIZED, _realized_cb, obj);
@@ -120,7 +128,8 @@ _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Sta
    if (pd->adapter)
      efl_del(pd->adapter);
 
-   return efl_destructor(efl_super(obj, MY_CLASS));
+end:
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 

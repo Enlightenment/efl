@@ -1256,14 +1256,37 @@ _elm_win_focus_in(Ecore_Evas *ee)
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (sd->type != ELM_WIN_FAKE)
      {
-        Efl_Ui_Focus_Manager *man = sd->obj;
-        while(efl_ui_focus_manager_redirect_get(man))
+        if (elm_widget_is_legacy(obj))
           {
-             man = efl_ui_focus_manager_redirect_get(man);
-          }
+             if (!efl_ui_widget_focus_order_get(obj))
+               {
+                  efl_ui_widget_focus_steal(obj, NULL);
+               }
+             else
+               {
+                  Evas_Object *newest = NULL;
+                  unsigned int newest_focus_order = 0;
 
-        Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
-        efl_ui_focus_object_focus_set(focused, EINA_TRUE);
+                  newest = efl_ui_widget_newest_focus_order_get
+                     (obj, &newest_focus_order, EINA_TRUE);
+                  if (newest &&
+                      (_elm_widget_onscreen_is(newest) || (newest == obj)))
+                    efl_ui_widget_focus_restore(obj);
+                  else
+                    evas_object_focus_set(obj, EINA_TRUE);
+               }
+          }
+        else
+          {
+             Efl_Ui_Focus_Manager *man = sd->obj;
+             while(efl_ui_focus_manager_redirect_get(man))
+               {
+                  man = efl_ui_focus_manager_redirect_get(man);
+               }
+
+             Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
+             efl_ui_focus_object_focus_set(focused, EINA_TRUE);
+          }
      }
 
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
@@ -1283,7 +1306,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    /* else if (sd->img_obj) */
    /*   { */
    /*   } */
-   if ((!efl_ui_focus_manager_focus_get(sd->obj)) &&
+   if (!elm_widget_is_legacy(obj) && (!efl_ui_focus_manager_focus_get(sd->obj)) &&
        (!efl_ui_focus_manager_redirect_get(sd->obj)))
      {
         Efl_Ui_Focus_Object *child;
@@ -1326,7 +1349,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
         efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_FALSE);
      }
 
-   if (sd->type != ELM_WIN_FAKE)
+   if (!elm_widget_is_legacy(obj) && sd->type != ELM_WIN_FAKE)
      {
         Efl_Ui_Focus_Manager *man = sd->obj;
         while(efl_ui_focus_manager_redirect_get(man))
@@ -1638,6 +1661,68 @@ _elm_win_state_change(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
+_efl_ui_win_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_ui_widget_focus_next(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   const Eina_List *items;
+   void *(*list_data_get)(const Eina_List *list);
+
+   /* Focus chain */
+   if (wd->subobjs)
+     {
+        if (!(items = efl_ui_widget_focus_custom_chain_get(obj)))
+          {
+             items = wd->subobjs;
+             if (!items)
+               return EINA_FALSE;
+          }
+        list_data_get = eina_list_data_get;
+
+        efl_ui_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
+
+        if (*next) return EINA_TRUE;
+     }
+   *next = (Evas_Object *)obj;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_ui_widget_focus_direction(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   const Eina_List *items;
+   void *(*list_data_get)(const Eina_List *list);
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   /* Focus chain */
+   if (wd->subobjs)
+     {
+        if (!(items = efl_ui_widget_focus_custom_chain_get(obj)))
+          items = wd->subobjs;
+
+        list_data_get = eina_list_data_get;
+
+        return efl_ui_widget_focus_list_direction_get
+                 (obj, base, items, list_data_get, degree, direction, direction_item, weight);
+     }
+
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
 _efl_ui_win_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    if (!efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS)))
@@ -1681,16 +1766,21 @@ _key_action_move(Evas_Object *obj, const char *params)
      focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
    else return EINA_FALSE;
 
-   o = efl_ui_focus_manager_move(obj, focus_dir);
-
-   if (!o)
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_cycle(obj, focus_dir);
+   else
      {
-        if (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT || focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
-          {
-             Efl_Ui_Focus_Object *root;
+        o = efl_ui_focus_manager_move(obj, focus_dir);
 
-             root = efl_ui_focus_manager_root_get(obj);
-             efl_ui_focus_manager_setup_on_first_touch(obj, focus_dir, root);
+        if (!o)
+          {
+             if (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT || focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+               {
+                  Efl_Ui_Focus_Object *root;
+
+                  root = efl_ui_focus_manager_root_get(obj);
+                  efl_ui_focus_manager_setup_on_first_touch(obj, focus_dir, root);
+               }
           }
      }
    return EINA_TRUE;
@@ -2680,7 +2770,8 @@ _win_img_hide(void *data,
               void *event_info EINA_UNUSED)
 {
    Efl_Ui_Win *real_win = elm_widget_top_get(data);
-   efl_ui_focus_manager_redirect_set(real_win, NULL);
+   if (!elm_widget_is_legacy(real_win))
+     efl_ui_focus_manager_redirect_set(real_win, NULL);
 }
 
 static void
@@ -2701,8 +2792,11 @@ _win_img_focus_in(void *data,
                   void *event_info EINA_UNUSED)
 {
    Efl_Ui_Win *real_win = elm_widget_top_get(data);
-   efl_ui_focus_manager_redirect_set(real_win, data);
-   efl_ui_focus_manager_focus_set(data, efl_ui_focus_manager_root_get(data));
+   if (!elm_widget_is_legacy(real_win))
+     {
+        efl_ui_focus_manager_redirect_set(real_win, data);
+        efl_ui_focus_manager_focus_set(data, efl_ui_focus_manager_root_get(data));
+     }
 }
 
 static void
@@ -2712,7 +2806,8 @@ _win_img_focus_out(void *data,
                    void *event_info EINA_UNUSED)
 {
    Efl_Ui_Win *real_win = elm_widget_top_get(data);
-   efl_ui_focus_manager_redirect_set(real_win, NULL);
+   if (!elm_widget_is_legacy(real_win))
+     efl_ui_focus_manager_redirect_set(real_win, NULL);
 }
 
 static void
@@ -5470,16 +5565,19 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
     * really bad and hacky. Needs fixing. */
 
    pd->obj = obj;
-   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-   pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
    pd->profile.available = eina_array_new(4);
 
    // For bindings: if no parent, allow simple unref
    if (!efl_parent_get(obj))
      efl_allow_parent_unref_set(obj, EINA_TRUE);
 
-   efl_composite_attach(obj, pd->manager);
-   _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
+   if (!elm_widget_is_legacy(obj))
+     {
+        pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
+        pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
+        efl_composite_attach(obj, pd->manager);
+        _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
+     }
 
    return obj;
 }

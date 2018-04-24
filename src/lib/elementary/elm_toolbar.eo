@@ -357,6 +357,8 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Efl.Ui.Widget.focused_item { get; }
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_next;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
       Efl.Ui.Widget.focus_state_apply;
       Efl.Access.Widget.Action.elm_actions { get; }

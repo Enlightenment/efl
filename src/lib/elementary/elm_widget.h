@@ -314,6 +314,7 @@ typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool f
 typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
+
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 #include "efl_ui_widget.eo.h"
@@ -673,12 +674,16 @@ EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, con
 EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
+EAPI Eina_Bool        elm_widget_focus_get(const Eo *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *obj);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
+
+
+double                _elm_widget_focus_direction_weight_get(const Evas_Object *obj1, const Evas_Object *obj2, double degree);
 
 /**
  * @internal

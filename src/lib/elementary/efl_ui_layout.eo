@@ -65,6 +65,10 @@ class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.focus_direction;
+      Efl.Ui.Widget.focus_direction_manager_is;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_next;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Container.content_count;
       Efl.Container.content_remove;

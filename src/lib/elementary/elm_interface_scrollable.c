@@ -4680,6 +4680,10 @@ EOLIAN static Efl_Object*
 _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
    Eo *o = efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
+
+   if (elm_widget_is_legacy(obj))
+     return o;
+
    pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
@@ -4702,6 +4706,7 @@ _filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
 EOLIAN static Eina_Iterator*
 _elm_interface_scrollable_efl_ui_focus_manager_border_elements_get(const Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
+   if (elm_widget_is_legacy(obj)) return NULL;
    Eina_Iterator *border_elements;
    Eina_Rectangle *rect = calloc(1, sizeof(Eina_Rectangle));
 

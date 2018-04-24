@@ -252,6 +252,10 @@ class Elm.Box (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Focus.Composition.prepare;
+      Efl.Ui.Widget.focus_direction;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_direction_manager_is;
+      Efl.Ui.Widget.focus_next;
    }
    events {
       child,added; [[Called when child was added]]

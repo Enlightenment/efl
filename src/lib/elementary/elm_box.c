@@ -23,6 +23,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static void *
+_elm_box_list_data_get(const Eina_List *list)
+{
+   Evas_Object_Box_Option *opt = eina_list_data_get(list);
+   return opt->obj;
+}
+
 static void
 _elm_box_efl_ui_focus_composition_prepare(Eo *obj, Elm_Box_Data *pd EINA_UNUSED)
 {
@@ -55,6 +62,66 @@ _child_removed_cb_proxy(void *data, const Efl_Event *event)
    Evas_Object *box = data;
    Evas_Object *child = event->info;
    efl_event_callback_legacy_call(box, ELM_BOX_EVENT_CHILD_REMOVED, child);
+}
+
+EOLIAN static Eina_Bool
+_elm_box_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Box_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_box_efl_ui_widget_focus_next(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   const Eina_List *items;
+   void *(*list_data_get)(const Eina_List *list);
+
+   /* Focus chain */
+   /* TODO: Change this to use other chain */
+   if ((items = efl_ui_widget_focus_custom_chain_get(obj)))
+     list_data_get = eina_list_data_get;
+   else
+     {
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+        Evas_Object_Box_Data *bd =
+          evas_object_smart_data_get(wd->resize_obj);
+
+        items = bd->children;
+        list_data_get = _elm_box_list_data_get;
+
+        if (!items) return EINA_FALSE;
+     }
+
+   return efl_ui_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
+}
+
+EOLIAN static Eina_Bool
+_elm_box_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Box_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_box_efl_ui_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Box_Data *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   const Eina_List *items;
+   void *(*list_data_get)(const Eina_List *list);
+
+   if ((items = efl_ui_widget_focus_custom_chain_get(obj)))
+     list_data_get = eina_list_data_get;
+   else
+     {
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+        Evas_Object_Box_Data *bd =
+          evas_object_smart_data_get(wd->resize_obj);
+
+        items = bd->children;
+        list_data_get = _elm_box_list_data_get;
+
+        if (!items) return EINA_FALSE;
+     }
+   return efl_ui_widget_focus_list_direction_get
+            (obj, base, items, list_data_get, degree, direction, direction_item, weight);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
