@@ -105,7 +105,11 @@ _owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
                                  i < (EFL_SELECTION_TYPE_CLIPBOARD + 1)
                                  ; i++)
                               {
+#ifdef HAVE_ELEMENTARY_X
                                  seat_sel2->sel_list[i].xwin = 0;
+#elif defined (HAVE_ELEMENTARY_WIN32)
+                                 seat_sel2->sel_list[i].win = NULL;
+#endif
                                  seat_sel2->sel_list[i].active = EINA_FALSE;
                               }
                          }
