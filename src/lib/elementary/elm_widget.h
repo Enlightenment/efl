@@ -314,7 +314,6 @@ typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool f
 typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
-
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 #include "efl_ui_widget.eo.h"

@@ -85,7 +85,7 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
 
 EOLIAN static Efl_Object*
 _elm_widget_item_static_focus_efl_object_constructor(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
-{   
+{
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
    Eo *ret = efl_constructor(efl_super(obj, MY_CLASS));
 
