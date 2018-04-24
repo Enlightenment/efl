@@ -36,13 +36,14 @@ static const char *attr_data[] =
 int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 
 static void
-_main_cb(void *data, Eina_Accessor *access)
+_main_cb(void *data, Eina_Array *array)
 {
    const char* attr;
    int *num_of_attr = (int *)data;
-   unsigned int count;
+   Eina_Array_Iterator iterator;
+   unsigned int j;
 
-   EINA_ACCESSOR_FOREACH(access, count, attr)
+   EINA_ARRAY_ITER_NEXT(array, j, attr, iterator)
      {
         unsigned int i;
 
