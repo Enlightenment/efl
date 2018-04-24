@@ -3356,7 +3356,7 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
      eo_it = sd->last_focused_item;
    else if (sd->last_selected_item)
      eo_it = sd->last_selected_item;
-   else if (_elm_config->first_item_focus_on_first_focus_in || !eo_it)
+   else if (_elm_config->first_item_focus_on_first_focus_in)
      {
         eo_it = elm_genlist_first_item_get(obj);
         is_sel = EINA_TRUE;
@@ -3384,6 +3384,11 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
             if (efl_ui_focus_manager_request_subchild(obj, eo_it))
               efl_ui_focus_manager_focus_set(obj, eo_it);
           }
+     }
+   else
+     {
+        //Just set evas focus on the genlist itself, events will pass on and a other element will be taken
+        evas_object_focus_set(obj, EINA_TRUE);
      }
 }
 

@@ -4202,8 +4202,6 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
 {
    Elm_Object_Item *eo_it = NULL;
 
-   if (direction == EFL_UI_FOCUS_DIRECTION_LAST && entry == NULL) return;
-
    if (pd->last_focused_item)
      eo_it = pd->last_focused_item;
    else if (pd->last_selected_item)
@@ -4229,6 +4227,11 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
           elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
         else
           efl_ui_focus_manager_focus_set(obj, eo_it);
+     }
+   else
+     {
+        //Just set evas focus on the gengrid itself, events will pass on and some element will be taken
+        evas_object_focus_set(obj, EINA_TRUE);
      }
 }
 
