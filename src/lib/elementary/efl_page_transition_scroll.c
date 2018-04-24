@@ -387,7 +387,7 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
                                              double pos)
 {
    Eina_List *list;
-   Page_Info *pi, *target;
+   Page_Info *pi, *target = NULL;
 
    // after the current page is changed, page infos need to be updated
    // with a new id based on the new geometry of the boxes.
