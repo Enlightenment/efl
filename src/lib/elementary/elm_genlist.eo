@@ -533,10 +533,13 @@ class Elm.Genlist (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Canvas.Group.group_member_add;
       Efl.Object.provider_find;
       Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_next_manager_is;
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
+      Efl.Ui.Widget.focus_next;
       Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Widget.focus_direction_manager_is;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focused_item { get; }

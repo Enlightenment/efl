@@ -2963,7 +2963,6 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
    EINA_LIST_FOREACH(it->item_focus_chain, l, focused_obj)
      if (elm_object_focus_get(focused_obj)) break;
 
-   /* FOCUS-FIXME
    if (focused_obj && (dir != ELM_FOCUS_PREVIOUS))
      {
         Evas_Object *nextfocus;
@@ -2977,7 +2976,6 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
              return;
           }
      }
-   */
 
    if (!l) l = it->item_focus_chain;
 
@@ -3434,6 +3432,69 @@ _elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
 }
 
 static Eina_Bool _elm_genlist_smart_focus_next_enable = EINA_FALSE;
+
+EOLIAN static Eina_Bool
+_elm_genlist_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Genlist_Data *_pd EINA_UNUSED)
+{
+   return _elm_genlist_smart_focus_next_enable;
+}
+
+EOLIAN static Eina_Bool
+_elm_genlist_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Genlist_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_genlist_efl_ui_widget_focus_next(Eo *obj, Elm_Genlist_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   Evas_Coord x, y, w, h;
+   Evas_Coord sx, sy, sw, sh;
+   Item_Block *itb;
+   Eina_List *items = NULL;
+   Eina_Bool done = EINA_FALSE;
+   int ret;
+
+   evas_object_geometry_get(sd->obj, &sx, &sy, &sw, &sh);
+
+   EINA_INLIST_FOREACH(sd->blocks, itb)
+     {
+        if (itb->realized)
+          {
+             Eina_List *l;
+             Elm_Gen_Item *it;
+
+             done = EINA_TRUE;
+             EINA_LIST_FOREACH(itb->items, l, it)
+               {
+                  if (it->realized)
+                    {
+                       evas_object_geometry_get(it->base->view, &x, &y, &w, &h);
+
+                       /* check item which displays more than half of its size */
+                       if (it->base->access_obj &&
+                           ELM_RECTS_INTERSECT
+                             (x + (w / 2), y + (h / 2), 0, 0, sx, sy, sw, sh))
+                         items = eina_list_append(items, it->base->access_obj);
+
+                       if (!it->base->access_order) continue;
+
+                       Eina_List *subl;
+                       Evas_Object *subo;
+                       EINA_LIST_FOREACH(it->base->access_order, subl, subo)
+                         items = eina_list_append(items, subo);
+                    }
+               }
+          }
+        else if (done) break;
+     }
+
+   ret =  efl_ui_widget_focus_list_next_get
+      (obj, items, eina_list_data_get, dir, next, next_item);
+   eina_list_free(items);
+
+   return ret;
+}
 
 static void
 _mirrored_set(Evas_Object *obj,
