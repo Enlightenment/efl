@@ -848,6 +848,7 @@ evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int
    if (g) *g = p->g;
    if (b) *b = p->b;
    if (a) *a = p->a;
+   return;
 
 error:
    if (r) *r = 255;
