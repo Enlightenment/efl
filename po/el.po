@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-04-23 19:19+0900\n"
+"POT-Creation-Date: 2018-04-25 14:22+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -402,21 +402,21 @@ msgstr "Κατάσταση"
 msgid "Check"
 msgstr "Επιλογή"
 
-#: src/lib/elementary/elm_clock.c:304
+#: src/lib/elementary/elm_clock.c:306
 #, fuzzy
 msgid "clock increment button for am,pm"
 msgstr "επόμενο κουμπί ρολογιού για πμ,μμ"
 
-#: src/lib/elementary/elm_clock.c:312
+#: src/lib/elementary/elm_clock.c:314
 #, fuzzy
 msgid "clock decrement button for am,pm"
 msgstr "προηγούμενο κουμπί ρολογιού για πμ,μμ"
 
-#: src/lib/elementary/elm_clock.c:691
+#: src/lib/elementary/elm_clock.c:703
 msgid "State: Editable"
 msgstr "Κατάσταση: Επεξεργάσιμο"
 
-#: src/lib/elementary/elm_clock.c:726
+#: src/lib/elementary/elm_clock.c:738
 msgid "Clock"
 msgstr "Ρολοι"
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-04-23 19:19+0900\n"
+"POT-Creation-Date: 2018-04-25 14:22+0900\n"
 "PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -393,19 +393,19 @@ msgstr "Состояние"
 msgid "Check"
 msgstr "Флажок"
 
-#: src/lib/elementary/elm_clock.c:304
+#: src/lib/elementary/elm_clock.c:306
 msgid "clock increment button for am,pm"
 msgstr "кнопка часов для увеличения am,pm"
 
-#: src/lib/elementary/elm_clock.c:312
+#: src/lib/elementary/elm_clock.c:314
 msgid "clock decrement button for am,pm"
 msgstr "кнопка часов для уменьшения am,pm"
 
-#: src/lib/elementary/elm_clock.c:691
+#: src/lib/elementary/elm_clock.c:703
 msgid "State: Editable"
 msgstr "Состояние: Редактируемо"
 
-#: src/lib/elementary/elm_clock.c:726
+#: src/lib/elementary/elm_clock.c:738
 msgid "Clock"
 msgstr "Часы"
 

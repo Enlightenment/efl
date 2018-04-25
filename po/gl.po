@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-04-23 19:19+0900\n"
+"POT-Creation-Date: 2018-04-25 14:22+0900\n"
 "PO-Revision-Date: 2014-05-24 08:39+0000\n"
 "Last-Translator: Kaptan <khanyux@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -391,19 +391,19 @@ msgstr "Estado"
 msgid "Check"
 msgstr "Comprobar"
 
-#: src/lib/elementary/elm_clock.c:304
+#: src/lib/elementary/elm_clock.c:306
 msgid "clock increment button for am,pm"
 msgstr "Botón de aumento do reloxo para am,pm"
 
-#: src/lib/elementary/elm_clock.c:312
+#: src/lib/elementary/elm_clock.c:314
 msgid "clock decrement button for am,pm"
 msgstr "Botón de diminución do reloxo para am,pm"
 
-#: src/lib/elementary/elm_clock.c:691
+#: src/lib/elementary/elm_clock.c:703
 msgid "State: Editable"
 msgstr "Estado: Editable"
 
-#: src/lib/elementary/elm_clock.c:726
+#: src/lib/elementary/elm_clock.c:738
 msgid "Clock"
 msgstr "Reloxo"
 
