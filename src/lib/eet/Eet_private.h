@@ -110,6 +110,7 @@ struct _Eet_File_Directory
 {
    int             size;
    Eet_File_Node **nodes;
+   unsigned int free_count;
 };
 
 struct _Eet_File_Node

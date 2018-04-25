@@ -885,7 +885,10 @@ eet_internal_read2(Eet_File *ef)
           {
              efn->data = malloc(efn->size);
              if (efn->data)
-               memcpy(efn->data, ef->data + efn->offset, efn->size);
+               {
+                  memcpy(efn->data, ef->data + efn->offset, efn->size);
+                  ef->header->directory->free_count++;
+               }
           }
 
         /* compute the possible position of a signature */
@@ -1189,6 +1192,7 @@ eet_internal_read1(Eet_File *ef)
 
              strncpy(efn->name, (char *)p + HEADER_SIZE, name_size);
              efn->name[name_size] = 0;
+             ef->header->directory->free_count++;
 
              WRN(
                "File: %s is not up to date for key \"%s\" - needs rebuilding sometime",
@@ -1211,7 +1215,10 @@ eet_internal_read1(Eet_File *ef)
           {
              data = malloc(efn->size);
              if (data)
-               memcpy(data, ef->data + efn->offset, efn->size);
+               {
+                  memcpy(data, ef->data + efn->offset, efn->size);
+                  ef->header->directory->free_count++;
+               }
 
              efn->data = data;
           }
@@ -1320,21 +1327,31 @@ eet_internal_close(Eet_File *ef,
                   int i, num;
 
                   num = (1 << ef->header->directory->size);
-                  for (i = 0; i < num; i++)
+                  for (i = 0; i < num && ef->header->directory->free_count; i++)
                     {
                        Eet_File_Node *efn;
 
                        while ((efn = ef->header->directory->nodes[i]))
                          {
                             if (efn->data)
-                              free(efn->data);
+                              {
+                                 free(efn->data);
+                                 ef->header->directory->free_count--;
+                              }
 
                             ef->header->directory->nodes[i] = efn->next;
 
                             if (efn->free_name)
-                              free(efn->name);
+                              {
+                                 free(efn->name);
+                                 ef->header->directory->free_count--;
+                              }
 
-                            if (!shutdown)
+                            if (shutdown)
+                              {
+                                 if (!ef->header->directory->free_count) break;
+                              }
+                            else
                               eet_file_node_mp_free(efn);
                          }
                     }
@@ -2310,12 +2327,14 @@ eet_alias(Eet_File   *ef,
         efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
         efn->free_name = 1;
+        ef->header->directory->free_count++;
         efn->data = NULL;
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
 
         eet_define_data(ef, efn, in, strlen(destination) + 1, comp, 0);
+        ef->header->directory->free_count++;
      }
 
    efn->alias = 1;
@@ -2458,12 +2477,14 @@ eet_write_cipher(Eet_File   *ef,
         efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
         efn->free_name = 1;
+        ef->header->directory->free_count++;
         efn->data = NULL;
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
 
         eet_define_data(ef, efn, in, size, comp, !!cipher_key);
+        ef->header->directory->free_count++;
      }
 
    /* flags that writes are pending */
