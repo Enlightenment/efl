@@ -1675,7 +1675,8 @@ _evas_canvas_efl_canvas_scene_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Eva
 EAPI Eina_List *
 evas_objects_in_rectangle_get(const Evas_Canvas *eo_e, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   return _efl_canvas_objects_in_rectangle_get_helper(eo_e, efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS), x, y, w, h, include_pass_events_objects, include_hidden_objects);
+   EVAS_LEGACY_API(eo_e, e, NULL);
+   return _efl_canvas_objects_in_rectangle_get_helper(eo_e, e, x, y, w, h, include_pass_events_objects, include_hidden_objects);
 }
 
 /* font related api */
