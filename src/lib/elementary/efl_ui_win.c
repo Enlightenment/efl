@@ -373,7 +373,6 @@ static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const c
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize);
-static void _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha);
 static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force);
 
 #ifdef HAVE_ELEMENTARY_X
@@ -4471,7 +4470,6 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         if (calc)
           evas_object_smart_calculate(sd->frame_obj);
         _elm_win_frame_obj_update(sd, 0);
-        _elm_win_opaque_update(sd, EINA_FALSE);
      }
 }
 
