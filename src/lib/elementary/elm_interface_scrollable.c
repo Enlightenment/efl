@@ -4824,10 +4824,21 @@ static Eina_Bool
 _filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
 {
    Eina_Rect geom;
+   int min_x, max_x, min_y, max_y;
 
    geom = efl_ui_focus_object_focus_geometry_get(data);
 
-   return eina_rectangles_intersect(&geom.rect, fdata);
+   min_x = geom.rect.x;
+   min_y = geom.rect.y;
+   max_x = eina_rectangle_max_x(&geom.rect);
+   max_y = eina_rectangle_max_y(&geom.rect);
+
+   Eina_Bool inside = eina_rectangle_coords_inside(fdata, min_x, min_y) ||
+                      eina_rectangle_coords_inside(fdata, min_x, max_y) ||
+                      eina_rectangle_coords_inside(fdata, max_x, min_y) ||
+                      eina_rectangle_coords_inside(fdata, max_x, max_y);
+
+   return inside;
 }
 
 EOLIAN static Eina_Iterator*
