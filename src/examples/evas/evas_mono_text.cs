@@ -87,7 +87,7 @@ class TestMain
 
     }
 
-    private void On_KeyDown(object sender, efl.input.KeyDownEvt_Args e)
+    private void On_KeyDown(object sender, efl.input.InterfaceConcrete.KeyDownEvt_Args e)
     {
         var key = e.arg.GetKey();
 

@@ -132,8 +132,7 @@ efl_eolian_blacklisted_files = \
 lib/efl/interfaces/efl_io_buffer.eo.cs \
 lib/efl/interfaces/efl_io_positioner.eo.cs \
 lib/efl/interfaces/efl_io_queue.eo.cs \
-lib/efl/interfaces/efl_io_sizer.eo.cs \
-lib/efl/interfaces/efl_gfx_buffer.eo.cs
+lib/efl/interfaces/efl_io_sizer.eo.cs
 
 ecore_eolian_blacklisted_files = \
 lib/ecore/efl_io_closer_fd.eo.cs \

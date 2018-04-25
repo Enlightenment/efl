@@ -1,5 +1,7 @@
 using System;
 
+using static test.TestingConcrete; // For the event args
+
 namespace TestSuite
 {
 
@@ -39,7 +41,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         string received_string = null;
 
-        obj.EvtWithStringEvt += (object sender, test.EvtWithStringEvt_Args e) => {
+        obj.EvtWithStringEvt += (object sender, EvtWithStringEvt_Args e) => {
             received_string = e.arg;
         };
 
@@ -53,7 +55,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         int received_int= 0;
 
-        obj.EvtWithIntEvt += (object sender, test.EvtWithIntEvt_Args e) => {
+        obj.EvtWithIntEvt += (object sender, EvtWithIntEvt_Args e) => {
             received_int = e.arg;
         };
 
@@ -67,7 +69,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         bool received_bool = false;
 
-        obj.EvtWithBoolEvt += (object sender, test.EvtWithBoolEvt_Args e) => {
+        obj.EvtWithBoolEvt += (object sender, EvtWithBoolEvt_Args e) => {
             received_bool = e.arg;
         };
 
@@ -84,7 +86,7 @@ class TestEoEvents
     {
         test.Testing obj = new test.TestingConcrete();
         uint received_uint = 0;
-        obj.EvtWithUintEvt += (object sender, test.EvtWithUintEvt_Args e) => {
+        obj.EvtWithUintEvt += (object sender, EvtWithUintEvt_Args e) => {
             received_uint = e.arg;
         };
 
@@ -98,7 +100,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         test.Testing received_obj = null;
 
-        obj.EvtWithObjEvt += (object sender, test.EvtWithObjEvt_Args e) => {
+        obj.EvtWithObjEvt += (object sender, EvtWithObjEvt_Args e) => {
             received_obj = e.arg;
         };
 
@@ -114,7 +116,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         eina.Error received_error = 0;
 
-        obj.EvtWithErrorEvt += (object sender, test.EvtWithErrorEvt_Args e) => {
+        obj.EvtWithErrorEvt += (object sender, EvtWithErrorEvt_Args e) => {
             received_error = e.arg;
         };
 
@@ -130,7 +132,7 @@ class TestEoEvents
         test.Testing obj = new test.TestingConcrete();
         test.StructSimple received_struct = default(test.StructSimple);
 
-        obj.EvtWithStructEvt += (object sender, test.EvtWithStructEvt_Args e) => {
+        obj.EvtWithStructEvt += (object sender, EvtWithStructEvt_Args e) => {
             received_struct = e.arg;
         };
 

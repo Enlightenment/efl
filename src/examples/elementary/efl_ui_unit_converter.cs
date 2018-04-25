@@ -21,9 +21,9 @@ public class Example
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
         popup.SetVisible(true);
-        popup.SetButton(efl.ui.popup_alert.Button.Positive, "Ok");
+        popup.SetButton(efl.ui.Popup_Alert_Button.Positive, "Ok");
         popup.SetSize(new eina.Size2D(150, 30));
-        popup.ButtonClickedEvt += (object sender, efl.ui.ButtonClickedEvt_Args e) => {
+        popup.ButtonClickedEvt += (object sender, efl.ui.Popup_AlertConcrete.ButtonClickedEvt_Args e) => {
             popup.SetParent(null);
             popup.Del();
         };
@@ -58,7 +58,7 @@ public class Example
         miles_label.SetSize(size);
         miles_label.SetVisible(true);
 
-        efl.ui.text.Editable miles_input = new efl.ui.text.EditableConcrete(miles_box);
+        efl.ui.Text_Editable miles_input = new efl.ui.Text_EditableConcrete(miles_box);
         miles_input.SetText("");
         miles_input.SetScrollable(true);
         miles_input.SetSize(size);
@@ -84,7 +84,7 @@ public class Example
         kms_label.SetSize(size);
         kms_label.SetVisible(true);
 
-        efl.ui.text.Editable kms_input = new efl.ui.text.EditableConcrete(kms_box);
+        efl.ui.Text_Editable kms_input = new efl.ui.Text_EditableConcrete(kms_box);
         kms_input.SetText("");
         kms_input.SetScrollable(true);
         kms_input.SetSize(size);

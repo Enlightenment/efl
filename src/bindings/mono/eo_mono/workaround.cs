@@ -116,24 +116,16 @@ public struct Dbg_Info {
 };
 #pragma warning restore 0169
 
-namespace text {
-
-namespace cursor {
-
 [StructLayout(LayoutKind.Sequential)]
-public struct Cursor {
+public struct Text_Cursor_Cursor {
     IntPtr obj;
     UIntPtr pos; // UIntPtr to automatically change size_t between 32/64
     IntPtr node;
     [MarshalAsAttribute(UnmanagedType.U1)]bool changed;
 }
 
-} // namespace cursor
-
-namespace annotate {
-
 [StructLayout(LayoutKind.Sequential)]
-public struct Annotation {
+public struct Text_Annotate_Annotation {
     IntPtr list;
     IntPtr obj;
     IntPtr start_node;
@@ -141,22 +133,7 @@ public struct Annotation {
     [MarshalAsAttribute(UnmanagedType.U1)]bool is_item;
 }
 
-} // namespace annotate
-
-} // namespace text
-
 public delegate void Signal_Cb(IntPtr data, IntPtr obj, IntPtr emission, IntPtr source);
-
-
-namespace gfx {
-
-public interface Buffer {}
-
-namespace buffer {
-public struct Access_Mode {}
-}
-        
-} // namespace gfx
 
 namespace access {
 

@@ -30,7 +30,7 @@ class TestMain
         rect.SetSize(size);
         rect.SetVisible(true);
 
-        canvas.KeyDownEvt += (object sender, efl.input.KeyDownEvt_Args e) => {
+        canvas.KeyDownEvt += (object sender, efl.input.InterfaceConcrete.KeyDownEvt_Args e) => {
             color_index = (color_index + 1) % 3;
             Console.WriteLine("Key Down");
             Console.WriteLine("Got key obj at {0}", e.arg.raw_handle.ToString("X"));
