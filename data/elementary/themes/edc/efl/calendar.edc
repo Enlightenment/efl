@@ -41,7 +41,7 @@
             color: 0 0 0 0;\
          }\
       }\
-      part { name: "elm,calendar,button"#_sufix",left";\
+      part { name: "efl.calendar.button"#_sufix".left";\
          type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\
@@ -55,7 +55,7 @@
             rel2.to: "right_bt"#_sufix;\
          }\
       }\
-      part { name: "elm,calendar,button"#_sufix",right";\
+      part { name: "efl.calendar.button"#_sufix".right";\
          type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\
@@ -446,7 +446,7 @@ group { "efl/calendar";
             rel2.offset: -2 -2;
          }
       }
-      part { name: "background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "bg";
             rel2.to: "bg";

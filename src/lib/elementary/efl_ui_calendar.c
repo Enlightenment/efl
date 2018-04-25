@@ -16,10 +16,10 @@
 #define MY_CLASS_NAME "Efl.Ui.Calendar"
 #define MY_CLASS_PFX efl_ui_calendar
 
-#define EFL_UI_CALENDAR_BUTTON_LEFT "elm,calendar,button,left"
-#define EFL_UI_CALENDAR_BUTTON_RIGHT "elm,calendar,button,right"
-#define EFL_UI_CALENDAR_BUTTON_YEAR_LEFT "elm,calendar,button_year,left"
-#define EFL_UI_CALENDAR_BUTTON_YEAR_RIGHT "elm,calendar,button_year,right"
+#define EFL_UI_CALENDAR_BUTTON_LEFT "efl.calendar.button.left"
+#define EFL_UI_CALENDAR_BUTTON_RIGHT "efl.calendar.button.right"
+#define EFL_UI_CALENDAR_BUTTON_YEAR_LEFT "efl.calendar.button_year.left"
+#define EFL_UI_CALENDAR_BUTTON_YEAR_RIGHT "efl.calendar.button_year.right"
 
 static const char PART_NAME_DEC_BUTTON[] = "dec_button";
 static const char PART_NAME_INC_BUTTON[] = "inc_button";

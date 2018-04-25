@@ -154,7 +154,7 @@ static Eina_Bool
 _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part, Eo *content)
 {
    //For efl_content_set()
-   if (part && !strcmp(part, "elm.swallow.content"))
+   if (part && !strcmp(part, "efl.content"))
      {
         pd->content = content;
 
@@ -176,7 +176,7 @@ Eo *
 _efl_ui_popup_alert_scroll_content_get(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
 {
    //For efl_content_set()
-   if (part && !strcmp(part, "elm.swallow.content"))
+   if (part && !strcmp(part, "efl.content"))
      return pd->content;
 
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
@@ -186,7 +186,7 @@ static Eo *
 _efl_ui_popup_alert_scroll_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
 {
    //For efl_content_set()
-   if (part && !strcmp(part, "elm.swallow.content"))
+   if (part && !strcmp(part, "efl.content"))
      {
         Eo *content = pd->content;
         if (!content) return content;
@@ -273,7 +273,7 @@ _efl_ui_popup_alert_scroll_efl_object_constructor(Eo *obj,
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_AUTO,
                            ELM_SCROLLER_POLICY_AUTO);
 
-   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"),
+   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);
 
    pd->size = EINA_SIZE2D(0, 0);

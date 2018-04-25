@@ -16,7 +16,7 @@ _efl_ui_navigation_layout_bar_set(Eo *obj, Efl_Ui_Navigation_Layout_Data *pd, Ef
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(bar, EFL_UI_LAYOUT_OBJECT_CLASS));
 
-   efl_content_set(efl_part(obj, "bar"), bar);
+   efl_content_set(efl_part(obj, "efl.bar"), bar);
    pd->bar = bar;
 }
 
@@ -49,7 +49,7 @@ _efl_ui_navigation_layout_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Layo
 }
 
 /* Standard widget overrides */
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_navigation_layout, "content")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_navigation_layout, "efl.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_navigation_layout, Efl_Ui_Navigation_Layout_Data)
 
 /* Internal EO APIs and hidden overrides */

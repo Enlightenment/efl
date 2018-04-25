@@ -38,6 +38,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static const char efl_ui_default_text[] = "efl.text";
+static const char efl_ui_default_content[] = "efl.content";
+
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
    {"default", "elm.text"},
@@ -50,12 +53,21 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const char *_efl_ui_layout_swallow_parts[] = {
+static const char *_elm_legacy_layout_swallow_parts[] = {
    "elm.swallow.icon",
    "elm.swallow.end",
    "elm.swallow.background",
    NULL
 };
+
+static const char *_efl_ui_layout_swallow_parts[] = {
+   "efl.content",
+   "efl.icon",
+   "efl.end",
+   "efl.background",
+   NULL
+};
+
 
 /* these are data operated by layout's class functions internally, and
  * should not be messed up by inhering classes */
@@ -174,7 +186,7 @@ _signals_emit(Eo *obj,
         snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "set" : "unset");
      }
-   efl_layout_signal_emit(obj, buf, "elm");
+    efl_layout_signal_emit(obj, buf, "elm");
 }
 
 static inline void
@@ -196,13 +208,25 @@ _icon_signal_emit(Efl_Ui_Layout_Object_Data *sd,
      {
         for (i = 0;; i++)
           {
+              if (!_elm_legacy_layout_swallow_parts[i]) return;
+              if (!strcmp(sub_d->part, _elm_legacy_layout_swallow_parts[i])) break;
+          }
+     }
+   else
+     {
+        for (i = 0;; i++)
+          {
               if (!_efl_ui_layout_swallow_parts[i]) return;
               if (!strcmp(sub_d->part, _efl_ui_layout_swallow_parts[i])) break;
           }
+        
      }
 
-   if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
+   if (elm_widget_is_legacy(sd->obj) &&
+       !strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
      type = sub_d->part + strlen("elm.swallow.");
+   else if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
+     type = sub_d->part + strlen("efl.");
    else
      type = sub_d->part;
 
@@ -222,15 +246,28 @@ _text_signal_emit(Efl_Ui_Layout_Object_Data *sd,
 
    //FIXME: Don't limit to "elm.text" prefix.
    //Send signals for all text parts after elm 2.0
-   if ((sub_d->type != TEXT) ||
-       (!((!strcmp("elm.text", sub_d->part)) ||
-          (!strncmp("elm.text.", sub_d->part, 9)))))
-     return;
+
+   if (sub_d->type != TEXT)
+     {
+        if (elm_widget_is_legacy(sd->obj) &&
+            !((!strcmp("elm.text", sub_d->part)) ||
+              (!strncmp("elm.text.", sub_d->part, 9))))
+          {
+             return;
+          }
+        else if (!((!strcmp("efl.text", sub_d->part)) ||
+                  (!strncmp("efl.text.", sub_d->part, 9))))
+          {
+             return;
+          }  
+     }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if (!strncmp(sub_d->part, "elm.text.", strlen("elm.text.")))
      type = sub_d->part + strlen("elm.text.");
+   else if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
+     type = sub_d->part + strlen("efl.");
    else
      type = sub_d->part;
 
@@ -508,6 +545,18 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                Eina_Bool is_text)
 {
    const Elm_Layout_Part_Alias_Description *aliases = NULL;
+
+   if (!elm_widget_is_legacy(obj))
+     {
+        if (!*part)
+          {
+             if (is_text)
+               *part = efl_ui_default_text;
+             else
+               *part = efl_ui_default_content;
+          }
+        return EINA_TRUE;
+     }
 
    if (is_text)
      aliases = elm_layout_text_aliases_get(obj);
@@ -2161,8 +2210,8 @@ _efl_ui_layout_object_efl_part_part(const Eo *obj, Efl_Ui_Layout_Object_Data *sd
 
    if (eina_streq(part, "background"))
      {
-        if (efl_layout_group_part_exist_get(wd->resize_obj, part))
-          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
+        if (efl_layout_group_part_exist_get(wd->resize_obj, "efl.background"))
+          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, "efl.background"));
         if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
           {
              if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
@@ -2341,7 +2390,7 @@ _efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
    pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    sd = efl_data_scope_get(pd->obj, MY_CLASS);
    bg = _efl_ui_widget_bg_get(pd->obj);
-   if (!_efl_ui_layout_content_set(pd->obj, sd, "background", bg))
+   if (!_efl_ui_layout_content_set(pd->obj, sd, "efl.background", bg))
      {
         ERR("Failed to swallow new background object!");
         // Shouldn't happen. What now? del bg? call super? return null?
