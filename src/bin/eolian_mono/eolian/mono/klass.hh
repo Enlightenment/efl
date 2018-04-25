@@ -149,8 +149,9 @@ struct klass
 
      for (auto &&p : cls.parts)
        if (!as_generator(
-              name_helpers::klass_full_interface_name(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
-            ).generate(sink, attributes::unused, iface_cxt))
+              documentation(1)
+              << name_helpers::klass_full_interface_name(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
+            ).generate(sink, p, iface_cxt))
          return false;
 
      // End of interface declaration
