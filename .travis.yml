@@ -68,3 +68,10 @@ after_success:
         docker push stefanschmidt1/ci-support-files:$DISTRO
         docker push stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
       fi
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#edevelop"
+    on_success: change
+    on_failure: always
