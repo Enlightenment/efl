@@ -1175,21 +1175,30 @@ _iterator_free(Border_Elements_Iterator *it)
    free(it);
 }
 
+static void
+_prepare_node(Node *root)
+{
+   Eina_List *n;
+   Node *node;
+
+   efl_ui_focus_object_prepare_logical(root->focusable);
+
+   EINA_LIST_FOREACH(root->tree.children, n, node)
+     {
+        _prepare_node(node);
+     }
+}
+
 EOLIAN static Eina_Iterator*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Border_Elements_Iterator *it;
-   Node *n;
 
    /* XXX const */
    dirty_flush_all((Eo *)obj, pd);
 
-   Eina_Iterator *elements = eina_hash_iterator_data_new(pd->node_hash);
-   EINA_ITERATOR_FOREACH(elements, n)
-     {
-        efl_ui_focus_object_prepare_logical(n->focusable);
-     }
-   eina_iterator_free(elements);
+   //now call prepare on every node
+   _prepare_node(pd->root);
 
    it = calloc(1, sizeof(Border_Elements_Iterator));
 
