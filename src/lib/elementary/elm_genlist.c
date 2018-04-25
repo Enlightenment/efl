@@ -8752,6 +8752,8 @@ _elm_genlist_efl_ui_focus_composition_prepare(Eo *obj, Elm_Genlist_Data *pd)
      {
         if (item->base->disabled)
           continue;
+        if (item->item->type == ELM_GENLIST_ITEM_GROUP)
+          continue;
 
         order = eina_list_append(order, item->base->eo_obj);
      }

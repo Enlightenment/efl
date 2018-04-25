@@ -5731,6 +5731,8 @@ _elm_gengrid_efl_ui_focus_composition_prepare(Eo *obj, Elm_Gengrid_Data *pd)
      {
         if (item->base->disabled)
           continue;
+        if (item->group)
+          continue;
 
         order = eina_list_append(order, item->base->eo_obj);
      }
