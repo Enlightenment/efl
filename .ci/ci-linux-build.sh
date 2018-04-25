@@ -31,6 +31,7 @@ if [ "$CI_BUILD_TYPE" = "" ]; then
   # Normal build test of all targets
   ./autogen.sh $DEFAULT_COPTS
   make -j $PARALLEL_JOBS
+  make -j $PARALLEL_JOBS check-build
   make -j $PARALLEL_JOBS examples
   make -j $PARALLEL_JOBS benchmark
 fi
