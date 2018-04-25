@@ -4208,16 +4208,6 @@ _elm_win_wl_configure(void *data, int t EINA_UNUSED, void *event)
 
 #endif
 
-static inline void
-_elm_object_part_cursor_set(Evas_Object *obj, Evas_Object *edj,
-                            const char *part, const char *cursor)
-{
-   Evas_Object *sub = (Evas_Object *) edje_object_part_object_get(edj, part);
-   if (!sub) return;
-
-   elm_object_sub_cursor_set(sub, obj, cursor);
-}
-
 static char *
 _efl_system_theme_path_get(void)
 {
@@ -4365,7 +4355,9 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
         for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_resize_infos); k++)
           {
              const resize_info *ri = &_resize_infos[k];
-             _elm_object_part_cursor_set(obj, sd->frame_obj, ri->source, ri->cursor);
+             Evas_Object *sub = (Evas_Object *)edje_object_part_object_get(sd->frame_obj, ri->source);
+             if (sub)
+               elm_object_sub_cursor_set(sub, obj, ri->cursor);
           }
      }
 
