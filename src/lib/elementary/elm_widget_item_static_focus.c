@@ -25,7 +25,7 @@ _realized_cb(void *data, const Efl_Event *ev)
    if (ev->info != data) return;
 
    pd->realized = EINA_TRUE;
-   efl_ui_focus_object_prepare_logical(ev->object);
+   efl_ui_focus_object_prepare_logical(data);
 }
 
 static void
