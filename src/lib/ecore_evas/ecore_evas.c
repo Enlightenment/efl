@@ -3117,16 +3117,26 @@ _ecore_evas_tick_source_find(void)
 {
    Ecore_Evas *ee;
    Eina_Bool source = EINA_FALSE;
+   Eina_Bool have_x = EINA_FALSE;
 
    // Check if we do have a potential tick source for legacy
    EINA_INLIST_FOREACH(ecore_evases, ee)
-     if (!ee->deleted &&
-         ee->engine.func->fn_animator_register &&
-         ee->engine.func->fn_animator_unregister)
-       {
-          source = EINA_TRUE;
-          break;
-       }
+     {
+        if (!ee->deleted)
+          {
+             if ((ee->engine.func->fn_animator_register) &&
+                 (ee->engine.func->fn_animator_unregister))
+               {
+                  source = EINA_TRUE;
+               }
+             if (ee->driver)
+               {
+                  if ((!strcmp(ee->driver, "software_x11")) ||
+                      (!strcmp(ee->driver, "opengl_x11")))
+                    have_x = EINA_TRUE;
+               }
+          }
+     }
 
    // If just one source require fallback, we can't be sure that
    // we are not running enlightenment and that this source might
@@ -3143,16 +3153,21 @@ _ecore_evas_tick_source_find(void)
 
    if (!source)
      {
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+        if (!have_x)
+          {
+             ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+             ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+             ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+          }
      }
    else
      {
         // Source set will trigger the previous tick end registered and then the new begin.
         // As we don't what was in behind, better first begin and end after source is set.
         ecore_animator_custom_source_tick_begin_callback_set(_ecore_evas_custom_tick_begin, NULL);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
         ecore_animator_custom_source_tick_end_callback_set(_ecore_evas_custom_tick_end, NULL);
-     }
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+    }
 }
 
 static Eina_Bool
