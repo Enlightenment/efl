@@ -27,6 +27,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_slider_interval.eo \
 	lib/elementary/efl_ui_spin.eo \
 	lib/elementary/efl_ui_spin_button.eo \
+	lib/elementary/efl_ui_datepicker.eo \
+	lib/elementary/efl_ui_timepicker.eo \
 	lib/elementary/efl_ui_video.eo \
 	lib/elementary/efl_ui_win.eo \
 	lib/elementary/efl_ui_win_inlined.eo \
@@ -145,6 +147,7 @@ elm_private_eolian_files = \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_selection_manager.eo \
+	lib/elementary/efl_datetime_manager.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -382,6 +385,8 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_spinner.h \
 	lib/elementary/efl_ui_spin_private.h \
 	lib/elementary/efl_ui_spin_button_private.h \
+	lib/elementary/efl_ui_datepicker_private.h \
+	lib/elementary/efl_ui_timepicker_private.h \
 	lib/elementary/elm_widget_table.h \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
@@ -742,6 +747,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_slider_interval.c \
 	lib/elementary/efl_ui_spin.c \
 	lib/elementary/efl_ui_spin_button.c \
+	lib/elementary/efl_ui_datepicker.c \
+	lib/elementary/efl_ui_timepicker.c \
 	lib/elementary/elm_slideshow.c \
 	lib/elementary/elm_spinner.c \
 	lib/elementary/elm_store.c \
@@ -812,6 +819,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_selection_manager.c \
 	lib/elementary/efl_selection_manager_private.h \
 	lib/elementary/efl_selection.c \
+	lib/elementary/efl_datetime_manager.c \
 	lib/elementary/efl_ui_dnd.c \
   static_libs/buildsystem/buildsystem.h \
   static_libs/buildsystem/buildsystem_autotools.c \
@@ -1000,6 +1008,8 @@ bin/elementary/test_ui_slider.c \
 bin/elementary/test_ui_slider_interval.c \
 bin/elementary/test_ui_spin.c \
 bin/elementary/test_ui_spin_button.c \
+bin/elementary/test_ui_datepicker.c \
+bin/elementary/test_ui_timepicker.c \
 bin/elementary/test_slideshow.c \
 bin/elementary/test_spinner.c \
 bin/elementary/test_store.c \

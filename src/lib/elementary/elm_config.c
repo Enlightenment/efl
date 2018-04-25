@@ -112,6 +112,8 @@ static const Elm_Color_Class _elm_color_classes[] = {
    {"calendar_day_highlighted", "Highlighted Day Effect"},
    {"calendar_day_checked", "Checked Day Effect"},
    {"datetime_bg", "Datetime Background"},
+   {"datepicker_bg", "Datepicker Background"},
+   {"timepicker_bg", "Timepicker Background"},
    {"datetime_separator_text", "Datetime Separator Text"},
    {"datetime_separator_text_disabled", "Datetime Separator Disabled Text"},
    {"hoversel_item_active", "Hoversel Item Text"},

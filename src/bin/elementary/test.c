@@ -183,6 +183,8 @@ void test_efl_ui_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
+void test_ui_datepicker(void *data, Evas_Object *obj, void *event_info);
+void test_ui_timepicker(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_index3(void *data, Evas_Object *obj, void *event_info);
@@ -1084,6 +1086,8 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Datetime", test_datetime);
    ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Calendar", test_efl_ui_calendar);
    ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Clock", test_ui_clock);
+   ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Datepicker", test_ui_datepicker);
+   ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Timepicker", test_ui_timepicker);
 
    //------------------------------//
    ADD_TEST(NULL, "Text", "Label", test_label);

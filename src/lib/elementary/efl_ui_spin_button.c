@@ -20,6 +20,7 @@
 
 #define EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME 0.2
 
+static const char PART_NAME_ENTRY[] = "entry";
 static const char PART_NAME_DEC_BUTTON[] = "dec_button";
 static const char PART_NAME_TEXT_BUTTON[] = "text_button";
 static const char PART_NAME_INC_BUTTON[] = "inc_button";
@@ -723,13 +724,7 @@ _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->ent)
-     {
-        //elm_widget_element_update(obj, sd->ent, PART_NAME_TEXT);
-        Eina_Strbuf *buf = eina_strbuf_new();
-        eina_strbuf_append_printf(buf, "spin_button/%s", elm_widget_style_get(obj));
-        elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-     }
+     elm_widget_element_update(obj, sd->ent, PART_NAME_ENTRY);
 
    if (sd->inc_button)
      elm_widget_element_update(obj, sd->inc_button, PART_NAME_INC_BUTTON);

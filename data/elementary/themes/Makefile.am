@@ -1035,6 +1035,8 @@ elementary/themes/edc/efl/scroller.edc \
 elementary/themes/edc/efl/slider.edc \
 elementary/themes/edc/efl/spin.edc \
 elementary/themes/edc/efl/spin_button.edc \
+elementary/themes/edc/efl/datepicker.edc \
+elementary/themes/edc/efl/timepicker.edc \
 elementary/themes/edc/efl/text.edc \
 elementary/themes/edc/efl/textpath.edc \
 elementary/themes/edc/efl/tooltip.edc \

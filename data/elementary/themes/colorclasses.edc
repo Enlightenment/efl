@@ -208,6 +208,14 @@ color_classes {
       color: 0 0 0 0;
       desc: "Background of a datetime widget";
    }
+   color_class { name: "datepicker_bg";
+      color: 0 0 0 0;
+      desc: "Background of a datepicker widget";
+   }
+   color_class { name: "timepicker_bg";
+      color: 0 0 0 0;
+      desc: "Background of a timepicker widget";
+   }
    color_class { name: "datetime_separator_text";
       color: FN_COL_DEFAULT;
       desc: "Text in a datetime separator area";

@@ -356,6 +356,10 @@ group { name: "efl/spin_button/inc_button";
       }
    }
 
+group { "efl/spin_button/entry";
+   inherit: "efl/text";
+}
+
 group { name: "efl/spin_button/dec_button";
       inherit: "efl/spin_button/inc_button";
       images.image: "sym_left_light_normal.png" COMP;
