@@ -491,8 +491,14 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
         tt->changed_style = EINA_FALSE;
         if (tt->tooltip)
-          edje_object_part_swallow(tt->tooltip, "elm.swallow.content",
-                                   tt->content);
+          {
+             if (elm_widget_is_legacy(tt->owner))
+               edje_object_part_swallow(tt->tooltip, "elm.swallow.content",
+                                        tt->content);
+             else
+               edje_object_part_swallow(tt->tooltip, "efl.content",
+                                        tt->content);
+          }
 
         edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
      }
@@ -519,11 +525,15 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              tt->tooltip = NULL;
              return;
           }
-        edje_object_part_swallow
-          (tt->tooltip, "elm.swallow.content", tt->content);
+        if (elm_widget_is_legacy(tt->owner))
+          edje_object_part_swallow
+             (tt->tooltip, "elm.swallow.content", tt->content);
+        else
+          edje_object_part_swallow
+             (tt->tooltip, "efl.content", tt->content);
         new_content = EINA_TRUE;
         evas_object_event_callback_add(tt->content, EVAS_CALLBACK_DEL,
-           _elm_tooltip_content_del_cb, tt);
+                                       _elm_tooltip_content_del_cb, tt);
 
         /* tooltip has to use layer tooltip */
         evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);

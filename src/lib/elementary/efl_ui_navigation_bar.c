@@ -59,7 +59,7 @@ _efl_ui_navigation_bar_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Bar_Dat
 
 /* Standard widget overrides */
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Data)
-ELM_PART_TEXT_DEFAULT_GET(efl_ui_navigation_bar, "text")
+ELM_PART_TEXT_DEFAULT_GET(efl_ui_navigation_bar, "efl.text")
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Data)
 
 #define EFL_UI_NAVIGATION_BAR_EXTRA_OPS \
@@ -106,7 +106,7 @@ _efl_ui_navigation_bar_content_unset(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EI
     }
   else if (eina_streq(part, "right_content"))
     return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), "efl.right_content"));
-   
+
   return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 }
 

@@ -168,7 +168,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
                                  pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
      }
 
-   elm_layout_signal_emit(obj, "elm,efl.buttons,show", "elm");
+   elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
    edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
 }

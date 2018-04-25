@@ -450,7 +450,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    if (elm_widget_is_legacy(obj))
      {
         if (edje_object_part_exists
-          (wd->resize_obj, "elm.swallow.event"))
+            (wd->resize_obj, "elm.swallow.event"))
           {
              Evas_Coord minw = 0, minh = 0;
 
@@ -462,7 +462,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    else
      {
         if (edje_object_part_exists
-          (wd->resize_obj, "efl.event"))
+            (wd->resize_obj, "efl.event"))
           {
              Evas_Coord minw = 0, minh = 0;
 
@@ -470,7 +470,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
              evas_object_size_hint_min_set(sd->event, minw, minh);
              elm_layout_content_set(obj, "efl.event", sd->event);
           }
-      }
+     }
    elm_widget_sub_object_add(obj, sd->event);
 
    elm_layout_sizing_eval(obj);

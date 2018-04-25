@@ -744,7 +744,7 @@ group { name: "efl/scroller";
             color: 255 255 255 128;
          }
       }
-      part { name: "overlay"; type: SWALLOW;
+      part { name: "efl.overlay"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.to: "efl.content";
@@ -1256,7 +1256,7 @@ group { name: "efl/scroller:noclip";
             rel2.offset: 999999 999999;
          }
       }
-      part { name: "background";
+      part { name: "efl.background";
          description { state: "default" 0.0;
             rel1.offset: 0 0;
             rel2.offset: -1 -1;
@@ -1288,7 +1288,7 @@ group { name: "efl/scroller/contents";
          description { state: "default" 0.0;
          }
       }
-      part { name: "content_r";
+      part { name: "efl.content_r";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1302,7 +1302,7 @@ group { name: "efl/scroller/contents";
             }
          }
       }
-      part { name: "content_b";
+      part { name: "efl.content_b";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1316,7 +1316,7 @@ group { name: "efl/scroller/contents";
             }
          }
       }
-      part { name: "content_rb";
+      part { name: "efl.content_rb";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;

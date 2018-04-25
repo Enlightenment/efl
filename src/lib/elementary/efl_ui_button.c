@@ -40,12 +40,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {

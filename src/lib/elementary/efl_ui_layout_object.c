@@ -186,7 +186,7 @@ _signals_emit(Eo *obj,
         snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "set" : "unset");
      }
-    efl_layout_signal_emit(obj, buf, "elm");
+   efl_layout_signal_emit(obj, buf, "elm");
 }
 
 static inline void
@@ -219,16 +219,22 @@ _icon_signal_emit(Efl_Ui_Layout_Object_Data *sd,
               if (!_efl_ui_layout_swallow_parts[i]) return;
               if (!strcmp(sub_d->part, _efl_ui_layout_swallow_parts[i])) break;
           }
-        
      }
 
-   if (elm_widget_is_legacy(sd->obj) &&
-       !strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
-     type = sub_d->part + strlen("elm.swallow.");
-   else if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
-     type = sub_d->part + strlen("efl.");
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
+          type = sub_d->part + strlen("elm.swallow.");
+        else
+          type = sub_d->part;
+     }
    else
-     type = sub_d->part;
+     {
+        if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
+          type = sub_d->part + strlen("efl.");
+        else
+          type = sub_d->part;
+     }
 
    _signals_emit(sd->obj, type, visible);
 
@@ -246,30 +252,37 @@ _text_signal_emit(Efl_Ui_Layout_Object_Data *sd,
 
    //FIXME: Don't limit to "elm.text" prefix.
    //Send signals for all text parts after elm 2.0
+   if (sub_d->type != TEXT) return;
 
-   if (sub_d->type != TEXT)
+   if (elm_widget_is_legacy(sd->obj))
      {
-        if (elm_widget_is_legacy(sd->obj) &&
-            !((!strcmp("elm.text", sub_d->part)) ||
+        if (!((!strcmp("elm.text", sub_d->part)) ||
               (!strncmp("elm.text.", sub_d->part, 9))))
-          {
-             return;
-          }
-        else if (!((!strcmp("efl.text", sub_d->part)) ||
-                  (!strncmp("efl.text.", sub_d->part, 9))))
-          {
-             return;
-          }  
+          return;
+     }
+   else
+     {
+        if (!((!strcmp("efl.text", sub_d->part)) ||
+              (!strncmp("efl.text.", sub_d->part, 9))))
+          return;
      }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
-   if (!strncmp(sub_d->part, "elm.text.", strlen("elm.text.")))
-     type = sub_d->part + strlen("elm.text.");
-   else if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
-     type = sub_d->part + strlen("efl.");
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        if (!strncmp(sub_d->part, "elm.text.", strlen("elm.text.")))
+          type = sub_d->part + strlen("elm.text.");
+        else
+          type = sub_d->part;
+     }
    else
-     type = sub_d->part;
+     {
+        if (!strncmp(sub_d->part, "efl.", strlen("efl.")))
+          type = sub_d->part + strlen("efl.");
+        else
+          type = sub_d->part;
+     }
 
    _signals_emit(sd->obj, type, visible);
 

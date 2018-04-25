@@ -251,7 +251,7 @@ _event_handler_create(Eo *obj, Efl_Ui_Pager_Data *pd)
    evas_object_color_set(pd->event, 0, 0, 0, 0);
    evas_object_repeat_events_set(pd->event, EINA_TRUE);
 
-   efl_content_set(efl_part(obj, "event"), pd->event);
+   efl_content_set(efl_part(obj, "efl.event"), pd->event);
 
    efl_event_callback_add(pd->event, EFL_EVENT_POINTER_DOWN,
                           _mouse_down_cb, obj);
@@ -264,7 +264,7 @@ _event_handler_create(Eo *obj, Efl_Ui_Pager_Data *pd)
 static void
 _event_handler_del(Eo *obj, Efl_Ui_Pager_Data *pd)
 {
-   efl_content_unset(efl_part(obj, "event"));
+   efl_content_unset(efl_part(obj, "efl.event"));
    efl_del(pd->event);
    pd->event = NULL;
 }
@@ -352,7 +352,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
-   efl_content_set(efl_part(obj, "page_root"), pd->page_root);
+   efl_content_set(efl_part(obj, "efl.page_root"), pd->page_root);
 
    efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, pd);
    efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, pd);
@@ -671,7 +671,7 @@ _efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
    if (!pd->idbox)
      {
         pd->idbox = efl_add(EFL_UI_BOX_CLASS, obj);
-        efl_content_set(efl_part(obj, "indicator"), pd->idbox);
+        efl_content_set(efl_part(obj, "efl.indicator"), pd->idbox);
      }
 
    efl_page_indicator_bind(pd->indicator, obj, pd->idbox);

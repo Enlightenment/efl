@@ -163,7 +163,7 @@ _fields_init(Eo *obj)
           {
              if (strchr(fmt_char[i], ch))
                {
-                  snprintf(buf, sizeof(buf), "field%d", field);
+                  snprintf(buf, sizeof(buf), "efl.field%d", field);
                   if (i == TIMEPICKER_HOUR)
                     efl_content_set(efl_part(obj, buf), pd->hour);
                   else if (i == TIMEPICKER_MIN)

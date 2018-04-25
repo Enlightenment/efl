@@ -883,7 +883,7 @@ _efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_B
    const char *name;
    name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));
    if (name) return name;
-   const char *ret = elm_layout_text_get(obj, "text");
+   const char *ret = elm_layout_text_get(obj, "efl.text");
    return ret;
 }
 

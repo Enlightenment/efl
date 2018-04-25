@@ -104,7 +104,7 @@ group { "efl/popup_alert";
          target: "efl.text.title";
       }
       program {
-         signal: "elm,efl.buttons,show"; source: "elm";
+         signal: "elm,buttons,show"; source: "elm";
          action: STATE_SET "button_visible" 0.0;
          target: "efl.buttons";
       }
