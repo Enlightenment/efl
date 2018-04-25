@@ -2047,13 +2047,12 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
 
    edje_object_message_signal_process(VIEW(it));
 
-   if (sd->focus_on_realization == it)
+   if (!elm_widget_is_legacy(WIDGET(it)) && sd->focus_on_realization == it)
      {
         _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
         _elm_widget_highlight_in_theme_update(WIDGET(it));
         _elm_widget_focus_highlight_start(WIDGET(it));
-        if (!elm_widget_is_legacy(WIDGET(it)))
-          efl_ui_focus_manager_focus_set(WIDGET(it), EO_OBJ(it));
+        efl_ui_focus_manager_focus_set(WIDGET(it), EO_OBJ(it));
         sd->focus_on_realization = NULL;
      }
 }
@@ -3432,20 +3431,23 @@ _elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
+   Eina_Bool focused;
 
    int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj) && (sd->items) && (sd->selected) &&
+   if (elm_widget_is_legacy(obj))
+     focused = elm_widget_focus_get(obj);
+   else
+     focused = efl_ui_focus_object_focus_get(obj);
+
+   if (focused && (sd->items) && (sd->selected) &&
        (!sd->last_selected_item))
      {
         sd->last_selected_item = eina_list_data_get(sd->selected);
      }
 
-   // Fallback Legacy Focus
-   if (!elm_widget_is_legacy(obj)) return EINA_TRUE;
-
-   if (efl_ui_focus_object_focus_get(obj) && !sd->mouse_down)
+   if (focused && !sd->mouse_down)
      {
         if (sd->last_focused_item)
           eo_it = sd->last_focused_item;
@@ -3453,14 +3455,22 @@ _elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
           eo_it = sd->last_selected_item;
         else if (_elm_config->first_item_focus_on_first_focus_in)
           {
-             if (!_elm_config->item_select_on_focus_disable && is_sel)
-               elm_genlist_item_selected_set(eo_it, EINA_TRUE);
+             if (!elm_widget_is_legacy(obj))
+               {
+                  if (!_elm_config->item_select_on_focus_disable && is_sel)
+                    elm_genlist_item_selected_set(eo_it, EINA_TRUE);
+                  else
+                    elm_object_item_focus_set(eo_it, EINA_TRUE);
+                  _elm_widget_focus_highlight_start(obj);
+                  //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
+                  if (!elm_widget_is_legacy(obj) && efl_ui_focus_manager_request_subchild(obj, eo_it))
+                    efl_ui_focus_manager_focus_set(obj, eo_it);
+               }
              else
-               elm_object_item_focus_set(eo_it, EINA_TRUE);
-            _elm_widget_focus_highlight_start(obj);
-            //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
-            if (!elm_widget_is_legacy(obj) && efl_ui_focus_manager_request_subchild(obj, eo_it))
-              efl_ui_focus_manager_focus_set(obj, eo_it);
+               {
+                  eo_it = elm_genlist_first_item_get(obj);
+                  is_sel = EINA_TRUE;
+               }
           }
 
         while (eo_it)
@@ -6333,7 +6343,12 @@ _elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
      }
    else
      {
-        if (!efl_ui_focus_object_focus_get(obj))
+        Eina_Bool focused;
+        if (elm_widget_is_legacy(obj))
+          focused = elm_widget_focus_get(obj);
+        else
+          focused = efl_ui_focus_object_focus_get(obj);
+        if (!focused)
           return;
         _elm_genlist_item_unfocused(eo_it);
      }
@@ -6408,9 +6423,7 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
    it->item->expanded_depth = depth;
    sd->item_count++;
 
-   //Fallback Legacy Focus
-   if (elm_widget_is_legacy(sd->obj))
-     efl_ui_focus_composition_dirty(sd->obj);
+   efl_ui_focus_composition_dirty(sd->obj);
 
    return it;
 }
