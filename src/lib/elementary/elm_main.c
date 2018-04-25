@@ -1616,43 +1616,58 @@ elm_object_focus_allow_get(const Evas_Object *obj)
 
 EAPI void
 elm_object_focus_custom_chain_set(Evas_Object *obj,
-                                  Eina_List   *objs EINA_UNUSED)
+                                  Eina_List   *objs)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   ERR("Focus-chain not supported");
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_custom_chain_set(obj, objs);
+   else
+     ERR("Focus-chain not supported");
 }
 
 EAPI void
 elm_object_focus_custom_chain_unset(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   ERR("Focus-chain not supported");
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_custom_chain_unset(obj);
+   else
+     ERR("Focus-chain not supported");
 }
 
 EAPI const Eina_List *
 elm_object_focus_custom_chain_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   if (elm_widget_is_legacy(obj))
+     return efl_ui_widget_focus_custom_chain_get(obj);
+
    ERR("Focus-chain not supported");
    return NULL;
 }
 
 EAPI void
 elm_object_focus_custom_chain_append(Evas_Object *obj,
-                                     Evas_Object *child EINA_UNUSED,
-                                     Evas_Object *relative_child EINA_UNUSED)
+                                     Evas_Object *child,
+                                     Evas_Object *relative_child)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   ERR("Focus-chain not supported");
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_custom_chain_append(obj, child, relative_child);
+   else
+     ERR("Focus-chain not supported");
 }
 
 EAPI void
 elm_object_focus_custom_chain_prepend(Evas_Object *obj,
-                                      Evas_Object *child EINA_UNUSED,
-                                      Evas_Object *relative_child EINA_UNUSED)
+                                      Evas_Object *child,
+                                      Evas_Object *relative_child)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   ERR("Focus-chain not supported");
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_custom_chain_prepend(obj, child, relative_child);
+   else
+     ERR("Focus-chain not supported");
 }
 
 EINA_DEPRECATED EAPI void
@@ -1667,27 +1682,12 @@ elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   
-   Evas_Object *target = NULL;
-   Elm_Object_Item *target_item = NULL;
-   if (!elm_widget_is(obj))
-     return;
-   efl_ui_widget_focus_next_get(obj, dir, &target, &target_item);
-   if (target)
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_cycle(obj, dir);
+   else
      {
-        /* access */
-        if (_elm_config->access_mode)
-          {
-             /* highlight cycle does not steal a focus, only after window gets
-                the ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE message,
-                target will steal focus, or focus its own job. */
-             if (!_elm_access_auto_highlight_get())
-               efl_ui_widget_focus_steal(target, target_item);
-
-             _elm_access_highlight_set(target);
-             elm_widget_focus_region_show(target);
-          }
-        else efl_ui_widget_focus_steal(target, target_item);
+        Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
+        efl_ui_focus_manager_move(top, dir);
      }
 }
 
@@ -1695,26 +1695,33 @@ EAPI Evas_Object *
 elm_object_focus_next_object_get(const Evas_Object  *obj,
                                  Elm_Focus_Direction dir)
 {
-   Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   if (elm_widget_is_legacy(obj))
+     return efl_ui_widget_focus_next_object_get(obj, dir);
 
+   Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, top), dir, NULL, EINA_FALSE);
 }
 
 EAPI void
 elm_object_focus_next_object_set(Evas_Object        *obj,
-                                 Evas_Object        *next EINA_UNUSED,
-                                 Elm_Focus_Direction dir EINA_UNUSED)
+                                 Evas_Object        *next,
+                                 Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   ERR("setting explicit objects not allowed not supported");
+   if (elm_widget_is_legacy(obj))
+     efl_ui_widget_focus_next_object_set(obj, next, dir);
+   else
+      ERR("setting explicit objects not allowed not supported");
 }
 
 EAPI Elm_Object_Item *
 elm_object_focus_next_item_get(const Evas_Object  *obj,
-                               Elm_Focus_Direction dir EINA_UNUSED)
+                               Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   if (elm_widget_is_legacy(obj))
+     return efl_ui_widget_focus_next_item_get(obj, dir);
    /* FOCUS-FIXME */
    return NULL;
 }
@@ -1725,6 +1732,8 @@ elm_object_focus_next_item_set(Evas_Object     *obj,
                                Elm_Focus_Direction dir EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
+   if (elm_widget_is_legacy(obj))
+      efl_ui_widget_focus_next_item_set(obj, next_item, dir);
    /* FOCUS-FIXME */
 }
 
