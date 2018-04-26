@@ -7,12 +7,18 @@ PARALLEL_JOBS=10
 CI_BUILD_TYPE=$1
 
 DEFAULT_COPTS="--with-tests=regular"
+
 WAYLAND_COPTS="--with-tests=regular --enable-wayland --enable-elput --enable-drm \
 --enable-wayland-ivi-shell --enable-gl-drm --with-opengl=es --enable-egl"
-MISC_COPTS="--enable-harfbuzz --enable-liblz4 --enable-image-loader-webp --enable-xinput22 --enable-multisense --enable-lua-old --enable-xpresent --enable-hyphen"
 
-# --enable-libvlc --enable-vnc-server --enable-g-main-loop --enable-libuv --enable-fb --enable-eglfs --enable-sdl --enable-gl-drm --enable-egl --enable-pix    man --enable-tile-rotate --enable-ecore-buffer --enable-image-loader-generic --enable-image-loader-jp2k --enable-gesture --enable-v4l2 --enable-xine
-# --with-profile=PROFILE --with-crypto=CRYPTO
+MISC_COPTS="--enable-harfbuzz --enable-liblz4 --enable-image-loader-webp --enable-xinput22 \
+--enable-multisense --enable-lua-old --enable-xpresent --enable-hyphen \
+--enable-pixman --enable-pixman-font --enable-pixman-rect --enable-pixman-line \
+--enable-pixman-poly --enable-pixman-image --enable-pixman-image-scale-sample \
+--enable-image-loader-generic --enable-libuv --enable-tile-rotate --enable-vnc-server \
+--enable-sdl --enable-fb --enable-v4l2 --enable-cserve --enable-always-build-examples \
+--enable-ecore-wayland --enable-ecore-drm --enable-cancel-ok --with-crypto=gnutls \
+--enable-debug --disable-gstreamer1 --enable-gstreamer"
 
 MISC_DISABLED_COPTS="--disable-neon --disable-libeeze --disable-systemd --disable-magic-debug \
 --disable-valgrind --disable-cxx-bindings --disable-gstreamer1 \
