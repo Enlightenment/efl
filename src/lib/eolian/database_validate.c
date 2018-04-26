@@ -350,13 +350,13 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    Eolian_Function_Parameter *param;
    char buf[512];
 
-   const Eolian_Function *ofunc = nhash ? eina_hash_find(nhash, func->base.name) : NULL;
-   if (EINA_UNLIKELY(ofunc && (ofunc != func)))
+   const Eolian_Object *oobj = nhash ? eina_hash_find(nhash, func->base.name) : NULL;
+   if (EINA_UNLIKELY(oobj && (oobj != &func->base)))
      {
         snprintf(buf, sizeof(buf),
-                 "%sfunction '%s' redefined (originally at %s:%d:%d)",
-                 func->is_beta ? "beta " : "", func->base.name, ofunc->base.file,
-                 ofunc->base.line, ofunc->base.column);
+                 "%sfunction '%s' conflicts with another symbol (at %s:%d:%d)",
+                 func->is_beta ? "beta " : "", func->base.name, oobj->file,
+                 oobj->line, oobj->column);
         _obj_error(&func->base, buf);
         vals->warned = EINA_TRUE;
      }
@@ -367,8 +367,8 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    if (func->base.validated)
      {
         /* it might be validated, but need to add it anyway */
-        if (!ofunc && nhash)
-          eina_hash_add(nhash, func->base.name, func);
+        if (!oobj && nhash)
+          eina_hash_add(nhash, func->base.name, &func->base);
         return EINA_TRUE;
      }
 
@@ -406,8 +406,8 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
      return EINA_FALSE;
 
    /* just for now, when dups become errors there will be no need to check */
-   if (!ofunc && nhash)
-     eina_hash_add(nhash, func->base.name, func);
+   if (!oobj && nhash)
+     eina_hash_add(nhash, func->base.name, &func->base);
 
    return _validate(&func->base);
 }
@@ -415,20 +415,23 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 static Eina_Bool
 _validate_part(Eolian_Part *part, Eina_Hash *nhash)
 {
-   const Eolian_Function *ofunc = eina_hash_find(nhash, part->base.name);
-   if (ofunc)
+   const Eolian_Object *oobj = eina_hash_find(nhash, part->base.name);
+   if (oobj)
      {
         char buf[512];
         snprintf(buf, sizeof(buf),
-                 "part '%s' conflicts with a function (defined at %s:%d:%d)",
-                 part->base.name, ofunc->base.file,
-                 ofunc->base.line, ofunc->base.column);
+                 "part '%s' conflicts with another symbol (at %s:%d:%d)",
+                 part->base.name, oobj->file, oobj->line, oobj->column);
         _obj_error(&part->base, buf);
      }
 
    /* see _validate_function above */
    if (part->base.validated)
-     return EINA_TRUE;
+     {
+        if (!oobj)
+          eina_hash_add(nhash, part->base.name, &part->base);
+        return EINA_TRUE;
+     }
 
    if (!_validate_doc(part->doc))
      return EINA_FALSE;
@@ -445,6 +448,9 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
      }
    eina_stringshare_del(part->klass_name);
    part->klass = pcl;
+
+   if (!oobj)
+     eina_hash_add(nhash, part->base.name, &part->base);
 
    return _validate(&part->base);
 }
