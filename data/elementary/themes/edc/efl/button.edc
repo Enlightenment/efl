@@ -298,7 +298,7 @@ group { name: "efl/button";
    programs {
       program {
          signal: "mouse,down,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,press" "elm";
+         action: SIGNAL_EMIT "efl,action,press" "efl";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
@@ -310,7 +310,7 @@ group { name: "efl/button";
       }
       program { name: "button_unclick";
          signal: "mouse,up,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
          after: "button_unclick_anim";
       }
       program { name: "button_unclick_anim";
@@ -321,7 +321,7 @@ group { name: "efl/button";
          }
       }
       program { name: "buttonactivate";
-         signal: "elm,anim,activate"; source: "elm";
+         signal: "efl,anim,activate"; source: "efl";
          action: STATE_SET "pressed" 0.0;
          target: "base";
          after: "button_unpressed_anim";
@@ -333,10 +333,10 @@ group { name: "efl/button";
       }
       program {
          signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,click" "elm";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { name: "button_text_visible";
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -344,7 +344,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_text_hidden";
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -352,7 +352,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_icon_visible";
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -360,7 +360,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_icon_hidden";
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -368,7 +368,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_background_visible";
-         signal: "elm,state,background,set"; source: "elm";
+         signal: "efl,state,background,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= BACKGROUND; set_int(btmode, m);
@@ -376,7 +376,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_background_hidden";
-         signal: "elm,state,background,unset"; source: "elm";
+         signal: "efl,state,background,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~BACKGROUND; set_int(btmode, m);
@@ -384,7 +384,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_state_disabled";
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
@@ -392,7 +392,7 @@ group { name: "efl/button";
          }
       }
       program { name: "button_state_enabled";
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);
@@ -682,7 +682,7 @@ group { name: "efl/button:anchor";
    programs {
       program {
          signal: "mouse,down,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,press" "elm";
+         action: SIGNAL_EMIT "efl,action,press" "efl";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
@@ -692,7 +692,7 @@ group { name: "efl/button:anchor";
       }
       program {
          signal: "mouse,up,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
          after: "button_unclick_anim";
       }
       program { name: "button_unclick_anim";
@@ -701,7 +701,7 @@ group { name: "efl/button:anchor";
          target: "text2";
       }
       program {
-         signal: "elm,anim,activate"; source: "elm";
+         signal: "efl,anim,activate"; source: "efl";
          action: STATE_SET "clicked" 0.0;
          target: "bar2";
          target: "text2";
@@ -715,10 +715,10 @@ group { name: "efl/button:anchor";
       }
       program {
          signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,click" "elm";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { name: "button_text_visible";
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -726,7 +726,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_text_hidden";
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -734,7 +734,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_icon_visible";
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -742,7 +742,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_icon_hidden";
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -750,17 +750,17 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_background_visible";
-         signal: "elm,state,background,set"; source: "elm";
+         signal: "efl,state,background,set"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.background";
       }
       program { name: "button_background_hidden";
-         signal: "elm,state,background,unset"; source: "elm";
+         signal: "efl,state,background,unset"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "efl.background";
       }
       program { name: "button_state_disabled";
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
@@ -768,7 +768,7 @@ group { name: "efl/button:anchor";
          }
       }
       program { name: "button_state_enabled";
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);

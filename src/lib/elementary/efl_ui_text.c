@@ -444,9 +444,9 @@ _efl_ui_text_guide_update(Evas_Object *obj,
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if ((has_text) && (!sd->has_text))
-     edje_object_signal_emit(sd->entry_edje, "elm,guide,disabled", "elm");
+     edje_object_signal_emit(sd->entry_edje, "efl,guide,disabled", "efl");
    else if ((!has_text) && (sd->has_text))
-     edje_object_signal_emit(sd->entry_edje, "elm,guide,enabled", "elm");
+     edje_object_signal_emit(sd->entry_edje, "efl,guide,enabled", "efl");
 
    sd->has_text = has_text;
 }
@@ -465,7 +465,7 @@ _validate(Evas_Object *obj)
    res = efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_VALIDATE, (void *)&vc);
    buf = eina_strbuf_new();
    eina_strbuf_append_printf(buf, "validation,%s,%s", vc.signal, res == EINA_FALSE ? "fail" : "pass");
-   edje_object_signal_emit(sd->scr_edje, eina_strbuf_string_get(buf), "elm");
+   edje_object_signal_emit(sd->scr_edje, eina_strbuf_string_get(buf), "efl");
    eina_tmpstr_del(vc.signal);
    eina_strbuf_free(buf);
 }
@@ -515,12 +515,12 @@ _hide_selection_handler(Evas_Object *obj)
 
    if (sd->start_handler_shown)
      {
-        edje_object_signal_emit(sd->start_handler, "elm,handler,hide", "elm");
+        edje_object_signal_emit(sd->start_handler, "efl,handler,hide", "efl");
         sd->start_handler_shown = EINA_FALSE;
      }
    if (sd->end_handler_shown)
      {
-        edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
+        edje_object_signal_emit(sd->end_handler, "efl,handler,hide", "efl");
         sd->end_handler_shown = EINA_FALSE;
      }
 }
@@ -606,13 +606,13 @@ _update_selection_handler(Eo *obj)
         if (!sd->start_handler_shown && !hidden)
           {
              edje_object_signal_emit(sd->start_handler,
-                                     "elm,handler,show", "elm");
+                                     "efl,handler,show", "efl");
              sd->start_handler_shown = EINA_TRUE;
           }
         else if (sd->start_handler_shown && hidden)
           {
              edje_object_signal_emit(sd->start_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->start_handler_shown = EINA_FALSE;
           }
 
@@ -632,13 +632,13 @@ _update_selection_handler(Eo *obj)
         if (!sd->end_handler_shown && !hidden)
           {
              edje_object_signal_emit(sd->end_handler,
-                                     "elm,handler,show", "elm");
+                                     "efl,handler,show", "efl");
              sd->end_handler_shown = EINA_TRUE;
           }
         else if (sd->end_handler_shown && hidden)
           {
              edje_object_signal_emit(sd->end_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->end_handler_shown = EINA_FALSE;
           }
         eina_rectangle_free(rect);
@@ -648,13 +648,13 @@ _update_selection_handler(Eo *obj)
         if (sd->start_handler_shown)
           {
              edje_object_signal_emit(sd->start_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->start_handler_shown = EINA_FALSE;
           }
         if (sd->end_handler_shown)
           {
              edje_object_signal_emit(sd->end_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->end_handler_shown = EINA_FALSE;
           }
      }
@@ -804,11 +804,11 @@ _efl_ui_text_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Ein
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   emission = disabled ? "elm,state,disabled" : "elm,state,enabled";
-   edje_object_signal_emit(sd->entry_edje, emission, "elm");
+   emission = disabled ? "efl,state,disabled" : "efl,state,enabled";
+   edje_object_signal_emit(sd->entry_edje, emission, "efl");
    if (sd->scroll)
      {
-        edje_object_signal_emit(sd->scr_edje, emission, "elm");
+        edje_object_signal_emit(sd->scr_edje, emission, "efl");
         elm_interface_scrollable_freeze_set(obj, disabled);
      }
    sd->disabled = disabled;
@@ -881,7 +881,7 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
                                    elm_widget_theme_element_get(obj));
 
    if (elm_widget_disabled_get(obj))
-     edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
+     edje_object_signal_emit(sd->entry_edje, "efl,state,disabled", "efl");
 
    edje_object_part_text_input_panel_layout_set
      (sd->entry_edje, "efl.text", (Edje_Input_Panel_Layout)sd->input_panel_layout);
@@ -912,9 +912,9 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    if (efl_ui_focus_object_focus_get(obj))
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,action,focus", "efl");
         if (sd->scroll)
-          edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
+          edje_object_signal_emit(sd->scr_edje, "efl,action,focus", "efl");
      }
 
    edje_object_message_signal_process(sd->entry_edje);
@@ -1144,9 +1144,9 @@ _efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
         Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
         evas_object_focus_set(sw, EINA_TRUE);
 
-        _edje_signal_emit(sd, "elm,action,focus", "elm");
+        _edje_signal_emit(sd, "efl,action,focus", "efl");
         if (sd->scroll)
-          edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
+          edje_object_signal_emit(sd->scr_edje, "efl,action,focus", "efl");
 
         if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
@@ -1159,9 +1159,9 @@ _efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
      {
         Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
-        _edje_signal_emit(sd, "elm,action,unfocus", "elm");
+        _edje_signal_emit(sd, "efl,action,unfocus", "efl");
         if (sd->scroll)
-          edje_object_signal_emit(sd->scr_edje, "elm,action,unfocus", "elm");
+          edje_object_signal_emit(sd->scr_edje, "efl,action,unfocus", "efl");
         evas_object_focus_set(sw, EINA_FALSE);
 
         if (top && top_is_win && sd->input_panel_enable)
@@ -1176,11 +1176,11 @@ _efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
                   sd->sel_mode = EINA_FALSE;
                   elm_widget_scroll_hold_pop(obj);
                   edje_object_part_text_select_allow_set(sd->entry_edje, "efl.text", EINA_FALSE);
-                  edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+                  edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
                   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
                }
           }
-        edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
+        edje_object_signal_emit(sd->scr_edje, "validation,default", "efl");
      }
 
    return EINA_TRUE;
@@ -1230,11 +1230,11 @@ _efl_ui_text_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd 
     * smart function */
    if (sobj == elm_layout_content_get(obj, "efl.icon"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,icon", "elm");
+        elm_layout_signal_emit(obj, "efl,action,hide,icon", "efl");
      }
    else if (sobj == elm_layout_content_get(obj, "efl.end"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
+        elm_layout_signal_emit(obj, "efl,action,hide,end", "efl");
      }
 
    ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -1321,7 +1321,7 @@ _hover_selected_cb(void *data,
           edje_object_part_text_select_allow_set
             (sd->entry_edje, "efl.text", EINA_TRUE);
      }
-   edje_object_signal_emit(sd->entry_edje, "elm,state,select,on", "elm");
+   edje_object_signal_emit(sd->entry_edje, "efl,state,select,on", "efl");
 
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_push(data);
@@ -1478,7 +1478,7 @@ _cut_cb(Eo *obj)
    if (!_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
        (sd->entry_edje, "efl.text", EINA_FALSE);
-   edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+   edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
 
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(obj);
@@ -1507,7 +1507,7 @@ _copy_cb(Eo *obj)
      {
         edje_object_part_text_select_allow_set
           (sd->entry_edje, "efl.text", EINA_FALSE);
-        edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
         elm_widget_scroll_hold_pop(obj);
      }
    _selection_store(ELM_SEL_TYPE_CLIPBOARD, obj);
@@ -1532,7 +1532,7 @@ _hover_cancel_cb(void *data,
    if (!_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
        (sd->entry_edje, "efl.text", EINA_FALSE);
-   edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+   edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(data);
    edje_object_part_text_select_none(sd->entry_edje, "efl.text");
@@ -1807,7 +1807,7 @@ static void
 _magnifier_hide(void *data)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
-   edje_object_signal_emit(sd->mgf_bg, "elm,action,hide,magnifier", "elm");
+   edje_object_signal_emit(sd->mgf_bg, "efl,action,hide,magnifier", "efl");
    elm_widget_scroll_freeze_pop(data);
    evas_object_hide(sd->mgf_clip);
 }
@@ -1816,7 +1816,7 @@ static void
 _magnifier_show(void *data)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
-   edje_object_signal_emit(sd->mgf_bg, "elm,action,show,magnifier", "elm");
+   edje_object_signal_emit(sd->mgf_bg, "efl,action,show,magnifier", "efl");
    elm_widget_scroll_freeze_push(data);
    evas_object_show(sd->mgf_clip);
 }
@@ -2181,11 +2181,11 @@ _entry_cursor_changed_signal_cb(void *data,
    sd->cur_changed = EINA_TRUE;
    if (efl_ui_focus_object_focus_get(data))
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,action,show,cursor", "efl");
      }
    else
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,hide,cursor", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,action,hide,cursor", "efl");
      }
 
    sd->deferred_decoration_cursor = EINA_TRUE;
@@ -2574,7 +2574,7 @@ _efl_ui_text_content_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char 
    if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
-    * "elm,state,{icon,end},visible", we have to repeat ourselves */
+    * "efl,state,{icon,end},visible", we have to repeat ourselves */
    if (!part || !strcmp(part, "icon") || !strcmp(part, "efl.icon"))
      efl_ui_text_icon_visible_set(obj, EINA_TRUE);
 
@@ -2593,7 +2593,7 @@ _efl_ui_text_content_unset(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const cha
    if (!ret) return NULL;
 
    /* too bad entry does not follow the pattern
-    * "elm,state,{icon,end},hidden", we have to repeat ourselves */
+    * "efl,state,{icon,end},hidden", we have to repeat ourselves */
    if (!part || !strcmp(part, "icon") || !strcmp(part, "efl.icon"))
      efl_ui_text_icon_visible_set(obj, EINA_FALSE);
 
@@ -3426,7 +3426,7 @@ _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
         if (!_elm_config->desktop_entry)
           edje_object_part_text_select_allow_set
             (sd->entry_edje, "efl.text", EINA_FALSE);
-        edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
      }
    if (sd->have_selection)
      efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);

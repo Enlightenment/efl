@@ -321,8 +321,8 @@ group { "efl/timepicker";
    }
    programs {
       program { "visible_ampm";
-         signal: "elm,state,ampm,visible";
-         source: "elm";
+         signal: "efl,state,ampm,visible";
+         source: "efl";
          script {
             set_state(PART:"base", "default", 0.0);
             set_state(PART:"bg", "default", 0.0);
@@ -330,8 +330,8 @@ group { "efl/timepicker";
          }
       }
       program { "invisible_ampm";
-         signal: "elm,state,ampm,invisible";
-         source: "elm";
+         signal: "efl,state,ampm,invisible";
+         source: "efl";
          script {
             set_state(PART:"base", "24layout", 0.0);
             set_state(PART:"bg", "24layout", 0.0);
@@ -339,8 +339,8 @@ group { "efl/timepicker";
          }
       }
       program { "visible_colon_field0";
-         signal: "elm,state,colon,visible,field0";
-         source: "elm";
+         signal: "efl,state,colon,visible,field0";
+         source: "efl";
          action: STATE_SET "default";
          target: "padding_center1";
          target: "hour_minute_colon";
@@ -348,8 +348,8 @@ group { "efl/timepicker";
          target: "padding_center2";
       }
       program { "invisible_colon_field0";
-         signal: "elm,state,colon,invisible,field0";
-         source: "elm";
+         signal: "efl,state,colon,invisible,field0";
+         source: "efl";
          action: STATE_SET "invisible";
          target: "padding_center1";
          target: "hour_minute_colon";
@@ -357,8 +357,8 @@ group { "efl/timepicker";
          target: "padding_center2";
       }
       program { "visible_colon_field1";
-         signal: "elm,state,colon,visible,field1";
-         source: "elm";
+         signal: "efl,state,colon,visible,field1";
+         source: "efl";
          action: STATE_SET "default";
          target: "padding_center3";
          target: "hour_minute_colon2";
@@ -366,8 +366,8 @@ group { "efl/timepicker";
          target: "padding_center4";
       }
       program { "invisible_colon_field1";
-         signal: "elm,state,colon,invisible,field1";
-         source: "elm";
+         signal: "efl,state,colon,invisible,field1";
+         source: "efl";
          action: STATE_SET "invisible";
          target: "padding_center3";
          target: "hour_minute_colon2";

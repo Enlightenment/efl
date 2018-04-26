@@ -136,11 +136,16 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    if (sd->fixed)
      {
-        elm_layout_signal_emit(obj, "elm,panes,fixed", "elm");
+        if (elm_widget_is_legacy(obj))
+          {
+             elm_layout_signal_emit(obj, "elm,panes,fixed", "elm");
 
-        //TODO: remove this signal on EFL 2.0.
-        // I left this due to the backward compatibility.
-        elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+             //TODO: remove this signal on EFL 2.0.
+             // I left this due to the backward compatibility.
+             elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+          }
+        else
+          elm_layout_signal_emit(obj, "efl,panes,fixed", "efl");
      }
 
    elm_layout_sizing_eval(obj);
@@ -415,18 +420,36 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
 
    elm_panes_content_left_size_set(obj, 0.5);
 
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click", "*",
-     _on_clicked, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click,double", "*",
-     _double_clicked, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,press", "*",
-     _on_pressed, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,unpress", "*",
-     _on_unpressed, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,click", "*",
+            _on_clicked, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,click,double", "*",
+            _double_clicked, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,press", "*",
+            _on_pressed, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,unpress", "*",
+            _on_unpressed, obj);
+     }
+   else
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,click", "*",
+            _on_clicked, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,click,double", "*",
+            _double_clicked, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,press", "*",
+            _on_pressed, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,unpress", "*",
+            _on_unpressed, obj);
+     }
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_RESIZE,
      _on_resize, obj);
@@ -555,19 +578,29 @@ _efl_ui_panes_fixed_set(Eo *obj, Efl_Ui_Panes_Data *sd, Eina_Bool fixed)
    sd->fixed = !!fixed;
    if (sd->fixed == EINA_TRUE)
      {
-        elm_layout_signal_emit(obj, "elm,panes,fixed", "elm");
+        if (elm_widget_is_legacy(obj))
+          {
+             elm_layout_signal_emit(obj, "elm,panes,fixed", "elm");
 
-        //TODO: remove this signal on EFL 2.0.
-        // I left this due to the backward compatibility.
-        elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+             //TODO: remove this signal on EFL 2.0.
+             // I left this due to the backward compatibility.
+             elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+          }
+        else
+          elm_layout_signal_emit(obj, "efl,panes,fixed", "efl");
      }
    else
      {
-        elm_layout_signal_emit(obj, "elm,panes,unfixed", "elm");
+        if (elm_widget_is_legacy(obj))
+          {
+             elm_layout_signal_emit(obj, "elm,panes,unfixed", "elm");
 
-        //TODO: remove this signal on EFL 2.0.
-        // I left this due to the backward compatibility.
-        elm_layout_signal_emit(obj, "elm.panes.unfixed", "elm");
+             //TODO: remove this signal on EFL 2.0.
+             // I left this due to the backward compatibility.
+             elm_layout_signal_emit(obj, "elm.panes.unfixed", "elm");
+          }
+        else
+          elm_layout_signal_emit(obj, "efl,panes,unfixed", "efl");
      }
 }
 

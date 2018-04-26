@@ -247,16 +247,32 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
-   if (sd->pulse)
-     elm_layout_signal_emit(obj, "elm,state,pulse", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->pulse)
+          elm_layout_signal_emit(obj, "elm,state,pulse", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,fraction", "elm");
+
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+
+        if (sd->format_cb && (!sd->pulse))
+          elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,fraction", "elm");
+     {
+        if (sd->pulse)
+          elm_layout_signal_emit(obj, "efl,state,pulse", "efl");
+        else
+          elm_layout_signal_emit(obj, "efl,state,fraction", "efl");
 
-   if (sd->pulse_state)
-     elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "efl,state,pulse,start", "efl");
 
-   if (sd->format_cb && (!sd->pulse))
-     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+        if (sd->format_cb && (!sd->pulse))
+          elm_layout_signal_emit(obj, "efl,state,units,visible", "efl");
+     }
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
@@ -267,10 +283,20 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
        (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
-   if (_is_inverted(sd->dir))
-     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (_is_inverted(sd->dir))
+          elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+     {
+        if (_is_inverted(sd->dir))
+          elm_layout_signal_emit(obj, "efl,state,inverted,on", "efl");
+        else
+          elm_layout_signal_emit(obj, "efl,state,inverted,off", "efl");
+     }
 
    _units_set(obj);
    _val_set(obj);
@@ -608,7 +634,10 @@ _efl_ui_progressbar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Progressbar_Data
    sd->format_free_cb = func_free_cb;
    if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
 
-   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,state,units,visible", "efl");
    edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
@@ -623,10 +652,20 @@ _efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool st
 
    sd->pulse_state = state;
 
-   if (sd->pulse_state)
-     elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
+     {
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "efl,state,pulse,start", "efl");
+        else
+          elm_layout_signal_emit(obj, "efl,state,pulse,stop", "efl");
+     }
 }
 
 EOLIAN static Eina_Bool

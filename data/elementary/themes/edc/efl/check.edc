@@ -258,20 +258,20 @@ group { "efl/check";
    programs {
       program {
          signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
+         action: SIGNAL_EMIT "efl,action,check,toggle" "efl";
       }
       program {
-         signal: "elm,state,check,on"; source: "elm";
+         signal: "efl,state,check,on"; source: "efl";
          action:  STATE_SET "selected" 0.0;
          target: "indicator";
       }
       program {
-         signal: "elm,state,check,off"; source: "elm";
+         signal: "efl,state,check,off"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "indicator";
       }
       program {
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -279,7 +279,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -287,7 +287,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -295,7 +295,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -303,7 +303,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
@@ -311,7 +311,7 @@ group { "efl/check";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);
@@ -776,10 +776,10 @@ group { "efl/check:toggle";
    programs {
       program {
          signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
+         action: SIGNAL_EMIT "efl,action,check,toggle" "efl";
       }
       program {
-         signal: "elm,state,check,on"; source: "elm";
+         signal: "efl,state,check,on"; source: "efl";
          script {
             new Float:drag;
             if (get_int(is_rtl) == 0) {
@@ -791,7 +791,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,check,off"; source: "elm";
+         signal: "efl,state,check,off"; source: "efl";
          script {
             new Float:drag;
             if (get_int(is_rtl) == 0) {
@@ -815,9 +815,9 @@ group { "efl/check:toggle";
                }
                if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
                    (get_int(is_rtl) == 0) && (dx > 0.5)) {
-                  emit("elm,action,check,off", "elm");
+                  emit("efl,action,check,off", "efl");
                } else {
-                  emit("elm,action,check,on", "elm");
+                  emit("efl,action,check,on", "efl");
                }
             }
          }
@@ -848,9 +848,9 @@ group { "efl/check:toggle";
                }
                if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
                    (get_int(is_rtl) == 0) && (dx > 0.5)) {
-                 emit("elm,action,check,on", "elm");
+                 emit("efl,action,check,on", "efl");
                } else {
-                 emit("elm,action,check,off", "elm");
+                 emit("efl,action,check,off", "efl");
                }
                set_int(was_drag, 1);
                set_int(is_drag, 0);
@@ -870,7 +870,7 @@ group { "efl/check:toggle";
          target: "glow_but";
       }
       program {
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -878,7 +878,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -886,7 +886,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -894,7 +894,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -902,7 +902,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
@@ -910,7 +910,7 @@ group { "efl/check:toggle";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);

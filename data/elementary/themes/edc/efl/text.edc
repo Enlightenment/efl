@@ -58,12 +58,12 @@ group { "efl/text/scroller";
          }
       }
       program {
-         signal: "elm,action,show,icon"; source: "elm";
+         signal: "efl,action,show,icon"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.icon";
       }
       program {
-         signal: "elm,action,hide,icon"; source: "elm";
+         signal: "efl,action,hide,icon"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
@@ -86,12 +86,12 @@ group { "efl/text/scroller";
          }
       }
       program {
-         signal: "elm,action,show,end"; source: "elm";
+         signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.end";
       }
       program {
-         signal: "elm,action,hide,end"; source: "elm";
+         signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.end";
       }
@@ -119,7 +119,7 @@ group { "efl/text/scroller";
    }
    programs {
       program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
+         signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
          target: "glow";
          after: "focus_in2";
@@ -130,26 +130,26 @@ group { "efl/text/scroller";
          target: "glow";
       }
       program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
+         signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
       }
       program { name: "validation_fail";
          signal: "validation,default,fail";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "fail" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_pass";
          signal: "validation,default,pass";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "pass" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_off";
          signal: "validation,default";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
@@ -263,12 +263,12 @@ group { "efl/text/single/scroller";
          }
       }
       program {
-         signal: "elm,action,show,icon"; source: "elm";
+         signal: "efl,action,show,icon"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.icon";
       }
       program {
-         signal: "elm,action,hide,icon"; source: "elm";
+         signal: "efl,action,hide,icon"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
@@ -289,12 +289,12 @@ group { "efl/text/single/scroller";
          }
       }
       program {
-         signal: "elm,action,show,end"; source: "elm";
+         signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.end";
       }
       program {
-         signal: "elm,action,hide,end"; source: "elm";
+         signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.end";
       }
@@ -351,7 +351,7 @@ group { "efl/text/single/scroller";
    }
    programs {
       program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
+         signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
          target: "glow";
          after: "focus_in2";
@@ -362,26 +362,26 @@ group { "efl/text/single/scroller";
          target: "glow";
       }
       program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
+         signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
       }
       program { name: "validation_fail";
          signal: "validation,default,fail";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "fail" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_pass";
          signal: "validation,default,pass";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "pass" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_off";
          signal: "validation,default";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
@@ -438,7 +438,7 @@ group { "efl/text/cursor";
          target: "clipper";
       }
       program {
-         signal: "elm,action,focus"; source: "elm";
+         signal: "efl,action,focus"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -447,7 +447,7 @@ group { "efl/text/cursor";
          after: "cursor_show";
       }
       program {
-         signal: "elm,action,unfocus"; source: "elm";
+         signal: "efl,action,unfocus"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -456,7 +456,7 @@ group { "efl/text/cursor";
          after: "cursor_hide_stop";
       }
       program {
-         signal: "elm,action,show,cursor"; source: "elm";
+         signal: "efl,action,show,cursor"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -583,23 +583,23 @@ group { "efl/text";
          target: "efl.text";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "efl.text";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.text";
       }
       #if 0
       program {
-         signal: "elm,guide,disabled"; source: "elm";
+         signal: "efl,guide,disabled"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "efl.guide";
       }
       program {
-         signal: "elm,guide,enabled"; source: "elm";
+         signal: "efl,guide,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.guide";
       }
@@ -676,14 +676,14 @@ group { "efl/text/magnifier";
    }
    programs {
       program { name: "magnifier_show";
-         signal: "elm,action,show,magnifier"; source: "elm";
+         signal: "efl,action,show,magnifier"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.content";
          target: "bg";
          target: "over";
       }
       program { name: "magnifier_hide";
-         signal: "elm,action,hide,magnifier"; source: "elm";
+         signal: "efl,action,hide,magnifier"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "efl.content";
          target: "bg";
@@ -726,13 +726,13 @@ group { "efl/text/handler/start";
    }
    programs {
       program {
-         signal: "elm,handler,show"; source: "elm";
+         signal: "efl,handler,show"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
       program {
-         signal: "elm,handler,hide"; source: "elm";
+         signal: "efl,handler,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
@@ -774,13 +774,13 @@ group { "efl/text/handler/end";
    }
    programs {
       program {
-         signal: "elm,handler,show"; source: "elm";
+         signal: "efl,handler,show"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
       program {
-         signal: "elm,handler,hide"; source: "elm";
+         signal: "efl,handler,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";

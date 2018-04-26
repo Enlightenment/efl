@@ -280,7 +280,11 @@ _elm_tooltip_hide_anim_start(Elm_Tooltip *tt)
    TTDBG("HIDE START\n");
    /* hide slightly faster when in window mode to look less stupid */
    if ((tt->hide_timeout > 0) && tt->tt_win) extra = 0.1;
-   edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
+
+   if (elm_widget_is_legacy(tt->owner))
+     edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
+   else
+     edje_object_signal_emit(tt->tooltip, "efl,action,hide", "efl");
    tt->hide_timer = ecore_timer_add
      (tt->hide_timeout - extra, _elm_tooltip_hide_anim_cb, tt);
 }
@@ -290,7 +294,12 @@ _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
 {
    if (!tt->hide_timer) return;
    if (tt->tooltip)
-     edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+     {
+        if (elm_widget_is_legacy(tt->owner))
+          edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+        else
+          edje_object_signal_emit(tt->tooltip, "efl,action,show", "efl");
+     }
 
    ELM_SAFE_FREE(tt->hide_timer, ecore_timer_del);
 }
@@ -500,7 +509,10 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
                                         tt->content);
           }
 
-        edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+        if (elm_widget_is_legacy(tt->owner))
+          edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+        else
+          edje_object_signal_emit(tt->tooltip, "efl,action,show", "efl");
      }
 
    if (!tt->content)

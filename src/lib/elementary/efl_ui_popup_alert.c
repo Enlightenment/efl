@@ -33,9 +33,9 @@ _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *p
           {
              efl_text_set(efl_part(efl_super(obj, MY_CLASS), "title"), label);
              if (label)
-               elm_layout_signal_emit(obj, "elm,title,show", "elm");
+               elm_layout_signal_emit(obj, "efl,title,show", "efl");
              else
-               elm_layout_signal_emit(obj, "elm,title,hide", "elm");
+               elm_layout_signal_emit(obj, "efl,title,hide", "efl");
 
              ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
              edje_object_message_signal_process(wd->resize_obj);
@@ -168,7 +168,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
                                  pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
      }
 
-   elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
+   elm_layout_signal_emit(obj, "efl,buttons,show", "efl");
    edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
 }

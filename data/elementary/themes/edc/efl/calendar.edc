@@ -260,7 +260,7 @@
       program { \
          name:    "cit_"#_pos".go_active"; \
          signal:  "cit_"#_pos",selected"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "selected" 0.0; \
          target:  "cit_"#_pos".pat"; \
          target:  "cit_"#_pos".selected"; \
@@ -268,7 +268,7 @@
       program { \
          name:    "cit_"#_pos".go_passive"; \
          signal:  "cit_"#_pos",unselected"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "default" 0.0; \
          target:  "cit_"#_pos".pat"; \
          target:  "cit_"#_pos".selected"; \
@@ -276,7 +276,7 @@
       program { \
          name:    "cit_"#_pos".focus_highlighted"; \
          signal:  "cit_"#_pos",focused"; \
-         source:  "elm"; \
+         source:  "efl"; \
          script { \
             set_int(item_focus_enabled, 1); \
             set_int(last_focused_item, _pos); \
@@ -287,7 +287,7 @@
       program { \
          name:    "cit_"#_pos".focus_unhighlighed"; \
          signal:  "cit_"#_pos",unfocused"; \
-         source:  "elm"; \
+         source:  "efl"; \
          script { \
             set_int(item_focus_enabled, 0); \
             set_state(PART:"cit_"#_pos".glow", "default", 0.0); \
@@ -296,21 +296,21 @@
       program { \
          name:    "cit_"#_pos".is_today"; \
          signal:  "cit_"#_pos",today"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "today" 0.0; \
          target:  "cit_"#_pos".text"; \
       } \
       program { \
          name:    "cit_"#_pos".not_today"; \
          signal:  "cit_"#_pos",not_today"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "default" 0.0; \
          target:  "cit_"#_pos".text"; \
       } \
       program { \
          name:    "cit_"#_pos".enable"; \
          signal:  "cit_"#_pos",enable"; \
-         source:  "elm"; \
+         source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
@@ -322,7 +322,7 @@
       program { \
          name:    "cit_"#_pos".disable"; \
          signal:  "cit_"#_pos",disable"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "disabled" 0.0; \
          target:  "cit_"#_pos".text"; \
       } \
@@ -344,12 +344,12 @@
          source: "cit_"#_pos".clicked"; \
          signal: "mouse,clicked,1"; \
          source: "cit_"#_pos".event"; \
-         action: SIGNAL_EMIT "elm,action,selected" #_pos; \
+         action: SIGNAL_EMIT "efl,action,selected" #_pos; \
       } \
       program { \
          name:    "cit_"#_pos".clear"; \
          signal:  "cit_"#_pos",clear"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "default" 0.0; \
          target:  "cit_"#_pos".check"; \
          after:   "cit_"#_pos".weekends_clear"; \
@@ -378,14 +378,14 @@
       program { \
          name:    "cit_"#_pos".checked"; \
          signal:  "cit_"#_pos",checked"; \
-         source:  "elm"; \
+         source:  "efl"; \
          action:  STATE_SET "visible" 0.0; \
          target:  "cit_"#_pos".check"; \
       } \
       program { \
          name:    "cit_"#_pos".holiday"; \
          signal:  "cit_"#_pos",holiday"; \
-         source:  "elm"; \
+         source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
@@ -397,7 +397,7 @@
       program { \
          name:    "cit_"#_pos".weekend/day1"; \
          signal:  "cit_"#_pos",weekend/day1"; \
-         source:  "elm"; \
+         source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
@@ -409,7 +409,7 @@
       program { \
          name:    "cit_"#_pos".weekend/day2"; \
          signal:  "cit_"#_pos",weekend/day2"; \
-         source:  "elm"; \
+         source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
@@ -516,20 +516,20 @@ group { "efl/calendar";
    }
    programs {
       program {
-         signal: "elm,action,focus_highlight,show";
-         source: "elm";
+         signal: "efl,action,focus_highlight,show";
+         source: "efl";
          script {
             set_int(win_focus_enabled, 1);
             if (get_int(item_focus_enabled) == 1) {
                new value[32];
                snprintf(value, 32, "cit_%d,focused", get_int(last_focused_item));
-               emit(value, "elm");
+               emit(value, "efl");
             }
          }
       }
       program {
-         signal: "elm,action,focus_highlight,hide";
-         source: "elm";
+         signal: "efl,action,focus_highlight,hide";
+         source: "efl";
          script {
             set_int(win_focus_enabled, 0);
          }
@@ -599,7 +599,7 @@ group { "efl/calendar";
             }
          }
          program { name: "button_press2";
-            action: SIGNAL_EMIT "elm,action,press" "";
+            action: SIGNAL_EMIT "efl,action,press" "";
             after: "button_press_anim";
          }
          program { name: "button_press_anim";
@@ -618,7 +618,7 @@ group { "efl/calendar";
             }
          }
          program { name: "button_unpress2";
-            action: SIGNAL_EMIT "elm,action,unpress" "";
+            action: SIGNAL_EMIT "efl,action,unpress" "";
          }
          program { name: "button_unpress_anim";
             action: STATE_SET "default" 0.0;
@@ -634,21 +634,21 @@ group { "efl/calendar";
             }
          }
          program { name: "action_unpressed";
-            signal: "elm,action,unpressed";
-            source: "elm";
+            signal: "efl,action,unpressed";
+            source: "efl";
             after: "button_unpress_anim";
          }
          program { name: "action_pressed";
-            signal: "elm,action,pressed";
-            source: "elm";
+            signal: "efl,action,pressed";
+            source: "efl";
             after: "button_press_anim";
          }
          program { name: "button_click2";
-            action: SIGNAL_EMIT "elm,action,click" "";
+            action: SIGNAL_EMIT "efl,action,click" "";
          }
          program { name: "access_pressed";
-            signal: "elm,action,anim,activate";
-            source: "elm";
+            signal: "efl,action,anim,activate";
+            source: "efl";
             action: STATE_SET "pressed" 0.0;
             target: "arrow.image";
             after: "access_pressed_anim";
@@ -659,31 +659,31 @@ group { "efl/calendar";
             target: "arrow.image";
          }
          program { name: "disable";
-            signal: "elm,state,disabled";
-            source: "elm";
+            signal: "efl,state,disabled";
+            source: "efl";
             action: STATE_SET "disabled" 0.0;
             target: "arrow.image";
             target: "disabler";
          }
          program { name: "enable";
-            signal: "elm,state,enabled";
-            source: "elm";
+            signal: "efl,state,enabled";
+            source: "efl";
             action: STATE_SET "default" 0.0;
             target: "arrow.image";
             target: "disabler";
          }
          program {
             name: "multi_down";
-            signal: "elm,action,multi,down";
-            source: "elm";
+            signal: "efl,action,multi,down";
+            source: "efl";
             script {
                set_int(multi_down, 1);
             }
          }
          program {
             name: "multi_up";
-            signal: "elm,action,multi,up";
-            source: "elm";
+            signal: "efl,action,multi,up";
+            source: "efl";
             script {
                set_int(multi_down, 0);
             }

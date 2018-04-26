@@ -112,7 +112,7 @@ _unselect(Evas_Object *obj,
    char emission[32];
 
    snprintf(emission, sizeof(emission), "cit_%d,unselected", selected);
-   elm_layout_signal_emit(obj, emission, "elm");
+   elm_layout_signal_emit(obj, emission, "efl");
 }
 
 static inline void
@@ -125,7 +125,7 @@ _select(Evas_Object *obj,
 
    sd->focused_it = sd->selected_it = selected;
    snprintf(emission, sizeof(emission), "cit_%d,selected", selected);
-   elm_layout_signal_emit(obj, emission, "elm");
+   elm_layout_signal_emit(obj, emission, "efl");
 }
 
 static inline void
@@ -134,7 +134,7 @@ _not_today(Efl_Ui_Calendar_Data *sd)
    char emission[32];
 
    snprintf(emission, sizeof(emission), "cit_%d,not_today", sd->today_it);
-   elm_layout_signal_emit(sd->obj, emission, "elm");
+   elm_layout_signal_emit(sd->obj, emission, "efl");
    sd->today_it = -1;
 }
 
@@ -145,7 +145,7 @@ _today(Efl_Ui_Calendar_Data *sd,
    char emission[32];
 
    snprintf(emission, sizeof(emission), "cit_%d,today", it);
-   elm_layout_signal_emit(sd->obj, emission, "elm");
+   elm_layout_signal_emit(sd->obj, emission, "efl");
    sd->today_it = it;
 }
 
@@ -156,7 +156,7 @@ _enable(Efl_Ui_Calendar_Data *sd,
    char emission[32];
 
    snprintf(emission, sizeof(emission), "cit_%d,enable", it);
-   elm_layout_signal_emit(sd->obj, emission, "elm");
+   elm_layout_signal_emit(sd->obj, emission, "efl");
 }
 
 static inline void
@@ -166,7 +166,7 @@ _disable(Efl_Ui_Calendar_Data *sd,
    char emission[32];
 
    snprintf(emission, sizeof(emission), "cit_%d,disable", it);
-   elm_layout_signal_emit(sd->obj, emission, "elm");
+   elm_layout_signal_emit(sd->obj, emission, "efl");
 }
 
 static void
@@ -759,7 +759,7 @@ _update_unfocused_it(Evas_Object *obj, int unfocused_it)
    sd->focused_it = -1;
 
    snprintf(emission, sizeof(emission), "cit_%d,unfocused", unfocused_it);
-   elm_layout_signal_emit(obj, emission, "elm");
+   elm_layout_signal_emit(obj, emission, "efl");
 }
 
 static Eina_Bool
@@ -775,12 +775,12 @@ _update_focused_it(Evas_Object *obj, int focused_it)
      return EINA_FALSE;
 
    snprintf(emission, sizeof(emission), "cit_%d,unfocused", sd->focused_it);
-   elm_layout_signal_emit(obj, emission, "elm");
+   elm_layout_signal_emit(obj, emission, "efl");
 
    sd->focused_it = focused_it;
 
    snprintf(emission, sizeof(emission), "cit_%d,focused", sd->focused_it);
-   elm_layout_signal_emit(obj, emission, "elm");
+   elm_layout_signal_emit(obj, emission, "efl");
 
    return EINA_TRUE;
 }
@@ -986,7 +986,7 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
    priv->format_cb = NULL;
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,selected", "*",
+     (wd->resize_obj, "efl,action,selected", "*",
      _day_selected, obj);
 
    current_date = time(NULL);

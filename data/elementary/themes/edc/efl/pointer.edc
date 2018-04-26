@@ -65,7 +65,7 @@ group { name: "efl/pointer";
    }
    programs {
       program {
-         signal: "elm,action,mouse,down"; source: "elm";
+         signal: "efl,action,mouse,down"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "glow";
          after: "fade";
@@ -90,7 +90,7 @@ group { name: "efl/pointer";
          after: "pulse";
       }
       program {
-         signal: "elm,action,mouse,move"; source: "elm";
+         signal: "efl,action,mouse,move"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "glow";
          after: "stop2";

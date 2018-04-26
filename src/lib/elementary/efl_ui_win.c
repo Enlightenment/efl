@@ -1077,11 +1077,17 @@ _elm_win_focus_highlight_visible_set(Efl_Ui_Win_Data *sd,
    if (visible)
      {
         evas_object_show(fobj);
-        edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
+        if (elm_widget_is_legacy(sd->obj))
+          edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
+        else
+          edje_object_signal_emit(fobj, "efl,action,focus,show", "efl");
      }
    else
      {
-        edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
+        if (elm_widget_is_legacy(sd->obj))
+          edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
+        else
+          edje_object_signal_emit(fobj, "efl,action,focus,hide", "efl");
      }
 }
 
@@ -1137,7 +1143,10 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
         if (clip) evas_object_clip_set(obj, clip);
      }
 
-   edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
+   if (elm_widget_is_legacy(sd->obj))
+     edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
+   else
+     edje_object_signal_emit(obj, "efl,state,anim,stop", "efl");
 }
 
 static void
@@ -1178,8 +1187,14 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
         evas_object_event_callback_del_full
            (previous, EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
         if (sd->focus_highlight.prev.in_theme)
-          elm_widget_signal_emit
-             (previous, "elm,action,focus_highlight,hide", "elm");
+          {
+             if (elm_widget_is_legacy(sd->obj))
+               elm_widget_signal_emit
+                  (previous, "elm,action,focus_highlight,hide", "elm");
+             else
+               elm_widget_signal_emit
+                  (previous, "efl,action,focus_highlight,hide", "efl");
+          }
      }
 
    if (!target)
@@ -1187,16 +1202,32 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
    else if (sd->focus_highlight.cur.in_theme)
      {
         common_visible = EINA_FALSE;
-        if (sd->focus_highlight.cur.visible)
-          sig = "elm,action,focus_highlight,show";
+
+        if (elm_widget_is_legacy(sd->obj))
+          {
+             if (sd->focus_highlight.cur.visible)
+               sig = "elm,action,focus_highlight,show";
+             else
+               sig = "elm,action,focus_highlight,hide";
+          }
         else
-          sig = "elm,action,focus_highlight,hide";
+          {
+             if (sd->focus_highlight.cur.visible)
+               sig = "efl,action,focus_highlight,show";
+             else
+               sig = "efl,action,focus_highlight,hide";
+          }
      }
    else
      common_visible = sd->focus_highlight.cur.visible;
 
    if (sig)
-     elm_widget_signal_emit(target, sig, "elm");
+     {
+        if (elm_widget_is_legacy(sd->obj))
+          elm_widget_signal_emit(target, sig, "elm");
+        else
+          elm_widget_signal_emit(target, sig, "efl");
+     }
 
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
      {
@@ -2232,6 +2263,7 @@ _elm_win_modality_increment(Efl_Ui_Win_Data *modalsd)
 {
    Efl_Ui_Win *current;
    Eina_List *l;
+   Eina_Bool is_legacy = elm_widget_is_legacy(modalsd->obj);
 
    EINA_LIST_FOREACH(_elm_win_list, l, current)
      {
@@ -2241,7 +2273,10 @@ _elm_win_modality_increment(Efl_Ui_Win_Data *modalsd)
         if (cursd->modal_count > 0)
           {
              Edje_Object *ed = _elm_win_modal_blocker_edje_get(cursd);
-             edje_object_signal_emit(ed, "elm,action,show_blocker", "elm");
+             if (is_legacy)
+               edje_object_signal_emit(ed, "elm,action,show_blocker", "elm");
+             else
+               edje_object_signal_emit(ed, "efl,action,show_blocker", "efl");
              efl_event_callback_legacy_call
                    (cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL);
              _elm_win_frame_style_update(cursd, 0, 1);
@@ -2254,6 +2289,7 @@ _elm_win_modality_decrement(Efl_Ui_Win_Data *modalsd)
 {
    Efl_Ui_Win *current;
    Eina_List *l;
+   Eina_Bool is_legacy = elm_widget_is_legacy(modalsd->obj);
 
    EINA_LIST_FOREACH(_elm_win_list, l, current)
      {
@@ -2263,7 +2299,10 @@ _elm_win_modality_decrement(Efl_Ui_Win_Data *modalsd)
         if (cursd->modal_count == 0)
           {
              Edje_Object *ed = _elm_win_modal_blocker_edje_get(cursd);
-             edje_object_signal_emit(ed, "elm,action,hide_blocker", "elm");
+             if (is_legacy)
+               edje_object_signal_emit(ed, "elm,action,hide_blocker", "elm");
+             else
+               edje_object_signal_emit(ed, "efl,action,hide_blocker", "efl");
              efl_event_callback_legacy_call
                    (cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL);
              _elm_win_frame_style_update(cursd, 0, 1);
@@ -2687,8 +2726,12 @@ _elm_win_focus_highlight_shutdown(Efl_Ui_Win_Data *sd)
    _elm_win_focus_highlight_reconfigure_job_stop(sd);
    if (sd->focus_highlight.cur.target)
      {
-        elm_widget_signal_emit(sd->focus_highlight.cur.target,
-                               "elm,action,focus_highlight,hide", "elm");
+        if (elm_widget_is_legacy(sd->obj))
+          elm_widget_signal_emit(sd->focus_highlight.cur.target,
+                                 "elm,action,focus_highlight,hide", "elm");
+        else
+          elm_widget_signal_emit(sd->focus_highlight.cur.target,
+                                 "efl,action,focus_highlight,hide", "efl");
         _elm_win_focus_target_callbacks_del(sd);
         evas_object_event_callback_del_full
            (sd->focus_highlight.cur.target,
@@ -3826,12 +3869,25 @@ _elm_win_focus_highlight_init(Efl_Ui_Win_Data *sd)
    if (!sd->focus_highlight.fobj)
      {
         sd->focus_highlight.fobj = edje_object_add(sd->evas);
-        edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                        "elm,action,focus,hide,end", "*",
-                                        _elm_win_focus_highlight_hide, NULL);
-        edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                        "elm,action,focus,anim,end", "*",
-                                        _elm_win_focus_highlight_anim_end, sd->obj);
+
+        if (elm_widget_is_legacy(sd->obj))
+          {
+             edje_object_signal_callback_add(sd->focus_highlight.fobj,
+                                             "elm,action,focus,hide,end", "*",
+                                             _elm_win_focus_highlight_hide, NULL);
+             edje_object_signal_callback_add(sd->focus_highlight.fobj,
+                                             "elm,action,focus,anim,end", "*",
+                                             _elm_win_focus_highlight_anim_end, sd->obj);
+          }
+        else
+          {
+             edje_object_signal_callback_add(sd->focus_highlight.fobj,
+                                             "efl,action,focus,hide,end", "*",
+                                             _elm_win_focus_highlight_hide, NULL);
+             edje_object_signal_callback_add(sd->focus_highlight.fobj,
+                                             "efl,action,focus,anim,end", "*",
+                                             _elm_win_focus_highlight_anim_end, sd->obj);
+          }
      }
 
    _elm_win_focus_highlight_reconfigure_job_start(sd);
@@ -4353,31 +4409,66 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
 
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,move,start", "elm",
-     _elm_win_frame_cb_move_start, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,move,stop", "elm",
-     _elm_win_frame_cb_move_stop, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,resize,show", "*",
-     _elm_win_frame_cb_resize_show, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,resize,hide", "*",
-     _elm_win_frame_cb_resize_hide, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,resize,start", "*",
-     _elm_win_frame_cb_resize_start, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,minimize", "elm",
-     _elm_win_frame_cb_minimize, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,maximize", "elm",
-     _elm_win_frame_cb_maximize, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, obj);
-   edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,menu", "elm", _elm_win_frame_cb_menu, obj);
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,move,start", "elm",
+            _elm_win_frame_cb_move_start, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,move,stop", "elm",
+            _elm_win_frame_cb_move_stop, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,resize,show", "*",
+            _elm_win_frame_cb_resize_show, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,resize,hide", "*",
+            _elm_win_frame_cb_resize_hide, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,resize,start", "*",
+            _elm_win_frame_cb_resize_start, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,minimize", "elm",
+            _elm_win_frame_cb_minimize, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,maximize", "elm",
+            _elm_win_frame_cb_maximize, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,close", "elm",
+            _elm_win_frame_cb_close, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "elm,action,menu", "elm",
+            _elm_win_frame_cb_menu, obj);
+     }
+   else
+     {
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,move,start", "efl",
+            _elm_win_frame_cb_move_start, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,move,stop", "efl",
+            _elm_win_frame_cb_move_stop, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,resize,show", "*",
+            _elm_win_frame_cb_resize_show, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,resize,hide", "*",
+            _elm_win_frame_cb_resize_hide, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,resize,start", "*",
+            _elm_win_frame_cb_resize_start, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,minimize", "efl",
+            _elm_win_frame_cb_minimize, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,maximize", "efl",
+            _elm_win_frame_cb_maximize, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,close", "efl",
+            _elm_win_frame_cb_close, obj);
+        edje_object_signal_callback_add
+           (sd->frame_obj, "efl,action,menu", "efl",
+            _elm_win_frame_cb_menu, obj);
+     }
 
    if (!sd->pointer.obj)
      {
@@ -4487,25 +4578,40 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    if (trap && sd->csd.wayland && sd->csd.need_borderless)
      shadow = 0;
 
-#define STATE_SET(state, s1, s2) do { \
+#define STATE_SET(state, s1, s2, s3) do { \
    if (force_emit || (state != sd->csd.cur_##state)) \
      { \
         const char *sig = state ? s1 : s2; \
-        edje_object_signal_emit(sd->frame_obj, sig, "elm"); \
+        edje_object_signal_emit(sd->frame_obj, sig, s3); \
         DBG("frame style emit: %p %s", sd->obj, sig); \
         sd->csd.cur_##state = state; \
         changed = EINA_TRUE; \
      } } while (0)
 
-   STATE_SET(borderless, "elm,state,borderless,on", "elm,state,borderless,off");
-   STATE_SET(shadow, "elm,state,shadow,on", "elm,state,shadow,off");
-   STATE_SET(maximized, "elm,state,maximized", "elm,state,unmaximized");
-   STATE_SET(focus, "elm,action,focus", "elm,action,unfocus");
-   STATE_SET(bg_solid, "elm,state,background,solid,on", "elm,state,background,solid,off");
-   STATE_SET(bg_standard, "elm,state,background,standard,on", "elm,state,background,standard,off");
-   STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off");
-   STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu");
-   STATE_SET(indicator, "elm,action,show_indicator", "elm,action,hide_indicator");
+   if (elm_widget_is_legacy(sd->obj))
+     {
+        STATE_SET(borderless, "elm,state,borderless,on", "elm,state,borderless,off", "elm");
+        STATE_SET(shadow, "elm,state,shadow,on", "elm,state,shadow,off", "elm");
+        STATE_SET(maximized, "elm,state,maximized", "elm,state,unmaximized", "elm");
+        STATE_SET(focus, "elm,action,focus", "elm,action,unfocus", "elm");
+        STATE_SET(bg_solid, "elm,state,background,solid,on", "elm,state,background,solid,off", "elm");
+        STATE_SET(bg_standard, "elm,state,background,standard,on", "elm,state,background,standard,off", "elm");
+        STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off", "elm");
+        STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu", "elm");
+        STATE_SET(indicator, "elm,action,show_indicator", "elm,action,hide_indicator", "elm");
+     }
+   else
+     {
+        STATE_SET(borderless, "efl,state,borderless,on", "efl,state,borderless,off", "efl");
+        STATE_SET(shadow, "efl,state,shadow,on", "efl,state,shadow,off", "efl");
+        STATE_SET(maximized, "efl,state,maximized", "efl,state,unmaximized", "efl");
+        STATE_SET(focus, "efl,action,focus", "efl,action,unfocus", "efl");
+        STATE_SET(bg_solid, "efl,state,background,solid,on", "efl,state,background,solid,off", "efl");
+        STATE_SET(bg_standard, "efl,state,background,standard,on", "efl,state,background,standard,off", "efl");
+        STATE_SET(unresizable, "efl,state,unresizable,on", "efl,state,unresizable,off", "efl");
+        STATE_SET(menu, "efl,action,show_menu", "efl,action,hide_menu", "efl");
+        STATE_SET(indicator, "efl,action,show_indicator", "efl,action,hide_indicator", "efl");
+     }
 
 #undef STATE_SET
 
@@ -5959,7 +6065,10 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
           {
              // Note: Based on EFL 1.18 the signal was "elm,action,hide"
              // and not "elm,action,hide_menu" as expected.
-             edje_object_signal_emit(swallow, "elm,action,hide", "elm");
+             if (elm_widget_is_legacy(data))
+               edje_object_signal_emit(swallow, "elm,action,hide", "elm");
+             else
+               edje_object_signal_emit(swallow, "efl,action,hide", "efl");
              edje_object_message_signal_recursive_process(swallow);
           }
      }
@@ -5981,7 +6090,10 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
           }
         else
           {
-             edje_object_signal_emit(swallow, "elm,action,show_menu", "elm");
+             if (elm_widget_is_legacy(data))
+               edje_object_signal_emit(swallow, "elm,action,show_menu", "elm");
+             else
+               edje_object_signal_emit(swallow, "efl,action,show_menu", "efl");
              edje_object_message_signal_recursive_process(swallow);
           }
      }
@@ -6478,7 +6590,7 @@ _efl_ui_win_keyboard_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_indicator_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Indicator_Mode mode)
+_efl_ui_win_indicator_mode_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Indicator_Mode mode)
 {
    sd->legacy.forbidden = EINA_TRUE;
    if (sd->indimode == mode) return;
@@ -6492,12 +6604,24 @@ _efl_ui_win_indicator_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_
 
    if (!sd->indicator) _indicator_add(sd);
 
-   if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
-     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_opaque", "elm");
-   else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
-     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_transparent", "elm");
-   else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
-     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,hidden", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
+          edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_opaque", "elm");
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
+          edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_transparent", "elm");
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
+          edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,hidden", "elm");
+     }
+   else
+     {
+        if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
+          edje_object_signal_emit(sd->frame_obj, "efl,action,indicator,bg_opaque", "efl");
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
+          edje_object_signal_emit(sd->frame_obj, "efl,action,indicator,bg_transparent", "efl");
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
+          edje_object_signal_emit(sd->frame_obj, "efl,action,indicator,hidden", "efl");
+     }
 
    edje_object_message_signal_process(sd->frame_obj);
    evas_object_smart_calculate(sd->frame_obj);

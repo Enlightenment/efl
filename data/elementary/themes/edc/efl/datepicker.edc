@@ -282,50 +282,50 @@ group { "efl/datepicker/spin_button";
    }
    programs {
       program { "entry_active";
-         signal: "elm,state,entry,active";
-         source: "elm";
+         signal: "efl,state,entry,active";
+         source: "efl";
          action: STATE_SET "active";
          target: "efl.entry";
       }
       program { "entry_inactive";
-         signal: "elm,state,entry,inactive";
-         source: "elm";
+         signal: "efl,state,entry,inactive";
+         source: "efl";
          action: STATE_SET "default";
          target: "efl.entry";
       }
       program { "text_button_active";
-         signal: "elm,state,button,active";
-         source: "elm";
+         signal: "efl,state,button,active";
+         source: "efl";
          action: STATE_SET "default";
          target: "efl.text_button";
       }
       program { "text_button_inactive";
-         signal: "elm,state,button,inactive";
-         source: "elm";
+         signal: "efl,state,button,inactive";
+         source: "efl";
          action: STATE_SET "inactive";
          target: "efl.text_button";
       }
       program { "access_activate";
-         signal: "elm,state,access,active";
-         source: "elm";
+         signal: "efl,state,access,active";
+         source: "efl";
          action:  STATE_SET "active";
          target: "access";
       }
       program { "access_inactivate";
-         signal: "elm,state,access,inactive";
-         source: "elm";
+         signal: "efl,state,access,inactive";
+         source: "efl";
          action:  STATE_SET "default";
          target: "access";
       }
       program { "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
+         signal: "efl,state,disabled";
+         source: "efl";
          action: STATE_SET "disabled";
          target: "disabler";
       }
       program { "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
+         signal: "efl,state,enabled";
+         source: "efl";
          action: STATE_SET "default";
          target: "disabler";
       }

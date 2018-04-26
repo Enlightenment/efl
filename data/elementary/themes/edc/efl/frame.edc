@@ -133,10 +133,10 @@ group { name: "efl/frame";
       }
       program {
          signal:  "mouse,up,1"; source:  "event";
-         action:  SIGNAL_EMIT "elm,action,click" "elm";
+         action:  SIGNAL_EMIT "efl,action,click" "efl";
       }
       program {
-         signal:  "elm,action,toggle"; source: "elm";
+         signal:  "efl,action,toggle"; source: "efl";
          script {
             new st[31];
             new Float:vl;
@@ -148,7 +148,7 @@ group { name: "efl/frame";
          }
       }
       program {
-         signal:  "elm,action,switch"; source: "elm";
+         signal:  "efl,action,switch"; source: "efl";
          script {
             new st[31];
             new Float:vl;
@@ -160,7 +160,7 @@ group { name: "efl/frame";
          }
       }
       program { name: "signal";
-         action: SIGNAL_EMIT "elm,anim,done" "elm";
+         action: SIGNAL_EMIT "efl,anim,done" "efl";
       }
    }
 }

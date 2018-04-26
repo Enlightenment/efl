@@ -180,13 +180,14 @@ _signals_emit(Eo *obj,
      {
         snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "visible" : "hidden");
+        efl_layout_signal_emit(obj, buf, "elm");
      }
    else
      {
-        snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
+        snprintf(buf, sizeof(buf), "efl,state,%s,%s", type,
                  set ? "set" : "unset");
+        efl_layout_signal_emit(obj, buf, "efl");
      }
-   efl_layout_signal_emit(obj, buf, "elm");
 }
 
 static inline void
@@ -413,12 +414,24 @@ _efl_ui_layout_object_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Layout_Ob
 
    // Not calling efl_super here: Elm.Widget simply returns false.
 
-   if (disabled)
-     edje_object_signal_emit
-       (wd->resize_obj, "elm,state,disabled", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (disabled)
+          edje_object_signal_emit
+             (wd->resize_obj, "elm,state,disabled", "elm");
+        else
+          edje_object_signal_emit
+             (wd->resize_obj, "elm,state,enabled", "elm");
+     }
    else
-     edje_object_signal_emit
-       (wd->resize_obj, "elm,state,enabled", "elm");
+     {
+        if (disabled)
+          edje_object_signal_emit
+             (wd->resize_obj, "efl,state,disabled", "efl");
+        else
+          edje_object_signal_emit
+             (wd->resize_obj, "efl,state,enabled", "efl");
+     }
 
    return EINA_TRUE;
 }
@@ -470,12 +483,18 @@ _efl_ui_layout_object_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Layout
 
    if (efl_ui_focus_object_focus_get(obj))
      {
-        elm_layout_signal_emit(obj, "elm,action,focus", "elm");
+        if (elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,action,focus", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,action,focus", "efl");
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
      }
    else
      {
-        elm_layout_signal_emit(obj, "elm,action,unfocus", "elm");
+        if (elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,action,unfocus", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,action,unfocus", "efl");
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
      }
 
@@ -710,8 +729,12 @@ _efl_ui_layout_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Layout_Object_Data *_p
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   edje_object_signal_callback_add
-     (edje, "size,eval", "elm", _on_size_evaluate_signal, obj);
+   if (elm_widget_is_legacy(obj))
+     edje_object_signal_callback_add
+        (edje, "size,eval", "elm", _on_size_evaluate_signal, obj);
+   else
+     edje_object_signal_callback_add
+        (edje, "size,eval", "efl", _on_size_evaluate_signal, obj);
 
    elm_layout_sizing_eval(obj);
 }
@@ -1934,7 +1957,10 @@ _view_update(Efl_Ui_Layout_Sub_Connect *sc, const char *property)
    eina_strbuf_append(buf, sc->name);
    eina_strbuf_replace_all(buf, "%v", property);
 
-   elm_layout_signal_emit(sc->obj, eina_strbuf_string_get(buf), "elm");
+   if (elm_widget_is_legacy(sc->obj))
+     elm_layout_signal_emit(sc->obj, eina_strbuf_string_get(buf), "elm");
+   else
+     elm_layout_signal_emit(sc->obj, eina_strbuf_string_get(buf), "efl");
    eina_strbuf_free(buf);
 }
 

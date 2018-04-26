@@ -140,13 +140,19 @@ _on_size_hints_changed(void *data EINA_UNUSED,
 static void
 _on_open_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_signal_emit(data, "elm,video,open", "elm");
+   if(elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,video,open", "elm");
+   else
+     elm_layout_signal_emit(data, "efl,video,open", "efl");
 }
 
 static void
 _on_playback_started(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_signal_emit(data, "elm,video,play", "elm");
+   if(elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,video,play", "elm");
+   else
+     elm_layout_signal_emit(data, "efl,video,play", "efl");
 
    return;
 
@@ -157,7 +163,11 @@ _on_playback_finished(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(data, "elm,video,end", "elm");
+
+   if(elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,video,end", "elm");
+   else
+     elm_layout_signal_emit(data, "efl,video,end", "efl");
 }
 
 static void
@@ -174,8 +184,17 @@ _on_title_changed(void *data, const Efl_Event *event EINA_UNUSED)
    EFL_UI_VIDEO_DATA_GET(data, sd);
 
    title = emotion_object_title_get(sd->emotion);
-   elm_layout_text_set(data, "elm,title", title);
-   elm_layout_signal_emit(data, "elm,video,title", "elm");
+
+   if(elm_widget_is_legacy(data))
+     {
+        elm_layout_text_set(data, "elm,title", title);
+        elm_layout_signal_emit(data, "elm,video,title", "elm");
+     }
+   else
+     {
+        elm_layout_text_set(data, "efl,title", title);
+        elm_layout_signal_emit(data, "efl,video,title", "efl");
+     }
 }
 
 static void
@@ -279,7 +298,10 @@ _efl_ui_video_efl_file_file_set(Eo *obj, Efl_Ui_Video_Data *sd, const char *file
    if (filename && ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://"))))
      emotion_object_last_position_load(sd->emotion);
 
-   elm_layout_signal_emit(obj, "elm,video,load", "elm");
+   if(elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,video,load", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,video,load", "efl");
 
    return EINA_TRUE;
 }
@@ -314,7 +336,11 @@ _efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play
         ELM_SAFE_FREE(sd->timer, ecore_timer_del);
         sd->stop = EINA_FALSE;
         emotion_object_play_set(sd->emotion, EINA_TRUE);
-        elm_layout_signal_emit(obj, "elm,video,play", "elm");
+
+        if(elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,video,play", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,video,play", "efl");
      }
    else
      {
@@ -323,7 +349,11 @@ _efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play
          */
         if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
         emotion_object_play_set(sd->emotion, EINA_FALSE);
-        elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+
+        if(elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,video,pause", "efl");
      }
 }
 
@@ -338,7 +368,12 @@ _efl_ui_video_efl_player_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 
    sd->stop = EINA_TRUE;
    emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(obj, "elm,video,stop", "elm");
+
+   if(elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,video,stop", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,video,stop", "efl");
+
    emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
 }
 

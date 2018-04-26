@@ -365,7 +365,7 @@ group { name: "efl/tooltip";
       }
       programs {
          program { name: "show0";
-            signal: "elm,action,show"; source: "elm";
+            signal: "efl,action,show"; source: "efl";
             action: ACTION_STOP;
             target: "hide0";
             target: "hide1";
@@ -386,7 +386,7 @@ group { name: "efl/tooltip";
             target: "clipper_content";
          }
          program { name: "hide0";
-            signal: "elm,action,hide"; source: "elm";
+            signal: "efl,action,hide"; source: "efl";
             action: ACTION_STOP;
             target: "show0";
             target: "show1";

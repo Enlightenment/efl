@@ -224,20 +224,20 @@ group { "efl/radio";
    programs {
       program {
          signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,radio,toggle" "elm";
+         action: SIGNAL_EMIT "efl,action,radio,toggle" "efl";
       }
       program {
-         signal: "elm,state,radio,on"; source: "elm";
+         signal: "efl,state,radio,on"; source: "efl";
          action:  STATE_SET "selected" 0.0;
          target: "indicator";
       }
       program {
-         signal: "elm,state,radio,off"; source: "elm";
+         signal: "efl,state,radio,off"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "indicator";
       }
       program {
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -245,7 +245,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -253,7 +253,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -261,7 +261,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -269,7 +269,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
@@ -277,7 +277,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);

@@ -76,22 +76,22 @@ group { "efl/navigation_bar";
       }
       programs {
          program {
-            signal: "elm,state,back_button,visible"; source: "elm";
+            signal: "efl,state,back_button,visible"; source: "efl";
             action: STATE_SET "visible" 0.0;
             target: "efl.back_button";
          }
          program {
-            signal: "elm,state,back_button,hidden"; source: "elm";
+            signal: "efl,state,back_button,hidden"; source: "efl";
             action: STATE_SET "default" 0.0;
             target: "efl.back_button";
          }
          program {
-            signal: "elm,state,left_content,visible"; source: "elm";
+            signal: "efl,state,left_content,set"; source: "efl";
             action: STATE_SET "left_content" 0.0;
             target: "text_base";
          }
          program {
-            signal: "elm,state,left_content,hidden"; source: "elm";
+            signal: "efl,state,left_content,unset"; source: "efl";
             action: STATE_SET "default" 0.0;
             target: "text_base";
          }

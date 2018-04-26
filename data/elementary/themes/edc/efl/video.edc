@@ -17,24 +17,24 @@ group { name: "efl/video";
    }
    programs {
       program {
-         signal: "elm,video,load"; source: "elm";
+         signal: "efl,video,load"; source: "efl";
          action: STATE_SET "darker" 0.0;
          target: "clipper";
       }
       program {
-         signal: "elm,video,play"; source: "elm";
+         signal: "efl,video,play"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.2 CURRENT;
          target: "clipper";
       }
       program {
-         signal: "elm,video,end"; source: "elm";
+         signal: "efl,video,end"; source: "efl";
          action: STATE_SET "darker" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "clipper";
       }
       program {
-         signal: "elm,video,pause"; source: "elm";
+         signal: "efl,video,pause"; source: "efl";
          action: STATE_SET "darker" 0.0;
          transition: SINUSOIDAL 0.7 CURRENT;
          target: "clipper";

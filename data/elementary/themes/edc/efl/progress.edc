@@ -400,14 +400,14 @@ group { "efl/progressbar/horizontal";
    }
    programs {
       program { name: "inverted-on";
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "efl,state,inverted,on"; source: "efl";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
          target: "barend";
          target: "light";
       }
       program { name: "inverted-off";
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "efl,state,inverted,off"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "bar";
          target: "barend";
@@ -433,18 +433,18 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "pulse-mode0";
-         signal: "elm,state,pulse"; source: "elm";
+         signal: "efl,state,pulse"; source: "efl";
          action:  STATE_SET "hidden" 0.0;
          target: "efl.text.status";
          after: "pulse-mode1";
       }
       program { name: "pulse-mode1";
-         signal: "elm,state,pulse,start"; source: "elm";
+         signal: "efl,state,pulse,start"; source: "efl";
          action:  STATE_SET "pulse" 0.0;
          target: "fract_clip";
       }
       program { name: "pulse-start";
-         signal: "elm,state,pulse,start"; source: "elm";
+         signal: "efl,state,pulse,start"; source: "efl";
          action:  STATE_SET "pulse" 0.0;
          target: "pulse_clip";
          target: "fract_clip";
@@ -477,13 +477,13 @@ group { "efl/progressbar/horizontal";
          after: "pulse0.1";
       }
       program { name: "fraction";
-         signal: "elm,state,fraction"; source: "elm";
+         signal: "efl,state,fraction"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "efl.text.status";
          after: "pulse-stop";
       }
       program { name: "elmpulse-stop";
-         signal: "elm,state,pulse,stop"; source: "elm";
+         signal: "efl,state,pulse,stop"; source: "efl";
          action: ACTION_STOP;
          target: "pulse0";
          target: "pulse1";
@@ -494,17 +494,17 @@ group { "efl/progressbar/horizontal";
          target: "pulse_clip";
       }
       program { name: "units-visible";
-         signal: "elm,state,units,visible"; source: "elm";
+         signal: "efl,state,units,visible"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "efl.text.status";
       }
       program { name: "units-hidden";
-         signal: "elm,state,units,hidden"; source: "elm";
+         signal: "efl,state,units,hidden"; source: "efl";
          action:  STATE_SET "hidden" 0.0;
          target: "efl.text.status";
       }
       program { name: "text-visible";
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -512,7 +512,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "text-hidden";
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -520,7 +520,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "icon-visible";
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -528,7 +528,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "icon-hidden";
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -536,7 +536,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "state-disabled";
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
@@ -544,7 +544,7 @@ group { "efl/progressbar/horizontal";
          }
       }
       program { name: "state-enabled";
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -973,14 +973,14 @@ group { "efl/progressbar/vertical";
    }
    programs {
       program { name: "inverted-on";
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "efl,state,inverted,on"; source: "efl";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
          target: "barend";
          target: "light";
       }
       program { name: "inverted-off";
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "efl,state,inverted,off"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "bar";
          target: "barend";
@@ -1006,18 +1006,18 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "pulse-mode0";
-         signal: "elm,state,pulse"; source: "elm";
+         signal: "efl,state,pulse"; source: "efl";
          action:  STATE_SET "hidden" 0.0;
          target: "efl.text.status";
          after: "pulse-mode1";
       }
       program { name: "pulse-mode1";
-         signal: "elm,state,pulse,start"; source: "elm";
+         signal: "efl,state,pulse,start"; source: "efl";
          action:  STATE_SET "pulse" 0.0;
          target: "fract_clip";
       }
       program { name: "pulse-start";
-         signal: "elm,state,pulse,start"; source: "elm";
+         signal: "efl,state,pulse,start"; source: "efl";
          action:  STATE_SET "pulse" 0.0;
          target: "pulse_clip";
          target: "fract_clip";
@@ -1050,13 +1050,13 @@ group { "efl/progressbar/vertical";
          after: "pulse0.1";
       }
       program { name: "fraction";
-         signal: "elm,state,fraction"; source: "elm";
+         signal: "efl,state,fraction"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "efl.text.status";
          after: "pulse-stop";
       }
       program { name: "elmpulsestop";
-         signal: "elm,state,pulse,stop"; source: "elm";
+         signal: "efl,state,pulse,stop"; source: "efl";
          action: ACTION_STOP;
          target: "pulse0";
          target: "pulse1";
@@ -1067,17 +1067,17 @@ group { "efl/progressbar/vertical";
          target: "pulse_clip";
       }
       program { name: "unit-visible";
-         signal: "elm,state,units,visible"; source: "elm";
+         signal: "efl,state,units,visible"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "efl.text.status";
       }
       program { name: "unit-hidden";
-         signal: "elm,state,units,hidden"; source: "elm";
+         signal: "efl,state,units,hidden"; source: "efl";
          action:  STATE_SET "hidden" 0.0;
          target: "efl.text.status";
       }
       program { name: "text-visible";
-         signal: "elm,state,text,set"; source: "elm";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= LABEL; set_int(slmode, m);
@@ -1085,7 +1085,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "text-hidden";
-         signal: "elm,state,text,unset"; source: "elm";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
@@ -1093,7 +1093,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "icon-visible";
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= ICON; set_int(slmode, m);
@@ -1101,7 +1101,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "icon-hidden";
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
@@ -1109,7 +1109,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "elmdisabled";
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
@@ -1117,7 +1117,7 @@ group { "efl/progressbar/vertical";
          }
       }
       program { name: "elmenabled";
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -1187,7 +1187,7 @@ group { "efl/progressbar/horizontal:wheel";
    }
    programs {
       program { name: "spin";
-         signal: "elm,state,pulse,start"; source: "elm";
+         signal: "efl,state,pulse,start"; source: "efl";
          action: STATE_SET "spin" 0.0;
          transition: LINEAR 1.0;
          target: "knob_spinner";
@@ -1199,13 +1199,13 @@ group { "efl/progressbar/horizontal:wheel";
          after: "spin";
       }
       program {
-         signal: "elm,state,pulse,start"; source: "elm";
+         signal: "efl,state,pulse,start"; source: "efl";
          action: STATE_SET "active" 0.0;
          transition: SINUSOIDAL 0.25;
          target: "busy_clip";
       }
       program {
-         signal: "elm,state,pulse,stop"; source: "elm";
+         signal: "efl,state,pulse,stop"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "busy_clip";
@@ -1292,7 +1292,7 @@ group { "efl/progressbar/horizontal:double";
    }
    programs {
       program { name: "inverted-on";
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "efl,state,inverted,on"; source: "efl";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
          target: "bar1";
@@ -1302,7 +1302,7 @@ group { "efl/progressbar/horizontal:double";
       }
       program
        { name: "inverted-off";
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "efl,state,inverted,off"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "bar";
          target: "bar1";
@@ -1381,7 +1381,7 @@ group { "efl/progressbar/vertical:double";
    }
    programs {
       program { name: "inverted-on";
-         signal: "elm,state,inverted,on"; source: "elm";
+         signal: "efl,state,inverted,on"; source: "efl";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
          target: "barend";
@@ -1390,7 +1390,7 @@ group { "efl/progressbar/vertical:double";
          target: "barend1";
       }
       program { name: "inverted-off";
-         signal: "elm,state,inverted,off"; source: "elm";
+         signal: "efl,state,inverted,off"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "bar";
          target: "barend";

@@ -1,14 +1,14 @@
 /* panes widget style information
 
    [SIGNAL]
-      elm,panes,fixed: Used for elm_panes_fixed_set()
-      elm,panes,unfixed: Used for elm_panes_fixed_set()
+      efl,panes,fixed: Used for elm_panes_fixed_set()
+      efl,panes,unfixed: Used for elm_panes_fixed_set()
 
    [SIGNAL EMIT]
-      elm,action,click: Used for "clicked" smart callback.
-      elm,action,click,double: Used for "clicked,double" smart callback.
-      elm,action,press: Used for "press" smart callback.
-      elm,action,unpress: Used for "unpress" smart callback.
+      efl,action,click: Used for "clicked" smart callback.
+      efl,action,click,double: Used for "clicked,double" smart callback.
+      efl,action,press: Used for "press" smart callback.
+      efl,action,unpress: Used for "unpress" smart callback.
 */
 
 #define PANEMIN  10
@@ -132,24 +132,24 @@ group { name: "efl/panes/vertical";
    }
    programs {
       program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
-         action: SIGNAL_EMIT "elm,action,press" "elm";
+         action: SIGNAL_EMIT "efl,action,press" "efl";
       }
       program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
-         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
       }
       program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
-         action: SIGNAL_EMIT "elm,action,click" "elm";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
-         action: SIGNAL_EMIT "elm,action,click,double" "elm";
+         action: SIGNAL_EMIT "efl,action,click,double" "efl";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,fixed"; source: "elm";
+         signal: "efl,panes,fixed"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "bar";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,unfixed"; source: "elm";
+         signal: "efl,panes,unfixed"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "bar";
       }
@@ -273,24 +273,24 @@ group { name: "efl/panes/horizontal";
    }
    programs {
       program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
-         action: SIGNAL_EMIT "elm,action,press" "elm";
+         action: SIGNAL_EMIT "efl,action,press" "efl";
       }
       program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
-         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
       }
       program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
-         action: SIGNAL_EMIT "elm,action,click" "elm";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
-         action: SIGNAL_EMIT "elm,action,click,double" "elm";
+         action: SIGNAL_EMIT "efl,action,click,double" "efl";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,fixed"; source: "elm";
+         signal: "efl,panes,fixed"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "bar";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,unfixed"; source: "elm";
+         signal: "efl,panes,unfixed"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "bar";
       }
@@ -473,24 +473,24 @@ group { name: "efl/panes/vertical:flush";
    }
    programs {
       program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
-         action: SIGNAL_EMIT "elm,action,press" "elm";
+         action: SIGNAL_EMIT "efl,action,press" "efl";
       }
       program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
-         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
       }
       program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
-         action: SIGNAL_EMIT "elm,action,click" "elm";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
-         action: SIGNAL_EMIT "elm,action,click,double" "elm";
+         action: SIGNAL_EMIT "efl,action,click,double" "efl";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,fixed"; source: "elm";
+         signal: "efl,panes,fixed"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "bar";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,unfixed"; source: "elm";
+         signal: "efl,panes,unfixed"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "bar";
       }
@@ -729,24 +729,24 @@ group { name: "efl/panes/horizontal:flush";
          target: "glow2b";
       }
       program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
-         action: SIGNAL_EMIT "elm,action,press" "elm";
+         action: SIGNAL_EMIT "efl,action,press" "efl";
       }
       program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
-         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
       }
       program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
-         action: SIGNAL_EMIT "elm,action,click" "elm";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
-         action: SIGNAL_EMIT "elm,action,click,double" "elm";
+         action: SIGNAL_EMIT "efl,action,click,double" "efl";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,fixed"; source: "elm";
+         signal: "efl,panes,fixed"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "bar";
       }
       program { // for elm_panes_fixed_set()
-         signal: "elm,panes,unfixed"; source: "elm";
+         signal: "efl,panes,unfixed"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "bar";
       }

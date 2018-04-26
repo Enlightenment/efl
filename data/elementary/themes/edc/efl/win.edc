@@ -6,13 +6,13 @@ group { "efl/win";
          clip_to: "client_clip";
          desc { "default";
             rel2.relative: 1 0;
-            link.base: "elm,action,hide" "elm";
+            link.base: "efl,action,hide" "efl";
             align: 0.5 0.0;
             hid;
          }
          desc { "visible";
             inherit: "default";
-            link.base: "elm,action,show_menu" "elm";
+            link.base: "efl,action,show_menu" "efl";
             fixed: 0 1;
             vis;
          }
@@ -24,7 +24,7 @@ group { "efl/win";
          desc { "with_menu";
             rel1.to: "efl.menu";
             rel1.relative: 0 1;
-            link.base: "elm,action,show_menu" "elm";
+            link.base: "efl,action,show_menu" "efl";
          }
       }
    }

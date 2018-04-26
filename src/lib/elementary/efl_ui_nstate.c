@@ -45,7 +45,7 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    efl_layout_signal_callback_add
-     (wd->resize_obj, "elm,action,state,changed", "*", _on_state_changed, obj);
+     (wd->resize_obj, "efl,action,state,changed", "*", _on_state_changed, obj);
 
    //TODO: Add ATSPI call here
 
@@ -64,8 +64,8 @@ _state_signal_emit(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
 {
    char buf[64];
 
-   sprintf(buf, "elm,state,changed,%d", sd->state);
-   elm_layout_signal_emit(obj, buf, "elm");
+   sprintf(buf, "efl,state,changed,%d", sd->state);
+   elm_layout_signal_emit(obj, buf, "efl");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_layout_sizing_eval(obj);
 }

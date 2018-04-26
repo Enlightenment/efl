@@ -71,9 +71,9 @@ _efl_ui_navigation_bar_content_set(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA
    if (eina_streq(part, "left_content"))
      {
         if (content)
-          efl_layout_signal_emit(obj, "elm,state,left_content,visible", "elm");
+          efl_layout_signal_emit(obj, "efl,state,left_content,set", "efl");
         else
-          efl_layout_signal_emit(obj, "elm,state,left_content,hidden", "elm");
+          efl_layout_signal_emit(obj, "efl,state,left_content,unset", "efl");
         efl_layout_signal_process(obj, EINA_FALSE);
 
         return efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"), content);
@@ -100,7 +100,7 @@ _efl_ui_navigation_bar_content_unset(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EI
 {
   if (eina_streq(part, "left_content"))
     {
-       efl_layout_signal_emit(obj, "elm,state,left_content,hidden", "elm");
+       efl_layout_signal_emit(obj, "efl,state,left_content,unset", "efl");
        efl_layout_signal_process(obj, EINA_FALSE);
        return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"));
     }
@@ -136,13 +136,13 @@ _efl_ui_navigation_bar_part_back_button_efl_gfx_entity_visible_set(Eo *obj, void
         if (!efl_content_set(efl_part(efl_super(pd->obj, MY_CLASS), "efl.back_button"), ppd->back_button))
           ERR("Part for back button(i.e. \"back_button\") does not exist!");
         else
-          efl_layout_signal_emit(pd->obj, "elm,state,back_button,visible", "elm");
+          efl_layout_signal_emit(pd->obj, "efl,state,back_button,visible", "efl");
      }
    else
      {
         efl_content_unset(efl_part(efl_super(pd->obj, MY_CLASS), "efl.back_button"));
         efl_gfx_entity_visible_set(ppd->back_button, visible);
-        efl_layout_signal_emit(pd->obj, "elm,state,back_button,hidden", "elm");
+        efl_layout_signal_emit(pd->obj, "efl,state,back_button,hidden", "efl");
      }
 
      efl_layout_signal_process(pd->obj, EINA_FALSE);

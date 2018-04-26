@@ -21,13 +21,13 @@
    programs{ \
       program { "field_"#_pos"enabled"; \
          signal: "field"#_pos",enable"; \
-         source: "elm"; \
+         source: "efl"; \
          action: STATE_SET "enable"; \
          target: "field"#_pos; \
       } \
       program { "field_"#_pos"disabled"; \
          signal: "field"#_pos",disable"; \
-         source: "elm"; \
+         source: "efl"; \
          action: STATE_SET "default"; \
          target: "field"#_pos; \
       } \
@@ -88,14 +88,14 @@
    programs { \
       program { \
          signal: "field"#_after",enable"; \
-         source: "elm"; \
+         source: "efl"; \
          action: STATE_SET "enable"; \
          target: "separator"#_pos; \
          target: "separator"#_pos"d"; \
       } \
       program { \
          signal: "field"#_after",disable"; \
-         source: "elm"; \
+         source: "efl"; \
          action: STATE_SET "default"; \
          target: "separator"#_pos; \
          target: "separator"#_pos"d"; \
@@ -191,16 +191,16 @@ group { "efl/uiclock";
    }
    programs {
       program {
-         signal: "elm,state,disabled";
-         source: "elm";
+         signal: "efl,state,disabled";
+         source: "efl";
          action: STATE_SET "disabled";
          target: "disclip";
          target: "disclip2";
          target: "discover";
       }
       program {
-         signal: "elm,state,enabled";
-         source: "elm";
+         signal: "efl,state,enabled";
+         source: "efl";
          action: STATE_SET "default";
          target: "disclip";
          target: "disclip2";

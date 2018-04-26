@@ -740,59 +740,59 @@ group { "efl/border";
          }
       }
       program {
-         signal: "elm,state,borderless,on"; source: "elm";
+         signal: "efl,state,borderless,on"; source: "efl";
          action: STATE_SET "hidden";
          targets: "top_clip" "bottom_clip";
          after: "borderless,on";
       }
       program { "borderless,on"; SET_MODE(BORDERLESS); }
       program {
-         signal: "elm,state,borderless,off"; source: "elm";
+         signal: "efl,state,borderless,off"; source: "efl";
          action: STATE_SET "default";
          targets: "top_clip" "bottom_clip";
          after: "borderless,off";
       }
       program { "borderless,off"; UNSET_MODE(BORDERLESS); }
       program {
-         signal: "elm,state,unresizable,on"; source: "elm";
+         signal: "efl,state,unresizable,on"; source: "efl";
          SET_MODE(UNRESIZABLE);
       }
       program {
-         signal: "elm,state,unresizable,off"; source: "elm";
+         signal: "efl,state,unresizable,off"; source: "efl";
          UNSET_MODE(UNRESIZABLE);
       }
       program {
-         signal: "elm,state,shadow,on"; source: "elm";
+         signal: "efl,state,shadow,on"; source: "efl";
          action: STATE_SET "default";
          targets: "shadow_spacer" "shadow";
       }
       program {
-         signal: "elm,state,shadow,off"; source: "elm";
+         signal: "efl,state,shadow,off"; source: "efl";
          action: STATE_SET "hidden";
          targets: "shadow_spacer" "shadow";
       }
       program {
-         signal: "elm,state,background,solid,on"; source: "elm";
+         signal: "efl,state,background,solid,on"; source: "efl";
          action: STATE_SET "visible";
          target: "efl.rect.background";
       }
       program {
-         signal: "elm,state,background,solid,off"; source: "elm";
+         signal: "efl,state,background,solid,off"; source: "efl";
          action: STATE_SET "default";
          target: "efl.rect.background";
       }
       program {
-         signal: "elm,state,background,standard,on"; source: "elm";
+         signal: "efl,state,background,standard,on"; source: "efl";
          action: STATE_SET "visible";
          target: "background_bevel";
       }
       program {
-         signal: "elm,state,background,standard,off"; source: "elm";
+         signal: "efl,state,background,standard,off"; source: "efl";
          action: STATE_SET "default";
          target: "background_bevel";
       }
       program {
-         signal: "elm,action,focus"; source: "elm";
+         signal: "efl,action,focus"; source: "efl";
          action: STATE_SET "focused";
          target: "top";
          target: "efl.text.title";
@@ -801,7 +801,7 @@ group { "efl/border";
          target: "clip2";
       }
       program {
-         signal: "elm,action,unfocus"; source: "elm";
+         signal: "efl,action,unfocus"; source: "efl";
          action: STATE_SET "default";
          target: "top";
          target: "efl.text.title";
@@ -810,7 +810,7 @@ group { "efl/border";
          target: "clip2";
       }
       program {
-         signal: "elm,state,urgent"; source: "elm";
+         signal: "efl,state,urgent"; source: "efl";
          action: STATE_SET "bounce1";
          target: "icon";
          after: "urg1";
@@ -828,12 +828,12 @@ group { "efl/border";
          after: "urg1";
       }
       program {
-         signal: "elm,state,not_urgent"; source: "elm";
+         signal: "efl,state,not_urgent"; source: "efl";
          action: STATE_SET "default";
          target: "icon";
       }
       program { name: "spin";
-         signal: "elm,state,hung"; source: "elm";
+         signal: "efl,state,hung"; source: "efl";
          action: STATE_SET "spin";
          transition: LINEAR 1.0;
          target: "knob_spinner";
@@ -845,13 +845,13 @@ group { "efl/border";
          after: "spin";
       }
       program {
-         signal: "elm,state,hung"; source: "elm";
+         signal: "efl,state,hung"; source: "efl";
          action: STATE_SET "hung";
          transition: SINUSOIDAL 0.25;
          target: "busy_clip";
       }
       program {
-         signal: "elm,state,unhung"; source: "elm";
+         signal: "efl,state,unhung"; source: "efl";
          action: STATE_SET "default";
          transition: SINUSOIDAL 1.0;
          target: "busy_clip";
@@ -870,68 +870,68 @@ group { "efl/border";
 
       /* maximize & unmaximize */
       program {
-         signal: "elm,state,maximize*"; source: "elm";
+         signal: "efl,state,maximize*"; source: "efl";
          action: STATE_SET "max";
          target: "efl.spacer.opaque";
       }
       program {
-         signal: "elm,state,maximize*"; source: "elm";
+         signal: "efl,state,maximize*"; source: "efl";
          SET_MODE(MAXIMIZED);
       }
       program {
-         signal: "elm,state,unmaximize*"; source: "elm";
+         signal: "efl,state,unmaximize*"; source: "efl";
          action: STATE_SET "default";
          target: "efl.spacer.opaque";
       }
       program {
-         signal: "elm,state,unmaximize*"; source: "elm";
+         signal: "efl,state,unmaximize*"; source: "efl";
          UNSET_MODE(MAXIMIZED);
       }
 
       /*indicator*/
       program {
-         signal: "elm,action,show_indicator"; source: "elm";
+         signal: "efl,action,show_indicator"; source: "efl";
          script {
             set_int(indicator_enabled, 1);
          }
          after: "update_indicator";
       }
       program {
-         signal: "elm,action,hide_indicator"; source: "elm";
+         signal: "efl,action,hide_indicator"; source: "efl";
          script {
             set_int(indicator_enabled, 0);
          }
          after: "update_indicator";
       }
       program {
-         signal: "elm,action,indicator,bg_opaque"; source: "elm";
+         signal: "efl,action,indicator,bg_opaque"; source: "efl";
          script {
             set_int(indicator_type, INDICATOR_TYPE_BG_OPAQUE);
          }
          after: "update_indicator";
       }
       program {
-         signal: "elm,action,indicator,bg_transparent"; source: "elm";
+         signal: "efl,action,indicator,bg_transparent"; source: "efl";
          script {
             set_int(indicator_type, INDICATOR_TYPE_BG_TRANSPARENT);
          }
          after: "update_indicator";
       }
       program {
-         signal: "elm,action,indicator,hidden"; source: "elm";
+         signal: "efl,action,indicator,hidden"; source: "efl";
          script {
             set_int(indicator_type, INDICATOR_TYPE_HIDDEN);
          }
          after: "update_indicator";
       }
       program {
-         signal: "elm,action,indicator,show_effect"; source: "elm";
+         signal: "efl,action,indicator,show_effect"; source: "efl";
          action: STATE_SET "visible";
          transition: DECELERATE 0.2;
          target: "efl.indicator";
       }
       program {
-         signal: "elm,action,indicator,hide_effect"; source: "elm";
+         signal: "efl,action,indicator,hide_effect"; source: "efl";
          action: STATE_SET "hidden";
          transition: DECELERATE 0.2;
          target: "efl.indicator";
@@ -962,25 +962,25 @@ group { "efl/border";
 
       /* application desktop menu */
       program { name: "show_menu";
-         signal: "elm,action,show_menu"; source: "elm";
+         signal: "efl,action,show_menu"; source: "efl";
          action: STATE_SET "visible";
          target: "efl.menu";
       }
       program { name: "hide_menu";
-         signal: "elm,action,hide"; source: "elm";
+         signal: "efl,action,hide"; source: "efl";
          action: STATE_SET "default";
          target: "efl.menu";
       }
 
       /* modal windows */
       program { name: "hide_blocker";
-         signal: "elm,action,hide_blocker"; source: "elm";
+         signal: "efl,action,hide_blocker"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "rect.blocker";
          transition: DECELERATE 0.2;
       }
       program { name: "show_blocker";
-         signal: "elm,action,show_blocker"; source: "elm";
+         signal: "efl,action,show_blocker"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "rect.blocker";
          transition: DECELERATE 0.2;
@@ -1025,99 +1025,99 @@ group { "efl/border";
       }
       program {
          signal: "mouse,down,1"; source: "event.titlebar";
-         action: SIGNAL_EMIT "elm,action,move,start" "elm";
+         action: SIGNAL_EMIT "efl,action,move,start" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "event.titlebar";
-         action: SIGNAL_EMIT "elm,action,move,stop" "elm";
+         action: SIGNAL_EMIT "efl,action,move,stop" "efl";
       }
       program {
          signal: "mouse,clicked,1"; source: "event.minimize";
-         action: SIGNAL_EMIT "elm,action,minimize" "elm";
+         action: SIGNAL_EMIT "efl,action,minimize" "efl";
       }
       program {
          signal: "mouse,clicked,1"; source: "event.maximize";
-         action: SIGNAL_EMIT "elm,action,maximize" "elm";
+         action: SIGNAL_EMIT "efl,action,maximize" "efl";
       }
       program {
          signal: "mouse,clicked,1"; source: "event.close";
-         action: SIGNAL_EMIT "elm,action,close" "elm";
+         action: SIGNAL_EMIT "efl,action,close" "efl";
       }
       program {
          signal: "mouse,in"; source: "efl.event.resize.t";
-         action: SIGNAL_EMIT "elm,action,resize,show" "efl.event.resize.t";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.t";
       }
       program {
          signal: "mouse,out"; source: "efl.event.resize.t";
-         action: SIGNAL_EMIT "elm,action,resize,hide" "efl.event.resize.t";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.t";
       }
       program {
          signal: "mouse,down,1"; source: "efl.event.resize.t";
-         action: SIGNAL_EMIT "elm,action,resize,start" "efl.event.resize.t";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.t";
       }
       program {
          signal: "mouse,in"; source: "efl.event.resize.b";
-         action: SIGNAL_EMIT "elm,action,resize,show" "efl.event.resize.b";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.b";
       }
       program {
          signal: "mouse,out"; source: "efl.event.resize.b";
-         action: SIGNAL_EMIT "elm,action,resize,hide" "efl.event.resize.b";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.b";
       }
       program {
          signal: "mouse,down,1"; source: "efl.event.resize.b";
-         action: SIGNAL_EMIT "elm,action,resize,start" "efl.event.resize.b";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.b";
       }
       program {
          signal: "mouse,in"; source: "efl.event.resize.tl";
-         action: SIGNAL_EMIT "elm,action,resize,show" "efl.event.resize.tl";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.tl";
       }
       program {
          signal: "mouse,out"; source: "efl.event.resize.tl";
-         action: SIGNAL_EMIT "elm,action,resize,hide" "efl.event.resize.tl";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.tl";
       }
       program {
          signal: "mouse,down,1"; source: "efl.event.resize.tl";
-         action: SIGNAL_EMIT "elm,action,resize,start" "efl.event.resize.tl";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.tl";
       }
       program {
          signal: "mouse,in"; source: "efl.event.resize.tr";
-         action: SIGNAL_EMIT "elm,action,resize,show" "efl.event.resize.tr";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.tr";
       }
       program {
          signal: "mouse,out"; source: "efl.event.resize.tr";
-         action: SIGNAL_EMIT "elm,action,resize,hide" "efl.event.resize.tr";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.tr";
       }
       program {
          signal: "mouse,down,1"; source: "efl.event.resize.tr";
-         action: SIGNAL_EMIT "elm,action,resize,start" "efl.event.resize.tr";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.tr";
       }
       program {
          signal: "mouse,in"; source: "efl.event.resize.bl";
-         action: SIGNAL_EMIT "elm,action,resize,show" "efl.event.resize.bl";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.bl";
       }
       program {
          signal: "mouse,out"; source: "efl.event.resize.bl";
-         action: SIGNAL_EMIT "elm,action,resize,hide" "efl.event.resize.bl";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.bl";
       }
       program {
          signal: "mouse,down,1"; source: "efl.event.resize.bl";
-         action: SIGNAL_EMIT "elm,action,resize,start" "efl.event.resize.bl";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.bl";
       }
       program {
          signal: "mouse,in"; source: "efl.event.resize.br";
-         action: SIGNAL_EMIT "elm,action,resize,show" "efl.event.resize.br";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.br";
       }
       program {
          signal: "mouse,out"; source: "efl.event.resize.br";
-         action: SIGNAL_EMIT "elm,action,resize,hide" "efl.event.resize.br";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.br";
       }
       program {
          signal: "mouse,down,1"; source: "efl.event.resize.br";
-         action: SIGNAL_EMIT "elm,action,resize,start" "efl.event.resize.br";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.br";
       }
       program {
          signal: "mouse,clicked,1"; source: "event.icon";
-         action: SIGNAL_EMIT "elm,action,menu" "elm";
+         action: SIGNAL_EMIT "efl,action,menu" "efl";
       }
    }
 }

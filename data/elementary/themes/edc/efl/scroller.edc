@@ -106,7 +106,7 @@ group { name: "efl/scroller";
       program {
          signal: "load"; source: "";
          script {
-            emit("reload", "elm");
+            emit("reload", "efl");
             action_on_pos_vbar(0);
             action_on_pos_hbar(0);
          }
@@ -300,7 +300,7 @@ group { name: "efl/scroller";
          }
       }
       program {
-         signal: "elm,action,show,vbar"; source: "elm";
+         signal: "efl,action,show,vbar"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
@@ -316,7 +316,7 @@ group { name: "efl/scroller";
          after: "check_pos_vbar";
       }
       program {
-         signal: "elm,action,hide,vbar"; source: "elm";
+         signal: "efl,action,hide,vbar"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
@@ -373,7 +373,7 @@ group { name: "efl/scroller";
          target: "efl.dragable.vbar";
       }
       program {
-         signal: "elm,action,scroll"; source: "elm";
+         signal: "efl,action,scroll"; source: "efl";
          script {
             action_on_pos_vbar(10);
          }
@@ -384,14 +384,14 @@ group { name: "efl/scroller";
          }
       }
       program { name: "loop_set_vbar";
-         signal: "elm,loop_y,set"; source: "elm";
+         signal: "efl,loop_y,set"; source: "efl";
          script {
             set_int(loop_y, 1);
             action_on_pos_vbar(10);
          }
       }
       program { name: "loop_unset_vbar";
-         signal: "elm,loop_y,unset"; source: "elm";
+         signal: "efl,loop_y,unset"; source: "efl";
          script {
             set_int(loop_y, 0);
             action_on_pos_vbar(10);
@@ -587,7 +587,7 @@ group { name: "efl/scroller";
          }
       }
       program {
-         signal: "elm,action,show,hbar"; source: "elm";
+         signal: "efl,action,show,hbar"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
@@ -603,7 +603,7 @@ group { name: "efl/scroller";
          after: "check_pos_hbar";
       }
       program {
-         signal: "elm,action,hide,hbar"; source: "elm";
+         signal: "efl,action,hide,hbar"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
@@ -662,7 +662,7 @@ group { name: "efl/scroller";
          after: "check_pos_hbar";
       }
       program {
-         signal: "elm,action,scroll"; source: "elm";
+         signal: "efl,action,scroll"; source: "efl";
          script {
             action_on_pos_hbar(10);
          }
@@ -673,14 +673,14 @@ group { name: "efl/scroller";
          }
       }
       program { name: "loop_set_hbar";
-         signal: "elm,loop_x,set"; source: "elm";
+         signal: "efl,loop_x,set"; source: "efl";
          script {
             set_int(loop_x, 1);
             action_on_pos_hbar(10);
          }
       }
       program { name: "loop_unset_hbar";
-         signal: "elm,loop_x,unset"; source: "elm";
+         signal: "efl,loop_x,unset"; source: "efl";
          script {
             set_int(loop_x, 0);
             action_on_pos_hbar(10);
@@ -1142,7 +1142,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,down,*"; source: "efl.dragable.vbar";
-         action: SIGNAL_EMIT "elm,vbar,press" "elm";
+         action: SIGNAL_EMIT "efl,vbar,press" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "efl.dragable.vbar";
@@ -1154,7 +1154,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,up,*"; source: "efl.dragable.vbar";
-         action: SIGNAL_EMIT "elm,vbar,unpress" "elm";
+         action: SIGNAL_EMIT "efl,vbar,unpress" "efl";
       }
       program {
          signal: "mouse,down,1*"; source: "efl.dragable.hbar";
@@ -1166,7 +1166,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,down,*"; source: "efl.dragable.hbar";
-         action: SIGNAL_EMIT "elm,hbar,press" "elm";
+         action: SIGNAL_EMIT "efl,hbar,press" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "efl.dragable.hbar";
@@ -1178,68 +1178,68 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,up,*"; source: "efl.dragable.hbar";
-         action: SIGNAL_EMIT "elm,hbar,unpress" "elm";
+         action: SIGNAL_EMIT "efl,hbar,unpress" "efl";
       }
       program {
-         signal: "elm,action,looping,left"; source: "elm";
+         signal: "efl,action,looping,left"; source: "efl";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
          after: "looping,left,done";
       }
       program { name: "looping,left,done";
-         action: SIGNAL_EMIT "elm,looping,left,done" "elm";
+         action: SIGNAL_EMIT "efl,looping,left,done" "efl";
       }
       program {
-         signal: "elm,action,looping,left,end"; source: "elm";
+         signal: "efl,action,looping,left,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
       }
       program {
-         signal: "elm,action,looping,right"; source: "elm";
+         signal: "efl,action,looping,right"; source: "efl";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
          after: "looping,right,done";
       }
       program { name: "looping,right,done";
-         action: SIGNAL_EMIT "elm,looping,right,done" "elm";
+         action: SIGNAL_EMIT "efl,looping,right,done" "efl";
       }
       program {
-         signal: "elm,action,looping,right,end"; source: "elm";
+         signal: "efl,action,looping,right,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
       }
       program {
-         signal: "elm,action,looping,up"; source: "elm";
+         signal: "efl,action,looping,up"; source: "efl";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
          after: "looping,up,done";
       }
       program { name: "looping,up,done";
-         action: SIGNAL_EMIT "elm,looping,up,done" "elm";
+         action: SIGNAL_EMIT "efl,looping,up,done" "efl";
       }
       program {
-         signal: "elm,action,looping,up,end"; source: "elm";
+         signal: "efl,action,looping,up,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
       }
       program {
-         signal: "elm,action,looping,down"; source: "elm";
+         signal: "efl,action,looping,down"; source: "efl";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
          after: "looping,down,done";
       }
       program { name: "looping,down,done";
-         action: SIGNAL_EMIT "elm,looping,down,done" "elm";
+         action: SIGNAL_EMIT "efl,looping,down,done" "efl";
       }
       program {
-         signal: "elm,action,looping,down,end"; source: "elm";
+         signal: "efl,action,looping,down,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";

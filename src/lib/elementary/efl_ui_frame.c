@@ -76,7 +76,12 @@ _on_frame_clicked(void *data,
    if (sd->collapsible)
      {
         efl_event_callback_add(wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
-        elm_layout_signal_emit(data, "elm,action,toggle", "elm");
+
+        if (elm_widget_is_legacy(data))
+          elm_layout_signal_emit(data, "elm,action,toggle", "elm");
+        else
+          elm_layout_signal_emit(data, "efl,action,toggle", "efl");
+
         sd->collapsed++;
         sd->anim = EINA_TRUE;
         elm_widget_tree_unfocusable_set(data, sd->collapsed);
@@ -109,12 +114,24 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,anim,done", "elm",
-     _on_recalc_done, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click", "elm",
-     _on_frame_clicked, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,anim,done", "elm",
+            _on_recalc_done, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,click", "elm",
+            _on_frame_clicked, obj);
+     }
+   else
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,anim,done", "efl",
+            _on_recalc_done, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,click", "efl",
+            _on_frame_clicked, obj);
+     }
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -158,7 +175,11 @@ _efl_ui_frame_collapse_set(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
    collapse = !!collapse;
    if (sd->collapsed == collapse) return;
 
-   elm_layout_signal_emit(obj, "elm,action,switch", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,action,switch", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,action,switch", "efl");
+
    edje_object_message_signal_process(wd->resize_obj);
    sd->collapsed = !!collapse;
    sd->anim = EINA_FALSE;
@@ -175,7 +196,11 @@ _efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
    collapse = !!collapse;
    if (sd->collapsed == collapse) return;
 
-   elm_layout_signal_emit(obj, "elm,action,toggle", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,action,toggle", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,action,toggle", "efl");
+
    efl_event_callback_legacy_call
      (wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, obj);
    sd->collapsed = collapse;

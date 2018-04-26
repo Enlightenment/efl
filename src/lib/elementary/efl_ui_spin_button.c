@@ -157,8 +157,8 @@ _entry_hide(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
-   elm_layout_signal_emit(obj, "elm,state,button,active", "elm");
-   elm_layout_signal_emit(obj, "elm,state,entry,inactive", "elm");
+   elm_layout_signal_emit(obj, "efl,state,button,active", "efl");
+   elm_layout_signal_emit(obj, "efl,state,entry,inactive", "efl");
 
    if (sd->entry_visible && !evas_focus_state_get(evas_object_evas_get(obj)))
      sd->entry_reactivate = EINA_TRUE;
@@ -340,7 +340,7 @@ _entry_show_cb(void *data,
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
-   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
+   elm_layout_signal_emit(data, "efl,state,button,inactive", "efl");
 }
 
 static void
@@ -378,7 +378,7 @@ _toggle_entry(Evas_Object *obj)
         efl_event_callback_add(sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
                                _entry_focus_changed_cb, obj);
         sd->entry_visible = EINA_TRUE;
-        elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
+        elm_layout_signal_emit(obj, "efl,state,entry,active", "efl");
         {
            Eina_List *items = NULL;
 
@@ -658,13 +658,13 @@ _access_increment_decrement_info_say(Evas_Object *obj,
    if (is_incremented)
      {
         elm_object_signal_emit
-           (sd->inc_button, "elm,action,anim,activate", "elm");
+           (sd->inc_button, "efl,action,anim,activate", "efl");
         eina_strbuf_append(buf, E_("incremented"));
      }
    else
      {
         elm_object_signal_emit
-           (sd->dec_button, "elm,action,anim,activate", "elm");
+           (sd->dec_button, "efl,action,anim,activate", "efl");
         eina_strbuf_append(buf, E_("decremented"));
      }
 
@@ -688,10 +688,10 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
         /* unregister access */
         _elm_access_edje_object_part_object_unregister
            (obj, elm_layout_edje_get(obj), "access");
-        elm_layout_signal_emit(obj, "elm,state,access,inactive", "elm");
+        elm_layout_signal_emit(obj, "efl,state,access,inactive", "efl");
         return;
      }
-   elm_layout_signal_emit(obj, "elm,state,access,active", "elm");
+   elm_layout_signal_emit(obj, "efl,state,access,active", "efl");
    ao = _elm_access_edje_object_part_object_register
       (obj, elm_layout_edje_get(obj), "access");
 
@@ -783,7 +783,7 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
      }
 
    elm_layout_signal_callback_add
-      (obj, "elm,action,entry,toggle", "*", _entry_toggle_cb, NULL);
+      (obj, "efl,action,entry,toggle", "*", _entry_toggle_cb, NULL);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 

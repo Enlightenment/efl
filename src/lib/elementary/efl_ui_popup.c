@@ -227,7 +227,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    evas_object_smart_member_add(pd->backwall, obj);
    evas_object_stack_below(pd->backwall, wd->resize_obj);
 
-   edje_object_signal_callback_add(pd->backwall, "elm,action,clicked", "*",
+   edje_object_signal_callback_add(pd->backwall, "efl,action,clicked", "*",
                                    _backwall_clicked_cb, obj);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;
@@ -367,7 +367,7 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
         Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");
         if (prev_obj)
           {
-             edje_object_signal_emit(sd->backwall, "elm,state,content,unset", "elm");
+             edje_object_signal_emit(sd->backwall, "efl,state,content,unset", "efl");
              edje_object_part_unswallow(sd->backwall, prev_obj);
              efl_del(prev_obj);
           }
@@ -380,7 +380,7 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
              return EINA_FALSE;
           }
         edje_object_part_swallow(sd->backwall, "efl.content", image);
-        edje_object_signal_emit(sd->backwall, "elm,state,content,set", "elm");
+        edje_object_signal_emit(sd->backwall, "efl,state,content,set", "efl");
 
         return EINA_TRUE;
      }

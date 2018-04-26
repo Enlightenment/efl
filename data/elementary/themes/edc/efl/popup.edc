@@ -98,13 +98,13 @@ group { "efl/popup_alert";
    }
    programs {
       program {
-         signal: "elm,title,show"; source: "elm";
+         signal: "efl,title,show"; source: "efl";
          action: STATE_SET "title_visible" 0.0;
          target: "title_bg";
          target: "efl.text.title";
       }
       program {
-         signal: "elm,buttons,show"; source: "elm";
+         signal: "efl,buttons,show"; source: "efl";
          action: STATE_SET "button_visible" 0.0;
          target: "efl.buttons";
       }
@@ -150,20 +150,20 @@ group { "efl/popup/backwall";
 
    programs {
       program {
-         signal: "elm,state,content,set"; source: "elm";
+         signal: "efl,state,content,set"; source: "efl";
          action: STATE_SET "content_visible" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
-         signal: "elm,state,content,unset"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
          signal: "mouse,clicked,1"; source: "block";
-         action: SIGNAL_EMIT "elm,action,clicked" "elm";
+         action: SIGNAL_EMIT "efl,action,clicked" "efl";
       }
    }
 }

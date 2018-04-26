@@ -173,16 +173,16 @@ _fields_init(Eo *obj)
                        //TODO: monitoring locale change and update field location.
                        if (field == 0)
                          {
-                            elm_object_signal_emit(obj, "elm,state,colon,visible,field1", "elm");
-                            elm_object_signal_emit(obj, "elm,state,colon,invisible,field0", "elm");
+                            elm_object_signal_emit(obj, "efl,state,colon,visible,field1", "efl");
+                            elm_object_signal_emit(obj, "efl,state,colon,invisible,field0", "efl");
                          }
                        else
                          {
-                            elm_object_signal_emit(obj, "elm,state,colon,visible,field0", "elm");
-                            elm_object_signal_emit(obj, "elm,state,colon,invisible,field1", "elm");
+                            elm_object_signal_emit(obj, "efl,state,colon,visible,field0", "efl");
+                            elm_object_signal_emit(obj, "efl,state,colon,invisible,field1", "efl");
                          }
 
-                       elm_layout_signal_emit(obj, "elm,state,ampm,visible", "elm");
+                       elm_layout_signal_emit(obj, "efl,state,ampm,visible", "efl");
                        edje_object_message_signal_process(elm_layout_edje_get(obj));
                        efl_content_set(efl_part(obj, buf), pd->ampm);
                     }
@@ -267,9 +267,9 @@ _efl_ui_timepicker_ampm_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24
 
    pd->is_24hour = is_24hour;
    if (pd->is_24hour == EINA_TRUE)
-     elm_layout_signal_emit(obj, "elm,state,ampm,invisible", "elm");
+     elm_layout_signal_emit(obj, "efl,state,ampm,invisible", "efl");
    else
-     elm_layout_signal_emit(obj, "elm,state,ampm,visible", "elm");
+     elm_layout_signal_emit(obj, "efl,state,ampm,visible", "efl");
    _field_value_update(obj);
 }
 

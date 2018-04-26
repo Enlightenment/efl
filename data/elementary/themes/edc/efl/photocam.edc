@@ -45,7 +45,7 @@ group { name: "efl/photocam";
    }
    programs {
       program { name: "spin";
-         signal: "elm,state,busy,start"; source: "elm";
+         signal: "efl,state,busy,start"; source: "efl";
          action: ACTION_STOP;
          target: "spin";
          target: "spin0";
@@ -73,14 +73,14 @@ group { name: "efl/photocam";
       }
       
       program {
-         signal: "elm,state,busy,start"; source: "elm";
+         signal: "efl,state,busy,start"; source: "efl";
          action: STATE_SET "active" 0.0;
          transition: SINUSOIDAL 0.25;
          target: "busy_clip";
       }
       
       program {
-         signal: "elm,state,busy,stop"; source: "elm";
+         signal: "efl,state,busy,stop"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "busy_clip";
