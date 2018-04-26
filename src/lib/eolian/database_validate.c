@@ -456,22 +456,29 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
 }
 
 static Eina_Bool
-_validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *ehash)
+_validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
 {
-   const Eolian_Event *oev = eina_hash_find(ehash, &event->base.name);
-   if (EINA_UNLIKELY(!!oev) && vals->event_redef)
+   const Eolian_Object *oobj = NULL;
+   if (vals->event_redef)
      {
-        char buf[512];
-        snprintf(buf, sizeof(buf),
-                 "event '%s' redefined (originally at %s:%d:%d)",
-                 oev->base.name, oev->base.file,
-                 oev->base.line, oev->base.column);
-        _obj_error(&event->base, buf);
-        vals->warned = EINA_TRUE;
+        oobj = eina_hash_find(nhash, &event->base.name);
+        if (EINA_UNLIKELY(!!oobj))
+          {
+             char buf[512];
+             snprintf(buf, sizeof(buf),
+                      "event '%s' conflicts with another symbol (at %s:%d:%d)",
+                      event->base.name, oobj->file, oobj->line, oobj->column);
+             _obj_error(&event->base, buf);
+             vals->warned = EINA_TRUE;
+          }
      }
 
    if (event->base.validated)
-     return EINA_TRUE;
+     {
+        if (vals->event_redef && !oobj)
+          eina_hash_add(nhash, &event->base.name, &event->base);
+        return EINA_TRUE;
+     }
 
    if (event->type && !_validate_type(vals, event->type))
      return EINA_FALSE;
@@ -479,8 +486,8 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *ehash)
    if (!_validate_doc(event->doc))
      return EINA_FALSE;
 
-   if (!oev)
-     eina_hash_add(ehash, &event->base.name, event);
+   if (vals->event_redef && !oobj)
+     eina_hash_add(nhash, &event->base.name, &event->base);
 
    return _validate(&event->base);
 }
@@ -775,7 +782,7 @@ _validate_implement(Eolian_Implement *impl)
 
 static Eina_Bool
 _validate_class(Validate_State *vals, Eolian_Class *cl,
-                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *chash)
+                Eina_Hash *nhash, Eina_Hash *chash)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -821,7 +828,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_validate_class(vals, icl, nhash, ehash, chash))
+        if (!_validate_class(vals, icl, nhash, chash))
           return EINA_FALSE;
      }
 
@@ -834,7 +841,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->events, l, event)
-     if (!_validate_event(vals, event, ehash))
+     if (!_validate_event(vals, event, nhash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
@@ -917,24 +924,20 @@ database_validate(const Eolian_Unit *src)
 
    iter = eolian_unit_classes_get(src);
    Eina_Hash *nhash = eina_hash_pointer_new(NULL);
-   Eina_Hash *ehash = eina_hash_pointer_new(NULL);
    Eina_Hash *chash = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
-        eina_hash_free_buckets(ehash);
         eina_hash_free_buckets(chash);
-        if (!_validate_class(&vals, cl, nhash, ehash, chash))
+        if (!_validate_class(&vals, cl, nhash, chash))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);
-             eina_hash_free(ehash);
              eina_hash_free(chash);
              return EINA_FALSE;
           }
      }
    eina_hash_free(chash);
-   eina_hash_free(ehash);
    eina_hash_free(nhash);
    eina_iterator_free(iter);
 
