@@ -350,7 +350,7 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    Eolian_Function_Parameter *param;
    char buf[512];
 
-   const Eolian_Object *oobj = nhash ? eina_hash_find(nhash, func->base.name) : NULL;
+   const Eolian_Object *oobj = nhash ? eina_hash_find(nhash, &func->base.name) : NULL;
    if (EINA_UNLIKELY(oobj && (oobj != &func->base)))
      {
         snprintf(buf, sizeof(buf),
@@ -368,7 +368,7 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
      {
         /* it might be validated, but need to add it anyway */
         if (!oobj && nhash)
-          eina_hash_add(nhash, func->base.name, &func->base);
+          eina_hash_add(nhash, &func->base.name, &func->base);
         return EINA_TRUE;
      }
 
@@ -407,7 +407,7 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 
    /* just for now, when dups become errors there will be no need to check */
    if (!oobj && nhash)
-     eina_hash_add(nhash, func->base.name, &func->base);
+     eina_hash_add(nhash, &func->base.name, &func->base);
 
    return _validate(&func->base);
 }
@@ -415,7 +415,7 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 static Eina_Bool
 _validate_part(Eolian_Part *part, Eina_Hash *nhash)
 {
-   const Eolian_Object *oobj = eina_hash_find(nhash, part->base.name);
+   const Eolian_Object *oobj = eina_hash_find(nhash, &part->base.name);
    if (oobj)
      {
         char buf[512];
@@ -429,7 +429,7 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
    if (part->base.validated)
      {
         if (!oobj)
-          eina_hash_add(nhash, part->base.name, &part->base);
+          eina_hash_add(nhash, &part->base.name, &part->base);
         return EINA_TRUE;
      }
 
@@ -450,7 +450,7 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
    part->klass = pcl;
 
    if (!oobj)
-     eina_hash_add(nhash, part->base.name, &part->base);
+     eina_hash_add(nhash, &part->base.name, &part->base);
 
    return _validate(&part->base);
 }
@@ -458,7 +458,7 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
 static Eina_Bool
 _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *ehash)
 {
-   const Eolian_Event *oev = eina_hash_find(ehash, event->base.name);
+   const Eolian_Event *oev = eina_hash_find(ehash, &event->base.name);
    if (EINA_UNLIKELY(!!oev) && vals->event_redef)
      {
         char buf[512];
@@ -480,7 +480,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *ehash)
      return EINA_FALSE;
 
    if (!oev)
-     eina_hash_add(ehash, event->base.name, event);
+     eina_hash_add(ehash, &event->base.name, event);
 
    return _validate(&event->base);
 }
@@ -699,7 +699,7 @@ end:
 static Eina_Bool
 _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
 {
-   if (eina_hash_find(fhash, cl->base.name))
+   if (eina_hash_find(fhash, &cl->base.name))
      return EINA_TRUE;
 
    /* already merged outside of staging, therefore validated, and skipped */
@@ -745,7 +745,7 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
    if (!succ)
      return EINA_FALSE;
 
-   eina_hash_add(fhash, cl->base.name, cl);
+   eina_hash_add(fhash, &cl->base.name, cl);
 
    /* make sure impls/ctors are filled first, but do it only once */
    if (!_db_fill_implements(cl))
@@ -788,7 +788,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
      return EINA_FALSE; /* if this happens something is very wrong though */
 
    /* we've gone through this part */
-   if (eina_hash_find(chash, cl->base.name))
+   if (eina_hash_find(chash, &cl))
      return EINA_TRUE;
 
    Eina_Bool valid = cl->base.validated;
@@ -849,7 +849,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
    if (valid)
      {
         /* no need to go through this next time */
-        eina_hash_add(chash, cl->base.name, cl);
+        eina_hash_add(chash, &cl, cl);
         return EINA_TRUE;
      }
 
@@ -857,7 +857,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
      return EINA_FALSE;
 
    /* also done */
-   eina_hash_add(chash, cl->base.name, cl);
+   eina_hash_add(chash, &cl, cl);
 
    return _validate(&cl->base);
 }
@@ -903,7 +903,7 @@ database_validate(const Eolian_Unit *src)
 
    /* do an initial pass to refill inherits */
    Eina_Iterator *iter = eolian_unit_classes_get(src);
-   Eina_Hash *fhash = eina_hash_stringshared_new(NULL);
+   Eina_Hash *fhash = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         if (!_db_fill_inherits(cl, fhash))
@@ -916,9 +916,9 @@ database_validate(const Eolian_Unit *src)
    eina_iterator_free(iter);
 
    iter = eolian_unit_classes_get(src);
-   Eina_Hash *nhash = eina_hash_stringshared_new(NULL);
-   Eina_Hash *ehash = eina_hash_stringshared_new(NULL);
-   Eina_Hash *chash = eina_hash_stringshared_new(NULL);
+   Eina_Hash *nhash = eina_hash_pointer_new(NULL);
+   Eina_Hash *ehash = eina_hash_pointer_new(NULL);
+   Eina_Hash *chash = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
@@ -928,7 +928,7 @@ database_validate(const Eolian_Unit *src)
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);
-             eina_hash_free(nhash);
+             eina_hash_free(ehash);
              eina_hash_free(chash);
              return EINA_FALSE;
           }
