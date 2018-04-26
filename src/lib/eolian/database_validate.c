@@ -11,6 +11,7 @@
 typedef struct _Validate_State
 {
    Eina_Bool warned;
+   Eina_Bool event_redef;
 } Validate_State;
 
 static Eina_Bool
@@ -449,8 +450,20 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
 }
 
 static Eina_Bool
-_validate_event(Validate_State *vals, Eolian_Event *event)
+_validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *ehash)
 {
+   const Eolian_Event *oev = eina_hash_find(ehash, event->base.name);
+   if (EINA_UNLIKELY(!!oev) && vals->event_redef)
+     {
+        char buf[512];
+        snprintf(buf, sizeof(buf),
+                 "event '%s' redefined (originally at %s:%d:%d)",
+                 oev->base.name, oev->base.file,
+                 oev->base.line, oev->base.column);
+        _obj_error(&event->base, buf);
+        vals->warned = EINA_TRUE;
+     }
+
    if (event->base.validated)
      return EINA_TRUE;
 
@@ -459,6 +472,9 @@ _validate_event(Validate_State *vals, Eolian_Event *event)
 
    if (!_validate_doc(event->doc))
      return EINA_FALSE;
+
+   if (!oev)
+     eina_hash_add(ehash, event->base.name, event);
 
    return _validate(&event->base);
 }
@@ -753,7 +769,7 @@ _validate_implement(Eolian_Implement *impl)
 
 static Eina_Bool
 _validate_class(Validate_State *vals, Eolian_Class *cl,
-                Eina_Hash *nhash, Eina_Hash *chash)
+                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *chash)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -799,7 +815,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_validate_class(vals, icl, nhash, chash))
+        if (!_validate_class(vals, icl, nhash, ehash, chash))
           return EINA_FALSE;
      }
 
@@ -812,7 +828,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->events, l, event)
-     if (!_validate_event(vals, event))
+     if (!_validate_event(vals, event, ehash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
@@ -877,7 +893,7 @@ database_validate(const Eolian_Unit *src)
 {
    Eolian_Class *cl;
 
-   Validate_State vals = { EINA_FALSE };
+   Validate_State vals = { EINA_FALSE, !!getenv("EOLIAN_EVENT_REDEF_WARN") };
 
    /* do an initial pass to refill inherits */
    Eina_Iterator *iter = eolian_unit_classes_get(src);
@@ -895,20 +911,24 @@ database_validate(const Eolian_Unit *src)
 
    iter = eolian_unit_classes_get(src);
    Eina_Hash *nhash = eina_hash_stringshared_new(NULL);
+   Eina_Hash *ehash = eina_hash_stringshared_new(NULL);
    Eina_Hash *chash = eina_hash_stringshared_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
+        eina_hash_free_buckets(ehash);
         eina_hash_free_buckets(chash);
-        if (!_validate_class(&vals, cl, nhash, chash))
+        if (!_validate_class(&vals, cl, nhash, ehash, chash))
           {
              eina_iterator_free(iter);
+             eina_hash_free(nhash);
              eina_hash_free(nhash);
              eina_hash_free(chash);
              return EINA_FALSE;
           }
      }
    eina_hash_free(chash);
+   eina_hash_free(ehash);
    eina_hash_free(nhash);
    eina_iterator_free(iter);
 
