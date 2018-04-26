@@ -899,6 +899,7 @@ database_validate(const Eolian_Unit *src)
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
+        eina_hash_free_buckets(chash);
         if (!_validate_class(&vals, cl, nhash, chash))
           {
              eina_iterator_free(iter);
