@@ -386,11 +386,11 @@ group { "efl/timepicker/spin_button/text_button";
 }
 
 group { "efl/timepicker/spin_button/inc_button";
-   inherit: "elm/button/base/spinner/increase/vertical";
+   inherit: "efl/spin_button/inc_button:vertical";
 }
 
 group { "efl/timepicker/spin_button/dec_button";
-   inherit: "elm/button/base/spinner/decrease/vertical";
+   inherit: "efl/spin_button/dec_button:vertical";
 }
 group { "efl/timepicker/button";
    inherit: "efl/button";
