@@ -3143,7 +3143,7 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
           }
         evas_object_move(sd->pointer.obj, 0, 0);
         evas_object_resize(sd->pointer.obj, mw, mh);
-        if (elm_widget_is_legacy(obj)
+        if (elm_widget_is_legacy(obj))
           edje_object_part_geometry_get(sd->pointer.obj,
                                         "elm.swallow.hotspot",
                                         &hx, &hy, NULL, NULL);
