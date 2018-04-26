@@ -72,9 +72,9 @@ _efl_ui_scroller_bar_read_and_update(Eo *obj)
    double vx, vy;
 
    edje_object_part_drag_value_get
-      (wd->resize_obj, "elm.dragable.vbar", NULL, &vy);
+      (wd->resize_obj, "efl.dragable.vbar", NULL, &vy);
    edje_object_part_drag_value_get
-      (wd->resize_obj, "elm.dragable.hbar", &vx, NULL);
+      (wd->resize_obj, "efl.dragable.hbar", &vx, NULL);
 
    efl_ui_scrollbar_bar_position_set(sd->smanager, vx, vy);
 }
@@ -206,8 +206,8 @@ _efl_ui_scroller_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNU
 
    edje_object_calc_force(wd->resize_obj);
    efl_ui_scrollbar_bar_size_get(sd->smanager, &width, &height);
-   edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.hbar", width, 1.0);
-   edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.vbar", 1.0, height);
+   edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.hbar", width, 1.0);
+   edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.vbar", 1.0, height);
 }
 
 static void
@@ -220,8 +220,8 @@ _efl_ui_scroller_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUS
    double posx = 0.0, posy = 0.0;
 
    efl_ui_scrollbar_bar_position_get(sd->smanager, &posx, &posy);
-   edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.hbar", posx, 0.0);
-   edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.vbar", 0.0, posy);
+   edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.hbar", posx, 0.0);
+   edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.vbar", 0.0, posy);
 }
 
 static void
@@ -260,22 +260,22 @@ _scroll_edje_object_attach(Eo *obj)
    efl_layout_signal_callback_add
      (obj, "reload", "elm", _efl_ui_scroller_reload_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag", "elm.dragable.vbar", _efl_ui_scroller_vbar_drag_cb,
+     (obj, "drag", "efl.dragable.vbar", _efl_ui_scroller_vbar_drag_cb,
      obj);
    efl_layout_signal_callback_add
-     (obj, "drag,set", "elm.dragable.vbar",
+     (obj, "drag,set", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,start", "elm.dragable.vbar",
+     (obj, "drag,start", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_start_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,stop", "elm.dragable.vbar",
+     (obj, "drag,stop", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,step", "elm.dragable.vbar",
+     (obj, "drag,step", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,page", "elm.dragable.vbar",
+     (obj, "drag,page", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "elm,vbar,press", "elm",
@@ -284,22 +284,22 @@ _scroll_edje_object_attach(Eo *obj)
      (obj, "elm,vbar,unpress", "elm",
      _efl_ui_scroller_vbar_unpress_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag", "elm.dragable.hbar", _efl_ui_scroller_hbar_drag_cb,
+     (obj, "drag", "efl.dragable.hbar", _efl_ui_scroller_hbar_drag_cb,
      obj);
    efl_layout_signal_callback_add
-     (obj, "drag,set", "elm.dragable.hbar",
+     (obj, "drag,set", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,start", "elm.dragable.hbar",
+     (obj, "drag,start", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_start_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,stop", "elm.dragable.hbar",
+     (obj, "drag,stop", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,step", "elm.dragable.hbar",
+     (obj, "drag,step", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_add
-     (obj, "drag,page", "elm.dragable.hbar",
+     (obj, "drag,page", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "elm,hbar,press", "elm",
@@ -317,22 +317,22 @@ _scroll_edje_object_detach(Evas_Object *obj)
    efl_layout_signal_callback_del
      (obj, "reload", "elm", _efl_ui_scroller_reload_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag", "elm.dragable.vbar", _efl_ui_scroller_vbar_drag_cb,
+     (obj, "drag", "efl.dragable.vbar", _efl_ui_scroller_vbar_drag_cb,
      obj);
    efl_layout_signal_callback_del
-     (obj, "drag,set", "elm.dragable.vbar",
+     (obj, "drag,set", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,start", "elm.dragable.vbar",
+     (obj, "drag,start", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_start_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,stop", "elm.dragable.vbar",
+     (obj, "drag,stop", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,step", "elm.dragable.vbar",
+     (obj, "drag,step", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,page", "elm.dragable.vbar",
+     (obj, "drag,page", "efl.dragable.vbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "elm,vbar,press", "elm",
@@ -341,22 +341,22 @@ _scroll_edje_object_detach(Evas_Object *obj)
      (obj, "elm,vbar,unpress", "elm",
      _efl_ui_scroller_vbar_unpress_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag", "elm.dragable.hbar", _efl_ui_scroller_hbar_drag_cb,
+     (obj, "drag", "efl.dragable.hbar", _efl_ui_scroller_hbar_drag_cb,
      obj);
    efl_layout_signal_callback_del
-     (obj, "drag,set", "elm.dragable.hbar",
+     (obj, "drag,set", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,start", "elm.dragable.hbar",
+     (obj, "drag,start", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_start_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,stop", "elm.dragable.hbar",
+     (obj, "drag,stop", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_stop_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,step", "elm.dragable.hbar",
+     (obj, "drag,step", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_del
-     (obj, "drag,page", "elm.dragable.hbar",
+     (obj, "drag,page", "efl.dragable.hbar",
      _efl_ui_scroller_edje_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "elm,hbar,press", "elm",
@@ -409,7 +409,7 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
    sd->pan_obj = efl_add(EFL_UI_PAN_CLASS, obj);
 
    efl_ui_scroll_manager_pan_set(sd->smanager, sd->pan_obj);
-   edje_object_part_swallow(wd->resize_obj, "elm.swallow.content", sd->pan_obj);
+   edje_object_part_swallow(wd->resize_obj, "efl.content", sd->pan_obj);
 
    _scroll_edje_object_attach(obj);
 

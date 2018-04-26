@@ -366,7 +366,7 @@ _toggle_entry(Evas_Object *obj)
              evas_object_event_callback_add
                (sd->ent, EVAS_CALLBACK_SHOW, _entry_show_cb, obj);
              elm_entry_single_line_set(sd->ent, EINA_TRUE);
-             elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
+             elm_layout_content_set(obj, "efl.entry", sd->ent);
              _entry_accept_filter_add(obj);
              elm_entry_markup_filter_append(sd->ent, _invalid_input_validity_filter, NULL);
              if (_elm_config->spinner_min_max_filter_enable)
@@ -757,7 +757,7 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
    sd->inc_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                             elm_widget_element_update(obj, efl_added, PART_NAME_INC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
-                            efl_content_set(efl_part(obj, "elm.swallow.inc_button"), efl_added));
+                            efl_content_set(efl_part(obj, "efl.inc_button"), efl_added));
 
    sd->text_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                              elm_widget_element_update(obj, efl_added, PART_NAME_TEXT_BUTTON),
@@ -765,12 +765,12 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
                                                     _text_button_clicked_cb, obj),
                              efl_event_callback_add(efl_added, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
                                                     _text_button_focus_changed_cb, obj),
-                             efl_content_set(efl_part(obj, "elm.swallow.text_button"), efl_added));
+                             efl_content_set(efl_part(obj, "efl.text_button"), efl_added));
 
    sd->dec_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                             elm_widget_element_update(obj, efl_added, PART_NAME_DEC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
-                            efl_content_set(efl_part(obj, "elm.swallow.dec_button"), efl_added));
+                            efl_content_set(efl_part(obj, "efl.dec_button"), efl_added));
 
      {
         Eina_List *items = NULL;
@@ -883,7 +883,7 @@ _efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_B
    const char *name;
    name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_SPIN_BUTTON_CLASS));
    if (name) return name;
-   const char *ret = elm_layout_text_get(obj, "elm.text");
+   const char *ret = elm_layout_text_get(obj, "efl.text");
    return ret;
 }
 

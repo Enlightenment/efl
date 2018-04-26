@@ -895,7 +895,7 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
         Elm_Access_Info *ai;
 
         priv->access_obj = _elm_access_edje_object_part_object_register
-          (obj, elm_layout_edje_get(obj), "elm.access");
+          (obj, elm_layout_edje_get(obj), "efl.access");
         if (!priv->access_obj)
           priv->access_obj = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), "access");

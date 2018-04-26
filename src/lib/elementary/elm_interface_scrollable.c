@@ -67,6 +67,11 @@ static void _elm_scroll_bounce_y_animator(void *data, const Efl_Event *event);
 static void _elm_scroll_bounce_x_animator(void *data, const Efl_Event *event);
 static void _elm_scroll_momentum_animator(void *data, const Efl_Event *event);
 
+static const char iface_scr_legacy_dragable_hbar[]  = "elm.dragable.hbar";
+static const char iface_scr_legacy_dragable_vbar[]  = "elm.dragable.vbar";
+static const char iface_scr_efl_ui_dragable_hbar[]  = "efl.dragable.hbar";
+static const char iface_scr_efl_ui_dragable_vbar[]  = "efl.dragable.vbar";
+
 static double
 _round(double value, int pos)
 {
@@ -793,6 +798,20 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         return;
      }
    sid->size_adjust_recurse++;
+
+   const char *iface_scr_dragable_hbar = NULL;
+   const char *iface_scr_dragable_vbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     {
+        iface_scr_dragable_hbar = iface_scr_legacy_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_legacy_dragable_vbar;
+     }
+   else
+     {
+        iface_scr_dragable_hbar = iface_scr_efl_ui_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_efl_ui_dragable_vbar;
+     }
+
    if ((sid->content) || (sid->extern_pan))
      {
         Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0,
@@ -800,8 +819,16 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         double vx = 0.0, vy = 0.0, size;
 
         edje_object_calc_force(sid->edje_obj);
-        edje_object_part_geometry_get
-          (sid->edje_obj, "elm.swallow.content", NULL, NULL, &vw, &vh);
+        if (elm_widget_is_legacy(sid->obj))
+          {
+             edje_object_part_geometry_get
+               (sid->edje_obj, "elm.swallow.content", NULL, NULL, &vw, &vh);
+          }
+        else
+          {
+             edje_object_part_geometry_get
+               (sid->edje_obj, "efl.content", NULL, NULL, &vw, &vh);
+          }
         w = sid->content_info.w;
         if (w < 1) w = 1;
         size = (double)vw / (double)w;
@@ -810,10 +837,10 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
           {
              size = 1.0;
              edje_object_part_drag_value_set
-               (sid->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
+               (sid->edje_obj, iface_scr_dragable_hbar, 0.0, 0.0);
           }
         edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.hbar", size, 1.0);
+          (sid->edje_obj, iface_scr_dragable_hbar, size, 1.0);
 
         h = sid->content_info.h;
         if (h < 1) h = 1;
@@ -822,15 +849,15 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
           {
              size = 1.0;
              edje_object_part_drag_value_set
-               (sid->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
+               (sid->edje_obj, iface_scr_dragable_vbar, 0.0, 0.0);
           }
         edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.vbar", 1.0, size);
+          (sid->edje_obj, iface_scr_dragable_vbar, 1.0, size);
 
         edje_object_part_drag_value_get
-          (sid->edje_obj, "elm.dragable.hbar", &vx, NULL);
+          (sid->edje_obj, iface_scr_dragable_hbar, &vx, NULL);
         edje_object_part_drag_value_get
-          (sid->edje_obj, "elm.dragable.vbar", NULL, &vy);
+          (sid->edje_obj, iface_scr_dragable_vbar, NULL, &vy);
 
         elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
         elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
@@ -838,26 +865,26 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         y = vy * my + miny;
 
         edje_object_part_drag_step_set
-          (sid->edje_obj, "elm.dragable.hbar", (double)sid->step.x /
+          (sid->edje_obj, iface_scr_dragable_hbar, (double)sid->step.x /
           (double)w, 0.0);
         edje_object_part_drag_step_set
-          (sid->edje_obj, "elm.dragable.vbar", 0.0, (double)sid->step.y /
+          (sid->edje_obj, iface_scr_dragable_vbar, 0.0, (double)sid->step.y /
           (double)h);
         if (sid->page.x > 0)
           edje_object_part_drag_page_set
-            (sid->edje_obj, "elm.dragable.hbar", (double)sid->page.x /
+            (sid->edje_obj, iface_scr_dragable_hbar, (double)sid->page.x /
             (double)w, 0.0);
         else
           edje_object_part_drag_page_set
-            (sid->edje_obj, "elm.dragable.hbar",
+            (sid->edje_obj, iface_scr_dragable_hbar,
             -((double)sid->page.x * ((double)vw / (double)w)) / 100.0, 0.0);
         if (sid->page.y > 0)
           edje_object_part_drag_page_set
-            (sid->edje_obj, "elm.dragable.vbar", 0.0,
+            (sid->edje_obj, iface_scr_dragable_vbar, 0.0,
             (double)sid->page.y / (double)h);
         else
           edje_object_part_drag_page_set
-            (sid->edje_obj, "elm.dragable.vbar", 0.0,
+            (sid->edje_obj, iface_scr_dragable_vbar, 0.0,
             -((double)sid->page.y * ((double)vh / (double)h)) / 100.0);
 
         elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
@@ -880,18 +907,18 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
           vy = 1.0;
 
         edje_object_part_drag_value_set
-           (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
+           (sid->edje_obj, iface_scr_dragable_vbar, 0.0, vy);
         edje_object_part_drag_value_set
-           (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
+           (sid->edje_obj, iface_scr_dragable_hbar, vx, 0.0);
      }
    else
      {
         Evas_Coord px = 0, py = 0, minx = 0, miny = 0;
 
         edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
+          (sid->edje_obj, iface_scr_dragable_vbar, 1.0, 1.0);
         edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+          (sid->edje_obj, iface_scr_dragable_hbar, 1.0, 1.0);
         elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
         elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
         elm_obj_pan_pos_set(sid->pan_obj, minx, miny);
@@ -920,10 +947,24 @@ _elm_scroll_scroll_bar_read_and_update(
        || (sid->down.bounce_y_animator) || (sid->down.momentum_animator)
        || (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
      return;
+
+   const char *iface_scr_dragable_hbar = NULL;
+   const char *iface_scr_dragable_vbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     {
+        iface_scr_dragable_hbar = iface_scr_legacy_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_legacy_dragable_vbar;
+     }
+   else
+     {
+        iface_scr_dragable_hbar = iface_scr_efl_ui_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_efl_ui_dragable_vbar;
+     }
+
    edje_object_part_drag_value_get
-     (sid->edje_obj, "elm.dragable.vbar", NULL, &vy);
+     (sid->edje_obj, iface_scr_dragable_vbar, NULL, &vy);
    edje_object_part_drag_value_get
-     (sid->edje_obj, "elm.dragable.hbar", &vx, NULL);
+     (sid->edje_obj, iface_scr_dragable_hbar, &vx, NULL);
    elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
    elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
    x = _round(vx * (double)mx + minx, 1);
@@ -1577,10 +1618,23 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
    else if (vy > 1.0)
      vy = 1.0;
 
+   const char *iface_scr_dragable_hbar = NULL;
+   const char *iface_scr_dragable_vbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     {
+        iface_scr_dragable_hbar = iface_scr_legacy_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_legacy_dragable_vbar;
+     }
+   else
+     {
+        iface_scr_dragable_hbar = iface_scr_efl_ui_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_efl_ui_dragable_vbar;
+     }
+
    edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
+     (sid->edje_obj, iface_scr_dragable_vbar, 0.0, vy);
    edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
+     (sid->edje_obj, iface_scr_dragable_hbar, vx, 0.0);
 
    if (!sid->loop_h && !sid->down.bounce_x_animator)
      {
@@ -3682,48 +3736,62 @@ _scroll_edje_object_attach(Evas_Object *obj)
 
    edje_object_signal_callback_add
      (sid->edje_obj, "reload", "elm", _elm_scroll_reload_cb, sid);
+
+   const char *iface_scr_dragable_vbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     iface_scr_dragable_vbar = iface_scr_legacy_dragable_vbar;
+   else
+     iface_scr_dragable_vbar = iface_scr_efl_ui_dragable_vbar;
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
+     (sid->edje_obj, "drag", iface_scr_dragable_vbar, _elm_scroll_vbar_drag_cb,
      sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,set", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,set", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,start", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,start", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_start_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,stop", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,stop", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_stop_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,step", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,step", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,page", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,page", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_cb, sid);
+
    edje_object_signal_callback_add
      (sid->edje_obj, "elm,vbar,press", "elm",
      _elm_scroll_vbar_press_cb, sid);
    edje_object_signal_callback_add
      (sid->edje_obj, "elm,vbar,unpress", "elm",
      _elm_scroll_vbar_unpress_cb, sid);
+
+   const char *iface_scr_dragable_hbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     iface_scr_dragable_hbar = iface_scr_legacy_dragable_hbar;
+   else
+     iface_scr_dragable_hbar = iface_scr_efl_ui_dragable_hbar;
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_hbar_drag_cb,
+     (sid->edje_obj, "drag", iface_scr_dragable_hbar, _elm_scroll_hbar_drag_cb,
      sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,set", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,set", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,start", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,start", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_start_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,stop", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,stop", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_stop_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,step", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,step", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag,page", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,page", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_cb, sid);
+
    edje_object_signal_callback_add
      (sid->edje_obj, "elm,hbar,press", "elm",
      _elm_scroll_hbar_press_cb, sid);
@@ -3761,49 +3829,62 @@ _scroll_edje_object_detach(Evas_Object *obj)
    evas_object_event_callback_del_full
      (sid->edje_obj, EVAS_CALLBACK_MOVE, _on_edje_move, sid);
 
+   const char *iface_scr_dragable_vbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     iface_scr_dragable_vbar = iface_scr_legacy_dragable_vbar;
+   else
+     iface_scr_dragable_vbar = iface_scr_efl_ui_dragable_vbar;
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
+     (sid->edje_obj, "drag", iface_scr_dragable_vbar, _elm_scroll_vbar_drag_cb,
      sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,set", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,set", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,start", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,start", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_start_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,stop", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,stop", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_stop_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,step", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,step", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,page", "elm.dragable.vbar",
+     (sid->edje_obj, "drag,page", iface_scr_dragable_vbar,
      _elm_scroll_edje_drag_v_cb, sid);
+
    edje_object_signal_callback_del_full
      (sid->edje_obj, "elm,vbar,press", "elm",
      _elm_scroll_vbar_press_cb, sid);
    edje_object_signal_callback_del_full
      (sid->edje_obj, "elm,vbar,unpress", "elm",
      _elm_scroll_vbar_unpress_cb, sid);
+
+   const char *iface_scr_dragable_hbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     iface_scr_dragable_hbar = iface_scr_legacy_dragable_hbar;
+   else
+     iface_scr_dragable_hbar = iface_scr_efl_ui_dragable_hbar;
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_hbar_drag_cb,
+     (sid->edje_obj, "drag", iface_scr_dragable_hbar, _elm_scroll_hbar_drag_cb,
      sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,set", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,set", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,start", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,start", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_start_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,stop", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,stop", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_stop_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,step", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,step", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag,page", "elm.dragable.hbar",
+     (sid->edje_obj, "drag,page", iface_scr_dragable_hbar,
      _elm_scroll_edje_drag_h_cb, sid);
-   edje_object_signal_callback_del_full
+
+     edje_object_signal_callback_del_full
      (sid->edje_obj, "elm,hbar,press", "elm",
      _elm_scroll_hbar_press_cb, sid);
    edje_object_signal_callback_del_full
@@ -3853,22 +3934,46 @@ _elm_interface_scrollable_objects_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
 
    mw = mh = -1;
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   if (edje_object_part_exists(sid->edje_obj, "elm.scrollbar.base"))
-     {
-        Evas_Object *base;
 
-        base = edje_object_part_swallow_get
-           (sid->edje_obj, "elm.scrollbar.base");
-        if (!base)
+   if (elm_widget_is_legacy(sid->obj))
+     {
+        if (edje_object_part_exists(sid->edje_obj, "elm.scrollbar.base"))
           {
-             base = evas_object_rectangle_add
-                 (evas_object_evas_get(sid->edje_obj));
-             evas_object_color_set(base, 0, 0, 0, 0);
-             edje_object_part_swallow
-               (sid->edje_obj, "elm.scrollbar.base", base);
+            Evas_Object *base;
+
+            base = edje_object_part_swallow_get
+              (sid->edje_obj, "elm.scrollbar.base");
+            if (!base)
+              {
+                base = evas_object_rectangle_add
+                    (evas_object_evas_get(sid->edje_obj));
+                evas_object_color_set(base, 0, 0, 0, 0);
+                edje_object_part_swallow
+                  (sid->edje_obj, "elm.scrollbar.base", base);
+              }
+            if (!_elm_config->thumbscroll_enable)
+              evas_object_size_hint_min_set(base, mw, mh);
           }
-        if (!_elm_config->thumbscroll_enable)
-          evas_object_size_hint_min_set(base, mw, mh);
+     }
+   else
+     {
+        if (edje_object_part_exists(sid->edje_obj, "efl.scrollbar.base"))
+          {
+            Evas_Object *base;
+
+            base = edje_object_part_swallow_get
+              (sid->edje_obj, "efl.scrollbar.base");
+            if (!base)
+              {
+                base = evas_object_rectangle_add
+                    (evas_object_evas_get(sid->edje_obj));
+                evas_object_color_set(base, 0, 0, 0, 0);
+                edje_object_part_swallow
+                  (sid->edje_obj, "efl.scrollbar.base", base);
+              }
+            if (!_elm_config->thumbscroll_enable)
+              evas_object_size_hint_min_set(base, mw, mh);
+          }
      }
 
    _elm_scroll_scroll_bar_visibility_adjust(sid);
@@ -3881,16 +3986,29 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
 
    if (!sid->edje_obj) return;
 
+   const char *iface_scr_dragable_hbar = NULL;
+   const char *iface_scr_dragable_vbar = NULL;
+   if (elm_widget_is_legacy(sid->obj))
+     {
+        iface_scr_dragable_hbar = iface_scr_legacy_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_legacy_dragable_vbar;
+     }
+   else
+     {
+        iface_scr_dragable_hbar = iface_scr_efl_ui_dragable_hbar;
+        iface_scr_dragable_vbar = iface_scr_efl_ui_dragable_vbar;
+     }
+
    edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
+     (sid->edje_obj, iface_scr_dragable_vbar, 0.0, 0.0);
    edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
+     (sid->edje_obj, iface_scr_dragable_hbar, 0.0, 0.0);
    if ((!sid->content) && (!sid->extern_pan))
      {
         edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
+          (sid->edje_obj, iface_scr_dragable_vbar, 1.0, 1.0);
         edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+          (sid->edje_obj, iface_scr_dragable_hbar, 1.0, 1.0);
      }
    if (sid->pan_obj)
      {
@@ -3986,7 +4104,11 @@ _elm_interface_scrollable_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_I
           (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
         evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb, sid);
-        edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
+
+        if (elm_widget_is_legacy(obj))
+          edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
+        else
+          edje_object_part_swallow(sid->edje_obj, "efl.content", o);
      }
 
    evas_object_event_callback_add
@@ -4041,8 +4163,17 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
      (sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
    evas_object_event_callback_add(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_scroll_pan_resized_cb, sid);
-   edje_object_part_swallow
-     (sid->edje_obj, "elm.swallow.content", sid->pan_obj);
+
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_part_swallow
+        (sid->edje_obj, "elm.swallow.content", sid->pan_obj);
+     }
+   else
+     {
+        edje_object_part_swallow
+        (sid->edje_obj, "efl.content", sid->pan_obj);
+     }
 }
 
 EOLIAN static void

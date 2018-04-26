@@ -206,7 +206,7 @@ _fields_init(Eo *obj)
           {
              if (strchr(fmt_char[i], ch))
                {
-                  snprintf(buf, sizeof(buf), "field%d", field++);
+                  snprintf(buf, sizeof(buf), "efl.field%d", field++);
                   if (i == DATEPICKER_YEAR)
                     efl_content_set(efl_part(obj, buf), pd->year);
                   else if (i == DATEPICKER_MONTH)

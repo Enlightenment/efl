@@ -182,7 +182,7 @@ group { "efl/uiclock";
             vis;
          }
       }
-      rect { "elm.access";
+      rect { "efl.access";
          repeat;
          desc { "default";
             color: 0 0 0 0;

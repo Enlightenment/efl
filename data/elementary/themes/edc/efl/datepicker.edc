@@ -97,7 +97,7 @@ group { "efl/datepicker";
             align: 1.0 1.0;
          }
       }
-      swallow { "field0";
+      swallow { "efl.field0";
          mouse;
          scale;
          desc { "default";
@@ -119,13 +119,13 @@ group { "efl/datepicker";
             max: 10 -1;
             rel1 {
                relative: 1.0 0.0;
-               to: "field0";
+               to: "efl.field0";
             }
-            rel2.to: "field0";
+            rel2.to: "efl.field0";
             align: 0.0 0.5;
          }
       }
-      swallow { "field1";
+      swallow { "efl.field1";
          mouse;
          scale;
          desc { "default";
@@ -148,15 +148,15 @@ group { "efl/datepicker";
             fixed: 1 0;
             min: 10 0;
             max: 10 -1;
-            rel1.to: "field2";
+            rel1.to: "efl.field2";
             rel2 {
                relative: 0.0 1.0;
-               to: "field2";
+               to: "efl.field2";
             }
             align: 1.0 0.5;
          }
       }
-      swallow { "field2";
+      swallow { "efl.field2";
          mouse;
          scale;
          desc { "default";
@@ -186,7 +186,7 @@ group { "efl/datepicker/spin_button";
    parts {
       rect { "clip";
          desc { "default";
-            rel.to: "elm.swallow.text_button";
+            rel.to: "efl.text_button";
          }
       }
       spacer { "base";
@@ -215,7 +215,7 @@ group { "efl/datepicker/spin_button";
             vis;
          }
       }
-      swallow { "elm.swallow.inc_button";
+      swallow { "efl.inc_button";
          scale;
          desc { "default";
             align: 0.5 0.0;
@@ -224,7 +224,7 @@ group { "efl/datepicker/spin_button";
             fixed: 1 1;
          }
       }
-      swallow { "elm.swallow.dec_button";
+      swallow { "efl.dec_button";
          scale;
          desc { "default";
             align: 0.5 1.0;
@@ -233,12 +233,12 @@ group { "efl/datepicker/spin_button";
             fixed: 1 1;
          }
       }
-      swallow { "elm.swallow.entry";
+      swallow { "efl.entry";
          clip: "clip";
          desc { "default";
             fixed: 1 1;
-            rel1.to: "elm.swallow.text_button";
-            rel2.to: "elm.swallow.text_button";
+            rel1.to: "efl.text_button";
+            rel2.to: "efl.text_button";
             hid;
          }
          desc { "active";
@@ -246,16 +246,16 @@ group { "efl/datepicker/spin_button";
             vis;
          }
       }
-      swallow { "elm.swallow.text_button";
+      swallow { "efl.text_button";
          scale;
          desc { "default";
             rel.to_x: "base";
             rel1 {
-               to_y: "elm.swallow.inc_button";
+               to_y: "efl.inc_button";
                relative: 0.0 1.0;
             }
             rel2 {
-               to_y: "elm.swallow.dec_button";
+               to_y: "efl.dec_button";
                relative: 1.0 0.0;
             }
             min: 0 70;
@@ -285,25 +285,25 @@ group { "efl/datepicker/spin_button";
          signal: "elm,state,entry,active";
          source: "elm";
          action: STATE_SET "active";
-         target: "elm.swallow.entry";
+         target: "efl.entry";
       }
       program { "entry_inactive";
          signal: "elm,state,entry,inactive";
          source: "elm";
          action: STATE_SET "default";
-         target: "elm.swallow.entry";
+         target: "efl.entry";
       }
       program { "text_button_active";
          signal: "elm,state,button,active";
          source: "elm";
          action: STATE_SET "default";
-         target: "elm.swallow.text_button";
+         target: "efl.text_button";
       }
       program { "text_button_inactive";
          signal: "elm,state,button,inactive";
          source: "elm";
          action: STATE_SET "inactive";
-         target: "elm.swallow.text_button";
+         target: "efl.text_button";
       }
       program { "access_activate";
          signal: "elm,state,access,active";

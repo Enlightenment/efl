@@ -236,7 +236,10 @@ _efl_ui_video_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Video_Data *priv)
                                        elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
-   elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
+   if (elm_widget_is_legacy(obj))
+     elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
+   else
+     elm_layout_content_set(obj, "efl.video", priv->emotion);
 
    efl_event_callback_array_add(priv->emotion, _video_cb(), obj);
 

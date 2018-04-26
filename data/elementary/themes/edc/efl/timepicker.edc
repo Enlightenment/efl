@@ -105,7 +105,7 @@ group { "efl/timepicker";
             align: 1.0 1.0;
          }
       }
-      swallow { "field0";
+      swallow { "efl.field0";
          mouse;
          scale;
          desc { "default";
@@ -127,9 +127,9 @@ group { "efl/timepicker";
             max: 3 -1;
             rel1 {
                relative: 1.0 0.0;
-               to: "field0";
+               to: "efl.field0";
             }
-            rel2.to: "field0";
+            rel2.to: "efl.field0";
             align: 0.0 0.5;
          }
          desc { "invisible";
@@ -197,7 +197,7 @@ group { "efl/timepicker";
             max: 0 0;
          }
       }
-      swallow { "field1";
+      swallow { "efl.field1";
          mouse;
          scale;
          desc { "default";
@@ -219,9 +219,9 @@ group { "efl/timepicker";
             max: 3 -1;
             rel1 {
                relative: 1.0 0.0;
-               to: "field1";
+               to: "efl.field1";
             }
-            rel2.to: "field1";
+            rel2.to: "efl.field1";
             align: 0.0 0.5;
          }
          desc { "invisible";
@@ -289,7 +289,7 @@ group { "efl/timepicker";
             max: 0 0;
          }
       }
-      swallow { "field2";
+      swallow { "efl.field2";
          mouse;
          scale;
          desc { "default";
@@ -326,7 +326,7 @@ group { "efl/timepicker";
          script {
             set_state(PART:"base", "default", 0.0);
             set_state(PART:"bg", "default", 0.0);
-            set_state(PART:"field2", "default", 0.0);
+            set_state(PART:"efl.field2", "default", 0.0);
          }
       }
       program { "invisible_ampm";
@@ -335,7 +335,7 @@ group { "efl/timepicker";
          script {
             set_state(PART:"base", "24layout", 0.0);
             set_state(PART:"bg", "24layout", 0.0);
-            set_state(PART:"field2", "24layout", 0.0);
+            set_state(PART:"efl.field2", "24layout", 0.0);
          }
       }
       program { "visible_colon_field0";

@@ -13,64 +13,64 @@ group { "efl/radio";
          new d = m & DISABLE;
          if (m1 == (ICON | LABEL)) {
             if (!d) {
-               set_state(PART:"elm.swallow.content", "visible", 0.0);
+               set_state(PART:"efl.content", "visible", 0.0);
                set_state(PART:"sizer.content", "visible", 0.0);
-               set_state(PART:"elm.text", "visible", 0.0);
+               set_state(PART:"efl.text", "visible", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
-               set_state(PART:"elm.swallow.content", "visible", 0.0);
+               set_state(PART:"efl.content", "visible", 0.0);
                set_state(PART:"sizer.content", "visible", 0.0);
-               set_state(PART:"elm.text", "disabled_visible", 0.0);
+               set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          } else if (m1 == (ICON)) {
             if (!d) {
-               set_state(PART:"elm.swallow.content", "visible", 0.0);
+               set_state(PART:"efl.content", "visible", 0.0);
                set_state(PART:"sizer.content", "icononly", 0.0);
-               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
-               set_state(PART:"elm.swallow.content", "visible", 0.0);
+               set_state(PART:"efl.content", "visible", 0.0);
                set_state(PART:"sizer.content", "icononly", 0.0);
-               set_state(PART:"elm.text", "disabled", 0.0);
+               set_state(PART:"efl.text", "disabled", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          } else if (m1 == (LABEL)) {
             if (!d) {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "visible", 0.0);
+               set_state(PART:"efl.text", "visible", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "disabled_visible", 0.0);
+               set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          } else {
             if (!d) {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
-               set_state(PART:"elm.swallow.content", "default", 0.0);
+               set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -120,7 +120,7 @@ group { "efl/radio";
             color: 255 255 255 64;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          required;
          scale: 1;
          clip_to: "clip";
@@ -155,8 +155,8 @@ group { "efl/radio";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel1.to: "efl.content";
+            rel2.to: "efl.content";
             text {
                min: 1 1;
                ellipsis: -1;
@@ -165,8 +165,8 @@ group { "efl/radio";
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel1.to: "efl.content";
+            rel2.to: "efl.content";
             text {
                min: 1 1;
                ellipsis: -1;
@@ -174,13 +174,13 @@ group { "efl/radio";
             }
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "efl.text"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
          scale: 1;
          required;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
-            rel1.to_x: "elm.swallow.content";
+            rel1.to_x: "efl.content";
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
             color: FN_COL_DEFAULT;
@@ -237,7 +237,7 @@ group { "efl/radio";
          target: "indicator";
       }
       program {
-         signal: "elm,state,elm.text,set"; source: "elm";
+         signal: "elm,state,text,set"; source: "elm";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -245,7 +245,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "elm,state,elm.text,unset"; source: "elm";
+         signal: "elm,state,text,unset"; source: "elm";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);

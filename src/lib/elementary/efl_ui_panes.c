@@ -446,14 +446,30 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    sd->event = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(sd->event, 0, 0, 0, 0);
    evas_object_pass_events_set(sd->event, EINA_TRUE);
-   if (edje_object_part_exists
-       (wd->resize_obj, "elm.swallow.event"))
-     {
-        Evas_Coord minw = 0, minh = 0;
 
-        elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-        evas_object_size_hint_min_set(sd->event, minw, minh);
-        elm_layout_content_set(obj, "elm.swallow.event", sd->event);
+   if (elm_widget_is_legacy(obj))
+     {
+        if (edje_object_part_exists
+            (wd->resize_obj, "elm.swallow.event"))
+          {
+             Evas_Coord minw = 0, minh = 0;
+
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             evas_object_size_hint_min_set(sd->event, minw, minh);
+             elm_layout_content_set(obj, "elm.swallow.event", sd->event);
+          }
+     }
+   else
+     {
+        if (edje_object_part_exists
+            (wd->resize_obj, "efl.event"))
+          {
+             Evas_Coord minw = 0, minh = 0;
+
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             evas_object_size_hint_min_set(sd->event, minw, minh);
+             elm_layout_content_set(obj, "efl.event", sd->event);
+          }
      }
    elm_widget_sub_object_add(obj, sd->event);
 
@@ -476,7 +492,10 @@ _efl_ui_panes_split_ratio_get(const Eo *obj, Efl_Ui_Panes_Data *sd)
    double w, h;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0.0);
 
-   edje_object_part_drag_value_get(wd->resize_obj, "elm.bar", &w, &h);
+   if (elm_widget_is_legacy(obj))
+     edje_object_part_drag_value_get(wd->resize_obj, "elm.bar", &w, &h);
+   else
+     edje_object_part_drag_value_get(wd->resize_obj, "efl.bar", &w, &h);
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      return h;
@@ -492,9 +511,19 @@ _efl_ui_panes_split_ratio_set(Eo *obj, Efl_Ui_Panes_Data *sd, double ratio)
    else if (ratio > 1.0) ratio = 1.0;
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
-     edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", 0.0, ratio);
+     {
+        if (elm_widget_is_legacy(obj))
+          edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", 0.0, ratio);
+        else
+          edje_object_part_drag_value_set(wd->resize_obj, "efl.bar", 0.0, ratio);
+     }
    else
-     edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", ratio, 0.0);
+     {
+        if (elm_widget_is_legacy(obj))
+          edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", ratio, 0.0);
+        else
+          edje_object_part_drag_value_set(wd->resize_obj, "efl.bar", ratio, 0.0);
+     }
 }
 
 EOLIAN static void

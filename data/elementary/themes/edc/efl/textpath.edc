@@ -8,7 +8,7 @@ group { name: "efl/textpath";
       }
    }
    parts {
-      part { name: "elm.text";
+      part { name: "efl.text";
          type: TEXTBLOCK;
          scale: 1;
          description { state: "default" 0.0;

@@ -111,12 +111,21 @@ _units_set(Evas_Object *obj)
 
         eina_strbuf_reset(sd->format_strbuf);
         sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
-        elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
+
+        if (elm_widget_is_legacy(obj))
+          elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
+        else
+          elm_layout_text_set(obj, "efl.text.status", eina_strbuf_string_get(sd->format_strbuf));
 
         eina_value_flush(&val);
      }
    else
-     elm_layout_text_set(obj, "elm.text.status", NULL);
+     {
+        if (elm_widget_is_legacy(obj))
+          elm_layout_text_set(obj, "elm.text.status", NULL);
+        else
+          elm_layout_text_set(obj, "efl.text.status", NULL);
+     }
 }
 
 static void
@@ -291,7 +300,12 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    Eina_Strbuf *buf;
    buf = eina_strbuf_new();
 
-   const char *txt = elm_layout_text_get(obj, "elm.text.status");
+   const char *txt;
+   if (elm_widget_is_legacy(obj))
+     txt = elm_layout_text_get(obj, "elm.text.status");
+   else
+     txt = elm_layout_text_get(obj, "efl.text.status");
+
    if (txt) eina_strbuf_append(buf, txt);
 
    if (elm_widget_disabled_get(obj))
@@ -338,7 +352,10 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
 
-   elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
+   if (elm_widget_is_legacy(obj))
+     elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
+   else
+     elm_layout_content_set(obj, "efl.bar", priv->spacer);
 
    _units_set(obj);
    _val_set(obj);
@@ -454,10 +471,21 @@ _progress_part_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *par
         WRN("min is greater than max.");
      }
 
-   if (!strcmp(part_name, "elm.cur.progressbar"))
+   if (elm_widget_is_legacy(obj))
      {
-        sd->val_min = min;
-        sd->val_max = max;
+        if (!strcmp(part_name, "elm.cur.progressbar"))
+          {
+             sd->val_min = min;
+             sd->val_max = max;
+          }
+     }
+   else
+     {
+        if (!strcmp(part_name, "efl.cur.progressbar"))
+          {
+             sd->val_min = min;
+             sd->val_max = max;
+          }
      }
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
@@ -493,8 +521,16 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    if (val < min) val = min;
    if (val > max) val = max;
 
-   if (!strcmp(part_name, "elm.cur.progressbar"))
-     sd->val = val;
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!strcmp(part_name, "elm.cur.progressbar"))
+          sd->val = val;
+     }
+   else
+     {
+        if (!strcmp(part_name, "efl.cur.progressbar"))
+          sd->val = val;
+     }
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
      {
@@ -541,13 +577,19 @@ _efl_ui_progressbar_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Progressbar_Dat
 {
    if (EINA_DBL_EQ(sd->val, val)) return;
 
-   _progressbar_part_value_set(obj, sd, "elm.cur.progressbar", val);
+   if (elm_widget_is_legacy(obj))
+     _progressbar_part_value_set(obj, sd, "elm.cur.progressbar", val);
+   else
+     _progressbar_part_value_set(obj, sd, "efl.cur.progressbar", val);
 }
 
 EOLIAN static double
 _efl_ui_progressbar_efl_ui_range_range_value_get(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED)
 {
-   return efl_ui_range_value_get(efl_part(obj, "elm.cur.progressbar"));
+   if (elm_widget_is_legacy(obj))
+     return efl_ui_range_value_get(efl_part(obj, "elm.cur.progressbar"));
+   else
+     return efl_ui_range_value_get(efl_part(obj, "efl.cur.progressbar"));
 }
 
 EOLIAN static void
@@ -596,7 +638,10 @@ _efl_ui_progressbar_pulse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data
 EOLIAN static void
 _efl_ui_progressbar_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double min, double max)
 {
-  _progress_part_min_max_set(obj, sd, "elm.cur.progressbar", min, max);
+  if (elm_widget_is_legacy(obj))
+    _progress_part_min_max_set(obj, sd, "elm.cur.progressbar", min, max);
+  else
+    _progress_part_min_max_set(obj, sd, "efl.cur.progressbar", min, max);
 }
 
 EOLIAN static void
@@ -681,7 +726,15 @@ _efl_ui_progressbar_part_efl_ui_range_range_min_max_get(const Eo *obj, void *_pd
 /* Internal EO APIs and hidden overrides */
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_progressbar, _content_aliases[0].real_part)
+
+static const char * _efl_ui_progressbar_default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
+{
+   if (elm_widget_is_legacy(obj))
+     return "elm.swallow.content";
+   else
+     return "efl.content";
+}
+
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)

@@ -1,8 +1,8 @@
-group { name: "efl/win";
+group { "efl/win";
    data.item: "version" "119";
    parts {
       rect { "client_clip"; nomouse; }
-      swallow { "elm.swallow.menu";
+      swallow { "efl.menu";
          clip_to: "client_clip";
          desc { "default";
             rel2.relative: 1 0;
@@ -17,12 +17,12 @@ group { name: "efl/win";
             vis;
          }
       }
-      swallow { "elm.swallow.contents";
+      swallow { "efl.contents";
          clip_to: "client_clip";
          desc { "default";
          }
          desc { "with_menu";
-            rel1.to: "elm.swallow.menu";
+            rel1.to: "efl.menu";
             rel1.relative: 0 1;
             link.base: "elm,action,show_menu" "elm";
          }

@@ -19,14 +19,14 @@ static const char PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_COUNT][15] =
                                                  "button_layout3"};
 
 static const char BUTTON_SWALLOW_NAME[EFL_UI_POPUP_ALERT_BUTTON_COUNT][20] =
-                                                {"elm.swallow.button1",
-                                                 "elm.swallow.button2",
-                                                 "elm.swallow.button3"};
+                                                {"efl.button1",
+                                                 "efl.button2",
+                                                 "efl.button3"};
 
 static Eina_Bool
 _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *part, const char *label)
 {
-   if (eina_streq(part, "title") || eina_streq(part, "elm.text.title"))
+   if (eina_streq(part, "title") || eina_streq(part, "efl.text.title"))
      {
         Eina_Bool changed = eina_stringshare_replace(&pd->title_text, label);
         if (changed)
@@ -51,7 +51,7 @@ _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *p
 const char *
 _efl_ui_popup_alert_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd, const char *part)
 {
-   if (eina_streq(part, "title") || eina_streq(part, "elm.text.title"))
+   if (eina_streq(part, "title") || eina_streq(part, "efl.text.title"))
      {
         if (pd->title_text)
           return pd->title_text;
@@ -132,7 +132,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
      }
    efl_text_set(pd->button[type], text);
 
-   cur_content = efl_content_get(efl_part(obj, "buttons"));
+   cur_content = efl_content_get(efl_part(obj, "efl.buttons"));
    if (cur_content)
      {
         for (i = 0; i < EFL_UI_POPUP_ALERT_BUTTON_COUNT; i++)
@@ -141,7 +141,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
    else
      {
         cur_content = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, obj,
-                              efl_content_set(efl_part(obj, "buttons"), efl_added));
+                              efl_content_set(efl_part(obj, "efl.buttons"), efl_added));
      }
 
    int btn_count = !!pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE] +
@@ -199,7 +199,7 @@ _efl_ui_popup_alert_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Alert_Data *pd)
 static Eina_Bool
 _part_is_efl_ui_popup_alert_part(const Eo *obj EINA_UNUSED, const char *part)
 {
-   return (eina_streq(part, "title") || eina_streq(part, "elm.text.title"));
+   return (eina_streq(part, "title") || eina_streq(part, "efl.text.title"));
 }
 
 /* Efl.Part begin */

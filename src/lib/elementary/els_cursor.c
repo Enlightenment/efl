@@ -306,15 +306,32 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
                                   _elm_cursor_hot_change, cur);
    evas_object_event_callback_add(cur->hotobj, EVAS_CALLBACK_RESIZE,
                                   _elm_cursor_hot_change, cur);
-   if (edje_object_part_exists(cur->obj, "elm.swallow.hotspot"))
-     edje_object_part_swallow(cur->obj, "elm.swallow.hotspot", cur->hotobj);
-   else if (edje_object_part_exists(cur->obj, "elm.content.hotspot"))
-     edje_object_part_swallow(cur->obj, "elm.content.hotspot", cur->hotobj);
+
+   if (elm_widget_is_legacy(obj))
+     {
+        if (edje_object_part_exists(cur->obj, "elm.swallow.hotspot"))
+          edje_object_part_swallow(cur->obj, "elm.swallow.hotspot", cur->hotobj);
+        else if (edje_object_part_exists(cur->obj, "elm.content.hotspot"))
+          edje_object_part_swallow(cur->obj, "elm.content.hotspot", cur->hotobj);
+        else
+          {
+             ELM_SAFE_FREE(cur->hotobj, evas_object_del);
+             ELM_SAFE_FREE(cur->obj, evas_object_del);
+             return EINA_FALSE;
+          }
+     }
    else
      {
-        ELM_SAFE_FREE(cur->hotobj, evas_object_del);
-        ELM_SAFE_FREE(cur->obj, evas_object_del);
-        return EINA_FALSE;
+        if (edje_object_part_exists(cur->obj, "efl.hotspot"))
+          edje_object_part_swallow(cur->obj, "efl.hotspot", cur->hotobj);
+        else if (edje_object_part_exists(cur->obj, "efl.content.hotspot"))
+          edje_object_part_swallow(cur->obj, "efl.content.hotspot", cur->hotobj);
+        else
+          {
+             ELM_SAFE_FREE(cur->hotobj, evas_object_del);
+             ELM_SAFE_FREE(cur->obj, evas_object_del);
+             return EINA_FALSE;
+          }
      }
 
    evas_object_event_callback_add(cur->obj, EVAS_CALLBACK_DEL,

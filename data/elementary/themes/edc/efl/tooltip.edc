@@ -11,7 +11,7 @@ group { name: "efl/label/tooltip";
       }
    }
    parts {
-      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+      part { name: "efl.text"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
             text {
@@ -161,11 +161,11 @@ group { name: "efl/tooltip";
          description { state: "default" 0.0;
             min: 30 30;
             rel1 {
-               to: "elm.swallow.content";
+               to: "efl.content";
                offset: -5 -4;
             }
             rel2 {
-               to: "elm.swallow.content";
+               to: "efl.content";
                offset: 4 5;
             }
             image {
@@ -217,12 +217,12 @@ group { name: "efl/tooltip";
             rel1 {                                                 \
                relative: rx 0.0;                                   \
                offset: ox 0;                                       \
-               to: "elm.swallow.content";                          \
+               to: "efl.content";                                      \
             }                                                      \
             rel2 {                                                 \
                relative: rx 1.0;                                   \
                offset: ox 0;                                       \
-               to: "elm.swallow.content";                          \
+               to: "efl.content";                                      \
             }                                                      \
          }                                                         \
          description { state: "visible" 0.0;                       \
@@ -241,12 +241,12 @@ group { name: "efl/tooltip";
             rel1 {                                                 \
                relative: rx 0.0;                                   \
                offset: ox 0;                                       \
-               to: "elm.swallow.content";                          \
+               to: "efl.content";                                      \
             }                                                      \
             rel2 {                                                 \
                relative: rx 1.0;                                   \
                offset: ox 0;                                       \
-               to: "elm.swallow.content";                          \
+               to: "efl.content";                                      \
             }                                                      \
          }                                                         \
       }                                                            \
@@ -291,12 +291,12 @@ group { name: "efl/tooltip";
             rel1 {                                                 \
                relative: 0.0 ry;                                   \
                offset: 0 oy;                                       \
-               to: "elm.swallow.content";                          \
+               to: "efl.content";                                      \
             }                                                      \
             rel2 {                                                 \
                relative: 1.0 ry;                                   \
                offset: 0 oy;                                       \
-               to: "elm.swallow.content";                          \
+               to: "efl.content";                                      \
             }                                                      \
          }                                                         \
          description { state: "visible" 0.0;                       \
@@ -348,15 +348,15 @@ group { name: "efl/tooltip";
       part { name: "clipper_content"; type: RECT;
          description { state: "default" 0.0;
             color: 255 255 255 0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel1.to: "efl.content";
+            rel2.to: "efl.content";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          clip_to: "clipper_content";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
@@ -421,7 +421,7 @@ group { name: "efl/tooltip:transparent";
    data.item: "pad_y" "10";
    data.item: "transparent" "enabled";
    parts {
-      part { name: "elm.swallow.content"; type: SWALLOW; mouse_events:   0;
+      part { name: "efl.content"; type: SWALLOW; mouse_events:   0;
          scale: 1;
          description { state: "default" 0.0; }
       }

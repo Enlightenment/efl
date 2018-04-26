@@ -1,12 +1,12 @@
 /* bg widget style information
 
    [SWALLOW]
-      elm.swallow.rectangle: Used for elm_bg_color_set()
-      elm.swallow.background: Used for elm_bg_file_set()
-      elm.swallow.content: Used for elm_layout_part_content_set(bg, "overlay", content).
+      efl.rectangle: Used for elm_bg_color_set()
+      efl.background: Used for elm_bg_file_set()
+      efl.content: Used for elm_layout_part_content_set(bg, "overlay", content).
 */
 
-group { name: "efl/bg";
+group { "efl/bg";
    data.item: "version" "119";
    images.image: "bevel_dark_out.png" COMP;
    parts {
@@ -20,11 +20,11 @@ group { name: "efl/bg";
             color: 64 64 64 255;
          }
       }
-      part { name: "elm.swallow.rectangle"; type: SWALLOW;
+      part { name: "efl.rectangle"; type: SWALLOW;
          description { state: "default" 0.0;
          }
       }
-      part { name: "elm.swallow.background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -38,7 +38,7 @@ group { name: "efl/bg";
             fill.smooth: 0;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
          }
       }
