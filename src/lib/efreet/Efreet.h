@@ -149,6 +149,18 @@ EAPI int efreet_shutdown(void);
  */
 EAPI void efreet_lang_reset(void);
 
+/**
+ * @brief Disables connecting to efreet cache for this process.
+ * @since 1.21
+ */
+EAPI void efreet_cache_disable(void);
+
+/**
+ * @brief Enables connecting to efreet cache for this process.
+ * @since 1.21
+ */
+EAPI void efreet_cache_enable(void);
+
 #undef EAPI
 #define EAPI
 

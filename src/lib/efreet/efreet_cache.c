@@ -99,6 +99,8 @@ static void icon_cache_update_free(void *data, void *ev);
 
 static void *hash_array_string_add(void *hash, const char *key, void *data);
 
+static Eina_Bool disable_cache;
+
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
@@ -162,6 +164,8 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    double t;
    IPC_HEAD(Del);
    ipc = NULL;
+
+   if (disable_cache) return ECORE_CALLBACK_RENEW;
    if (reconnect_count > 10)
      {
         reconnect_timer = NULL;
@@ -188,7 +192,9 @@ _efreet_cache_reset()
    int len = 0;
 
    if (ipc) ecore_ipc_server_del(ipc);
-   ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+   ipc = NULL;
+   if (!disable_cache)
+     ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
    if (!ipc) return;
 
    s = efreet_language_get();
@@ -316,8 +322,13 @@ efreet_cache_init(void)
        pfx = eina_prefix_new
          (NULL, efreet_icon_cache_file, "EFREET", "efreet", "checkme",
           PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-       ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
-       if (!ipc) _ipc_launch();
+       if (disable_cache)
+         ipc = NULL;
+       else
+         {
+            ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+            if (!ipc) _ipc_launch();
+         }
        if (ipc)
          {
             const char *s;
@@ -337,7 +348,8 @@ efreet_cache_init(void)
          {
             Efreet_Event_Cache_Update *ev;
 
-            WRN("Can't contact efreetd daemon for desktop/icon etc. changes");
+            if (!disable_cache)
+              WRN("Can't contact efreetd daemon for desktop/icon etc. changes");
             ev = NEW(Efreet_Event_Cache_Update, 1);
             if (ev)
               {
@@ -1339,4 +1351,32 @@ hash_array_string_add(void *hash, const char *key, void *data)
         return NULL;
     eina_hash_add(hash, key, data);
     return hash;
+}
+
+EAPI void
+efreet_cache_disable(void)
+{
+   Eina_Bool prev = disable_cache;
+
+   disable_cache = EINA_TRUE;
+
+   if (_efreet_cache_log_dom < 0) return; // not yet initialized
+   if (prev == disable_cache) return; // same value
+   if (ipc)
+     {
+        ecore_ipc_server_del(ipc);
+        ipc = NULL;
+     }
+}
+
+EAPI void
+efreet_cache_enable(void)
+{
+   Eina_Bool prev = disable_cache;
+
+   disable_cache = EINA_FALSE;
+
+   if (_efreet_cache_log_dom < 0) return; // not yet initialized
+   if (prev == disable_cache) return; // same value
+   if (!ipc) _ipc_launch();
 }
