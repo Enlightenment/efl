@@ -128,51 +128,38 @@ _timeout(void *data,
 
 
 struct resolve_ctx {
-   Eina_Array *results;
+   Eina_Value *results;
    Eina_Stringshare *canonical_name;
    Eina_Stringshare *request_address;
-   Efl_Future *future;
+   Eina_Future *future;
    Eina_Error err;
 };
 
 static void
 _resolve_cleanup(struct resolve_ctx *ctx)
 {
-   Eina_Array_Iterator it;
-   unsigned int i;
-   const Efl_Net_Ip_Address *o;
-
    mark_point();
 
-   if (ctx->results)
-     {
-        EINA_ARRAY_ITER_NEXT(ctx->results, i, o, it)
-          efl_unref(o);
-        eina_array_free(ctx->results);
-        ctx->results = NULL;
-     }
+   if (ctx->results) eina_value_free(ctx->results);
+   ctx->results = NULL;
 
    ctx->err = 0;
    eina_stringshare_replace(&ctx->canonical_name, NULL);
    eina_stringshare_replace(&ctx->request_address, NULL);
 
-   if (ctx->future)
-     {
-        efl_future_cancel(ctx->future);
-        ctx->future = NULL;
-     }
+   if (ctx->future) eina_future_cancel(ctx->future);
+   ctx->future = NULL;
 }
 
 static Eina_Bool
 _resolve_found(const struct resolve_ctx *ctx, const char *string)
 {
-   Eina_Array_Iterator it;
-   unsigned int i;
    const Efl_Net_Ip_Address *o;
+   unsigned int i, len;
 
    ck_assert_ptr_ne(ctx->results, NULL);
 
-   EINA_ARRAY_ITER_NEXT(ctx->results, i, o, it)
+   EINA_VALUE_ARRAY_FOREACH(ctx->results, len, i, o)
      {
         if (strcmp(string, efl_net_ip_address_string_get(o)) == 0)
           return EINA_TRUE;
@@ -186,8 +173,7 @@ static void
 _assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx, const char *string, Eina_Bool expected, Eina_Error err)
 {
    Eina_Bool found;
-   Eina_Array_Iterator it;
-   unsigned int i;
+   unsigned int i, len;
    const Efl_Net_Ip_Address *o;
 
    if (ctx->err != err)
@@ -206,7 +192,7 @@ _assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx
    fprintf(stderr, "ERROR: did%s expect '%s' in results:\n",
            expected ? "" : " NOT", string);
 
-   EINA_ARRAY_ITER_NEXT(ctx->results, i, o, it)
+   EINA_VALUE_ARRAY_FOREACH(ctx->results, len, i, o)
      fprintf(stderr, "result %u: %s\n", i, efl_net_ip_address_string_get(o));
 
    _ck_assert_failed(file, line, "Failed",
@@ -216,44 +202,35 @@ _assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx
                      NULL);
 }
 
-static void
-_resolve_done(void *data, const Efl_Event *event)
+static Eina_Value
+_resolve_done(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
    struct resolve_ctx *ctx = data;
-   Efl_Future_Event_Success *f = event->info;
-   Efl_Net_Ip_Address_Resolve_Results *r = f->value;
-   Eina_Array_Iterator it;
-   unsigned int i;
-   Efl_Net_Ip_Address *o;
+   const Eina_Value_Array desc = { 0 };
 
-   ck_assert_ptr_eq(ctx->results, NULL);
-   ctx->results = eina_array_new(32);
+   mark_point();
 
-   ctx->canonical_name = eina_stringshare_ref(r->canonical_name);
-   ctx->request_address = eina_stringshare_ref(r->request_address);
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_error_get(&v, &ctx->err);
+        goto end;
+     }
 
-   EINA_ARRAY_ITER_NEXT(r->results, i, o, it)
-     eina_array_push(ctx->results, efl_ref(o));
+   eina_value_struct_get(&v, "canonical_name", &ctx->canonical_name);
+   eina_value_struct_get(&v, "request_address", &ctx->request_address);
+   eina_value_struct_get(&v, "results", &desc);
 
-   ctx->future = NULL;
+   ctx->results = eina_value_new(EINA_VALUE_TYPE_ARRAY);
+   eina_value_pset(ctx->results, &desc);
+
+ end:
    ecore_main_loop_quit();
 
-   mark_point();
-}
-
-static void
-_resolve_failed(void *data, const Efl_Event *event)
-{
-   struct resolve_ctx *ctx = data;
-   Efl_Future_Event_Failure *f = event->info;
-
-   mark_point();
-
-   ctx->err = f->error;
    ctx->future = NULL;
-   ecore_main_loop_quit();
 
    mark_point();
+
+   return v;
 }
 
 static void
@@ -262,7 +239,7 @@ _resolve(struct resolve_ctx *ctx, const char *address, int family, int flags)
    ctx->future = efl_net_ip_address_resolve(EFL_NET_IP_ADDRESS_CLASS,
                                             address, family, flags);
    ck_assert_ptr_ne(ctx->future, NULL);
-   efl_future_then(ctx->future, _resolve_done, _resolve_failed, NULL, ctx);
+   ctx->future = eina_future_then(ctx->future, _resolve_done, ctx);
 
    LOOP_WITH_TIMEOUT(10);
 }
