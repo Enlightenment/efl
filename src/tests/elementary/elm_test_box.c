@@ -11,7 +11,7 @@ EFL_START_TEST (elm_box_legacy_type_check)
    Evas_Object *win, *box;
    const char *type;
 
-   win = elm_win_add(NULL, "box", ELM_WIN_BASIC);
+   win = win_add(NULL, "box", ELM_WIN_BASIC);
 
    box = elm_box_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *box;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "box", ELM_WIN_BASIC);
+   win = win_add(NULL, "box", ELM_WIN_BASIC);
 
    box = elm_box_add(win);
    role = efl_access_object_role_get(box);

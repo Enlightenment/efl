@@ -58,7 +58,7 @@ EFL_START_TEST (elm_genlist_group)
    Elm_Object_Item *git;
    int i;
 
-   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
 
@@ -75,7 +75,7 @@ EFL_START_TEST (elm_genlist_legacy_type_check)
 {
    const char *type;
 
-   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
 
@@ -93,7 +93,7 @@ EFL_END_TEST
 void test_init(void)
 {
    elm_config_atspi_mode_set(EINA_TRUE);
-   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
    genlist = elm_genlist_add(win);
 }
 
@@ -270,7 +270,7 @@ EFL_START_TEST(elm_genlist_item_destroy)
 {
    Elm_Object_Item *git;
 
-   win = elm_win_add(NULL, "genlist", ELM_WIN_BASIC);
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
    efl_event_callback_add(genlist, EFL_EVENT_DESTRUCT, _gl_destroy, NULL);

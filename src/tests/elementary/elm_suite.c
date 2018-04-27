@@ -8,6 +8,7 @@
 
 static int main_pid = -1;
 static Eina_Bool did_shutdown;
+static Evas_Object *global_win;
 
 static const Efl_Test_Case etc[] = {
   { "elm_config", elm_test_config },
@@ -130,10 +131,21 @@ static const Efl_Test_Case etc_init[] = {
   { NULL, NULL }
 };
 
+Evas_Object *
+win_add()
+{
+   if (getpid() != main_pid)
+     {
+        if (global_win) return global_win;
+     }
+   return elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);;
+}
+
 int
 main(int argc, char **argv)
 {
    int failed_count;
+   Eina_Bool buffer = EINA_FALSE;
 
    if (!_efl_test_option_disp(argc, argv, etc))
      return 0;
@@ -144,13 +156,17 @@ main(int argc, char **argv)
    if (!getenv("ELM_ENGINE"))
      putenv("ELM_ENGINE=buffer");
    if (eina_streq(getenv("ELM_ENGINE"), "buffer"))
-     putenv("TESTS_GL_DISABLED=1");
+     {
+        putenv("TESTS_GL_DISABLED=1");
+        buffer = EINA_TRUE;
+     }
 
    main_pid = getpid();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Elementary_Init", etc_init, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
    failed_count += !elm_init(1, (char*[]){"exe"});
+   if (buffer) global_win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
    /* preload default theme */
    failed_count += !elm_theme_group_path_find(NULL, "elm/button/base/default");

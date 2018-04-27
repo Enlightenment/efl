@@ -11,7 +11,7 @@ EFL_START_TEST (elm_colorselector_legacy_type_check)
    Evas_Object *win, *colorselector;
    const char *type;
 
-   win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "colorselector", ELM_WIN_BASIC);
 
    colorselector = elm_colorselector_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_colorselector_palette)
    Evas_Object *win, *c;
    unsigned int palette_cnt;
 
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    c = elm_colorselector_add(win);
    /* Get the count of default palettes */
@@ -56,7 +56,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *c;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "colorselector", ELM_WIN_BASIC);
 
    c = elm_colorselector_add(win);
    role = efl_access_object_role_get(c);

@@ -12,7 +12,7 @@ EFL_START_TEST (elm_gengrid_legacy_type_check)
    Evas_Object *win, *gengrid;
    const char *type;
 
-   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
 
@@ -32,7 +32,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *gengrid;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
    role = efl_access_object_role_get(gengrid);
@@ -64,7 +64,7 @@ EFL_START_TEST(elm_atspi_children_parent)
    elm_config_atspi_mode_set(EINA_TRUE);
    static Elm_Gengrid_Item_Class itc;
 
-   Evas_Object *win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   Evas_Object *win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
    evas_object_resize(win, 100, 100);
    Evas_Object *gengrid = elm_gengrid_add(win);
    evas_object_resize(gengrid, 100, 100);

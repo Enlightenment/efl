@@ -11,7 +11,7 @@ EFL_START_TEST (elm_fileselector_legacy_type_check)
    Evas_Object *win, *fileselector;
    const char *type;
 
-   win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *fileselector;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
    role = efl_access_object_role_get(fileselector);
@@ -72,7 +72,7 @@ EFL_START_TEST (elm_fileselector_selected)
    fp = fopen(exist, "w");
    fclose(fp);
 
-   win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
    evas_object_smart_callback_add(fileselector, "directory,open", _ready_cb, &open);

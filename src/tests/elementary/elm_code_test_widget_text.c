@@ -16,7 +16,7 @@ EFL_START_TEST (elm_code_test_widget_text_tab_width)
    char *args[] = { "exe" };
    elm_init(1, args);
    code = elm_code_create();
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    elm_code_widget_tabstop_set(widget, 8);
 
@@ -44,7 +44,7 @@ EFL_START_TEST (elm_code_test_widget_text_position)
    elm_code_file_line_append(file, "a\tb", 4, NULL);
    line = elm_code_file_line_get(file, 1);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    elm_code_widget_tabstop_set(widget, 8);
 

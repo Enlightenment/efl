@@ -11,7 +11,7 @@ EFL_START_TEST (elm_plug_legacy_type_check)
    Evas_Object *win, *plug;
    const char *type;
 
-   win = elm_win_add(NULL, "plug", ELM_WIN_BASIC);
+   win = win_add(NULL, "plug", ELM_WIN_BASIC);
 
    plug = elm_plug_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *plug;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "plug", ELM_WIN_BASIC);
+   win = win_add(NULL, "plug", ELM_WIN_BASIC);
 
    plug = elm_plug_add(win);
    role = efl_access_object_role_get(plug);

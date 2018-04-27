@@ -11,7 +11,7 @@ EFL_START_TEST (elm_popup_legacy_type_check)
    Evas_Object *win, *popup;
    const char *type;
 
-   win = elm_win_add(NULL, "popup", ELM_WIN_BASIC);
+   win = win_add(NULL, "popup", ELM_WIN_BASIC);
 
    popup = elm_popup_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *popup;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "popup", ELM_WIN_BASIC);
+   win = win_add(NULL, "popup", ELM_WIN_BASIC);
 
    popup = elm_popup_add(win);
    role = efl_access_object_role_get(popup);

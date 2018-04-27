@@ -68,7 +68,7 @@ EFL_START_TEST (elm_win_legacy_type_check)
    Evas_Object *win;
    const char *type;
 
-   win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    type = elm_object_widget_type_get(win);
    ck_assert(type != NULL);
@@ -86,7 +86,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    role = efl_access_object_role_get(win);
 
@@ -100,7 +100,7 @@ EFL_START_TEST (elm_atspi_component_screen_position)
    Eina_Bool ret;
    int x, y;
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    ret = efl_access_component_screen_position_set(win, 45, 45);
    ck_assert(ret == EINA_TRUE);
@@ -116,7 +116,7 @@ EFL_END_TEST
 
 EFL_START_TEST (elm_win_autohide)
 {
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
    if (elm_win_xwindow_get(win))
      {
         elm_win_autohide_set(win, EINA_TRUE);
@@ -139,7 +139,7 @@ EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
    efl_gfx_entity_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
@@ -162,7 +162,7 @@ EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
    if (elm_win_xwindow_get(win))
      {
         elm_win_autohide_set(win, EINA_TRUE);
@@ -363,7 +363,7 @@ EFL_START_TEST (efl_ui_win_multi_touch_inputs)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
    elm_win_autohide_set(win, EINA_TRUE);
    efl_gfx_entity_visible_set(win, EINA_TRUE);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(100,  100));

@@ -11,7 +11,7 @@ EFL_START_TEST (elm_clock_legacy_type_check)
    Evas_Object *win, *clock;
    const char *type;
 
-   win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
+   win = win_add(NULL, "clock", ELM_WIN_BASIC);
 
    clock = elm_clock_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *clk;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
+   win = win_add(NULL, "clock", ELM_WIN_BASIC);
 
    clk = elm_clock_add(win);
    role = efl_access_object_role_get(clk);

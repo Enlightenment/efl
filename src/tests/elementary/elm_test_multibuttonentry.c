@@ -11,7 +11,7 @@ EFL_START_TEST (elm_multibuttonentry_legacy_type_check)
    Evas_Object *win, *multibuttonentry;
    const char *type;
 
-   win = elm_win_add(NULL, "multibuttonentry", ELM_WIN_BASIC);
+   win = win_add(NULL, "multibuttonentry", ELM_WIN_BASIC);
 
    multibuttonentry = elm_multibuttonentry_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *multibuttonentry;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "multibuttonentry", ELM_WIN_BASIC);
+   win = win_add(NULL, "multibuttonentry", ELM_WIN_BASIC);
 
    multibuttonentry = elm_multibuttonentry_add(win);
    role = efl_access_object_role_get(multibuttonentry);

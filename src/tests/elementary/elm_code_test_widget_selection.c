@@ -22,7 +22,7 @@ EFL_START_TEST (elm_code_test_widget_selection_set)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 2);
@@ -48,7 +48,7 @@ EFL_START_TEST (elm_code_test_widget_selection_normalized_get)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
@@ -91,7 +91,7 @@ EFL_START_TEST (elm_code_test_widget_selection_text_get)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    ck_assert_str_eq("", elm_code_widget_selection_text_get(widget));
@@ -125,7 +125,7 @@ EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    ck_assert_str_eq("", elm_code_widget_selection_text_get(widget));
@@ -160,7 +160,7 @@ EFL_START_TEST (elm_code_test_widget_selection_text_get_twoline)
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
@@ -190,7 +190,7 @@ EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 2, 2);
@@ -221,7 +221,7 @@ EFL_START_TEST (elm_code_test_widget_selection_text_get_multiline)
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
@@ -252,7 +252,7 @@ EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 3, 2);
@@ -283,7 +283,7 @@ EFL_START_TEST (elm_code_test_widget_selection_delete)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
@@ -320,7 +320,7 @@ EFL_START_TEST (elm_code_test_widget_selection_reverse_delete)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
@@ -359,7 +359,7 @@ EFL_START_TEST (elm_code_test_widget_selection_delete_twoline)
    elm_code_file_line_append(file, "TEXT", 4, NULL);
    elm_code_file_line_append(file, "remove", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -407,7 +407,7 @@ EFL_START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
    elm_code_file_line_append(file, "TEXT", 4, NULL);
    elm_code_file_line_append(file, "remove", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -457,7 +457,7 @@ EFL_START_TEST (elm_code_test_widget_selection_delete_multiline)
    elm_code_file_line_append(file, "delete", 6, NULL);
    elm_code_file_line_append(file, "REMOVE", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -507,7 +507,7 @@ EFL_START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    elm_code_file_line_append(file, "delete", 6, NULL);
    elm_code_file_line_append(file, "REMOVE", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -553,7 +553,7 @@ EFL_START_TEST (elm_code_test_widget_selection_select_line)
    elm_code_file_line_append(file, "line2", 5, NULL);
    elm_code_file_line_append(file, "\ttab", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_line(widget, 1);
@@ -591,7 +591,7 @@ EFL_START_TEST (elm_code_test_widget_selection_select_word)
    elm_code_file_line_append(file, "more stuff\tto test", 18, NULL);
    elm_code_file_line_append(file, "word \"symbols\" test", 19, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_word(widget, 1, 3);
@@ -631,7 +631,7 @@ EFL_START_TEST (elm_code_test_widget_selection_select_word_punctuation)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "comma, stop. question? mark!", 38, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_word(widget, 1, 3);
@@ -671,7 +671,7 @@ EFL_START_TEST (elm_code_test_widget_selection_select_word_symbols)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "colon: [array] (brackets) {braces}", 38, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_word(widget, 1, 3);

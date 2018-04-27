@@ -11,7 +11,7 @@ EFL_START_TEST (elm_check_legacy_type_check)
    Evas_Object *win, *check;
    const char *type;
 
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
 
@@ -30,7 +30,7 @@ EFL_START_TEST (elm_check_onoff_text)
 {
    Evas_Object *win, *check;
 
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
    elm_object_style_set(check, "toggle");
@@ -52,7 +52,7 @@ EFL_START_TEST (elm_check_state)
    Evas_Object *win, *check;
    Eina_Bool state = EINA_TRUE;
 
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
    elm_check_state_pointer_set(check, &state);
@@ -71,7 +71,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *check;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
    role = efl_access_object_role_get(check);

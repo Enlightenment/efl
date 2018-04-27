@@ -34,7 +34,7 @@ EFL_START_TEST (elm_code_widget_construct)
    elm_init(1, args);
    code = elm_code_create();
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    ck_assert(!!widget);
@@ -51,7 +51,7 @@ EFL_START_TEST (elm_code_widget_construct_nocode)
    char *args[] = { "exe" };
    elm_init(1, args);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, NULL);
    ck_assert(!widget);
 
@@ -70,7 +70,7 @@ EFL_START_TEST (elm_code_widget_position)
    elm_init(1, args);
    code = elm_code_create();
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    evas_object_show(widget);
    evas_object_resize(widget, 100, 100);

@@ -11,7 +11,7 @@ EFL_START_TEST (elm_slider_legacy_type_check)
    Evas_Object *win, *slider;
    const char *type;
 
-   win = elm_win_add(NULL, "slider", ELM_WIN_BASIC);
+   win = win_add(NULL, "slider", ELM_WIN_BASIC);
 
    slider = elm_slider_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *slider;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "slider", ELM_WIN_BASIC);
+   win = win_add(NULL, "slider", ELM_WIN_BASIC);
 
    slider = elm_slider_add(win);
    role = efl_access_object_role_get(slider);

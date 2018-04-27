@@ -11,7 +11,7 @@ EFL_START_TEST (elm_segment_control_legacy_type_check)
    Evas_Object *win, *segment_control;
    const char *type;
 
-   win = elm_win_add(NULL, "segment_control", ELM_WIN_BASIC);
+   win = win_add(NULL, "segment_control", ELM_WIN_BASIC);
 
    segment_control = elm_segment_control_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *segmentcontrol;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "segmentcontrol", ELM_WIN_BASIC);
+   win = win_add(NULL, "segmentcontrol", ELM_WIN_BASIC);
 
    segmentcontrol = elm_segment_control_add(win);
    role = efl_access_object_role_get(segmentcontrol);

@@ -24,7 +24,7 @@ EFL_START_TEST (elm_code_test_widget_undo_text_insert)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_text_at_cursor_insert(widget, "a");
@@ -75,7 +75,7 @@ EFL_START_TEST (elm_code_test_widget_undo_text_insert_multiple)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_text_at_cursor_insert(widget, "a");

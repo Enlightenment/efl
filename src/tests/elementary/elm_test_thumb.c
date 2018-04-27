@@ -11,7 +11,7 @@ EFL_START_TEST (elm_thumb_legacy_type_check)
    Evas_Object *win, *thumb;
    const char *type;
 
-   win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
+   win = win_add(NULL, "thumb", ELM_WIN_BASIC);
 
    thumb = elm_thumb_add(win);
 
@@ -32,7 +32,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *thumb;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
+   win = win_add(NULL, "thumb", ELM_WIN_BASIC);
 
    thumb = elm_thumb_add(win);
    role = efl_access_object_role_get(thumb);

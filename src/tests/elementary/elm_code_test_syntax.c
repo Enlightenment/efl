@@ -62,7 +62,7 @@ EFL_START_TEST (elm_code_syntax_c)
    code = elm_code_create();
    file = elm_code_file_new(code);
 
-   win = elm_win_add(NULL, "syntax", ELM_WIN_BASIC);
+   win = win_add(NULL, "syntax", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    elm_obj_code_widget_code_get(widget)->file->mime = "text/x-csrc";
    elm_code_widget_syntax_enabled_set(widget, EINA_TRUE);

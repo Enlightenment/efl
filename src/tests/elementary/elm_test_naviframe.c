@@ -11,7 +11,7 @@ EFL_START_TEST (elm_naviframe_legacy_type_check)
    Evas_Object *win, *naviframe;
    const char *type;
 
-   win = elm_win_add(NULL, "naviframe", ELM_WIN_BASIC);
+   win = win_add(NULL, "naviframe", ELM_WIN_BASIC);
 
    naviframe = elm_naviframe_add(win);
 
@@ -31,7 +31,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *naviframe;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "naviframe", ELM_WIN_BASIC);
+   win = win_add(NULL, "naviframe", ELM_WIN_BASIC);
 
    naviframe = elm_naviframe_add(win);
    role = efl_access_object_role_get(naviframe);

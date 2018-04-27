@@ -13,7 +13,7 @@ EFL_START_TEST (elm_button_legacy_type_check)
    Evas_Object *win, *button;
    const char *type;
 
-   win = elm_win_add(NULL, "button", ELM_WIN_BASIC);
+   win = win_add(NULL, "button", ELM_WIN_BASIC);
 
    button = elm_button_add(win);
 
@@ -33,7 +33,7 @@ EFL_START_TEST (elm_atspi_role_get)
    Evas_Object *win, *button;
    Efl_Access_Role role;
 
-   win = elm_win_add(NULL, "button", ELM_WIN_BASIC);
+   win = win_add(NULL, "button", ELM_WIN_BASIC);
 
    button = elm_button_add(win);
    role = efl_access_object_role_get(button);
@@ -47,7 +47,7 @@ EFL_START_TEST (elm_atspi_interfaces_check)
 {
    Evas_Object *win, *button;
 
-   win = elm_win_add(NULL, "button", ELM_WIN_BASIC);
+   win = win_add(NULL, "button", ELM_WIN_BASIC);
 
    button = elm_button_add(win);
 

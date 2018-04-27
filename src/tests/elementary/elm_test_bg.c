@@ -10,7 +10,7 @@ EFL_START_TEST (elm_bg_legacy_type_check)
    Evas_Object *win, *bg;
    const char *type;
 
-   win = elm_win_add(NULL, "bg", ELM_WIN_BASIC);
+   win = win_add(NULL, "bg", ELM_WIN_BASIC);
 
    bg = elm_bg_add(win);
 
@@ -30,7 +30,7 @@ EFL_START_TEST (elm_bg_legacy_file_set_get_check)
    Evas_Object *win, *bg;
    const char *file = NULL, *key = NULL;
 
-   win = elm_win_add(NULL, "bg", ELM_WIN_BASIC);
+   win = win_add(NULL, "bg", ELM_WIN_BASIC);
 
    bg = elm_bg_add(win);
 

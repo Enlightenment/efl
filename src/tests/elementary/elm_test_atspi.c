@@ -14,7 +14,7 @@ static Evas_Object *g_win, *g_btn, *g_bg;
 
 void generate_app(void)
 {
-   g_win = elm_win_add(NULL, "Title", ELM_WIN_BASIC);
+   g_win = win_add(NULL, "Title", ELM_WIN_BASIC);
    evas_object_geometry_set(g_win, 100, 100, 100, 100);
 
    g_bg = elm_bg_add(g_win);
@@ -204,14 +204,14 @@ EFL_START_TEST (test_efl_access_children_and_parent)
 
    //bg_child_list = efl_access_object_access_children_get(eina_list_nth(child_list, 0));
 
-   ck_assert(eina_list_count(child_list) == 1);
+   ck_assert_int_eq(eina_list_count(child_list), 1);
 
    Eo *win = NULL;
 
    win = eina_list_nth(child_list, 0);
 
-   ck_assert(win != NULL);
-   ck_assert(win == g_win);
+   ck_assert_ptr_ne(win, NULL);
+   ck_assert_ptr_eq(win, g_win);
 
    efl_del(root);
 }
