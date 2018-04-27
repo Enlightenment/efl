@@ -162,6 +162,7 @@ main(int argc, char **argv)
      }
 
    main_pid = getpid();
+   efreet_cache_disable();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Elementary_Init", etc_init, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
