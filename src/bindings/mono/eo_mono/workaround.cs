@@ -492,33 +492,6 @@ public delegate void Change_Cb(IntPtr data, IntPtr obj, IntPtr part);
 
 } // namespace edje
 
-[StructLayout(LayoutKind.Sequential)]
-public struct Elm_Code
-{
-    IntPtr file;
-    IntPtr widgets;
-    IntPtr parsers;
-
-    // Below is inside _Elm_Code_Config
-    [MarshalAsAttribute(UnmanagedType.U1)]bool config;
-}
-
-[StructLayout(LayoutKind.Sequential)]
-public struct Elm_Code_Line
-{
-    IntPtr file;
-    IntPtr content;
-    uint length;
-    uint number;
-    IntPtr modified;
-
-    Elm_Code_Status_Type status;
-    IntPtr tokens;
-
-    IntPtr data;
-    IntPtr status_text;
-}
-
 public enum Elm_Code_Status_Type {
    ELM_CODE_STATUS_TYPE_DEFAULT = 0,
    ELM_CODE_STATUS_TYPE_CURRENT,

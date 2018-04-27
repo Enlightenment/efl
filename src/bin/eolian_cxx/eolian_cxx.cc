@@ -247,7 +247,7 @@ types_generate(std::string const& fname, options_type const& opts,
         const Eolian_Function *func = eolian_typedecl_function_pointer_get(tp);
         if (!func) return false;
 
-        function_def def(func, EOLIAN_FUNCTION_POINTER, opts.unit);
+        function_def def(func, EOLIAN_FUNCTION_POINTER, tp, opts.unit);
         def.c_name = eolian_typedecl_name_get(tp);
         std::replace(def.c_name.begin(), def.c_name.end(), '.', '_');
         functions.push_back(std::move(def));

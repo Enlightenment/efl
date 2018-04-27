@@ -17,10 +17,8 @@ struct enum_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::enum_def const& enum_, Context const& context) const
   {
-     std::vector<std::string> cpp_namespaces = name_helpers::escape_namespace(attributes::cpp_namespaces(enum_.namespaces));
-
-     auto open_namespace = *("namespace " << string << " { ") << "\n";
-     if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;
+     if(!name_helpers::open_namespaces(sink, enum_.namespaces, context))
+       return false;
 
      if(!as_generator(documentation).generate(sink, enum_, context))
        return false;
@@ -49,9 +47,9 @@ struct enum_definition_generator
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
-     auto close_namespace = *(lit("} ")) << "\n";
-     if(!as_generator(close_namespace).generate(sink, cpp_namespaces, context)) return false;
-     
+     if(!name_helpers::close_namespaces(sink, enum_.namespaces, context))
+       return false;
+
      return true;
   }
 };

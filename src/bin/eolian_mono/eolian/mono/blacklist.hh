@@ -65,12 +65,12 @@ inline bool is_struct_blacklisted(std::string const& full_name)
 
 inline bool is_struct_blacklisted(attributes::struct_def const& struct_)
 {
-   return is_struct_blacklisted(name_helpers::struct_full_name(struct_));
+   return is_struct_blacklisted(name_helpers::struct_full_eolian_name(struct_));
 }
 
 inline bool is_struct_blacklisted(attributes::regular_type_def const& struct_)
 {
-   return is_struct_blacklisted(name_helpers::type_full_name(struct_));
+   return is_struct_blacklisted(name_helpers::type_full_eolian_name(struct_));
 }
 
 }

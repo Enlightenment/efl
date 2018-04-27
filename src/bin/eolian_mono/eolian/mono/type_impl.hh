@@ -151,20 +151,7 @@ struct visitor_generate
               { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
               }} // FIXME add proper support for any_value_ptr
         };
-      // if(regular.base_type == "void_ptr")
-      //   {
-      //     if(regular.base_qualifier & qualifier_info::is_ref)
-      //       throw std::runtime_error("ref of void_ptr is invalid");
-      //     return as_generator
-      //        (
-      //         lit("void") << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
-      //         << "*"
-      //         << (is_out ? "&" : "")
-      //        )
-      //        .generate(sink, attributes::unused, *context);
-      //   }
-      // else
-        std::string full_type_name = name_helpers::type_full_name(regular);
+        std::string full_type_name = name_helpers::type_full_eolian_name(regular);
         if(eina::optional<bool> b = call_match
          (match_table
           , [&] (match const& m)
@@ -245,40 +232,12 @@ struct visitor_generate
       //   }
       else
         {
-          // as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
-          //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
-          if(as_generator
-             (
-              *(lower_case[string] << ".")
-              << string
-              // << (regular.base_qualifier & qualifier_info::is_const
-              //     || (regular.base_qualifier & qualifier_info::is_ref
-              //         && !is_return && !is_out)
-              //     ? /*" const"*/ "" : "")
-              /*<< (regular.base_qualifier & qualifier_info::is_ref? "&" : "")*/
-             )
-             .generate(sink, std::make_tuple(name_helpers::escape_namespace(regular.namespaces), regular.base_type), *context))
-            return true;
-          else
-            return false;
+          return as_generator(string).generate(sink, name_helpers::type_full_managed_name(regular), *context);
         }
    }
    bool operator()(attributes::klass_name klass) const
    {
-     // as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
-     //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context);
-     // if(klass.namespaces.size() == 1
-     //    && klass.namespaces[0] == "Eina"
-     //    && klass.eolian_name == "Error")
-     // return
-     //   as_generator(" System.IntPtr")
-     //   .generate(sink, attributes::unused, *context);
-     return
-       as_generator(*(lower_case[string] << ".") << string)
-       .generate(sink, std::make_tuple(name_helpers::escape_namespace(klass.namespaces), klass.eolian_name), *context)
-       // && (!(klass.base_qualifier & qualifier_info::is_ref)
-       //     || as_generator("&").generate(sink, attributes::unused, *context))
-       ;
+     return as_generator(string).generate(sink, name_helpers::klass_full_interface_name(klass), *context);
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {

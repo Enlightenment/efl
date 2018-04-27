@@ -48,7 +48,7 @@ inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
      return false;
 
    if (regular->is_enum()
-       || (regular->is_struct() && name_helpers::type_full_name(*regular) != "Eina.Binbuf")
+       || (regular->is_struct() && name_helpers::type_full_eolian_name(*regular) != "Eina.Binbuf")
       )
      return true;
 

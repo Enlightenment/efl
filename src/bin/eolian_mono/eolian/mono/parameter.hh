@@ -413,11 +413,7 @@ struct type_name_visitor
 
    std::string operator()(grammar::attributes::regular_type_def const &type) const
    {
-      std::stringstream type_name;
-      for (auto&& i : escape_namespace(type.namespaces))
-        type_name << i << ".";
-      type_name << type.base_type;
-      return type_name.str();
+      return name_helpers::type_full_eolian_name(type);
    }
 
    template<typename T>
@@ -1077,6 +1073,7 @@ struct native_convert_out_assign_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
+      EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "native_convert_out_assign_generator: " << param.param_name << std::endl;
       if (param.direction == attributes::parameter_direction::in)
         return true;
 
@@ -1095,15 +1092,25 @@ struct native_convert_out_assign_generator
         }
       else if (param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
+           if (klass == nullptr)
+             {
+                EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Null class found when trying to assign out stringshare from native wrapper." << std::endl;
+                return false;
+             }
            return as_generator(
-                string << "= efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, " << string << ");\n"
-              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), klass->cxx_name, out_variable_name(param.param_name)), context);
+                string << "= efl.eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, " << string << ");\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
         {
+           if (klass == nullptr)
+             {
+                EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Null class found when trying to assign out string from native wrapper." << std::endl;
+                return false;
+             }
            return as_generator(
-                string << "= efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, " << string << ");\n"
-              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), klass->cxx_name, out_variable_name(param.param_name)), context);
+                string << "= efl.eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, " << string << ");\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
@@ -1230,9 +1237,14 @@ struct native_convert_return_generator
        {
           if(!ret_type.has_own)
             {
+               if (klass == nullptr)
+                 {
+                    EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Null class found when trying to return string from native wrapper." << std::endl;
+                    return false;
+                 }
                return as_generator(
-                    "return efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, _ret_var);\n"
-                 ).generate(sink, klass->cxx_name, context);
+                    "return efl.eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, _ret_var);\n"
+                 ).generate(sink, attributes::unused, context);
             }
           else
             {
@@ -1243,9 +1255,14 @@ struct native_convert_return_generator
      else if (ret_type.c_type == "Eina_Stringshare *") { // Correct check for string?
          if (!ret_type.has_own)
            {
+               if (klass == nullptr)
+                 {
+                    EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Null class found when trying to return stringshare from native wrapper." << std::endl;
+                    return false;
+                 }
               return as_generator(
-                   "return efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, _ret_var);\n"
-                ).generate(sink, klass->cxx_name, context);
+                   "return efl.eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, _ret_var);\n"
+                ).generate(sink, attributes::unused, context);
            }
          else
            {
@@ -1375,7 +1392,7 @@ struct native_convert_function_pointer_generator
            EINA_LOG_ERR("Failed to get function pointer info for c type [%s]", param.type.c_type.c_str());
            return false;
         }
-      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER, param.unit);
+      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER, tpd, param.unit);
 
       std::string param_name = escape_keyword(param.param_name);
       // Allocate GCHandle in "param_name"_handle for param;

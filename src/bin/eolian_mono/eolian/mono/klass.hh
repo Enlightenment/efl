@@ -30,15 +30,15 @@
 namespace eolian_mono {
 
 template <typename OutputIterator, typename Context>
-static bool generate_static_cast_method(OutputIterator sink, const std::string &class_name, Context const &context)
+static bool generate_static_cast_method(OutputIterator sink, grammar::attributes::klass_def const& cls, Context const &context)
 {
    return as_generator(
        scope_tab << "///<summary>Casts obj into an instance of this type.</summary>\n"
-       << scope_tab << "public static " << class_name << " static_cast(efl.Object obj)\n"
+       << scope_tab << "public static " << name_helpers::klass_interface_name(cls) << " static_cast(efl.Object obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "if (obj == null)\n"
        << scope_tab << scope_tab << scope_tab << "throw new System.ArgumentNullException(\"obj\");\n"
-       << scope_tab << scope_tab << "return new " << class_name << "Concrete(obj.raw_handle);\n"
+       << scope_tab << scope_tab << "return new " << name_helpers::klass_concrete_name(cls) << "(obj.raw_handle);\n"
        << scope_tab << "}\n"
        ).generate(sink, nullptr, context);
 }
@@ -91,6 +91,7 @@ struct klass
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
+     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "klass_generator: " << cls.eolian_name << std::endl;
      std::string suffix, class_type;
      switch(cls.type)
        {
@@ -109,9 +110,9 @@ struct klass
          break;
        }
 
-     std::vector<std::string> namespaces = name_helpers::escape_namespace(cls.namespaces);
-     auto open_namespace = *("namespace " << string << " { ") << "\n";
-     if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(context))) return false;
+     if (!name_helpers::open_namespaces(sink, cls.namespaces, context))
+       return false;
+
      auto methods = cls.get_all_methods();
 
      // Interface class
@@ -130,25 +131,25 @@ struct klass
      for(auto first = std::begin(cls.immediate_inherits)
            , last = std::end(cls.immediate_inherits); first != last; ++first)
        {
-         if(!as_generator("\n" << scope_tab << *(lower_case[string] << ".") << string << " ,")
-            .generate(sink, std::make_tuple(name_helpers::escape_namespace(first->namespaces), first->eolian_name), iface_cxt))
+         if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
            return false;
-         // if(std::next(first) != last)
-         //   *sink++ = ',';
        }
-     // if(cls.immediate_inherits.empty())
-       if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt)) return false;
-     if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt)) return false;
-     
-     if(!as_generator(*(scope_tab << function_declaration))
-        .generate(sink, cls.functions, iface_cxt)) return false;
 
-     if (!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
+     if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
+       return false;
+
+     if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
+       return false;
+
+     if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
+       return false;
+
+     if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
        return false;
 
      for (auto &&p : cls.parts)
        if (!as_generator(
-              name_helpers::klass_name_to_csharp(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
+              name_helpers::klass_full_interface_name(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
             ).generate(sink, attributes::unused, iface_cxt))
          return false;
 
@@ -156,15 +157,16 @@ struct klass
      if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
 
-     auto class_get_name = *(lower_case[string] << "_") << lower_case[string] << "_class_get";
      // Concrete class
      // if(class_type == "class")
        {
          auto concrete_cxt = context_add_tag(class_context{class_context::concrete}, context);
+         auto concrete_name = name_helpers::klass_concrete_name(cls);
+         auto interface_name = name_helpers::klass_interface_name(cls);
          if(!as_generator
             (
              documentation
-             << "sealed public class " << string << "Concrete : " << string << "\n{\n"
+             << "sealed public class " << concrete_name << " : " << interface_name << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
@@ -175,18 +177,18 @@ struct klass
              << scope_tab << scope_tab << "get { return efl.eo.Globals.efl_class_get(handle); }\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
+             << scope_tab << "public delegate void ConstructingMethod(" << interface_name << " obj);\n"
              << scope_tab << "///<summary>Returns the pointer the unerlying Eo class object. Used internally on class methods.</summary>\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] public static extern System.IntPtr\n"
-             << scope_tab << scope_tab << class_get_name << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << (class_type == "class" ? "" : "/*")
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << string << "Concrete(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << concrete_name << "(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "System.IntPtr klass = " << class_get_name << "();\n"
+             << scope_tab << scope_tab << "System.IntPtr klass = " << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "if(parent != null)\n"
              << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
@@ -200,13 +202,13 @@ struct klass
              << scope_tab << "}\n"
              << (class_type == "class" ? "" : "*/")
              << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
-             << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
+             << scope_tab << "public " << concrete_name << "(System.IntPtr raw)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "handle = raw;\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Destructor.</summary>\n"
-             << scope_tab << "~" << string << "Concrete()\n"
+             << scope_tab << "~" << concrete_name << "()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
@@ -225,15 +227,10 @@ struct klass
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
             )
-            .generate(sink
-              , std::make_tuple( cls,
-                cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
-                , cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
-                , cls.cxx_name)
-              , concrete_cxt))
+            .generate(sink, cls, concrete_cxt))
            return false;
 
-         if (!generate_static_cast_method(sink, cls.cxx_name, concrete_cxt))
+         if (!generate_static_cast_method(sink, cls, concrete_cxt))
            return false;
 
          if (!generate_equals_method(sink, concrete_cxt))
@@ -266,10 +263,15 @@ struct klass
         bool cls_has_string_return = has_string_return(cls);
         bool cls_has_stringshare_return = has_stringshare_return(cls);
 
+        auto interface_name = name_helpers::klass_interface_name(cls);
+        auto inherit_name = name_helpers::klass_inherit_name(cls);
+        auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
+
+
          if(!as_generator
             (
              documentation
-             << "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
+             << "public " << class_type << " " << inherit_name << " : " << interface_name << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "internal static System.IntPtr klass = System.IntPtr.Zero;\n"
              << scope_tab << "private static readonly object klassAllocLock = new object();\n"
@@ -284,20 +286,19 @@ struct klass
              << scope_tab << scope_tab << "get { return klass; }\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
+             << scope_tab << "public delegate void ConstructingMethod(" << interface_name << " obj);\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(inherit_cxt).actual_library_name(cls.filename)
              << ")] private static extern System.IntPtr\n"
-             << scope_tab << scope_tab << class_get_name << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << string << "Inherit(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer), \"" << string << "\", " << class_get_name << "());\n"
-             //<< scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(null/*new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer)*/, " << class_get_name << "());\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << native_inherit_name << ".class_initializer), \"" << cls.eolian_name << "\", " << name_helpers::klass_get_name(cls) << "());\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "}\n"
@@ -311,7 +312,7 @@ struct klass
              << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Destructor.</summary>\n"
-             << scope_tab << "~" << string << "Inherit()\n"
+             << scope_tab << "~" << inherit_name << "()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
@@ -332,15 +333,7 @@ struct klass
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
             )
-            .generate(sink
-              , std::make_tuple(
-                cls, cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
-                , cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
-                , cls.cxx_name)
-              , inherit_cxt))
-           return false;
-
-         if (!generate_static_cast_method(sink, cls.cxx_name, inherit_cxt))
+            .generate(sink, cls, inherit_cxt))
            return false;
 
          if (!generate_equals_method(sink, inherit_cxt))
@@ -375,14 +368,15 @@ struct klass
      if(class_type == "class")
        {
          auto inative_cxt = context_add_tag(class_context{class_context::inherit_native}, context);
+         auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          if(!as_generator
             (
-             "internal " << class_type << " " << string << "NativeInherit {\n"
+             "internal " << class_type << " " << native_inherit_name << " {\n"
              << scope_tab << "public static byte class_initializer(IntPtr klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Efl_Op_Description[] descs = new Efl_Op_Description[" << grammar::int_ << "];\n"
             )
-            .generate(sink, std::make_tuple(cls.cxx_name, function_count), inative_cxt))
+            .generate(sink, function_count, inative_cxt))
            return false;
 
          // Native wrapper registration
@@ -404,22 +398,22 @@ struct klass
              << scope_tab << scope_tab << "Marshal.StructureToPtr(ops, ops_ptr, false);\n"
              << scope_tab << scope_tab << "efl.eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);\n"
             ).generate(sink, attributes::unused, inative_cxt)) return false;
-         
-         
+
+
          if(!as_generator(scope_tab << scope_tab << "return 1;\n"
                           << scope_tab << "}\n")
             .generate(sink, attributes::unused, inative_cxt)) return false;
-     
+         //
          // Native method definitions
          if(!as_generator(*(native_function_definition(cls)))
             .generate(sink, methods, inative_cxt)) return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }
-     
-     auto close_namespace = *(lit("} ")) << "\n";
-     if(!as_generator(close_namespace).generate(sink, namespaces, context)) return false;
-     
+
+     if(!name_helpers::close_namespaces(sink, cls.namespaces, context))
+       return false;
+
      return true;
    }
 

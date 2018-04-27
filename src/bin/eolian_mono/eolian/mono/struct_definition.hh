@@ -31,7 +31,7 @@ struct struct_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-
+     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "struct_definition_generator: " << struct_.cxx_name << std::endl;
      if(!as_generator(documentation).generate(sink, struct_, context))
        return false;
      if(!as_generator
@@ -267,13 +267,15 @@ struct to_external_field_convert_generator
 
       if (klass)
         {
+           auto interface_name = name_helpers::klass_full_interface_name(*klass);
+           auto concrete_name = name_helpers::klass_full_concrete_name(*klass);
            if (!as_generator(
                  "\n"
                  << scope_tab << scope_tab << "_external_struct." << string
-                 << " = (" << type << ") System.Activator.CreateInstance(typeof("
-                 << type << "Concrete), new System.Object[] {_internal_struct." << string << "});\n"
+                 << " = (" << interface_name << ") System.Activator.CreateInstance(typeof("
+                 << concrete_name << "), new System.Object[] {_internal_struct." << string << "});\n"
                  << scope_tab << scope_tab << "efl.eo.Globals.efl_ref(_internal_struct." << string << ");\n\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field.type, field_name, field_name), context))
+               .generate(sink, std::make_tuple(field_name, field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
@@ -443,10 +445,8 @@ struct struct_entities_generator
      if (blacklist::is_struct_blacklisted(struct_))
        return true;
 
-     std::vector<std::string> cpp_namespaces = name_helpers::escape_namespace(attributes::cpp_namespaces(struct_.namespaces));
 
-     auto open_namespace = *("namespace " << string << " { ") << "\n";
-     if (!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context)))
+     if (!name_helpers::open_namespaces(sink, struct_.namespaces, context))
        return false;
 
      if (!struct_definition.generate(sink, struct_, context))
@@ -458,10 +458,8 @@ struct struct_entities_generator
      if (!struct_binding_conversion_functions.generate(sink, struct_, context))
        return false;
 
-     auto close_namespace = *(lit("} ")) << "\n";
-     if(!as_generator(close_namespace).generate(sink, cpp_namespaces, context)) return false;
+     return name_helpers::close_namespaces(sink, struct_.namespaces, context);
 
-     return true;
   }
 } const struct_entities {};
 

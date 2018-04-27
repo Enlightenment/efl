@@ -530,12 +530,13 @@ enum class function_type
 
 struct function_def
 {
-  klass_name klass;
+  klass_name klass; // Klass information for function_def as method
   type_def return_type;
   std::string name;
   std::vector<parameter_def> parameters;
   std::string c_name;
   std::string filename;
+  std::vector<std::string> namespaces; // Namespaces for top-level function pointers
   documentation_def documentation;
   documentation_def return_documentation;
   documentation_def property_documentation;
@@ -553,6 +554,7 @@ struct function_def
       && lhs.parameters == rhs.parameters
       && lhs.c_name == rhs.c_name
       && lhs.filename == rhs.filename
+      && lhs.namespaces == rhs.namespaces
       && lhs.documentation == rhs.documentation
       && lhs.return_documentation == rhs.return_documentation
       && lhs.property_documentation == rhs.property_documentation
@@ -571,6 +573,7 @@ struct function_def
                std::vector<parameter_def> const& _parameters,
                std::string const& _c_name,
                std::string _filename,
+               std::vector<std::string> const& _namespaces,
                documentation_def _documentation,
                documentation_def _return_documentation,
                documentation_def _property_documentation,
@@ -580,6 +583,7 @@ struct function_def
                Eolian_Unit const* unit = nullptr)
     : klass(_klass), return_type(_return_type), name(_name),
       parameters(_parameters), c_name(_c_name), filename(_filename),
+      namespaces(_namespaces),
       documentation(_documentation),
       return_documentation(_return_documentation),
       property_documentation(_property_documentation),
@@ -587,7 +591,7 @@ struct function_def
       is_beta(_is_beta), is_protected(_is_protected),
       unit(unit) {}
 
-  function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Unit const* unit)
+  function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Typedecl const* tp, Eolian_Unit const* unit)
     : return_type(void_), unit(unit)
   {
     Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
@@ -648,6 +652,14 @@ struct function_def
      else
        {
           filename = "";
+
+          if (tp)
+            {
+               for (efl::eina::iterator<const char> ns_iterator(::eolian_typedecl_namespaces_get(tp)), ns_last;
+                    ns_iterator != ns_last;
+                    ns_iterator++)
+                 namespaces.push_back(&*ns_iterator);
+            }
        }
      is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
@@ -967,19 +979,19 @@ struct klass_def
              try {
                 if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
                    && ::eolian_function_scope_get(function, EOLIAN_PROP_GET) != EOLIAN_SCOPE_PRIVATE)
-                  functions.push_back({function, EOLIAN_PROP_GET, unit});
+                  functions.push_back({function, EOLIAN_PROP_GET, NULL,  unit});
              } catch(std::exception const&) {}
              try {
                 if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
                    && ::eolian_function_scope_get(function, EOLIAN_PROP_SET) != EOLIAN_SCOPE_PRIVATE)
-                  functions.push_back({function, EOLIAN_PROP_SET, unit});
+                  functions.push_back({function, EOLIAN_PROP_SET, NULL, unit});
              } catch(std::exception const&) {}
            }
          else
            try {
              if(! ::eolian_function_is_legacy_only(function, func_type)
                 && ::eolian_function_scope_get(function, func_type) != EOLIAN_SCOPE_PRIVATE)
-               functions.push_back({function, func_type, unit});
+               functions.push_back({function, func_type, NULL, unit});
            } catch(std::exception const&) {}
        }
      for(efl::eina::iterator<Eolian_Function const> eolian_functions ( ::eolian_class_functions_get(klass, EOLIAN_METHOD))
@@ -990,7 +1002,7 @@ struct klass_def
              Eolian_Function_Type func_type = eolian_function_type_get(function);
              if(! ::eolian_function_is_legacy_only(function, EOLIAN_METHOD)
                 && ::eolian_function_scope_get(function, func_type) != EOLIAN_SCOPE_PRIVATE)
-               functions.push_back({function, EOLIAN_METHOD, unit});
+               functions.push_back({function, EOLIAN_METHOD, NULL, unit});
          } catch(std::exception const&) {}
        }
      for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(klass))

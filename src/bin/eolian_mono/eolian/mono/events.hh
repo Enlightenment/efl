@@ -16,7 +16,6 @@ struct unpack_event_args_visitor
 {
    mutable OutputIterator sink;
    Context const* context;
-   std::string arg_type;
    attributes::type_def const& type;
 
    typedef unpack_event_args_visitor<OutputIterator, Context> visitor_type;
@@ -24,6 +23,7 @@ struct unpack_event_args_visitor
    bool operator()(grammar::attributes::regular_type_def const& regular) const
    {
       std::string const& arg = "evt.Info";
+      std::string arg_type = name_helpers::type_full_managed_name(regular);
 
       // Structs are usually passed by pointer to events, like having a ptr<> modifier
       if (type.is_ptr || regular.is_struct())
@@ -45,7 +45,7 @@ struct unpack_event_args_visitor
            , {"Eina.Error", [&arg] { return "(eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(eina.Error))"; }}
         };
 
-      std::string full_type_name = name_helpers::type_full_name(regular);
+      std::string full_type_name = name_helpers::type_full_eolian_name(regular);
       auto filter_func = [&regular, &full_type_name] (match const& m)
         {
            return (!m.name || *m.name == regular.base_type || *m.name == full_type_name);
@@ -61,9 +61,9 @@ struct unpack_event_args_visitor
       else
         return as_generator("default(" + arg_type + ")").generate(sink, attributes::unused, *context);
    }
-   bool operator()(grammar::attributes::klass_name const&) const
+   bool operator()(grammar::attributes::klass_name const& cls) const
    {
-      return as_generator("new " + arg_type + "Concrete(evt.Info)").generate(sink, attributes::unused, *context);
+      return as_generator("new " + name_helpers::klass_full_concrete_name(cls) + "(evt.Info)").generate(sink, attributes::unused, *context);
    }
    bool operator()(attributes::complex_type_def const&) const
    {
@@ -160,9 +160,9 @@ struct event_definition_generator
 
       std::string klass_name;
       if (is_inherited_event)
-        klass_name = name_helpers::klass_get_full_name(klass);
+        klass_name = name_helpers::klass_full_interface_name(klass);
       else
-        klass_name = klass.eolian_name;
+        klass_name = name_helpers::klass_interface_name(klass);
 
 
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
@@ -177,19 +177,18 @@ struct event_definition_generator
         {
            wrapper_args_type = name_helpers::managed_event_args_name(evt);
            wrapper_args_template = "<" + wrapper_args_type + ">";
-           std::string arg_type = wrapper_args_type + " args = new " + wrapper_args_type + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
-           std::string actual_arg_type = (*etype).original_type.visit(name_helpers::get_csharp_type_visitor{});
+           std::string arg_initializer = wrapper_args_type + " args = new " + wrapper_args_type + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
 
-           arg_type += "      args.arg = ";
+           arg_initializer += "      args.arg = ";
 
-           auto arg_type_sink = std::back_inserter(arg_type);
+           auto arg_initializer_sink = std::back_inserter(arg_initializer);
 
-           if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_type_sink), Context>{arg_type_sink, &context, actual_arg_type, *etype}))
+           if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_initializer_sink), Context>{arg_initializer_sink, &context, *etype}))
              return false;
 
-           arg_type += ";\n";
+           arg_initializer += ";\n";
 
-           event_args = arg_type;
+           event_args = arg_initializer;
         }
 
       // Wrapper event declaration

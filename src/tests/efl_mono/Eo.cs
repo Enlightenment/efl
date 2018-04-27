@@ -186,7 +186,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        test.Testing parent_from_cast = test.TestingInherit.static_cast(child.GetParent());
+        test.Testing parent_from_cast = test.TestingConcrete.static_cast(child.GetParent());
         Test.AssertEquals(parent, parent_from_cast);
     }
 }

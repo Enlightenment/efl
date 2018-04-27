@@ -160,8 +160,8 @@ struct marshall_type_visitor_generate
           {
              if ((is_out || is_return) && is_ptr)
                  return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
-             return as_generator(*(lower_case[string] << ".") << string << "_StructInternal")
-                    .generate(sink, std::make_tuple(name_helpers::escape_namespace(regular.namespaces), regular.base_type), *context);
+             return as_generator(string << "_StructInternal")
+                    .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
         else if (eina::optional<bool> b = call_match
          (match_table

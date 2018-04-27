@@ -13,36 +13,30 @@
 namespace eolian_mono {
 
 // Blacklist structs that require some kind of manual binding.
-static bool is_function_ptr_blacklisted(attributes::function_def const& func, std::vector<std::string> const &namesp)
+static bool is_function_ptr_blacklisted(attributes::function_def const& func)
 {
-  std::stringstream full_name;
-
-  for (auto&& i : namesp)
-    full_name << i << ".";
-  full_name << func.name;
-
-  std::string name = full_name.str();
+  std::string name = name_helpers::function_ptr_full_eolian_name(func);
 
   return false;
 }
 
 struct function_pointer {
    template <typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::function_def const& f, std::vector<std::string> const &namesp, Context const& context) const
+   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
    {
+      EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_pointer_generator: " << f.name << std::endl;
       // FIXME export Typedecl in eolian_cxx API
-      std::vector<std::string> namespaces =  name_helpers::escape_namespace(namesp);
       auto funcptr_ctx = context_add_tag(class_context{class_context::function_ptr}, context);
 
       std::string return_type;
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
         return false;
 
-      if (is_function_ptr_blacklisted(f, namesp))
+      if (is_function_ptr_blacklisted(f))
         return true;
 
-      auto open_namespace = *("namespace " << string << " {") << "\n";
-      if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(funcptr_ctx))) return false;
+      if (!name_helpers::open_namespaces(sink, f.namespaces, funcptr_ctx))
+        return false;
 
       // C# visible delegate
       if (!as_generator(documentation
@@ -103,8 +97,8 @@ struct function_pointer {
                   ).generate(sink, std::make_tuple(f.return_type, f.parameters, f, f.parameters, f, f.return_type, f.return_type, f.parameters, f_name, f_name, f, f.parameters, f), funcptr_ctx))
           return false;
 
-      auto close_namespace = *(lit("} ")) << "\n";
-      if(!as_generator(close_namespace).generate(sink, namespaces, funcptr_ctx)) return false;
+      if (!name_helpers::close_namespaces(sink, f.namespaces, funcptr_ctx))
+        return false;
 
       return true;
    }
