@@ -3743,7 +3743,11 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
      {
         //Create new drop
         dropable = calloc(1, sizeof(Sel_Manager_Dropable));
-        if (!dropable) return EINA_FALSE;
+        if (!dropable)
+          {
+             free(df);
+             return EINA_FALSE;
+          }
         pd->drop_list = eina_list_append(pd->drop_list, dropable);
         if (!pd->drop_list)
           {
