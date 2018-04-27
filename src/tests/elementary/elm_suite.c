@@ -162,6 +162,7 @@ main(int argc, char **argv)
      }
 
    main_pid = getpid();
+   ecore_app_no_system_modules();
    efreet_cache_disable();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
