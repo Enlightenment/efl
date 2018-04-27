@@ -68,15 +68,12 @@ bin_eolian_mono_eolian_mono_SOURCES = \
 	bin/eolian_mono/eolian/mono/type.hh \
 	bin/eolian_mono/eolian/mono/marshall_annotation.hh \
 	bin/eolian_mono/eolian/mono/function_pointer.hh \
-	bin/eolian_mono/eolian/mono/namespace.hh \
-	bin/eolian_mono/eolian/mono/function_blacklist.hh \
 	bin/eolian_mono/eolian/mono/function_definition.hh \
 	bin/eolian_mono/eolian/mono/name_helpers.hh \
 	bin/eolian_mono/eolian/mono/function_declaration.hh \
 	bin/eolian_mono/eolian/mono/helpers.hh \
 	bin/eolian_mono/eolian/mono/function_helpers.hh \
 	bin/eolian_mono/eolian/mono/marshall_type_impl.hh \
-	bin/eolian_mono/eolian/mono/keyword.hh \
 	bin/eolian_mono/eolian/mono/function_registration.hh \
 	bin/eolian_mono/eolian/mono/enum_definition.hh \
 	bin/eolian_mono/eolian/mono/struct_definition.hh \
