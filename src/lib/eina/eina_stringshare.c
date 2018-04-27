@@ -679,6 +679,8 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
 
    if (size < 1)
      return "";
+   if (size > len)
+     size = len;
 
    return eina_stringshare_add_length(tmp, size);
 }
