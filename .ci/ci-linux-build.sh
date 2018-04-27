@@ -27,6 +27,8 @@ MISC_DISABLED_COPTS="--disable-neon --disable-libeeze --disable-systemd --disabl
 --disable-pulseaudio --disable-avahi --disable-xinput2 --disable-xim --disable-scim \
 --disable-ibus --disable-physics --disable-quick-launch --disable-elua"
 
+RELEASE_READY_COPTS="--with-profile=release"
+
 if [ "$CI_BUILD_TYPE" = "" ]; then
   # Normal build test of all targets
   ./autogen.sh $DEFAULT_COPTS
@@ -52,4 +54,10 @@ if [ "$CI_BUILD_TYPE" = "misc-disabled" ]; then
   ./autogen.sh $MISC_DISABLED_COPTS
   make -j $PARALLEL_JOBS
   make -j $PARALLEL_JOBS examples
+fi
+
+if [ "$CI_BUILD_TYPE" = "release-ready" ]; then
+  ./autogen.sh $RELEASE_READY_COPTS
+  make -j $PARALLEL_JOBS
+  make -j $PARALLEL_JOBS distcheck
 fi
