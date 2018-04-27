@@ -2225,6 +2225,16 @@ _eina_value_type_stringshare_pset(const Eina_Value_Type *type EINA_UNUSED, void 
 }
 
 static Eina_Bool
+_eina_value_type_stringshare_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   const Eina_Stringshare * const *src = mem;
+   Eina_Stringshare **dst = ptr;
+
+   *dst = eina_stringshare_ref(*src);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _eina_value_type_string_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
 {
    char **tmem = mem;
@@ -5197,7 +5207,7 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
     NULL, /* no convert from */
     _eina_value_type_stringshare_vset,
     _eina_value_type_stringshare_pset,
-    _eina_value_type_string_common_pget
+    _eina_value_type_stringshare_pget
   },
   {
     EINA_VALUE_TYPE_VERSION,
