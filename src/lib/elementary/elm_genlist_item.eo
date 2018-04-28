@@ -17,6 +17,12 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
 
                        If filter is set on genlist, this returns the filtered
                        item placed before $item in the list.
+
+                       Note that parent / child relationship is not taken into
+                       account, the previous visual item is always returned,
+                       could it be a parent, a child or a group item.
+
+                       NULL is returned if called on the first item.
                      ]]
                 }
                 values {
@@ -34,10 +40,11 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
                        If filter is set on genlist, this returns the filtered
                        item placed after $item in the list.
 
-                       Also the next item means item in the same tree level.
-                       If a item has subitems, and it have expand all subitems
-                       will be ignore, and will get the next item in the same
-                       level.
+                       Note that parent / child relationship is not taken into
+                       account, the next visual item is always returned, could
+                       it be a parent, a child or a group item.
+
+                       NULL is returned if called on the last item.
                      ]]
                 }
                 values {
@@ -60,7 +67,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
            }
            @property subitems {
                 get {
-                     [[et the list of subitems of a given item
+                     [[Get the list of subitems of a given item
 
                        This returns the list of subitems that an item
                        possesses. It cannot be changed.
