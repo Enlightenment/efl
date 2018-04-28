@@ -5825,20 +5825,6 @@ _elm_genlist_efl_object_constructor(Eo *obj, Elm_Genlist_Data *sd)
    return obj;
 }
 
-EOLIAN static Eo *
-_elm_genlist_efl_object_finalize(Eo *obj, Elm_Genlist_Data *sd)
-{
-   obj = efl_finalize(efl_super(obj, MY_CLASS));
-
-   // FIXME:
-   // Genlist is a legacy-only widget which means it will always be marked as
-   // "legacy" here. The proper test here is "app targets EFL 1.19 or below".
-   if (elm_widget_is_legacy(obj))
-     sd->legacy_order_insane = EINA_TRUE;
-
-   return obj;
-}
-
 static void
 _internal_elm_genlist_clear(Evas_Object *obj)
 {
@@ -6812,208 +6798,10 @@ _elm_genlist_at_xy_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eva
    return NULL;
 }
 
-/* ======== Genlist legacy item ordering fix. Insanity begins here. ========
- *
- * Welcome to insanity land, where items' real order is not what matters.
- *
- * Sane order:
- *
- * parent1
- *   parent2
- *     leaf1
- *     leaf2
- *   leaf3
- *   parent3
- *     leaf4
- *     leaf5
- *
- * Legacy "insane" order:
- *
- *     leaf1
- *     leaf2
- *   parent2
- *   leaf3
- *     leaf4
- *     leaf5
- *   parent3
- * parent1
- *
- * Then filtering comes into play. Fun times.
- * The implementation has undefined behavior. Don't worry. This is already
- * insane anyway.
- *
- */
-
-static inline Elm_Gen_Item *
-_insane_item_unfiltered_child_find(Eina_Bool filter, Elm_Gen_Item *it_parent)
-{
-   Eo *eo_it = NULL;
-   Elm_Gen_Item *it, *it2;
-   Eina_List *li;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(it_parent->item, NULL);
-   EINA_LIST_FOREACH(it_parent->item->items, li, eo_it)
-     {
-        it = efl_data_scope_get(eo_it, ELM_GENLIST_ITEM_CLASS);
-        if (!filter || _item_filtered_get(it))
-          {
-             it2 = _insane_item_unfiltered_child_find(filter, it);
-             if (it2) return it2;
-             else return it;
-          }
-     }
-
-   if (!eo_it) return NULL;
-   return it_parent;
-}
-
-static Elm_Object_Item *
-_elm_genlist_first_item_get_insane(Elm_Genlist_Data *sd)
-{
-   Elm_Gen_Item *it, *it2;
-
-   it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-   if (!it) return NULL;
-
-   // Find first unfiltered item (sane order)
-   while (it)
-     {
-        if (!sd->filter || _item_filtered_get(it)) break;
-        it = ELM_GEN_ITEM_NEXT(it);
-     }
-   if (!it) return NULL;
-
-   // Find a "leaf" item that isn't filtered...
-   it2 = _insane_item_unfiltered_child_find(sd->filter, it);
-   if (it2) it = it2;
-
-   return EO_OBJ(it);
-}
-
-static Elm_Object_Item *
-_elm_genlist_last_item_get_insane(Elm_Genlist_Data *sd)
-{
-   Elm_Gen_Item *it;
-
-   if (!sd->items) return NULL;
-
-   // Find last unfiltered item (sane order)
-   it = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-   while (it)
-     {
-        if (!sd->filter || _item_filtered_get(it)) break;
-        it = ELM_GEN_ITEM_PREV(it);
-     }
-   if (!it) return NULL;
-
-   // Parents are not filtered out and are after the items, in insane order.
-   while (it->parent)
-     it = it->parent;
-
-   return EO_OBJ(it);
-}
-
-static Elm_Object_Item *
-_elm_genlist_next_item_get_insane(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
-{
-   Elm_Gen_Item *it2;
-
-   if (sd->filter && !_item_filtered_get(it))
-     {
-        // If this item is filtered out, give up on smarts and just find
-        // the next filtered one.
-        for (it2 = ELM_GEN_ITEM_NEXT(it); it2; it2 = ELM_GEN_ITEM_NEXT(it2))
-          if (!sd->filter || _item_filtered_get(it2))
-            break;
-        return EO_OBJ(it2);
-     }
-
-   for (it2 = ELM_GEN_ITEM_NEXT(it); it2; it2 = ELM_GEN_ITEM_NEXT(it2))
-     {
-        // 0. If filtered out, go to next
-        if (sd->filter && !_item_filtered_get(it2))
-          continue;
-
-        // 1. Return next sibling in list, if any
-        if (it->parent == it2->parent)
-          return EO_OBJ(it2);
-
-        // 2. If next item is a child, skip until next sibling
-        if (it2->parent == it)
-          {
-             Eo *eo_it2 = NULL;
-             Eina_List *last;
-
-             EINA_SAFETY_ON_NULL_RETURN_VAL(it->item, NULL);
-             last = _list_last_recursive(it->item->items);
-             if (last) eo_it2 = last->data;
-             it2 = efl_data_scope_get(eo_it2, ELM_GENLIST_ITEM_CLASS);
-             continue;
-          }
-
-        // 3. If next item has another parent (or NULL parent), return it's parent
-        // Note: it's parent can't be filtered out, unless it was also filtered out.
-        if (it->parent && (it->parent != it2->parent))
-          return EO_OBJ(it->parent);
-     }
-   /* if item is already last item, return its parent if a parent exists */
-   if (it->parent)
-     return EO_OBJ(it->parent);
-   return EO_OBJ(it2);
-}
-
-static Elm_Object_Item *
-_elm_genlist_prev_item_get_insane(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
-{
-   Elm_Gen_Item *it2, *parent;
-
-   if (sd->filter && !_item_filtered_get(it))
-     {
-        // If this item is filtered out, give up on smarts and just find
-        // the previous filtered one.
-        for (it2 = ELM_GEN_ITEM_PREV(it); it2; it2 = ELM_GEN_ITEM_PREV(it2))
-          if (!sd->filter || _item_filtered_get(it2))
-            break;
-        return EO_OBJ(it2);
-     }
-
-   parent = it->parent;
-   if (!parent)
-     {
-        Elm_Object_Item *eo_it2;
-        Eina_List *l;
-
-        // No parent: just return previous filtered item we can find.
-        EINA_LIST_REVERSE_FOREACH(it->item->items, l, eo_it2)
-          {
-             ELM_GENLIST_ITEM_DATA_GET(eo_it2, itt);
-             if (!sd->filter || _item_filtered_get(itt)) return eo_it2;
-          }
-        for (it2 = ELM_GEN_ITEM_PREV(it); it2; it2 = ELM_GEN_ITEM_PREV(it2))
-          if (!sd->filter || _item_filtered_get(it2))
-            break;
-        return EO_OBJ(it2);
-     }
-
-   it2 = ELM_GEN_ITEM_PREV(it);
-   if (it2 == parent)
-     return _elm_genlist_prev_item_get_insane(sd, it2);
-
-   return EO_OBJ(it2);
-}
-
-/* ======== Genlist legacy item ordering fix. Insanity ends here. ========== */
-
-
 EOLIAN static Elm_Object_Item*
 _elm_genlist_first_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
-   Elm_Gen_Item *it;
-
-   if (EINA_LIKELY(sd->legacy_order_insane))
-     return _elm_genlist_first_item_get_insane(sd);
-
-   it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
+   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
 
    while (it && sd->filter && !_item_filtered_get(it))
      it = ELM_GEN_ITEM_NEXT(it);
@@ -7025,9 +6813,6 @@ EOLIAN static Elm_Object_Item*
 _elm_genlist_last_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    Elm_Gen_Item *it;
-
-   if (EINA_LIKELY(sd->legacy_order_insane))
-     return _elm_genlist_last_item_get_insane(sd);
 
    if (!sd->items) return NULL;
    it = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
@@ -7043,9 +6828,6 @@ _elm_genlist_item_next_get(const Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (EINA_LIKELY(sd->legacy_order_insane))
-     return _elm_genlist_next_item_get_insane(sd, it);
-
    do it = ELM_GEN_ITEM_NEXT(it);
    while (it && sd->filter && !_item_filtered_get(it));
 
@@ -7056,9 +6838,6 @@ EOLIAN static Elm_Object_Item *
 _elm_genlist_item_prev_get(const Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-
-   if (EINA_LIKELY(sd->legacy_order_insane))
-     return _elm_genlist_prev_item_get_insane(sd, it);
 
    do it = ELM_GEN_ITEM_PREV(it);
    while (it && sd->filter && !_item_filtered_get(it));
@@ -7915,7 +7694,6 @@ _filter_item_internal(Elm_Gen_Item *it)
 }
 
 // Returns true if the item is not filtered out, but remains visible.
-// If a parent is filtered out its children are also filtered out.
 static Eina_Bool
 _item_filtered_get(Elm_Gen_Item *it)
 {
