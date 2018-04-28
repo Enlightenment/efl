@@ -15,58 +15,103 @@ static Efl_Access_Event_Children_Changed_Data ev_data;
 Evas_Object *content;
 
 static void
-verify_group_api(Elm_Object_Item *git)
+verify_item_iteration_api(Elm_Object_Item *parent)
 {
-   Elm_Object_Item *it;
+   Elm_Object_Item *it, *first_child;
+   Eina_List *children, *l;
    int i;
 
-   /* the last item is the group item
-    * this is not consistent with the visual layout but this is consistent with behavior since 1.0
-    */
-   it = elm_genlist_last_item_get(genlist);
-   ck_assert_ptr_ne(it, NULL);
-   ck_assert_ptr_eq(it, git);
-
-   /* assert that the last item is actually the last item */
-   it = elm_genlist_item_next_get(git);
-   ck_assert_ptr_eq(it, NULL);
-
-   /* assert that the other items added to the list exist */
-   it = elm_genlist_item_prev_get(git);
-   ck_assert_ptr_ne(it, NULL);
-
-   /* assert that the parent of this item is the group item */
-   ck_assert_ptr_eq(elm_genlist_item_parent_get(it), git);
-
-   /* check that the first item in the list is a normal item */
+   /* verify first_item_get() */
    it = elm_genlist_first_item_get(genlist);
-   ck_assert_ptr_eq(elm_genlist_item_parent_get(it), git);
+   ck_assert_ptr_eq(it, parent);
+   ck_assert_ptr_eq(elm_object_item_data_get(it), NULL);
+   ck_assert_ptr_eq(elm_genlist_item_prev_get(it), NULL);
+
+   /* verify last_item_get() */
+   it = elm_genlist_last_item_get(genlist);
+   ck_assert_ptr_eq(elm_object_item_data_get(it), (void*)(uintptr_t)10);
+   ck_assert_ptr_eq(elm_genlist_item_next_get(it), NULL);
+
+   /* verify next item of parent item is it's first child */
+   first_child = elm_genlist_item_next_get(parent);
+   ck_assert_ptr_eq(elm_object_item_data_get(first_child), (void*)(uintptr_t)1);
+   ck_assert_ptr_eq(elm_genlist_item_parent_get(first_child), parent);
+
+   /* verify subitems_count() */
+   ck_assert_int_eq(elm_genlist_item_subitems_count(parent), 10);
+   ck_assert_int_eq(elm_genlist_item_subitems_count(first_child), 0);
 
    /* verify list consistency */
-   for (i = 0; i < 9; i++)
+   it = first_child;
+   for (i = 1; i <= 9; i++)
      {
+        ck_assert_ptr_eq(elm_object_item_data_get(it), (void*)(uintptr_t)i);
+        ck_assert_ptr_eq(elm_genlist_item_parent_get(it), parent);
         it = elm_genlist_item_next_get(it);
-        ck_assert_ptr_eq(elm_genlist_item_parent_get(it), git);
      }
-   it = elm_genlist_item_next_get(it);
-   /* verify once again that we have arrived at the group item */
-   ck_assert_ptr_eq(it, git);
+
+   /* verify children list */
+   i = 1;
+   children = (Eina_List *)elm_genlist_item_subitems_get(parent);
+   EINA_LIST_FOREACH(children, l, it)
+     {
+        ck_assert_ptr_eq(elm_object_item_data_get(it), (void*)(uintptr_t)i);
+        ck_assert_ptr_eq(elm_genlist_item_parent_get(it), parent);
+        i++;
+     }
+
+   /* verify item_expanded_depth_get() */
+   ck_assert_int_eq(elm_genlist_item_expanded_depth_get(parent), 0);
+   if (elm_genlist_item_type_get(parent) == ELM_GENLIST_ITEM_GROUP)
+     ck_assert_int_eq(elm_genlist_item_expanded_depth_get(first_child), 0);
+   else if (elm_genlist_item_type_get(parent) == ELM_GENLIST_ITEM_TREE)
+     ck_assert_int_eq(elm_genlist_item_expanded_depth_get(first_child), 1);
+
+   /* verify nth_item_get() and item_index_get() */
+   for (i = 0; i <= 11; i++) // also test the not existant item 11
+     {
+        it = elm_genlist_nth_item_get(genlist, i);
+        if (i == 11)
+          // item #11 do not exists
+          ck_assert_int_eq(elm_genlist_item_index_get(it), -1);
+        else
+          ck_assert_int_eq(elm_genlist_item_index_get(it), i + 1);
+
+        if ((i == 0) || (i == 11))
+          // test first and item #11 (that do not exists)
+          ck_assert_ptr_eq(elm_object_item_data_get(it), NULL);
+        else
+          ck_assert_ptr_eq(elm_object_item_data_get(it), (void*)(uintptr_t)i);
+     }
 }
 
-EFL_START_TEST (elm_genlist_group)
+EFL_START_TEST (elm_genlist_item_iteration)
 {
-   Elm_Object_Item *git;
+   Elm_Object_Item *parent;
    int i;
 
    win = win_add(NULL, "genlist", ELM_WIN_BASIC);
 
    genlist = elm_genlist_add(win);
 
-   git = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
-   for (i = 0; i < 10; i++)
-     elm_genlist_item_append(genlist, &itc, NULL, git, 0, NULL, NULL);
+   // perform test using a GROUP item
+   parent = elm_genlist_item_append(genlist, &itc, NULL, NULL,
+                                    ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+   for (i = 1; i <= 10; i++)
+     elm_genlist_item_append(genlist, &itc, (void*)(uintptr_t)i, parent,
+                             0, NULL, NULL);
 
-   verify_group_api(git);
+   verify_item_iteration_api(parent);
+
+   // repeat same test with a TREE item
+   elm_genlist_clear(genlist);
+   parent = elm_genlist_item_append(genlist, &itc, NULL, NULL,
+                                    ELM_GENLIST_ITEM_TREE, NULL, NULL);
+   for (i = 1; i <= 10; i++)
+     elm_genlist_item_append(genlist, &itc, (void*)(uintptr_t)i, parent,
+                             0, NULL, NULL);
+
+   verify_item_iteration_api(parent);
 
 }
 EFL_END_TEST
@@ -286,7 +331,7 @@ void elm_test_genlist(TCase *tc)
 {
    tcase_add_test(tc, elm_genlist_legacy_type_check);
    tcase_add_test(tc, elm_genlist_item_destroy);
-   tcase_add_test(tc, elm_genlist_group);
+   tcase_add_test(tc, elm_genlist_item_iteration);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_atspi_children_get1);
    tcase_add_test(tc, elm_atspi_children_get2);
