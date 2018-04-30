@@ -9044,39 +9044,36 @@ st_collections_group_parts_part_description_inherit(void)
     * referenced
     */
 
-   ed->size_class = STRDUP(ed->size_class);
-   if ((ed->size_class) && (pcp->import))
-     {
-        Edje_Size_Class *sc;
-        Edje_Size_Class_Parser *scp;
-        Eina_List *l;
-        Eina_Bool overriden = EINA_FALSE;
-
-        EINA_LIST_FOREACH(edje_file->size_classes, l, sc)
-          {
-             if (!strcmp(ed->size_class, sc->name))
-               {
-                  overriden = EINA_TRUE;
-                  break;
-               }
-          }
-
-        if (!overriden)
-          {
-             EINA_LIST_FOREACH(edje_file_import->size_classes, l, sc)
-               {
-                  if (!strcmp(ed->size_class, sc->name))
-                    {
-                       scp = mem_alloc(SZ(Edje_Size_Class_Parser));
-                       memcpy(scp, sc, sizeof(Edje_Size_Class));
-                       scp->imported = EINA_TRUE;
-
-                       edje_file->size_classes = eina_list_append(edje_file->size_classes, scp);
-                       break;
-                    }
-               }
-          }
+#define IMPORT_DATA(TYPE, NAME, CONTAINER) \
+   if ((NAME) && (pcp->import)) \
+     { \
+        TYPE *dt; \
+        TYPE ## _Parser *dtp; \
+        Eina_List *l; \
+        Eina_Bool overriden = EINA_FALSE; \
+        EINA_LIST_FOREACH(edje_file->CONTAINER, l, dt) \
+          { \
+             if (!strcmp(NAME, dt->name)) \
+               { \
+                  overriden = EINA_TRUE; \
+                  break; \
+               } \
+          } \
+        if (!overriden) \
+          { \
+             EINA_LIST_FOREACH(edje_file_import->CONTAINER, l, dt) \
+               { \
+                  dtp = mem_alloc(SZ(TYPE ## _Parser)); \
+                  memcpy(dtp, dt, sizeof(TYPE)); \
+                  dtp->imported = EINA_TRUE; \
+                  edje_file->CONTAINER = eina_list_append(edje_file->CONTAINER, dtp); \
+                  break; \
+               } \
+          } \
      }
+
+   ed->size_class = STRDUP(ed->size_class);
+   IMPORT_DATA(Edje_Size_Class, ed->size_class, size_classes);
 
    ed->color_class = STRDUP(ed->color_class);
    if ((ed->color_class) && (pcp->import))
@@ -9160,66 +9157,10 @@ st_collections_group_parts_part_description_inherit(void)
          ted->text.text.str = STRDUP(ted->text.text.str);
          ted->text.domain = STRDUP(ted->text.domain);
          ted->text.text_class = STRDUP(ted->text.text_class);
-         if ((ted->text.text_class) && (pcp->import))
-           {
-              Edje_Text_Class *tc;
-              Edje_Text_Class_Parser *tcp;
-              Eina_List *l;
-              Eina_Bool overriden = EINA_FALSE;
-
-              EINA_LIST_FOREACH(edje_file->text_classes, l, tc)
-                {
-                   if (!strcmp(ted->text.text_class, tc->name))
-                     {
-                        overriden = EINA_TRUE;
-                        break;
-                     }
-                }
-
-              if (!overriden)
-                {
-                   EINA_LIST_FOREACH(edje_file_import->text_classes, l, tc)
-                     {
-                        tcp = mem_alloc(SZ(Edje_Text_Class_Parser));
-                        memcpy(tcp, tc, sizeof(Edje_Text_Class));
-                        tcp->imported = EINA_TRUE;
-
-                        edje_file->text_classes = eina_list_append(edje_file->text_classes, tcp);
-                        break;
-                     }
-                }
-          }
          ted->text.font.str = STRDUP(ted->text.font.str);
 
-         if ((ted->text.style.str) && (pcp->import))
-           {
-              Edje_Style *stl;
-              Edje_Style_Parser *stlp;
-              Eina_List *l;
-              Eina_Bool overriden = EINA_FALSE;
-
-              EINA_LIST_FOREACH(edje_file->styles, l, stl)
-                {
-                   if (!strcmp(ted->text.style.str, stl->name))
-                     {
-                        overriden = EINA_TRUE;
-                        break;
-                     }
-                }
-
-              if (!overriden)
-                {
-                   EINA_LIST_FOREACH(edje_file_import->styles, l, stl)
-                     {
-                        stlp = mem_alloc(SZ(Edje_Style_Parser));
-                        memcpy(stlp, stl, sizeof(Edje_Style));
-                        stlp->imported = EINA_TRUE;
-
-                        edje_file->styles = eina_list_append(edje_file->styles, stlp);
-                        break;
-                     }
-                }
-           }
+         IMPORT_DATA(Edje_Text_Class, ted->text.text_class, text_classes);
+         IMPORT_DATA(Edje_Style, ted->text.style.str, styles);
 
          _filter_copy(&ted->filter, &tparent->filter);
          data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
