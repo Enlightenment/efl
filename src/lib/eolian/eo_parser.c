@@ -714,14 +714,11 @@ parse_type_void(Eo_Lexer *ls)
              def->btype = ls->t.kw - KW_byte + 1;
              def->base.name = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
-             if (tpid >= KW_accessor && tpid <= KW_future)
+             if (tpid >= KW_accessor && tpid <= KW_inlist)
                {
                   int bline = ls->line_number, bcol = ls->column;
                   check_next(ls, '<');
-                  if (tpid == KW_future)
-                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls));
-                  else
-                    def->base_type = eo_lexer_type_release(ls, parse_type(ls));
+                  def->base_type = eo_lexer_type_release(ls, parse_type(ls));
                   if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
                     eo_lexer_get(ls);
                   if (tpid == KW_hash)
@@ -731,11 +728,6 @@ parse_type_void(Eo_Lexer *ls)
                          eo_lexer_type_release(ls, parse_type(ls));
                        if ((def->base_type->next_type->owned = (ls->t.kw == KW_at_owned)))
                          eo_lexer_get(ls);
-                    }
-                  else if((tpid == KW_future) && test_next(ls, ','))
-                    {
-                       def->base_type->next_type =
-                         eo_lexer_type_release(ls, parse_type_void(ls));
                     }
                   check_match(ls, '>', '<', bline, bcol);
                }

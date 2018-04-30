@@ -52,7 +52,6 @@ enum Tokens
     KW(void), \
     \
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), KW(inarray), KW(inlist), \
-    KW(future),                                   \
     KW(any_value), KW(any_value_ptr), \
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
