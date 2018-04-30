@@ -9,19 +9,7 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void error_cb(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Failure *failure = ev->info;
-   const char *msg = eina_error_msg_get(failure->error);
-   Efl_Io_Manager *job = data;
-   (void) job;
-
-   EINA_LOG_ERR("error: %s", msg);
-
-   ecore_main_loop_quit();
-}
-
-static Eina_Value
+Eina_Value
 _close_cb(void *data EINA_UNUSED, const Eina_Value array, const Eina_Future *dead EINA_UNUSED)
 {
    printf("%s closed all files.\n", __FUNCTION__);
