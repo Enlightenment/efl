@@ -38,12 +38,62 @@ _custom_chain_get(const Efl_Ui_Widget *node)
 }
 
 static void
+_flush_manager(Efl_Ui_Widget *obj, Elm_Widget_Smart_Data *pd)
+{
+   Efl_Ui_Focus_Manager *manager;
+
+   manager = efl_ui_focus_object_focus_manager_get(obj);
+   if (manager)
+     {
+        Eina_List *order;
+
+        if (pd->legacy_focus.custom_chain)
+          order = eina_list_clone(pd->legacy_focus.custom_chain);
+        else
+          order = eina_list_clone(pd->subobjs);
+
+        efl_ui_focus_manager_calc_update_order(manager, obj, order);
+     }
+}
+
+static void
+_manager_changed(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(ev->object, pd);
+
+   _flush_manager(ev->object, pd);
+}
+
+static void
 _custom_chain_set(Efl_Ui_Widget *node, Eina_List *lst)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(node, pd);
+   Efl_Ui_Widget *list_item;
+   Eina_List *n;
 
    pd->legacy_focus.custom_chain = eina_list_free(pd->legacy_focus.custom_chain);
    pd->legacy_focus.custom_chain = lst;
+
+   EINA_LIST_FOREACH(pd->legacy_focus.custom_chain, n, list_item)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_isa(list_item, EFL_UI_WIDGET_CLASS));
+        EINA_SAFETY_ON_FALSE_RETURN(efl_ui_widget_parent_get(list_item) == node);
+     }
+
+   _elm_widget_full_eval_children(node, pd);
+
+   if (pd->legacy_focus.custom_chain && !pd->legacy_focus.listen_to_manager)
+     {
+        efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        pd->legacy_focus.listen_to_manager = EINA_TRUE;
+     }
+   else if (!pd->legacy_focus.custom_chain && pd->legacy_focus.listen_to_manager)
+     {
+        efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        pd->legacy_focus.listen_to_manager = EINA_FALSE;
+     }
+
+   _flush_manager(node, pd);
 }
 
 Evas_Object*
@@ -107,12 +157,15 @@ elm_object_focus_custom_chain_get(const Evas_Object *obj)
 
 EAPI void
 elm_object_focus_custom_chain_append(Evas_Object *obj,
-                                     Evas_Object *child EINA_UNUSED,
-                                     Evas_Object *relative_child EINA_UNUSED)
+                                     Evas_Object *child,
+                                     Evas_Object *relative_child)
 {
    API_ENTRY()
+   Eina_List *tmp;
 
-   pd->legacy_focus.custom_chain = eina_list_append_relative(pd->legacy_focus.custom_chain, child, relative_child);
+   tmp = eina_list_clone(pd->legacy_focus.custom_chain);
+   tmp = eina_list_append_relative(tmp, child, relative_child);
+   _custom_chain_set(obj, tmp);
 }
 
 EAPI void
@@ -121,8 +174,11 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
                                       Evas_Object *relative_child EINA_UNUSED)
 {
    API_ENTRY()
+   Eina_List *tmp;
 
-   pd->legacy_focus.custom_chain = eina_list_prepend_relative(pd->legacy_focus.custom_chain, child, relative_child);
+   tmp = eina_list_clone(pd->legacy_focus.custom_chain);
+   tmp = eina_list_prepend_relative(tmp, child, relative_child);
+   _custom_chain_set(obj, tmp);
 }
 
 EINA_DEPRECATED EAPI void
