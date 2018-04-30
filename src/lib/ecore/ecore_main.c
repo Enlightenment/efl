@@ -1597,17 +1597,6 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
 void
 _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd)
 {
-   Efl_Promise *promise;
-   Efl_Future *future;
-
-   EINA_LIST_FREE(pd->pending_futures, future)
-     efl_del(future);
-   Eina_List *tmp = pd->pending_promises;
-   pd->pending_promises = NULL;
-   EINA_LIST_FREE(tmp, promise)
-     ecore_loop_promise_fulfill(promise);
-
-   // FIXME
    __eina_promise_cancel_data(obj);
 
    while (pd->fd_handlers)
@@ -2304,19 +2293,12 @@ static void
 _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
 {
    double next_time = -1.0;
-   Eo *f, *p;
 
    if (obj == ML_OBJ)
      {
         in_main_loop++;
         pd->in_loop = in_main_loop;
      }
-   // destroy all optional futures
-   EINA_LIST_FREE(pd->pending_futures, f) efl_del(f);
-   // and propagate all promise value
-   Eina_List *tmp = pd->pending_promises;
-   pd->pending_promises = NULL;
-   EINA_LIST_FREE(tmp, p) ecore_loop_promise_fulfill(p);
    // expire any timers
    _efl_loop_timer_expired_timers_call(obj, pd, pd->loop_time);
    // process signals into events ....
@@ -2385,14 +2367,6 @@ _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
 
    // start of the sleeping or looping section
 start_loop: //-*************************************************************
-   // We could be looping here without exiting the function and we need to
-   // process future and promise before the next waiting period.
-   // destroy all optional futures
-   EINA_LIST_FREE(pd->pending_futures, f) efl_del(f);
-   // and propagate all promise value
-   tmp = pd->pending_promises;
-   pd->pending_promises = NULL;
-   EINA_LIST_FREE(tmp, p) ecore_loop_promise_fulfill(p);
    // any timers re-added as a result of these are allowed to go
    _efl_loop_timer_enable_new(obj, pd);
    // if we have been asked to quit the mainloop then exit at this point

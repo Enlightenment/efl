@@ -32,7 +32,6 @@ typedef struct
    Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
-   Eina_List                 *futures;
 } Efl_Object_Extension;
 
 typedef struct
@@ -171,8 +170,7 @@ _efl_object_extension_noneed(Efl_Object_Data *pd)
        (ext->comment) ||
        (ext->generic_data) ||
        (ext->wrefs) ||
-       (ext->composite_parent) ||
-       (ext->futures)) return;
+       (ext->composite_parent)) return;
    _efl_object_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -2142,8 +2140,6 @@ err_parent_back:
    ext->name = NULL;
    eina_stringshare_del(ext->comment);
    ext->comment = NULL;
-   while (pd->ext && ext->futures)
-     efl_future_cancel(eina_list_data_get(ext->futures));
    _efl_object_extension_noneed(pd);
    _eo_condtor_done(obj);
    return;
@@ -2227,33 +2223,6 @@ _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
    eina_hash_free(_legacy_events_hash);
 }
 
-static void
-_efl_object_future_link_tracking_end(void *data, const Efl_Event *ev)
-{
-   Efl_Future *link = ev->object;
-   Eo *obj = data;
-   Efl_Object_Data *pd = efl_data_scope_get(obj, EFL_OBJECT_CLASS);
-   Efl_Object_Extension *ext = _efl_object_extension_need(pd);
-
-   ext->futures = eina_list_remove(ext->futures, link);
-   _efl_object_extension_noneed(pd);
-}
-
-EOAPI EFL_FUNC_BODYV(efl_future_link, Eina_Bool, 0, EFL_FUNC_CALL(link), Efl_Future *link);
-
-EOLIAN static Eina_Bool
-_efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *link)
-{
-   Efl_Object_Extension *ext;
-
-   if (!link) return EINA_FALSE;
-
-   ext = _efl_object_extension_need(pd);
-
-   ext->futures = eina_list_append(ext->futures, link);
-   return !!efl_future_then(link, _efl_object_future_link_tracking_end, _efl_object_future_link_tracking_end, NULL, obj);
-}
-
 #define EFL_OBJECT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_object_event_callback_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_del, _efl_object_event_callback_del), \
@@ -2262,7 +2231,6 @@ _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *li
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get), \
-   EFL_OBJECT_OP_FUNC(efl_future_link, _efl_object_future_link), \
    EFL_OBJECT_OP_FUNC(efl_wref_add, _efl_object_wref_add), \
    EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_object_wref_del), \
    EFL_OBJECT_OP_FUNC(efl_key_data_set, _efl_object_key_data_set), \

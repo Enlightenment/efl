@@ -414,55 +414,6 @@ ecore_loop_arguments_send(int argc, const char **argv)
    efl_future_Eina_FutureXXX_then(efl_main_loop_get(), job);
 }
 
-// Only one main loop handle for now
-void
-ecore_loop_future_register(Efl_Loop *l, Efl_Future *f)
-{
-   Efl_Loop_Data *pd;
-
-   if (l == ML_OBJ) pd = ML_DAT;
-   else pd = efl_data_scope_get(l, EFL_LOOP_CLASS);
-   if (!pd) return;
-
-   pd->pending_futures = eina_list_append(pd->pending_futures, f);
-}
-
-void
-ecore_loop_future_unregister(Efl_Loop *l, Efl_Future *f)
-{
-   Efl_Loop_Data *pd;
-
-   if (l == ML_OBJ) pd = ML_DAT;
-   else pd = efl_data_scope_get(l, EFL_LOOP_CLASS);
-   if (!pd) return;
-
-   pd->pending_futures = eina_list_remove(pd->pending_futures, f);
-}
-
-void
-ecore_loop_promise_register(Efl_Loop *l, Efl_Promise *p)
-{
-   Efl_Loop_Data *pd;
-
-   if (l == ML_OBJ) pd = ML_DAT;
-   else pd = efl_data_scope_get(l, EFL_LOOP_CLASS);
-   if (!pd) return;
-
-   pd->pending_promises = eina_list_append(pd->pending_promises, p);
-}
-
-void
-ecore_loop_promise_unregister(Efl_Loop *l, Efl_Promise *p)
-{
-   Efl_Loop_Data *pd;
-
-   if (l == ML_OBJ) pd = ML_DAT;
-   else pd = efl_data_scope_get(l, EFL_LOOP_CLASS);
-   if (!pd) return;
-
-   pd->pending_promises = eina_list_remove(pd->pending_promises, p);
-}
-
 static Eina_Future *
 _efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {

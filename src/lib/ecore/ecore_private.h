@@ -149,9 +149,6 @@ struct _Efl_Loop_Data
    Eina_List           *win32_handlers_to_delete;
 # endif
 
-   Eina_List           *pending_futures;
-   Eina_List           *pending_promises;
-
    Eina_Inarray        *message_handlers;
    Eina_Inlist         *message_queue;
    unsigned int         message_walking;
@@ -534,12 +531,6 @@ extern Efl_Loop_Data *_mainloop_singleton_data;
 //#define ML_DAT efl_data_scope_get(ML_OBJ, EFL_LOOP_CLASS)
 
 extern Efl_Version _app_efl_version;
-
-void ecore_loop_future_register(Efl_Loop *l, Efl_Future *f);
-void ecore_loop_future_unregister(Efl_Loop *l, Efl_Future *f);
-void ecore_loop_promise_register(Efl_Loop *l, Efl_Promise *p);
-void ecore_loop_promise_unregister(Efl_Loop *l, Efl_Promise *p);
-void ecore_loop_promise_fulfill(Efl_Promise *p);
 
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL

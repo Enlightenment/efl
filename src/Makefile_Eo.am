@@ -18,7 +18,7 @@ lib_LTLIBRARIES += lib/eo/libeo.la \
                    lib/eo/libeo_dbg.la
 
 installed_eomainheadersdir = $(includedir)/eo-@VMAJ@
-dist_installed_eomainheaders_DATA = lib/eo/Eo.h lib/eo/efl_future.h
+dist_installed_eomainheaders_DATA = lib/eo/Eo.h
 
 nodist_installed_eomainheaders_DATA = \
 									  $(eo_eolian_h)
@@ -31,8 +31,7 @@ lib/eo/eo_base_class.c \
 lib/eo/eo_class_class.c \
 lib/eo/eo_add_fallback.c \
 lib/eo/eo_add_fallback.h \
-lib/eo/eo_private.h \
-lib/eo/efl_future.c
+lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \

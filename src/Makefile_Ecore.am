@@ -47,7 +47,6 @@ ecore_eolian_files = \
 	$(ecore_eolian_files_public) \
         lib/ecore/efl_loop_message_future_handler.eo \
         lib/ecore/efl_loop_message_future.eo \
-	lib/ecore/efl_promise.eo \
 	lib/ecore/efl_model_item.eo \
 	lib/ecore/efl_model_container.eo \
 	lib/ecore/efl_model_container_item.eo \
@@ -120,7 +119,6 @@ lib/ecore/efl_io_stderr.c \
 lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
 lib/ecore/efl_io_buffered_stream.c \
-lib/ecore/efl_promise.c \
 lib/ecore/efl_model_item.c \
 lib/ecore/efl_model_container.c \
 lib/ecore/efl_model_container_item.c \

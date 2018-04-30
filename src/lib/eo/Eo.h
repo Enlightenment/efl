@@ -144,8 +144,8 @@ extern "C" {
  * EO_LIFECYCLE_NO_DEBUG=class1,class2.
  *
  * @verbatim
-   # Log all but Efl_Future, Efl_Promise and Efl_Loop_Timer
-   export EO_LIFECYCLE_NO_DEBUG=Efl_Future,Efl_Promise,Efl_Loop_Timer
+   # Log all but Efl_Loop_Timer
+   export EO_LIFECYCLE_NO_DEBUG=Efl_Loop_Timer
    export EINA_LOG_LEVELS=eo_lifecycle:4
    eo_debug my_app
  * @endverbatim
@@ -209,12 +209,6 @@ EAPI extern unsigned int _efl_object_init_generation;
  * @param obj_id The object needing to be destroyed.
  */
 typedef void (*Efl_Del_Intercept) (Eo *obj_id);
-
-/**
- * @typedef Efl_Future
- * The type of Efl Future used in asynchronous operation, the read side of a promise.
- */
-typedef Eo Efl_Future;
 
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
@@ -345,15 +339,6 @@ EOAPI Eina_Bool efl_event_callback_call(Eo *obj, const Efl_Event_Description *de
  * @since 1.19
  */
 EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Description *desc, void *event_info);
-
-/**
- * @brief Track a future life cycle and cancel it if the object dies.
- *
- * @param[in] link The future to link with the object
- *
- * @return @c true if it succeeds in setting up tracking.
- */
-EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
 
 
 /**
@@ -2111,8 +2096,6 @@ eina_value_object_get(Eina_Value *v)
 /**
  * @}
  */
-
-#include "efl_future.h"
 
 /**
  * @addtogroup Eo_Iterators Eo iterators

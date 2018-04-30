@@ -377,7 +377,4 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
      }
 }
 
-Eina_Bool efl_future_init(void);
-Eina_Bool efl_future_shutdown(void);
-
 #endif
