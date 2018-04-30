@@ -62,6 +62,18 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
 
    logical_child = efl_ui_focus_manager_request_subchild(wpd->widget, obj);
 
+   if (logical_child == pd->adapter)
+     {
+        Eo *next_widget;
+        next_widget = efl_ui_focus_manager_request_move(wpd->widget, EFL_UI_FOCUS_DIRECTION_NEXT, logical_child, EINA_TRUE);
+
+        if (efl_isa(next_widget, ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS))
+          {
+             next_widget = NULL;
+          }
+        logical_child = next_widget;
+     }
+
    if (!logical_child)
      {
         if (!pd->adapter)
