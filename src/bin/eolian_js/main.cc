@@ -195,8 +195,7 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
           {"list", "Eina_List"},
           {"string", "const char*"},
           {"void_ptr", "void *"},
-          {"stringshare", "Eina_Stringshare*"},
-          {"future", "Efl_Future*"}
+          {"stringshare", "Eina_Stringshare*"}
 
         };
 
