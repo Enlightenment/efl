@@ -205,6 +205,7 @@ static void       check_has_anchors(void);
 static void       st_id(void);
 static void       st_requires(void);
 static void       st_efl_version(void);
+static void       st_import(void);
 static void       st_externals_external(void);
 
 static void       st_images_image(void);
@@ -706,6 +707,7 @@ New_Statement_Handler statement_handlers[] =
    {"id", st_id},
    {"requires", st_requires},
    {"efl_version", st_efl_version},
+   {"import", st_import},
    {"externals.external", st_externals_external},
    IMAGE_STATEMENTS("")
    FONT_STYLE_CC_STATEMENTS("")
@@ -2286,6 +2288,70 @@ st_requires(void)
    if (eina_streq(str, edje_file->id))
      error_and_abort(NULL, "Cannot require the current file!");
    eina_array_push(requires, str);
+}
+
+/** @edcsubsection{toplevel_import,
+ *                 import} */
+
+/**
+    @page edcref
+
+    @property
+        import
+    @parameters
+        [edj file path]
+    @effect
+        Import compiled edj with give file path. Users can inherit from
+        imported edj, and resources and classes used by inherited group
+        will be copied to currunt file.
+        Importing signle edj file is allowed and "import" statement should
+        be at the top of edc file.
+    @since 1.22
+    @endproperty
+ */
+static void
+st_import(void)
+{
+   char *name;
+   Eina_Strbuf *path;
+   Eina_File *f;
+   int error_ret;
+
+   if (!beta)
+     error_and_abort(NULL, "\"import\" edj is currently a beta feature, please enable it by running edje_cc with -beta.");
+
+   if (edje_file->collection)
+     {
+        ERR("parse error %s:%i. \"import\" statement should be at the top of edc",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   name = parse_str(0);
+   path = eina_strbuf_new();
+
+   if (((name[0] == '~') && (name[1] == '/')))
+     {
+        const char *home = eina_environment_home_get();
+        eina_strbuf_append_printf(path, "%s/%s", home, name);
+     }
+   else
+     {
+        eina_strbuf_append(path, name);
+     }
+
+   f = eina_file_open(eina_strbuf_string_get(path), EINA_FALSE);
+   if (!f)
+     {
+        ERR("parse error %s:%i. Failed to load \"%s\"", file_in, line - 1, name);
+        exit(-1);
+     }
+
+   edje_file_import = _edje_file_open(f, &error_ret, eina_file_mtime_get(f),
+                                      EINA_TRUE);
+
+   eina_strbuf_free(path);
+   free(name);
 }
 
 /** @edcsubsection{toplevel_externals,

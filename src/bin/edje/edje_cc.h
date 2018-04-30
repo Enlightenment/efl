@@ -331,6 +331,7 @@ extern int                    max_quality;
 extern int                    line;
 extern Eina_List             *stack;
 extern Edje_File             *edje_file;
+extern Edje_File             *edje_file_import;
 extern Eina_List             *edje_collections;
 extern Eina_Hash             *edje_collections_lookup;
 extern Eina_List             *externals;

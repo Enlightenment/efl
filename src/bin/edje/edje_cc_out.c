@@ -216,6 +216,7 @@ static void data_process_string(Edje_Part_Collection *pc, const char *prefix, ch
 extern Eina_List *po_files;
 
 Edje_File *edje_file = NULL;
+Edje_File *edje_file_import = NULL;
 Eina_List *edje_collections = NULL;
 Eina_Hash *edje_collections_lookup = NULL;
 Eina_List *externals = NULL;
