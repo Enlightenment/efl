@@ -560,7 +560,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_menu.h \
 	lib/elementary/elm_menu_legacy.h \
 	lib/elementary/elm_mirroring.h \
-	lib/elementary/elm_multibuttonentry.eo.h \
 	lib/elementary/elm_need.h \
 	lib/elementary/elm_notify.h \
 	lib/elementary/elm_notify_common.h \

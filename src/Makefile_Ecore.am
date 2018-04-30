@@ -4,7 +4,8 @@
 ecore_eolian_files_legacy = \
 	lib/ecore/ecore_exe.eo \
 	lib/ecore/ecore_event_message.eo \
-	lib/ecore/ecore_event_message_handler.eo
+	lib/ecore/ecore_event_message_handler.eo \
+	lib/ecore/efl_loop_timer.eo
 
 ecore_eolian_files_public = \
 	lib/ecore/efl_app.eo \
@@ -39,8 +40,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_interpolator_bounce.eo \
 	lib/ecore/efl_interpolator_spring.eo \
 	lib/ecore/efl_interpolator_cubic_bezier.eo \
-	lib/ecore/efl_model_composite.eo \
-	lib/ecore/efl_loop_timer.eo
+	lib/ecore/efl_model_composite.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
@@ -66,9 +66,9 @@ BUILT_SOURCES += \
                  $(ecore_eolian_h)
 
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
-ecoreeolianfiles_DATA = $(ecore_eolian_files_public)
+ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
 
-EXTRA_DIST2 += ${ecoreeolianfiles_DATA}
+EXTRA_DIST2 += $(ecore_eolian_files)
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
 
