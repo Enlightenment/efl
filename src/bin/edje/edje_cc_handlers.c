@@ -9162,6 +9162,58 @@ st_collections_group_parts_part_description_inherit(void)
          IMPORT_DATA(Edje_Text_Class, ted->text.text_class, text_classes);
          IMPORT_DATA(Edje_Style, ted->text.style.str, styles);
 
+         if ((ted->text.style.str) && (pcp->import))
+           {
+              Edje_Style *stl;
+              Edje_Style_Parser *stlp;
+              Eina_List *l;
+
+              EINA_LIST_FOREACH(edje_file->styles, l, stl)
+                {
+                   if (!strcmp(ted->text.style.str, stl->name))
+                     {
+                        stlp = (Edje_Style_Parser *)stl;
+                        break;
+                     }
+                }
+
+              if (!stl || (stlp->imported))
+                {
+                   EINA_LIST_FOREACH(edje_file_import->styles, l, stl)
+                     {
+                        if (!strcmp(ted->text.style.str, stl->name))
+                           break;
+                     }
+
+                   if (stl)
+                     {
+                        Edje_Style_Tag *tag;
+                        char *tmp;
+
+                        EINA_LIST_FOREACH(stl->tags, l, tag)
+                          {
+                             if (!strcmp(tag->key, "DEFAULT"))
+                                break;
+                          }
+
+                        if (tag && (tmp = strstr(tag->value, "text_class=")))
+                          {
+                             char buf[512];
+                             char *ptr = buf;
+
+                             tmp += strlen("text_class=");
+                             while (*tmp == ' ') tmp++;
+                             while ((*tmp != ' ') && (*tmp != '\0'))
+                               *ptr++ = *tmp++;
+                             *ptr = '\0';
+
+                             ptr = buf;
+                             IMPORT_DATA(Edje_Text_Class, ptr, text_classes);
+                          }
+                     }
+                }
+           }
+
          _filter_copy(&ted->filter, &tparent->filter);
          data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
          data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
