@@ -38,12 +38,12 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_unref(priv->treemodel);
 }
 
-static Eina_Bool
-_filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
+static int
+_filter_cb(void *data EINA_UNUSED, Eio_Model *model, Eina_File_Direct_Info *info)
 {
-   if (info->type == EINA_FILE_DIR && info->path[info->name_start] != '.')  return EINA_TRUE;
+   if (info->type == EINA_FILE_DIR && info->path[info->name_start] != '.')  return 1;
 
-   return EINA_FALSE;
+   return 0;
 }
 
 static void
@@ -58,39 +58,14 @@ _list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 static void
-_promise_then(void *data, const Efl_Event *event)
-{
-   Efl_Model_Test_Filemvc_Data *priv = data;
-   char *path;
-   Eo *model;
-   Efl_Future_Event_Success* info = event->info;
-   Eina_Value* value = info->value;
-
-   eina_value_get(value, &path);
-   model = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(), eio_model_path_set(efl_added, path));
-   elm_view_list_model_set(priv->fileview, model);
-}
-
-static void
-_promise_error(void *data EINA_UNUSED, const Efl_Event* err EINA_UNUSED)
-{
-   printf("Promise error!\n");
-}
-
-static void
 _tree_selected_cb(void *data, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
-   Efl_Future *f;
 
    printf("TREE selected model\n");
 
-   f = efl_model_property_get(child, "path");
-   efl_ref(f);
-   efl_future_then(f, &_promise_then, &_promise_error, NULL, priv);
-   efl_future_link(event->object, f);
-   efl_unref(f);
+   elm_view_list_model_set(priv->fileview, child);
 }
 
 static void
@@ -151,7 +126,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    //treemodel
    priv.treemodel = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(), eio_model_path_set(efl_added, dirname));
-   eio_model_children_filter_set(priv.treemodel, _filter_cb, NULL);
+   eio_model_children_filter_set(priv.treemodel, NULL, _filter_cb, NULL);
 
    //treeview
    genlist = elm_genlist_add(win);
