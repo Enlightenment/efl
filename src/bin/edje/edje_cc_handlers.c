@@ -2441,8 +2441,43 @@ st_import(void)
    edje_file_import = _edje_file_open(f, &error_ret, eina_file_mtime_get(f),
                                       EINA_TRUE);
 
+   file_import = eina_strbuf_string_steal(path);
    eina_strbuf_free(path);
    free(name);
+
+   if (edje_file_import->image_dir)
+     {
+        unsigned int i;
+        Edje_Image_Directory *eid, *eid2;
+        Edje_Image_Directory_Set_Entry *entry, *entry2;
+        Eina_List *l;
+
+        eid2 = edje_file_import->image_dir;
+        eid = edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
+
+        eid->entries_count = eid2->entries_count;
+        eid->entries = mem_alloc(SZ(Edje_Image_Directory_Entry) * eid->entries_count);
+
+        for (i = 0; i < eid->entries_count; i++)
+          {
+             eid->entries[i].entry = STRDUP(eid2->entries[i].entry);
+             eid->entries[i].source_type = eid2->entries[i].source_type;
+             eid->entries[i].source_param = eid2->entries[i].source_param;
+             eid->entries[i].id = eid2->entries[i].id;
+          }
+
+        for (i = 0; i < eid->sets_count; i++)
+          {
+             eid->sets[i].name = STRDUP(eid2->sets[i].name);
+             eid->sets[i].id = eid2->sets[i].id;
+
+             EINA_LIST_FOREACH(eid2->sets[i].entries, l, entry2)
+               {
+                  entry = mem_alloc(SZ(Edje_Image_Directory_Set_Entry));
+                  memcpy(entry, entry2, sizeof(Edje_Image_Directory_Set_Entry));
+               }
+          }
+     }
 }
 
 /** @edcsubsection{toplevel_externals,
@@ -9230,7 +9265,11 @@ st_collections_group_parts_part_description_inherit(void)
          ied->image = iparent->image;
 
          data_queue_image_remove(&ied->image.id, &ied->image.set);
-         data_queue_copied_image_lookup(&iparent->image.id, &ied->image.id, &ied->image.set);
+         if (!pcp->import)
+           data_queue_copied_image_lookup(&iparent->image.id, &ied->image.id, &ied->image.set);
+         else
+           data_queue_image_lookup(STRDUP(edje_file->image_dir->entries[iparent->image.id].entry),
+                                          &ied->image.id, &ied->image.set);
 
          ied->image.tweens = calloc(iparent->image.tweens_count,
                                     sizeof (Edje_Part_Image_Id *));
@@ -9243,6 +9282,11 @@ st_collections_group_parts_part_description_inherit(void)
               iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
               data_queue_image_remove(&ied->image.id, &ied->image.set);
               data_queue_copied_image_lookup(&(iid->id), &(iid_new->id), &(iid_new->set));
+              if (!pcp->import)
+                data_queue_copied_image_lookup(&(iid->id), &(iid_new->id), &(iid_new->set));
+              else
+                data_queue_image_lookup(STRDUP(edje_file->image_dir->entries[iid->id].entry),
+                                        &iid_new->id, &iid_new->set);
               ied->image.tweens[i] = iid_new;
            }
 

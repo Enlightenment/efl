@@ -340,6 +340,7 @@ extern Eina_List             *vibration_dirs;
 extern Eina_List             *data_dirs;
 extern char                  *file_in;
 extern char                  *file_out;
+extern char                  *file_import;
 extern char                  *watchfile;
 extern char                  *depfile;
 extern char                  *license;

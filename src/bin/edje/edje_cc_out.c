@@ -215,6 +215,7 @@ static void data_process_string(Edje_Part_Collection *pc, const char *prefix, ch
 
 extern Eina_List *po_files;
 
+char *file_import;
 Edje_File *edje_file = NULL;
 Edje_File *edje_file_import = NULL;
 Eina_List *edje_collections = NULL;
@@ -242,6 +243,7 @@ static Eet_File *cur_ef;
 static int image_num;
 static Ecore_Evas *buffer_ee;
 static int cur_image_entry;
+static Eina_List *images_unused_list = NULL;
 
 static void data_write_images(void);
 
@@ -1363,6 +1365,7 @@ data_write_images(void)
 {
    Evas *evas;
    const char *ext = NULL;
+   Image_Unused_Ids *iui;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
@@ -1447,9 +1450,35 @@ data_write_images(void)
                }
              else
                {
-                  free(iw);
-                  error_and_abort_image_load_error(cur_ef, img->entry, load_err);
-                  exit(1); // ensure static analysis tools know we exit
+                  int load_err2 = EVAS_LOAD_ERROR_NONE;
+                  char buf[PATH_MAX];
+                  Eina_List *l;
+
+                  EINA_LIST_FOREACH(images_unused_list, l, iui)
+                    {
+                       if (iui->new_id == img->id)
+                         break;
+                    }
+
+                  snprintf(buf, sizeof(buf), "edje/images/%i", (iui) ? iui->old_id : img->id);
+                  evas_object_image_file_set(im, file_import, buf);
+                  load_err2 = evas_object_image_load_error_get(im);
+                  if (load_err2 == EVAS_LOAD_ERROR_NONE)
+                    {
+                       image_num += 1;
+                       iw->path = strdup(buf);
+                       pending_threads++;
+                       if (threads)
+                         evas_object_image_preload(im, 0);
+                       if (!threads)
+                         data_image_preload_done(iw, evas, im, NULL);
+                    }
+                  else
+                    {
+                       free(iw);
+                       error_and_abort_image_load_error(cur_ef, img->entry, load_err);
+                       exit(1); // ensure static analysis tools know we exit
+                    }
                }
           }
 
@@ -1471,6 +1500,8 @@ data_write_images(void)
              if (pending_threads + pending_image_threads > (int)max_open_files - 2) break;
           }
      }
+   EINA_LIST_FREE(images_unused_list, iui)
+     free(iui);
 }
 
 static void
@@ -4021,7 +4052,6 @@ free_group:
         Edje_Image_Directory_Entry *de, *de_last, *img;
         Edje_Image_Directory_Set *set, *set_last, *set_realloc;
         Edje_Image_Directory_Set_Entry *set_e;
-        Eina_List *images_unused_list = NULL;
         unsigned int i;
 
         for (i = 0; i < edje_file->image_dir->entries_count; ++i)
@@ -4084,8 +4114,6 @@ free_group:
 
         /* update image id in parts */
         if (images_unused_list) _data_image_id_update(images_unused_list);
-        EINA_LIST_FREE(images_unused_list, iui)
-          free(iui);
 
         _data_image_sets_size_set();
      }
