@@ -138,7 +138,7 @@ evas_object_image_border_scale_set(Evas_Object *obj, double scale)
 EAPI double
 evas_object_image_border_scale_get(const Evas_Object *obj)
 {
-   EVAS_IMAGE_API(obj, 1.0);
+   EVAS_IMAGE_API(obj, 0.0);
    return efl_gfx_image_border_scale_get(obj);
 }
 
@@ -152,7 +152,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode
 EAPI Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
-   EVAS_IMAGE_API(obj, EVAS_BORDER_FILL_DEFAULT);
+   EVAS_IMAGE_API(obj, EVAS_BORDER_FILL_NONE);
    return (Evas_Border_Fill_Mode) efl_gfx_image_border_center_fill_get(obj);
 }
 
