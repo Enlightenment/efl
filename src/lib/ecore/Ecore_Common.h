@@ -3207,17 +3207,4 @@ typedef struct _Ecore_Job Ecore_Job;    /**< A job handle */
  * @}
  */
 
-
-#ifdef EFL_BETA_API_SUPPORT
-
-/*
- * @brief Function callback type for when creating Ecore_Thread that
- * uses Efl_Future for communication.
- */
-typedef void (*Ecore_Thread_Future_Cb)(const void *data, Eo *promise, Ecore_Thread *thread);
-
-EAPI Efl_Future *ecore_thread_future_run(Ecore_Thread_Future_Cb heavy, const void *data, Eina_Free_Cb free_cb);
-
-#endif
-
 #endif
