@@ -78,12 +78,12 @@ static void
 _anim_ended_cb(void *data, const Efl_Event *event)
 {
    Transit_Data *td = data;
-   Efl_Canvas_Object_Animation_Event_Info *anim_event = event->info;
+   Efl_Canvas_Object_Animation_Event *anim_event = event->info;
 
    //Unset animation because originally there is no animation.
    if (!td->orig_anim)
      efl_canvas_object_event_animation_set(event->object,
-                                           anim_event->event_type, NULL);
+                                           anim_event->event_desc, NULL);
 
    efl_canvas_object_freeze_events_set(event->object,
                                        td->freeze_events);
@@ -91,7 +91,7 @@ _anim_ended_cb(void *data, const Efl_Event *event)
    td->cd->on_pushing = EINA_FALSE;
    td->cd->on_popping = EINA_FALSE;
 
-   if (anim_event->event_type == EFL_GFX_ENTITY_EVENT_SHOW)
+   if (anim_event->event_desc == EFL_GFX_ENTITY_EVENT_SHOW)
      {
         //Activated Event
         Efl_Ui_Stack_Event_Activated activated_info;

@@ -172,8 +172,8 @@ _anim_started_cb(void *data, const Efl_Event *ev)
 {
    const Efl_Event_Description *desc = data;
 
-   Efl_Canvas_Object_Animation_Event_Info event;
-   event.event_type = desc;
+   Efl_Canvas_Object_Animation_Event event;
+   event.event_desc = desc;
 
    Eo *eo_obj = efl_animation_player_target_get(ev->object);
 
@@ -186,8 +186,8 @@ _anim_running_cb(void *data, const Efl_Event *ev)
 {
    const Efl_Event_Description *desc = data;
 
-   Efl_Canvas_Object_Animation_Event_Info event;
-   event.event_type = desc;
+   Efl_Canvas_Object_Animation_Event event;
+   event.event_desc = desc;
 
    Eo *eo_obj = efl_animation_player_target_get(ev->object);
 
@@ -207,8 +207,8 @@ _anim_ended_cb(void *data, const Efl_Event *ev)
    efl_event_callback_del(ev->object, EFL_ANIMATION_PLAYER_EVENT_ENDED,
                           _anim_ended_cb, desc);
 
-   Efl_Canvas_Object_Animation_Event_Info event;
-   event.event_type = desc;
+   Efl_Canvas_Object_Animation_Event event;
+   event.event_desc = desc;
 
    Eo *eo_obj = efl_animation_player_target_get(ev->object);
 
