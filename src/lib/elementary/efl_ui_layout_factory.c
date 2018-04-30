@@ -80,7 +80,7 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
      {
         layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, parent,
                          efl_ui_view_model_set(efl_added, model),
-                         elm_layout_theme_set(efl_added, pd->klass, pd->group, pd->style));
+                         efl_ui_layout_object_theme_set(efl_added, pd->klass, pd->group, pd->style));
 
         eina_hash_foreach(pd->connects, _model_connect, layout);
 
