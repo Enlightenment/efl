@@ -149,7 +149,7 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    ssp->sources_patterns = edje_match_programs_source_init(all, j);
 }
 
-static Edje_Part_Collection *
+Edje_Part_Collection *
 _edje_file_coll_open(Edje_File *edf, const char *coll)
 {
    Edje_Part_Collection *edc = NULL;
@@ -286,7 +286,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 extern size_t  _edje_data_string_mapping_size;
 extern void   *_edje_data_string_mapping;
 
-static Edje_File *
+Edje_File *
 _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll)
 {
    Edje_Color_Tree_Node *ctn;

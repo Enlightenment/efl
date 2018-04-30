@@ -2709,6 +2709,8 @@ void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
 EAPI void edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce);
 EAPI void edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce);
 EAPI void _edje_cache_file_unref(Edje_File *edf);
+EAPI Edje_File *_edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll);
+EAPI Edje_Part_Collection *_edje_file_coll_open(Edje_File *edf, const char *coll);
 
 void _edje_embryo_globals_init(Edje *ed);
 
