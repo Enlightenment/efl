@@ -9,8 +9,8 @@
 collections {
 
 group {
-   name: "elm/list/item/custom";
-   alias: "elm/list/item/default";
+   name: "efl/list_item:custom";
+   alias: "efl/list_item";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    parts {
@@ -34,12 +34,12 @@ group {
          }
       }
       program {
-         signal: "elm,state,odd"; source: "elm";
+         signal: "efl,state,odd"; source: "efl";
          action: STATE_SET "odd" 1.0;
          target: "base";
       }
       program {
-         signal: "elm,state,even"; source: "elm";
+         signal: "efl,state,even"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -74,41 +74,41 @@ group {
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "efl,state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "sel_shadow";
          target: "sel_base";
          target: "sel_bevel";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "efl,state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sel_shadow";
          target: "sel_base";
          target: "sel_bevel";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "event";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "event";
       }
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "efl.text"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
-            rel1.to_x: "elm.swallow.icon";
+            rel1.to_x: "efl.icon";
             rel2.offset: -3 -3;
             rel2.relative: 0.0 1.0;
-            rel2.to_x: "elm.swallow.end";
+            rel2.to_x: "efl.end";
             color: FN_COL_DEFAULT;
             color_class: "list_item";
             text { font: FN; size: 10;
@@ -131,12 +131,12 @@ group {
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
+            rel1.to: "efl.text";
+            rel2.to: "efl.text";
             color: FN_COL_DISABLE;
             color_class: "list_item_disabled";
             text { font: FN; size: 10;
-               text_source: "elm.text";
+               text_source: "efl.text";
                align: 0.0 0.5;
                text_class: "list_item";
             }
@@ -156,13 +156,13 @@ group {
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -2 -3;
-            rel1.to: "elm.text";
+            rel1.to: "efl.text";
             rel2.offset: 1 1;
-            rel2.to: "elm.text";
+            rel2.to: "efl.text";
             color: FN_COL_HIGHLIGHT;
             color_class: "list_item_selected";
             text { font: FN; size: 10;
-               text_source: "elm.text";
+               text_source: "efl.text";
                align: 0.0 0.5;
                text_class: "list_item";
             }
@@ -178,35 +178,35 @@ group {
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "efl,state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
-         target: "elm.text";
+         target: "efl.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "efl,state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.text";
+         target: "efl.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
+         target: "efl.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.text";
+         target: "efl.text";
          target: "label2";
          target: "label3";
       }
       //##//
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "efl.icon"; type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -216,7 +216,7 @@ group {
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "efl.end"; type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -254,22 +254,22 @@ group {
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "efl,state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "sel_shine";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "efl,state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sel_shine";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "event_block";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "event_block";
       }

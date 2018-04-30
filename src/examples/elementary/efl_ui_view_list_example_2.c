@@ -24,7 +24,7 @@ _realized_cb(void *data, const Efl_Event *event)
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   efl_ui_factory_model_connect(ie->layout, "elm.swallow.icon", imf);
+   efl_ui_factory_model_connect(ie->layout, "efl.icon", imf);
 }
 
 EAPI_MAIN int
@@ -45,7 +45,7 @@ elm_main(int argc, char **argv)
 
    model = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(), eio_model_path_set(efl_added, dirname));
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_model_connect(factory, "elm.text", "filename");
+   efl_ui_model_connect(factory, "efl.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
    li = efl_add(EFL_UI_VIEW_LIST_CLASS, win);
