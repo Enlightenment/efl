@@ -90,7 +90,6 @@ static const char *legacy_type_table[][2] =
      { "Efl.Ui.Image_Legacy", "Elm_Image" },
      { "Efl.Ui.Image_Zoomable_Legacy", "Elm_Photocam" },
      { "Efl.Ui.Layout_Legacy", "Elm_Layout" },
-     { "Efl.Ui.Multibuttonentry_Legacy", "Elm_Multibuttonentry" },
      { "Efl.Ui.Panes_Legacy", "Elm_Panes" },
      { "Efl.Ui.Progressbar_Legacy", "Elm_Progressbar" },
      { "Efl.Ui.Radio_Legacy", "Elm_Radio" },
@@ -145,6 +144,7 @@ static const char *legacy_type_table[][2] =
      { "Elm.Spinner", "Elm_Spinner" },
      { "Elm.Plug", "Elm_Plug" },
      { "Elm.Web.None", "Elm_Web" },
+     { "Elm.Multibuttonentry", "Elm_Multibuttonentry" },
      { NULL, NULL }
 };
 
