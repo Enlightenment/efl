@@ -136,10 +136,10 @@ struct _Efl_Canvas_Animation_Player_Event_Running
    double progress;
 };
 
-typedef struct Efl_Canvas_Object_Animation_Event
+struct _Efl_Canvas_Object_Animation_Event
 {
    const Efl_Event_Description *event_desc;
-} Efl_Canvas_Object_Animation_Event;
+};
 
 /**
  * @ingroup Evas_Object_Rectangle
