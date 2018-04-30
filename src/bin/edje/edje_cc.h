@@ -164,9 +164,10 @@ struct _Edje_Part_Collection_Parser
    Eina_List *links;
    Eina_Hash *link_hash;
    Eina_List *base_codes;
-   Eina_Bool default_mouse_events;
-   Eina_Bool inherit_only;
-   Eina_Bool inherit_script : 1;
+   Eina_Bool default_mouse_events : 1;
+   Eina_Bool inherit_only         : 1;
+   Eina_Bool inherit_script       : 1;
+   Eina_Bool import               : 1;
 };
 
 typedef enum

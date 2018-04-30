@@ -49,10 +49,13 @@ code_parse(Code *code)
    if (code->is_lua || code->parsed) return;
 
    id = eina_list_data_idx(codes, code);
-   pcp = eina_list_nth(edje_collections, id);
+   if (id >= 0)
+     {
+        pcp = eina_list_nth(edje_collections, id);
 
-   EINA_LIST_FOREACH(pcp->base_codes, l, base)
-     code_parse(base);
+        EINA_LIST_FOREACH(pcp->base_codes, l, base)
+          code_parse(base);
+     }
 
    if (code->shared)
      code_parse_internal(code);
