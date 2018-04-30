@@ -830,6 +830,23 @@ EAPI Eina_Bool eolian_state_all_eo_files_parse(Eolian_State *state);
 EAPI Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
 
 /*
+ * @brief Perform additional checks on the state.
+ *
+ * This funciton performs additional checks that aren't crucial for the
+ * database integrity (that's checked as a part of the regular parse process,
+ * so the database is guaranteed to be valid), but are important for proper
+ * correctness. It is recommended that all available .eot and .eo files are
+ * parsed when running this.
+ *
+ * The set of available checks will expand over time.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_state_check(Eolian_State *state);
+
+/*
  * @brief Get an Eolian unit by file name.
  *
  * For any .eo or .eot file (must be within a directory previously scanned

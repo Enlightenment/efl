@@ -1106,6 +1106,12 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
    return pd.ret;
 }
 
+EAPI Eina_Bool
+eolian_state_check(Eolian_State *state EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 EAPI const Eolian_Unit *
 eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name)
 {
