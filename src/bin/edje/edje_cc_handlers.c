@@ -3636,7 +3636,7 @@ ob_styles_style(void)
 {
    Edje_Style *stl;
 
-   stl = mem_alloc(SZ(Edje_Style));
+   stl = mem_alloc(SZ(Edje_Style_Parser));
    edje_file->styles = eina_list_append(edje_file->styles, stl);
 }
 
@@ -3644,6 +3644,7 @@ static void
 _style_name(char *name)
 {
    Edje_Style *stl, *tstl;
+   Edje_Style_Parser *stlp;
    Eina_List *l;
 
    stl = eina_list_last_data_get(edje_file->styles);
@@ -3653,9 +3654,20 @@ _style_name(char *name)
      {
         if (stl->name && tstl->name && (stl != tstl) && (!strcmp(stl->name, tstl->name)))
           {
-             ERR("parse error %s:%i. There is already a style named \"%s\"",
-                 file_in, line - 1, stl->name);
-             exit(-1);
+             stlp = (Edje_Style_Parser *)tstl;
+
+             if (stlp->imported)
+               {
+                  edje_file->styles = eina_list_remove(edje_file->styles, tstl);
+                  free(tstl);
+                  break;
+               }
+             else
+               {
+                  ERR("parse error %s:%i. There is already a style named \"%s\"",
+                      file_in, line - 1, stl->name);
+                  exit(-1);
+               }
           }
      }
 }
@@ -3771,6 +3783,7 @@ static void
 _text_class_name(char *name)
 {
    Edje_Text_Class *tc, *ttc;
+   Edje_Text_Class_Parser *tcp;
    Eina_List *l;
 
    tc = eina_list_data_get(eina_list_last(edje_file->text_classes));
@@ -3779,9 +3792,20 @@ _text_class_name(char *name)
      {
         if ((tc != ttc) && (!strcmp(tc->name, ttc->name)))
           {
-             ERR("parse error %s:%i. There is already a text class named \"%s\"",
-                 file_in, line - 1, tc->name);
-             exit(-1);
+             tcp = (Edje_Text_Class_Parser *)ttc;
+
+             if (tcp->imported)
+               {
+                  edje_file->text_classes = eina_list_remove(edje_file->text_classes, ttc);
+                  free(ttc);
+                  break;
+               }
+             else
+               {
+                  ERR("parse error %s:%i. There is already a text class named \"%s\"",
+                      file_in, line - 1, tc->name);
+                  exit(-1);
+               }
           }
      }
 }
@@ -3802,6 +3826,7 @@ static void
 st_text_class_name(void)
 {
    Edje_Text_Class *tc, *ttc;
+   Edje_Text_Class_Parser *tcp;
    Eina_List *l;
 
    tc = eina_list_data_get(eina_list_last(edje_file->text_classes));
@@ -3810,9 +3835,20 @@ st_text_class_name(void)
      {
         if ((tc != ttc) && (!strcmp(tc->name, ttc->name)))
           {
-             ERR("parse error %s:%i. There is already a text class named \"%s\"",
-                 file_in, line - 1, tc->name);
-             exit(-1);
+             tcp = (Edje_Text_Class_Parser *)ttc;
+
+             if (tcp->imported)
+               {
+                  edje_file->text_classes = eina_list_remove(edje_file->text_classes, ttc);
+                  free(ttc);
+                  break;
+               }
+             else
+               {
+                  ERR("parse error %s:%i. There is already a text class named \"%s\"",
+                      file_in, line - 1, tc->name);
+                  exit(-1);
+               }
           }
      }
 }
@@ -9124,7 +9160,66 @@ st_collections_group_parts_part_description_inherit(void)
          ted->text.text.str = STRDUP(ted->text.text.str);
          ted->text.domain = STRDUP(ted->text.domain);
          ted->text.text_class = STRDUP(ted->text.text_class);
+         if ((ted->text.text_class) && (pcp->import))
+           {
+              Edje_Text_Class *tc;
+              Edje_Text_Class_Parser *tcp;
+              Eina_List *l;
+              Eina_Bool overriden = EINA_FALSE;
+
+              EINA_LIST_FOREACH(edje_file->text_classes, l, tc)
+                {
+                   if (!strcmp(ted->text.text_class, tc->name))
+                     {
+                        overriden = EINA_TRUE;
+                        break;
+                     }
+                }
+
+              if (!overriden)
+                {
+                   EINA_LIST_FOREACH(edje_file_import->text_classes, l, tc)
+                     {
+                        tcp = mem_alloc(SZ(Edje_Text_Class_Parser));
+                        memcpy(tcp, tc, sizeof(Edje_Text_Class));
+                        tcp->imported = EINA_TRUE;
+
+                        edje_file->text_classes = eina_list_append(edje_file->text_classes, tcp);
+                        break;
+                     }
+                }
+          }
          ted->text.font.str = STRDUP(ted->text.font.str);
+
+         if ((ted->text.style.str) && (pcp->import))
+           {
+              Edje_Style *stl;
+              Edje_Style_Parser *stlp;
+              Eina_List *l;
+              Eina_Bool overriden = EINA_FALSE;
+
+              EINA_LIST_FOREACH(edje_file->styles, l, stl)
+                {
+                   if (!strcmp(ted->text.style.str, stl->name))
+                     {
+                        overriden = EINA_TRUE;
+                        break;
+                     }
+                }
+
+              if (!overriden)
+                {
+                   EINA_LIST_FOREACH(edje_file_import->styles, l, stl)
+                     {
+                        stlp = mem_alloc(SZ(Edje_Style_Parser));
+                        memcpy(stlp, stl, sizeof(Edje_Style));
+                        stlp->imported = EINA_TRUE;
+
+                        edje_file->styles = eina_list_append(edje_file->styles, stlp);
+                        break;
+                     }
+                }
+           }
 
          _filter_copy(&ted->filter, &tparent->filter);
          data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);

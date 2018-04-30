@@ -221,6 +221,18 @@ typedef struct
    Eina_Bool imported;
 } Edje_Size_Class_Parser;
 
+typedef struct
+{
+   Edje_Text_Class tc;
+   Eina_Bool imported;
+} Edje_Text_Class_Parser;
+
+typedef struct
+{
+   Edje_Style style;
+   Eina_Bool imported;
+} Edje_Style_Parser;
+
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
