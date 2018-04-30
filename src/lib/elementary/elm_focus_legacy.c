@@ -11,11 +11,13 @@
 
 #define API_ENTRY()\
    EINA_SAFETY_ON_NULL_RETURN(obj); \
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, EFL_UI_WIDGET_CLASS)); \
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd); \
    EINA_SAFETY_ON_FALSE_RETURN(elm_widget_is_legacy(obj));
 
 #define API_ENTRY_VAL(val)\
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, val); \
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, EFL_UI_WIDGET_CLASS), val); \
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, val); \
    EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_widget_is_legacy(obj), val);
 
@@ -119,12 +121,12 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
                                  Elm_Focus_Direction dir EINA_UNUSED)
 {
    API_ENTRY()
-
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(next, EFL_UI_WIDGET_CLASS));
+   ELM_WIDGET_DATA_GET_OR_RETURN(next, next_pd);
 
    #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
    MAPPING()
    #undef MAP
-   ELM_WIDGET_DATA_GET_OR_RETURN(next, next_pd);
    dir = efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS, dir);
    #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) next_pd->legacy_focus.field = obj;
    MAPPING()
@@ -203,14 +205,17 @@ elm_object_focus_next(Evas_Object        *obj,
    /* regular = efl_ui_focus_manager_request_move(manager_top, dir, NULL, EINA_FALSE); */
    logical = efl_ui_focus_manager_focus_get(manager_top);
 
-   Efl_Ui_Focus_Object *legacy_target = legacy_elm_widget_next_targer(logical, dir);
-   if (legacy_target)
+   if (elm_widget_is(logical))
      {
-        o = legacy_target;
-        efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, legacy_target);
-        if (elm_object_focused_object_get(top) == legacy_target)
+        Efl_Ui_Focus_Object *legacy_target = legacy_elm_widget_next_targer(logical, dir);
+        if (legacy_target)
           {
-             legacy_focus_move = EINA_TRUE;
+             o = legacy_target;
+             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, legacy_target);
+             if (elm_object_focused_object_get(top) == legacy_target)
+               {
+                  legacy_focus_move = EINA_TRUE;
+               }
           }
      }
 
