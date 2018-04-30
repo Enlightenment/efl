@@ -209,6 +209,18 @@ typedef struct
    Edje_Part_Anchor fill;
 } Edje_Part_Description_Anchors;
 
+typedef struct
+{
+   Edje_Color_Class cc;
+   Eina_Bool imported;
+} Edje_Color_Class_Parser;
+
+typedef struct
+{
+   Edje_Size_Class sc;
+   Eina_Bool imported;
+} Edje_Size_Class_Parser;
+
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
