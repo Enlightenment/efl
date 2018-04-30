@@ -161,7 +161,7 @@ EFL_START_TEST(eio_test_job_xattr_set)
 
    num_of_attr = 0;
 
-   futures = calloc(total_attributes + 1, sizeof(Efl_Future*));
+   futures = calloc(total_attributes + 1, sizeof(Eina_Future*));
    futures[total_attributes] = NULL;
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
