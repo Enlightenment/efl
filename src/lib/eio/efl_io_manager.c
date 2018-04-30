@@ -43,7 +43,6 @@ struct _Job_Closure
 {
    Eo *object;
    Efl_Io_Manager_Data *pdata;
-   Efl_Promise *promise;
    Eio_File *file;
    Eina_Bool delete_me;
    void *delayed_arg;
