@@ -83,6 +83,7 @@ typedef struct {
 static Node* _request_subchild(Node *node);
 static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
 static Node* _next(Node *node);
+static void _prepare_node(Node *root);
 
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
@@ -1232,13 +1233,17 @@ _get_middle(Evas_Object *obj, Eina_Vector2 *elem)
 }
 
 static Node*
-_coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_Direction direction)
+_coords_movement(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_Direction direction)
 {
    Node *candidate;
    Eina_List *node_list;
    Eina_List *lst;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_IS_2D(direction), NULL);
+
+   //flush the node and prepare all the nodes
+   _prepare_node(pd->root);
+   dirty_flush(obj, pd, upper);
 
    //decide which direction we take
    lst = DIRECTION_ACCESS(upper, direction).partners;
@@ -1425,7 +1430,7 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
 }
 
 static Efl_Ui_Focus_Object*
-_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper, Eina_Bool accept_logical)
+_request_move(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper, Eina_Bool accept_logical)
 {
    Node *dir = NULL;
 
@@ -1441,13 +1446,11 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
 
      }
 
-   dirty_flush(obj, pd, upper);
-
    if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS
     || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
       dir = _logical_movement(pd, upper, direction, accept_logical);
    else
-      dir = _coords_movement(pd, upper, direction);
+      dir = _coords_movement(obj, pd, upper, direction);
 
    //return the widget
    if (dir)
