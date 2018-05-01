@@ -246,8 +246,6 @@ _efl_ui_view_list_segarray_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Se
      }
    else if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ARRAY)
      {
-        Eina_Value vo = EINA_VALUE_EMPTY;
-
         EINA_VALUE_ARRAY_FOREACH(&v, len, i, children)
           {
              unsigned int idx = first + i;
