@@ -144,8 +144,12 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
         efl_parent_set(child_id, NULL);
      }
 
-   // Finally invalidate itself
-   efl_parent_set(obj_id, NULL);
+   // Finally invalidate itself if it wasn't done already
+   // I am not sure this is a good idea, but it force the
+   // behavior of calling directly efl_invalidate to be the
+   // same as efl_parent_set(NULL).
+   if (!obj->is_invalidating)
+     efl_parent_set(obj_id, NULL);
 
    obj->invalidate = EINA_TRUE;
 
