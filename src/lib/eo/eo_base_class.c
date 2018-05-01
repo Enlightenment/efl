@@ -2189,7 +2189,7 @@ composite_obj:
 
 err_parent:
    if (EINA_LIKELY(!pd->allow_parent_unref))
-     ERR("Object '%p' still has a parent at the time of destruction.", obj);
+     ERR("Object '%p' of type '%s' still has a parent at the time of destruction.", obj, efl_class_name_get(obj));
    efl_parent_set(obj, NULL);
    goto err_parent_back;
 }
