@@ -98,23 +98,6 @@ _custom_chain_set(Efl_Ui_Widget *node, Eina_List *lst)
    _flush_manager(node, pd);
 }
 
-Evas_Object*
-legacy_elm_widget_next_targer(Efl_Ui_Widget *obj, Elm_Focus_Direction dir)
-{
-   API_ENTRY_VAL(NULL)
-   Efl_Ui_Widget *target = NULL;
-
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) target = pd->legacy_focus.field;
-
-   if (!target)
-     {
-        MAPPING()
-     }
-   #undef MAP
-
-   return target;
-}
-
 EAPI void
 elm_object_focus_next_object_set(Evas_Object        *obj,
                                  Evas_Object        *next EINA_UNUSED,
@@ -207,14 +190,19 @@ elm_object_focus_next(Evas_Object        *obj,
 
    if (elm_widget_is(logical))
      {
-        Efl_Ui_Focus_Object *legacy_target = legacy_elm_widget_next_targer(logical, dir);
+        Efl_Ui_Focus_Object *legacy_target = NULL;
+
+        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) legacy_target = pd->legacy_focus.field;
+        MAPPING()
+        #undef MAP
+
         if (legacy_target)
           {
-             o = legacy_target;
              efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, legacy_target);
              if (elm_object_focused_object_get(top) == legacy_target)
                {
                   legacy_focus_move = EINA_TRUE;
+                  o = legacy_target;
                }
           }
      }
