@@ -116,6 +116,7 @@ struct _Eo_Object
      Eina_Bool finalized:1;
      Eina_Bool super:1;
      Eina_Bool invalidate:1;
+     Eina_Bool is_invalidating:1;
 
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
@@ -257,6 +258,8 @@ _efl_invalidate(_Eo_Object *obj)
 {
    Eo *id;
 
+   if (obj->is_invalidating) return ;
+   obj->is_invalidating = EINA_TRUE;
    if (obj->invalidate) return;
 
    id = _eo_obj_id_get(obj);
