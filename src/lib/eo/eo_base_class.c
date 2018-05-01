@@ -678,9 +678,20 @@ EOLIAN static void
 _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
    Eo *prev_parent = pd->parent;
+   Eina_Bool bad_parent = EINA_FALSE;
+
    if ((pd->parent == parent_id) ||
        ((parent_id) && (!_eo_id_domain_compatible(parent_id, obj))))
      return;
+
+   if (parent_id != NULL)
+     {
+        EO_OBJ_POINTER_GOTO(parent_id, parent_obj, err_impossible);
+        bad_parent = parent_obj->invalidate || parent_obj->is_invalidating;
+        EO_OBJ_DONE(parent_id);
+     }
+
+   if (bad_parent) goto err_parent;
 
    EO_OBJ_POINTER_GOTO(obj, eo_obj, err_impossible);
 
