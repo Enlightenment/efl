@@ -185,7 +185,6 @@ elm_object_focus_next(Evas_Object        *obj,
 
    top = elm_object_top_widget_get(obj);
    manager_top = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, obj);
-   /* regular = efl_ui_focus_manager_request_move(manager_top, dir, NULL, EINA_FALSE); */
    logical = efl_ui_focus_manager_focus_get(manager_top);
 
    if (elm_widget_is(logical))
