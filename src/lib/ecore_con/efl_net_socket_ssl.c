@@ -244,7 +244,6 @@ efl_net_socket_ssl_sock_connected(void *data, const Efl_Event *event EINA_UNUSED
      {
         WRN("SSL=%p failed handshake: %s", o, eina_error_msg_get(err));
         efl_io_closer_close(o);
-        return;
      }
 
    efl_unref(o);
@@ -455,14 +454,6 @@ _efl_net_socket_ssl_efl_object_invalidate(Eo *o, Efl_Net_Socket_Ssl_Data *pd EIN
         efl_event_thaw(o);
      }
 
-   efl_invalidate(efl_super(o, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
-{
-   efl_destructor(efl_super(o, MY_CLASS));
-
    pd->torndown = EINA_TRUE;
    efl_net_ssl_conn_teardown(&pd->ssl_conn);
    if (pd->sock)
@@ -481,7 +472,15 @@ _efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
         pd->context = NULL;
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
+{
    eina_stringshare_replace(&pd->hostname_override, NULL);
+
+   efl_destructor(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static Eina_Error
