@@ -1030,7 +1030,7 @@ efl_reuse(const Eo *eo_id)
    efl_object_override(obj, NULL);
    if (!efl_parent_get(obj))
      _efl_object_parent_sink_set(obj, EINA_FALSE);
-   _efl_object_reuse(obj);
+   _efl_object_reuse(_obj);
 
 #ifdef EO_DEBUG
    _eo_log_obj_ref_op(_obj, EO_REF_OP_REUSE);

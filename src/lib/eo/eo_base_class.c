@@ -666,12 +666,10 @@ _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink)
 }
 
 void
-_efl_object_reuse(Eo *obj_id)
+_efl_object_reuse(_Eo_Object *obj)
 {
-   EO_OBJ_POINTER(obj_id, obj);
    obj->is_invalidating = EINA_FALSE;
    obj->invalidate = EINA_FALSE;
-   EO_OBJ_DONE(obj_id);
 }
 
 EOLIAN static void
