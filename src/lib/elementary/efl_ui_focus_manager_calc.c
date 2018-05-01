@@ -1454,11 +1454,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                     }
                   else
                     {
-                       //we set the redirect to NULL since it cannot
-                       //help us, later on the redirect manager can be
-                       //set to the same again, and it is strictly new setted up.
-                       efl_ui_focus_manager_redirect_set(obj, NULL);
-                       pd->redirect_entry = NULL;
+                       /*
+                         DO NOT unset the redirect here, the value has to stay,
+                         if one direction is not continuing in one direction, the
+                         other can continue thus we need to safe the redirect for this case.
+                        */
+
                     }
 
                   candidate = new_candidate;
