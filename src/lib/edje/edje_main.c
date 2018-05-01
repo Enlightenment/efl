@@ -153,7 +153,7 @@ shutdown_all:
         efl_loop_unregister(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE, _edje_global_obj);
         efl_loop_unregister(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj);
         efl_loop_unregister(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj);
-        efl_unref(_edje_global_obj);
+        efl_del(_edje_global_obj);
         _edje_global_obj = NULL;
      }
 shutdown_efreet:
@@ -212,7 +212,7 @@ _edje_shutdown_core(void)
    efl_loop_unregister(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE, _edje_global_obj);
    efl_loop_unregister(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj);
    efl_loop_unregister(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj);
-   efl_unref(_edje_global_obj);
+   efl_del(_edje_global_obj);
    _edje_global_obj = NULL;
 
    eina_cow_del(_edje_calc_params_map_cow);
@@ -286,17 +286,17 @@ _edje_class_shutdown(void)
 {
    if (_edje_color_class_member)
      {
-        efl_unref(_edje_color_class_member);
+        efl_del(_edje_color_class_member);
         _edje_color_class_member = NULL;
      }
    if (_edje_text_class_member)
      {
-        efl_unref(_edje_text_class_member);
+        efl_del(_edje_text_class_member);
         _edje_text_class_member = NULL;
      }
    if (_edje_size_class_member)
      {
-        efl_unref(_edje_size_class_member);
+        efl_del(_edje_size_class_member);
         _edje_size_class_member = NULL;
      }
 }
