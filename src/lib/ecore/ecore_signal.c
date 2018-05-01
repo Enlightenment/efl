@@ -279,10 +279,29 @@ _ecore_signal_init(void)
 void
 _ecore_signal_shutdown(void)
 {
+   sigset_t newset;
+
    ecore_fork_reset_callback_del(_ecore_signal_cb_fork, NULL);
    _ecore_signal_pipe_shutdown();
    // we probably should restore.. but not a good idea
    // pthread_sigmask(SIG_SETMASK, &sig_oldset, NULL);
+   // at least do not trigger signal callback after shutdown
+#ifndef _WIN32
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+# ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+# endif
+   pthread_sigmask(SIG_BLOCK, &newset, NULL);
+#endif
 }
 
 void
