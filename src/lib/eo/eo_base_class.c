@@ -65,7 +65,6 @@ typedef struct
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
    Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
-   Eina_Bool                  invalidate : 1; // Object become invalide once it loose its parent
 } Efl_Object_Data;
 
 typedef enum
@@ -666,6 +665,7 @@ void
 _efl_object_reuse(Eo *obj_id)
 {
    EO_OBJ_POINTER(obj_id, obj);
+   obj->is_invalidating = EINA_FALSE;
    obj->invalidate = EINA_FALSE;
    EO_OBJ_DONE(obj_id);
 }
@@ -680,8 +680,13 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 
    EO_OBJ_POINTER_GOTO(obj, eo_obj, err_impossible);
 
+   if (eo_obj->is_invalidating && parent_id == NULL)
+     {
+        EO_OBJ_DONE(obj);
+        return ;
+     }
    // Invalidated object can not be bring back to life
-   if (eo_obj->invalidate)
+   if (eo_obj->invalidate || eo_obj->is_invalidating)
      {
         ERR("Call of efl_parent_set(%p, %p) when object is already invalidated.\n", obj, parent_id);
         goto err_impossible;
@@ -725,7 +730,6 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
      }
    else
      {
-        eo_obj->invalidate = EINA_TRUE;
         if (prev_parent) _efl_invalidate(eo_obj);
 
         pd->parent = NULL;
@@ -782,7 +786,7 @@ _efl_object_provider_find(const Eo *obj, Efl_Object_Data *pd, const Efl_Object *
    if (invalidate)
      {
         ERR("Calling efl_provider_find(%p) after the object was invalidated.", obj);
-	return NULL;
+        return NULL;
      }
    if (pd->parent) return efl_provider_find(pd->parent, klass);
    return NULL;
