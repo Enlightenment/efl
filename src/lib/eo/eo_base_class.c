@@ -2101,7 +2101,8 @@ _efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 EOLIAN static void
 _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 {
-   Eo *child;
+   _Eo_Object *obj_child;
+   Eina_Inlist *l;
    Efl_Object_Extension *ext;
    _Eo_Object *obj_data2 = NULL;
 
@@ -2165,9 +2166,11 @@ err_parent_back:
    return;
 
 children:
-   while (pd->children)
+   EINA_INLIST_FOREACH_SAFE(pd->children, l, obj_child)
      {
-        child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
+        Eo *child;
+
+        child = _eo_obj_id_get(obj_child);
         efl_parent_set(child, NULL);
      }
    goto children_back;
