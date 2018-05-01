@@ -321,20 +321,16 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 }
 
 EOLIAN static void
-_efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
+_efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
 {
    _ecore_main_content_clear(obj, pd);
 
-   pd->future_message_handler = NULL;
-
+   // Even if we are just refcounting provider, efl_provider_find won't reach them after invalidate
    eina_hash_free(pd->providers);
    pd->providers = NULL;
 
-   efl_del(pd->poll_low);
    pd->poll_low = NULL;
-   efl_del(pd->poll_medium);
    pd->poll_medium = NULL;
-   efl_del(pd->poll_high);
    pd->poll_high = NULL;
 
    if (pd->message_handlers)
@@ -342,6 +338,21 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
         eina_inarray_free(pd->message_handlers);
         pd->message_handlers = NULL;
      }
+
+   // After invalidate, it won't be possible to parent to the singleton anymore
+   if (obj == _mainloop_singleton)
+     {
+        _mainloop_singleton = NULL;
+        _mainloop_singleton_data = NULL;
+     }
+
+   efl_invalidate(efl_super(obj, EFL_LOOP_CLASS));
+}
+
+EOLIAN static void
+_efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
+{
+   pd->future_message_handler = NULL;
 
    eina_lock_take(&_environ_lock);
    _clean_old_environ();
@@ -352,12 +363,6 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    eina_lock_release(&_environ_lock);
 
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
-
-   if (obj == _mainloop_singleton)
-     {
-        _mainloop_singleton = NULL;
-        _mainloop_singleton_data = NULL;
-     }
 }
 
 static void

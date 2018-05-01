@@ -122,6 +122,7 @@ class Efl.Loop (Efl.Task)
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Object.provider_find;
       Efl.Task.env { set; get; }
