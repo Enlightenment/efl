@@ -336,8 +336,6 @@ _efl_net_ssl_context_efl_object_constructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
 EOLIAN static void
 _efl_net_ssl_context_efl_object_destructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
 {
-   efl_destructor(efl_super(o, MY_CLASS));
-
    efl_net_ssl_ctx_teardown(&pd->ssl_ctx);
 
    _efl_net_ssl_context_string_list_free(&pd->certificates);
@@ -346,6 +344,8 @@ _efl_net_ssl_context_efl_object_destructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
    _efl_net_ssl_context_string_list_free(&pd->certificate_authorities);
 
    eina_stringshare_replace(&pd->hostname, NULL);
+
+   efl_destructor(efl_super(o, MY_CLASS));
 }
 
 static Efl_Net_Ssl_Context *_efl_net_ssl_context_default_dialer = NULL;
