@@ -16,6 +16,7 @@ typedef struct
    Eo *outgoing;
    Eo *sender;
    Eo *receiver;
+   Eina_Bool is_closing;
    Eina_Bool closed;
    Eina_Bool eos;
    Eina_Bool can_read;
@@ -151,6 +152,9 @@ _efl_io_buffered_stream_efl_object_finalize(Eo *o, Efl_Io_Buffered_Stream_Data *
 EOLIAN static void
 _efl_io_buffered_stream_efl_object_invalidate(Eo *o, Efl_Io_Buffered_Stream_Data *pd)
 {
+   if (!efl_io_closer_closed_get(o))
+     efl_io_closer_close(o);
+
    if (pd->inner_io)
      {
         efl_event_callback_array_del(pd->inner_io, _efl_io_buffered_stream_inner_io_cbs(), o);
@@ -168,7 +172,6 @@ _efl_io_buffered_stream_efl_object_invalidate(Eo *o, Efl_Io_Buffered_Stream_Data
 
    if (!pd->is_finished)
      {
-        fprintf(stderr, "forced finish\n");
         pd->is_finished = EINA_TRUE;
         efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, NULL);
      }
@@ -182,6 +185,8 @@ _efl_io_buffered_stream_efl_io_closer_close(Eo *o, Efl_Io_Buffered_Stream_Data *
    Eina_Error err = 0;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->closed, EINVAL);
+   if (pd->is_closing) return 0;
+   pd->is_closing = EINA_TRUE;
 
    if (pd->outgoing)
      {
