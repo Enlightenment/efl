@@ -153,7 +153,7 @@ _efl_net_server_ssl_efl_object_invalidate(Eo *o, Efl_Net_Server_Ssl_Data *pd)
 {
    pd->server = NULL;
 
-   efl_destructor(efl_super(o, MY_CLASS));
+   efl_invalidate(efl_super(o, MY_CLASS));
 }
 
 EOLIAN void
