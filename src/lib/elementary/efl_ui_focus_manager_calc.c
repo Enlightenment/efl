@@ -7,6 +7,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#include "efl_ui_focus_graph.h"
+
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_CALC_CLASS
 #define FOCUS_DATA(obj) Efl_Ui_Focus_Manager_Calc_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
@@ -75,6 +77,7 @@ typedef struct {
     Efl_Ui_Focus_Manager *redirect;
     Efl_Ui_Focus_Object *redirect_entry;
     Eina_List *dirty;
+    Efl_Ui_Focus_Graph_Context graph_ctx;
 
     Node *root;
 } Efl_Ui_Focus_Manager_Calc_Data;
@@ -319,230 +322,6 @@ _focus_stack_unfocus_last(Efl_Ui_Focus_Manager_Calc_Data *pd)
    return focusable;
 }
 
-//CALCULATING STUFF
-
-static inline int
-_distance(Eina_Rect node, Eina_Rect op, Dimension dim)
-{
-    int min, max, point;
-    int v1, v2;
-
-    if (dim == DIMENSION_X)
-      {
-         min = op.x;
-         max = eina_rectangle_max_x(&op.rect);
-         point = node.x + node.w/2;
-      }
-    else
-      {
-         min = op.y;
-         max = eina_rectangle_max_y(&op.rect);
-         point = node.y + node.h/2;
-      }
-
-    v1 = min - point;
-    v2 = max - point;
-
-    if (abs(v1) < abs(v2))
-      return v1;
-    else
-      return v2;
-}
-
-static inline void
-_min_max_gen(Dimension dim, Eina_Rect rect, int *min, int *max)
-{
-   if (dim == DIMENSION_X)
-     {
-        *min = rect.y;
-        *max = eina_rectangle_max_y(&rect.rect);
-     }
-   else
-     {
-        *min = rect.x;
-        *max = eina_rectangle_max_x(&rect.rect);
-     }
-}
-
-static inline void
-_calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
-{
-   int dim_min, dim_max, cur_pos_min = 0, cur_neg_min = 0;
-   Efl_Ui_Focus_Object *op;
-   Eina_Iterator *nodes;
-   Eina_Rect rect;
-   Node *n;
-
-   *pos = NULL;
-   *neg = NULL;
-
-   rect = efl_ui_focus_object_focus_geometry_get(node);
-   nodes = eina_hash_iterator_data_new(pd->node_hash);
-   _min_max_gen(dim, rect, &dim_min, &dim_max);
-
-   EINA_ITERATOR_FOREACH(nodes, n)
-     {
-        Eina_Rect op_rect;
-        int min, max;
-
-        op = n->focusable;
-        if (op == node) continue;
-
-        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
-
-        op_rect = efl_ui_focus_object_focus_geometry_get(op);
-
-        _min_max_gen(dim, op_rect, &min, &max);
-
-        /* The only way the calculation does make sense is if the two number
-         * lines are not disconnected.
-         * If they are connected one point of the 4 lies between the min and max of the other line
-         */
-        if (!((min <= max && max <= dim_min && dim_min <= dim_max) ||
-              (dim_min <= dim_max && dim_max <= min && min <= max)) &&
-              !eina_rectangle_intersection(&op_rect.rect, &rect.rect))
-          {
-             //this thing hits horizontal
-             int tmp_dis;
-
-             tmp_dis = _distance(rect, op_rect, dim);
-
-             if (tmp_dis < 0)
-               {
-                  if (tmp_dis == cur_neg_min)
-                    {
-                       //add it
-                       *neg = eina_list_append(*neg, op);
-                    }
-                  else if (tmp_dis > cur_neg_min
-                    || cur_neg_min == 0) //init case
-                    {
-                       //nuke the old and add
-#ifdef CALC_DEBUG
-                       printf("CORRECTION FOR %s-%s\n found anchor %s-%s in distance %d\n (%d,%d,%d,%d)\n (%d,%d,%d,%d)\n\n", DEBUG_TUPLE(node), DEBUG_TUPLE(op),
-                         tmp_dis,
-                         op_rect.x, op_rect.y, op_rect.w, op_rect.h,
-                         rect.x, rect.y, rect.w, rect.h);
-#endif
-                       *neg = eina_list_free(*neg);
-                       *neg = eina_list_append(NULL, op);
-                       cur_neg_min = tmp_dis;
-                    }
-               }
-             else
-               {
-                  if (tmp_dis == cur_pos_min)
-                    {
-                       //add it
-                       *pos = eina_list_append(*pos, op);
-                    }
-                  else if (tmp_dis < cur_pos_min
-                    || cur_pos_min == 0) //init case
-                    {
-                       //nuke the old and add
-#ifdef CALC_DEBUG
-                       printf("CORRECTION FOR %s-%s\n found anchor %s-%s in distance %d\n (%d,%d,%d,%d)\n (%d,%d,%d,%d)\n\n", DEBUG_TUPLE(node), DEBUG_TUPLE(op),
-                         tmp_dis,
-                         op_rect.x, op_rect.y, op_rect.w, op_rect.h,
-                         rect.x, rect.y, rect.w, rect.h);
-#endif
-                       *pos = eina_list_free(*pos);
-                       *pos = eina_list_append(NULL, op);
-                       cur_pos_min = tmp_dis;
-                    }
-               }
-
-
-#if 0
-             printf("(%d,%d,%d,%d)%s vs(%d,%d,%d,%d)%s\n", rect.x, rect.y, rect.w, rect.h, elm_widget_part_text_get(node, NULL), op_rect.x, op_rect.y, op_rect.w, op_rect.h, elm_widget_part_text_get(op, NULL));
-             printf("(%d,%d,%d,%d)\n", min, max, dim_min, dim_max);
-             printf("Candidate %d\n", tmp_dis);
-             if (anchor->anchor == NULL || abs(tmp_dis) < abs(distance)) //init case
-               {
-                  distance = tmp_dis;
-                  anchor->positive = tmp_dis > 0 ? EINA_FALSE : EINA_TRUE;
-                  anchor->anchor = op;
-                  //Helper for debugging wrong calculations
-
-               }
-#endif
-         }
-
-
-     }
-   eina_iterator_free(nodes);
-   nodes = NULL;
-
-}
-
-static inline Eina_Position2D
-_relative_position_rects(Eina_Rect *a, Eina_Rect *b)
-{
-   Eina_Position2D a_pos = {a->rect.x + a->rect.w/2, a->rect.y + a->rect.h/2};
-   Eina_Position2D b_pos = {b->rect.x + b->rect.w/2, b->rect.y + b->rect.h/2};
-
-   return (Eina_Position2D){b_pos.x - a_pos.x, b_pos.y - b_pos.y};
-}
-
-static inline Eina_Rectangle_Outside
-_direction_to_outside(Efl_Ui_Focus_Direction direction)
-{
-   if (direction == EFL_UI_FOCUS_DIRECTION_RIGHT) return EINA_RECTANGLE_OUTSIDE_RIGHT;
-   if (direction == EFL_UI_FOCUS_DIRECTION_LEFT) return EINA_RECTANGLE_OUTSIDE_LEFT;
-   if (direction == EFL_UI_FOCUS_DIRECTION_DOWN) return EINA_RECTANGLE_OUTSIDE_BOTTOM;
-   if (direction == EFL_UI_FOCUS_DIRECTION_UP) return EINA_RECTANGLE_OUTSIDE_TOP;
-
-   return -1;
-}
-
-static inline void
-_calculate_node_indirection(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Direction direction, Eina_List **lst)
-{
-   Efl_Ui_Focus_Object *op;
-   Eina_Iterator *nodes;
-   int min_distance = 0;
-   Node *n;
-   Eina_Rect rect;
-
-   rect = efl_ui_focus_object_focus_geometry_get(node);
-   nodes = eina_hash_iterator_data_new(pd->node_hash);
-
-   EINA_ITERATOR_FOREACH(nodes, n)
-     {
-        Eina_Rectangle_Outside outside, outside_dir;
-        Eina_Position2D pos;
-        int distance;
-        Eina_Rect op_rect;
-
-        op = n->focusable;
-
-        if (op == node) continue;
-        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
-
-        op_rect = efl_ui_focus_object_focus_geometry_get(op);
-        outside = eina_rectangle_outside_position(&rect.rect, &op_rect.rect);
-        outside_dir = _direction_to_outside(direction);
-        //calculate relative position of the nodes
-        pos = _relative_position_rects(&rect, &op_rect);
-        //calculate distance
-        distance = pow(pos.x, 2) + pow(pos.y, 2);
-
-        if (outside & outside_dir)
-          {
-             if (min_distance == 0 || min_distance > distance)
-               {
-                  min_distance = distance;
-                  *lst = eina_list_free(*lst);
-                  *lst = eina_list_append(*lst, op);
-               }
-             else if (min_distance == distance)
-               {
-                  *lst = eina_list_append(*lst, op);
-               }
-          }
-     }
-}
-
 #ifdef CALC_DEBUG
 static void
 _debug_node(Node *node)
@@ -574,57 +353,47 @@ _debug_node(Node *node)
 }
 #endif
 
-static void
-convert_set(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node, Eina_List *focusable_list, Efl_Ui_Focus_Direction dir, void (*converter)(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list))
+static Eina_Bool
+_no_logical(const void *iter EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
-   Eina_List *partners = NULL;
-   Efl_Ui_Focus_Object *fobj;
+   Node *n = data;
 
-   EINA_LIST_FREE(focusable_list, fobj)
-     {
-        Node *entry;
-
-        entry = node_get(obj, pd, fobj);
-        if (!entry)
-          {
-             CRI("Found a obj in graph without node-entry!");
-             return;
-          }
-        partners = eina_list_append(partners, entry);
-     }
-
-   converter(node, dir, partners);
+   return n->type != NODE_TYPE_ONLY_LOGICAL;
 }
 
 static void
 dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
-   Eina_List *x_partners_pos, *x_partners_neg;
-   Eina_List *y_partners_pos, *y_partners_neg;
+   Efl_Ui_Focus_Graph_Calc_Result result;
 
-   _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
-   _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
+   efl_ui_focus_graph_calc(&pd->graph_ctx, eina_iterator_filter_new(eina_hash_iterator_data_new(pd->node_hash), _no_logical, NULL, NULL) ,  (Opaque_Graph_Member*) node, &result);
 
-   convert_set(obj, pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT, border_partners_set);
-   convert_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT, border_partners_set);
-   convert_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP, border_partners_set);
-   convert_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN, border_partners_set);
-
-
-   /*
-    * Stage 2: if there is still no relation in a special direction,
-    *          just take every single node that is in the given direction
-    *          and take the one with the shortest direction
-    */
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+   for (int i = 0; i < 4; ++i)
      {
-        if (!DIRECTION_ACCESS(node, i).partners)
-          {
-             Eina_List *tmp = NULL;
+        Efl_Ui_Focus_Direction direction;
+        Efl_Ui_Focus_Graph_Calc_Direction_Result *res;
 
-             _calculate_node_indirection(pd, node->focusable, i, &tmp);
-             convert_set(obj, pd, node, tmp, i, border_onedirection_set);
+        if (i == 0)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_RIGHT;
+             res = &result.right;
           }
+        else if (i == 1)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_LEFT;
+             res = &result.left;
+          }
+        else if (i == 2)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_UP;
+             res = &result.top;
+          }
+       else if (i == 3)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_DOWN;
+             res = &result.bottom;
+          }
+        border_onedirection_set(node, direction, res->relation);
      }
 
 #ifdef CALC_DEBUG
@@ -1091,6 +860,9 @@ _efl_ui_focus_manager_calc_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->node_hash = eina_hash_pointer_new(_free_node);
+
+   pd->graph_ctx.offset_focusable = offsetof(Node, focusable);
+
    return obj;
 }
 
