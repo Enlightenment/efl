@@ -194,13 +194,13 @@ elm_object_focus_next(Evas_Object        *obj,
 {
    Eina_Bool legacy_focus_move = EINA_FALSE;
    Efl_Ui_Widget *o = NULL, *top;
-   Efl_Ui_Focus_Object *regular, *logical;
+   Efl_Ui_Focus_Object *logical;
    Efl_Ui_Focus_Manager *manager_top;
    API_ENTRY()
 
    top = elm_object_top_widget_get(obj);
    manager_top = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, obj);
-   regular = efl_ui_focus_manager_request_move(manager_top, dir, NULL, EINA_FALSE);
+   /* regular = efl_ui_focus_manager_request_move(manager_top, dir, NULL, EINA_FALSE); */
    logical = efl_ui_focus_manager_focus_get(manager_top);
 
    Efl_Ui_Focus_Object *legacy_target = legacy_elm_widget_next_targer(logical, dir);
