@@ -215,8 +215,8 @@ elm_object_focus_next(Evas_Object        *obj,
           {
              Efl_Ui_Focus_Object *root;
 
-             root = efl_ui_focus_manager_root_get(obj);
-             efl_ui_focus_manager_setup_on_first_touch(obj, dir, root);
+             root = efl_ui_focus_manager_root_get(top);
+             efl_ui_focus_manager_setup_on_first_touch(top, dir, root);
           }
      }
 }
