@@ -1728,7 +1728,6 @@ _key_action_move(Evas_Object *obj, const char *params)
    _elm_widget_focus_auto_show(obj);
 
    Efl_Ui_Focus_Direction focus_dir;
-   Efl_Ui_Focus_Object *o;
 
    if (!strcmp(dir, "previous"))
      focus_dir = EFL_UI_FOCUS_DIRECTION_PREVIOUS;
