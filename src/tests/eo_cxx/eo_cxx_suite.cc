@@ -6,7 +6,6 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-   { "Promise", eo_cxx_test_promise },
    { NULL, NULL }
 };
 

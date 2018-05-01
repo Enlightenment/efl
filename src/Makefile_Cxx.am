@@ -16,9 +16,6 @@ bindings/cxx/eo_cxx/Eo.hh \
 bindings/cxx/eo_cxx/eo_init.hh \
 bindings/cxx/eo_cxx/eo_ops.hh \
 bindings/cxx/eo_cxx/eo_wref.hh \
-bindings/cxx/eo_cxx/eo_future.hh \
-bindings/cxx/eo_cxx/eo_promise.hh \
-bindings/cxx/eo_cxx/eo_promise_meta.hh \
 bindings/cxx/eo_cxx/eo_private.hh \
 bindings/cxx/eo_cxx/efl_object_impl.hh
 
@@ -247,8 +244,7 @@ tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_IN
 
 tests_eo_cxx_eo_cxx_suite_SOURCES = \
 tests/eo_cxx/eo_cxx_suite.cc \
-tests/eo_cxx/eo_cxx_suite.h \
-tests/eo_cxx/eo_cxx_test_promise.cc
+tests/eo_cxx/eo_cxx_suite.h
 
 tests_eo_cxx_eo_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
