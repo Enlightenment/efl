@@ -40,7 +40,6 @@ typedef struct _Border Border;
 typedef struct _Node Node;
 
 struct _Border {
-  Eina_List *partners; //partners that are linked in both directions
   Eina_List *one_direction; //partners that are linked in one direction
   Eina_List *cleanup_nodes; //a list of nodes that needs to be cleaned up when this node is deleted
 };
@@ -109,38 +108,6 @@ _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
    else
       DBG("No focus manager for focusable %s@%p",
           efl_class_name_get(pd->root->focusable), root);
-}
-
-/*
- * Set this new list of partners to the border.
- * All old partners will be deleted
- */
-static void
-border_partners_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list)
-{
-   Node *partner;
-   Eina_List *lnode;
-   Border *border;
-
-   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
-
-   border = &DIRECTION_ACCESS(node, direction);
-
-   EINA_LIST_FREE(border->partners, partner)
-     {
-        Border *comp_border = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
-
-        comp_border->partners = eina_list_remove(comp_border->partners, node);
-     }
-
-   border->partners = list;
-
-   EINA_LIST_FOREACH(border->partners, lnode, partner)
-     {
-        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
-
-        comp_border->partners = eina_list_append(comp_border->partners, node);
-     }
 }
 
 static void
@@ -246,11 +213,9 @@ node_item_free(Node *item)
              dirty_add(obj, pd, partner); \
           }
 
-        MAKE_LIST_DIRTY(item, partners)
         MAKE_LIST_DIRTY(item, one_direction)
         MAKE_LIST_DIRTY(item, cleanup_nodes)
 
-        border_partners_set(item, i, NULL);
         border_onedirection_cleanup(item, i);
         border_onedirection_set(item, i, NULL);
      }
@@ -909,7 +874,7 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
 
         for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
           {
-             if (!DIRECTION_ACCESS(node, i).partners)
+             if (!DIRECTION_ACCESS(node, i).one_direction)
                {
                   *data = node->focusable;
                   return EINA_TRUE;
@@ -1018,9 +983,7 @@ _coords_movement(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_U
    dirty_flush(obj, pd, upper);
 
    //decide which direction we take
-   lst = DIRECTION_ACCESS(upper, direction).partners;
-   if (!lst)
-     lst = DIRECTION_ACCESS(upper, direction).one_direction;
+   lst = DIRECTION_ACCESS(upper, direction).one_direction;
 
    //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
@@ -1589,9 +1552,6 @@ _convert(Border b)
 {
    Eina_List *n, *par = NULL;
    Node *node;
-
-   EINA_LIST_FOREACH(b.partners, n, node)
-     par = eina_list_append(par, node->focusable);
 
    EINA_LIST_FOREACH(b.one_direction, n, node)
      par = eina_list_append(par, node->focusable);
