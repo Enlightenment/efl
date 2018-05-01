@@ -977,6 +977,14 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 
    _ecore_con_server_dialer_close(svr);
 
+   if (svr->ssl.clients_ctx)
+     {
+        // This is always created with efl_add_ref
+        efl_parent_set(svr->ssl.clients_ctx, NULL);
+        efl_unref(svr->ssl.clients_ctx);
+        svr->ssl.clients_ctx = NULL;
+     }
+
    if (svr->dialer)
      {
         efl_del(svr->dialer);
@@ -987,12 +995,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      {
         efl_del(svr->server);
         svr->server = NULL;
-     }
-
-   if (svr->ssl.clients_ctx)
-     {
-        efl_unref(svr->ssl.clients_ctx);
-        svr->ssl.clients_ctx = NULL;
      }
 
    if (svr->ssl.job) eina_future_cancel(svr->ssl.job);
@@ -1591,13 +1593,13 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
 
    /* legacy compatibility: server never verified peer, only dialer did */
 
-   return efl_add(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
-                  efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
-                  efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                  efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
-                  efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
-                  efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
-                  efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE));
+   return efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
+                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
+                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
+                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                      efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
+                      efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
+                      efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE));
 }
 
 static Eina_Value
@@ -1990,8 +1992,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    EINA_SAFETY_ON_NULL_GOTO(dialer, error_dialer);
 
    efl_parent_set(inner_dialer, dialer);
-
-   efl_unref(ssl_ctx); /* inner_dialer keeps it */
+   efl_parent_set(ssl_ctx, inner_dialer);
 
    if (!_ecore_con_server_dialer_set(svr, dialer))
      goto error_dial;
@@ -2062,16 +2063,16 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    if (svr->ssl.verify)
      verify_mode = EFL_NET_SSL_VERIFY_MODE_REQUIRED;
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
-                     efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
-                     efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                     efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
-                     efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
-                     efl_net_ssl_context_verify_mode_set(efl_added, verify_mode),
-                     efl_net_ssl_context_hostname_set(efl_added, svr->ssl.verify_name ? svr->ssl.verify_name : svr->name),
-                     efl_net_ssl_context_hostname_verify_set(efl_added, svr->ssl.verify_basic),
-                     efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
-                     efl_net_ssl_context_setup(efl_added, cipher, EINA_TRUE));
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
+                         efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
+                         efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
+                         efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                         efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
+                         efl_net_ssl_context_verify_mode_set(efl_added, verify_mode),
+                         efl_net_ssl_context_hostname_set(efl_added, svr->ssl.verify_name ? svr->ssl.verify_name : svr->name),
+                         efl_net_ssl_context_hostname_verify_set(efl_added, svr->ssl.verify_basic),
+                         efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
+                         efl_net_ssl_context_setup(efl_added, cipher, EINA_TRUE));
    EINA_SAFETY_ON_NULL_GOTO(ssl_ctx, error_ssl_ctx);
 
    tcp_dialer = svr->dialer;
