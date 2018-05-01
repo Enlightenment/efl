@@ -274,7 +274,6 @@
  * @li "theme,changed": Called when the theme is changed.
  * @li "undo,request": Called on undo request.
  * @li "rejected": Called when some of inputs are rejected by the filter. (since 1.9)
- * @li "validate": Called when entry text ready to validate. (since 1.14)
  *
  * Default content parts of the entry items that you can use for are:
  * @li "icon" - An icon in the entry
