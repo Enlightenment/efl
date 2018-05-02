@@ -3215,18 +3215,18 @@ ob_color_class(void)
    cc = mem_alloc(SZ(Edje_Color_Class));
    edje_file->color_classes = eina_list_append(edje_file->color_classes, cc);
 
-   cc->r = 255;
-   cc->g = 255;
-   cc->b = 255;
-   cc->a = 255;
-   cc->r2 = 255;
-   cc->g2 = 255;
-   cc->b2 = 255;
-   cc->a2 = 255;
-   cc->r3 = 255;
-   cc->g3 = 255;
-   cc->b3 = 255;
-   cc->a3 = 255;
+   cc->r = 0;
+   cc->g = 0;
+   cc->b = 0;
+   cc->a = 0;
+   cc->r2 = 0;
+   cc->g2 = 0;
+   cc->b2 = 0;
+   cc->a2 = 0;
+   cc->r3 = 0;
+   cc->g3 = 0;
+   cc->b3 = 0;
+   cc->a3 = 0;
 }
 
 static void
@@ -3329,7 +3329,7 @@ parse_color(unsigned int first_arg, void *base)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
-        Defaults: 255 255 255 255
+        Defaults: 0 0 0 0
     @endproperty
  */
 static void
@@ -3360,7 +3360,7 @@ st_color_class_color(void)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
-        Defaults: 255 255 255 255
+        Defaults: 0 0 0 0
     @endproperty
  */
 static void
@@ -3391,7 +3391,7 @@ st_color_class_color2(void)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
-        Defaults: 255 255 255 255
+        Defaults: 0 0 0 0
     @endproperty
  */
 static void
