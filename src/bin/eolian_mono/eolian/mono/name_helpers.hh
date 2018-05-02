@@ -172,13 +172,19 @@ inline std::string managed_namespace(std::string const& ns)
   return utils::to_lowercase(escape_keyword(ns));
 }
 
-inline std::string managed_method_name(std::string const& underscore_name)
+inline std::string managed_method_name(attributes::function_def const& f)
 {
-  std::vector<std::string> names = utils::split(underscore_name, '_');
+  std::vector<std::string> names = utils::split(f.name, '_');
 
   name_helpers::reorder_verb(names);
 
-  return escape_keyword(utils::to_pascal_case(names));
+  std::string candidate = escape_keyword(utils::to_pascal_case(names));
+
+  // Some eolian methods have the same name as their parent class
+  if (candidate == f.klass.eolian_name)
+      candidate = "Do" + candidate;
+
+  return candidate;
 }
 
 inline std::string function_ptr_full_eolian_name(attributes::function_def const& func)
@@ -201,6 +207,11 @@ inline std::string struct_full_eolian_name(attributes::struct_def const& struct_
    return join_namespaces(struct_.namespaces, '.') + struct_.cxx_name;
 }
 
+inline std::string enum_managed_name(attributes::enum_def const& enum_)
+{
+   return enum_.cxx_name;
+}
+
 inline std::string to_field_name(std::string const& in)
 {
   return utils::capitalize(in);
@@ -210,7 +221,7 @@ inline std::string to_field_name(std::string const& in)
 template<typename T>
 inline std::string klass_interface_name(T const& klass)
 {
-  return klass.eolian_name;
+  return "I" + klass.eolian_name;
 }
 
 template<typename T>
@@ -222,7 +233,7 @@ inline std::string klass_full_interface_name(T const& klass)
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  return klass.eolian_name + "Concrete";
+  return klass.eolian_name;
 }
 
 template<typename T>

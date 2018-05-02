@@ -27,7 +27,7 @@ struct enum_definition_generator
         (
          "public enum " << string << "\n{\n"
          )
-        .generate(sink, enum_.cxx_name, context))
+        .generate(sink, name_helpers::enum_managed_name(enum_), context))
        return false;
 
      // iterate enum fiels

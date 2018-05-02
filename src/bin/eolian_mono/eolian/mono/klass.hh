@@ -34,7 +34,7 @@ static bool generate_static_cast_method(OutputIterator sink, grammar::attributes
 {
    return as_generator(
        scope_tab << "///<summary>Casts obj into an instance of this type.</summary>\n"
-       << scope_tab << "public static " << name_helpers::klass_interface_name(cls) << " static_cast(efl.Object obj)\n"
+       << scope_tab << "public static " << name_helpers::klass_interface_name(cls) << " static_cast(efl.IObject obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "if (obj == null)\n"
        << scope_tab << scope_tab << scope_tab << "throw new System.ArgumentNullException(\"obj\");\n"
@@ -50,7 +50,7 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
        scope_tab << "///<summary>Verifies if the given object is equals to this.</summary>\n" 
        << scope_tab << "public override bool Equals(object obj)\n"
        << scope_tab << "{\n"
-       << scope_tab << scope_tab << "var other = obj as efl.Object;\n"
+       << scope_tab << scope_tab << "var other = obj as efl.IObject;\n"
        << scope_tab << scope_tab << "if (other == null)\n"
        << scope_tab << scope_tab << scope_tab << "return false;\n"
        << scope_tab << scope_tab << "return this.raw_handle == other.raw_handle;\n"
@@ -126,7 +126,7 @@ struct klass
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
          )
-        .generate(sink, cls.cxx_name, iface_cxt))
+        .generate(sink, name_helpers::klass_interface_name(cls), iface_cxt))
        return false;
      for(auto first = std::begin(cls.immediate_inherits)
            , last = std::end(cls.immediate_inherits); first != last; ++first)
@@ -186,7 +186,7 @@ struct klass
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << concrete_name << "(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << concrete_name << "(efl.IObject parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "System.IntPtr klass = " << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
@@ -293,7 +293,7 @@ struct klass
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << inherit_name << "(efl.IObject parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"

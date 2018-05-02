@@ -105,7 +105,7 @@ struct native_function_definition_generator
        .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters
                                        , /***/f.c_name/***/
                                        , f
-                                       , managed_method_name(f.name)
+                                       , name_helpers::managed_method_name(f)
                                        , f.parameters
                                        , f
                                        , f.c_name
@@ -175,7 +175,7 @@ struct function_definition_generator
         << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()
         << " }\n")
-       .generate(sink, std::make_tuple(managed_method_name(f.name), f.parameters, f, f.c_name, f.parameters, f), context))
+       .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters, f, f.c_name, f.parameters, f), context))
       return false;
 
     return true;
