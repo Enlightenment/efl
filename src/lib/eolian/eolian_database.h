@@ -377,6 +377,7 @@ struct _Eolian_Variable
 
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(const Eolian_Unit *src);
+Eina_Bool database_check(const Eolian_State *state);
 /* if isdep is EINA_TRUE, parse as a dependency of current unit */
 void database_defer(Eolian_State *state, const char *fname, Eina_Bool isdep);
 
