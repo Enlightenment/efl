@@ -250,33 +250,73 @@ edje_object_part_text_cursor_line_end_set(Edje_Object *obj, const char *part, Ed
 EAPI Eina_Bool
 edje_object_part_text_cursor_prev(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_char_prev(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur));
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_char_prev(efl_part(obj, part), c);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_object_part_text_cursor_next(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_char_next(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur));
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_char_next(efl_part(obj, part), c);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_object_part_text_cursor_down(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_line_jump_by(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur), 1);
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_line_jump_by(efl_part(obj, part), c, 1);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_object_part_text_cursor_up(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_line_jump_by(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur), -1);
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_line_jump_by(efl_part(obj, part), c, -1);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI void

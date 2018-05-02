@@ -943,6 +943,86 @@ START_TEST(edje_test_signal_callback_del_full)
 }
 END_TEST
 
+START_TEST(edje_test_text_cursor)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   const char *buf = "ABC<br/>DEF";
+   const char *txt;
+   int i, old_pos, new_pos;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_text_cursor.edj"), "test_text_cursor"));
+   edje_object_part_text_set(obj, "text", buf);
+   txt = edje_object_part_text_get(obj, "text");
+   fail_if(!txt || strcmp(txt, buf));
+
+   edje_object_part_text_cursor_pos_set(obj, "text", EDJE_CURSOR_MAIN, 0);
+   ck_assert_int_eq(edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN), 0);
+   edje_object_part_text_cursor_pos_set(obj, "text", EDJE_CURSOR_MAIN, 1);
+   ck_assert_int_eq(edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN), 1);
+
+   /* Move cursor to the 0 pos from 1 pos */
+   old_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert(edje_object_part_text_cursor_prev(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_ne(old_pos, new_pos);
+
+   /* Move cursor to the -1 pos from 0 pos. It has to fail. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_prev(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   /* Jump to 2nd line from 1st line.
+    * It has to return EINA_TRUE which means success. */
+   old_pos = new_pos;
+   ck_assert(edje_object_part_text_cursor_down(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_ne(old_pos, new_pos);
+
+   /* Try to jump to 3rd line from 2nd line. But, 3rd line does not exist.
+    * So, it has to return EINA_FALSE which means failure. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_down(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   /* Move cursor to the end of 2nd line. */
+   for (i = 0; i < 3; i++)
+     {
+        old_pos = new_pos;
+        ck_assert(edje_object_part_text_cursor_next(obj, "text", EDJE_CURSOR_MAIN));
+        new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+        ck_assert_int_ne(old_pos, new_pos);
+     }
+
+   /* Move cursor to the next of the end of 2nd line which does not exist. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_next(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   /* Jump to 1st line from 2nd line.
+    * It has to return EINA_TRUE which means success. */
+   old_pos = new_pos;
+   ck_assert(edje_object_part_text_cursor_up(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_ne(old_pos, new_pos);
+
+   /* Try to jump to the above of 1st line from 1st line. But, there is no such line.
+    * So, it has to return EINA_FALSE which means failure. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_up(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -968,4 +1048,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_message_send_eo);
    tcase_add_test(tc, edje_test_signals);
    tcase_add_test(tc, edje_test_signal_callback_del_full);
+   tcase_add_test(tc, edje_test_text_cursor);
 }
