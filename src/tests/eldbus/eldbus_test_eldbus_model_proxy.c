@@ -49,7 +49,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   efl_unref(dbus_object1);
+   efl_del(dbus_object1);
 }
 
 EFL_START_TEST(properties_get)

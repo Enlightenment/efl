@@ -24,7 +24,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   efl_unref(object);
+   efl_del(object);
 }
 
 EFL_START_TEST(properties_get)

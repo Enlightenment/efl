@@ -170,8 +170,8 @@ check_property(Eo *object, const char *property_name, const char *expected_value
 Eo *
 create_connection(void)
 {
-   Eo *connection = efl_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, efl_main_loop_get(),
-                                eldbus_model_connect(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
+   Eo *connection = efl_add(ELDBUS_MODEL_CONNECTION_CLASS, efl_main_loop_get(),
+                            eldbus_model_connect(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
    ck_assert_ptr_ne(NULL, connection);
    return connection;
 }
@@ -268,7 +268,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
 EFL_START_TEST(smoke)
 {
    Eo *connection = create_connection();
-   efl_unref(connection);
+   efl_del(connection);
 }
 EFL_END_TEST
 
@@ -276,7 +276,7 @@ EFL_START_TEST(object)
 {
    Eo *root = create_object();
 
-   efl_unref(root);
+   efl_del(root);
 
 }
 EFL_END_TEST
