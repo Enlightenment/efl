@@ -141,6 +141,7 @@ void test_genlist_filter(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_show_bring(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_cache(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_reusable(void *data, Evas_Object *obj, void *event_info);
+void test_genlist_item_show(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer3(void *data, Evas_Object *obj, void *event_info);
@@ -967,6 +968,7 @@ add_tests:
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Show/Bring", test_genlist_show_bring);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Cache", test_genlist_cache);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Reusable Contents", test_genlist_reusable);
+   ADD_TEST(NULL, "Lists - Genlist", "Genlist Item Show", test_genlist_item_show);
 
    //------------------------------//
 
