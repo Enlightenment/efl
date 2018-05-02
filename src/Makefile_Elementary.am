@@ -120,6 +120,10 @@ elm_public_eolian_files = \
 	lib/elementary/efl_page_transition_scroll.eo \
 	lib/elementary/efl_page_indicator.eo \
 	lib/elementary/efl_page_indicator_icon.eo \
+	lib/elementary/efl_ui_tab_pager.eo \
+	lib/elementary/efl_ui_tab_bar.eo \
+	lib/elementary/efl_ui_tab_page.eo \
+	lib/elementary/efl_ui_tab_page_part_tab.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -428,7 +432,10 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_page_transition.h \
 	lib/elementary/efl_page_transition_scroll.h \
 	lib/elementary/efl_page_indicator.h \
-	lib/elementary/efl_page_indicator_icon.h
+	lib/elementary/efl_page_indicator_icon.h \
+	lib/elementary/efl_ui_tab_pager_private.h \
+	lib/elementary/efl_ui_tab_bar_private.h \
+	lib/elementary/efl_ui_tab_page_private.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
@@ -848,6 +855,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_page_indicator.c \
 	lib/elementary/efl_page_indicator_icon.c \
 	lib/elementary/efl_ui_focus_graph.c \
+	lib/elementary/efl_ui_tab_pager.c \
+	lib/elementary/efl_ui_tab_bar.c \
+	lib/elementary/efl_ui_tab_page.c \
 	$(NULL)
 
 
@@ -1062,6 +1072,7 @@ bin/elementary/test_efl_ui_text.c \
 bin/elementary/test_win_stack.c \
 bin/elementary/test_win_indicator.c \
 bin/elementary/test_gesture_framework.c \
+bin/elementary/test_ui_tab_pager.c \
 bin/elementary/test.h
 
 bin_elementary_elementary_test_LDADD = @USE_ELEMENTARY_LIBS@

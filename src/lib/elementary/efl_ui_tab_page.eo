@@ -1,0 +1,28 @@
+enum Efl.Ui.Tab_Page.Tab_Changed {
+   label = 0, [[Label changed]]
+   icon [[Icon changed]]
+}
+
+struct Efl.Ui.Tab_Page.Tab.Changed_Event {
+   [[Information of changed event]]
+   changed_info: Efl.Ui.Tab_Page.Tab_Changed;
+}
+
+class Efl.Ui.Tab_Page (Efl.Ui.Layout.Object, Efl.Content)
+{
+   [[Tab Page class]]
+   methods {
+   }
+   parts {
+      tab: Efl.Ui.Tab_Page.Part_Tab;
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Content.content { get; set; }
+      Efl.Part.part;
+   }
+   events {
+      tab,changed: Efl.Ui.Tab_Page.Tab.Changed_Event; [[Called when tab changed]]
+   }
+}

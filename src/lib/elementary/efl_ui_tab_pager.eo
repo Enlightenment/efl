@@ -1,0 +1,28 @@
+class Efl.Ui.Tab_Pager (Efl.Ui.Pager)
+{
+   [[Tab Pager class]]
+   methods {
+      @property tab_bar {
+         values {
+            tab_bar: Efl.Canvas.Object;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Container.content_count;
+      Efl.Pack.pack_clear;                     // TODO
+      Efl.Pack.unpack_all;                     // TODO
+      Efl.Pack.unpack;                         // TODO
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_unpack_at;          // TODO
+      Efl.Ui.Pager.current_page { set; }
+   }
+}

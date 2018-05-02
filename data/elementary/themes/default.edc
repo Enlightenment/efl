@@ -200,4 +200,7 @@ collections {
 #include "edc/efl/win.edc"
 #include "edc/efl/uiclock.edc"
 #include "edc/efl/pager.edc"
+#include "edc/efl/tab_pager.edc"
+#include "edc/efl/tab_bar.edc"
+#include "edc/efl/tab_page.edc"
 }

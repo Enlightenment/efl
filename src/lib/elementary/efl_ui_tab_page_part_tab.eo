@@ -1,0 +1,15 @@
+class Efl.Ui.Tab_Page.Part_Tab (Efl.Ui.Layout.Part, Efl.Text)
+{
+   [[Tab_Page internal part class]]
+   data: null;
+   methods {
+      @property icon {
+         values {
+            path: string;
+         }
+      }
+   }
+   implements {
+      Efl.Text.text { get; set; }
+   }
+}

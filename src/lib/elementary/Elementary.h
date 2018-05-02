@@ -362,6 +362,11 @@ typedef Eo Efl_Ui_Pager;
 # include <efl_page_indicator.eo.h>
 # include <efl_page_indicator_icon.eo.h>
 # include <efl_ui_pager.eo.h>
+
+# include <efl_ui_tab_bar.eo.h>
+# include <efl_ui_tab_page.eo.h>
+# include <efl_ui_tab_page_part_tab.eo.h>
+# include <efl_ui_tab_pager.eo.h>
 #endif
 
 /* include deprecated calls last of all */

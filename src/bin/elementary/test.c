@@ -366,6 +366,8 @@ void test_efl_anim_interpolator(void *data, Evas_Object *obj, void *event_info);
 
 void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
 
+void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
+
 static void _list_udpate(void);
 
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
@@ -1059,6 +1061,9 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Check", test_check);
    ADD_TEST(NULL, "Booleans", "Check Toggle", test_check_toggle);
+
+   //------------------------------//
+   ADD_TEST_EO(NULL, "Tab Pager", "Efl.Ui.Tab_Pager", test_ui_tab_pager);
 
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
