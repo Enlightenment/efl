@@ -86,12 +86,17 @@ EAPI void eina_bezier_values_set(Eina_Bezier *b, double start_x, double start_y,
 EAPI void eina_bezier_values_get(const Eina_Bezier *b, double *start_x, double *start_y, double *ctrl_start_x, double *ctrl_start_y, double *ctrl_end_x, double *ctrl_end_y, double *end_x, double *end_y) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Calculates the length of the given floating point cubic bezier
- * curve.
+ * @brief Calculates the approximate length of the given floating point
+ * cubic bezier curve.
  *
  * @param[in] b The floating point bezier.
+ * @return The bezier's length.
  *
- * @p b. No check is done on @p b.
+ * The curve length is approximated using the Alpha max plus beta min algorithm,
+ * which is designed to give fast results with a maximum error of less than 7%
+ * compared with the correct value.
+ *
+ * No check is done on @p b.
  * @since 1.16
  */
 EAPI double eina_bezier_length_get(const Eina_Bezier *b) EINA_ARG_NONNULL(1);
@@ -101,11 +106,14 @@ EAPI double eina_bezier_length_get(const Eina_Bezier *b) EINA_ARG_NONNULL(1);
  *
  * @param[in] b The floating point bezier.
  * @param[in] len The length along the bezier curve.
+ * @return The relative position from 0.0 to 1.0.
  *
- * Calculates the proportional location on @p b as a number from
- * 0.0 to 1.0 that corresponds to a distance @p len along it.
+ * Calculates the proportional location on @p b as a number from 0.0 to
+ * 1.0 that corresponds to a distance @p len along it.  Returns 1.0 if
+ * @p len is equal or greater than the bezier's length.
  *
- * @p b. No check is done on @p b.
+ * No check is done on @p b.
+ *
  * @since 1.16
  */
 EAPI double eina_bezier_t_at(const Eina_Bezier *b, double len) EINA_ARG_NONNULL(1);
@@ -118,7 +126,7 @@ EAPI double eina_bezier_t_at(const Eina_Bezier *b, double len) EINA_ARG_NONNULL(
  * @param[out] px The corresponding point's X coordinate.
  * @param[out] py The corresponding point's Y coordinate.
  *
- * @p b. No check is done on @p b.
+ * No check is done on @p b.
  * @since 1.16
  */
 EAPI void eina_bezier_point_at(const Eina_Bezier *b, double t, double *px, double *py) EINA_ARG_NONNULL(1);
@@ -129,7 +137,7 @@ EAPI void eina_bezier_point_at(const Eina_Bezier *b, double t, double *px, doubl
  * @param[in] b The floating point bezier.
  * @param[out] t The position along the bezier between 0.0 and 1.0.
  *
- * @p b. No check is done on @p b.
+ * No check is done on @p b.
  * @since 1.16
  */
 EAPI double eina_bezier_angle_at(const Eina_Bezier *b, double t) EINA_ARG_NONNULL(1);
@@ -142,13 +150,13 @@ EAPI double eina_bezier_angle_at(const Eina_Bezier *b, double t) EINA_ARG_NONNUL
  * @param[out] left The resultant split's left portion of the bezier.
  * @param[out] right The resultant split's right portion of the bezier.
  *
- * @p b. No check is done on @p b.
+ * No check is done on @p b.
  * @since 1.16
  */
 EAPI void eina_bezier_split_at_length(const Eina_Bezier *b, double len, Eina_Bezier *left, Eina_Bezier *right) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Calculates and returns the bounding box for the bezier.
+ * @brief Calculates the bounding box for the bezier.
  *
  * @param[in] b The floating point bezier.
  * @param[out] x The X coordinate of the bounding box.
@@ -156,7 +164,7 @@ EAPI void eina_bezier_split_at_length(const Eina_Bezier *b, double len, Eina_Bez
  * @param[out] w The width of the bounding box.
  * @param[out] h The height of the bounding box.
  *
- * @p b. No check is done on @p b.
+ * No check is done on @p b.
  * @since 1.17
  */
 EAPI void eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, double *w, double *h) EINA_ARG_NONNULL(1);
@@ -169,7 +177,7 @@ EAPI void eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, dou
  * @param[in] t1 The end of the interval.
  * @param[out] result The resulting bezier.
  *
- * @p b. No check is done on @p b.
+ * No check is done on @p b.
  * @since 1.17
  */
 EAPI void eina_bezier_on_interval(Eina_Bezier *b, double t0, double t1, Eina_Bezier *result);
