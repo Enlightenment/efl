@@ -24,7 +24,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   efl_unref(connection);
+   efl_del(connection);
 }
 
 EFL_START_TEST(properties_get)
