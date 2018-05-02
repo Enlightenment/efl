@@ -162,7 +162,6 @@ EFL_START_TEST(utc_eldbus_signal_handler_add_p)
 
    ck_assert_msg(is_success_cb, "Signal %s is not call", signal_name);
 
-   eldbus_message_unref(msg);
    eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
@@ -231,8 +230,6 @@ EFL_START_TEST(utc_eldbus_signal_handler_del_p)
 
    ck_assert_msg(!is_success_cb, "Signal %s was called", signal_name);
 
-   eldbus_message_unref(msg);
-   eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST
@@ -375,7 +372,6 @@ EFL_START_TEST(utc_eldbus_signal_handler_ref_unref_p)
 
    ck_assert_msg(!is_success_cb, "Signal %s was called", signal_name);
 
-   eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST

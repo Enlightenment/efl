@@ -221,8 +221,6 @@ EFL_START_TEST(utc_eldbus_object_send_info_get_p)
 
    ck_assert_msg(is_success, "Method %s is not call", method_name);
 
-   eldbus_message_unref(msg);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST

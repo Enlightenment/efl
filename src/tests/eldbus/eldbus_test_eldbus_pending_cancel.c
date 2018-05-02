@@ -115,7 +115,6 @@ _pending_connection_get()
    message = eldbus_object_method_call_new(obj, interface, member);
    if (!message)
      {
-        eldbus_object_unref(obj);
         eldbus_connection_unref(conn);
         return NULL;
      }
@@ -123,8 +122,6 @@ _pending_connection_get()
    Eldbus_Pending *pending = eldbus_connection_send(conn, message, _response_message_cb, NULL, send_timeout_ms);
    if (!pending)
      {
-        eldbus_message_unref(message);
-        eldbus_object_unref(obj);
         eldbus_connection_unref(conn);
         return NULL;
      }
@@ -178,8 +175,6 @@ EFL_START_TEST(utc_eldbus_pending_info_get_cancel_p)
 
    ck_assert(is_success_cb == EINA_TRUE);
 
-   eldbus_message_unref(message);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST
