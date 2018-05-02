@@ -1,0 +1,57 @@
+class Efl.Ui.Tags (Efl.Ui.Layout.Object, Efl.Text, Efl.Ui.Format)
+{
+   [[Elementary Tags class]]
+   methods {
+      @property editable {
+         [[Control if the tags is to be editable or not.]]
+         set {
+         }
+         get {
+         }
+         values {
+            editable: bool; [[If $true, user can add/delete item in tags, if not, the tags is non-editable.]]
+         }
+      }
+      @property expanded {
+         [[Control the tags to expanded state.
+
+           In expanded state, the complete entry will be displayed.
+           Otherwise, only single line of the entry will be displayed.]]
+         set {
+         }
+         get {
+         }
+         values {
+            expanded: bool; [[The value of expanded state. Set this to $true for expanded state. Set
+                       this to $false for single line state.]]
+         }
+      }
+      @property items {
+         [[Get a list of items in the tags]]
+         set {
+         }
+         get {
+         }
+         values {
+            items: const(array<string>); [[The array of items, or NULL if none]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Ui.Widget.widget_event;
+      Efl.Text.text { get; set; }
+      Efl.Ui.Format.format_cb { set; }
+   }
+   events {
+      item,selected; [[Called when item was selected]]
+      item,added; [[Called when item was added]]
+      item,deleted; [[Called when item was deleted]]
+      item,clicked; [[Called when item was clicked]]
+      item,longpressed; [[Called when item got a longpress]]
+      expanded; [[Called when expanded]]
+      contracted; [[Called when contracted]]
+      expand,state,changed; [[Called when expanded state changed]]
+   }
+}

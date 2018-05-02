@@ -29,6 +29,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_spin_button.eo \
 	lib/elementary/efl_ui_datepicker.eo \
 	lib/elementary/efl_ui_timepicker.eo \
+	lib/elementary/efl_ui_tags.eo \
 	lib/elementary/efl_ui_video.eo \
 	lib/elementary/efl_ui_win.eo \
 	lib/elementary/efl_ui_win_inlined.eo \
@@ -395,6 +396,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_spin_button_private.h \
 	lib/elementary/efl_ui_datepicker_private.h \
 	lib/elementary/efl_ui_timepicker_private.h \
+	lib/elementary/efl_ui_tags_private.h \
 	lib/elementary/elm_widget_table.h \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
@@ -759,6 +761,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_spin_button.c \
 	lib/elementary/efl_ui_datepicker.c \
 	lib/elementary/efl_ui_timepicker.c \
+	lib/elementary/efl_ui_tags.c \
 	lib/elementary/elm_slideshow.c \
 	lib/elementary/elm_spinner.c \
 	lib/elementary/elm_store.c \
@@ -1027,6 +1030,7 @@ bin/elementary/test_ui_spin.c \
 bin/elementary/test_ui_spin_button.c \
 bin/elementary/test_ui_datepicker.c \
 bin/elementary/test_ui_timepicker.c \
+bin/elementary/test_ui_tags.c \
 bin/elementary/test_slideshow.c \
 bin/elementary/test_spinner.c \
 bin/elementary/test_store.c \

@@ -394,6 +394,30 @@ color_classes {
       color: FN_COL_DISABLE;
       desc: "Text of a disabled multibuttonentry item";
    }
+   color_class { name: "tags_bg";
+      color: 0 0 0 0;
+      desc: "Background of a tags widget";
+   }
+   color_class { name: "tags_item_bg";
+      color: 0 0 0 0;
+      desc: "Background of a tags item object";
+   }
+   color_class { name: "tags_item_bg_selected";
+      color: 0 0 0 0;
+      desc: "Background of a selected tags item object";
+   }
+   color_class { name: "tags_item_text";
+      color: FN_COL_DEFAULT;
+      desc: "Text of a tags item";
+   }
+   color_class { name: "tags_item_text_pressed";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Text of a pressed tags item";
+   }
+   color_class { name: "tags_item_text_disabled";
+      color: FN_COL_DISABLE;
+      desc: "Text of a disabled tags item";
+   }
    color_class { "elm/win/background";
       color: 64 64 64 255;
       desc: "Background color of a standard window";
