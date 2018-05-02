@@ -1536,7 +1536,8 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
      evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    else
      w = ow, h = oh;
-   TRAP(sd, resize, w, h);
+   if (w && h)
+     TRAP(sd, resize, w, h);
 }
 
 static void
