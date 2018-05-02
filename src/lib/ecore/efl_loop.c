@@ -323,6 +323,8 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 EOLIAN static void
 _efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
 {
+   efl_invalidate(efl_super(obj, EFL_LOOP_CLASS));
+
    _ecore_main_content_clear(obj, pd);
 
    // Even if we are just refcounting provider, efl_provider_find won't reach them after invalidate
@@ -345,8 +347,6 @@ _efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
         _mainloop_singleton = NULL;
         _mainloop_singleton_data = NULL;
      }
-
-   efl_invalidate(efl_super(obj, EFL_LOOP_CLASS));
 }
 
 EOLIAN static void
