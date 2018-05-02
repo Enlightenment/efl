@@ -1427,20 +1427,23 @@ EAPI Eo *_efl_added_get(void);
 
 /**
  * @def efl_add
- * @brief Create a new object and call its constructor (If it exists).
+ * @brief Create a new object and add it to an existing parent object.
  *
  * The object returned by this function will always have 1 ref
- * (reference count) irrespective of whether the parent is NULL or
- * not.
+ * (reference count) which belongs to its parent. Therefore, it is not safe
+ * to use the returned object outside the constructor methods passed as
+ * parameters. If you need to further manipulate the object, use #efl_add_ref
+ * and remember to #efl_unref the object when done.
+ *
  * If the object is created using this function, then it will
  * automatically be deleted when the parent object is.
  * There is no need to call efl_unref on the child. This is convenient
  * in C.
  *
- * If you want a more "consistent" behaviour, see #efl_add_ref.
+ * If the object's class has a constructor, it is called.
  *
- * @param klass the class of the object to create.
- * @param parent the parent to set to the object.
+ * @param klass The class of the object to create.
+ * @param parent The parent to set to the object (MUST not be @c NULL)
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
@@ -1448,16 +1451,19 @@ EAPI Eo *_efl_added_get(void);
 
 /**
  * @def efl_add_ref
- * @brief Create a new object and call its constructor (If it exists).
+ * @brief Create a new object, add it to an existing parent object and return
+ *        an extra reference for further manipulation.
  *
- * The object returned by this function has 1 ref for itself, 1 ref from the
- * parent (if exists) and possible other refs if were added during construction.
- * If a child object is created using this, then it won't get deleted
- * when the parent object is until you manually remove the ref
- * by calling efl_unref().
+ * The object returned by this function has 1 ref which belongs to the caller.
+ * If a parent object is provided (@c parent is not @c NULL) then the object
+ * has an additional reference for the parent. Note that if a child object is
+ * created in this way then it won't get automatically deleted with the parent.
+ * You need to manually remove the extra ref by calling #efl_unref.
  *
- * @param klass the class of the object to create.
- * @param parent the parent to set to the object.
+ * If the object's class has a constructor, it is called.
+ *
+ * @param klass The class of the object to create.
+ * @param parent The parent to set to the object (can be @c NULL).
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
