@@ -253,7 +253,7 @@ _ecore_win32_window_procedure(HWND   window,
        return TRUE;
      case WM_MOVING:
        INF("moving window message");
-       _ecore_win32_event_handle_configure_notify(data);
+       _ecore_win32_event_handle_configure_notify(data, EINA_FALSE);
        return TRUE;
      case WM_MOVE:
        INF("move window message");
@@ -261,10 +261,11 @@ _ecore_win32_window_procedure(HWND   window,
      case WM_SIZING:
        INF("sizing window message");
        _ecore_win32_event_handle_resize(data);
-       _ecore_win32_event_handle_configure_notify(data);
+       _ecore_win32_event_handle_configure_notify(data, EINA_FALSE);
        return TRUE;
      case WM_SIZE:
        INF("size window message");
+       _ecore_win32_event_handle_configure_notify(data, EINA_TRUE);
        return 0;
 /*      case WM_WINDOWPOSCHANGING: */
 /*        { */
@@ -273,11 +274,11 @@ _ecore_win32_window_procedure(HWND   window,
 /*          printf (" *** ecore message : WINDOWPOSCHANGING %ld %ld\n", */
 /*                  rect.right - rect.left, rect.bottom - rect.top); */
 /*        } */
-/*        _ecore_win32_event_handle_configure_notify(data); */
+/*        _ecore_win32_event_handle_configure_notify(data, EINA_FALSE); */
 /*        return 0; */
      case WM_WINDOWPOSCHANGED:
        INF("position changed window message");
-       _ecore_win32_event_handle_configure_notify(data);
+       _ecore_win32_event_handle_configure_notify(data, EINA_FALSE);
        _ecore_win32_event_handle_property_notify(data);
        _ecore_win32_event_handle_expose(data);
        return 0;
