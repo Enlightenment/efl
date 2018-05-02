@@ -987,11 +987,11 @@ EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MAL
  * @param func The function to call on each parameter.
  * @param fdata The data pointer to pass to the function being called.
  *
- * This function goes through every entry in the hash table @p hash and calls
- * the function @p func on each member. The function should @b not modify the
- * hash table contents if it returns @c 1. @b If the hash table contents are
- * modified by this function or the function wishes to stop processing it must
- * return @c 0, otherwise return @c 1 to keep processing.
+ * This function iterates over the hash table @p hash, calling the
+ * function @p func on each member. If @p func modifies the contents
+ * of the hash table, or wishes to stop processing it should return
+ * #EINA_FALSE.  If @p func returns #EINA_TRUE the foreach loop will
+ * keep processing.
  *
  * Example:
  * @code
@@ -1002,7 +1002,7 @@ EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MAL
  * {
  *   printf("Func data: %s, Hash entry: %s / %p\n",
  *          fdata, (const char *)key, data);
- *   return 1;
+ *   return EINA_TRUE;
  * }
  *
  * int main(int argc, char **argv)
