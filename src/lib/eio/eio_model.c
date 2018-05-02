@@ -339,6 +339,7 @@ _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *s
      }
 
    _eio_child_delete(model, pd);
+   efl_unref(model);
 }
 
 static void
@@ -353,6 +354,7 @@ _eio_build_st_error(void *data, Eio_File *handler EINA_UNUSED, int error)
    efl_model_properties_changed(model, "direct_info", "mtime", "atime", "ctime", "is_dir", "is_lnk", "size", "stat");
 
    _eio_child_delete(model, pd);
+   efl_unref(model);
 }
 
 static void
@@ -362,7 +364,7 @@ _eio_build_st(const Eio_Model *model, Eio_Model_Data *pd)
    if (pd->request.stat) return ;
    if (pd->error) return ;
 
-   pd->request.stat = eio_file_direct_stat(pd->path, _eio_build_st_done, _eio_build_st_error, model);
+   pd->request.stat = eio_file_direct_stat(pd->path, _eio_build_st_done, _eio_build_st_error, efl_ref(model));
 }
 
 static Eina_List *delayed_queue = NULL;
