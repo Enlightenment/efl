@@ -316,9 +316,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    Eina_Strbuf *params_init = eina_strbuf_new(); /* default value inits */
    Eina_Strbuf *fallback_free_ownership = eina_strbuf_new(); /* list of function calls that are freeing the owned parameters, or doing nothing on the normal parameters, NULL if there is nothing owned*/
 
-   Eina_Stringshare *promise_param_name = NULL;
-   Eina_Stringshare *promise_param_type = NULL;
-
    /* property keys */
    {
       Eina_Iterator *itr = eolian_property_keys_get(fid, ftype);
@@ -726,9 +723,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    free(ocnamel);
 
    eina_stringshare_del(rtpn);
-
-   eina_stringshare_del(promise_param_name);
-   eina_stringshare_del(promise_param_type);
 
    eina_strbuf_free(params);
    eina_strbuf_free(params_full);
