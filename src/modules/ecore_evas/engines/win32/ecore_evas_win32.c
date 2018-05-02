@@ -342,6 +342,7 @@ _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_U
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
+   ee->draw_block = EINA_FALSE;
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
    pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
@@ -563,36 +564,13 @@ static void
 _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 {
    INF("ecore evas resize (%dx%d)", width, height);
-   ee->req.w = width;
-   ee->req.h = height;
 
-   if ((ee->w != width) || (ee->h != height))
+   if ((ee->req.w != width) || (ee->req.h != height))
      {
-        ee->w = width;
-        ee->h = height;
+        ee->req.w = width;
+        ee->req.h = height;
         ecore_win32_window_resize((Ecore_Win32_Window *)ee->prop.window,
                                   width, height);
-        if (ECORE_EVAS_PORTRAIT(ee))
-          {
-             evas_output_size_set(ee->evas, ee->w, ee->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-          }
-        else
-          {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-          }
-        if (ee->prop.avoid_damage)
-          {
-             int pdam;
-
-             pdam = ecore_evas_avoid_damage_get(ee);
-             ecore_evas_avoid_damage_set(ee, 0);
-             ecore_evas_avoid_damage_set(ee, pdam);
-          }
-/*         if ((ee->shaped) || (ee->alpha)) */
-/*           _ecore_evas_win32_region_border_resize(ee); */
-        if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
@@ -1439,6 +1417,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    ee->req.w = ee->w;
    ee->req.h = ee->h;
    ee->can_async_render = EINA_FALSE;
+   ee->draw_block = EINA_TRUE;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
