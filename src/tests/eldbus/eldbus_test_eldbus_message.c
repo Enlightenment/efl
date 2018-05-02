@@ -752,7 +752,6 @@ EFL_START_TEST(utc_eldbus_message_info_data_get_p)
 
    ck_assert_msg(is_success, "Method %s is not call", method_name);
 
-   eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST
@@ -816,8 +815,7 @@ EFL_START_TEST(utc_eldbus_message_signal_new_p)
 
    ck_assert_msg(is_success, "Signal NameOwnerChanged is not emit");
 
-   eldbus_signal_handler_unref(signal_handler);
-   eldbus_message_unref(msg);
+   eldbus_signal_handler_del(signal_handler);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST
@@ -1016,7 +1014,6 @@ EFL_START_TEST(utc_eldbus_message_arguments_vappend_p)
 
    ck_assert_msg(is_success, "Method GetNameOwner is not call");
 
-   eldbus_message_unref(message_vparam);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST
@@ -1077,7 +1074,6 @@ EFL_START_TEST(utc_eldbus_message_arguments_vget_p)
 
    ck_assert_msg(is_success, "Can't get arguments");
 
-   eldbus_message_unref(message);
    eldbus_connection_unref(conn);
 }
 EFL_END_TEST
@@ -1186,9 +1182,6 @@ EFL_START_TEST(utc_eldbus_message_eina_p)
    ck_assert_msg(is_register_service, "Can't registered service");
    ck_assert_msg(is_iter_vget, "Can't get argument");
 
-   eldbus_message_unref(msg);
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
@@ -1307,9 +1300,6 @@ EFL_START_TEST(utc_eldbus_message_container_p)
    ck_assert_msg(is_register_service, "Can't registered service");
    ck_assert_msg(is_receive, "Can't get container data");
 
-   eldbus_message_unref(msg);
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
@@ -1389,8 +1379,6 @@ EFL_START_TEST(utc_eldbus_message_error_new_p)
 
    ecore_main_loop_begin();
 
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
@@ -1463,7 +1451,6 @@ EFL_START_TEST(utc_eldbus_message_iter_del_p)
         eldbus_message_iter_del(iter);
      }
 
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
@@ -1544,8 +1531,6 @@ EFL_START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
 
    ecore_main_loop_begin();
 
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
