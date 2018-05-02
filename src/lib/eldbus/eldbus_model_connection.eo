@@ -3,7 +3,7 @@ class Eldbus.Model.Connection (Eldbus.Model) {
 
     implements {
         Efl.Object.constructor;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
         Efl.Model.children_slice_get;
         Efl.Model.children_count { get; }
     }

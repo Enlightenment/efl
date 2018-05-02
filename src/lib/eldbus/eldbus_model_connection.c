@@ -22,15 +22,11 @@ _eldbus_model_connection_efl_object_constructor(Eo *obj, Eldbus_Model_Connection
 }
 
 static void
-_eldbus_model_connection_efl_object_destructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
+_eldbus_model_connection_efl_object_invalidate(Eo *obj, Eldbus_Model_Connection_Data *pd)
 {
    Eldbus_Children_Slice_Promise *slice;
-   Eo *child;
 
    if (pd->pending) eldbus_pending_cancel(pd->pending);
-
-   EINA_LIST_FREE(pd->childrens, child)
-     efl_del(child);
 
    EINA_LIST_FREE(pd->requests, slice)
      {
@@ -38,7 +34,9 @@ _eldbus_model_connection_efl_object_destructor(Eo *obj, Eldbus_Model_Connection_
         free(slice);
      }
 
-   efl_destructor(efl_super(obj, ELDBUS_MODEL_CONNECTION_CLASS));
+   pd->childrens = eina_list_free(pd->childrens);
+
+   efl_invalidate(efl_super(obj, ELDBUS_MODEL_CONNECTION_CLASS));
 }
 
 static void
