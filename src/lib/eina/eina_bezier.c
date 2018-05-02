@@ -17,6 +17,7 @@
  */
 #include <math.h>
 #include <float.h>
+#include <stdio.h>
 
 #include "eina_private.h"
 #include "eina_bezier.h"
@@ -78,8 +79,6 @@ _eina_bezier_split(const Eina_Bezier *b,
    second->ctrl_start.y = (second->ctrl_end.y + c) * 0.5;
    first->end.y = second->start.y = (first->ctrl_end.y + second->ctrl_start.y) * 0.5;
 }
-
-#include <stdio.h>
 
 static float
 _eina_bezier_length_helper(const Eina_Bezier *b)
