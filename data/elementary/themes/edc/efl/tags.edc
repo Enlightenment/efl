@@ -9,13 +9,13 @@ group { "efl/tags";
             color_class: "tags_bg";
          }
       }
-      swallow { "efl.swallow.background";
+      swallow { "efl.background";
          scale;
          desc { "default";
             rel.to: "bg";
          }
       }
-      swallow { "box.swallow";
+      swallow { "efl.box";
          desc { "default";
             rel.to: "bg";
          }
