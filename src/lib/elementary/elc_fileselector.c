@@ -786,7 +786,7 @@ static void
 _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
 {
    Elm_Fileselector_Item_Data *it_data;
-   Elm_Object_Item *item;
+   Elm_Object_Item *item, *it_parent;
    int itcn = ELM_FILE_UNKNOW;
 
    Efl_Model *parent = efl_parent_get(child);
@@ -829,7 +829,7 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
      }
 
    it_data->model = efl_ref(child);
-   it_data->parent_model = efl_parent_get(child);
+   it_data->parent_model = parent;
    it_data->parent_path = eina_stringshare_add(parent_path);
    it_data->path = eina_stringshare_add(path);
    it_data->filename = eina_stringshare_add(filename);
@@ -837,6 +837,8 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
    it_data->mtime = mtime;
    it_data->mime_type = eina_stringshare_add(mime_type);
    it_data->is_dir = dir;
+
+   it_parent = efl_key_data_get(parent, ".item.data");
 
    if (dir)
      {
@@ -851,7 +853,7 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
    if (sd->mode == ELM_FILESELECTOR_LIST)
      item = elm_genlist_item_sorted_insert(sd->files_view, list_itc[itcn],
                                            it_data,
-                                           NULL,
+                                           it_parent,
                                            (sd->expand && itcn == ELM_DIRECTORY) ? ELM_GENLIST_ITEM_TREE : ELM_GENLIST_ITEM_NONE,
                                            _file_list_cmp, NULL, NULL);
    else
