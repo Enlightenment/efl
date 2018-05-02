@@ -264,8 +264,10 @@ _eio_model_info_type_get(const Eina_File_Direct_Info *info, const Eina_Stat *st)
           return EINA_FILE_FIFO;
         else if (S_ISLNK(st->mode))
           return EINA_FILE_LNK;
+#ifdef S_ISSOCK
         else if (S_ISSOCK(st->mode))
           return EINA_FILE_SOCK;
+#endif
      }
    return EINA_FILE_UNKNOWN;
 }
