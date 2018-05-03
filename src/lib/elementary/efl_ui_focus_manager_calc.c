@@ -205,10 +205,9 @@ node_item_free(Node *item)
    for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
         Node *partner;
-        Eina_List *n;
 
 #define MAKE_LIST_DIRTY(node, field) \
-        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, n, partner) \
+        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, l, partner) \
           { \
              dirty_add(obj, pd, partner); \
           }
