@@ -18,7 +18,7 @@ class TestStrBuf
 
     public static void test_eolian()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
         eina.Strbuf buf = new eina.Strbuf();
 
         obj.AppendToStrbuf(buf, "Appended");

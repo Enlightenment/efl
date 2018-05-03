@@ -16,14 +16,14 @@ public class Example
 
     private static void ShowErrorPopup(efl.ui.Win win, string message)
     {
-        efl.ui.Popup_Alert popup = new efl.ui.Popup_AlertConcrete(win);
-        efl.ui.Text popup_text = new efl.ui.TextConcrete(popup);
+        efl.ui.IPopup_Alert popup = new efl.ui.Popup_Alert(win);
+        efl.ui.Text popup_text = new efl.ui.Text(popup);
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
         popup.SetVisible(true);
         popup.SetButton(efl.ui.Popup_Alert_Button.Positive, "Ok");
         popup.SetSize(new eina.Size2D(150, 30));
-        popup.ButtonClickedEvt += (object sender, efl.ui.Popup_AlertConcrete.ButtonClickedEvt_Args e) => {
+        popup.ButtonClickedEvt += (object sender, efl.ui.Popup_Alert.ButtonClickedEvt_Args e) => {
             popup.SetParent(null);
             popup.Del();
         };
@@ -41,63 +41,63 @@ public class Example
 
         efl.All.Init(efl.Components.Ui);
 
-        efl.ui.Win win = new efl.ui.WinConcrete(null);
+        efl.ui.Win win = new efl.ui.Win(null);
         win.SetText("C# Unit Converter");
         win.SetAutohide(true);
 
-        efl.ui.Box_Flow box = new efl.ui.Box_FlowConcrete(win);
+        efl.ui.Box_Flow box = new efl.ui.Box_Flow(win);
         box.SetDirection(efl.ui.Dir.Horizontal);
 
-        efl.ui.Box_Flow miles_box = new efl.ui.Box_FlowConcrete(box);
+        efl.ui.Box_Flow miles_box = new efl.ui.Box_Flow(box);
         miles_box.SetDirection(efl.ui.Dir.Down);
 
-        box.Pack(miles_box);
+        box.DoPack(miles_box);
 
-        efl.ui.Text miles_label = new efl.ui.TextConcrete(miles_box);
+        efl.ui.Text miles_label = new efl.ui.Text(miles_box);
         miles_label.SetText("Miles:");
         miles_label.SetSize(size);
         miles_label.SetVisible(true);
 
-        efl.ui.Text_Editable miles_input = new efl.ui.Text_EditableConcrete(miles_box);
+        efl.ui.Text_Editable miles_input = new efl.ui.Text_Editable(miles_box);
         miles_input.SetText("");
         miles_input.SetScrollable(true);
         miles_input.SetSize(size);
         miles_input.SetVisible(true);
 
-        efl.ui.Button miles_button = new efl.ui.ButtonConcrete(miles_box);
+        efl.ui.IButton miles_button = new efl.ui.Button(miles_box);
         miles_button.SetText("To Km");
         miles_button.SetSize(size);
         miles_button.SetVisible(true);
 
-        miles_box.Pack(miles_label);
-        miles_box.Pack(miles_input);
-        miles_box.Pack(miles_button);
+        miles_box.DoPack(miles_label);
+        miles_box.DoPack(miles_input);
+        miles_box.DoPack(miles_button);
 
 
-        efl.ui.Box_Flow kms_box = new efl.ui.Box_FlowConcrete(box);
+        efl.ui.Box_Flow kms_box = new efl.ui.Box_Flow(box);
         kms_box.SetDirection(efl.ui.Dir.Down);
 
-        box.Pack(kms_box);
+        box.DoPack(kms_box);
 
-        efl.ui.Text kms_label = new efl.ui.TextConcrete(kms_box);
+        efl.ui.Text kms_label = new efl.ui.Text(kms_box);
         kms_label.SetText("Kilometers:");
         kms_label.SetSize(size);
         kms_label.SetVisible(true);
 
-        efl.ui.Text_Editable kms_input = new efl.ui.Text_EditableConcrete(kms_box);
+        efl.ui.Text_Editable kms_input = new efl.ui.Text_Editable(kms_box);
         kms_input.SetText("");
         kms_input.SetScrollable(true);
         kms_input.SetSize(size);
         kms_input.SetVisible(true);
 
-        efl.ui.Button kms_button = new efl.ui.ButtonConcrete(kms_box);
+        efl.ui.IButton kms_button = new efl.ui.Button(kms_box);
         kms_button.SetText("To Miles");
         kms_button.SetSize(size);
         kms_button.SetVisible(true);
 
-        kms_box.Pack(kms_label);
-        kms_box.Pack(kms_input);
-        kms_box.Pack(kms_button);
+        kms_box.DoPack(kms_label);
+        kms_box.DoPack(kms_input);
+        kms_box.DoPack(kms_button);
 
         kms_button.ClickedEvt += (object sender, EventArgs e) => {
             try

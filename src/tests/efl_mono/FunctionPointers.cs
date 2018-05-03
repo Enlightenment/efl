@@ -29,7 +29,7 @@ class TestFunctionPointers
     public static void set_callback_basic()
     {
         setup();
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
         obj.SetCallback(twice);
 
         Test.Assert(called == false, "set_callback should not call the callback");
@@ -44,7 +44,7 @@ class TestFunctionPointers
     {
         setup();
 
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
         obj.SetCallback(y => {
                     called = true;
                     return y + 4;
@@ -62,7 +62,7 @@ class TestFunctionPointers
     {
         setup();
 
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
         obj.SetCallback(twice);
         Test.Assert(called == false, "set_callback should not call the callback");
 

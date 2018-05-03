@@ -13,7 +13,7 @@ public static class TestParts
 {
     public static void basic_part_test()
     {
-        test.Testing t = new test.TestingConcrete();
+        test.ITesting t = new test.Testing();
         do_part_test(t);
     }
 
@@ -27,7 +27,7 @@ public static class TestParts
         do_part_test(t);
     }
 
-    private static void do_part_test(test.Testing t)
+    private static void do_part_test(test.ITesting t)
     {
         var p1 = t.Part1;
         var p2 = t.Part2;

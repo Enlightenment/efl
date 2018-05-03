@@ -11,7 +11,7 @@ namespace TestSuite {
 public static class TestEinaValueEolian {
     public static void TestEolianEinaValueInReturn()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
 
         using (eina.Value v = new eina.Value(eina.ValueType.Int32)) {
             v.Set(42);
@@ -27,7 +27,7 @@ public static class TestEinaValueEolian {
 
     public static void TestEolianEinaValueInOwn()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
 
         using (eina.Value v = new eina.Value(eina.ValueType.Int32)) {
             v.Set(2001);
@@ -47,7 +47,7 @@ public static class TestEinaValueEolian {
 
     public static void TestEolianEinaValueOut()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
 
         using (eina.Value v = new eina.Value(eina.ValueType.String)) {
             eina.Value v_out = null;
@@ -63,7 +63,7 @@ public static class TestEinaValueEolian {
 
     public static void TestEolianEinaValueOutOwn()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
 
         using (eina.Value v = new eina.Value(eina.ValueType.String)) {
             eina.Value v_out = null;
@@ -79,7 +79,7 @@ public static class TestEinaValueEolian {
 
     public static void TestEolianEinaValueInReturnByValue()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
 
         using (eina.Value v = new eina.Value(eina.ValueType.Int32)) {
             v.Set(42);
@@ -96,7 +96,7 @@ public static class TestEinaValueEolian {
 
     public static void TestEolianEinaValueOutByValue()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
 
         using (eina.Value v = new eina.Value(eina.ValueType.String)) {
             eina.Value v_out = null;

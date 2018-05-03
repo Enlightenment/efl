@@ -22,8 +22,8 @@ class TestMain
     static int HEIGHT = 240;
 
     private EcoreEvas ecore_evas;
-    private efl.canvas.Object canvas;
-    private efl.canvas.Rectangle bg;
+    private efl.canvas.IObject canvas;
+    private efl.canvas.IRectangle bg;
     private evas.Text text;
     private evas.Image border;
 
@@ -34,7 +34,7 @@ class TestMain
         canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        bg = new efl.canvas.RectangleConcrete(canvas);
+        bg = new efl.canvas.Rectangle(canvas);
         bg.SetColor(255, 255, 255, 255);
         position.X = 0;
         position.Y = 0;
@@ -47,7 +47,7 @@ class TestMain
 
         bg.KeyDownEvt += On_KeyDown;
 
-        text = new evas.TextConcrete(canvas);
+        text = new evas.Text(canvas);
         text.SetStyle(evas.Text_Style_Type.OutlineSoftShadow);
 
         text.SetColor(0, 0, 0, 255);
@@ -71,7 +71,7 @@ class TestMain
         Console.WriteLine("Adding text object with font {0} and size {1}", font, size);
 
         // setup border
-        border = new evas.ImageConcrete(canvas);
+        border = new evas.Image(canvas);
         border.SetFile(border_file, null);
         border.SetBorder(3, 3, 3, 3);
         border.SetBorderCenterFill(0);
@@ -87,7 +87,7 @@ class TestMain
 
     }
 
-    private void On_KeyDown(object sender, efl.input.InterfaceConcrete.KeyDownEvt_Args e)
+    private void On_KeyDown(object sender, efl.input.Interface.KeyDownEvt_Args e)
     {
         var key = e.arg.GetKey();
 
@@ -114,7 +114,7 @@ class TestMain
         if (args.Length >= 1)
             border_path = args[0];
 
-        efl.Loop loop = new efl.LoopConcrete();
+        efl.Loop loop = new efl.Loop();
         TestMain t = new TestMain(border_path);
 
         loop.Begin();
