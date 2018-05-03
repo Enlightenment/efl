@@ -13,6 +13,7 @@ lib/eolian_cxx/grammar/attribute_conditional.hpp \
 lib/eolian_cxx/grammar/attribute_reorder.hpp \
 lib/eolian_cxx/grammar/attribute_replace.hpp \
 lib/eolian_cxx/grammar/attributes.hpp \
+lib/eolian_cxx/grammar/blacklist.hpp \
 lib/eolian_cxx/grammar/base_class_definition.hpp \
 lib/eolian_cxx/grammar/case.hpp \
 lib/eolian_cxx/grammar/class_declaration.hpp \
