@@ -1891,7 +1891,8 @@ efl_unref(const Eo *obj_id)
         return ;
      }
 
-   if (EINA_UNLIKELY(obj->user_refcount == 1))
+   if (EINA_UNLIKELY((obj->user_refcount == 1 && !obj->parent) ||
+                     (obj->user_refcount == 2 && obj->parent)))
      {
         // The noref event should happen before any object in the
         // tree get affected by the change in refcount.
