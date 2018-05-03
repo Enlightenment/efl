@@ -15,6 +15,7 @@
 #define EFL_UI_WIN_BETA
 #define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>

@@ -54,7 +54,7 @@ class Elm.Fileselector (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.mode { get; set; }
       Elm.Interface.Fileselector.current_name { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       done: string; [[Called when OK button was pressed]]

@@ -123,6 +123,6 @@ class Elm.Mapbuf (Efl.Ui.Widget, Efl.Content, Efl.Part, Efl.Ui.Legacy)
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
 }

@@ -11,6 +11,6 @@ class Efl.Ui.Button_Legacy (Efl.Ui.Button, Efl.Ui.Legacy)
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_sub_object_del;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
 }

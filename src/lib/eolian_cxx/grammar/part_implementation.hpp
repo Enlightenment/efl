@@ -29,9 +29,8 @@ struct part_implementation_generator
         return false;
       // FIXME: part_def can't depend on klass_def so C type is not known :(
       if(!as_generator(string << ">::type "<< string << "::" << string << "() const\n{\n"
-                       << scope_tab << "::Eo *__return_value = ::efl_part"
-                       << "(this->_eo_ptr(), \"" << string << "\");\n"
-                       << scope_tab << "::___efl_auto_unref_set(__return_value, false);\n")
+                       << scope_tab << "::Eo *__return_value = ::efl_part_get"
+                       << "(this->_eo_ptr(), \"" << string << "\");\n")
             .generate(sink, std::make_tuple(part.klass.eolian_name, klass_name, part.name, part.name), ctx))
         return false;
       if(!as_generator(scope_tab << "return ::" << *(string << "::"))

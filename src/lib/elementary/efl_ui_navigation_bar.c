@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PART_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -113,7 +115,7 @@ _efl_ui_navigation_bar_content_unset(Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EI
 
 /* Efl.Part begin */
 EOLIAN static Efl_Object *
-_efl_ui_navigation_bar_efl_part_part(const Eo *obj, Efl_Ui_Navigation_Bar_Data *priv EINA_UNUSED, const char *part)
+_efl_ui_navigation_bar_efl_part_part_get(const Eo *obj, Efl_Ui_Navigation_Bar_Data *priv EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
@@ -122,7 +124,7 @@ _efl_ui_navigation_bar_efl_part_part(const Eo *obj, Efl_Ui_Navigation_Bar_Data *
    else if (eina_streq(part, "left_content") || eina_streq(part, "right_content"))
      return ELM_PART_IMPLEMENT(EFL_UI_NAVIGATION_BAR_PART_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void

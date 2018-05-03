@@ -52,7 +52,7 @@ class Efl.Ui.Panes (Efl.Ui.Layout.Object, Efl.Ui.Direction,
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       press: void; [[Called when panes got pressed]]

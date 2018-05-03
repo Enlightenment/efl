@@ -55,7 +55,7 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Format,
       Efl.Ui.Range.range_min_max {get; set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Ui.Format.format_cb { set; }
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Access.Value.value_and_text { get; }
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }

@@ -13,7 +13,7 @@ class Elm.Fileselector_Entry (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.is_save { get; set; }
       Efl.Ui.View.model { get; set; }
       Elm.Interface.Fileselector.expandable { get; set; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       changed: void; [[Called when the entry changed]]

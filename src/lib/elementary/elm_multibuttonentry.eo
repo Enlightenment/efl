@@ -183,7 +183,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Object.access_children { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       item,selected: Efl.Object; [[Called when item was selected]]

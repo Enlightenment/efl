@@ -11,6 +11,7 @@
 #define EFL_UI_TRANSLATABLE_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIDGET_PART_BG_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -6047,7 +6048,7 @@ _efl_ui_widget_part_shadow_efl_gfx_filter_filter_state_get(const Eo *obj, void *
 /* Efl.Part implementation */
 
 EOLIAN static Efl_Object *
-_efl_ui_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, const char *part)
+_efl_ui_widget_efl_part_part_get(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, const char *part)
 {
    if (eina_streq(part, "background"))
      return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_BG_CLASS, obj, part);

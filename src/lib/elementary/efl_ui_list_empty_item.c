@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_UI_LIST_EMPTY_ITEM_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -39,13 +40,13 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_list_empty_item, void)
 /* Efl.Part end */
 
 EOLIAN static Efl_Object *
-_efl_ui_list_empty_item_efl_part_part(const Eo *obj, void *wd EINA_UNUSED, const char *part)
+_efl_ui_list_empty_item_efl_part_part_get(const Eo *obj, void *wd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (eina_streq(part, "content"))
      return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, "efl.content");
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 /* Internal EO APIs and hidden overrides */

@@ -85,7 +85,7 @@ class Elm.Panel (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Elm.Interface_Scrolla
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       toggled: void; [[Called when the hidden state was toggled]]

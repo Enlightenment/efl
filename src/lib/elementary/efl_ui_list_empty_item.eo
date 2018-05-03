@@ -11,6 +11,6 @@ class Efl.Ui.List_Empty_Item (Efl.Ui.List_Item, Efl.Content)
       Efl.Object.destructor;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
 }

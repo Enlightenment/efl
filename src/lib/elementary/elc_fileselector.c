@@ -12,6 +12,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_FILESELECTOR_BETA
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "Eio_Eo.h"

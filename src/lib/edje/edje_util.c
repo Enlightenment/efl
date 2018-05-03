@@ -3286,7 +3286,7 @@ _edje_efl_content_content_get(Edje *ed, const char *part)
 }
 
 EOLIAN Eo *
-_efl_canvas_layout_efl_part_part(Eo *obj, Edje *ed, const char *part)
+_efl_canvas_layout_efl_part_part_get(Eo *obj, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 

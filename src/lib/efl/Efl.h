@@ -10,6 +10,12 @@ extern "C" {
 #ifdef EAPI
 # undef EAPI
 #endif
+#ifdef EWAPI
+# undef EWAPI
+#endif
+#ifdef EOAPI
+# undef EOAPI
+#endif
 
 #ifdef _WIN32
 # ifdef EFL_BUILD
@@ -21,17 +27,24 @@ extern "C" {
 # else
 #  define EAPI __declspec(dllimport)
 # endif
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
+#  define EAPI_WEAK
 # endif
 #endif
+
+#define EWAPI EAPI EAPI_WEAK
+#define EOAPI EAPI EAPI_WEAK
 
 #define EFL_VERSION_1_18 1
 #define EFL_VERSION_1_19 1
@@ -166,6 +179,22 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_annotate.eo.h"
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
+
+/**
+ * @brief Get a proxy object referring to a part of an object.
+ *
+ * The returned object is valid for only a single function call.
+ * Of course, if the first call is @ref efl_ref, it will last
+ * until @ref efl_unref.
+ *
+ * @param[in] obj The object.
+ * @param[in] name The part name.
+ *
+ * @return A (proxy) object, valid for a single call.
+ *
+ * @since 1.21
+ */
+EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
 
 #else
 

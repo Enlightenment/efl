@@ -25,6 +25,6 @@ class Efl.Ui.Navigation_Bar (Efl.Ui.Layout.Object, Efl.Content, Efl.Text, Efl.Ui
       Efl.Content.content_unset;
       Efl.Text.text { set; get; }
       Efl.Ui.Translatable.translatable_text { set; get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
 }

@@ -10,6 +10,7 @@
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED 1
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>

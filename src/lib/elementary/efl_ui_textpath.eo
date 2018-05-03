@@ -50,7 +50,7 @@ class Efl.Ui.Textpath (Efl.Ui.Layout.Object, Efl.Object, Efl.Text, Efl.Gfx.Path)
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text {get; set;}
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Ui.Widget.theme_apply;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }

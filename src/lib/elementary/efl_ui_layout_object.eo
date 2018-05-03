@@ -69,7 +69,7 @@ class Efl.Ui.Layout.Object (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Container.content_count;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Ui.View.model { get; set; }
       Efl.Ui.Model.Connect.connect;
       Efl.Ui.Factory.model_connect;

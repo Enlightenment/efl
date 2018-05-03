@@ -2,7 +2,7 @@ class Efl.Ui.Widget_Part (Efl.Object)
 {
    [[This is the base class for all "Part" handles in Efl.Ui widgets.
 
-     Since objects of this type are returned by @Efl.Part.part, their lifetime
+     Since objects of this type are returned by @Efl.Part.part_get, their lifetime
      is limited to exactly one function call only. Each widget class should
      expose more specific types for their API-defined parts.
    ]]

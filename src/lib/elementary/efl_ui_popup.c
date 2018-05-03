@@ -2,7 +2,9 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PART_PROTECTED
 #define EFL_UI_POPUP_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -322,14 +324,14 @@ ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "efl.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
 
 EOLIAN static Eo *
-_efl_ui_popup_efl_part_part(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSED, const char *part)
+_efl_ui_popup_efl_part_part_get(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    if (eina_streq(part, "backwall"))
      return ELM_PART_IMPLEMENT(EFL_UI_POPUP_PART_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void

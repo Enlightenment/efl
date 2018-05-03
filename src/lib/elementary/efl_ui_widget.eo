@@ -590,7 +590,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
-      Efl.Part.part; [[Returns @Efl.Ui.Widget_Part.]]
+      Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]
    }
    events {
       moved: Efl.Object; [[Called when widget moved]]

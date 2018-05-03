@@ -831,7 +831,6 @@ _efl_ui_slider_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSE
 }
 
 // A11Y Accessibility - END
-
 /* Internal EO APIs and hidden overrides */
 
 EFL_VOID_FUNC_BODYV(efl_ui_slider_val_fetch, EFL_FUNC_CALL(user_event), Eina_Bool user_event)

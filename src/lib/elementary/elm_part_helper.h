@@ -57,8 +57,6 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
    Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd && obj && part, NULL);
-   efl_allow_parent_unref_set(proxy, 1);
-   ___efl_auto_unref_set(proxy, 1);
    pd->part = eina_tmpstr_add(part);
    pd->obj = obj;
 
@@ -74,17 +72,17 @@ ELM_PART_IMPLEMENT(const Efl_Class *part_klass, const Eo *obj, const char *part)
 
 #define ELM_PART_OVERRIDE_PARTIAL(type, TYPE, typedata, _is_part_cb) \
    EOLIAN static Efl_Object * \
-   _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
+   _ ## type ## _efl_part_part_get(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
    { \
      EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
      if (_is_part_cb(obj, part)) \
        return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \
-     return efl_part(efl_super(obj, TYPE ## _CLASS), part); \
+     return efl_part_get(efl_super(obj, TYPE ## _CLASS), part); \
    }
 
 #define ELM_PART_OVERRIDE(type, TYPE, typedata) \
 EOLIAN static Efl_Object * \
-_ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
+_ ## type ## _efl_part_part_get(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
 { \
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
    return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \

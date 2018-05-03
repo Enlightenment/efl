@@ -7,6 +7,7 @@
 //#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
