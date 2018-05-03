@@ -117,6 +117,7 @@ struct _Eo_Object
      Eina_Bool super:1;
      Eina_Bool invalidate:1;
      Eina_Bool is_invalidating:1;
+     Eina_Bool parent : 1;
 
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;

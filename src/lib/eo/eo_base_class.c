@@ -740,12 +740,16 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
              // to improve l1 cache efficiency
              goto err_parent;
           }
+
+        eo_obj->parent = EINA_TRUE;
      }
    else
      {
         if (prev_parent) _efl_invalidate(eo_obj);
 
         pd->parent = NULL;
+        eo_obj->parent = EINA_FALSE;
+
         if (prev_parent && !eo_obj->del_triggered) efl_unref(obj);
      }
 
