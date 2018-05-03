@@ -898,7 +898,7 @@ class Elm.Entry (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickabl
       Efl.Access.Editable.Text.paste;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       activated: void; [[Called when entry got activated]]

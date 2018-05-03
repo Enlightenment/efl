@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PART_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"

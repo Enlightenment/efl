@@ -153,7 +153,7 @@ class Elm.Dayselector (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       /* FIXME: Nobody emits this

@@ -61,7 +61,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout.Object, Efl.Content)
       Efl.Ui.Widget.widget_parent { set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       backwall,clicked: void; [[This is called whenever the user clicks back wall of popup.]]

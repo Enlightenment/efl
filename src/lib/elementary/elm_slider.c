@@ -6,6 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -1100,14 +1101,14 @@ _slider_span_size_set(Eo *obj, Elm_Slider_Data *sd, int size)
 /* Efl.Part begin */
 
 EOLIAN static Eo *
-_elm_slider_efl_part_part(const Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, const char *part)
+_elm_slider_efl_part_part_get(const Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    if (eina_streq(part, "indicator"))
      return ELM_PART_IMPLEMENT(ELM_SLIDER_PART_INDICATOR_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void

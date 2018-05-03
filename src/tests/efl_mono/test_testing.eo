@@ -1646,7 +1646,7 @@ class Test.Testing (Efl.Object, Efl.Part) {
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       evt,with,string @hot: string;

@@ -10,9 +10,6 @@
 
 #define EOLIAN
 
-/* When used, this indicates that the function is an Eo API. */
-#define EOAPI EAPI EAPI_WEAK
-
 #ifdef _WIN32
 # ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
@@ -23,17 +20,24 @@
 # else
 #  define EAPI __declspec(dllimport)
 # endif
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
+#   define EAPI_WEAK
 # endif
 #endif
+
+/* When used, this indicates that the function is an Eo API. */
+#define EOAPI EAPI EAPI_WEAK
 
 #ifdef __cplusplus
 extern "C" {
@@ -2163,11 +2167,9 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
  * @}
  */
 
-
    /* Private for EFL internal use only. Do not use these! */
 EAPI int ___efl_ref2_count(const Eo *obj_id);
 EAPI void ___efl_ref2_reset(const Eo *obj_id);
-EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool val);
 
 #endif
 
@@ -2177,5 +2179,8 @@ EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool val);
 
 #undef EAPI
 #define EAPI
+
+#undef EOAPI
+#define EOAPI
 
 #endif

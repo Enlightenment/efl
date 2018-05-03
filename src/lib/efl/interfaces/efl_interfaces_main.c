@@ -5,6 +5,9 @@
 #define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_SCROLLBAR_PROTECTED
 #define EFL_UI_SCROLLBAR_BETA
+#define EFL_PART_PROTECTED
+
+#include "eo_internal.h"
 
 #include <Efl.h>
 
@@ -76,6 +79,27 @@
 #include "interfaces/efl_ui_selectable.eo.c"
 #include "interfaces/efl_ui_multi_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
+
+static void
+_noref_death(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   efl_event_callback_del(event->object, EFL_EVENT_NOREF, _noref_death, NULL);
+   efl_del(event->object);
+}
+
+EAPI Efl_Object *
+efl_part(const Eo *obj, const char *name)
+{
+   Efl_Object *r;
+
+   r = efl_part_get(obj, name);
+   if (!r) return NULL;
+
+   efl_event_callback_add(r, EFL_EVENT_NOREF, _noref_death, NULL);
+   ___efl_auto_unref_set(r, EINA_TRUE);
+
+   return efl_ref(r);
+}
 
 EAPI void
 __efl_internal_init(void)

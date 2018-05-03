@@ -7,6 +7,7 @@
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"

@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PART_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_tab_page_private.h"
@@ -66,14 +68,14 @@ _efl_ui_tab_page_efl_object_destructor(Eo *obj, Efl_Ui_Tab_Page_Data *sd EINA_UN
 /* Efl.Part begin */
 
 EOLIAN static Eo *
-_efl_ui_tab_page_efl_part_part(const Eo *obj, Efl_Ui_Tab_Page_Data *sd EINA_UNUSED, const char *part)
+_efl_ui_tab_page_efl_part_part_get(const Eo *obj, Efl_Ui_Tab_Page_Data *sd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    if (eina_streq(part, "tab"))
      return ELM_PART_IMPLEMENT(EFL_UI_TAB_PAGE_PART_TAB_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void

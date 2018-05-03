@@ -5,6 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_WIDGET_PART_BG_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -2207,7 +2208,7 @@ _efl_ui_layout_object_efl_layout_signal_signal_process(Eo *obj, Efl_Ui_Layout_Ob
 /* Efl.Part implementation */
 
 EOLIAN static Eo *
-_efl_ui_layout_object_efl_part_part(const Eo *obj, Efl_Ui_Layout_Object_Data *sd EINA_UNUSED, const char *part)
+_efl_ui_layout_object_efl_part_part_get(const Eo *obj, Efl_Ui_Layout_Object_Data *sd EINA_UNUSED, const char *part)
 {
    Efl_Canvas_Layout_Part_Type type = EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
 
@@ -2231,18 +2232,18 @@ _efl_ui_layout_object_efl_part_part(const Eo *obj, Efl_Ui_Layout_Object_Data *sd
                   WRN("Layout has a background but it's not a swallow: '%s'",
                       elm_widget_theme_element_get(obj));
                }
-             return efl_part(efl_super(obj, MY_CLASS), part);
+             return efl_part_get(efl_super(obj, MY_CLASS), part);
           }
 
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
      }
    else if (eina_streq(part, "shadow"))
-     return efl_part(efl_super(obj, MY_CLASS), part);
+     return efl_part_get(efl_super(obj, MY_CLASS), part);
 
    if (!efl_layout_group_part_exist_get(wd->resize_obj, part))
      {
         // edje part will handle the error message
-        return efl_part(wd->resize_obj, part);
+        return efl_part_get(wd->resize_obj, part);
      }
 
    type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));

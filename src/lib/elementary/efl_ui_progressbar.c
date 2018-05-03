@@ -5,6 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -693,7 +694,7 @@ _efl_ui_progressbar_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Ef
 /* Efl.Part begin */
 
 EOLIAN static Eo *
-_efl_ui_progressbar_efl_part_part(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED, const char *part)
+_efl_ui_progressbar_efl_part_part_get(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -702,7 +703,7 @@ _efl_ui_progressbar_efl_part_part(const Eo *obj, Efl_Ui_Progressbar_Data *sd EIN
    if (edje_object_part_drag_dir_get(wd->resize_obj, part) != EFL_UI_DRAG_DIR_NONE)
      return ELM_PART_IMPLEMENT(EFL_UI_PROGRESSBAR_PART_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void

@@ -8,6 +8,7 @@
 //#define EFL_UI_WIDGET_BETA
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 

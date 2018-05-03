@@ -29,7 +29,7 @@ class Efl.Ui.Popup_Alert(Efl.Ui.Popup)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       button,clicked: Efl.Ui.Popup_Alert_Button_Clicked_Event; [[Called when alert popup was clicked]]

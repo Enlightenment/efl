@@ -240,7 +240,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Access.Widget.
       Efl.Ui.Widget.focused_item { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Object.state_set { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       dismissed: void; [[Called when context popup was dismissed]]

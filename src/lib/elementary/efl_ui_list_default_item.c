@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_UI_LIST_DEFAULT_ITEM_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -89,7 +90,7 @@ _efl_ui_list_default_item_part_end_efl_content_content_unset(Eo *obj, void *pd E
 #include "efl_ui_list_default_item_part_end.eo.c"
 
 EOLIAN static Efl_Object *
-_efl_ui_list_default_item_efl_part_part(const Eo *obj, void *wd EINA_UNUSED, const char *part)
+_efl_ui_list_default_item_efl_part_part_get(const Eo *obj, void *wd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (eina_streq(part, "text"))
@@ -99,7 +100,7 @@ _efl_ui_list_default_item_efl_part_part(const Eo *obj, void *wd EINA_UNUSED, con
    else if (eina_streq(part, "end"))
      return ELM_PART_IMPLEMENT(EFL_UI_LIST_DEFAULT_ITEM_PART_END_CLASS, obj, "efl.end");
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 /* Efl.Part end */
 

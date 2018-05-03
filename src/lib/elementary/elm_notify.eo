@@ -88,7 +88,7 @@ class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part, Efl.
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
       block,clicked: void; [[Called when block was clicked]]

@@ -236,7 +236,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Pack.unpack;
       Efl.Pack.pack;
       Efl.Pack_Linear.pack_begin;

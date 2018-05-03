@@ -3744,7 +3744,7 @@ void _test_testing_emit_event_with_struct(Eo *obj, EINA_UNUSED Test_Testing_Data
 }
 
 
-Efl_Object *_test_testing_efl_part_part(EINA_UNUSED const Eo *obj, Test_Testing_Data *pd, const char *name)
+Efl_Object *_test_testing_efl_part_part_get(EINA_UNUSED const Eo *obj, Test_Testing_Data *pd, const char *name)
 {
     if (!strcmp(name, "part1"))
       return pd->part1;

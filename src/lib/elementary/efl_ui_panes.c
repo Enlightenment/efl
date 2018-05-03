@@ -5,6 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 

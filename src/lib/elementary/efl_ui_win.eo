@@ -817,7 +817,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
       Efl.Canvas.Scene.seat { get; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    constructors {
       .win_name;
