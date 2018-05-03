@@ -854,6 +854,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_page_transition_scroll.c \
 	lib/elementary/efl_page_indicator.c \
 	lib/elementary/efl_page_indicator_icon.c \
+	lib/elementary/efl_ui_focus_graph.h \
 	lib/elementary/efl_ui_focus_graph.c \
 	lib/elementary/efl_ui_tab_pager.c \
 	lib/elementary/efl_ui_tab_bar.c \
