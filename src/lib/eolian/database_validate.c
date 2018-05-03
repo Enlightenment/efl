@@ -200,7 +200,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
    const Eolian_Unit *src = tp->base.unit;
 
    char buf[256];
-   if (tp->owned && !database_type_is_ownable(src, tp))
+   if (tp->owned && !database_type_is_ownable(src, tp, EINA_FALSE))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->base.name);
         return _obj_error(&tp->base, buf);
@@ -209,7 +209,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
    if (tp->is_ptr && !tp->legacy)
      {
         tp->is_ptr = EINA_FALSE;
-        Eina_Bool still_ownable = database_type_is_ownable(src, tp);
+        Eina_Bool still_ownable = database_type_is_ownable(src, tp, EINA_FALSE);
         tp->is_ptr = EINA_TRUE;
         if (still_ownable)
           {
@@ -238,9 +238,9 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                   {
                      if (!_validate_type(vals, itp))
                        return EINA_FALSE;
-                     if ((kwid >= KW_accessor) && (kwid <= KW_list))
+                     if ((kwid >= KW_accessor) && (kwid <= KW_list) && (kwid != KW_future))
                        {
-                          if (!database_type_is_ownable(src, itp))
+                          if (!database_type_is_ownable(src, itp, EINA_TRUE))
                             {
                                snprintf(buf, sizeof(buf),
                                         "%s cannot contain value types (%s)",

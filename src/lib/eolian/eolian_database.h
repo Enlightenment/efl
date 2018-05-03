@@ -407,7 +407,7 @@ void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *src, const Eolian_Type *tp);
 
-Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp);
+Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp, Eina_Bool allow_void);
 
 /* expressions */
 

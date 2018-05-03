@@ -718,7 +718,10 @@ parse_type_void(Eo_Lexer *ls)
                {
                   int bline = ls->line_number, bcol = ls->column;
                   check_next(ls, '<');
-                  def->base_type = eo_lexer_type_release(ls, parse_type(ls));
+                  if (tpid == KW_future)
+                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls));
+                  else
+                    def->base_type = eo_lexer_type_release(ls, parse_type(ls));
                   if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
                     eo_lexer_get(ls);
                   if (tpid == KW_hash)
