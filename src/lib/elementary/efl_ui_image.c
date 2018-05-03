@@ -1952,6 +1952,8 @@ elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
 EAPI Eina_Bool
 elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(img, NULL);
+
    Evas_Load_Error err;
 
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
