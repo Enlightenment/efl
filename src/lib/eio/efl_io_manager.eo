@@ -34,7 +34,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
         @in path: string; [[Path we want to list entries for]]
         paths: EflIoPath; [[Callback called for each packet of files found]]
       }
-      return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
+      return: future<uint64> @owned; [[Amount of files found during the listing of the directory]]
     }
 
     direct_ls @const {
@@ -44,7 +44,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
 	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File.Direct.Info]]
       }
-      return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
+      return: future<uint64> @owned; [[Amount of files found during the listing of the directory]]
     }
 
     stat_ls @const {
@@ -54,7 +54,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
 	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File.Direct.Info]]
       }
-      return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
+      return: future<uint64> @owned; [[Amount of files found during the listing of the directory]]
     }
 
     // Extended attributes
@@ -64,7 +64,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
          @in path: string; [[Path we want to list entries for]]
          paths: EflIoPath; [[Callback called for each packet of extended attributes found.]]
       }
-      return: ptr(Eina.Future) @owned; [[Amount of extended attributes found]]
+      return: future<uint64> @owned; [[Amount of extended attributes found]]
     }
 
     stat @const {
@@ -72,7 +72,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
       params {
         @in path: string; [[Path we want to get stat information for]]
       }
-      return: ptr(Eina.Future); [[Stat information]]
+      return: future<Eina.Stat>; [[Stat information]]
     }
 
     // FIXME: Add helper for Eina.Value to Xattr
@@ -83,10 +83,10 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
             data: ptr(Eina.Binbuf); [[Data to set as information]]
             flags: Eina.Xattr.Flags; [[Extended attributes flags]]
          }
-         return: ptr(Eina.Future) @owned; [[Future for asynchronous set operation]]
+         return: future<uint64> @owned; [[Future for asynchronous set operation]]
       }
       get {
-         return: ptr(Eina.Future) @owned; [[Information]]
+         return: future<Eina.Binbuf> @owned; [[Information]]
       }
       keys {
          path: string; [[File path]]
@@ -103,7 +103,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
         @in path: string; [[Path to file]]
         @in shared: bool; [[$true if the file can be accessed by others, $false otherwise]]
       }
-      return: ptr(Eina.Future) @owned; [[Eina file handle]]
+      return: future<Eina.File> @owned; [[Eina file handle]]
     }
     close @const {
       [[Closes an open Eina.File.]]
@@ -111,7 +111,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
         @in file: ptr(Eina.File); [[Eina file handle]]
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
       }
-      return: ptr(Eina.Future) @owned; [[Close return code]]
+      return: future<int> @owned; [[Close return code]]
     }
   }
 }

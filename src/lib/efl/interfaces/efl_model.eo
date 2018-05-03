@@ -46,7 +46,7 @@ interface Efl.Model ()
 
                @since 1.14
               ]]
-	      return: ptr(Eina.Future); [[Return an error in case the property could not be set, the value that was set otherwise.]]
+              return: future<any_value_ptr>; [[Return an error in case the property could not be set, the value that was set otherwise.]]
            }
            get {
               [[Retrieve the value of a given property name.
@@ -98,7 +98,8 @@ interface Efl.Model ()
                 @in count: uint; [[Range size. If count is 0, start is
                                ignored.]]
             }
-            return: ptr(Eina.Future); [[Array of childrens]]
+            /* XXX: is this right? */
+            return: future<accessor<Efl.Object>>; [[Array of childrens]]
          }
          @property children_count {
 	    get {

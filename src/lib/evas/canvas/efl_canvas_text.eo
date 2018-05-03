@@ -263,7 +263,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
            @since 1.21
          ]]
          legacy: null;
-         return: ptr(Eina.Future) @owned; [[Future for layout result]]
+         return: future<Eina.Rect> @owned; [[Future for layout result]]
       }
    }
    implements {

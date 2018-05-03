@@ -143,7 +143,7 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
       }
       run {
          [[ Actually run the task ]]
-         return: ptr(Eina.Future) @owned; [[ A future triggered when task exits and is passed int exit code ]]
+         return: future<void> @owned; [[ A future triggered when task exits and is passed int exit code ]]
       }
       end {
          [[ Request the task end (may send a signal or interrupt

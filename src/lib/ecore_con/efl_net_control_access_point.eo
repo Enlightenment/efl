@@ -108,7 +108,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_Consumer) {
               EINPROGRESS (the connection was already ongoing) and
               EALREADY (the connection was already established).
             ]]
-            return: ptr(Eina.Future) @owned; [[Future for asynchronous connect]] /* NOTE: This should be future<void> */
+            return: future<void> @owned; [[Future for asynchronous connect]]
         }
 
         disconnect {

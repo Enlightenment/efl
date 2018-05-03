@@ -78,5 +78,23 @@ struct @extern Eina.Rw_Slice {
 }
 
 struct @extern Eina.Value.Type; [[Eina value type]]
-struct @extern Eina.Future; [[Eina_Future handle]]
-struct @extern Eina.Promise; [[Eina_Promise handle]]
+
+struct @extern Eina.Stat {
+    [[The structure to store some file statistics.]]
+    dev      : ulong; [[The device where this file is located]]
+    ino      : ulong; [[The inode]]
+    mode     : uint;  [[The mode]]
+    nlink    : uint;  [[The link number]]
+    uid      : uint;  [[The owner user id]]
+    gid      : uint;  [[The owner group id]]
+    rdev     : ulong; [[The remote device]]
+    size     : ulong; [[The file size in bytes]]
+    blksize  : ulong; [[The block size in bytes]]
+    blocks   : ulong; [[The number of blocks allocated]]
+    atime    : ulong; [[The tilestamp when the file was last accessed]]
+    atimensec: ulong; [[The nano version of the timestmap when the file was last accessed]]
+    mtime    : ulong; [[The tilestamp when the file was modified]]
+    mtimensec: ulong; [[The nano version of the timestmap when the file was modified]]
+    ctime    : ulong; [[The tilestamp when the file was created]]
+    ctimensec: ulong; [[The nano version of the timestmap when the file was created]]
+}

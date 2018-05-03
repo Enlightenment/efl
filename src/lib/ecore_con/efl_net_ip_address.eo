@@ -112,7 +112,7 @@ class Efl.Net.Ip_Address (Efl.Object) {
                 family: int @optional; [[Preferred family. AF_UNSPEC or 0 for both, otherwise one of AF_INET or AF_INET6]]
                 flags: int @optional; [[Flags to use with getaddrinfo(). If 0, default flags are used (AI_V4MAPPED | AI_ADDRCONFIG, if these exist in your system).]]
             }
-            return: ptr(Eina.Future); [[The resolve results. It contains a list of Efl.Net.Ip_Address, they will be automatically deleted unless you keep a reference to it.]]
+            return: future<const(Efl.Net.Ip_Address.Resolve_Results)>; [[The resolve results. It contains a list of Efl.Net.Ip_Address, they will be automatically deleted unless you keep a reference to it.]]
         }
 
         @property string {

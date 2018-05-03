@@ -90,7 +90,7 @@ class Efl.Net.Control.Technology (Efl.Loop_Consumer) {
               state. Otherwise allow the system to perform
               passive scans in a timely manner.
             ]]
-            return: ptr(Eina.Future) @owned; [[Future return for finished background scan]]
+            return: future<void> @owned; [[Future return for finished background scan]]
         }
     }
 

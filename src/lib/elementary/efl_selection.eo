@@ -12,7 +12,7 @@ mixin Efl.Selection {
             @in data: Eina.Slice;
             @in seat: uint;[[Specified seat for multiple seats case.]]
          }
-         return: ptr(Eina.Future); [[Future for tracking when the selection is lost]]
+         return: future<void>; [[Future for tracking when the selection is lost]]
       }
       selection_get {
          [[Get the data from the object that has selection]]

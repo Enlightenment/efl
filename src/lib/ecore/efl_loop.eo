@@ -50,7 +50,7 @@ class Efl.Loop (Efl.Task)
            This has higher priority, for low priority use
            @.idle
          ]]
-         return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
+         return: future<void> @owned; [[The future handle.]]
       }
       @property throttle {
          [[Slow down the loop execution by forcing sleep for a small
@@ -75,7 +75,7 @@ class Efl.Loop (Efl.Task)
 
            This is a low priority version of @.job
          ]]
-         return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
+         return: future<void> @owned; [[The future handle.]]
       }
       timeout {
          [[A future promise that will be resolved from a clean main
@@ -83,7 +83,7 @@ class Efl.Loop (Efl.Task)
          params {
             @in time: double; [[The time from now in second that the main loop will wait before triggering it.]]
          }
-         return: ptr(Eina.Future) @owned /* future<void> */; [[The future handle.]]
+         return: future<void> @owned; [[The future handle.]]
       }
       register {
          [[Will register a manager of a specific class to be answered by eo.provider_find.]]
