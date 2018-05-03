@@ -1882,6 +1882,15 @@ efl_unref(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
+   if (EINA_UNLIKELY(obj->user_refcount == 1 &&
+                     obj->parent))
+     {
+        CRI("Calling efl_unref instead of efl_del or efl_parent_set(NULL). Temporary fallback in place triggered.");
+        EO_OBJ_DONE(obj_id);
+        efl_del(obj_id);
+        return ;
+     }
+
    if (EINA_UNLIKELY(obj->user_refcount == 1))
      {
         // The noref event should happen before any object in the
