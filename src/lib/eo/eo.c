@@ -21,6 +21,8 @@
 #include "eo_private.h"
 #include "eo_add_fallback.h"
 
+#include "eo_internal.h"
+
 #include "efl_object_override.eo.c"
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>

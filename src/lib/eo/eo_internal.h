@@ -32,6 +32,9 @@ typedef struct _Eo_Opaque Eo;
 
 EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable);
 
+EAPI int ___efl_ref2_count(const Eo *obj_id);
+EAPI void ___efl_ref2_reset(const Eo *obj_id);
+
 #undef EAPI
 #define EAPI
 
