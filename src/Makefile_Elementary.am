@@ -847,8 +847,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_datetime_manager.c \
 	lib/elementary/efl_ui_dnd.c \
 	lib/elementary/elm_focus_legacy.c \
-  static_libs/buildsystem/buildsystem.h \
-  static_libs/buildsystem/buildsystem_autotools.c \
+	static_libs/buildsystem/buildsystem.h \
+	static_libs/buildsystem/buildsystem_autotools.c \
 	lib/elementary/efl_ui_pager.c \
 	lib/elementary/efl_page_transition.c \
 	lib/elementary/efl_page_transition_scroll.c \
