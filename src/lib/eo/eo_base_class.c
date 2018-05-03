@@ -5,7 +5,10 @@
 #include <Eina.h>
 #include <fnmatch.h>
 
-#include "Eo.h"
+#include <Eo.h>
+
+#include "eo_internal.h"
+
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 #include "eina_promise_private.h"
@@ -2212,9 +2215,12 @@ err_parent:
 }
 
 EOLIAN static void
-_efl_object_allow_parent_unref_set(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd, Eina_Bool allow)
+_efl_object_allow_parent_unref_set(Eo *obj_id, Efl_Object_Data *pd, Eina_Bool allow)
 {
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
+   obj->allow_parent_unref = !!allow;
    pd->allow_parent_unref = !!allow;
+   EO_OBJ_DONE(obj_id);
 }
 
 EOLIAN static Eina_Bool
