@@ -1,5 +1,6 @@
 #define EVAS_CANVAS_BETA
 #define EFL_INPUT_EVENT_PROTECTED
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
@@ -10,6 +11,8 @@
 #include "evas_image_private.h"
 #include "evas_polygon_private.h"
 #include "evas_vg_private.h"
+
+#include "eo_internal.h"
 
 #include <Ecore.h>
 
