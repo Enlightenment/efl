@@ -1029,6 +1029,8 @@ EAPI Evas_Object *
 elm_layout_content_get(const Evas_Object *obj, const char *swallow)
 {
    EFL_UI_LAYOUT_CHECK(obj) NULL;
+   // If the object is already dead, their shouldn't be any part in it
+   if (efl_invalidated_get(obj)) return NULL;
    if (!swallow)
      {
         swallow = efl_ui_widget_default_content_part_get(obj);
