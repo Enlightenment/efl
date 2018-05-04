@@ -23,54 +23,28 @@
  * Do not add any logic here.
  */
 
-static Efl_Input_Pointer *s_cached_event = NULL;
-
-static void
-_del_hook(Eo *evt)
-{
-   if (!s_cached_event)
-     {
-        if (efl_parent_get(evt))
-          {
-             efl_ref(evt);
-             efl_parent_set(evt, NULL);
-          }
-        efl_reuse(evt);
-        s_cached_event = evt;
-        efl_input_reset(s_cached_event);
-     }
-   else
-     {
-        efl_del_intercept_set(evt, NULL);
-        efl_unref(evt);
-     }
-}
-
 /* internal eo */
 static Efl_Input_Pointer *
-_efl_input_pointer_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
+_efl_input_pointer_efl_input_event_instance_get(Eo *klass, void *_pd EINA_UNUSED,
                                                 Eo *owner, void **priv)
 {
    Efl_Input_Pointer_Data *ev;
    Efl_Input_Pointer *evt;
 
-   if (s_cached_event)
-     {
-        evt = s_cached_event;
-        s_cached_event = NULL;
-        efl_parent_set(evt, owner);
-     }
-   else
-     {
-        evt = efl_add(EFL_INPUT_POINTER_CLASS, owner);
-        efl_del_intercept_set(evt, _del_hook);
-     }
+   evt = efl_input_event_instance_get(klass, owner);
+   if (!evt) return NULL;
 
-   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
+   ev = efl_data_scope_get(evt, klass);
    ev->fake = EINA_FALSE;
    if (priv) *priv = ev;
 
    return evt;
+}
+
+EOLIAN static void
+_efl_input_pointer_class_destructor(Efl_Class *klass)
+{
+   efl_input_event_instance_clean(klass);
 }
 
 EAPI void
@@ -98,18 +72,6 @@ efl_input_pointer_finalize(Efl_Input_Pointer *obj)
    ev->prev.x = pdata->seat->x;
    ev->prev.y = pdata->seat->y;
    ev->pressed_buttons = pdata->button;
-}
-
-EOLIAN static void
-_efl_input_pointer_class_destructor(Efl_Class *klass EINA_UNUSED)
-{
-   // this is a strange situation...
-   efl_del_intercept_set(s_cached_event, NULL);
-   if (efl_parent_get(s_cached_event))
-     efl_del(s_cached_event);
-   else
-     efl_unref(s_cached_event);
-   s_cached_event = NULL;
 }
 
 EOLIAN static Efl_Object *
@@ -151,6 +113,16 @@ _efl_input_pointer_efl_duplicate_duplicate(const Eo *obj, Efl_Input_Pointer_Data
    Efl_Input_Pointer_Data *ev;
    Efl_Input_Focus *evt;
 
+   if (efl_invalidated_get(obj))
+     {
+        ERR("Object %s has already been invalidated and can't be duplicated.", efl_debug_name_get(obj));
+        return NULL;
+     }
+   if (!efl_parent_get(obj))
+     {
+        ERR("Object %s has not parent during duplicate.", efl_debug_name_get(obj));
+        return NULL;
+     }
    evt = efl_add(MY_CLASS, efl_parent_get(obj),
                  efl_allow_parent_unref_set(efl_added, EINA_TRUE));
    ev = efl_data_scope_get(evt, MY_CLASS);

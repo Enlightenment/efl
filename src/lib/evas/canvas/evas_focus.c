@@ -134,7 +134,7 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
                                    evt, _evas_object_event_new(),
                                    efl_object_focus_event);
    evas_event_callback_call(obj->layer->evas->evas, cb_evas, evt);
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void

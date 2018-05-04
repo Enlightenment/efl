@@ -2465,7 +2465,7 @@ _input_pointer_iterator_free(Input_Pointer_Iterator *it)
    Efl_Input_Pointer *ptr;
 
    EINA_LIST_FREE(it->list, ptr)
-     efl_del(ptr);
+     efl_unref(ptr);
    eina_iterator_free(it->real_iterator);
    free(it);
 }
