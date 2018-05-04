@@ -546,7 +546,9 @@ _efl_ui_layout_object_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout
         break;
      }
 
-   elm_layout_sizing_eval(obj);
+   // No need to resize object during destruction
+   if (!efl_invalidated_get(obj))
+     elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
