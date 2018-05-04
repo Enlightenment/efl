@@ -30,41 +30,6 @@
  */
 EAPI void efl_access_attributes_list_free(Eina_List *list);
 
-/**
- * Frees relation.
- */
-EAPI void efl_access_relation_free(Efl_Access_Relation *relation);
-
-/**
- * Clones relation.
- */
-EAPI Efl_Access_Relation * efl_access_relation_clone(const Efl_Access_Relation *relation);
-
-/**
- * Appends relation to relation set
- */
-EAPI Eina_Bool efl_access_relation_set_relation_append(Efl_Access_Relation_Set *set, Efl_Access_Relation_Type type, const Eo *rel_obj);
-
-/**
- * Removes relation from relation set
- */
-EAPI void efl_access_relation_set_relation_remove(Efl_Access_Relation_Set *set, Efl_Access_Relation_Type type, const Eo *rel_obj);
-
-/**
- * Removes all relation from relation set of a given type
- */
-EAPI void efl_access_relation_set_relation_type_remove(Efl_Access_Relation_Set *set, Efl_Access_Relation_Type type);
-
-/**
- * Frees Efl_Access_Relation_Set
- */
-EAPI void efl_access_relation_set_free(Efl_Access_Relation_Set set);
-
-/**
- * Clones Efl_Access_Relation_Set
- */
-EAPI Efl_Access_Relation_Set efl_access_relation_set_clone(const Efl_Access_Relation_Set set);
-
 #ifdef EFL_EO_API_SUPPORT
 
 /**

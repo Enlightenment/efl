@@ -805,9 +805,9 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    Eo *rel_obj, *obj = _bridge_object_from_path(bridge, obj_path);
    Eldbus_Message *ret = NULL;
    Eldbus_Message_Iter *iter = NULL, *iter_array = NULL, *iter_array2 = NULL, *iter_struct;
-   Efl_Access_Relation *rel;
-   Eina_List *l, *l2;
-   Efl_Access_Relation_Set rels;
+   const Efl_Access_Relation *rel;
+   Eina_List *l;
+   Eina_Iterator *it;
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_OBJECT_MIXIN, msg);
 
@@ -818,15 +818,14 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    iter_array = eldbus_message_iter_container_new(iter, 'a', "(ua(so))");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   rels = efl_access_object_relation_set_get(obj);
-
-   EINA_LIST_FOREACH(rels, l, rel)
+   it = efl_access_object_relations_get(obj);
+   EINA_ITERATOR_FOREACH(it, rel)
      {
         iter_struct = eldbus_message_iter_container_new(iter_array, 'r', NULL);
         eldbus_message_iter_basic_append(iter_struct, 'u', _elm_relation_to_atspi_relation(rel->type));
         iter_array2 = eldbus_message_iter_container_new(iter_struct, 'a', "(so)");
         EINA_SAFETY_ON_NULL_GOTO(iter_array2, fail);
-        EINA_LIST_FOREACH(rel->objects, l2, rel_obj)
+        EINA_LIST_FOREACH(rel->objects, l, rel_obj)
           {
              _bridge_iter_object_reference_append(bridge, iter_array2, rel_obj);
              _bridge_object_register(bridge, rel_obj);
@@ -834,7 +833,7 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
         eldbus_message_iter_container_close(iter_struct, iter_array2);
         eldbus_message_iter_container_close(iter_array, iter_struct);
      }
-   efl_access_relation_set_free(rels);
+   eina_iterator_free(it);
    eldbus_message_iter_container_close(iter, iter_array);
 
    return ret;

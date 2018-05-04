@@ -239,8 +239,6 @@ struct Efl.Access.Relation
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-type Efl.Access.Relation_Set: list<ptr(Efl.Access.Relation)>; [[Elementary Accessibility relation set type]]
-
 mixin Efl.Access.Object (Efl.Interface, Efl.Object)
 {
    [[Accessibility accessible mixin]]
@@ -265,13 +263,9 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
             i18n_name: string; [[Accessible name]]
          }
       }
-      @property relation_set @protected @beta {
+      relations_get @protected @beta @const {
          [[Gets an all relations between accessible object and other accessible objects.]]
-         get {
-         }
-         values {
-            relations: Efl.Access.Relation_Set; [[Accessible relation set]]
-         }
+         return: iterator<ptr(Efl.Access.Relation)>; [[Accessible relation set]]
       }
       @property role @beta {
          [[The role of the object in accessibility domain.]]
@@ -456,6 +450,7 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
    }
    implements {
       Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Object.provider_find;
    }
    events {
