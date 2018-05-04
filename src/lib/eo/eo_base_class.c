@@ -792,7 +792,7 @@ _efl_object_invalidated_get(const Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
 {
    Eina_Bool invalidate;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_TRUE);
-   invalidate = obj->invalidate;
+   invalidate = obj->invalidate || obj->is_invalidating;
    EO_OBJ_DONE(obj_id);
    return invalidate;
 }
