@@ -175,7 +175,7 @@ _item_del_cb(void *data,
              elm_layout_signal_emit(obj, buf, "elm");
 
              VIEW(it) = NULL;
-             efl_del(EO_OBJ(it));
+             // The object is already being deleted, there is no point in calling efl_del on it.
 
              elm_layout_sizing_eval(obj);
              break;
@@ -437,7 +437,7 @@ _elm_dayselector_efl_canvas_group_group_del(Eo *obj, Elm_Dayselector_Data *sd)
      {
         sd->items = eina_list_remove(sd->items, it);
         eina_stringshare_del(it->day_style);
-        efl_del(EO_OBJ(it));
+        // No need to efl_del the object as they have been created by efl_add and are dead by now.
      }
 
    /* handles freeing sd */
