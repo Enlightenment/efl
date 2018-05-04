@@ -2005,7 +2005,11 @@ _elm_colorselector_efl_canvas_group_group_del(Eo *obj, Elm_Colorselector_Data *s
    ecore_event_handler_del(sd->grab.key_up);
 #endif
 
-   _items_del(sd);
+   // We created the items with efl_add, they will be dead after this.
+   sd->items = eina_list_free(sd->items);
+   sd->selected = NULL;
+   sd->focus_items = NULL;
+
    /* This cb_data are used during the destruction process of base.del */
    for (i = 0; i < 4; i++)
      tmp[i] = sd->cb_data[i];
