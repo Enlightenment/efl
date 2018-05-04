@@ -299,17 +299,6 @@ _eio_model_info_build(const Eio_Model *model, Eio_Model_Data *pd)
 }
 
 static void
-_eio_child_delete(Eio_Model *child, Eio_Model_Data *child_pd)
-{
-   Eio_Model *parent;
-
-   if (!child_pd->delete_me) return ;
-
-   parent = efl_parent_get(child);
-   efl_model_child_del(parent, child);
-}
-
-static void
 _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *stat)
 {
    Eio_Model *model = data;
@@ -338,7 +327,6 @@ _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *s
         efl_model_children_count_get(model);
      }
 
-   _eio_child_delete(model, pd);
    efl_unref(model);
 }
 
@@ -353,7 +341,6 @@ _eio_build_st_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 
    efl_model_properties_changed(model, "direct_info", "mtime", "atime", "ctime", "is_dir", "is_lnk", "size", "stat");
 
-   _eio_child_delete(model, pd);
    efl_unref(model);
 }
 
