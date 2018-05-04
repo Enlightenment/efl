@@ -123,7 +123,7 @@ struct _Efl_Access_Event_Handler
 
 struct _Efl_Access_Object_Data
 {
-   Efl_Access_Relation_Set relations;
+   Eina_List     *relations;
    Eina_List     *attr_list;
    const char    *name;
    const char    *description;
@@ -377,10 +377,10 @@ _efl_access_object_state_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Da
    return 0;
 }
 
-EOLIAN Efl_Access_Relation_Set
-_efl_access_object_relation_set_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
+EOLIAN Eina_Iterator *
+_efl_access_object_relations_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
-   return efl_access_relation_set_clone(pd->relations);
+   return eina_list_iterator_new(pd->relations);
 }
 
 EAPI void efl_access_attributes_list_free(Eina_List *list)
@@ -472,64 +472,60 @@ _efl_access_object_translation_domain_get(const Eo *obj EINA_UNUSED, Efl_Access_
    return pd->translation_domain;
 }
 
-EAPI void
-efl_access_relation_free(Efl_Access_Relation *relation)
-{
-   eina_list_free(relation->objects);
-   free(relation);
-}
-
-EAPI Efl_Access_Relation *
-efl_access_relation_clone(const Efl_Access_Relation *relation)
-{
-   Efl_Access_Relation *ret = calloc(1, sizeof(Efl_Access_Relation));
-   if (!ret) return NULL;
-
-   ret->type = relation->type;
-   ret->objects = eina_list_clone(relation->objects);
-   return ret;
-}
-
 static void
 _on_rel_obj_del(void *data, const Efl_Event *event)
 {
-   Efl_Access_Relation_Set *set = data;
+   Efl_Access_Object_Data *sd = data;
    Efl_Access_Relation *rel;
    Eina_List *l, *l2, *p, *p2;
    Eo *rel_obj;
 
-   EINA_LIST_FOREACH_SAFE(*set, l, l2, rel)
+   EINA_LIST_FOREACH_SAFE(sd->relations, l, l2, rel)
      {
         EINA_LIST_FOREACH_SAFE(rel->objects, p, p2, rel_obj)
           {
-          if (rel_obj == event->object)
+             if (rel_obj == event->object)
                rel->objects = eina_list_remove_list(rel->objects, p);
           }
         if (!rel->objects)
           {
-             *set = eina_list_remove_list(*set, l);
+             sd->relations = eina_list_remove_list(sd->relations, l);
              free(rel);
           }
      }
 }
 
-EAPI Eina_Bool
-efl_access_relation_set_relation_append(Efl_Access_Relation_Set *set, Efl_Access_Relation_Type type, const Eo *rel_obj)
+static void
+efl_access_relation_set_free(Efl_Access_Object_Data *sd)
+{
+   Efl_Access_Relation *rel;
+   Eo *obj;
+
+   EINA_LIST_FREE(sd->relations, rel)
+     {
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(rel->objects, l, obj)
+          efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, sd);
+        eina_list_free(rel->objects);
+        free(rel);
+     }
+}
+
+EOLIAN static Eina_Bool
+_efl_access_object_relationship_append(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation)
 {
    Efl_Access_Relation *rel;
    Eina_List *l;
 
-   if (!efl_isa(rel_obj, EFL_ACCESS_OBJECT_MIXIN))
-     return EINA_FALSE;
-
-   EINA_LIST_FOREACH(*set, l, rel)
+   EINA_LIST_FOREACH(sd->relations, l, rel)
      {
         if (rel->type == type)
           {
-             if (!eina_list_data_find(rel->objects, rel_obj))
+             if (!eina_list_data_find(rel->objects, relation))
                {
-                  rel->objects = eina_list_append(rel->objects, rel_obj);
-                  efl_event_callback_add((Eo *) rel_obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
+                  rel->objects = eina_list_append(rel->objects, relation);
+                  efl_event_callback_add((Eo *) relation, EFL_EVENT_DEL, _on_rel_obj_del, sd);
                }
              return EINA_TRUE;
           }
@@ -539,108 +535,56 @@ efl_access_relation_set_relation_append(Efl_Access_Relation_Set *set, Efl_Access
    if (!rel) return EINA_FALSE;
 
    rel->type = type;
-   rel->objects = eina_list_append(rel->objects, rel_obj);
-   *set = eina_list_append(*set, rel);
+   rel->objects = eina_list_append(rel->objects, relation);
+   sd->relations = eina_list_append(sd->relations, rel);
 
-   efl_event_callback_add((Eo *) rel_obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
+   efl_event_callback_add((Eo *) relation, EFL_EVENT_DEL, _on_rel_obj_del, sd);
+
    return EINA_TRUE;
 }
 
-EAPI void
-efl_access_relation_set_relation_remove(Efl_Access_Relation_Set *set, Efl_Access_Relation_Type type, const Eo *rel_obj)
-{
-   Eina_List *l;
-   Efl_Access_Relation *rel;
-
-   EINA_LIST_FOREACH(*set, l, rel)
-     {
-        if (rel->type == type)
-          {
-             if (eina_list_data_find(rel->objects, rel_obj))
-               {
-                  efl_event_callback_del((Eo *) rel_obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
-                  rel->objects = eina_list_remove(rel->objects, rel_obj);
-               }
-             if (!rel->objects)
-               {
-                  *set = eina_list_remove(*set, rel);
-                  efl_access_relation_free(rel);
-               }
-             return;
-          }
-     }
-}
-
-EAPI void
-efl_access_relation_set_relation_type_remove(Efl_Access_Relation_Set *set, Efl_Access_Relation_Type type)
-{
-   Eina_List *l;
-   Efl_Access_Relation *rel;
-   Eo *obj;
-
-   EINA_LIST_FOREACH(*set, l, rel)
-     {
-        if (rel->type == type)
-          {
-             EINA_LIST_FOREACH(rel->objects, l, obj)
-                efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
-             *set = eina_list_remove(*set, rel);
-             efl_access_relation_free(rel);
-             return;
-          }
-     }
-}
-
-EAPI void
-efl_access_relation_set_free(Efl_Access_Relation_Set set)
-{
-   Efl_Access_Relation *rel;
-   Eina_List *l;
-   Eo *obj;
-
-   EINA_LIST_FREE(set, rel)
-     {
-        EINA_LIST_FOREACH(rel->objects, l, obj)
-           efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, set);
-        efl_access_relation_free(rel);
-     }
-}
-
-EAPI Efl_Access_Relation_Set
-efl_access_relation_set_clone(const Efl_Access_Relation_Set set)
-{
-   Efl_Access_Relation_Set ret = NULL;
-   Eina_List *l;
-   Efl_Access_Relation *rel;
-
-   EINA_LIST_FOREACH(set, l, rel)
-     {
-        Efl_Access_Relation *cpy = efl_access_relation_clone(rel);
-        ret = eina_list_append(ret, cpy);
-     }
-
-   return ret;
-}
-
-EOLIAN static Eina_Bool
-_efl_access_object_relationship_append(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation_obj)
-{
-   return efl_access_relation_set_relation_append(&sd->relations, type, relation_obj);
-}
-
 EOLIAN static void
-_efl_access_object_relationship_remove(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation_obj)
+_efl_access_object_relationship_remove(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation)
 {
-   if (relation_obj)
-     efl_access_relation_set_relation_remove(&sd->relations, type, relation_obj);
-   else
-     efl_access_relation_set_relation_type_remove(&sd->relations, type);
+   Efl_Access_Relation *rel;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->relations, l, rel)
+     {
+        if (rel->type == type)
+          {
+             if (relation)
+               {
+                  if (eina_list_data_find(rel->objects, relation))
+                    {
+                       efl_event_callback_del((Eo *) relation, EFL_EVENT_DEL, _on_rel_obj_del, sd);
+                       rel->objects = eina_list_remove(rel->objects, relation);
+                    }
+                  if (!rel->objects)
+                    {
+                       sd->relations = eina_list_remove(sd->relations, rel);
+                       free(rel);
+                    }
+               }
+             else
+               {
+                  Eina_List *ll;
+                  Eo *ro;
+
+                  EINA_LIST_FOREACH(rel->objects, ll, ro)
+                    efl_event_callback_del(ro, EFL_EVENT_DEL, _on_rel_obj_del, sd);
+                  sd->relations = eina_list_remove(sd->relations, rel);
+                  free(rel);
+               }
+             return ;
+          }
+     }
 }
 
 EOLIAN static void
 _efl_access_object_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd)
 {
-   efl_access_relation_set_free(sd->relations);
+   efl_access_relation_set_free(sd);
    sd->relations = NULL;
 }
 
@@ -683,12 +627,19 @@ _efl_access_object_access_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Acce
 }
 
 EOLIAN void
+_efl_access_object_efl_object_invalidate(Eo *obj, Efl_Access_Object_Data *pd)
+{
+   efl_access_relation_set_free(pd);
+
+   efl_invalidate(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
+}
+
+EOLIAN void
 _efl_access_object_efl_object_destructor(Eo *obj, Efl_Access_Object_Data *pd)
 {
    eina_stringshare_del(pd->name);
    eina_stringshare_del(pd->description);
    eina_stringshare_del(pd->translation_domain);
-   efl_access_relation_set_free(pd->relations);
 
    efl_destructor(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
 }
