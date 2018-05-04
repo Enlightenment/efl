@@ -1394,20 +1394,44 @@ EAPI void
 elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   if (!part)
-     efl_ui_translatable_text_set(obj, text, domain);
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!part)
+          part = efl_ui_widget_default_text_part_get(obj);
+        else if (efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))
+           _elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE);
+
+        elm_widget_part_translatable_text_set(obj, part, text, domain);
+     }
    else
-     efl_ui_translatable_text_set(efl_part(obj, part), text, domain);
+     {
+        if (!part)
+           efl_ui_translatable_text_set(obj, text, domain);
+        else
+           efl_ui_translatable_text_set(efl_part(obj, part), text, domain);
+     }
 }
 
 EAPI const char *
 elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   if (!part)
-     return efl_ui_translatable_text_get(obj, NULL);
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!part)
+          part = efl_ui_widget_default_text_part_get(obj);
+        else if (efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))
+           _elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE);
+
+        return elm_widget_part_translatable_text_get(obj, part, NULL);
+     }
    else
-     return efl_ui_translatable_text_get(efl_part(obj, part), NULL);
+     {
+        if (!part)
+          return efl_ui_translatable_text_get(obj, NULL);
+        else
+          return efl_ui_translatable_text_get(efl_part(obj, part), NULL);
+     }
 }
 
 EAPI void
