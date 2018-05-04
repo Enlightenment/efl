@@ -710,7 +710,7 @@ _evas_canvas_focus_inout_dispatch(Eo *eo_e, Efl_Input_Device *seat,
    efl_event_callback_call(eo_e,
                            in ? EFL_EVENT_FOCUS_IN : EFL_EVENT_FOCUS_OUT,
                            evt);
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EOLIAN static void
