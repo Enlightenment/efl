@@ -3705,6 +3705,30 @@ EFL_START_TEST(evas_textblock_style)
 }
 EFL_END_TEST
 
+/* Basic test for style user push/peek/pop. */
+START_TEST(evas_textblock_style_user)
+{
+   Evas_Textblock_Style *user_st;
+
+   START_TB_TEST();
+
+   user_st = evas_textblock_style_new();
+   fail_if(!user_st);
+   evas_textblock_style_set(user_st, "DEFAULT='" TEST_FONT " font_size=50 color=#000'");
+
+   evas_object_textblock_style_user_push(tb, user_st);
+   fail_if(evas_object_textblock_style_user_peek(tb) != user_st);
+
+   evas_object_textblock_style_user_pop(tb);
+   fail_if(evas_object_textblock_style_user_peek(tb) != NULL);
+
+   /* new/free should be handled from outside of Evas Textblock. */
+   evas_textblock_style_free(user_st);
+
+   END_TB_TEST();
+}
+END_TEST
+
 /* Various setters and getters */
 EFL_START_TEST(evas_textblock_set_get)
 {
@@ -4472,6 +4496,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);
+   tcase_add_test(tc, evas_textblock_style_user);
    tcase_add_test(tc, evas_textblock_evas);
    tcase_add_test(tc, evas_textblock_text_getters);
    tcase_add_test(tc, evas_textblock_formats);

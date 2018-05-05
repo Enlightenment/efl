@@ -7221,6 +7221,16 @@ _style_by_key_find(Efl_Canvas_Text_Data *o, const char *key)
    return NULL;
 }
 
+static void
+_style_remove_from_obj(Eo *eo_obj, Efl_Canvas_Text_Data *o, Evas_Textblock_Style *ts, Eina_Bool style_free)
+{
+   o->styles = eina_list_remove(o->styles, ts);
+   ts->objects = eina_list_remove(ts->objects, eo_obj);
+
+   if (style_free || (ts->delete_me && !ts->objects))
+     evas_textblock_style_free(ts);
+}
+
 EOLIAN static void
 _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key, const char *style)
 {
@@ -7246,9 +7256,7 @@ _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key,
           }
         else
           {
-             o->styles = eina_list_remove(o->styles, ts);
-             ts->objects = eina_list_remove(ts->objects, eo_obj);
-             evas_textblock_style_free(ts);
+             _style_remove_from_obj(eo_obj, o, ts, EINA_TRUE);
           }
      }
    else if (!ts && style)
@@ -7296,20 +7304,29 @@ EAPI void
 evas_object_textblock_style_user_push(Eo *eo_obj, Evas_Textblock_Style *ts)
 {
    EINA_SAFETY_ON_NULL_RETURN(eo_obj);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
+   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Textblock_Style *old_ts, *tmp = NULL;
 
-   Evas_Textblock_Style *old_ts = _style_by_key_find(o, _STYLE_USER);
+   old_ts = _style_by_key_find(o, _STYLE_USER);
+
+   if (old_ts == ts) return;
 
    if (old_ts)
+     _style_remove_from_obj(eo_obj, o, old_ts, EINA_FALSE);
+
+   if (ts)
      {
-        efl_canvas_text_style_set(eo_obj, _STYLE_USER, NULL);
+        _textblock_style_generic_set(eo_obj, ts, &tmp);
+        ts->key = eina_stringshare_add(_STYLE_USER);
+        o->styles = eina_list_append(o->styles, ts);
      }
-   Evas_Textblock_Style *tmp = NULL;
-   _textblock_style_generic_set(eo_obj, ts, &tmp);
-   ts->key = eina_stringshare_add(_STYLE_USER);
-   o->styles = eina_list_append(o->styles, ts);
+
+   o->format_changed = EINA_TRUE;
+   _evas_textblock_invalidate_all(o);
+   _evas_textblock_changed(o, eo_obj);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
 
 EAPI const Evas_Textblock_Style*
@@ -7320,6 +7337,7 @@ evas_object_textblock_style_user_peek(const Eo *eo_obj)
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Evas_Textblock_Style *ts = _style_by_key_find(o, _STYLE_USER);
+
    return ts;
 }
 
@@ -7329,8 +7347,18 @@ evas_object_textblock_style_user_pop(Eo *eo_obj)
    EINA_SAFETY_ON_NULL_RETURN(eo_obj);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
+   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Textblock_Style *ts = _style_by_key_find(o, _STYLE_USER);
 
-   efl_canvas_text_style_set(eo_obj, _STYLE_USER, NULL);
+   if (ts)
+     {
+        _style_remove_from_obj(eo_obj, o, ts, EINA_FALSE);
+
+        o->format_changed = EINA_TRUE;
+        _evas_textblock_invalidate_all(o);
+        _evas_textblock_changed(o, eo_obj);
+        efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+     }
 }
 
 EAPI void
