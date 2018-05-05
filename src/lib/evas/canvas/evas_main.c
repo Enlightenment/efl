@@ -104,9 +104,9 @@ evas_init(void)
    _evas_preload_thread_shutdown();
 #ifdef EVAS_CSERVE2
    if (cs2) evas_cserve2_shutdown();
-#endif
  shutdown_async_events:
    evas_async_events_shutdown();
+#endif
  shutdown_module:
    evas_module_shutdown();
 #ifdef BUILD_LOADER_EET
