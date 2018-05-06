@@ -69,7 +69,7 @@ static int _ecore_init_count_threshold = 0;
 int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
-extern void (*_ecore_thread_join)();
+extern void _ecore_thread_join();
 
 typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
 struct _Ecore_Safe_Call
