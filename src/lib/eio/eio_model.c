@@ -408,8 +408,9 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
    // Make sure that we are not over consuming time in the main loop
    if (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004)
      {
-        return eina_future_as_value(eina_future_then(_build_delay(pd->loop),
-                                                     _eio_build_mime_now, model));
+        Eina_Future *f = eina_future_then(_build_delay(pd->loop),
+                                          _eio_build_mime_now, model);
+        return eina_future_as_value(efl_future_Eina_FutureXXX_then(model, f));
      }
 
    pd->mime_type = efreet_mime_type_get(pd->path);
