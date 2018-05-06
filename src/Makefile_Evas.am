@@ -2524,7 +2524,9 @@ tests/evas/images/bg_gray.png \
 tests/evas/images/flower.jp2 \
 tests/evas/images/flower.jp2.png \
 tests/evas/images/train.j2k \
-tests/evas/images/train.j2k.png
+tests/evas/images/train.j2k.png \
+tests/evas/dicts/hyph_en_US.dic \
+tests/evas/dicts/hyph_de_DE.dic
 
 if HAVE_ELUA
 

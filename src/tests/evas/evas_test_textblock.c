@@ -16,6 +16,8 @@
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
 
+#define TESTS_DIC_DIR TESTS_SRC_DIR"/dicts"
+
 /* Functions defined in evas_object_textblock.c */
 EAPI Eina_Bool
 _evas_textblock_check_item_node_link(Evas_Object *obj);
@@ -4149,6 +4151,21 @@ EFL_START_TEST(evas_textblock_hyphenation)
 
    evas_object_textblock_text_markup_set(tb, buf);
    _hyphenation_width_stress(tb, cur);
+
+   setenv("EVAS_DICTS_HYPHEN_DIR", TESTS_DIC_DIR, 1);
+
+   buf = "europäi-";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, NULL);
+
+   buf = "europäischen";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_format_prepend(cur, "<wrap=hyphenation lang=de_DE>");
+   evas_object_resize(tb, w, 100);
+   evas_object_textblock_size_formatted_get(tb, &fw, NULL);
+   ck_assert_int_eq(w, fw);
+
+   unsetenv("EVAS_DICTS_HYPHEN_DIR");
 
    END_TB_TEST();
 }
