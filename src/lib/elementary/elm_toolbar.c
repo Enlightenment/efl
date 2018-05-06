@@ -141,6 +141,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
           }
      }
    efl_ui_focus_composition_dirty(obj);
+   efl_ui_focus_object_prepare_logical(obj);
 }
 
 static void
