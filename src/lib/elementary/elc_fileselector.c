@@ -368,6 +368,7 @@ _itc_del(void *data,
          Evas_Object *obj EINA_UNUSED)
 {
    Elm_Fileselector_Item_Data *it_data = data;
+   efl_key_data_set(it_data->model, ".item.data", NULL);
    efl_unref(it_data->model);
    eina_stringshare_del(it_data->path);
    eina_stringshare_del(it_data->filename);
