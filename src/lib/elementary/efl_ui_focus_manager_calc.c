@@ -751,6 +751,12 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    eina_hash_del_by_key(pd->node_hash, &child);
 }
 
+static void
+_redirect_del(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   efl_ui_focus_manager_redirect_set(data, NULL);
+}
+
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Manager *redirect)
 {
@@ -763,12 +769,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
    old_manager = pd->redirect;
 
    if (pd->redirect)
-     efl_wref_del(pd->redirect, &pd->redirect);
+     efl_event_callback_del(pd->redirect, EFL_EVENT_DEL, _redirect_del, obj);
 
    pd->redirect = redirect;
 
    if (pd->redirect)
-     efl_wref_add(pd->redirect, &pd->redirect);
+     efl_event_callback_add(pd->redirect, EFL_EVENT_DEL, _redirect_del, obj);
 
    efl_ui_focus_manager_reset_history(old_manager);
 
