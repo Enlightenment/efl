@@ -733,7 +733,7 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    F_DBG("Manager: %p unregister %p", obj, child);
 
-   if (eina_list_last_data_get(pd->focus_stack) == node)
+   if (eina_list_last_data_get(pd->focus_stack) == node && !pd->redirect)
      {
         if (!efl_invalidated_get(pd->root->focusable))
           {
