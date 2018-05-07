@@ -86,7 +86,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       item_prepend {
          [[Prepend a new item to the multibuttonentry
 
-           See @Efl.Object.del to delete the item.]]
+           See @Efl.Object.invalidate to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
@@ -113,7 +113,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       item_insert_before {
          [[Add a new item to the multibuttonentry before the indicated object reference.
 
-           See @Efl.Object.del to delete the item.]]
+           See @Efl.Object.invalidate to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
@@ -126,7 +126,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       item_append {
          [[Append a new item to the multibuttonentry
 
-           See @Efl.Object.del to delete the item.]]
+           See @Efl.Object.invalidate to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
@@ -164,7 +164,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       item_insert_after {
          [[Add a new item to the multibuttonentry after the indicated object
 
-           See @Efl.Object.del to delete the item.]]
+           See @Efl.Object.invalidate to delete the item.]]
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {

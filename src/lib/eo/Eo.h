@@ -1493,6 +1493,20 @@ EAPI Eo *_efl_added_get(void);
 EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
 
 /**
+ * @brief Unrefs the object and reparents it to NULL.
+ *
+ * Because efl_del() unrefs and reparents to NULL, it doesn't really delete the
+ * object.
+ *
+ * This method accepts a const object for convenience, so all objects can be
+ * passed to it easily.
+ * @param[in] obj The object.
+ *
+ * @ingroup Efl_Object
+ */
+EAPI void efl_del(const Eo *obj);
+
+/**
  * @brief Get a pointer to the data of an object for a specific class.
  *
  * The data reference count is not incremented. The pointer must be used only

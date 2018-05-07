@@ -39,15 +39,6 @@ abstract Efl.Object ()
             parent: Efl.Object @nullable; [[The new parent]]
          }
       }
-      del @const {
-         [[Unrefs the object and reparents it to NULL.
-
-           Because efl_del() unrefs and reparents to NULL, it doesn't really delete the object.
-
-           This method accepts a const object for convenience, so all objects
-           can be passed to it easily.
-         ]]
-      }
       @property name {
          [[ The name of the object.
 
