@@ -35,7 +35,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    ic2.icon_set("folder");
    ic2.scalable_set(false, false);
    // FIXME: C++ part API needs special reference handling! This will show ERR!
-   efl::eo::downcast<efl::Content>(sl2.part("elm.swallow.end"))
+   efl::eo::downcast<efl::Content>(sl2.part_get("elm.swallow.end"))
          .content_set(ic2);
 
    sl2.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
