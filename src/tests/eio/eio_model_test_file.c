@@ -80,9 +80,25 @@ listing(void *data,
 {
    Eina_Future *future;
    Efl_Model *filemodel = data;
+   static unsigned int it = 0;
 
-   future = efl_model_children_slice_get(filemodel, 0, efl_model_children_count_get(filemodel));
-   future = eina_future_then(future, &promise_then_accessor, NULL);
+   if (it++ >= 3)
+     {
+        fprintf(stderr, "Failed to list any files after 3 attemps.\n");
+        ecore_main_loop_quit();
+        return eina_value_error_init(ECANCELED);
+     }
+
+   if (efl_model_children_count_get(filemodel) == 0)
+     {
+        future = efl_loop_job(efl_provider_find(filemodel, EFL_LOOP_CLASS));
+        future = eina_future_then(future, listing, filemodel);
+     }
+   else
+     {
+        future = efl_model_children_slice_get(filemodel, 0, efl_model_children_count_get(filemodel));
+        future = eina_future_then(future, &promise_then_accessor, NULL);
+     }
 
    return eina_future_as_value(future);
 }
