@@ -595,8 +595,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Object.invalidate;
+      Efl.Object.parent { set; }
       Efl.Object.provider_find;
-      Efl.Object.del;
       Efl.Object.debug_name_override;
       Efl.Gfx.Entity.visible { get; set; }
       Efl.Gfx.Color.color { get; set; }
