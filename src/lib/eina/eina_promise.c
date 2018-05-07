@@ -644,7 +644,8 @@ _future_proxy(void *data, const Eina_Value v,
 {
    Eina_Value copy = EINA_VALUE_EMPTY;
 
-   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR) return v;
+   if (memcmp(&copy, &v, sizeof (Eina_Value)) &&
+       eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR) return v;
    //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
    if (!v.type || !memcmp(&v, &copy, sizeof (Eina_Value))) copy = v;
    else if (!eina_value_copy(&v, &copy))
