@@ -149,8 +149,13 @@ struct marshall_annotation_visitor_generate
         << string << ", efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
         ).generate(sink, name_helpers::klass_full_concrete_name(klass_name), *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& c) const
    {
+     if (c.outer.base_type == "future")
+       {
+          std::string prefix = is_return ? "return: " : "";
+          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.FutureMarshaler))]").generate(sink, nullptr, *context);
+       }
      return true;
    }
 };
@@ -254,8 +259,13 @@ struct marshall_native_annotation_visitor_generate
         << string << ", efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
         ).generate(sink, name_helpers::klass_full_concrete_name(klass_name), *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& c) const
    {
+     if (c.outer.base_type == "future")
+       {
+          std::string prefix = is_return ? "return: " : "";
+          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.FutureMarshaler))]").generate(sink, nullptr, *context);
+       }
      return true;
    }
 };

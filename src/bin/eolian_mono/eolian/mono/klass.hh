@@ -11,6 +11,7 @@
 #include "grammar/alternative.hpp"
 #include "type.hh"
 #include "name_helpers.hh"
+#include "async_function_definition.hh"
 #include "function_definition.hh"
 #include "function_registration.hh"
 #include "function_declaration.hh"
@@ -144,6 +145,9 @@ struct klass
      if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
        return false;
 
+     if(!as_generator(*(scope_tab << async_function_declaration)).generate(sink, cls.functions, iface_cxt))
+       return false;
+
      if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
        return false;
 
@@ -251,6 +255,10 @@ struct klass
          if(!as_generator(*(function_definition))
             .generate(sink, methods, concrete_cxt)) return false;
 
+         // Async wrappers
+         if(!as_generator(*(async_function_definition)).generate(sink, methods, concrete_cxt))
+           return false;
+
          if(!as_generator(*(event_argument_wrapper)).generate(sink, cls.events, context))
            return false;
 
@@ -353,6 +361,10 @@ struct klass
          // Inherit function definitions
          if(!as_generator(*(function_definition(true)))
             .generate(sink, methods, inherit_cxt)) return false;
+
+         // Async wrappers
+         if(!as_generator(*(async_function_definition(true))).generate(sink, methods, inherit_cxt))
+           return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }

@@ -168,7 +168,7 @@ public class Future
     /// </summary>
     public delegate eina.Value ResolvedCb(eina.Value value);
 
-    private IntPtr Handle;
+    public IntPtr Handle { get; internal set; }
 
     /// <summary>
     /// Creates a Future from a native pointer.
@@ -293,6 +293,42 @@ public class Future
         }
         return new Future(eina_future_chain_array(Handle, descs));
     }
+}
+
+public class FutureMarshaler : ICustomMarshaler
+{
+
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        return new Future(pNativeData);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
+        Future f = managedObj as Future;
+        if (f == null)
+            return IntPtr.Zero;
+        return f.Handle;
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) { }
+
+    public void CleanUpManagedData(object managedObj) { }
+
+    public int GetNativeDataSize()
+    {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null)
+        {
+            marshaler = new FutureMarshaler();
+        }
+        return marshaler;
+    }
+
+    private static FutureMarshaler marshaler;
 }
 
 } // namespace eina

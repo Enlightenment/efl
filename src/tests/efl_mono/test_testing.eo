@@ -1615,6 +1615,24 @@ class Test.Testing (Efl.Object, Efl.Part) {
             prop: int;
          }
       }
+
+      /* Futures */
+
+      get_future {
+         return: future<any_value_ptr>;
+      }
+
+      fulfill_promise {
+         params {
+            @in data: int;
+         }
+      }
+
+      reject_promise {
+         params {
+            @in error: Eina.Error;
+         }
+      }
    }
    implements {
       class.constructor;

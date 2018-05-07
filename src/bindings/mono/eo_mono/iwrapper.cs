@@ -4,6 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 using static eina.NativeCustomExportFunctions;
 
@@ -179,7 +180,51 @@ public class Globals {
         GCHandle handle = GCHandle.FromIntPtr(ptr);
         handle.Free();
     }
-}
+
+    public static System.Threading.Tasks.Task<eina.Value> WrapAsync(eina.Future future, CancellationToken token)
+    {
+        // Creates a task that will wait for SetResult for completion.
+        // TaskCompletionSource is used to create tasks for 'external' Task sources.
+        var tcs = new System.Threading.Tasks.TaskCompletionSource<eina.Value>();
+
+        // Flag to be passed to the cancell callback
+        bool fulfilled = false;
+
+        future.Then((eina.Value received) => {
+                lock (future)
+                {
+                    // Convert an failed Future to a failed Task.
+                    if (received.GetValueType() == eina.ValueType.Error)
+                    {
+                        eina.Error err;
+                        received.Get(out err);
+                        if (err == eina.Error.ECANCELED)
+                            tcs.SetCanceled();
+                        else
+                            tcs.TrySetException(new efl.FutureException(received));
+                    }
+                    else
+                    {
+                        // Will mark the returned task below as completed.
+                        tcs.SetResult(received);
+                    }
+                    fulfilled = true;
+                    return received;
+                }
+        });
+        // Callback to be called when the token is cancelled.
+        token.Register(() => {
+                lock (future)
+                {
+                    // Will trigger the Then callback above with an eina.Error
+                    if (!fulfilled)
+                        future.Cancel();
+                }
+        });
+
+        return tcs.Task;
+    }
+} // Globals
 
 public static class Config
 {
@@ -449,10 +494,29 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler {
 
 } // namespace eo
 
+/// <summary>General exception for errors inside the binding.</summary>
 public class EflException : Exception
 {
+    /// <summary>Create a new EflException with the given.
     public EflException(string message) : base(message)
     {
+    }
+}
+
+/// <summary>Exception to be raised when a Task fails due to a failed eina.Future.</summary>
+public class FutureException : EflException
+{
+    /// <summary>The error code returned by the failed eina.Future.</summary>
+    public eina.Error Error { get; private set; }
+
+    /// <summary>Construct a new exception from the eina.Error stored in the given eina.Value.</summary>
+    public FutureException(eina.Value value) : base("Future failed.")
+    {
+        if (value.GetValueType() != eina.ValueType.Error)
+            throw new ArgumentException("FutureException must receive an eina.Value with eina.Error.");
+        eina.Error err;
+        value.Get(out err);
+        Error = err;
     }
 }
 

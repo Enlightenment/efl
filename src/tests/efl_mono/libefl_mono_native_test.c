@@ -51,6 +51,7 @@ typedef struct Test_Testing_Data
   int stored_int;
   Eo *part1;
   Eo *part2;
+  Eina_Promise *promise;
 } Test_Testing_Data;
 
 typedef struct Test_Numberwrapper_Data
@@ -3798,6 +3799,48 @@ void _test_testing_klass_prop_set(Eo *klass, EINA_UNUSED void *pd, int value)
      }
    _test_testing_klass_prop = value;
 }
+
+static void _promise_cancelled(void *data, EINA_UNUSED const Eina_Promise *p)
+{
+    Test_Testing_Data *pd = data;
+    pd->promise = NULL;
+}
+
+Eina_Future* _test_testing_get_future(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
+{
+    if (pd->promise == NULL)
+      {
+         Eo *loop = efl_app_loop_main_get(EFL_APP_CLASS);
+         Eina_Future_Scheduler *scheduler = efl_loop_future_scheduler_get(loop);
+         pd->promise = eina_promise_new(scheduler, _promise_cancelled, pd);
+      }
+    return eina_future_new(pd->promise);
+}
+
+void _test_testing_fulfill_promise(Eo *obj, Test_Testing_Data *pd, int data)
+{
+    if (pd->promise == NULL)
+      {
+         EINA_LOG_ERR("Can't fulfill an object without a valid promise.");
+         return;
+      }
+    Eina_Value v;
+    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+    eina_value_set(&v, data);
+    eina_promise_resolve(pd->promise, v);
+}
+
+void _test_testing_reject_promise(Eo *obj, Test_Testing_Data *pd, Eina_Error err)
+{
+    if (pd->promise == NULL)
+      {
+         EINA_LOG_ERR("Can't fulfill an object without a valid promise.");
+         return;
+      }
+
+    eina_promise_reject(pd->promise, err);
+}
+
 
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"

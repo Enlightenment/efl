@@ -68,6 +68,7 @@ bin_eolian_mono_eolian_mono_SOURCES = \
 	bin/eolian_mono/eolian/mono/documentation.hh \
 	bin/eolian_mono/eolian/mono/type.hh \
 	bin/eolian_mono/eolian/mono/marshall_annotation.hh \
+	bin/eolian_mono/eolian/mono/async_function_definition.hh \
 	bin/eolian_mono/eolian/mono/function_pointer.hh \
 	bin/eolian_mono/eolian/mono/function_definition.hh \
 	bin/eolian_mono/eolian/mono/name_helpers.hh \
@@ -434,6 +435,7 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Eina.cs \
      tests/efl_mono/Eldbus.cs \
      tests/efl_mono/Eo.cs \
+     tests/efl_mono/EoPromises.cs \
      tests/efl_mono/Errors.cs \
      tests/efl_mono/Evas.cs \
      tests/efl_mono/Events.cs \
