@@ -792,6 +792,7 @@ static void
 _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 {
    if (!sid->pan_obj || !sid->edje_obj) return;
+   if (efl_invalidated_get(sid->pan_obj) || efl_invalidated_get(sid->edje_obj)) return;
 
    if (sid->size_adjust_recurse_abort) return;
    if (sid->size_adjust_recurse > 20)
@@ -3986,7 +3987,7 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
 {
    Evas_Coord px = 0, py = 0, minx = 0, miny = 0;
 
-   if (!sid->edje_obj) return;
+   if (!sid->edje_obj || efl_invalidated_get(sid->edje_obj)) return;
 
    const char *iface_scr_dragable_hbar = NULL;
    const char *iface_scr_dragable_vbar = NULL;
