@@ -54,6 +54,7 @@ LDADD = \
 -lm \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/efl/libefl.la \
 $(top_builddir)/src/lib/eet/libeet.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
