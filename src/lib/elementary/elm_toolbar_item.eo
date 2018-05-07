@@ -312,7 +312,7 @@ class Elm.Toolbar_Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
       }
       implements {
            Efl.Object.constructor;
-           Efl.Object.destructor;
+           Efl.Object.invalidate;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.disabled { set; }
            Elm.Widget.Item.item_focus { get; set; }
