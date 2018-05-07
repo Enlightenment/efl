@@ -1280,7 +1280,7 @@ _item_new(Evas_Object *obj,
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
 
    //item base layout
-   VIEW(it) = elm_layout_add(obj);
+   VIEW_SET(it, elm_layout_add(obj));
    evas_object_smart_member_add(VIEW(it), obj);
 
    if (!elm_widget_sub_object_add(obj, VIEW(it)))

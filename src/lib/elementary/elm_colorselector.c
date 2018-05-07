@@ -1771,7 +1771,7 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    Evas_Object *obj;
    obj = efl_parent_get(eo_item);
 
-   VIEW(item) = elm_layout_add(obj);
+   VIEW_SET(item, elm_layout_add(obj));
    if (!elm_layout_theme_set
        (VIEW(item), "colorselector", "item", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");

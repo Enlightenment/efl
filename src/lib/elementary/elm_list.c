@@ -2295,7 +2295,7 @@ _item_new(Evas_Object *obj,
    it->func = func;
    WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
-   VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   VIEW_SET(it, edje_object_add(evas_object_evas_get(obj)));
    edje_object_update_hints_set(VIEW(it), 1);
 
    if (it->icon) efl_parent_set(it->icon, eo_it);

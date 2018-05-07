@@ -673,7 +673,7 @@ _item_new(Evas_Object *obj,
    it->label = eina_stringshare_add(label);
    it->func = func;
    WIDGET_ITEM_DATA_SET(eo_it, data);
-   VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   VIEW_SET(it, edje_object_add(evas_object_evas_get(obj)));
    elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                elm_widget_style_get(obj));
 

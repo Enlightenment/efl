@@ -857,7 +857,8 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
      snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s",
               elm_widget_style_get(obj));
 
-   VIEW(item) = bt = elm_button_add(obj);
+   bt = elm_button_add(obj);
+   VIEW_SET(item, bt);
    efl_ui_mirrored_set(bt, efl_ui_mirrored_get(obj));
    elm_object_style_set(bt, buf);
    elm_object_text_set(bt, item->label);

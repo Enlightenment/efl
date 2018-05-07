@@ -923,7 +923,7 @@ _item_new(Elm_Popup_Item_Data *it)
 {
    char style[1024];
 
-   VIEW(it) = elm_layout_add(WIDGET(it));
+   VIEW_SET(it, elm_layout_add(WIDGET(it)));
    elm_object_focus_allow_set(VIEW(it), EINA_TRUE);
    efl_ui_mirrored_automatic_set(VIEW(it), EINA_FALSE);
    elm_object_mirrored_set(VIEW(it), elm_object_mirrored_get(WIDGET(it)));

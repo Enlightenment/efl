@@ -851,6 +851,7 @@ _efl_ui_widget_efl_canvas_group_group_del(Eo *obj, Elm_Widget_Smart_Data *sd)
              sd->subobjs = eina_list_remove_list
                  (sd->subobjs, sd->subobjs);
           }
+        // FIXME: is that a legacy or a new object ?
         evas_object_del(sobj);
      }
    sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
@@ -4043,8 +4044,6 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
-   evas_object_del(item->view);
-
    eina_stringshare_del(item->style);
    eina_stringshare_del(item->access_info);
    eina_stringshare_del(item->accessible_name);
@@ -4099,12 +4098,17 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 EOLIAN static void
 _elm_widget_item_efl_object_invalidate(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
-   item->on_deletion = EINA_TRUE;
+   Evas_Object *view;
 
    //Widget item delete callback
    elm_wdg_item_del_pre(item->eo_obj);
+
+   view = item->view;
+   if (item->view) efl_wref_del(item->view, &item->view);
+   // FIXME: Is view an Efl.Ui or a legacy object ?
+   evas_object_del(view);
+   item->view = NULL;
+
    efl_invalidate(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
 }
 
