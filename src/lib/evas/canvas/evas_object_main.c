@@ -1015,15 +1015,26 @@ evas_object_ref_get(const Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_object_del(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_object_parent_set(Eo *obj, Evas_Object_Protected_Data *pd, Eo *parent)
+{
+   // This look very bad, seems like we are trying to bypass Eo refcounting somehow
+   // to keep the object "usable" event when parent get set to NULL
+   if (pd->legacy.ctor)
+     {
+        if (pd->ref > 0 && !efl_invalidated_get(obj))
+          {
+             pd->del_ref = EINA_TRUE;
+             return ;
+          }
+     }
+
+   efl_parent_set(efl_super(obj, MY_CLASS), parent);
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    evas_object_async_block(obj);
-   if (obj->delete_me || obj->efl_del_called) return;
-   if (obj->ref > 0)
-     {
-        obj->del_ref = EINA_TRUE;
-        return;
-     }
 
    //Unset callbacks for Hide event before hiding
    evas_object_intercept_hide_callback_del((Eo *)eo_obj,
@@ -1031,7 +1042,7 @@ _efl_canvas_object_efl_object_del(const Eo *eo_obj, Evas_Object_Protected_Data *
 
    efl_gfx_entity_visible_set((Eo *) eo_obj, EINA_FALSE);
    obj->efl_del_called = EINA_TRUE;
-   efl_del(efl_super(eo_obj, MY_CLASS));
+   efl_invalidate(efl_super(eo_obj, MY_CLASS));
 }
 
 EAPI void
