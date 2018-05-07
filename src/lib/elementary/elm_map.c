@@ -4112,7 +4112,7 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    elm_interface_scrollable_animate_stop_cb_set(obj, _scroll_animate_stop_cb);
    elm_interface_scrollable_scroll_cb_set(obj, _scroll_cb);
 
-   priv->pan_obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
+   priv->pan_obj = efl_add(MY_PAN_CLASS, obj);
    pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    efl_data_ref(obj, MY_CLASS);
    pan_data->wobj = obj;
@@ -4185,12 +4185,30 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
 }
 
 EOLIAN static void
+_elm_map_efl_object_invalidate(Eo *obj, Elm_Map_Data *sd)
+{
+   Evas_Object *track;
+
+   EINA_LIST_FREE(sd->track, track)
+     evas_object_del(track);
+
+   ELM_SAFE_FREE(sd->copyright, evas_object_del);
+
+   // pan_obj was created with efl_add and will die after invalidate.
+   // Technically it will bring down all the object above, and there is
+   // no need to explicitely destroy them, but we were doing that
+   // explicitely in the past, so keep it explicit.
+   sd->pan_obj = NULL;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
 _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
 {
    Elm_Map_Route *r;
    Elm_Map_Name *na;
    Eina_List *l, *ll;
-   Evas_Object *track;
    Elm_Map_Overlay *overlay;
 
    EINA_LIST_FOREACH_SAFE(sd->routes, l, ll, r)
@@ -4209,9 +4227,6 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
    eina_list_free(sd->overlays);
    eina_list_free(sd->group_overlays);
    eina_list_free(sd->all_overlays);
-
-   EINA_LIST_FREE(sd->track, track)
-     evas_object_del(track);
 
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
@@ -4237,10 +4252,6 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
    ecore_timer_del(sd->loaded_timer);
    if (sd->map) evas_map_free(sd->map);
 
-   evas_object_del(sd->pan_obj);
-   sd->pan_obj = NULL;
-
-   ELM_SAFE_FREE(sd->copyright, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 

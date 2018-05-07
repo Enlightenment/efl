@@ -525,6 +525,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
