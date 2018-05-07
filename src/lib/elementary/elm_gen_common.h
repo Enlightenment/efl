@@ -71,6 +71,8 @@ struct Elm_Gen_Item
    Eina_Bool                 cursor_engine_only : 1;
    Eina_Bool                 hide : 1; /**< flag used for hiding the items which do not match filter text */
    Eina_Bool                 filtered: 1; /**<flag used to indicate whether or not item has been filtered */
+
+   Eina_Bool                 callbacks : 1;
 };
 
 #endif

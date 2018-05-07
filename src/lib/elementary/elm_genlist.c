@@ -1543,7 +1543,8 @@ _item_cache_free(Item_Cache *itc)
    if (!itc) return;
 
    evas_object_del(itc->spacer);
-   evas_object_del(itc->base_view);
+   efl_wref_del(itc->base_view, &itc->base_view);
+   efl_del(itc->base_view);
    itc->item_class = NULL;
    EINA_LIST_FREE(itc->contents, c)
      {
@@ -1604,7 +1605,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
         return EINA_FALSE;
      }
    itc->spacer = it->spacer;
-   itc->base_view = VIEW(it);
+   efl_wref_add(VIEW(it), &itc->base_view);
    itc->item_class = it->itc;
    itc->contents = contents;
    if (it->item->type & ELM_GENLIST_ITEM_TREE)
@@ -1642,6 +1643,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
                          * elm_config_scale_get());
 
    it->spacer = NULL;
+   efl_wref_del(it->base->view, &it->base->view);
    VIEW(it) = NULL;
    evas_object_hide(itc->base_view);
    evas_object_move(itc->base_view, -9999, -9999);
@@ -1677,8 +1679,9 @@ _item_cache_find(Elm_Gen_Item *it)
              if (!itc) continue;
 
              it->spacer = itc->spacer;
-             VIEW(it) = itc->base_view;
+             VIEW_SET(it, itc->base_view);
              itc->spacer = NULL;
+             efl_wref_del(itc->base_view, &itc->base_view);
              itc->base_view = NULL;
              eina_list_free(itc->contents);
              itc->contents = NULL;
@@ -1833,7 +1836,7 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
    if (sd->tree_effect_enabled ||
        (!_item_cache_find(it)))
      {
-        VIEW(it) = _view_create(it, it->itc->item_style);
+        VIEW_SET(it, _view_create(it, it->itc->item_style));
         if (it->item->nocache_once)
           it->item->nocache_once = EINA_FALSE;
      }
@@ -4915,15 +4918,19 @@ _item_mouse_up_cb(void *data,
    it->down = EINA_FALSE;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
+   evas_object_ref(WIDGET(it));
+   efl_ref(EO_OBJ(it));
    sd->mouse_down = EINA_FALSE;
+
    efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_RELEASED, EO_OBJ(it));
+
    if (sd->multi_touched)
      {
         if ((!sd->multi) && (!it->selected) && (it->highlighted))
           _item_unhighlight(it);
-        if (sd->multi_down) return;
+        if (sd->multi_down) goto early;
         _multi_touch_gesture_eval(it);
-        return;
+        goto early;
      }
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      sd->on_hold = EINA_TRUE;
@@ -4949,7 +4956,7 @@ _item_mouse_up_cb(void *data,
         sd->longpressed = EINA_FALSE;
         sd->on_hold = EINA_FALSE;
         sd->wasselected = EINA_FALSE;
-        return;
+        goto early;
      }
    if ((sd->reorder_mode) && (sd->reorder_it))
      {
@@ -4983,7 +4990,7 @@ _item_mouse_up_cb(void *data,
         if (!sd->wasselected) _item_unselect(it);
         sd->longpressed = EINA_FALSE;
         sd->wasselected = EINA_FALSE;
-        return;
+        goto early;
      }
    if (dragged)
      {
@@ -5003,7 +5010,7 @@ _item_mouse_up_cb(void *data,
        !it->base->still_in ||
        _is_no_select(it) ||
        (elm_wdg_item_disabled_get(EO_OBJ(it))))
-     return;
+     goto early;
 
    evas_object_ref(sd->obj);
 
@@ -5049,14 +5056,19 @@ _item_mouse_up_cb(void *data,
         if (_item_select(it)) goto deleted;
      }
 
-deleted:
+ deleted:
    evas_object_unref(sd->obj);
+ early:
+   evas_object_unref(WIDGET(it));
+   efl_unref(EO_OBJ(it));
 }
 
 static void
 _item_mouse_callbacks_add(Elm_Gen_Item *it,
                           Evas_Object *view)
 {
+   if (it->callbacks) return ;
+   it->callbacks = EINA_TRUE;
    evas_object_event_callback_add
      (view, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb, it);
    evas_object_event_callback_add
@@ -5077,6 +5089,8 @@ static void
 _item_mouse_callbacks_del(Elm_Gen_Item *it,
                           Evas_Object *view)
 {
+   if (!it->callbacks) return ;
+   it->callbacks = EINA_FALSE;
    evas_object_event_callback_del_full
      (view, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb, it);
    evas_object_event_callback_del_full
@@ -5186,7 +5200,7 @@ _item_unrealize(Elm_Gen_Item *it)
 
    if (!_item_cache_add(it, _content_cache_add(it, &cache)))
      {
-        ELM_SAFE_FREE(VIEW(it), evas_object_del);
+        ELM_SAFE_FREE(VIEW(it), efl_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
         EINA_LIST_FREE(cache, c)
           {
@@ -5846,7 +5860,7 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    // because sd->items can be modified inside elm_widget_item_del()
    while (sd->items)
      {
-        it = EINA_INLIST_CONTAINER_GET(sd->items->last, Elm_Gen_Item);
+        it = EINA_INLIST_CONTAINER_GET(sd->items, Elm_Gen_Item);
         efl_del(EO_OBJ(it));
      }
 
@@ -5902,6 +5916,7 @@ _item_select(Elm_Gen_Item *it)
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
+   Eina_Bool r = EINA_FALSE;
 
    if (elm_wdg_item_disabled_get(eo_it)) return EINA_FALSE;
    if (_is_no_select(it) || (it->decorate_it_set)) return EINA_FALSE;
@@ -5927,9 +5942,8 @@ _item_select(Elm_Gen_Item *it)
           eina_list_append(sd->selected, eo_it);
      }
 
-   evas_object_ref(obj);
-
    efl_ref(eo_it);
+
    elm_object_item_focus_set(eo_it, EINA_TRUE);
    if ((it->base)->on_deletion) goto item_deleted;
    _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
@@ -5943,22 +5957,21 @@ _item_select(Elm_Gen_Item *it)
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
    // delete item if it's requested deletion in the above callbacks.
-   if ((it->base)->on_deletion) goto item_deleted;
-   efl_unref(eo_it);
+   if ((it->base)->on_deletion)
+     {
+        r = EINA_TRUE;
+        goto item_deleted;
+     }
 
    if (!(sd->focus_on_selection_enabled || _elm_config->item_select_on_focus_disable))
      {
         efl_ui_focus_manager_focus_set(obj, it->base->eo_obj);
      }
 
-   evas_object_unref(obj);
-   return EINA_FALSE;
+ item_deleted:
+   efl_unref(eo_it);
 
-item_deleted:
-   _item_del(it);
-   efl_del(eo_it);
-   evas_object_unref(obj);
-   return EINA_TRUE;
+   return r;
 }
 
 EOLIAN static Evas_Object *

@@ -131,7 +131,7 @@ _item_realize(Elm_Slideshow_Item_Data *item)
 
    if ((!VIEW(item)) && (item->itc->func.get))
      {
-        VIEW(item) = item->itc->func.get(elm_object_item_data_get(EO_OBJ(item)), obj);
+        VIEW_SET(item, item->itc->func.get(elm_object_item_data_get(EO_OBJ(item)), obj));
         item->l_built = eina_list_append(NULL, item);
         sd->items_built = eina_list_merge(sd->items_built, item->l_built);
         //FIXME: item could be shown by obj
@@ -161,9 +161,9 @@ _item_realize(Elm_Slideshow_Item_Data *item)
                       && (_item_next->itc->func.get))
                     {
                        ic++;
-                       VIEW(_item_next) =
+                       VIEW_SET(_item_next,
                          _item_next->itc->func.get(
-                           elm_object_item_data_get(EO_OBJ(_item_next)), obj);
+                                                   elm_object_item_data_get(EO_OBJ(_item_next)), obj));
                        _item_next->l_built =
                          eina_list_append(NULL, _item_next);
                        sd->items_built = eina_list_merge
@@ -193,9 +193,9 @@ _item_realize(Elm_Slideshow_Item_Data *item)
                       && (_item_prev->itc->func.get))
                     {
                        ic++;
-                       VIEW(_item_prev) =
+                       VIEW_SET(_item_prev,
                          _item_prev->itc->func.get(
-                           elm_object_item_data_get(EO_OBJ(_item_prev)), obj);
+                                                   elm_object_item_data_get(EO_OBJ(_item_prev)), obj));
                        _item_prev->l_built =
                          eina_list_append(NULL, _item_prev);
                        sd->items_built = eina_list_merge

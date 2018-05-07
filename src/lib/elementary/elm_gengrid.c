@@ -231,6 +231,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    evas_object_hide(itc->base_view);
    evas_object_move(itc->base_view, -9999, -9999);
    it->spacer = NULL;
+   if (!it->base->view) efl_wref_del(it->base->view, &it->base->view);
    VIEW(it) = NULL;
 
    _item_cache_clean(sd);
@@ -261,7 +262,7 @@ _item_cache_find(Elm_Gen_Item *it)
              if (!itc) continue;
 
              it->spacer = itc->spacer;
-             VIEW(it) = itc->base_view;
+             VIEW_SET(it, itc->base_view);
              itc->spacer = NULL;
              itc->base_view = NULL;
 
@@ -1576,7 +1577,7 @@ _item_realize(Elm_Gen_Item *it)
 
    if (!_item_cache_find(it))
      {
-        VIEW(it) = _view_create(it, it->itc->item_style);
+        VIEW_SET(it, _view_create(it, it->itc->item_style));
         if (it->item->nocache_once)
           it->item->nocache_once = EINA_FALSE;
      }

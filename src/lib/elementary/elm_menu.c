@@ -580,7 +580,7 @@ _elm_menu_efl_gfx_entity_visible_set(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, Ein
 static void
 _item_obj_create(Elm_Menu_Item_Data *item)
 {
-   VIEW(item) = elm_layout_add(WIDGET(item));
+   VIEW_SET(item, elm_layout_add(WIDGET(item)));
    efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_SKIPPED);
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -604,7 +604,7 @@ _item_obj_create(Elm_Menu_Item_Data *item)
 static void
 _item_separator_obj_create(Elm_Menu_Item_Data *item)
 {
-   VIEW(item) = elm_layout_add(WIDGET(item));
+   VIEW_SET(item, elm_layout_add(WIDGET(item)));
    efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_SKIPPED);
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

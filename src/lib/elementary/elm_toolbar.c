@@ -2398,7 +2398,7 @@ _item_new(Evas_Object *obj,
    it->object = NULL;
    WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
-   VIEW(it) = elm_layout_add(obj);
+   VIEW_SET(it, elm_layout_add(obj));
    elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
    evas_object_data_set(VIEW(it), "item", it);
    efl_access_object_access_type_set(VIEW(it), EFL_ACCESS_TYPE_DISABLED);

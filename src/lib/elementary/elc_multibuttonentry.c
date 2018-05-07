@@ -752,7 +752,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    efl_access_object_role_set(eo_item, EFL_ACCESS_ROLE_RADIO_BUTTON);
 
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
-   VIEW(item) = elm_layout_add(obj);
+   VIEW_SET(item, elm_layout_add(obj));
 
    efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_DISABLED);
 

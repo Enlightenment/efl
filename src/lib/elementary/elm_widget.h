@@ -602,6 +602,7 @@ struct _Elm_Widget_Item_Data
    EINA_MAGIC;
 /* simple accessor macros */
 #define VIEW(X)   X->base->view
+#define VIEW_SET(X, V) efl_wref_add(V, &X->base->view)
 #define WIDGET(X) X->base->widget
 #define EO_OBJ(X) ((X)?X->base->eo_obj:NULL)
    /**< the owner widget that owns this item */

@@ -4043,8 +4043,6 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
-   evas_object_del(item->view);
-
    eina_stringshare_del(item->style);
    eina_stringshare_del(item->access_info);
    eina_stringshare_del(item->accessible_name);
@@ -4099,12 +4097,14 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 EOLIAN static void
 _elm_widget_item_efl_object_invalidate(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
-   item->on_deletion = EINA_TRUE;
-
    //Widget item delete callback
    elm_wdg_item_del_pre(item->eo_obj);
+
+   if (item->view) efl_wref_del(item->view, &item->view);
+   // FIXME: Is view an Efl.Ui or a legacy object ?
+   evas_object_del(item->view);
+   item->view = NULL;
+
    efl_invalidate(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
 }
 

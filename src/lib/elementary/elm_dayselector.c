@@ -174,8 +174,7 @@ _item_del_cb(void *data,
                       _item_location_get(sd, it));
              elm_layout_signal_emit(obj, buf, "elm");
 
-             VIEW(it) = NULL;
-             // The object is already being deleted, there is no point in calling efl_del on it.
+             // The object is already being deleted, there is no point in calling efl_del on it nore setting it to NULL.
 
              elm_layout_sizing_eval(obj);
              break;
@@ -243,7 +242,7 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
         if (!content) return EINA_TRUE; /* item deletion already handled */
 
         evas_object_del(VIEW(it));
-        VIEW(it) = content;
+        VIEW_SET(it, content);
      }
    else
      {
@@ -261,7 +260,7 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
           }
 
         sd->items = eina_list_append(sd->items, it);
-        VIEW(it) = content;
+        VIEW_SET(it, content);
      }
 
    snprintf(buf, sizeof(buf), "day%d,visible", _item_location_get(sd, it));
@@ -329,7 +328,6 @@ _elm_dayselector_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *it
    snprintf(buf, sizeof(buf), "day%d,default", _item_location_get(sd, it));
    elm_layout_signal_emit(obj, buf, "elm");
 
-   VIEW(it) = NULL;
    efl_del(EO_OBJ(it));
 
    elm_layout_sizing_eval(obj);

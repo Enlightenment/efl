@@ -1870,8 +1870,27 @@ elm_object_focus_region_show_mode_get(const Evas_Object *obj)
    return elm_widget_focus_region_show_mode_get(obj);
 }
 
+static void
+_item_noref(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   if (!efl_parent_get(ev->object)) return ;
+   efl_del(ev->object);
+}
+
 EAPI void
 elm_object_item_del(Eo *obj)
 {
-   efl_del(obj);
+   Elm_Widget_Item_Data *item;
+
+   if (efl_ref_count(obj) == 1)
+     {
+        // Noref already, die little item !
+        efl_del(obj);
+        return ;
+     }
+
+   item = efl_data_scope_safe_get(obj, ELM_WIDGET_ITEM_CLASS);
+   if (!item) return ;
+   efl_event_callback_add(obj, EFL_EVENT_NOREF, _item_noref, NULL);
+   item->on_deletion = EINA_TRUE;
 }
