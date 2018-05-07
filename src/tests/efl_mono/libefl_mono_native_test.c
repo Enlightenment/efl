@@ -3,6 +3,8 @@
 #include "config.h"
 #endif
 
+#define EFL_PART_PROTECTED
+
 #include <Ecore.h>
 #include <Eo.h>
 

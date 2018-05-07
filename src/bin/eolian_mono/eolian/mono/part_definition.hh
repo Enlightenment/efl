@@ -25,7 +25,7 @@ struct part_definition_generator
                        << scope_tab << "{\n"
                        << scope_tab << scope_tab << "get\n"
                        << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << "efl.IObject obj = efl_part(raw_handle, \"" << part.name << "\");\n"
+                       << scope_tab << scope_tab << scope_tab << "efl.IObject obj = efl_part_get(raw_handle, \"" << part.name << "\");\n"
                        << scope_tab << scope_tab << scope_tab << "return " << part_klass_name << ".static_cast(obj);\n"
                        << scope_tab << scope_tab << "}\n"
                        << scope_tab << "}\n"

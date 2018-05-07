@@ -25,7 +25,7 @@ public class Example
         popup.SetSize(new eina.Size2D(150, 30));
         popup.ButtonClickedEvt += (object sender, efl.ui.Popup_Alert.ButtonClickedEvt_Args e) => {
             popup.SetParent(null);
-            popup.Del();
+            popup.Invalidate();
         };
     }
 
