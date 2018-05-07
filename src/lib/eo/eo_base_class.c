@@ -647,9 +647,10 @@ _efl_object_debug_name_override(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd EINA
 {
 }
 
-EOLIAN static void
-_efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
+EAPI void
+efl_del(const Eo *obj)
 {
+   if (!obj) return ;
    if (efl_parent_get((Eo *) obj))
      {
         efl_parent_set((Eo *) obj, NULL);
