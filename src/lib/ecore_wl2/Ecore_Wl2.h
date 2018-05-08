@@ -1348,7 +1348,7 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.19
  */
-EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input);
+EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Get the display object of an input
