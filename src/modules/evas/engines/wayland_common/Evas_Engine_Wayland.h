@@ -15,7 +15,7 @@ struct _Evas_Engine_Info_Wayland
    struct
      {
         Ecore_Wl2_Window *wl2_win;
-        int depth, rotation, edges;
+        int depth, rotation;
         Eina_Bool destination_alpha : 1;
         Eina_Bool hidden : 1;
      } info;

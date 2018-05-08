@@ -1986,15 +1986,6 @@ _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
 }
 
 static void
-_ecore_evas_wayland_resize_edge_set(Ecore_Evas *ee, int edge)
-{
-   Evas_Engine_Info_Wayland *einfo;
-
-   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
-     einfo->info.edges = edge;
-}
-
-static void
 _ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -2004,10 +1995,7 @@ _ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
    if (!ee) return;
    wdata = ee->engine.data;
    if (wdata->win)
-     {
-        _ecore_evas_wayland_resize_edge_set(ee, location);
-        ecore_wl2_window_resize(wdata->win, NULL, location);
-     }
+     ecore_wl2_window_resize(wdata->win, NULL, location);
 }
 
 static void
