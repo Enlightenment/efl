@@ -1329,14 +1329,6 @@ EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
 
 /* TODO: doxy */
 /** @since 1.17 */
-EAPI void ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button);
-
-/* TODO: doxy */
-/** @since 1.17 */
-EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
-
-/* TODO: doxy */
-/** @since 1.17 */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
