@@ -2703,7 +2703,6 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
    Ecore_Wl2_Event_Data_Source_End *ev;
    Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
-   Ecore_Wl2_Window *win;
 
    ev = event;
    seat_sel = _wl_sel_manager_seat_selection_init(pd, ev->seat);
@@ -2732,8 +2731,6 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
      }
 
    seat_sel->accept = EINA_FALSE;
-   win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
-   ecore_wl2_input_ungrab(_wl_seat_get(win, NULL, seat_sel->seat));
 
    return ECORE_CALLBACK_PASS_ON;
 }
