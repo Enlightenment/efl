@@ -128,6 +128,42 @@ _edje_emit_child(Edje *ed, Edje_Real_Part *rp, const char *part, const char *sig
    return ed->collection->broadcast_signal;
 }
 
+static Edje_Message_Signal_Data *
+_edje_signal_data_setup(void *data, Ecore_Cb free_func)
+{
+   Edje_Message_Signal_Data *out = NULL;
+
+   if (data)
+     {
+        out = calloc(1, sizeof(*out));
+        if (!out) return NULL;
+
+        out->ref = 1;
+        out->data = data;
+        out->free_func = free_func;
+     }
+   return out;
+}
+
+void
+_edje_signal_data_free(Edje_Message_Signal_Data *mdata)
+{
+   if (!mdata) return;
+   if (--(mdata->ref)) return;
+
+   if (mdata->free_func)
+     {
+        mdata->free_func(mdata->data);
+     }
+   free(mdata);
+}
+
+void
+_edje_signal_data_ref(Edje_Message_Signal_Data *mdata)
+{
+   if (mdata) mdata->ref++;
+}
+
 static void
 _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src, void *data, Ecore_Cb free_func)
 {
@@ -135,17 +171,7 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
 
    emsg.sig = sig;
    emsg.src = src;
-   if (data)
-     {
-        emsg.data = calloc(1, sizeof(*(emsg.data)));
-        emsg.data->ref = 1;
-        emsg.data->data = data;
-        emsg.data->free_func = free_func;
-     }
-   else
-     {
-        emsg.data = NULL;
-     }
+   emsg.data = _edje_signal_data_setup(data, free_func);
    /* new sends code */
    if (broadcast)
      edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
@@ -163,14 +189,7 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
       _edje_util_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
       }
     */
-   if (emsg.data && (--(emsg.data->ref) == 0))
-     {
-        if (emsg.data->free_func)
-          {
-             emsg.data->free_func(emsg.data->data);
-          }
-        free(emsg.data);
-     }
+   _edje_signal_data_free(emsg.data);
 }
 
 /*============================================================================*

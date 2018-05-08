@@ -2531,6 +2531,9 @@ void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 const char * _edje_object_part_state_get(Edje *ed, const char *part, double *val_ret);
 
+void _edje_signal_data_free(Edje_Message_Signal_Data *mdata);
+void _edje_signal_data_ref(Edje_Message_Signal_Data *mdata);
+
 void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);
 void _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
