@@ -716,13 +716,6 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    input->focus.pointer = window;
 
    _ecore_wl2_input_mouse_in_send(input, window);
-
-   if ((window->moving || window->resizing) && (input->grab.window == window))
-     {
-        _ecore_wl2_input_mouse_up_send(input, window, 0, input->grab.button,
-                                       input->grab.timestamp);
-        window->resizing = window->moving = EINA_FALSE;
-     }
 }
 
 static void

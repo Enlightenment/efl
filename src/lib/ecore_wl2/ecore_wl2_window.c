@@ -734,8 +734,6 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
    if (!input)
      input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
-   window->moving = EINA_TRUE;
-
    if (window->xdg_toplevel)
      xdg_toplevel_move(window->xdg_toplevel, input->wl.seat,
                            window->display->serial);
@@ -743,6 +741,8 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
      zxdg_toplevel_v6_move(window->zxdg_toplevel, input->wl.seat,
                            window->display->serial);
    ecore_wl2_display_flush(window->display);
+
+   _ecore_wl2_input_ungrab(input);
 }
 
 EAPI void
@@ -754,8 +754,6 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    if (!input)
      input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
-   window->resizing = EINA_TRUE;
-
    if (window->xdg_toplevel)
      xdg_toplevel_resize(window->xdg_toplevel, input->wl.seat,
                              window->display->serial, location);
@@ -763,6 +761,8 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
      zxdg_toplevel_v6_resize(window->zxdg_toplevel, input->wl.seat,
                              window->display->serial, location);
    ecore_wl2_display_flush(window->display);
+
+   _ecore_wl2_input_ungrab(input);
 }
 
 EAPI void
