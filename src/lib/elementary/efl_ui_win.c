@@ -4171,19 +4171,6 @@ _elm_win_frame_cb_move_start(void *data,
 }
 
 static void
-_elm_win_frame_cb_move_stop(void *data,
-                            Evas_Object *obj EINA_UNUSED,
-                            const char *sig EINA_UNUSED,
-                            const char *source EINA_UNUSED)
-{
-   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
-
-#ifdef HAVE_ELEMENTARY_WL2
-   _elm_win_wl_cursor_set(sd->obj, NULL);
-#endif
-}
-
-static void
 _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj EINA_UNUSED,
                                const char *sig EINA_UNUSED, const char *source)
 {
@@ -4424,9 +4411,6 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
            (sd->frame_obj, "elm,action,move,start", "elm",
             _elm_win_frame_cb_move_start, obj);
         edje_object_signal_callback_add
-           (sd->frame_obj, "elm,action,move,stop", "elm",
-            _elm_win_frame_cb_move_stop, obj);
-        edje_object_signal_callback_add
            (sd->frame_obj, "elm,action,resize,show", "*",
             _elm_win_frame_cb_resize_show, obj);
         edje_object_signal_callback_add
@@ -4453,9 +4437,6 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
         edje_object_signal_callback_add
            (sd->frame_obj, "efl,action,move,start", "efl",
             _elm_win_frame_cb_move_start, obj);
-        edje_object_signal_callback_add
-           (sd->frame_obj, "efl,action,move,stop", "efl",
-            _elm_win_frame_cb_move_stop, obj);
         edje_object_signal_callback_add
            (sd->frame_obj, "efl,action,resize,show", "*",
             _elm_win_frame_cb_resize_show, obj);

@@ -745,9 +745,6 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
 
-   /* NB: Don't send a mouse out if we grabbed this window for moving */
-   if ((window->moving) && (input->grab.window == window)) return;
-
    _ecore_wl2_input_mouse_out_send(input, window);
 }
 
