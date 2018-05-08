@@ -129,11 +129,11 @@ _edje_emit_child(Edje *ed, Edje_Real_Part *rp, const char *part, const char *sig
 }
 
 static Edje_Message_Signal_Data *
-_edje_signal_data_setup(void *data, Ecore_Cb free_func)
+_edje_signal_data_setup(void *data, Ecore_Cb free_func, void *seat_data, Ecore_Cb seat_free_func)
 {
    Edje_Message_Signal_Data *out = NULL;
 
-   if (data)
+   if (data || seat_data)
      {
         out = calloc(1, sizeof(*out));
         if (!out) return NULL;
@@ -141,6 +141,8 @@ _edje_signal_data_setup(void *data, Ecore_Cb free_func)
         out->ref = 1;
         out->data = data;
         out->free_func = free_func;
+        out->seat_data = seat_data;
+        out->seat_free_func = seat_free_func;
      }
    return out;
 }
@@ -154,6 +156,10 @@ _edje_signal_data_free(Edje_Message_Signal_Data *mdata)
    if (mdata->free_func)
      {
         mdata->free_func(mdata->data);
+     }
+   if (mdata->seat_free_func)
+     {
+        mdata->seat_free_func(mdata->seat_data);
      }
    free(mdata);
 }
@@ -1296,7 +1302,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
    else
      broadcast = ed->collection->broadcast_signal;
 
-   mdata = _edje_signal_data_setup(data, free_func);
+   mdata = _edje_signal_data_setup(data, free_func, NULL, NULL);
    _edje_emit_send(ed, broadcast, sig, src, mdata);
 }
 

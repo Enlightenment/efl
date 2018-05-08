@@ -2201,6 +2201,8 @@ struct _Edje_Message_Signal_Data
    int ref;
    void *data;
    void (*free_func)(void *);
+   void *seat_data;
+   void (*seat_free_func)(void *);
 };
 
 struct _Edje_Message_Signal
