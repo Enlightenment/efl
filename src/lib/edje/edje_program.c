@@ -865,12 +865,12 @@ low_mem_current:
                        Eina_Bool broadcast;
 
                        broadcast = _edje_emit_child(ed, rp, rp->part->name, pr->state, pr->state2);
-                       _edje_emit_send(ed, broadcast, pr->state, pr->state2, NULL);
+                       _edje_emit_send(ed, broadcast, pr->state, pr->state2, mdata);
                     }
                }
           }
         else
-          _edje_emit(ed, pr->state, pr->state2);
+          _edje_emit_full_data(ed, pr->state, pr->state2, mdata);
         if (_edje_block_break(ed)) goto break_prog;
         // _edje_emit(ed, "program,stop", pr->name);
         if (_edje_block_break(ed)) goto break_prog;
