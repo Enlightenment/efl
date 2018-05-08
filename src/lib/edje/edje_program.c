@@ -1593,12 +1593,21 @@ break_prog:
 
 /* Extra data for callbacks */
 static void *callback_extra_data = NULL;
+static void *callback_seat_data = NULL;
 
 EAPI void *
 edje_object_signal_callback_extra_data_get(void)
 {
    return callback_extra_data;
 }
+
+#ifdef EFL_BETA_API_SUPPORT
+EAPI void *
+edje_object_signal_callback_seat_data_get(void)
+{
+   return callback_seat_data;
+}
+#endif
 
 /* FIXME: what if we delete the evas object??? */
 static void
@@ -1625,6 +1634,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
         EINA_REFCOUNT_REF(m);
 
         callback_extra_data = (data) ? data->data : NULL;
+        callback_seat_data = (data) ? data->seat_data : NULL;
 
         if (eina_inarray_count(&ssp->u.callbacks.globing))
           r = edje_match_callback_exec(ssp,
