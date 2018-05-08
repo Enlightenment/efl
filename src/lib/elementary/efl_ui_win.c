@@ -4086,9 +4086,7 @@ _win_move_start(Efl_Ui_Win_Data *sd)
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      {
-        /* Note: Not passing any X,Y position as those don't make sense, only
-         * the compositor can really handle the window & pointer position. */
-        ecore_evas_wayland_move(sd->ee, 0, 0);
+        ecore_wl2_window_move(sd->wl.win, NULL);
         return EINA_TRUE;
      }
 #endif
@@ -4139,7 +4137,7 @@ _win_move_resize_start(Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      {
-        ecore_evas_wayland_resize(sd->ee, ri->wl_location);
+        ecore_wl2_window_resize(sd->wl.win, NULL, ri->wl_location);
         return EINA_TRUE;
      }
 #endif
