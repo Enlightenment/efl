@@ -4080,13 +4080,40 @@ _elm_win_frame_cb_resize_hide(void *data,
 #endif
 }
 
+#ifdef HAVE_ELEMENTARY_WL2
+/* This only works when called from an edje event
+ * that propagates seat info...
+ */
+static Ecore_Wl2_Input *
+_elm_win_wayland_input_get(Efl_Ui_Win_Data *sd)
+{
+   Ecore_Wl2_Display *di;
+   char *sname;
+   const char *engine;
+
+   engine = ecore_evas_engine_name_get(sd->ee);
+   if (strcmp(engine, ELM_WAYLAND_SHM) &&
+       strcmp(engine, ELM_WAYLAND_EGL))
+     return NULL;
+
+   di = ecore_wl2_window_display_get(sd->wl.win);
+
+   sname = edje_object_signal_callback_seat_data_get();
+   if (!sname) return NULL;
+   return ecore_wl2_display_input_find_by_name(di, sname);
+}
+#endif
+
 static inline Eina_Bool
 _win_move_start(Efl_Ui_Win_Data *sd)
 {
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      {
-        ecore_wl2_window_move(sd->wl.win, NULL);
+        Ecore_Wl2_Input *ei;
+
+        ei = _elm_win_wayland_input_get(sd);
+        ecore_wl2_window_move(sd->wl.win, ei);
         return EINA_TRUE;
      }
 #endif
@@ -4137,7 +4164,10 @@ _win_move_resize_start(Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      {
-        ecore_wl2_window_resize(sd->wl.win, NULL, ri->wl_location);
+        Ecore_Wl2_Input *ei;
+
+        ei = _elm_win_wayland_input_get(sd);
+        ecore_wl2_window_resize(sd->wl.win, ei, ri->wl_location);
         return EINA_TRUE;
      }
 #endif
