@@ -999,7 +999,7 @@ _ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type dev
 }
 
 static EE_Wl_Device *
-_ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id)
+_ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id, const char *name)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
    EE_Wl_Device *device;
@@ -1009,9 +1009,13 @@ _ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id)
    device = calloc(1, sizeof(EE_Wl_Device));
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
 
-   snprintf(buf, sizeof(buf), "seat-%u", id);
+   if (!name)
+     {
+        snprintf(buf, sizeof(buf), "seat-%u", id);
+        name = buf;
+     }
    dev =
-     evas_device_add_full(ee->evas, buf, "Wayland seat", NULL, NULL,
+     evas_device_add_full(ee->evas, name, "Wayland seat", NULL, NULL,
                           EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_SUBCLASS_NONE);
    EINA_SAFETY_ON_NULL_GOTO(dev, err_dev);
    evas_device_seat_id_set(dev, id);
@@ -1059,7 +1063,7 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
         if (already_present)
           continue;
 
-        if (!_ecore_evas_wl_common_seat_add(ee, ev->id))
+        if (!_ecore_evas_wl_common_seat_add(ee, ev->id, NULL))
           break;
      }
 
@@ -2291,10 +2295,12 @@ _ecore_wl2_devices_setup(Ecore_Evas *ee, Ecore_Wl2_Display *display)
         EE_Wl_Device *device;
         Ecore_Wl2_Seat_Capabilities cap;
         unsigned int id;
+        Eina_Stringshare *name;
 
         id = ecore_wl2_input_seat_id_get(input);
         cap = ecore_wl2_input_seat_capabilities_get(input);
-        device = _ecore_evas_wl_common_seat_add(ee, id);
+        name = ecore_wl2_input_name_get(input);
+        device = _ecore_evas_wl_common_seat_add(ee, id, name);
 
         if (!device)
           {
