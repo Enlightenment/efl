@@ -104,18 +104,15 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 {
    Render_Engine *re;
    Evas_Engine_Info_Wayland *einfo;
-   Eina_Bool resize = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(re = (Render_Engine *)data)) return;
    if (!(einfo = re->generic.ob->info)) return;
 
-   if (einfo->info.edges) resize = EINA_TRUE;
-
    _evas_outbuf_reconfigure(re->generic.ob, w, h,
                             einfo->info.rotation, einfo->info.depth,
-                            einfo->info.destination_alpha, resize);
+                            einfo->info.destination_alpha, 0);
 
    evas_common_tilebuf_free(re->generic.tb);
    if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
