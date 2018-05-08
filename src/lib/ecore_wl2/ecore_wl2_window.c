@@ -732,8 +732,10 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
    EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
 
    if (!input)
-     input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
-
+     {
+        ERR("NULL input parameter is deprecated");
+        input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
+     }
    if (window->xdg_toplevel)
      xdg_toplevel_move(window->xdg_toplevel, input->wl.seat,
                            window->display->serial);
@@ -752,7 +754,10 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
 
    if (!input)
-     input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
+     {
+        ERR("NULL input parameter is deprecated");
+        input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
+     }
 
    if (window->xdg_toplevel)
      xdg_toplevel_resize(window->xdg_toplevel, input->wl.seat,
