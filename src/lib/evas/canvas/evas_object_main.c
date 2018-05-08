@@ -2555,6 +2555,16 @@ _efl_canvas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->legacy.ctor = EINA_TRUE;
 }
 
+EAPI Eo *
+evas_find(const Eo *obj)
+{
+   if (efl_isa(obj, EVAS_CANVAS_CLASS))
+     return (Eo*) obj;
+   if (efl_isa(obj, EFL_CANVAS_OBJECT_CLASS))
+     return evas_object_evas_get(obj);
+   return efl_provider_find(obj, EVAS_CANVAS_CLASS);
+}
+
 EOLIAN void
 _efl_canvas_object_event_animation_set(Eo *eo_obj,
                                        Evas_Object_Protected_Data *pd,
