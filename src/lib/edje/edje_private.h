@@ -2523,7 +2523,7 @@ void  _edje_unref(Edje *ed);
 void _edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp);
 Eina_Bool _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
-void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc);
+void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc, Edje_Message_Signal_Data *mdata);
 void _edje_programs_patterns_clean(Edje_Part_Collection *ed);
 void _edje_programs_patterns_init(Edje_Part_Collection *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);

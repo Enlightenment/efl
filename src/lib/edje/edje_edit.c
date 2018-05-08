@@ -11205,7 +11205,7 @@ edje_edit_program_run(Evas_Object *obj, const char *prog)
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   _edje_program_run(ed, epr, 0, "", "");
+   _edje_program_run(ed, epr, 0, "", "", NULL);
    return EINA_TRUE;
 }
 

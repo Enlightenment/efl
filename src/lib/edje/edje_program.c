@@ -487,7 +487,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
              if (pa->id >= 0)
                {
                   pr = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
-                  if (pr) _edje_program_run(ed, pr, 0, "", "");
+                  if (pr) _edje_program_run(ed, pr, 0, "", "", NULL);
                   if (_edje_block_break(ed))
                     {
                        if ((!ed->walking_actions) && (runp->ref == 0))
@@ -644,7 +644,7 @@ not_allowed:
 }
 
 void
-_edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc)
+_edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc, Edje_Message_Signal_Data *mdata)
 {
    Eina_List *l;
    Edje_Real_Part *rp;
@@ -804,7 +804,7 @@ low_mem_current:
                   if (pa->id >= 0)
                     {
                        pr2 = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
-                       if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+                       if (pr2) _edje_program_run(ed, pr2, 0, "", "", mdata);
                        if (_edje_block_break(ed)) goto break_prog;
                     }
                }
@@ -1226,7 +1226,7 @@ low_mem_current:
              if (pa->id >= 0)
                {
                   pr2 = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
-                  if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+                  if (pr2) _edje_program_run(ed, pr2, 0, "", "", mdata);
                   if (_edje_block_break(ed)) goto break_prog;
                }
           }
@@ -1495,7 +1495,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
                 EINA_LIST_FOREACH(matches, l, pr)
                   if (pr->exec)
                     {
-                       _edje_program_run(ed, pr, 0, sig, src);
+                       _edje_program_run(ed, pr, 0, sig, src, sdata);
                        if (_edje_block_break(ed))
                          {
                             goto break_prog;
@@ -1550,7 +1550,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 #endif
                     {
                        if (pr->exec)
-                         _edje_program_run(ed, pr, 0, sig, src);
+                         _edje_program_run(ed, pr, 0, sig, src, sdata);
 
                        if (_edje_block_break(ed))
                          {
