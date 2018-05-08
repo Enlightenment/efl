@@ -152,7 +152,7 @@ _wl_default_seat_id_get(Evas_Object *obj)
              EINA_ITERATOR_FOREACH(it, input) break;
              eina_iterator_free(it);
              if (input)
-               ecore_wl2_input_seat_id_get(input);
+               return ecore_wl2_input_seat_id_get(input);
           }
      }
 
