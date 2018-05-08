@@ -165,13 +165,13 @@ _edje_signal_data_ref(Edje_Message_Signal_Data *mdata)
 }
 
 static void
-_edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src, void *data, Ecore_Cb free_func)
+_edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src, Edje_Message_Signal_Data *mdata)
 {
    Edje_Message_Signal emsg;
 
    emsg.sig = sig;
    emsg.src = src;
-   emsg.data = _edje_signal_data_setup(data, free_func);
+   emsg.data = mdata;
    /* new sends code */
    if (broadcast)
      edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
@@ -860,7 +860,7 @@ low_mem_current:
                        Eina_Bool broadcast;
 
                        broadcast = _edje_emit_child(ed, rp, rp->part->name, pr->state, pr->state2);
-                       _edje_emit_send(ed, broadcast, pr->state, pr->state2, NULL, NULL);
+                       _edje_emit_send(ed, broadcast, pr->state, pr->state2, NULL);
                     }
                }
           }
@@ -1264,6 +1264,7 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
 void
 _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *))
 {
+   Edje_Message_Signal_Data *mdata;
    const char *sep;
    Eina_Bool broadcast;
 
@@ -1295,7 +1296,8 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
    else
      broadcast = ed->collection->broadcast_signal;
 
-   _edje_emit_send(ed, broadcast, sig, src, data, free_func);
+   mdata = _edje_signal_data_setup(data, free_func);
+   _edje_emit_send(ed, broadcast, sig, src, mdata);
 }
 
 void
