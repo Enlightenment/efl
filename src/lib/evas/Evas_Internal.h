@@ -62,6 +62,7 @@ evas_object_size_hint_combined_min_get(const Eo *obj, int *w, int *h)
 }
 
 /* Internal EO APIs */
+EAPI Eo *evas_find(const Eo *obj);
 EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
 EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
 EOAPI void efl_canvas_group_add(Eo *obj);
