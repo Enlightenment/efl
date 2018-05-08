@@ -195,7 +195,6 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
       _edje_util_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
       }
     */
-   _edje_signal_data_free(emsg.data);
 }
 
 /*============================================================================*
@@ -1271,11 +1270,22 @@ void
 _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *))
 {
    Edje_Message_Signal_Data *mdata;
+
+   mdata = _edje_signal_data_setup(data, free_func, NULL, NULL);
+   _edje_emit_full_data(ed, sig, src, mdata);
+   _edje_signal_data_free(mdata);
+}
+
+void
+_edje_emit_full_data(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *mdata)
+{
    const char *sep;
    Eina_Bool broadcast;
 
    if (!ed->collection) return;
    if (ed->delete_me) return;
+
+   _edje_signal_data_ref(mdata);
 
    sep = strchr(sig, EDJE_PART_PATH_SEPARATOR);
    /* If we are not sending the signal to a part of the child, the
@@ -1295,15 +1305,16 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 
         newsig = sep + 1;
 
-        if (_edje_emit_aliased(ed, part, newsig, src)) return;
+        if (_edje_emit_aliased(ed, part, newsig, src)) goto out;
 
         broadcast = _edje_emit_child(ed, NULL, part, newsig, src);
      }
    else
      broadcast = ed->collection->broadcast_signal;
 
-   mdata = _edje_signal_data_setup(data, free_func, NULL, NULL);
    _edje_emit_send(ed, broadcast, sig, src, mdata);
+out:
+   _edje_signal_data_free(mdata);
 }
 
 void

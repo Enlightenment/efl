@@ -2529,6 +2529,7 @@ void _edje_programs_patterns_init(Edje_Part_Collection *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *src);
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
+void _edje_emit_full_data(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *mdata);
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 const char * _edje_object_part_state_get(Edje *ed, const char *part, double *val_ret);
