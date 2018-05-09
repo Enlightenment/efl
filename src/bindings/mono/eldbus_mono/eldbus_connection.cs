@@ -313,7 +313,7 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
-    public eldbus.Pending ActivableList(eldbus.MessageDelegate dlgt = null)
+    public eldbus.Pending ActivatableList(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
 

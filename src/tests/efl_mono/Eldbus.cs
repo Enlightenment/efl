@@ -158,6 +158,8 @@ class TestEldbusObject
 
         eldbus.Pending pending = obj.Send(message, objectMessageCb, -1);
 
+        AssertEquals(pending.GetMethod(), methodName);
+
         timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
         Assert(timeout != IntPtr.Zero);
 
@@ -216,6 +218,8 @@ class TestEldbusObject
 
         eldbus.Pending pending = obj.Introspect(objectMessageCb);
 
+        AssertEquals(pending.GetMethod(), "Introspect");
+
         timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
         Assert(timeout != IntPtr.Zero);
 
@@ -236,13 +240,15 @@ class TestEldbusMessage
     private static bool isSuccess = false;
 
 
-    private static void ActivableList(eldbus.MessageDelegate messageCb)
+    private static void ActivatableList(eldbus.MessageDelegate messageCb)
     {
         isSuccess = false;
 
         var conn = new eldbus.Connection(eldbus.Connection.Type.System);
 
-        eldbus.Pending pending = conn.ActivableList(messageCb);
+        eldbus.Pending pending = conn.ActivatableList(messageCb);
+
+        AssertEquals(pending.GetMethod(), "ListActivatableNames");
 
         timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
         Assert(timeout != IntPtr.Zero);
@@ -303,7 +309,7 @@ class TestEldbusMessage
             }
         };
 
-        ActivableList(responseMessageCb);
+        ActivatableList(responseMessageCb);
     }
 
     public static void utc_eldbus_message_info_data_get_p()
@@ -359,6 +365,8 @@ class TestEldbusMessage
 
         const int timeoutSendMs = 1000;
         eldbus.Pending pending = conn.Send(msg, messageMethodCb, timeoutSendMs);
+
+        AssertEquals(pending.GetMethod(), methodName);
 
         timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
         Assert(timeout != IntPtr.Zero);
@@ -438,7 +446,7 @@ class TestEldbusMessage
                 ecore_main_loop_quit();
             }
         };
-        ActivableList(activatableListResponseCb);
+        ActivatableList(activatableListResponseCb);
     }
 }
 
