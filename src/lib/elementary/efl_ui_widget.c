@@ -2769,7 +2769,9 @@ _efl_ui_widget_efl_gfx_entity_scale_get(const Eo *obj EINA_UNUSED, Elm_Widget_Sm
 EAPI void
 elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    Eina_Bool apply = EINA_FALSE;
    if (sd->theme != th)
      {
@@ -2985,7 +2987,8 @@ _efl_ui_widget_access_info_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
 EAPI Elm_Theme *
 elm_widget_theme_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd, NULL);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return NULL;
 
    if (!sd->theme)
      {
@@ -3110,7 +3113,8 @@ elm_widget_scroll_child_locked_y_get(const Eo *obj)
 EAPI Efl_Ui_Theme_Apply
 elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd, EFL_UI_THEME_APPLY_FAILED);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EFL_UI_THEME_APPLY_FAILED;
 
    if (eina_streq(welement, "base"))
      welement = NULL;
@@ -3711,7 +3715,9 @@ _efl_ui_widget_focus_move_policy_automatic_set(Eo *obj, Elm_Widget_Smart_Data *s
 EAPI Eina_Bool
 elm_widget_theme_klass_set(Evas_Object *obj, const char *name)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return EINA_FALSE;
+
    return eina_stringshare_replace(&(pd->klass), name);
 }
 
@@ -3725,7 +3731,9 @@ elm_widget_theme_klass_set(Evas_Object *obj, const char *name)
 EAPI const char *
 elm_widget_theme_klass_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return NULL;
+
    return (const char *)pd->klass;
 }
 
@@ -3741,7 +3749,9 @@ elm_widget_theme_klass_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_widget_theme_element_set(Evas_Object *obj, const char *name)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return EINA_FALSE;
+
    if (eina_streq(name, "base"))
      name = NULL;
 
@@ -3758,7 +3768,9 @@ elm_widget_theme_element_set(Evas_Object *obj, const char *name)
 EAPI const char *
 elm_widget_theme_element_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return NULL;
+
    return (const char *)pd->group;
 }
 
@@ -3774,7 +3786,9 @@ elm_widget_theme_element_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_widget_theme_style_set(Evas_Object *obj, const char *name)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return EINA_FALSE;
+
    if (eina_streq(name, "default"))
      name = NULL;
 
@@ -3791,7 +3805,9 @@ elm_widget_theme_style_set(Evas_Object *obj, const char *name)
 EAPI const char *
 elm_widget_theme_style_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return NULL;
+
    return (const char *)pd->style;
 }
 
