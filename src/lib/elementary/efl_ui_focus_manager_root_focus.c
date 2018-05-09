@@ -13,7 +13,7 @@
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS
 
 typedef struct {
-   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focus_Object *replacement_object;
 
    Evas_Object *rect;
    Eina_Bool rect_registered;
@@ -24,7 +24,7 @@ typedef struct {
 static Efl_Ui_Focus_Object*
 _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
 {
-   if (pd->rect == obj) return pd->root;
+   if (pd->rect == obj) return pd->replacement_object;
    return obj;
 }
 
@@ -51,10 +51,10 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
      }
    else
      {
-        efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
+        efl_ui_focus_manager_calc_register(obj, pd->rect, pd->replacement_object, NULL);
         pd->rect_registered = EINA_TRUE;
 
-        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, pd->root);
+        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, pd->replacement_object);
         efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, obj);
 
         if (focused)
@@ -153,24 +153,66 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus
    return _trap(pd, efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction));
 }
 
+EOLIAN static Efl_Canvas_Object*
+_efl_ui_focus_manager_root_focus_canvas_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+{
+   return pd->replacement_object;
+}
+
+EOLIAN static void
+_efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Canvas_Object *canvas_object)
+{
+
+   //if canvas object is NULL trigger it as root
+   if (!canvas_object)
+     canvas_object = efl_ui_focus_manager_root_get(obj);
+
+   if (canvas_object == pd->replacement_object) return;
+
+   if (pd->replacement_object)
+     {
+        pd->iterator_list = eina_list_remove(pd->iterator_list, pd->replacement_object);
+        pd->replacement_object = NULL;
+     }
+
+   pd->replacement_object = canvas_object;
+   if (pd->replacement_object)
+     {
+        efl_ui_focus_composition_adapter_canvas_object_set(pd->rect, pd->replacement_object);
+        pd->iterator_list = eina_list_append(pd->iterator_list, pd->replacement_object);
+
+     }
+}
+
+
+EOLIAN static Efl_Object*
+_efl_ui_focus_manager_root_focus_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+{
+   pd->rect = efl_add_ref(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->rect, NULL);
+
+   return efl_constructor(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_focus_manager_root_focus_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+{
+   efl_unref(pd->rect);
+   pd->rect = NULL;
+
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Efl_Object*
 _efl_ui_focus_manager_root_focus_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   Efl_Object *ret;
-
-   ret = efl_finalize(efl_super(obj, MY_CLASS));
-
-   pd->root = efl_ui_focus_manager_root_get(obj);
-
-   pd->rect = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, pd->root);
-   efl_ui_focus_composition_adapter_canvas_object_set(pd->rect, pd->root);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->rect, NULL);
-
-   pd->iterator_list = eina_list_append(pd->iterator_list, pd->root);
+   //set it to NULL so the root manager is passed to the manager
+   if (!pd->replacement_object)
+     efl_ui_focus_manager_root_focus_canvas_object_set(obj, NULL);
 
    _state_eval(obj, pd);
 
-   return ret;
+   return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 #include "efl_ui_focus_manager_root_focus.eo.c"
