@@ -1045,16 +1045,24 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
 }
 
 EAPI void
-evas_object_del(Evas_Object *eo_obj)
+evas_object_del(Evas_Object *obj)
 {
-   if (!eo_obj) return;
-   if (!efl_isa(eo_obj, MY_CLASS))
+   Evas_Object_Protected_Data *pd;
+
+   if (!obj) return;
+   if (!efl_isa(obj, MY_CLASS))
      {
         ERR("Called %s on a non-evas object: %s@%p",
-            __FUNCTION__, efl_class_name_get(eo_obj), eo_obj);
+            __FUNCTION__, efl_class_name_get(obj), obj);
         return;
      }
-   efl_del(eo_obj);
+   pd = efl_data_scope_get(obj, MY_CLASS);
+   if (pd->ref)
+     {
+        pd->del_ref = EINA_TRUE;
+        return;
+     }
+   efl_del(obj);
 }
 
 EOLIAN static Eina_Bool
