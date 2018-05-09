@@ -21,7 +21,7 @@ EAPI Evas_Object *
 edje_object_add(Evas *evas)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
