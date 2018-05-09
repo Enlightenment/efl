@@ -902,7 +902,7 @@ evas_object_textgrid_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(EVAS_TEXTGRID_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(EVAS_TEXTGRID_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

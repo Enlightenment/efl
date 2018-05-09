@@ -404,7 +404,7 @@ EAPI Evas_Object *
 evas_object_event_grabber_add(Evas *eo_e)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(MY_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(eo_e), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 #include "efl_canvas_event_grabber.eo.c"

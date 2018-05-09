@@ -128,7 +128,7 @@ evas_object_vg_add(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    // TODO: Ask backend to return the main Ector_Surface
-   return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Efl_VG *

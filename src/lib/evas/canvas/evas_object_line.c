@@ -97,7 +97,7 @@ evas_object_line_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(EVAS_LINE_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(EVAS_LINE_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static void
