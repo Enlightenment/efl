@@ -227,6 +227,7 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
    Ecore_X_Atom protos[3];
    unsigned int num = 0, tmp = 0;
 
+   if (ee->deleted) return;
    if (ee->func.fn_delete_request)
      protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    protos[num++] = ECORE_X_ATOM_NET_WM_PING;
@@ -254,6 +255,7 @@ _ecore_evas_x_sync_set(Ecore_Evas *ee)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Ecore_X_Sync_Counter sync_counter = edata->sync_counter;
 
+   if (ee->deleted) return;
    if (((ee->should_be_visible) || (ee->visible)) &&
        ((ecore_x_e_comp_sync_supported_get(edata->win_root)) &&
            (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync)))
