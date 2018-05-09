@@ -31,35 +31,35 @@ _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
 static void
 _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   Efl_Ui_Focus_Object *root;
-   Eina_Bool none_logical = EINA_FALSE, focused = EINA_FALSE;
+   Efl_Ui_Focus_Object *sub;
 
-   if (pd->rect_registered)
+   sub = efl_ui_focus_manager_request_subchild(obj, efl_ui_focus_manager_root_get(obj));
+
+   if (sub == pd->rect)
      {
-        focused = efl_ui_focus_object_focus_get(pd->rect);
-        efl_ui_focus_manager_calc_unregister(obj, pd->rect);
+        sub = efl_ui_focus_manager_request_move(obj, EFL_UI_FOCUS_DIRECTION_NEXT, pd->rect, EINA_FALSE);
+        if (sub == pd->rect)
+          sub = NULL;
      }
 
-   root = efl_ui_focus_manager_root_get(obj);
-   none_logical = !!efl_ui_focus_manager_request_subchild(obj, root);
+   EINA_SAFETY_ON_TRUE_RETURN(sub == pd->rect);
 
-   if (none_logical)
+   if (sub && pd->rect_registered)
      {
+        efl_ui_focus_manager_calc_unregister(obj, pd->rect);
         pd->rect_registered = EINA_FALSE;
         efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, NULL);
         efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, NULL);
      }
-   else
+   else if (!sub && !pd->rect_registered)
      {
-        efl_ui_focus_manager_calc_register(obj, pd->rect, pd->replacement_object, NULL);
-        pd->rect_registered = EINA_TRUE;
+        Efl_Ui_Focus_Object *root;
 
-        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, pd->replacement_object);
+        root = efl_ui_focus_manager_root_get(obj);
+        efl_ui_focus_manager_calc_register(obj, pd->rect, root, NULL);
+        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, root);
         efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, obj);
-
-        if (focused)
-          efl_ui_focus_manager_focus_set(obj, pd->rect);
-
+        pd->rect_registered = EINA_TRUE;
      }
 }
 
