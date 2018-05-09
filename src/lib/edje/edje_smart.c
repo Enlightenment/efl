@@ -49,9 +49,11 @@ _efl_canvas_layout_efl_object_constructor(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_object_invalidate(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_object_invalidate(Eo *obj, Edje *ed)
 {
    _edje_file_callbacks_del(ed, NULL);
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
