@@ -12,6 +12,7 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool event_redef;
+   Eina_Bool event_notype;
 } Validate_State;
 
 static Eina_Bool
@@ -456,13 +457,14 @@ _validate_part(Eolian_Part *part, Eina_Hash *nhash)
 static Eina_Bool
 _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
 {
+   char buf[512];
    const Eolian_Object *oobj = NULL;
+
    if (vals->event_redef)
      {
         oobj = eina_hash_find(nhash, &event->base.name);
         if (EINA_UNLIKELY(!!oobj))
           {
-             char buf[512];
              snprintf(buf, sizeof(buf),
                       "event '%s' conflicts with another symbol (at %s:%d:%d)",
                       event->base.name, oobj->file, oobj->line, oobj->column);
@@ -476,6 +478,13 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
         if (vals->event_redef && !oobj)
           eina_hash_add(nhash, &event->base.name, &event->base);
         return EINA_TRUE;
+     }
+
+   if (vals->event_notype && !event->type)
+     {
+        snprintf(buf, sizeof(buf), "event '%s' has no type", event->base.name);
+        _obj_error(&event->base, buf);
+        vals->warned = EINA_TRUE;
      }
 
    if (event->type && !_validate_type(vals, event->type))
@@ -904,7 +913,11 @@ database_validate(const Eolian_Unit *src)
 {
    Eolian_Class *cl;
 
-   Validate_State vals = { EINA_FALSE, !!getenv("EOLIAN_EVENT_REDEF_WARN") };
+   Validate_State vals = {
+      EINA_FALSE,
+      !!getenv("EOLIAN_EVENT_REDEF_WARN"),
+      !!getenv("EOLIAN_EVENT_NO_TYPE_WARN")
+   };
 
    /* do an initial pass to refill inherits */
    Eina_Iterator *iter = eolian_unit_classes_get(src);

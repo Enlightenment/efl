@@ -9,6 +9,8 @@ EAPI const Eolian_Type *
 eolian_event_type_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   if (event->type && (event->type->type == EOLIAN_TYPE_VOID))
+     return NULL;
    return event->type;
 }
 
