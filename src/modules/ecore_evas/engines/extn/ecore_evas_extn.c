@@ -1542,27 +1542,30 @@ _ecore_evas_ews_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
    prev_b = extn->prev_b;
    _extnbuf_unlock(extn->b[prev_b].buf);
 
-   EINA_LIST_FOREACH(post->updated_area, l, r)
+   if (post->updated_area)
      {
-        Ipc_Data_Update ipc;
-        Eina_List *ll;
+        EINA_LIST_FOREACH(post->updated_area, l, r)
+          {
+             Ipc_Data_Update ipc;
+             Eina_List *ll;
 
-        ipc.x = r->x;
-        ipc.y = r->y;
-        ipc.w = r->w;
-        ipc.h = r->h;
-        EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
-          ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc,
-                                sizeof(ipc));
-     }
+             ipc.x = r->x;
+             ipc.y = r->y;
+             ipc.w = r->w;
+             ipc.h = r->h;
+             EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
+               ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc,
+                                     sizeof(ipc));
+          }
 
-   EINA_LIST_FOREACH(extn->ipc.clients, l, client)
-     ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0,
-                           prev_b, NULL, 0);
-   if (extn->profile.done)
-     {
-        _ecore_evas_extn_socket_window_profile_change_done_send(ee);
-        extn->profile.done = EINA_FALSE;
+        EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+          ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0,
+                                prev_b, NULL, 0);
+        if (extn->profile.done)
+          {
+             _ecore_evas_extn_socket_window_profile_change_done_send(ee);
+             extn->profile.done = EINA_FALSE;
+          }
      }
 }
 
