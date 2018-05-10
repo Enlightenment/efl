@@ -233,7 +233,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
-   e->gesture_manager = efl_add(EFL_CANVAS_GESTURE_MANAGER_CLASS, eo_obj);
+   efl_wref_add(efl_add(EFL_CANVAS_GESTURE_MANAGER_CLASS, eo_obj), &e->gesture_manager);
 
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
@@ -283,11 +283,9 @@ evas_free(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
 {
    evas_sync(eo_e);
-
-   e->gesture_manager = NULL;
 
    efl_invalidate(efl_super(eo_e, MY_CLASS));
 }
