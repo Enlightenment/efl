@@ -705,7 +705,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    // Invalidated object can not be bring back to life
    if (eo_obj->invalidate || eo_obj->is_invalidating)
      {
-        ERR("Call of efl_parent_set(%p, %p) when object is already invalidated.\n", obj, parent_id);
+        ERR("Call of efl_parent_set(%p, %p) when object of clas '%s' is already invalidated.\n", obj, parent_id, efl_class_name_get(obj));
         goto err_impossible;
      }
 
@@ -2187,6 +2187,8 @@ err_parent_back:
    return;
 
 children:
+   ERR("Object %p of type '%s' is still holding child at time of destruction.\n",
+       obj, efl_class_name_get(obj));
    EINA_INLIST_FOREACH_SAFE(pd->children, l, obj_child)
      {
         Eo *child;
