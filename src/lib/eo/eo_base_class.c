@@ -709,6 +709,11 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
         goto err_impossible;
      }
 
+   if (!parent_id)
+     {
+        if (prev_parent) _efl_invalidate(eo_obj);
+     }
+
    if (pd->parent)
      {
         Efl_Object_Data *old_parent_pd = efl_data_scope_get(pd->parent,
@@ -749,8 +754,6 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
      }
    else
      {
-        if (prev_parent) _efl_invalidate(eo_obj);
-
         pd->parent = NULL;
         eo_obj->parent = EINA_FALSE;
 
