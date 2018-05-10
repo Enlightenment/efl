@@ -1010,17 +1010,24 @@ _populate(Evas_Object *obj,
    if (selected)
      {
         fetch = efl_model_property_get(selected, "path");
-	string = eina_value_to_string(fetch);
-	lreq->selected_path = eina_stringshare_add(string);
-	eina_value_free(fetch);
-	free(string);
+        string = eina_value_to_string(fetch);
+        lreq->selected_path = eina_stringshare_add(string);
+        eina_value_free(fetch);
+        free(string);
      }
 
-   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-   future = eina_future_then(future, _process_children_cb, lreq);
-   efl_future_Eina_FutureXXX_then(obj, future);
-
    _signal_first(lreq);
+
+   if (efl_model_children_count_get(model))
+     {
+        future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
+        future = eina_future_then(future, _process_children_cb, lreq);
+        efl_future_Eina_FutureXXX_then(obj, future);
+     }
+   else
+     {
+        _process_last(lreq);
+     }
 }
 
 static void
