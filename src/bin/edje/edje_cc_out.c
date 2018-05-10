@@ -2541,8 +2541,8 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
      {
         char *s = alloca(strlen(lw->file) + 1 + 13);
 
-        strcpy(s, lw->file);
-        sprintf(s, "edje/license/%s", basename(s));
+        strncpy(s, lw->file, strlen(lw->file) + 1 + 13);
+        snprintf(s, strlen(lw->file) + 1 + 13, "edje/license/%s", basename(s));
 
         bytes = eet_write(ef, s, m, eina_file_size_get(f), compress_mode);
      }
