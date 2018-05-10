@@ -1909,6 +1909,9 @@ void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, v
 void _efl_canvas_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
 void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
 
+//evas focus functions
+void evas_focus_init(void);
+void evas_focus_shutdown(void);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;

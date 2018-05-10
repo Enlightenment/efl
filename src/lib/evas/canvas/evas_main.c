@@ -96,6 +96,7 @@ evas_init(void)
 		   EINA_LOG_STATE_INIT);
 
    _efl_gfx_map_init();
+   evas_focus_init();
 
    return _evas_init_count;
 
@@ -140,6 +141,8 @@ evas_shutdown(void)
    eina_log_timing(_evas_log_dom_global,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
+
+   evas_focus_shutdown();
 
    evas_common_shutdown();
 

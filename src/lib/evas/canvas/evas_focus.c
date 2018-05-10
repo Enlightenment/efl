@@ -5,12 +5,33 @@
 #include "evas_private.h"
 #include "interfaces/efl_common_internal.h"
 
+
+static int evas_focus_log_domain = -1;
+
+#define F_CRI(...) EINA_LOG_DOM_CRIT(evas_focus_log_domain, __VA_ARGS__)
+#define F_ERR(...) EINA_LOG_DOM_ERR(evas_focus_log_domain, __VA_ARGS__)
+#define F_WRN(...) EINA_LOG_DOM_WARN(evas_focus_log_domain, __VA_ARGS__)
+#define F_INF(...) EINA_LOG_DOM_INFO(evas_focus_log_domain, __VA_ARGS__)
+#define F_DBG(...) EINA_LOG_DOM_DBG(evas_focus_log_domain, __VA_ARGS__)
+
 /* private calls */
 
 /* local calls */
 
 /* public calls */
 
+void
+evas_focus_init(void)
+{
+   evas_focus_log_domain = eina_log_domain_register("evas-focus", "red");
+}
+
+void
+evas_focus_shutdown(void)
+{
+   eina_log_domain_unregister(evas_focus_log_domain);
+   evas_focus_log_domain = -1;
+}
 
 static Eina_Bool
 _already_focused(Eina_List *seats, Efl_Input_Device *seat)
@@ -38,6 +59,8 @@ _default_seat_get(const Eo *evas_obj)
    return edata->default_seat;
 }
 
+#define DEBUG_TUPLE(v) v, (v ? efl_class_name_get(v) : "(null)")
+
 static void
 _evas_focus_set(Eo *evas_obj, Efl_Input_Device *key, Eina_Bool focus)
 {
@@ -46,6 +69,8 @@ _evas_focus_set(Eo *evas_obj, Efl_Input_Device *key, Eina_Bool focus)
 
    EINA_SAFETY_ON_NULL_RETURN(evas);
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
+
+   F_DBG("Focus moved in %d from (%p,%s) to (%p,%s)", efl_input_device_seat_id_get(key), DEBUG_TUPLE(eina_hash_find(edata->focused_objects, &key)), DEBUG_TUPLE(evas_obj));
 
    if (focus)
      eina_hash_add(edata->focused_objects, &key, evas_obj);
