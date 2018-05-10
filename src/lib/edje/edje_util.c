@@ -4502,9 +4502,19 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
 static void
 _eo_unparent_helper(Eo *child, Eo *parent)
 {
+   if (efl_invalidated_get(child)) return ;
    if (efl_parent_get(child) == parent)
      {
-        efl_parent_set(child, evas_object_evas_get(parent));
+        if (efl_invalidated_get(evas_object_evas_get(parent)))
+          // Temporary reparenting children to the main loop.
+          // They are about to die, but shouldn't just yet.
+          {
+             efl_parent_set(child, efl_main_loop_get());
+          }
+        else
+          {
+             efl_parent_set(child, evas_object_evas_get(parent));
+          }
      }
 }
 
