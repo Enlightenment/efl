@@ -669,12 +669,16 @@ _elm_list_deletions_process(Elm_List_Data *sd)
 
    EINA_LIST_FREE(sd->to_delete, it)
      {
+        Eo *obj = EO_OBJ(it);
+
         sd->items = eina_list_remove_list(sd->items, it->node);
 
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
-        efl_unref(EO_OBJ(it));
-        efl_parent_set(EO_OBJ(it), NULL);
+        // This will be the equivalent of an efl_del if parent != NULL
+        // otherwise it does nothing.
+        efl_parent_set(obj, NULL);
+        efl_unref(obj);
      }
 
    sd->walking--;
