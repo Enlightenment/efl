@@ -250,7 +250,7 @@ group { name: "elm/slider/horizontal/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -326,7 +326,7 @@ group { name: "elm/slider/horizontal/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -967,7 +967,7 @@ group { name: "elm/slider/vertical/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -1044,7 +1044,7 @@ group { name: "elm/slider/vertical/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -1741,7 +1741,7 @@ group { name: "elm/slider/range/horizontal/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -1817,7 +1817,7 @@ group { name: "elm/slider/range/horizontal/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -2525,7 +2525,7 @@ group { name: "elm/slider/range/vertical/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -2602,7 +2602,7 @@ group { name: "elm/slider/range/vertical/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }

@@ -43,7 +43,7 @@ group { name: "elm/bubble/top_left/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -192,7 +192,7 @@ group { name: "elm/bubble/top_right/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -339,7 +339,7 @@ group { name: "elm/bubble/bottom_left/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -488,7 +488,7 @@ group { name: "elm/bubble/bottom_right/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }

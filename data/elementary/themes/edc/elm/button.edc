@@ -72,6 +72,7 @@ group { name: "elm/button/base/default";
       text { "sizer.content"; nomouse;
          scale: 1;
          desc { "default";
+            fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
                min: 0 0;
@@ -83,15 +84,16 @@ group { name: "elm/button/base/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
          desc { "icononly"; inherit;
+            fixed: 0 0;
             rel.to: "elm.swallow.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -371,30 +373,28 @@ group { name: "elm/button/base/anchor";
       text { "sizer.content"; nomouse;
          scale: 1;
          desc { "default";
+            fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
                min: 0 0;
                text_class: "button_text";
             }
          }
-         desc { "visible";
-            inherit: "default";
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+         desc { "visible"; inherit;
+            rel.to: "elm.swallow.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
-         desc { "icononly";
-            inherit: "default";
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+         desc { "icononly";  inherit;
+            fixed: 0 0;
+            rel.to: "elm.swallow.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -855,24 +855,21 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
                text_class: "button_text";
             }
          }
-         desc { "visible";
-            inherit: "default";
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+         desc { "visible"; inherit;
+            rel.to: "elm.swallow.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
-         desc { "icononly";
-            inherit: "default";
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+         desc { "icononly";  inherit;
+            fixed: 0 0;
+            rel.to: "elm.swallow.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }

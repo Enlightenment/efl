@@ -1991,7 +1991,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
                ellipsis: -1;
                align: 0.5 0.5;
                text_class: "list_item";
-               text: "M";
+               text: SPACER_TEXT;
             }
             hid;
          }

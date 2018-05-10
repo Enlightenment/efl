@@ -107,7 +107,7 @@ group { name: "elm/progressbar/horizontal/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
@@ -482,7 +482,7 @@ group { name: "elm/progressbar/vertical/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
