@@ -593,9 +593,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Object.invalidate;
+      Efl.Object.destructor;
       Efl.Object.parent { set; }
       Efl.Object.provider_find;
       Efl.Object.debug_name_override;

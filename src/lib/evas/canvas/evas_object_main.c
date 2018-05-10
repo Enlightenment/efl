@@ -539,7 +539,10 @@ evas_object_cur_prev(Evas_Object_Protected_Data *obj)
 void
 evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj;
+
+   if (!eo_obj) return ;
+   obj = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->clean_layer = !!clean_layer;
 
@@ -1031,20 +1034,6 @@ _efl_canvas_object_efl_object_parent_set(Eo *obj, Evas_Object_Protected_Data *pd
    efl_parent_set(efl_super(obj, MY_CLASS), parent);
 }
 
-EOLIAN static void
-_efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   evas_object_async_block(obj);
-
-   //Unset callbacks for Hide event before hiding
-   evas_object_intercept_hide_callback_del((Eo *)eo_obj,
-                                           _animation_intercept_hide);
-
-   efl_gfx_entity_visible_set((Eo *) eo_obj, EINA_FALSE);
-   obj->efl_del_called = EINA_TRUE;
-   efl_invalidate(efl_super(eo_obj, MY_CLASS));
-}
-
 EAPI void
 evas_object_del(Evas_Object *obj)
 {
@@ -1256,18 +1245,23 @@ _efl_canvas_object_efl_object_event_callback_legacy_call(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   Evas_Object *proxy;
-   Eina_List *l, *l2;
-   Evas_Canvas3D_Texture *texture;
    Efl_Input_Device *dev;
    Evas_Public_Data *edata;
    Evas_Object_Pointer_Data *pdata;
+   Evas_Object *proxy;
+   Eina_List *l, *l2;
    int event_id;
+
+   evas_object_async_block(obj);
+
+   // Unset callbacks for Hide event before hiding
+   evas_object_intercept_hide_callback_del((Eo *)eo_obj,
+                                           _animation_intercept_hide);
+
+   efl_gfx_entity_visible_set((Eo *) eo_obj, EINA_FALSE);
+   obj->efl_del_called = EINA_TRUE;
 
    edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
 
@@ -1296,54 +1290,41 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, event_id, NULL);
    if ((obj->layer) && (obj->layer->evas))
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
-   if (obj->name) evas_object_name_set(eo_obj, NULL);
+
    if (obj->layer)
      {
         if (obj->layer->evas)
           if (obj->layer->evas->pending_default_focus_obj == eo_obj)
             obj->layer->evas->pending_default_focus_obj = NULL;
      }
-   else
-     {
-        efl_manual_free_set(eo_obj, EINA_FALSE);
-        obj->clean_layer = 1;
-        goto end;
-     }
+
    evas_object_grabs_cleanup(eo_obj, obj);
-   if (obj->clip.clipees)
-     {
-        ERR("object %p still has %d clippees after del callback",
-            eo_obj, eina_list_count(obj->clip.clipees));
-        /* "while" should be used for null check of obj->clip.clipees,
-           because evas_objct_clip_unset can set null to obj->clip.clipees */
-        while (obj->clip.clipees)
-          {
-             Evas_Object_Protected_Data *tmp;
-             tmp = eina_list_data_get(obj->clip.clipees);
-             evas_object_clip_unset(tmp->object);
-          }
-     }
 
    /* FIXME: Proxies should listen to source death */
-   EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
+   if (obj->proxy)
      {
-        if (efl_isa(proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
-          evas_object_image_source_unset(proxy);
-        if (efl_isa(proxy, EFL_GFX_FILTER_INTERFACE))
-          efl_gfx_filter_source_set(proxy, NULL, eo_obj);
-     }
-
-   /* Eina_Cow has no way to know if we are going to really change something
-    or not. So before calling the cow, let's check if we want to do something */
-   if (obj->proxy->proxy_textures)
-     {
-        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
-                             Evas_Object_Proxy_Data, proxy_src)
+        EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
           {
-             EINA_LIST_FREE(proxy_src->proxy_textures, texture)
-               evas_canvas3d_texture_source_set(texture, NULL);
+             if (efl_isa(proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
+               evas_object_image_source_unset(proxy);
+             if (efl_isa(proxy, EFL_GFX_FILTER_INTERFACE))
+               efl_gfx_filter_source_set(proxy, NULL, eo_obj);
           }
-        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_src);
+
+        /* Eina_Cow has no way to know if we are going to really change something
+           or not. So before calling the cow, let's check if we want to do something */
+        if (obj->proxy->proxy_textures)
+          {
+             EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
+                                  Evas_Object_Proxy_Data, proxy_src)
+               {
+                  Evas_Canvas3D_Texture *texture;
+
+                  EINA_LIST_FREE(proxy_src->proxy_textures, texture)
+                    evas_canvas3d_texture_source_set(texture, NULL);
+               }
+             EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_src);
+          }
      }
 
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
@@ -1362,7 +1343,40 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
      }
 
    evas_object_map_set(eo_obj, NULL);
+
    if (obj->is_smart) evas_object_smart_del(eo_obj);
+   evas_object_change(eo_obj, obj);
+
+   efl_invalidate(efl_super(eo_obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   int event_id;
+
+   if (obj->clip.clipees)
+     {
+        ERR("object %p of type '%s' still has %d clippees after del callback",
+            eo_obj, efl_class_name_get(eo_obj), eina_list_count(obj->clip.clipees));
+        /* "while" should be used for null check of obj->clip.clipees,
+           because evas_objct_clip_unset can set null to obj->clip.clipees */
+        while (obj->clip.clipees)
+          {
+             Evas_Object_Protected_Data *tmp;
+             tmp = eina_list_data_get(obj->clip.clipees);
+             evas_object_clip_unset(tmp->object);
+          }
+     }
+
+   if (obj->name) evas_object_name_set(eo_obj, NULL);
+   if (!obj->layer)
+     {
+        efl_manual_free_set(eo_obj, EINA_FALSE);
+        obj->clean_layer = 1;
+        goto end;
+     }
+
    event_id = _evas_object_event_new();
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FREE, NULL, event_id, NULL);
    if ((obj->layer) && (obj->layer->evas))
@@ -1376,6 +1390,7 @@ end:
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
+
 
 EOLIAN static void
 _efl_canvas_object_efl_gfx_entity_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rect r)

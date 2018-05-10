@@ -579,17 +579,16 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 static void
 _efl_canvas_group_group_members_all_del_internal(Evas_Smart_Data *o)
 {
+   Evas_Object_Smart_Clipped_Data *cso = o->clipped ? o->data : NULL;
    Evas_Object_Protected_Data *memobj;
    Eina_Inlist *itrn;
-   Eo *eo_clipper;
 
-   eo_clipper = _smart_clipper_get(o);
    EINA_INLIST_FOREACH_SAFE(o->contained, itrn, memobj)
      {
-        if (memobj->object != eo_clipper)
-          efl_del(memobj->object);
+        if (memobj->object != cso->clipper)
+          _evas_wrap_del(&memobj->object, memobj);
      }
-   efl_del(eo_clipper);
+   _evas_wrap_del(&cso->clipper, efl_data_scope_get(cso->clipper, EFL_CANVAS_OBJECT_CLASS));
    o->group_del_called = EINA_TRUE;
 }
 
