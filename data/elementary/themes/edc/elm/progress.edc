@@ -1,14 +1,4 @@
 group { name: "elm/progressbar/horizontal/default";
-   images.image: "inset_bar_horiz_base.png" COMP;
-   images.image: "inset_bar_horiz_light.png" COMP;
-   images.image: "inset_bar_horiz_inside_base.png" COMP;
-   images.image: "inset_bar_horiz_inside_light.png" COMP;
-   images.image: "inset_bar_horiz_glow_base.png" COMP;
-   images.image: "inset_bar_horiz_glow_light.png" COMP;
-   images.image: "inset_bar_horiz_glow_inv_base.png" COMP;
-   images.image: "inset_bar_horiz_glow_inv_light.png" COMP;
-   images.image: "inset_bar_horiz_glow_mid_base.png" COMP;
-   images.image: "inset_bar_horiz_glow_mid_light.png" COMP;
 #define ICON    1
 #define LABEL   2
 #define DISABLE 4
@@ -30,9 +20,16 @@ group { name: "elm/progressbar/horizontal/default";
          if (ic) {
             set_state(PART:"elm.swallow.content", "visible", 0.0);
             set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"bg", "iclabel", 0.0);
          } else {
             set_state(PART:"elm.swallow.content", "default", 0.0);
             set_state(PART:"sizer.content", "default", 0.0);
+            if (l) {
+              set_state(PART:"bg", "iclabel", 0.0);
+            }
+            else {
+              set_state(PART:"bg", "default", 0.0);
+            }
          }
          if (!d) {
             set_state(PART:"dis_clip", "default", 0.0);
@@ -74,21 +71,23 @@ group { name: "elm/progressbar/horizontal/default";
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          clip_to: "dis_clip";
          description { state: "default" 0.0;
             visible: 0;
             align: 0.0 0.5;
             fixed: 1 0;
-            rel1.offset: 0 2;
-            rel2.offset: -1 -3;
+            rel1.offset: 0 4;
+            rel2.offset: -1 -5;
             rel2.relative: 0.0 1.0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
          }
       }
       part { name: "sizer.content"; type: TEXT; mouse_events:  0;
@@ -113,213 +112,113 @@ group { name: "elm/progressbar/horizontal/default";
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: -1 4;
             rel2.to_x: "elm.swallow.content";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "progressbar_text";
+            rel2.offset: -1 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                text_class: "progressbar";
                min: 0 0;
                align: 0.0 0.5;
             }
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             fixed: 1 0;
             visible: 1;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
             text.min: 1 1;
             text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "progressbar_text_disabled";
-            color: FN_COL_DISABLE_LIGHTER_SHADOW;
+            color: 80 80 80 255;
          }
       }
-      part { name: "bg-hi";
-         description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel1.offset: 0 1;
-            rel2.to: "bg";
-            rel2.offset: -1 0;
-            image.normal: "inset_bar_horiz_light.png";
-            image.border: 32 32 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-         }
-      }
-      part { name: "bg";
+      part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             min: 16 16;
             max: -1 16;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color: DARK_GREY_BG_COLOR;
+            offscale;
+         }
+         description { state: "iclabel" 0.0;
+            inherit: "default" 0.0;
             rel1.to_x: "elm.text";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 3 3;
-            rel2.offset: -4 -4;
-            image.normal: "inset_bar_horiz_base.png";
-            image.border: 32 32 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-         }
-      }
-      part { name: "ins0"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            rel2.relative: 0.0 1.0;
-            min: 5 16;
-            align: 0.0 0.5;
-         }
-      }
-      part { name: "ins1"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.to: "bg";
-            rel1.relative: 1.0 0.0;
-            rel2.to: "bg";
-            min: 5 16;
-            align: 1.0 0.5;
-         }
-      }
-      part { name: "inside-hi";
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "inside";
-            rel1.offset: 0 1;
-            rel2.to: "inside";
-            rel2.offset: -1 0;
-            image.normal: "inset_bar_horiz_inside_light.png";
-            image.border: 8 8 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-         }
-      }
-      part { name: "inside";
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 4 4;
-            rel1.to: "ins0";
-            rel1.relative: 1.0 (6/16);
-            rel2.to: "ins1";
-            rel2.relative: 0.0 (10/16);
-            image.normal: "inset_bar_horiz_inside_base.png";
-            image.border: 8 8 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
          }
       }
       part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            rel1.to: "bg";
+            rel2.to: "bg";
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;
-         scale: 1;
-         dragable.confine: "inside";
+         dragable.confine: "elm.swallow.bar";
          dragable.x: 1 1 1;
          dragable.y: 0 0 0;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 8 4;
-            max: 8 4;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            min: 1 1;
+            max: 1 9999;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
          }
       }
       part { name: "barend"; type: SPACER;
-         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 0;
-            min: 14 16;
+            max: 1 9999;
             rel1.to_x: "elm.cur.progressbar";
-            rel1.relative: 1.0 0.0;
             rel2.to_x: "elm.cur.progressbar";
-            rel2.relative: 1.0 1.0;
-            align: 0.0 0.5;
+            align: 1.0 0.5;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 0.0 1.0;
-            align: 1.0 0.5;
+            align: 0.0 0.5;
          }
       }
-      part { name: "bar";
-         clip_to: "fract_clip";
+      part { name: "bar"; type: RECT;
          scale: 1;
+         clip_to: "fract_clip";
          description { state: "default" 0.0;
-            rel1.to_x: "ins0";
-            rel1.to_y: "bg";
-            rel1.relative: (12/16) -0.25;
+            rel1.to: "bg";
             rel2.to_x: "barend";
             rel2.to_y: "bg";
-            rel2.relative: 1.0 1.25;
-            image.normal: "inset_bar_horiz_glow_base.png";
-            image.border: 0 72 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
+            color: 51 153 255 255;
+            offscale;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
             rel1.to_x: "barend";
-            rel1.relative: 0.0 -0.25;
-            rel2.to_x: "ins1";
-            rel2.relative: (4/16) 1.25;
-            image.normal: "inset_bar_horiz_glow_inv_base.png";
-            image.border: 72 0 0 0;
+            rel2.to_x: "bg";
          }
       }
-      part { name: "insidep0"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 0;
-            min: 20 16;
-            rel1.to_x: "inside";
-            rel1.relative: 0.0 0.0;
-            rel2.to_x: "inside";
-            rel2.relative: 0.0 1.0;
-            align: 1.0 0.5;
-         }
-      }
-      part { name: "insidep1"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 0;
-            min: 20 16;
-            rel1.to_x: "inside";
-            rel1.relative: 1.0 0.0;
-            rel2.to_x: "inside";
-            rel2.relative: 1.0 1.0;
-            align: 0.0 0.5;
-         }
-      }
-      part { name: "pulse";
+      part { name: "pulse"; type: RECT;
          clip_to: "pulse_clip";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 64 24;
-            max: 64 24;
-            rel1.to_x: "insidep0";
-            rel1.to_y: "bar";
-            rel1.relative: 0.0 0.0;
-            rel2.to_x: "insidep1";
-            rel2.to_y: "bar";
-            rel2.relative: 1.0 1.0;
-            image.normal: "inset_bar_horiz_glow_mid_base.png";
+            min: 16 8;
+            max: 16 9999;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
             align: 0.0 0.5;
+            color: 51 153 255 255;
          }
          description { state: "end" 0.0;
             inherit: "default" 0.0;
@@ -328,71 +227,24 @@ group { name: "elm/progressbar/horizontal/default";
       }
       part { name: "elm.text.status"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: GLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "inside";
-            rel2.to: "inside";
-            color_class: "progress_status";
+            rel1.to: "elm.swallow.bar";
+            rel1.offset: 4 0;
+            rel2.to: "elm.swallow.bar";
+            rel2.offset: -5 -1;
             align: 1.0 0.5;
             text { font: FN; size: 10;
                min: 0 1;
                text_class: "progress_status";
                align: 1.0 0.5;
             }
-            color: FN_COL_HIGHLIGHT_CLICKED;
-            visible: 1;
+            color: 255 255 255 255;
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-         }
-      }
-      part { name: "pulse2";
-         clip_to: "pulse_clip";
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 36 14;
-            max: 36 14;
-            rel1.to: "pulse";
-            rel2.to: "pulse";
-            image.normal: "inset_bar_horiz_glow_mid_light.png";
-            color: 255 255 255 0;
-         }
-         description { state: "glow" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "light";
-         clip_to: "fract_clip";
-         scale: 1;
-         description { state: "default" 0.0;
-            max: 36 11;
-            rel1.to_x: "bar";
-            rel1.to_y: "bar";
-            rel1.relative: 0.0 (26/96);
-            rel2.to_x: "barend";
-            rel2.to_y: "bar";
-            rel2.relative: 0.2 ((26+44)/96);
-            align: 1.0 0.0;
-            image.normal: "inset_bar_horiz_glow_light.png";
-            image.border: 0 20 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-            color: 255 255 255 0;
-         }
-         description { state: "inv" 0.0;
-            inherit: "default" 0.0;
-            rel1.to_x: "barend";
-            rel1.to_y: "bar";
-            rel1.relative: 0.8 (26/96);
-            rel2.to_x: "bar";
-            rel2.to_y: "bar";
-            rel2.relative: 1.0 ((26+44)/96);
-            align: 0.0 0.0;
-            image.normal: "inset_bar_horiz_glow_inv_light.png";
-            image.border: 20 0 0 0;
          }
       }
    }
@@ -402,33 +254,12 @@ group { name: "elm/progressbar/horizontal/default";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
          target: "barend";
-         target: "light";
       }
       program { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "bar";
          target: "barend";
-         target: "light";
-      }
-      program { name: "drag-set";
-         signal: "drag,set"; source: "elm.cur.progressbar";
-         script {
-            new a, Float:dx, Float:dy, Float:vl, st[20];
-
-            get_drag(PART:"elm.cur.progressbar", dx, dy);
-            get_state(PART:"bar", st, 19, vl);
-            if (!strcmp(st, "inv")) {
-               a = round(((1.0 - dx) * 255) / 0.2);
-               custom_state(PART:"light", "inv", 0.0);
-            } else {
-               a = round((dx * 255) / 0.2);
-               custom_state(PART:"light", "default", 0.0);
-            }
-            if (a > 255) { a = 255; }
-            set_state_val(PART:"light", STATE_COLOR, 255, 255, 255, a);
-            set_state(PART:"light", "custom", 0.0);
-         }
       }
       program { name: "pulse-mode0";
          signal: "elm,state,pulse"; source: "elm";
@@ -447,32 +278,18 @@ group { name: "elm/progressbar/horizontal/default";
          target: "pulse_clip";
          target: "fract_clip";
          after: "pulse0";
-         after: "pulse0.1";
-      }
-      program { name: "pulse0.1";
-         action:  STATE_SET "glow" 0.0;
-         transition: ACCELERATE 0.4;
-         target: "pulse2";
-         after: "pulse0.2";
-      }
-      program { name: "pulse0.2";
-         action:  STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4;
-         target: "pulse2";
       }
       program { name: "pulse0";
          action:  STATE_SET "end" 0.0;
          transition: SINUSOIDAL 0.8;
          target: "pulse";
          after: "pulse1";
-         after: "pulse0.1";
       }
       program { name: "pulse1";
          action:  STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.8;
          target: "pulse";
          after: "pulse0";
-         after: "pulse0.1";
       }
       program { name: "fraction";
          signal: "elm,state,fraction"; source: "elm";
@@ -552,21 +369,10 @@ group { name: "elm/progressbar/horizontal/default";
    }
 #undef ICON
 #undef LABEL
-#undef UNITS
 #undef DISABLE
 }
 
 group { name: "elm/progressbar/vertical/default";
-   images.image: "inset_bar_vert_base.png" COMP;
-   images.image: "inset_bar_vert_light.png" COMP;
-   images.image: "inset_bar_vert_inside_base.png" COMP;
-   images.image: "inset_bar_vert_inside_light.png" COMP;
-   images.image: "inset_bar_vert_glow_base.png" COMP;
-   images.image: "inset_bar_vert_glow_light.png" COMP;
-   images.image: "inset_bar_vert_glow_inv_base.png" COMP;
-   images.image: "inset_bar_vert_glow_inv_light.png" COMP;
-   images.image: "inset_bar_vert_glow_mid_base.png" COMP;
-   images.image: "inset_bar_vert_glow_mid_light.png" COMP;
 #define ICON    1
 #define LABEL   2
 #define DISABLE 4
@@ -588,9 +394,16 @@ group { name: "elm/progressbar/vertical/default";
          if (ic) {
             set_state(PART:"elm.swallow.content", "visible", 0.0);
             set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"bg", "iclabel", 0.0);
          } else {
             set_state(PART:"elm.swallow.content", "default", 0.0);
             set_state(PART:"sizer.content", "default", 0.0);
+            if (l) {
+               set_state(PART:"bg", "iclabel", 0.0);
+            }
+            else {
+               set_state(PART:"bg", "default", 0.0);
+            }
          }
          if (!d) {
             set_state(PART:"dis_clip", "default", 0.0);
@@ -632,27 +445,29 @@ group { name: "elm/progressbar/vertical/default";
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          clip_to: "dis_clip";
          description { state: "default" 0.0;
             visible: 0;
             align: 0.5 0.0;
-            fixed: 0 1;
-            rel1.offset: 2 0;
-            rel2.offset: -3 -1;
+            fixed: 1 1;
+            rel1.offset: 4 0;
+            rel2.offset: -5 -1;
             rel2.relative: 1.0 0.0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0; aspect_preference: HORIZONTAL;
-            rel1.offset: 2 2;
-            rel2.offset: -3 2;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
          }
       }
       part { name: "sizer.content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 1;
+            fixed: 0 0;
             visible: 0;
             text { font: FN; size: 10;
                min: 0 0;
@@ -661,6 +476,7 @@ group { name: "elm/progressbar/vertical/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            fixed: 1 1;
             rel1.to: "elm.swallow.content";
             rel2.to: "elm.swallow.content";
             text {
@@ -671,213 +487,112 @@ group { name: "elm/progressbar/vertical/default";
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             align: 0.5 0.0;
             rel1.to_y: "elm.swallow.content";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 2 -1;
+            rel1.offset: 4 -1;
             rel2.to_y: "elm.swallow.content";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -1;
-            color: FN_COL_DEFAULT;
-            color_class: "progressbar_text";
+            rel2.offset: -5 -1;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                text_class: "progressbar";
                min: 0 0;
                align: 0.5 0.0;
             }
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            fixed: 0 1;
             visible: 1;
-            rel1.offset: 2 2;
-            rel2.offset: -3 2;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
             text.min: 1 1;
             text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "progressbar_text_disabled";
-            color: FN_COL_DISABLE_LIGHTER_SHADOW;
+            color: 80 80 80 255;
          }
       }
-      part { name: "bg-hi";
-         description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel1.offset: 0 1;
-            rel2.to: "bg";
-            rel2.offset: -1 0;
-            image.normal: "inset_bar_vert_light.png";
-            image.border: 0 0 32 32;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-         }
-      }
-      part { name: "bg";
+      part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             min: 16 16;
             max: 16 -1;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color: DARK_GREY_BG_COLOR;
+            offscale;
+         }
+         description { state: "iclabel" 0.0;
+            inherit: "default" 0.0;
             rel1.to_y: "elm.text";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 3 3;
-            rel2.offset: -4 -4;
-            image.normal: "inset_bar_vert_base.png";
-            image.border: 0 0 32 32;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-         }
-      }
-      part { name: "ins0"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 0 1;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            rel2.relative: 1.0 0.0;
-            min: 16 5;
-            align: 0.5 0.0;
-         }
-      }
-      part { name: "ins1"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 0 1;
-            rel1.to: "bg";
-            rel1.relative: 0.0 1.0;
-            rel2.to: "bg";
-            min: 16 5;
-            align: 0.5 1.0;
-         }
-      }
-      part { name: "inside-hi";
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "inside";
-            rel1.offset: 0 1;
-            rel2.to: "inside";
-            rel2.offset: -1 0;
-            image.normal: "inset_bar_vert_inside_light.png";
-            image.border: 0 0 8 8;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-         }
-      }
-      part { name: "inside";
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 4 4;
-            rel1.to: "ins0";
-            rel1.relative: (6/16) 1.0;
-            rel2.to: "ins1";
-            rel2.relative: (10/16) 0.0;
-            image.normal: "inset_bar_vert_inside_base.png";
-            image.border: 0 0 8 8;
-            image.border_scale_by: 0.25; image.border_scale: 1;
          }
       }
       part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            rel1.to: "bg";
+            rel2.to: "bg";
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;
-         scale: 1;
-         dragable.confine: "inside";
+         dragable.confine: "elm.swallow.bar";
          dragable.x: 0 0 0;
          dragable.y: 1 1 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 4 8;
-            max: 4 8;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            min: 1 1;
+            max: 9999 1;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
          }
       }
       part { name: "barend"; type: SPACER;
-         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
-            min: 16 14;
+            max: 9999 1;
             rel1.to_y: "elm.cur.progressbar";
-            rel1.relative: 0.0 1.0;
             rel2.to_y: "elm.cur.progressbar";
-            rel2.relative: 1.0 1.0;
-            align: 0.5 0.0;
+            align: 0.5 1.0;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 0.0;
-            align: 0.5 1.0;
+            align: 0.5 0.0;
          }
       }
-      part { name: "bar";
-         clip_to: "fract_clip";
+      part { name: "bar"; type: RECT;
          scale: 1;
+         clip_to: "fract_clip";
          description { state: "default" 0.0;
-            rel1.to_y: "ins0";
-            rel1.to_x: "bg";
-            rel1.relative: -0.25 (12/16);
+            rel1.to: "bg";
             rel2.to_y: "barend";
             rel2.to_x: "bg";
-            rel2.relative: 1.25 1.0;
-            image.normal: "inset_bar_vert_glow_base.png";
-            image.border: 0 0 0 72;
-            image.border_scale_by: 0.25; image.border_scale: 1;
+            color: 51 153 255 255;
+            offscale;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
             rel1.to_y: "barend";
-            rel1.relative: -0.25 0.0;
-            rel2.to_y: "ins1";
-            rel2.relative: 1.25 (4/16);
-            image.normal: "inset_bar_vert_glow_inv_base.png";
-            image.border: 0 0 72 0;
+            rel2.to_y: "bg";
          }
       }
-      part { name: "insidep0"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 0 1;
-            min: 16 20;
-            rel1.to_y: "inside";
-            rel1.relative: 0.0 0.0;
-            rel2.to_y: "inside";
-            rel2.relative: 1.0 0.0;
-            align: 0.5 1.0;
-         }
-      }
-      part { name: "insidep1"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 0 1;
-            min: 16 20;
-            rel1.to_y: "inside";
-            rel1.relative: 0.0 1.0;
-            rel2.to_y: "inside";
-            rel2.relative: 1.0 1.0;
-            align: 0.5 0.0;
-         }
-      }
-      part { name: "pulse";
+      part { name: "pulse"; type: RECT;
          clip_to: "pulse_clip";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 24 64;
-            max: 24 64;
-            rel1.to_y: "insidep0";
-            rel1.to_x: "bar";
-            rel1.relative: 0.0 0.0;
-            rel2.to_y: "insidep1";
-            rel2.to_x: "bar";
-            rel2.relative: 1.0 1.0;
-            image.normal: "inset_bar_vert_glow_mid_base.png";
+            min: 8 16;
+            max: 9999 16;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
             align: 0.5 0.0;
+            color: 51 153 255 255;
          }
          description { state: "end" 0.0;
             inherit: "default" 0.0;
@@ -888,82 +603,33 @@ group { name: "elm/progressbar/vertical/default";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            rel1.to: "bg";
+            rel2.to: "bg";
             aspect: 1.0 1.0; aspect_preference: NONE;
          }
       }
       part { name: "elm.text.status"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: GLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.to: "statbox";
             rel2.to: "statbox";
-            color_class: "progress_status";
+            rel1.offset: 4 0;
+            rel2.offset: -5 -1;
             align: 1.0 0.5;
             text { font: FN; size: 10;
                min: 0 1;
                text_class: "progress_status";
                align: 1.0 0.5;
             }
-            color: FN_COL_HIGHLIGHT_CLICKED;
-            visible: 1;
             map.on: 1;
             map.smooth: 0;
-            map.rotation.center: "statbox";
+            map.rotation.center: "elm.swallow.bar";
             map.rotation.z: 90;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-         }
-      }
-      part { name: "pulse2";
-         clip_to: "pulse_clip";
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 14 36;
-            max: 14 36;
-            rel1.to: "pulse";
-            rel2.to: "pulse";
-            image.normal: "inset_bar_vert_glow_mid_light.png";
-            color: 255 255 255 0;
-         }
-         description { state: "glow" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "light";
-         clip_to: "fract_clip";
-         scale: 1;
-         description { state: "default" 0.0;
-            max: 11 36;
-            rel1.to_y: "bar";
-            rel1.to_x: "bar";
-            rel1.relative: (26/96) 0.0;
-            rel2.to_y: "barend";
-            rel2.to_x: "bar";
-            rel2.relative: ((26+44)/96) 0.2;
-            align: 0.0 1.0;
-            image.normal: "inset_bar_vert_glow_light.png";
-            image.border: 0 0 0 20;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-            color: 255 255 255 0;
-         }
-         description { state: "inv" 0.0;
-            inherit: "default" 0.0;
-            rel1.to_y: "barend";
-            rel1.to_x: "bar";
-            rel1.relative: (26/96) 0.8;
-            rel2.to_y: "bar";
-            rel2.to_x: "bar";
-            rel2.relative: ((26+44)/96) 1.0;
-            align: 0.0 0.0;
-            image.normal: "inset_bar_vert_glow_inv_light.png";
-            image.border: 0 0 20 0;
          }
       }
    }
@@ -973,33 +639,12 @@ group { name: "elm/progressbar/vertical/default";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
          target: "barend";
-         target: "light";
       }
       program { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "bar";
          target: "barend";
-         target: "light";
-      }
-      program { name: "drag-set";
-         signal: "drag,set"; source: "elm.cur.progressbar";
-         script {
-            new a, Float:dx, Float:dy, Float:vl, st[20];
-
-            get_drag(PART:"elm.cur.progressbar", dx, dy);
-            get_state(PART:"bar", st, 19, vl);
-            if (!strcmp(st, "inv")) {
-               a = round(((1.0 - dy) * 255) / 0.2);
-               custom_state(PART:"light", "inv", 0.0);
-            } else {
-               a = round((dy * 255) / 0.2);
-               custom_state(PART:"light", "default", 0.0);
-            }
-            if (a > 255) { a = 255; }
-            set_state_val(PART:"light", STATE_COLOR, 255, 255, 255, a);
-            set_state(PART:"light", "custom", 0.0);
-         }
       }
       program { name: "pulse-mode0";
          signal: "elm,state,pulse"; source: "elm";
@@ -1018,32 +663,18 @@ group { name: "elm/progressbar/vertical/default";
          target: "pulse_clip";
          target: "fract_clip";
          after: "pulse0";
-         after: "pulse0.1";
-      }
-      program { name: "pulse0.1";
-         action:  STATE_SET "glow" 0.0;
-         transition: ACCELERATE 0.4;
-         target: "pulse2";
-         after: "pulse0.2";
-      }
-      program { name: "pulse0.2";
-         action:  STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4;
-         target: "pulse2";
       }
       program { name: "pulse0";
          action:  STATE_SET "end" 0.0;
          transition: SINUSOIDAL 0.8;
          target: "pulse";
          after: "pulse1";
-         after: "pulse0.1";
       }
       program { name: "pulse1";
          action:  STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.8;
          target: "pulse";
          after: "pulse0";
-         after: "pulse0.1";
       }
       program { name: "fraction";
          signal: "elm,state,fraction"; source: "elm";
@@ -1051,7 +682,7 @@ group { name: "elm/progressbar/vertical/default";
          target: "elm.text.status";
          after: "pulse-stop";
       }
-      program { name: "elmpulsestop";
+      program { name: "elmpulse-stop";
          signal: "elm,state,pulse,stop"; source: "elm";
          action: ACTION_STOP;
          target: "pulse0";
@@ -1062,12 +693,12 @@ group { name: "elm/progressbar/vertical/default";
          action:  STATE_SET "default" 0.0;
          target: "pulse_clip";
       }
-      program { name: "unit-visible";
+      program { name: "units-visible";
          signal: "elm,state,units,visible"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "elm.text.status";
       }
-      program { name: "unit-hidden";
+      program { name: "units-hidden";
          signal: "elm,state,units,hidden"; source: "elm";
          action:  STATE_SET "hidden" 0.0;
          target: "elm.text.status";
@@ -1082,7 +713,7 @@ group { name: "elm/progressbar/vertical/default";
       }
       program { name: "text-hidden";
          signal: "elm,state,text,hidden"; source: "elm";
-         script {         
+         script {
             new m = get_int(slmode);
             m &= ~LABEL; set_int(slmode, m);
             eval_mode(m);
@@ -1098,23 +729,23 @@ group { name: "elm/progressbar/vertical/default";
       }
       program { name: "icon-hidden";
          signal: "elm,state,icon,hidden"; source: "elm";
-         script {         
+         script {
             new m = get_int(slmode);
             m &= ~ICON; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program { name: "elmdisabled";
+      program { name: "state-disabled";
          signal: "elm,state,disabled"; source: "elm";
-         script {         
+         script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program { name: "elmenabled";
+      program { name: "state-enabled";
          signal: "elm,state,enabled"; source: "elm";
-         script {         
+         script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
             eval_mode(m);
@@ -1123,18 +754,21 @@ group { name: "elm/progressbar/vertical/default";
    }
 #undef ICON
 #undef LABEL
-#undef UNITS
 #undef DISABLE
 }
 
 group { name: "elm/progressbar/horizontal/wheel";
    alias: "elm/progressbar/vertical/wheel";
    alias: "elm/progressbar/horizontal/fileselector/default";
-   images.image: "knob_round_busy.png" COMP;
-   images.image: "glow_round_corners.png" COMP;
+   set { name: "spinner";
+      image { image: "spinner-32.png" COMP; size: 17 45 9999 9999; }
+      image { image: "spinner-16.png" COMP; size:  9 23   16   44; }
+      image { image: "spinner-8.png"  COMP; size:  0  0    8   22; }
+   }
    parts {
       part { name: "elm.swallow.bar" ; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 0 0;
             max: 0 0;
             visible: 0;
@@ -1142,148 +776,278 @@ group { name: "elm/progressbar/horizontal/wheel";
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 0 0;
             max: 0 0;
             visible: 0;
          }
       }
-      part { name: "busy_clip"; type: RECT;
-         description { state: "default" 0.0;
-            visible: 0;
-            color: 255 255 255 0;
-         }
-         description { state: "active" 0.0;
-            visible: 1;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "knob"; mouse_events: 0;
+      part { name: "spin1"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob_round_busy.png";
-            min: 40 40;
-            max: 40 40;
-         }
-      }
-      part { name: "knob_spinner"; mouse_events: 0;
-         clip_to: "busy_clip";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "knob";
-            rel2.to: "knob";
-            image.normal: "glow_round_corners.png";
+            image.normal: "spinner";
+            color: 160 160 160 255;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.2 1.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            min: 8 22;
+            max: 8 22;
             map.on: 1;
             map.smooth: 1;
-            map.rotation.center: "knob";
+            map.rotation.center: "spin1";
          }
-         description { state: "spin" 0.0;
-            inherit: "default" 0.0;
+         description { state: "end" 0.0;
+            inherit;
             map.rotation.z: 360;
+         }
+      }
+      part { name: "spin2"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "spinner";
+            color: 160 160 160 255;
+            rel1.relative: 0.2 0.0;
+            rel2.relative: 0.4 1.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            min: 8 22;
+            max: 8 22;
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "spin2";
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 360;
+         }
+      }
+      part { name: "spin3"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "spinner";
+            color: 160 160 160 255;
+            rel1.relative: 0.4 0.0;
+            rel2.relative: 0.6 1.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            min: 8 22;
+            max: 8 22;
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "spin3";
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 360;
+         }
+      }
+      part { name: "spin4"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "spinner";
+            color: 160 160 160 255;
+            rel1.relative: 0.6 0.0;
+            rel2.relative: 0.8 1.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            min: 8 22;
+            max: 8 22;
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "spin4";
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 360;
+         }
+      }
+      part { name: "spin5"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "spinner";
+            color: 160 160 160 255;
+            rel1.relative: 0.8 0.0;
+            rel2.relative: 1.0 1.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            min: 8 22;
+            max: 8 22;
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "spin5";
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 360;
+         }
+      }
+      part { name: "base"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            min: 100 20;
+            max: 100 20;
+            offscale;
          }
       }
    }
    programs {
-      program { name: "spin";
+      program { name: "spin-1";
+         in: 0.0 0.0;
          signal: "elm,state,pulse,start"; source: "elm";
-         action: STATE_SET "spin" 0.0;
-         transition: LINEAR 1.0;
-         target: "knob_spinner";
-         after: "spin2";
+         action: SIGNAL_EMIT "spin1" "";
+         after: "spin-2";
       }
-      program { name: "spin2";
+      program { name: "spin-2";
+         in: 0.2 0.0;
+         action: SIGNAL_EMIT "spin2" "";
+         after: "spin-3";
+      }
+      program { name: "spin-3";
+         in: 0.2 0.0;
+         action: SIGNAL_EMIT "spin3" "";
+         after: "spin-4";
+      }
+      program { name: "spin-4";
+         in: 0.2 0.0;
+         action: SIGNAL_EMIT "spin4" "";
+         after: "spin-5";
+      }
+      program { name: "spin-5";
+         in: 0.2 0.0;
+         action: SIGNAL_EMIT "spin5" "";
+      }
+      program { name: "spin1.1";
+         signal: "spin1"; source: "";
+         action: STATE_SET "end" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "spin1";
+         after: "spin1.2";
+      }
+      program { name: "spin1.2";
          action: STATE_SET "default" 0.0;
-         target: "knob_spinner";
-         after: "spin";
+         target: "spin1";
+         after: "spin1.1";
       }
-      program {
-         signal: "elm,state,pulse,start"; source: "elm";
-         action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.25;
-         target: "busy_clip";
+      program { name: "spin2.1";
+         signal: "spin2"; source: "";
+         action: STATE_SET "end" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "spin2";
+         after: "spin2.2";
+      }
+      program { name: "spin2.2";
+         action: STATE_SET "default" 0.0;
+         target: "spin2";
+         after: "spin2.1";
+      }
+      program { name: "spin3.1";
+         signal: "spin3"; source: "";
+         action: STATE_SET "end" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "spin3";
+         after: "spin3.2";
+      }
+      program { name: "spin3.2";
+         action: STATE_SET "default" 0.0;
+         target: "spin3";
+         after: "spin3.1";
+      }
+      program { name: "spin4.1";
+         signal: "spin4"; source: "";
+         action: STATE_SET "end" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "spin4";
+         after: "spin4.2";
+      }
+      program { name: "spin4.2";
+         action: STATE_SET "default" 0.0;
+         target: "spin4";
+         after: "spin4.1";
+      }
+      program { name: "spin5.1";
+         signal: "spin5"; source: "";
+         action: STATE_SET "end" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "spin5";
+         after: "spin5.2";
+      }
+      program { name: "spin5.2";
+         action: STATE_SET "default" 0.0;
+         target: "spin5";
+         after: "spin5.1";
       }
       program {
          signal: "elm,state,pulse,stop"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 1.0;
-         target: "busy_clip";
-         after: "spin3";
-      }
-      program { name: "spin3";
          action: ACTION_STOP;
-         target: "spin";
-         target: "spin2";
-         after: "spin4";
+         target: "spin-1";
+         target: "spin-2";
+         target: "spin-3";
+         target: "spin-4";
+         target: "spin-5";
+         after: "stop2";
       }
-      program { name: "spin4";
+      program { name: "stop2";
          action: STATE_SET "default" 0.0;
-         target: "knob_spinner";
+         transition: SINUSOIDAL 1.0 CURRENT;
+         target: "spin1";
+         target: "spin2";
+         target: "spin3";
+         target: "spin4";
+         target: "spin5";
       }
    }
 }
 
 group { name: "elm/progressbar/horizontal/double";
    inherit: "elm/progressbar/horizontal/default";
-   images {
-      image: "inset_bar_horiz_glow_base_double.png" COMP;
-      image: "inset_bar_horiz_glow_inv_base_double.png" COMP;
-   }
    parts {
       part { name: "elm.cur.progressbar1"; mouse_events: 0; type: SPACER;
-         insert_after: "inside";
+         insert_after: "bg";
          scale: 1;
-         dragable.confine: "inside";
+         dragable.confine: "elm.swallow.bar";
          dragable.x: 1 1 1;
          dragable.y: 0 0 0;
          description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 8 4;
-            max: 8 4;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            fixed: 1 0;
+            min: 1 1;
+            max: 1 9999;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
          }
       }
       part { name: "barend1"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 0;
-            min: 14 16;
+            max: 1 9999;
             rel1.to_x: "elm.cur.progressbar1";
-            rel1.relative: 1.0 0.0;
             rel2.to_x: "elm.cur.progressbar1";
-            rel2.relative: 1.0 1.0;
-            align: 0.0 0.5;
-         }
-         description { state: "inv" 0.0;
-            inherit: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 0.0 1.0;
             align: 1.0 0.5;
          }
+         description { state: "inv" 0.0;
+            inherit: "default" 0.0;
+            align: 0.0 0.5;
+         }
       }
-      part { name: "bar1";
-         insert_after: "barend";
-         clip_to: "fract_clip";
+      part { name: "bar1"; type: RECT;
          scale: 1;
+         insert_before: "bar";
+         clip_to: "fract_clip";
          description { state: "default" 0.0;
-            rel1.to_x: "ins0";
-            rel1.to_y: "bg";
-            rel1.relative: (12/16) -0.25;
+            rel1.to: "bg";
             rel2.to_x: "barend1";
             rel2.to_y: "bg";
-            rel2.relative: 1.0 1.25;
-            image.normal: "inset_bar_horiz_glow_base_double.png";
-            image.border: 0 72 0 0;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-            color: 51 153 255 128;
+            color: 80 80 80 255;
+            offscale;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
-            rel1.to_x: "barend";
-            rel1.relative: 0.0 -0.25;
-            rel2.to_x: "ins1";
-            rel2.relative: (4/16) 1.25;
-            image.normal: "inset_bar_horiz_glow_inv_base_double.png";
-            image.border: 72 0 0 0;
+            rel1.to_x: "barend1";
+            rel2.to_x: "bg";
          }
       }
    }
@@ -1295,7 +1059,6 @@ group { name: "elm/progressbar/horizontal/double";
          target: "bar1";
          target: "barend";
          target: "barend1";
-         target: "light";
       }
       program
        { name: "inverted-off";
@@ -1305,74 +1068,55 @@ group { name: "elm/progressbar/horizontal/double";
          target: "bar1";
          target: "barend";
          target: "barend1";
-         target: "light";
       }
    }
 }
 
 group { name: "elm/progressbar/vertical/double";
    inherit: "elm/progressbar/vertical/default";
-   images {
-      image: "inset_bar_vert_glow_base_double.png" COMP;
-      image: "inset_bar_vert_glow_inv_base_double.png" COMP;
-   }
    parts {
       part { name: "elm.cur.progressbar1"; mouse_events: 0; type: SPACER;
-         insert_after: "inside";
+         insert_after: "bg";
          scale: 1;
-         dragable.confine: "inside";
+         dragable.confine: "elm.swallow.bar";
          dragable.x: 0 0 0;
          dragable.y: 1 1 1;
          description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 4 8;
-            max: 4 8;
-            rel1.to: "inside";
-            rel2.to: "inside";
+            fixed: 0 1;
+            max: 1 9999;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
          }
       }
       part { name: "barend1"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
-            min: 16 14;
+            max: 1 9999;
             rel1.to_y: "elm.cur.progressbar1";
-            rel1.relative: 0.0 1.0;
             rel2.to_y: "elm.cur.progressbar1";
-            rel2.relative: 1.0 1.0;
-            align: 0.5 0.0;
+            align: 0.5 1.0;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 0.0;
-            align: 0.5 1.0;
+            align: 0.5 0.0;
          }
       }
-      part { name: "bar1";
+      part { name: "bar1"; type: RECT;
+         scale: 1;
          insert_after: "barend";
          clip_to: "fract_clip";
-         scale: 1;
          description { state: "default" 0.0;
-            rel1.to_y: "ins0";
-            rel1.to_x: "bg";
-            rel1.relative: -0.25 (12/16);
+            rel1.to: "bg";
             rel2.to_y: "barend1";
             rel2.to_x: "bg";
-            rel2.relative: 1.25 1.0;
-            image.normal: "inset_bar_vert_glow_base_double.png";
-            image.border: 0 0 0 72;
-            image.border_scale_by: 0.25; image.border_scale: 1;
-            color: 51 153 255 128;
+            color: 80 80 80 255;
+            offscale;
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
             rel1.to_y: "barend1";
-            rel1.relative: -0.25 0.0;
-            rel2.to_y: "ins1";
-            rel2.relative: 1.25 (4/16);
-            image.normal: "inset_bar_vert_glow_inv_base_double.png";
-            image.border: 0 0 72 0;
+            rel2.to_y: "bg";
          }
       }
    }
@@ -1381,18 +1125,16 @@ group { name: "elm/progressbar/vertical/double";
          signal: "elm,state,inverted,on"; source: "elm";
          action:  STATE_SET "inv" 0.0;
          target: "bar";
-         target: "barend";
-         target: "light";
          target: "bar1";
+         target: "barend";
          target: "barend1";
       }
       program { name: "inverted-off";
          signal: "elm,state,inverted,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "bar";
-         target: "barend";
-         target: "light";
          target: "bar1";
+         target: "barend";
          target: "barend1";
       }
    }
