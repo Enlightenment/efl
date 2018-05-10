@@ -4183,8 +4183,10 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
    keyl = strlen(prefix) + 2;
    key = alloca(keyl + 1);
    if (!key) return;
-   strcpy(key, prefix);
-   strcat(key, ":\"");
+
+   strncpy(key, prefix, keyl + 1);
+   strncat(key, ":\"", strlen(":\""));
+
    quote = 0;
    escape = 0;
    for (p = s; (p) && (*p); p++)
