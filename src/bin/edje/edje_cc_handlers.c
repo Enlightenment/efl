@@ -11341,7 +11341,7 @@ st_collections_group_parts_part_description_text_text(void)
         else
           {
              str = realloc(str, strlen(str) + strlen(s) + 1);
-             strcat(str, s);
+             strncat(str, s, strlen(str) + strlen(s) + 1);
              free(s);
           }
      }
