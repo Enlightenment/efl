@@ -4014,6 +4014,12 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 }
 
 static Eina_Bool
+_more_item_is_present(Elm_Toolbar_Data *pd)
+{
+  return pd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU || pd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND;
+}
+
+static Eina_Bool
 _part_of_chain(Elm_Toolbar_Item_Data *pd)
 {
    Eina_Bool want = EINA_TRUE;
@@ -4040,7 +4046,8 @@ _elm_toolbar_efl_ui_focus_composition_prepare(Eo *obj, Elm_Toolbar_Data *pd)
      {
        if (_part_of_chain(it))
           order = eina_list_append(order, EO_OBJ(it));
-        if (!it->prio.visible) require_more_items = EINA_TRUE;
+        if (_more_item_is_present(pd) && !it->prio.visible)
+          require_more_items = EINA_TRUE;
      }
 
    if (require_more_items)
