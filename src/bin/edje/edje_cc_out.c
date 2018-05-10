@@ -4184,8 +4184,8 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
    key = alloca(keyl + 1);
    if (!key) return;
 
-   strncpy(key, prefix, keyl + 1);
-   strncat(key, ":\"", strlen(":\""));
+   memcpy(key, prefix, keyl - 1);
+   strncat(key, ":\"", strlen(":\"") + 1);
 
    quote = 0;
    escape = 0;
