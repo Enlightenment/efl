@@ -251,25 +251,7 @@ _eo_condtor_reset(_Eo_Object *obj)
    obj->condtor_done = EINA_FALSE;
 }
 
-// Generate the invalidate event in all case and make sure it happens
-// before any user code can change the children invalidate state. This
-// make sure that the entire tree of object is valid at the time of
-// the invalidate event.
-static void
-_efl_invalidate(_Eo_Object *obj)
-{
-   Eo *id;
-
-   if (obj->is_invalidating) return ;
-   obj->is_invalidating = EINA_TRUE;
-   if (obj->invalidate) return;
-
-   id = _eo_obj_id_get(obj);
-
-   efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
-
-   efl_invalidate(id);
-}
+void _efl_invalidate(_Eo_Object *obj);
 
 static inline void
 _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)

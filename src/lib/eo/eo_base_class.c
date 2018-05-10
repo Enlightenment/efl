@@ -132,20 +132,10 @@ _efl_pending_futures_clear(Efl_Object_Data *pd)
 static void
 _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 {
-   Eina_Inlist *l;
-   _Eo_Object *child;
-
    _efl_pending_futures_clear(pd);
 
    EO_OBJ_POINTER(obj_id, obj);
    if (obj->invalidate) goto end;
-
-   // Invalidate all children too
-   EINA_INLIST_FOREACH_SAFE(pd->children, l, child)
-     {
-        Eo *child_id = _eo_obj_id_get(child);
-        efl_parent_set(child_id, NULL);
-     }
 
    // Finally invalidate itself if it wasn't done already
    // I am not sure this is a good idea, but it force the
@@ -158,6 +148,47 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 
  end:
    EO_OBJ_DONE(obj_id);
+}
+
+// Generate the invalidate event in all case and make sure it happens
+// before any user code can change the children invalidate state. This
+// make sure that the entire tree of object is valid at the time of
+// the invalidate event.
+void
+_efl_invalidate(_Eo_Object *obj)
+{
+   Eina_Array stash = { 0 };
+   Efl_Object_Data *pd;
+   _Eo_Object *child;
+   Eo *id;
+
+   if (obj->is_invalidating) return ;
+   obj->is_invalidating = EINA_TRUE;
+   if (obj->invalidate) return;
+
+   id = _eo_obj_id_get(obj);
+
+   efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
+
+   pd = efl_data_scope_get(id, EFL_OBJECT_CLASS);
+
+   efl_invalidate(id);
+
+   eina_array_step_set(&stash, sizeof (stash), 4);
+
+   // Invalidate all children too
+   EINA_INLIST_FOREACH(pd->children, child)
+     eina_array_push(&stash, _efl_ref(child));
+
+   while ((child = eina_array_pop(&stash)))
+     {
+        Eo *child_id = _eo_obj_id_get(child);
+
+        efl_parent_set(child_id, NULL);
+        _efl_unref(child);
+     }
+
+   eina_array_flush(&stash);
 }
 
 static void
