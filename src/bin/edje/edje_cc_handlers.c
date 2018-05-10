@@ -15310,7 +15310,9 @@ ob_collections_group_programs_program(void)
 
    /* generate new name */
    def_name = alloca(strlen("program_") + strlen("FFFFFFFFFFFFFFFF") + 1);
-   sprintf(def_name, "program_%X", pc->programs.total_count);
+   snprintf(def_name, strlen("program_") + strlen("FFFFFFFFFFFFFFFF") + 1,
+            "program_%X", pc->programs.total_count);
+
    ep->name = strdup(def_name);
    if (pcp->default_source)
      ep->source = strdup(pcp->default_source);
