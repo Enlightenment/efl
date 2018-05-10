@@ -5589,6 +5589,13 @@ eina_value_new(const Eina_Value_Type *type)
 {
    Eina_Value *value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value) return NULL;
+   if (!type)
+     {
+        const Eina_Value empty = EINA_VALUE_EMPTY;
+
+        memcpy(value, &empty, sizeof (empty));
+        return value;
+     }
    if (!eina_value_setup(value, type))
      {
         eina_mempool_free(_eina_value_mp, value);
