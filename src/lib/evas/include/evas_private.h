@@ -822,7 +822,6 @@ struct _Evas_Public_Data
 
    int               output_validity;
 
-   int               walking_list;
    Evas_Event_Flags  default_event_flags;
 
    struct {

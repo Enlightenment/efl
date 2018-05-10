@@ -303,9 +303,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Eina_Bool del;
 
    evas_canvas_async_block(e);
-   if (e->walking_list == 0) evas_render_idle_flush(eo_e);
-
-   if (e->walking_list > 0) return;
+   evas_render_idle_flush(eo_e);
 
    evas_render_idle_flush(eo_e);
 
@@ -317,7 +315,6 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    _evas_canvas_event_shutdown(eo_e, e);
 
    del = EINA_TRUE;
-   e->walking_list++;
    e->cleanup = 1;
    while (del)
      {
@@ -385,8 +382,6 @@ next_zombie:
    EINA_INLIST_FOREACH(e->layers, lay)
      evas_layer_free_objects(lay);
    evas_layer_clean(eo_e);
-
-   e->walking_list--;
 
    evas_font_path_clear(eo_e);
 
@@ -776,14 +771,13 @@ _evas_canvas_nochange_pop(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 void
 _evas_walk(Evas_Public_Data *e)
 {
-   e->walking_list++;
+   efl_ref(e->evas);
 }
 
 void
 _evas_unwalk(Evas_Public_Data *e)
 {
-   e->walking_list--;
-   if ((e->walking_list == 0) && (e->delete_me)) evas_free(e->evas);
+   efl_unref(e->evas);
 }
 
 EAPI const char *
