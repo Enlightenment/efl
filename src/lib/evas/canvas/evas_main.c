@@ -283,9 +283,99 @@ evas_free(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
+_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
 {
+   Evas_Object_Protected_Data *o;
+   Evas_Layer *lay;
+   Eo *obj;
+   Eina_Array stash = { 0 };
+
    evas_sync(eo_e);
+
+   evas_canvas_async_block(e);
+   evas_render_idle_flush(eo_e);
+
+   efl_replace(&e->default_seat, NULL);
+   efl_replace(&e->default_mouse, NULL);
+   efl_replace(&e->default_keyboard, NULL);
+
+   _evas_post_event_callback_free(eo_e);
+   _evas_canvas_event_shutdown(eo_e, e);
+
+   e->cleanup = 1;
+
+   eina_array_step_set(&stash, sizeof (Eina_Array), 16);
+
+   // The first pass should destroy all object that are properly referenced
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        evas_layer_pre_free(lay);
+
+        EINA_INLIST_FOREACH(lay->objects, o)
+          {
+             if (!o->delete_me)
+               eina_array_push(&stash, o->object);
+          }
+     }
+
+   while ((obj = eina_array_pop(&stash)))
+     {
+        Evas_Object_Protected_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS);
+
+        // Properly destroy depending on the object being legacy or not
+        if (pd->legacy.ctor) evas_object_del(obj);
+        else efl_del(obj);
+     }
+
+   // We are now potentially only facing zombies
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        evas_layer_pre_free(lay);
+        EINA_INLIST_FOREACH(lay->objects, o)
+          {
+             if (!o->delete_me)
+               eina_array_push(&stash, o->object);
+          }
+     }
+
+   // Killing zombies now
+   while ((obj = eina_array_pop(&stash)))
+     {
+        ERR("Killing Zombie Object [%s]. Refs: %i:%i",
+            efl_debug_name_get(obj), efl_ref_count(obj), ___efl_ref2_count(obj));
+        ___efl_ref2_reset(obj);
+        // This code explicitely bypass all refcounting to destroy them
+        while (efl_ref_count(obj) > 1) efl_unref(obj);
+        while (efl_ref_count(obj) < 1) efl_ref(obj);
+        efl_del(obj);
+
+        // Forcefully remove the object from layers
+        EINA_INLIST_FOREACH(e->layers, lay)
+          EINA_INLIST_FOREACH(lay->objects, o)
+            if (o && (o->object == obj))
+              {
+                 ERR("Zombie Object [%s] %s@%p could not be removed "
+                     "from the list of objects. Maybe this object "
+                     "was deleted but the call to efl_invalidated() "
+                     "was not propagated to all the parent classes? "
+                     "Forcibly removing it. This may leak! Refs: %i:%i",
+                     efl_debug_name_get(obj), efl_class_name_get(obj), obj,
+                     efl_ref_count(obj), ___efl_ref2_count(obj));
+                 lay->objects = (Evas_Object_Protected_Data *)
+                   eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
+                 goto next_zombie;
+              }
+
+     next_zombie:
+        continue;
+     }
+
+   eina_array_flush(&stash);
+
+   // Destroying layers and their associated objects completely
+   EINA_INLIST_FOREACH(e->layers, lay)
+     evas_layer_free_objects(lay);
+   evas_layer_clean(eo_e);
 
    efl_invalidate(efl_super(eo_e, MY_CLASS));
 }
@@ -298,90 +388,23 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Evas_Post_Render_Job *job;
    Evas_Layer *lay;
    Efl_Canvas_Output *evo;
-   unsigned int prev_zombie_count = UINT_MAX;
    int i;
-   Eina_Bool del;
 
-   evas_canvas_async_block(e);
-   evas_render_idle_flush(eo_e);
-
-   evas_render_idle_flush(eo_e);
-
-   efl_replace(&e->default_seat, NULL);
-   efl_replace(&e->default_mouse, NULL);
-   efl_replace(&e->default_keyboard, NULL);
-
-   _evas_post_event_callback_free(eo_e);
-   _evas_canvas_event_shutdown(eo_e, e);
-
-   del = EINA_TRUE;
-   e->cleanup = 1;
-   while (del)
+   if (e->layers)
      {
-        Eina_Bool detach_zombies = EINA_FALSE;
+        // This should never happen as during invalidate we explicitely
+        // destroy all layers. If they survive, we have a zombie appocallypse.
         Evas_Object_Protected_Data *o;
-        Eina_List *unrefs = NULL;
-        Eo *eo_obj;
 
-        del = EINA_FALSE;
+        CRI("The layers of %p are not empty !", eo_e);
+
         EINA_INLIST_FOREACH(e->layers, lay)
-          {
-             evas_layer_pre_free(lay);
-
-             EINA_INLIST_FOREACH(lay->objects, o)
-               {
-                  if (!o->delete_me)
-                    {
-                       if ((o->ref > 0) || (efl_ref_count(o->object) > 0))
-                         {
-                            ERR("obj(%s) ref count(%d) is bigger than 0. This "
-                                "object couldn't be deleted",
-                                efl_debug_name_get(o->object),
-                                efl_ref_count(o->object));
-                            continue;
-                         }
-                       unrefs = eina_list_append(unrefs, o->object);
-                       del = EINA_TRUE;
-                    }
-               }
-          }
-
-        if (eina_list_count(unrefs) >= prev_zombie_count)
-          detach_zombies = EINA_TRUE;
-        prev_zombie_count = eina_list_count(unrefs);
-
-        EINA_LIST_FREE(unrefs, eo_obj)
-          {
-             ERR("Killing Zombie Object [%s]. Refs: %i:%i",
-                 efl_debug_name_get(eo_obj), efl_ref_count(eo_obj), ___efl_ref2_count(eo_obj));
-             ___efl_ref2_reset(eo_obj);
-             while (efl_ref_count(eo_obj) > 1) efl_unref(eo_obj);
-             while (efl_ref_count(eo_obj) < 1) efl_ref(eo_obj);
-             efl_del(eo_obj);
-
-             if (!detach_zombies) continue;
-
-             EINA_INLIST_FOREACH(e->layers, lay)
-               EINA_INLIST_FOREACH(lay->objects, o)
-                 if (o && (o->object == eo_obj))
-                   {
-                      ERR("Zombie Object [%s] could not be removed "
-                          "from the list of objects. Maybe this object "
-                          "was deleted but the call to efl_destructor() "
-                          "was not propagated to all the parent classes? "
-                          "Forcibly removing it. This may leak! Refs: %i:%i",
-                          efl_debug_name_get(eo_obj), efl_ref_count(eo_obj), ___efl_ref2_count(eo_obj));
-                      lay->objects = (Evas_Object_Protected_Data *)
-                            eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
-                      goto next_zombie;
-                   }
-next_zombie:
-             continue;
-          }
+          EINA_INLIST_FOREACH(lay->objects, o)
+            {
+               CRI("Zombie object [%s] %s@%p still present.",
+                   efl_debug_name_get(o->object), efl_class_name_get(o->object), o->object);
+            }
      }
-   EINA_INLIST_FOREACH(e->layers, lay)
-     evas_layer_free_objects(lay);
-   evas_layer_clean(eo_e);
 
    evas_font_path_clear(eo_e);
 
