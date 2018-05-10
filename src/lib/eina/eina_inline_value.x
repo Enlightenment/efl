@@ -538,11 +538,10 @@ eina_value_pget(const Eina_Value *value, void *ptr)
 static inline const Eina_Value_Type *
 eina_value_type_get(const Eina_Value *value)
 {
-   const Eina_Value empty = EINA_VALUE_EMPTY;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
    // Trigger warning if the type is NULL, but the value is != EINA_VALUE_EMTPY.
-   if (memcmp(value, &empty, sizeof (Eina_Value)))
+   if (!value->type &&
+       value->value._guarantee)
      EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(value->type), NULL);
    return value->type;
 }
