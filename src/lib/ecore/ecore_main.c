@@ -1341,6 +1341,8 @@ _ecore_main_fd_handler_del(Eo *obj EINA_UNUSED,
                            Efl_Loop_Data *pd,
                            Ecore_Fd_Handler *fd_handler)
 {
+   void *r = fd_handler->data;
+
    DBG("_ecore_main_fd_handler_del %p", fd_handler);
    if (fd_handler->delete_me)
      {
@@ -1350,16 +1352,25 @@ _ecore_main_fd_handler_del(Eo *obj EINA_UNUSED,
 
    fd_handler->handler = NULL;
    fd_handler->delete_me = EINA_TRUE;
-   _ecore_main_fdh_poll_del(pd, fd_handler);
-   pd->fd_handlers_to_delete = eina_list_append
-     (pd->fd_handlers_to_delete, fd_handler);
-   if (fd_handler->prep_func && pd->fd_handlers_with_prep)
-     pd->fd_handlers_with_prep = eina_list_remove
-      (pd->fd_handlers_with_prep, fd_handler);
-   if (fd_handler->buf_func && pd->fd_handlers_with_buffer)
-     pd->fd_handlers_with_buffer = eina_list_remove
-       (pd->fd_handlers_with_buffer, fd_handler);
-   return fd_handler->data;
+   if (pd)
+     {
+        _ecore_main_fdh_poll_del(pd, fd_handler);
+        pd->fd_handlers_to_delete = eina_list_append
+          (pd->fd_handlers_to_delete, fd_handler);
+        if (fd_handler->prep_func && pd->fd_handlers_with_prep)
+          pd->fd_handlers_with_prep = eina_list_remove
+            (pd->fd_handlers_with_prep, fd_handler);
+        if (fd_handler->buf_func && pd->fd_handlers_with_buffer)
+          pd->fd_handlers_with_buffer = eina_list_remove
+            (pd->fd_handlers_with_buffer, fd_handler);
+     }
+   else
+     {
+        // The main loop is dead by now, so cleanup is required.
+        ECORE_MAGIC_SET(fd_handler, ECORE_MAGIC_NONE);
+        ecore_fd_handler_mp_free(fd_handler);
+     }
+   return r;
 }
 
 EAPI Ecore_Fd_Handler *
