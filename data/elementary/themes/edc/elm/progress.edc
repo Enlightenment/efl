@@ -758,7 +758,6 @@ group { name: "elm/progressbar/vertical/default";
 }
 
 group { name: "elm/progressbar/horizontal/wheel";
-   alias: "elm/progressbar/vertical/wheel";
    alias: "elm/progressbar/horizontal/fileselector/default";
    set { name: "spinner";
       image { image: "spinner-32.png" COMP; size: 17 45 9999 9999; }
@@ -998,6 +997,73 @@ group { name: "elm/progressbar/horizontal/wheel";
          target: "spin3";
          target: "spin4";
          target: "spin5";
+      }
+   }
+}
+
+group { name: "elm/progressbar/vertical/wheel";
+   inherit: "elm/progressbar/horizontal/wheel";
+   parts {
+      part { name: "spin1";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.2;
+            map.rotation.z: 90;
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 450;
+         }
+      }
+      part { name: "spin2";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.2;
+            rel2.relative: 1.0 0.4;
+            map.rotation.z: 90;
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 450;
+         }
+      }
+      part { name: "spin3";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.4;
+            rel2.relative: 1.0 0.6;
+            map.rotation.z: 90;
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 450;
+         }
+      }
+      part { name: "spin4";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.6;
+            rel2.relative: 1.0 0.8;
+            map.rotation.z: 90;
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 450;
+         }
+      }
+      part { name: "spin5";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.8;
+            rel2.relative: 1.0 1.0;
+            map.rotation.z: 90;
+         }
+         description { state: "end" 0.0;
+            inherit;
+            map.rotation.z: 450;
+         }
+      }
+      part { name: "base";
+         description { state: "default" 0.0;
+            min: 20 100;
+            max: 20 100;
+         }
       }
    }
 }
