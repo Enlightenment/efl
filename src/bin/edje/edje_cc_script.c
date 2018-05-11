@@ -93,19 +93,13 @@ code_parse_internal(Code *code)
                        free(token);
 
                        token = tmp;
+                       tmp = NULL;
                        break;
                     }
 
                   if (tmp->str) free(tmp->str);
                   free(tmp);
                }
-          }
-
-        if (tmp)
-          {
-             if (tmp->str) free(tmp->str);
-             free(tmp);
-             tmp = NULL;
           }
 
         switch (token->type)
