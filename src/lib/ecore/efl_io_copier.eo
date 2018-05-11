@@ -361,9 +361,9 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
     }
 
     events {
-        done; [[All available data was copied from source to destination]]
+        done: void; [[All available data was copied from source to destination]]
         error: Eina.Error; [[An error happened and the copy stopped]]
-        progress; [[Total size changed or Data was read/written]]
+        progress: void; [[Total size changed or Data was read/written]]
         data: ptr(const(Eina.Slice)); [[When data is read to internal buffer, it's emitted in this event. The memory is only valid during event callback dispatched and should not be modified.]]
         line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified.]]
     }

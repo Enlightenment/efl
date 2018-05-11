@@ -232,11 +232,13 @@ interface Efl.Access.Text ()
       }
    }
    events {
-      access,text,bounds,changed; [[Text bounds have changed]]
-      access,text,attributes,changed; [[Text attributes have changed]]
-      access,text,caret,moved; [[Caret moved]]
-      access,text,inserted; [[Text was inserted]]
-      access,text,removed; [[Text was removed]]
-      access,text,selection,changed; [[Text selection has changed]]
+      /* FIXME: Nobody emits these
+      access,text,bounds,changed: void; [[Text bounds have changed]]
+      access,text,attributes,changed: void; [[Text attributes have changed]]
+      */
+      access,text,caret,moved: void; [[Caret moved]]
+      access,text,inserted: Efl.Access.Text_Change_Info; [[Text was inserted]]
+      access,text,removed: Efl.Access.Text_Change_Info; [[Text was removed]]
+      access,text,selection,changed: void; [[Text selection has changed]]
    }
 }

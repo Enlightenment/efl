@@ -137,9 +137,9 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
     }
 
     events {
-       position_read,changed; [[Notifies @.position_read changed]]
-       position_write,changed; [[Notifies @.position_write changed]]
-       reallocated; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice becomes invalid]]
+       position_read,changed: void; [[Notifies @.position_read changed]]
+       position_write,changed: void; [[Notifies @.position_write changed]]
+       reallocated: void; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice becomes invalid]]
     }
 
     implements {

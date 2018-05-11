@@ -38,7 +38,7 @@ class Eldbus.Model.Method (Eldbus.Model.Arguments) {
         .method;
     }
     events {
-      successful,call; [[Event dispatched for a successful method call.]]
+      successful,call: void; [[Event dispatched for a successful method call.]]
    }
 
 }

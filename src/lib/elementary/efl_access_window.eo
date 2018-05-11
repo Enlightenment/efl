@@ -2,12 +2,12 @@ interface Efl.Access.Window ()
 {
    [[Elementary accessible window interface]]
    events {
-      window,created; [[Called when new window has been created.]]
-      window,destroyed; [[Called when window has been destroyed.]]
-      window,activated; [[Called when window has been activated. (unfocused)]]
-      window,deactivated; [[Called when window has been deactivated (unfocused).]]
-      window,maximized; [[Called when window has been maximmized]]
-      window,minimized; [[Called when window has been minimized]]
-      window,restored; [[Called when window has been restored]]
+      window,created: void; [[Called when new window has been created.]]
+      window,destroyed: void; [[Called when window has been destroyed.]]
+      window,activated: void; [[Called when window has been activated. (unfocused)]]
+      window,deactivated: void; [[Called when window has been deactivated (unfocused).]]
+      window,maximized: void; [[Called when window has been maximmized]]
+      window,minimized: void; [[Called when window has been minimized]]
+      window,restored: void; [[Called when window has been restored]]
    }
 }

@@ -70,7 +70,8 @@ class Evas.Canvas3D.Object (Efl.Object)
       Efl.Object.provider_find;
    }
    events {
-      clicked; [[Clicked Event.]]
-      collision; [[Collision Event.]]
+      /* FIXME: Make sure that these two events are actually being emitted */
+      clicked: Evas.Canvas3D.Node; [[Clicked Event.]]
+      collision: Evas.Canvas3D.Node; [[Collision Event.]]
    }
 }

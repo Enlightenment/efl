@@ -355,8 +355,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
       Efl.Gfx.Entity.scale { set; }
    }
    events {
-      cursor,changed; [[Called when cursor changed]]
-      changed; [[Called when canvas text changed ]]
-      style_insets,changed; [[Called when the property @.style_insets changed.]]
+      cursor,changed: void; [[Called when cursor changed]]
+      changed: void; [[Called when canvas text changed ]]
+      style_insets,changed: void; [[Called when the property @.style_insets changed.]]
    }
 }

@@ -19,7 +19,7 @@ class Elm.Atspi.Bridge (Efl.Object)
       Efl.Object.destructor;
    }
    events {
-      connected; [[Connected with AT-SPI2 bus]]
-      disconnected; [[Disconnected from AT-SPI2 bus]]
+      connected: void; [[Connected with AT-SPI2 bus]]
+      disconnected: void; [[Disconnected from AT-SPI2 bus]]
    }
 }

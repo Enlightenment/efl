@@ -121,6 +121,6 @@ class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      drop; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
+      drop: string; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
    }
 }

@@ -75,6 +75,6 @@ class Efl.Ui.Layout.Object (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Ui.Factory.model_connect;
    }
    events {
-      theme,changed; [[Called when theme changed]]
+      theme,changed: void; [[Called when theme changed]]
    }
 }

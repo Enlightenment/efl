@@ -93,8 +93,8 @@ interface Efl.Ui.Zoom ()
       }
    }
    events {
-      zoom,start; [[Called when zooming started]]
-      zoom,stop; [[Called when zooming stopped]]
-      zoom,change; [[Called when zooming changed]]
+      zoom,start: void; [[Called when zooming started]]
+      zoom,stop: void; [[Called when zooming stopped]]
+      zoom,change: void; [[Called when zooming changed]]
    }
 }

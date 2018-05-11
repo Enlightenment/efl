@@ -203,9 +203,9 @@ class Elm.Index (Efl.Ui.Layout.Object, Efl.Ui.Direction,
       Efl.Access.Object.access_children { get; }
    }
    events {
-      changed; [[Called when index changed]]
-      delay,changed; [[Called when delay changed]]
-      level,up; [[Called when level increased]]
-      level,down; [[Called when level decreased]]
+      changed: Efl.Object; [[Called when index changed]]
+      delay,changed: Efl.Object; [[Called when delay changed]]
+      level,up: void; [[Called when level increased]]
+      level,down: void; [[Called when level decreased]]
    }
 }

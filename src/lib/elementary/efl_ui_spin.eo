@@ -18,8 +18,8 @@ class Efl.Ui.Spin (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Format,
       Efl.Ui.Format.format_cb { set; }
    }
    events {
-      changed; [[Called when spin changed]]
-      min,reached; [[Called when spin value reached min]]
-      max,reached; [[Called when spin value reached max]]
+      changed: void; [[Called when spin changed]]
+      min,reached: void; [[Called when spin value reached min]]
+      max,reached: void; [[Called when spin value reached max]]
    }
 }

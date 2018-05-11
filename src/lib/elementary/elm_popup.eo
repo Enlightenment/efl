@@ -181,10 +181,10 @@ class Elm.Popup (Efl.Ui.Layout.Object, Efl.Access.Widget.Action, Efl.Ui.Legacy)
       Efl.Part.part;
    }
    events {
-      block,clicked; [[Called when popup was clicked]]
-      timeout; [[Called when popup timed out]]
-      item,focused; [[Called when popup got focus]]
-      item,unfocused; [[Called when popup lost focus]]
-      dismissed; [[Called when popup was dismissed]]
+      block,clicked: void; [[Called when popup was clicked]]
+      timeout: void; [[Called when popup timed out]]
+      item,focused: Efl.Object; [[Called when popup got focus]]
+      item,unfocused: Efl.Object; [[Called when popup lost focus]]
+      dismissed: void; [[Called when popup was dismissed]]
    }
 }

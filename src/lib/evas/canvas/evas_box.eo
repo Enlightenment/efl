@@ -663,7 +663,7 @@ class Evas.Box (Efl.Canvas.Group)
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      child,added; [[Called when a child object was added to the box]]
-      child,removed; [[Called when a child object was removed from the box]]
+      child,added: ptr(Evas_Object_Box_Option); [[Called when a child object was added to the box]]
+      child,removed: Efl.Canvas.Object; [[Called when a child object was removed from the box]]
    }
 }

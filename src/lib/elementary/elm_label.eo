@@ -128,6 +128,6 @@ class Elm.Label (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
       Efl.Part.part;
    }
    events {
-      slide,end; [[Called when slide stopped]]
+      slide,end: void; [[Called when slide stopped]]
    }
 }

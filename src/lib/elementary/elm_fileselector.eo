@@ -57,9 +57,10 @@ class Elm.Fileselector (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
       Efl.Part.part;
    }
    events {
-      done; [[Called when OK button was pressed]]
-      activated; [[Called when the filesector was activated]]
-      selected,invalid; [[Called when fileselector was selected]]
-      directory,open; [[Called when a directory was opened]]
+      done: string; [[Called when OK button was pressed]]
+      /* FIXME: For all three events below, event_info can either be a string or an Efl.Model */
+      activated: void; [[Called when the filesector was activated]]
+      selected,invalid: void; [[Called when fileselector was selected]]
+      directory,open: void; [[Called when a directory was opened]]
    }
 }

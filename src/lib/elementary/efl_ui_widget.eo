@@ -593,8 +593,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Part.part; [[Returns @Efl.Ui.Widget_Part.]]
    }
    events {
-      moved; [[Called when widget moved]]
-      language,changed; [[Called when widget language changed]]
-      access,changed; [[Called when accessibility changed]]
+      moved: Efl.Object; [[Called when widget moved]]
+      language,changed: void; [[Called when widget language changed]]
+      access,changed: void; [[Called when accessibility changed]]
    }
 }

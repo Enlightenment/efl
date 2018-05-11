@@ -129,6 +129,6 @@ interface Efl.Gfx.Stack
       }
    }
    events {
-      restack; [[Object stacking was changed.]]
+      restack: void; [[Object stacking was changed.]]
    }
 }

@@ -40,6 +40,6 @@ mixin Efl.Selection {
       }
    }
    events {
-      selection,changed; [[Called when display server's selection has changed]]
+      selection,changed: Efl.Selection.Changed; [[Called when display server's selection has changed]]
    }
 }

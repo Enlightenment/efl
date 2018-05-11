@@ -235,6 +235,6 @@ interface Efl.Gfx.Size_Hint
       }
    }
    events {
-      change,size,hints; [[Object size hints changed.]]
+      change,size,hints: void; [[Object size hints changed.]]
    }
 }

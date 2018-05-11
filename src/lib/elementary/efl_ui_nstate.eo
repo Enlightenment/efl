@@ -34,6 +34,6 @@ class Efl.Ui.Nstate(Efl.Ui.Button)
       Efl.Ui.Widget.widget_event;
    }
    events {
-      changed; [[Called when the value changed.]]
+      changed: void; [[Called when the value changed.]]
    }
 }

@@ -55,6 +55,6 @@ interface Efl.Access.Selection ()
       }
    }
    events {
-      selection,changed; [[Called when selection has been changed.]]
+      selection,changed: void; [[Called when selection has been changed.]]
    }
 }

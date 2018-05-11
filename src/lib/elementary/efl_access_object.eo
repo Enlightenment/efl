@@ -1,6 +1,3 @@
-/* FIXME: This definitely shouldn't be here. */
-type Efl_Event_Cb: __undefined_type; [[Efl event callback type]]
-
 enum Efl.Access.Type
 {
    [[Type of accessibility object]]
@@ -364,7 +361,7 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
       event_handler_add @class @protected @beta {
          [[Register accessibility event listener]]
          params {
-              @in cb: Efl_Event_Cb; [[Callback]]
+              @in cb: Efl.Event_Cb; [[Callback]]
               @in data: void_ptr; [[Data]]
          }
          return: ptr(Efl.Access.Event.Handler); [[Event handler]]
@@ -466,9 +463,9 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
       children,changed: Efl.Access.Event.Children_Changed.Data; [[Called when children have changed]]
       state,changed: Efl.Access.Event.State_Changed.Data; [[Called when state has changed]]
       bounds,changed: Efl.Access.Event.Geometry_Changed.Data; [[Called when boundaries have changed]]
-      visible,data,changed; [[Called when visibility has changed]]
-      active,descendant,changed; [[Called when active state of descendant has changed]]
-      added; [[Called when item is added]]
-      removed; [[Called when item is removed]]
+      visible,data,changed: void; [[Called when visibility has changed]]
+      active,descendant,changed: Efl.Object; [[Called when active state of descendant has changed]]
+      added: void; [[Called when item is added]]
+      removed: void; [[Called when item is removed]]
    }
 }

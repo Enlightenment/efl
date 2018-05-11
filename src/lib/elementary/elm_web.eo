@@ -442,8 +442,10 @@ class Elm.Web (Efl.Ui.Widget, Efl.Ui.Legacy, Efl.Ui.Zoom)
       Efl.Object.constructor;
    }
    events {
+      /* FIXME: Nobody is emitting these
       uri,changed; [[Called when URI changed]]
       url,changed; [[Called when URL changed]]
       windows,close,request; [[Called when window closed event was received]]
+      */
    }
 }

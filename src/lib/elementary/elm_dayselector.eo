@@ -156,6 +156,8 @@ class Elm.Dayselector (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
       Efl.Part.part;
    }
    events {
+      /* FIXME: Nobody emits this
       dayselector,changed; [[Called when dayselector widget changed]]
+      */
    }
 }

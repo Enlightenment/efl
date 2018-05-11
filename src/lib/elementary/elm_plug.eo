@@ -37,7 +37,7 @@ class Elm.Plug (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Legacy)
       Efl.Ui.Focus.Object.on_focus_update;
    }
    events {
-      image,deleted; [[Called when image was deleted]]
-      image,resized; [[Called when image was resized]]
+      image,deleted: void; [[Called when image was deleted]]
+      image,resized: Eina.Position2D; [[Called when image was resized]]
    }
 }

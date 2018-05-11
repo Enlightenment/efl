@@ -92,6 +92,6 @@ mixin Ector.Buffer
       }
    }
    events {
-      detached; [[Emitted whenever the previously attached pixels are detached during pixels_set]]
+      detached: ptr(ubyte); [[Emitted whenever the previously attached pixels are detached during pixels_set]]
    }
 }

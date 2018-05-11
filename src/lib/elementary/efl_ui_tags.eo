@@ -45,13 +45,15 @@ class Efl.Ui.Tags (Efl.Ui.Layout.Object, Efl.Text, Efl.Ui.Format)
       Efl.Ui.Format.format_cb { set; }
    }
    events {
-      item,selected; [[Called when item was selected]]
-      item,added; [[Called when item was added]]
-      item,deleted; [[Called when item was deleted]]
-      item,clicked; [[Called when item was clicked]]
-      item,longpressed; [[Called when item got a longpress]]
-      expanded; [[Called when expanded]]
-      contracted; [[Called when contracted]]
-      expand,state,changed; [[Called when expanded state changed]]
+      /* FIXME: Returning a basic type is not future-proof, better return a struct */
+      item,selected: string; [[Called when item was selected]]
+      item,added: string; [[Called when item was added]]
+      item,deleted: string; [[Called when item was deleted]]
+      item,clicked: string; [[Called when item was clicked]]
+      item,longpressed: string; [[Called when item got a longpress]]
+      expanded: void; [[Called when expanded]]
+      contracted: void; [[Called when contracted]]
+      /* FIXME: Not future-proof */
+      expand,state,changed: int; [[Called when expanded state changed]]
    }
 }

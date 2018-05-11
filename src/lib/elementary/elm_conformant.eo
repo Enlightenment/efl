@@ -11,9 +11,9 @@ class Elm.Conformant (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
       Efl.Ui.Widget.theme_apply;
    }
    events {
-      virtualkeypad,state,on; [[Called when virtualkeypad was enabled]]
-      virtualkeypad,state,off; [[Called when virtualkeypad was disabled]]
-      clipboard,state,on; [[Called when clipboard was enabled]]
-      clipboard,state,off; [[Called when clipboard was disabled]]
+      virtualkeypad,state,on: void; [[Called when virtualkeypad was enabled]]
+      virtualkeypad,state,off: void; [[Called when virtualkeypad was disabled]]
+      clipboard,state,on: void; [[Called when clipboard was enabled]]
+      clipboard,state,off: void; [[Called when clipboard was disabled]]
    }
 }

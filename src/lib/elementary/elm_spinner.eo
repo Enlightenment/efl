@@ -184,11 +184,12 @@ class Elm.Spinner (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Focus.Composition,
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      changed; [[Called when spinner changed]]
-      delay,changed; [[Called when spinner delay changed]]
-      spinner,drag,start; [[Called when spinner drag started]]
-      spinner,drag,stop; [[Called when spinner drag stopped]]
-      min,reached; [[Called when spinner value reached min]]
-      max,reached; [[Called when spinner value reached max]]
+      /* FIXME: Colorselector puts Colorselector_Data here! */
+      changed: void; [[Called when spinner changed]]
+      delay,changed: void; [[Called when spinner delay changed]]
+      spinner,drag,start: void; [[Called when spinner drag started]]
+      spinner,drag,stop: void; [[Called when spinner drag stopped]]
+      min,reached: void; [[Called when spinner value reached min]]
+      max,reached: void; [[Called when spinner value reached max]]
    }
 }

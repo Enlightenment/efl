@@ -243,7 +243,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Access.Widget.
       Efl.Part.part;
    }
    events {
-      dismissed; [[Called when context popup was dismissed]]
+      dismissed: void; [[Called when context popup was dismissed]]
       geometry,update: const(ptr(Eina.Rect)); [[Called when context popup geometry was updated]]
    }
 }

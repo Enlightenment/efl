@@ -101,9 +101,9 @@ interface Efl.Gfx.Entity {
       }
    }
    events {
-      show; [[Object just became visible.]]
-      hide; [[Object just became invisible.]]
-      move; [[Object was moved, its position during the event is the new one.]]
-      resize; [[Object was resized, its size during the event is the new one.]]
+      show: void; [[Object just became visible.]]
+      hide: void; [[Object just became invisible.]]
+      move: void; [[Object was moved, its position during the event is the new one.]]
+      resize: void; [[Object was resized, its size during the event is the new one.]]
    }
 }

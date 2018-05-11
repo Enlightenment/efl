@@ -4,7 +4,7 @@ class Efl.Canvas.Gesture_Tap(Efl.Canvas.Gesture)
    eo_prefix: efl_gesture_tap;
    event_prefix: efl;
    events {
-      gesture,tap; [[Event for tap gesture]]
+      gesture,tap: Efl.Canvas.Gesture; [[Event for tap gesture]]
    }
    implements {
       Efl.Object.constructor;

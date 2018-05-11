@@ -51,7 +51,7 @@ class Efl.Net.Session (Efl.Loop_Consumer) {
       @since 1.19
     ]]
     events {
-        changed; [[Called when some properties were changed.]]
+        changed: void; [[Called when some properties were changed.]]
     }
 
     methods {

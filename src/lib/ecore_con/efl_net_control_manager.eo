@@ -110,13 +110,13 @@ class Efl.Net.Control.Manager (Efl.Loop_Consumer) {
     events {
         access_point,add: Efl.Net.Control.Access_Point; [[The given access point has been added]]
         access_point,del: Efl.Net.Control.Access_Point; [[The given access point will be deleted]]
-        access_points,changed; [[Access points were added, deleted or reordered.]]
+        access_points,changed: void; [[Access points were added, deleted or reordered.]]
         technology,add: Efl.Net.Control.Technology; [[The given technology has been added]]
         technology,del: Efl.Net.Control.Technology; [[The given technology will be deleted]]
-        radios_offline,changed; [[Property @.radios_offline changed]]
-        state,changed; [[Property @.state changed]]
+        radios_offline,changed: void; [[Property @.radios_offline changed]]
+        state,changed: void; [[Property @.state changed]]
 
-        agent_released; [[Notifies we're not the agent anymore]]
+        agent_released: void; [[Notifies we're not the agent anymore]]
         agent_error: Efl.Net.Control.Agent_Error; [[Requires the error to be reported to the user]]
         agent_browser_url: Efl.Net.Control.Agent_Browser_Url; [[Requires the user to visit a web page]]
         agent_request_input: Efl.Net.Control.Agent_Request_Input; [[Requires the user to enter information in order to proceed, such as hidden SSID, passphrase, etc. After the user enters the information, reply by calling @.agent_reply]]

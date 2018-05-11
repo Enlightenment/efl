@@ -123,9 +123,9 @@ class Efl.Ui.Stack (Efl.Ui.Layout.Object)
       Efl.Object.constructor;
    }
    events {
-      loaded;      [[Called when content is loaded right before transition.]]
-      unloaded;    [[Called when content is unloaded right after being deactivated.]]
-      activated;   [[Called when content is activated right after transition.]]
-      deactivated; [[Called when content is deactivated right after transition.]]
+      loaded: Efl.Ui.Stack.Event_Loaded;      [[Called when content is loaded right before transition.]]
+      unloaded: Efl.Ui.Stack.Event_Unloaded;    [[Called when content is unloaded right after being deactivated.]]
+      activated: Efl.Ui.Stack.Event_Activated;   [[Called when content is activated right after transition.]]
+      deactivated: Efl.Ui.Stack.Event_Deactivated; [[Called when content is deactivated right after transition.]]
    }
 }

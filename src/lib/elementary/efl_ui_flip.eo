@@ -249,7 +249,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
       Efl.Pack_Linear.pack_index_get;
    }
    events {
-      animate,begin; [[Called when flip animation begins]]
-      animate,done; [[Called when flip animation is done]]
+      animate,begin: void; [[Called when flip animation begins]]
+      animate,done: void; [[Called when flip animation is done]]
    }
 }

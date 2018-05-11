@@ -133,10 +133,16 @@ enum Elm.Icon.Type
    standard [[Icon is of type standard]]
 }
 
-/* FIXME: shouldn't exist */
+/* FIXME: shouldn't exist, they are unusable by the bindings */
 struct @extern Elm_Gen_Item; [[Elementary gen item]]
 struct @extern Efl_Access_Action_Data; [[Efl access action data]]
-
+struct @extern Elm.Validate_Content; [[Data for the elm_validator_regexp_helper()]]
+struct @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "anchor,clicked" signals emitted
+                                        by entries.]]
+struct @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted
+                                              by the Anchor_Hover widget]]
+struct @extern Elm.Entry_Change_Info; [[This corresponds to Edje_Entry_Change_Info. Includes information about
+                                        a change in the entry]]
 
 /* Enums from elm_entry.eo, also used by efl_ui_text */
 enum Elm.Text_Format

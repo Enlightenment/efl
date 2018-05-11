@@ -373,7 +373,7 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Focus.Composition.prepare;
    }
    events {
-      item,focused; [[Called when toolbar item got focus]]
-      item,unfocused; [[Called when toolbar item lost focus]]
+      item,focused: Efl.Object; [[Called when toolbar item got focus]]
+      item,unfocused: Efl.Object; [[Called when toolbar item lost focus]]
    }
 }

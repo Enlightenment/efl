@@ -22,9 +22,9 @@ class Efl.Ui.Slider (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      changed; [[Called when slider changed]]
-      delay,changed; [[Called when delay changed]]
-      slider,drag,start; [[Called when slider drag started]]
-      slider,drag,stop; [[Called when slider drag stopped]]
+      changed: void; [[Called when slider changed]]
+      delay,changed: void; [[Called when delay changed]]
+      slider,drag,start: void; [[Called when slider drag started]]
+      slider,drag,stop: void; [[Called when slider drag stopped]]
    }
 }

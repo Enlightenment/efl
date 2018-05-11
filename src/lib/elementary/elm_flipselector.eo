@@ -169,7 +169,7 @@ class Elm.Flipselector (Efl.Ui.Layout.Object, Efl.Ui.Range,
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      underflowed; [[Called when flipselector is underflowed]]
-      overflowed; [[Called when flipselector is overflowed]]
+      underflowed: void; [[Called when flipselector is underflowed]]
+      overflowed: void; [[Called when flipselector is overflowed]]
    }
 }

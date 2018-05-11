@@ -186,13 +186,14 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       Efl.Part.part;
    }
    events {
-      item,selected; [[Called when item was selected]]
-      item,added; [[Called when item was added]]
-      item,deleted; [[Called when item was deleted]]
-      item,clicked; [[Called when item was clicked]]
-      item,longpressed; [[Called when item got a longpress]]
-      expanded; [[Called when expanded]]
-      contracted; [[Called when contracted]]
-      expand,state,changed; [[Called when expanded state changed]]
+      item,selected: Efl.Object; [[Called when item was selected]]
+      item,added: Efl.Object; [[Called when item was added]]
+      item,deleted: Efl.Object; [[Called when item was deleted]]
+      item,clicked: Efl.Object; [[Called when item was clicked]]
+      item,longpressed: Efl.Object; [[Called when item got a longpress]]
+      expanded: void; [[Called when expanded]]
+      contracted: void; [[Called when contracted]]
+      /* FIXME: This is not very future-proof, a struct would be better */
+      expand,state,changed: int; [[Called when expanded state changed]]
    }
 }

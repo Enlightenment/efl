@@ -167,6 +167,6 @@ class Elm.Clock (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
       Efl.Ui.Widget.theme_apply;
    }
    events {
-      changed; [[The clock's user changed the time]]
+      changed: void; [[The clock's user changed the time]]
    }
 }

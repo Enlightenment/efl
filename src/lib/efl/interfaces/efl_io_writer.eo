@@ -47,7 +47,7 @@ interface Efl.Io.Writer {
     }
 
     events {
-        can_write,changed; [[Notifies can_write property changed.
+        can_write,changed: void; [[Notifies can_write property changed.
 
                              If @.can_write is $true there is data to
                              @.write without blocking/error. If

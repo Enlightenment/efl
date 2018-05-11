@@ -118,9 +118,9 @@ class Elm.Colorselector (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition,
       Efl.Access.Object.access_children { get; }
    }
    events {
-      color,item,selected; [[Called when color item was selected]]
-      color,item,longpressed; [[Called when color item got a long press]]
-      changed; [[Called when colorselector changed]]
-      changed,user; [[Called when the object changed due to user interaction]]
+      color,item,selected: Efl.Object; [[Called when color item was selected]]
+      color,item,longpressed: Efl.Object; [[Called when color item got a long press]]
+      changed: void; [[Called when colorselector changed]]
+      changed,user: void; [[Called when the object changed due to user interaction]]
    }
 }

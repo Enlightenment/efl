@@ -28,10 +28,8 @@ interface Efl.Gfx.Image_Load_Controller ()
       load_async_cancel {
          [[Cancel preloading an image object's image data in the background.
 
-           The event $load,cancelled should be triggered soon after
-           cancellation occurs and the object should be left in a state
-           where it has no image data. If cancel is called too late, the image
-           will be kept in memory.
+           The object should be left in a state where it has no image data.
+           If cancel is called too late, the image will be kept in memory.
          ]]
       }
       /*
@@ -181,8 +179,7 @@ interface Efl.Gfx.Image_Load_Controller ()
       }
    }
    events {
-      load,done; [[Called when he image was loaded]]
+      load,done: void; [[Called when he image was loaded]]
       load,error: Efl.Gfx.Image_Load_Error; [[Called when an error happened during image loading]]
-      load,cancelled; [[Called when the image loading was cancelled]]
    }
 }

@@ -6,11 +6,13 @@ class Efl.Ui.Model_State (Efl.Model_Composite_Boolean)
       Efl.Model.property { set; }
    }
    events {
+      /* FIXME: Nobody is emitting these
       enable;
       disable;
       show;
       hide;
       selected;
       unselected;
+      */
    }
 }

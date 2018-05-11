@@ -420,7 +420,7 @@ class Elm.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Access.W
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      changed; [[Emitted when the date in the calendar is changed]]
-      display,changed; [[Emitted when the current month displayed in the calendar is changed]]
+      changed: void; [[Emitted when the date in the calendar is changed]]
+      display,changed: void; [[Emitted when the current month displayed in the calendar is changed]]
    }
 }

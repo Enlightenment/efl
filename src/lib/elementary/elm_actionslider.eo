@@ -75,6 +75,6 @@ class Elm.Actionslider (Efl.Ui.Layout.Object, Efl.Ui.Selectable, Efl.Ui.Legacy)
       Efl.Part.part;
    }
    events {
-      pos_changed; [[The position of the actionslider has changed]]
+      pos_changed: string; [[The position of the actionslider has changed]]
    }
 }

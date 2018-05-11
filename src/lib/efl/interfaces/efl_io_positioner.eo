@@ -39,6 +39,6 @@ mixin Efl.Io.Positioner {
     }
 
     events {
-        position,changed; [[Notifies position changed]]
+        position,changed: void; [[Notifies position changed]]
     }
 }

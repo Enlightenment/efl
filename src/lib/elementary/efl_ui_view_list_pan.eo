@@ -10,7 +10,9 @@ class Efl.Ui.View_List_Pan (Efl.Ui.Pan)
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      item,focused; [[Called when item is focused.]]
-      item,unfocused; [[Called when item has lost focus.]]
+      /* FIXME: Nobody is emitting these
+      item,focused: void; [[Called when item is focused.]]
+      item,unfocused: void; [[Called when item has lost focus.]]
+      */
    }
 }

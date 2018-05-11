@@ -388,7 +388,7 @@ class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
     }
 
     events {
-        headers,done; [[Notifies all headers were parsed and are available.]]
+        headers,done: void; [[Notifies all headers were parsed and are available.]]
     }
 
     implements {

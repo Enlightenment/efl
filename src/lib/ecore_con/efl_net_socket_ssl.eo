@@ -13,7 +13,7 @@ class Efl.Net.Socket_Ssl (Efl.Loop_Consumer, Efl.Net.Socket) {
     ]]
 
     events {
-        ssl,ready; [[Notifies the SSL handshake has been performed and the socket is now able to communicate]]
+        ssl,ready: void; [[Notifies the SSL handshake has been performed and the socket is now able to communicate]]
         ssl,error: Eina.Error; [[An error such as @Efl.Net.Socket_Ssl_Error.HANDSHAKE]]
     }
 

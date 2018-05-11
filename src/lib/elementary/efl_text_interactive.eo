@@ -45,6 +45,6 @@ interface Efl.Text_Interactive (Efl.Text, Efl.Text_Font,
       }
    }
    events {
-      selection,changed; [[The selection on the object has changed. Query using @.selection_cursors]]
+      selection,changed: void; [[The selection on the object has changed. Query using @.selection_cursors]]
    }
 }

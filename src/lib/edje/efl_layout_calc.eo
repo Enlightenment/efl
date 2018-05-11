@@ -108,8 +108,9 @@ interface Efl.Layout.Calc
       }
    }
    events {
-      recalc; [[The layout was recalculated.]]
-      circular,dependency; [[A circular dependency between parts of the
+      recalc: void; [[The layout was recalculated.]]
+      /* FIXME: The actual type is list<string> but the C# bindings do not support that yet */
+      circular,dependency: void; [[A circular dependency between parts of the
          object was found.]]
    }
 }

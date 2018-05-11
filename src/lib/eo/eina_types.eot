@@ -98,3 +98,7 @@ struct @extern Eina.Stat {
     ctime    : ulong; [[The tilestamp when the file was created]]
     ctimensec: ulong; [[The nano version of the timestmap when the file was created]]
 }
+
+/* FIXME: This definitely shouldn't be here. */
+type Efl.Event_Cb: __undefined_type; [[Efl event callback type]]
+

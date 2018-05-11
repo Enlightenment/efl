@@ -47,8 +47,10 @@ class Efl.Canvas.Animation_Player (Efl.Object, Efl.Player)
       Efl.Player.seekable { get; }
    }
    events {
-      started; [[Animation is started.]]
-      running; [[Animation is running.]]
-      ended; [[Animation is ended.]]
+      /* FIXME: This event is similar to Efl.Canvas.Object.anim_started but with different type, might be confusing. */
+      started: void; [[Animation is started.]]
+      running: Efl.Canvas.Object.Animation_Event; [[Animation is running.]]
+      /* FIXME: This event is similar to Efl.Canvas.Object.anim_ended but with different type, might be confusing. */
+      ended: void; [[Animation is ended.]]
    }
 }

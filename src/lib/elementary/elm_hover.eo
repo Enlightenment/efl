@@ -74,7 +74,7 @@ class Elm.Hover (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
       Efl.Part.part;
    }
    events {
-      smart,changed; [[Called when hover changed]]
-      dismissed; [[Called when hover was dismissed]]
+      smart,changed: string; [[Called when hover changed]]
+      dismissed: void; [[Called when hover was dismissed]]
    }
 }

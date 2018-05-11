@@ -75,6 +75,6 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      delay,changed; [[Called when spin delay is changed.]]
+      delay,changed: void; [[Called when spin delay is changed.]]
    }
 }

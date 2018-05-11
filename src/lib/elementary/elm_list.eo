@@ -420,17 +420,19 @@ class Elm.List (Efl.Ui.Layout.Object, Elm.Interface_Scrollable,
       Efl.Access.Selection.access_selection_clear;
    }
    events {
-      activated; [[Called when activated]]
-      edge,top; [[Called when top edge was reached]]
-      edge,bottom; [[Called when bottom edge was reached]]
-      edge,left; [[Called when left edge was reached]]
-      edge,right; [[Called when right edge was reached]]
-      swipe; [[Called when swipe is detected]]
-      highlighted; [[Called when highlighted]]
-      unhighlighted; [[Called when no longer highlighted]]
-      item,focused; [[Called when item got focus]]
-      item,unfocused; [[Called when item no longer has focus]]
+      activated: Efl.Object; [[Called when activated]]
+      edge,top: void; [[Called when top edge was reached]]
+      edge,bottom: void; [[Called when bottom edge was reached]]
+      edge,left: void; [[Called when left edge was reached]]
+      edge,right: void; [[Called when right edge was reached]]
+      swipe: Efl.Object; [[Called when swipe is detected]]
+      highlighted: Efl.Object; [[Called when highlighted]]
+      unhighlighted: Efl.Object; [[Called when no longer highlighted]]
+      item,focused: Efl.Object; [[Called when item got focus]]
+      item,unfocused: Efl.Object; [[Called when item no longer has focus]]
+      /* FIXME: Nobody emits these
       item,reorder,anim,start; [[Called when item reorder animation started]]
       item,reorder,anim,stop; [[Called when item reorder animation stopped]]
+      */
    }
 }

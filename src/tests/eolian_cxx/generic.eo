@@ -105,13 +105,13 @@ class Generic (Efl.Object)
       Efl.Object.constructor;
    }
    events {
-     prefix,event1;
+     prefix,event1: void;
      prefix,event2: Generic;
      prefix,event3: int;
      prefix,event4: list<ptr(int)>;
      prefix,event5: Generic.Event;
-     protected,event1 @protected;
-     beta,event1 @beta;
-     protected,beta,event1 @beta @protected;
+     protected,event1 @protected: void;
+     beta,event1 @beta: void;
+     protected,beta,event1 @beta @protected: void;
    }
 }

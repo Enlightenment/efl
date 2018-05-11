@@ -1,4 +1,5 @@
 import efl_input_device;
+import efl_gfx_types;
 
 interface Efl.Canvas.Scene ()
 {
@@ -231,8 +232,9 @@ interface Efl.Canvas.Scene ()
       focus,out: Efl.Input.Focus; [[Called when canvas lost focus]]
       object,focus,in: Efl.Input.Focus; [[Called when object got focus]]
       object,focus,out: Efl.Input.Focus; [[Called when object lost focus]]
-      render,pre; [[Called when pre render happens]]
-      render,post; [[Called when post render happens]]
+      render,pre: void; [[Called when pre render happens]]
+      /* FIXME: event_info can be NULL, but @nullable tag does not work on events yet */
+      render,post: Efl.Gfx.Event.Render_Post; [[Called when post render happens]]
       device,changed: Efl.Input.Device; [[Called when input device changed]]
       device,added: Efl.Input.Device; [[Called when input device was added]]
       device,removed: Efl.Input.Device; [[Called when input device was removed]]

@@ -98,8 +98,9 @@ class Elm.Menu (Efl.Ui.Widget, Efl.Ui.Clickable,
       Efl.Object.provider_find;
    }
    events {
-      dismissed; [[Called when menu widget was dismissed]]
-      elm,action,block_menu; [[Called when menu blocking have been enabled]]
-      elm,action,unblock_menu; [[Called when menu blocking has been disabled]]
+      dismissed: void; [[Called when menu widget was dismissed]]
+      /* FIXME: Nobody is emitting this, but they are already in use */
+      elm,action,block_menu: void; [[Called when menu blocking have been enabled]]
+      elm,action,unblock_menu: void; [[Called when menu blocking has been disabled]]
    }
 }

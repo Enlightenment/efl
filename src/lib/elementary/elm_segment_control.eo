@@ -142,6 +142,6 @@ class Elm.Segment_Control (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.U
       Efl.Ui.Translatable.translation_update;
    }
    events {
-      changed; [[Called when segment control changed]]
+      changed: Efl.Object; [[Called when segment control changed]]
    }
 }

@@ -105,9 +105,9 @@ class Elm.Hoversel (Efl.Ui.Button, Efl.Ui.Selectable,
       Efl.Access.Object.access_children { get; }
    }
    events {
-      dismissed; [[Called when hoversel is dismissed]]
-      expanded; [[Called when hoversel is expanded]]
-      item,focused; [[Called when hoversel item got focus]]
-      item,unfocused; [[Called when hoversel item lost focus]]
+      dismissed: void; [[Called when hoversel is dismissed]]
+      expanded: void; [[Called when hoversel is expanded]]
+      item,focused: Efl.Object; [[Called when hoversel item got focus]]
+      item,unfocused: Efl.Object; [[Called when hoversel item lost focus]]
    }
 }

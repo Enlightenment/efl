@@ -74,6 +74,6 @@ mixin Efl.Io.Closer {
     }
 
     events {
-        closed; [[Notifies closed, when property is marked as true]]
+        closed: void; [[Notifies closed, when property is marked as true]]
     }
 }

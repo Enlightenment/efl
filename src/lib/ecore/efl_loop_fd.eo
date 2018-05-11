@@ -32,9 +32,9 @@ class Efl.Loop_Fd (Efl.Loop_Consumer)
       }
    }
    events {
-      read; [[Called when a read happened on the file descriptor]]
-      write; [[Called when a write happened on the file descriptor]]
-      error; [[Called when a error occurred on the file descriptor]]
+      read: void; [[Called when a read happened on the file descriptor]]
+      write: void; [[Called when a write happened on the file descriptor]]
+      error: void; [[Called when a error occurred on the file descriptor]]
    }
    implements {
       Efl.Object.constructor;

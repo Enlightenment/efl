@@ -663,6 +663,6 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.
       Efl.Ui.Base.mirrored { set; }
    }
    events {
-      changed; [[Called when content changed]]
+      changed: void; [[Called when content changed]]
    }
 }

@@ -55,7 +55,7 @@ class Efl.Ui.Panes (Efl.Ui.Layout.Object, Efl.Ui.Direction,
       Efl.Part.part;
    }
    events {
-      press; [[Called when panes got pressed]]
-      unpress; [[Called when panes are no longer pressed]]
+      press: void; [[Called when panes got pressed]]
+      unpress: void; [[Called when panes are no longer pressed]]
    }
 }

@@ -48,8 +48,8 @@ class Efl.Ui.Pan (Efl.Canvas.Group,
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      content,changed; [[Called when pan content changed]]
-      viewport,changed; [[Called when pan viewport changed]]
-      position,changed; [[Called when pan position changed]]
+      content,changed: void; [[Called when pan content changed]]
+      viewport,changed: void; [[Called when pan viewport changed]]
+      position,changed: void; [[Called when pan position changed]]
    }
 }

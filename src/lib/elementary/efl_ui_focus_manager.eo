@@ -159,8 +159,8 @@ interface Efl.Ui.Focus.Manager {
     events {
         redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect
             object has changed, the old manager is passed as event info]]
-        flush,pre; [[Emitted once the graph calculationg will be performed]]
-        coords,dirty; [[Emitted once the graph is dirty, this means there are
+        flush,pre: void; [[Emitted once the graph calculationg will be performed]]
+        coords,dirty: void; [[Emitted once the graph is dirty, this means there are
             potential changes in border_elements you want to know about]]
         focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
             object, the passed focus object is the last focused object]]

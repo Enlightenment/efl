@@ -13,10 +13,10 @@ class Elm.Thumb (Efl.Ui.Layout.Object, Efl.File, Efl.Ui.Clickable,
       Efl.Ui.Draggable.drag_target { get; set; }
    }
    events {
-      generate,error; [[Called when an error occurred during thumbnail generation]]
-      generate,start; [[Called when thumbnail generation started]]
-      generate,stop; [[Called when thumbnail generation stopped]]
-      load,error; [[Called when an error occurred during loading]]
-      press; [[Called when pressed]]
+      generate,error: void; [[Called when an error occurred during thumbnail generation]]
+      generate,start: void; [[Called when thumbnail generation started]]
+      generate,stop: void; [[Called when thumbnail generation stopped]]
+      load,error: void; [[Called when an error occurred during loading]]
+      press: void; [[Called when pressed]]
    }
 }

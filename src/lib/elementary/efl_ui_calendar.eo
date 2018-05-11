@@ -114,6 +114,6 @@ class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Acces
       Efl.Ui.Format.format_cb { set; }
    }
    events {
-      changed; [[Emitted when the selected date in the calendar is changed]]
+      changed: void; [[Emitted when the selected date in the calendar is changed]]
    }
 }

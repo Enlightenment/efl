@@ -58,6 +58,6 @@ interface Efl.Pack (Efl.Container)
       }
    }
    events {
-      layout,updated; [[Sent after the layout was updated.]]
+      layout,updated: void; [[Sent after the layout was updated.]]
    }
 }

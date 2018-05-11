@@ -11,7 +11,7 @@ class Ecore.Audio.Out.Pulse (Ecore.Audio.Out)
       Ecore.Audio.Out.input_detach;
    }
    events {
-      context,ready; [[Called when the output is ready for playback.]]
-      context,fail; [[Called when context fails.]]
+      context,ready: void; [[Called when the output is ready for playback.]]
+      context,fail: void; [[Called when context fails.]]
    }
 }

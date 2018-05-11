@@ -13,29 +13,6 @@ EAPI extern Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT; /**< @since 1.19 */
 
 /**
- * @struct _Efl_Model_Children_Event
- * Every time a child id added the event
- * EFL_MODEL_EVENT_CHILD_ADDED is dispatched
- * passing along this structure.
- */
-struct _Efl_Model_Children_Event
-{
-   /**
-    * index is a hint and is intended
-    * to provide a way for applications
-    * to control/know children relative
-    * positions through listings.
-    */
-   unsigned int index;
-   /**
-    * If an object has been build for this index and
-    * is currently tracked by the parent, it wild be
-    * available here.
-    */
-   Eo *child;
-};
-
-/**
  * @struct Efl_Model_Children_Event
  */
 typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;

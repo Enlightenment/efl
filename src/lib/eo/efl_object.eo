@@ -303,10 +303,10 @@ abstract Efl.Object ()
         class.destructor;
    }
    events {
-      del @hot; [[Object is being deleted.]]
-      invalidate @hot; [[Object is being invalidated and loosing its parent.]]
-      noref @hot; [[Object has lost its last reference, only parent relationship is keeping it alive.]]
-      destruct @hot; [[Object has been fully destroyed. It can not be used
+      del @hot: void; [[Object is being deleted.]]
+      invalidate @hot: void; [[Object is being invalidated and loosing its parent.]]
+      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive.]]
+      destruct @hot: void; [[Object has been fully destroyed. It can not be used
          beyond this point. This event should only serve to clean up any
          dangling pointer.]]
    }

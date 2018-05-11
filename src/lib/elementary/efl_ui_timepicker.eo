@@ -39,6 +39,6 @@ class Efl.Ui.Timepicker (Efl.Ui.Layout.Object)
       Efl.Object.destructor;
    }
    events {
-      changed; [[Called when date is changed]]
+      changed: void; [[Called when date is changed]]
    }
 }

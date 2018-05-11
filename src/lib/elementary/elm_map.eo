@@ -5,6 +5,7 @@ type Elm_Map_Overlay: __undefined_type; [[Elementary map overlay type]]
 type Elm_Map_Name: __undefined_type; [[Elementary map name type]]
 type Elm_Map_Name_Cb: __undefined_type; [[Elementary map name callback type]]
 type Elm_Map_Name_List_Cb: __undefined_type; [[Elementary map name list callback type]]
+type Evas.Event_Mouse_Down: __undefined_type;
 
 enum Elm.Map.Source_Type
 {
@@ -536,18 +537,19 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.wheel_disabled { set; }
    }
    events {
-      press; [[Called when map was pressed]]
-      loaded; [[Called when map loaded]]
-      tile,load; [[Called when title load started]]
-      tile,loaded; [[Called when title load finished]]
-      tile,loaded,fail; [[Called when title load failed]]
-      route,load; [[Called when route load started]]
-      route,loaded; [[Called when route load finished]]
-      route,loaded,fail; [[Called when route load failed]]
-      name,load; [[Called when name load started]]
-      name,loaded; [[Called when name load finished]]
-      name,loaded,fail; [[Called when name load failed]]
-      overlay,clicked; [[Called when overlay was clicked]]
-      overlay,del; [[Called when overlay was deleted]]
+      press: Evas.Event_Mouse_Down; [[Called when map was pressed]]
+      loaded: void; [[Called when map loaded]]
+      tile,load: void; [[Called when title load started]]
+      tile,loaded: void; [[Called when title load finished]]
+      tile,loaded,fail: void; [[Called when title load failed]]
+      route,load: Elm_Map_Route; [[Called when route load started]]
+      route,loaded: void; [[Called when route load finished]]
+      route,loaded,fail: void; [[Called when route load failed]]
+      /* FIXME: Can be Elm_Map_Name or list<Elm_Map_Name> */
+      name,load: void; [[Called when name load started]]
+      name,loaded: void; [[Called when name load finished]]
+      name,loaded,fail: void; [[Called when name load failed]]
+      overlay,clicked: Elm_Map_Overlay; [[Called when overlay was clicked]]
+      overlay,del: Elm_Map_Overlay; [[Called when overlay was deleted]]
    }
 }

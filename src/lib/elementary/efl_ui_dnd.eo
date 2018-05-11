@@ -52,11 +52,12 @@ mixin Efl.Ui.Dnd {
       }
    }
    events {
-      drag,accept; [[accept drag data]]
-      drag,done; [[drag is done (mouse up)]]
-      drag,enter; [[called when the drag object enters this object]]
-      drag,leave; [[called when the drag object leaves this object]]
-      drag,pos; [[called when the drag object changes drag position]]
-      drag,drop; [[called when the drag object dropped on this object]]
+      /* FIXME: This is not very future-proof. Better return a struct. */
+      drag,accept: ptr(bool); [[accept drag data]]
+      drag,done: void; [[drag is done (mouse up)]]
+      drag,enter: void; [[called when the drag object enters this object]]
+      drag,leave: void; [[called when the drag object leaves this object]]
+      drag,pos: Efl.Dnd.Drag_Pos; [[called when the drag object changes drag position]]
+      drag,drop: Efl.Selection.Data; [[called when the drag object dropped on this object]]
    }
 }

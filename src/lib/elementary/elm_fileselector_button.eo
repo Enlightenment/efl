@@ -20,6 +20,7 @@ class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.mode { get; set; }
    }
    events {
-      file,chosen; [[Called when a file was chosen in the fileselector]]
+      /* FIXME: Can be Efl.Model, string and NULL */
+      file,chosen: void; [[Called when a file was chosen in the fileselector]]
    }
 }

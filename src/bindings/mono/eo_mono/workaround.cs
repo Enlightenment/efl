@@ -106,10 +106,6 @@ public struct Description {
 
 public delegate void Event_Cb(System.IntPtr data, ref Event evt);
 #pragma warning disable 0169
-public struct Callback_Array_Item {
-    IntPtr desc;
-    IntPtr func;
-};
 public struct Dbg_Info {
     IntPtr name;
     IntPtr value;
@@ -479,9 +475,6 @@ public struct Elm_Atspi_Action
     IntPtr param;
     IntPtr func;
 }
-
-// Some places stil use the non-namespaced Efl_Event_Cb
-public delegate void Efl_Event_Cb(System.IntPtr data, ref efl.Event evt);
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Tm {

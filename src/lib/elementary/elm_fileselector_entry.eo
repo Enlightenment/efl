@@ -16,9 +16,10 @@ class Elm.Fileselector_Entry (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
       Efl.Part.part;
    }
    events {
-      changed; [[Called when the entry changed]]
-      activated; [[Called when the entry was activated]]
-      file,chosen; [[Called when a file was chosen in the fileselector]]
-      press; [[Called when entry was pressed]]
+      changed: void; [[Called when the entry changed]]
+      activated: void; [[Called when the entry was activated]]
+      /* FIXME: Can be Efl.Model or string */
+      file,chosen: void; [[Called when a file was chosen in the fileselector]]
+      press: void; [[Called when entry was pressed]]
    }
 }

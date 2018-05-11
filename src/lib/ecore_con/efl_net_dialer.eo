@@ -111,6 +111,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
     }
 
     events {
+        /* FIXME: Might be NULL, but @nullable does not work on event types */
         resolved: string; [[Notifies @.address_dial was resolved to
                             @Efl.Net.Socket.address_remote.
 
@@ -126,6 +127,6 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
         error: Eina.Error; [[Some error happened and the socket
                              stopped working.
                            ]]
-        connected; [[Notifies the socket is connected to the remote peer.]]
+        connected: void; [[Notifies the socket is connected to the remote peer.]]
     }
 }

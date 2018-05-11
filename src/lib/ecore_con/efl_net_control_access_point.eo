@@ -87,7 +87,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_Consumer) {
     ]]
 
     events {
-        changed; [[Called when some properties were changed.]]
+        changed: void; [[Called when some properties were changed.]]
     }
 
     methods {

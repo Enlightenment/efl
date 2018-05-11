@@ -54,11 +54,11 @@ class Efl.Loop_Handler (Efl.Object)
       }
    }
    events {
-      read; [[ Called when a read occurs on the descriptor. ]]
-      write; [[ Called when a write occurs on the descriptor. ]]
-      error; [[ Called when a error occurrs on the descriptor. ]]
-      buffer; [[ Called when buffered data already read from the descriptor should be processed. ]]
-      prepare; [[ Called when preparing a descriptor for listening. ]]
+      read: void; [[ Called when a read occurs on the descriptor. ]]
+      write: void; [[ Called when a write occurs on the descriptor. ]]
+      error: void; [[ Called when a error occurrs on the descriptor. ]]
+      buffer: void; [[ Called when buffered data already read from the descriptor should be processed. ]]
+      prepare: void; [[ Called when preparing a descriptor for listening. ]]
    }
 
    implements {

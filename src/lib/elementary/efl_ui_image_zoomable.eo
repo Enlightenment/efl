@@ -1,3 +1,7 @@
+/* FIXME: Define these structs in EO, or they are useless to bindings */
+struct @extern Elm.Photocam.Error;
+struct @extern Elm.Photocam.Progress;
+
 class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
                              Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar)
@@ -73,14 +77,14 @@ class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       //Efl.Canvas.Layout_Group.group_data { get; }
    }
    events {
-      press; [[Called when photocam got pressed]]
-      load; [[Called when photocam loading started]]
-      loaded; [[Called when photocam loading finished]]
-      load,detail; [[Called when photocal detail loading started]]
-      loaded,detail; [[Called when photocam detail loading finished]]
-      download,start; [[Called when photocam download started]]
-      download,progress; [[Called when photocam download progress updated]]
-      download,done; [[Called when photocam download finished]]
-      download,error; [[Called when photocam download failed]]
+      press: void; [[Called when photocam got pressed]]
+      load: void; [[Called when photocam loading started]]
+      loaded: void; [[Called when photocam loading finished]]
+      load,detail: void; [[Called when photocal detail loading started]]
+      loaded,detail: void; [[Called when photocam detail loading finished]]
+      download,start: void; [[Called when photocam download started]]
+      download,progress: Elm.Photocam.Progress; [[Called when photocam download progress updated]]
+      download,done: void; [[Called when photocam download finished]]
+      download,error: Elm.Photocam.Error; [[Called when photocam download failed]]
    }
 }
