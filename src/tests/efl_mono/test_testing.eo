@@ -1,5 +1,7 @@
 import eina_types;
 
+type Test.MyInt: int;
+
 enum Test.SampleEnum {
    v0,
    v1,
@@ -57,6 +59,7 @@ struct Test.StructSimple
    fstring: string;
    fmstring: mstring;
    fstringshare: stringshare;
+   fmyint: Test.MyInt;
 }
 
 struct Test.StructComplex {
@@ -1594,6 +1597,15 @@ class Test.Testing (Efl.Object, Efl.Part) {
             @in value: const(any_value);
             @in func: Test.FormatCb;
          }
+      }
+
+      bypass_typedef {
+         params {
+            @in data: Test.MyInt;
+            @out receiver: Test.MyInt;
+         }
+
+         return: Test.MyInt;
       }
 
       @property klass_prop @class {

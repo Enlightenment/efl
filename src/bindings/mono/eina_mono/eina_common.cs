@@ -145,20 +145,6 @@ public static class StringConversion
     }
 }
 
-public struct Unicode {
-    private uint val;
-
-    public static implicit operator Unicode(uint x)
-    {
-        return new Unicode{val=x};
-    }
-    public static implicit operator uint(Unicode x)
-    {
-        return x.val;
-    }
-}
-
-
 /// <summary>Enum to handle resource ownership between managed and unmanaged code.</summary>
 public enum Ownership {
     /// <summary> The resource is owned by the managed code. It should free the handle on disposal.</summary>

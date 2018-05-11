@@ -414,6 +414,39 @@ inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
       }
 }
 
+struct alias_def
+{
+  std::string eolian_name;
+  std::string cxx_name;
+  std::vector<std::string> namespaces;
+  bool is_undefined;
+  type_def base_type {};
+  documentation_def documentation;
+
+  alias_def(Eolian_Typedecl const* alias_obj, Eolian_Unit const* unit)
+  {
+     cxx_name = eolian_name = ::eolian_typedecl_short_name_get(alias_obj);
+
+     for(efl::eina::iterator<const char> namespace_iterator( ::eolian_typedecl_namespaces_get(alias_obj))
+          , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+       {
+          this->namespaces.push_back((&*namespace_iterator));
+       }
+
+     Eolian_Type const* bt = ::eolian_typedecl_base_type_get(alias_obj);
+     if (eolian_type_type_get(bt) == EOLIAN_TYPE_UNDEFINED)
+       is_undefined = true;
+     else
+       {
+          base_type = type_def(::eolian_typedecl_base_type_get(alias_obj), unit, EOLIAN_C_TYPE_DEFAULT);
+          is_undefined = false;
+       }
+
+     documentation = ::eolian_typedecl_documentation_get(alias_obj);
+
+  }
+};
+
 enum class parameter_direction
 {
   unknown, in, inout, out

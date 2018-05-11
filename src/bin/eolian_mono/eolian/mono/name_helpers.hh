@@ -187,6 +187,11 @@ inline std::string managed_method_name(attributes::function_def const& f)
   return candidate;
 }
 
+inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
+{
+   return join_namespaces(alias.namespaces, '.') + alias.eolian_name;
+}
+
 inline std::string function_ptr_full_eolian_name(attributes::function_def const& func)
 {
    return join_namespaces(func.namespaces, '.') + func.name;

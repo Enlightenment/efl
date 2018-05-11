@@ -3777,6 +3777,12 @@ void _test_testing_call_format_cb(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_
     func_free_cb(func_data);
 }
 
+Test_MyInt _test_testing_bypass_typedef(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_MyInt data, Test_MyInt *receiver)
+{
+    *receiver = data;
+    return data;
+}
+
 /* Class Properties */
 static int _test_testing_klass_prop = 0;
 

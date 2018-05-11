@@ -137,32 +137,6 @@ public delegate void Signal_Cb(IntPtr data, IntPtr obj, IntPtr emission, IntPtr 
 
 namespace access {
 
-public struct State_Set {
-    private ulong mask;
-
-    public static implicit operator State_Set(ulong x)
-    {
-        return new State_Set{mask=x};
-    }
-    public static implicit operator ulong(State_Set x)
-    {
-        return x.mask;
-    }
-}
-
-public struct Relation_Set {
-    private IntPtr mask;
-
-    public static implicit operator Relation_Set(IntPtr x)
-    {
-        return new Relation_Set{mask=x};
-    }
-    public static implicit operator IntPtr(Relation_Set x)
-    {
-        return x.mask;
-    }
-}
-
 public struct Action_Data {
     public IntPtr name;
     public IntPtr action;
@@ -171,23 +145,6 @@ public struct Action_Data {
 }
 
 } // namespace access
-
-namespace font {
-
-public struct Size {
-    private int mask;
-
-    public static implicit operator Size(int x)
-    {
-        return new Size{mask=x};
-    }
-    public static implicit operator int(Size x)
-    {
-        return x.mask;
-    }
-}
-
-}
 
 } // namespace efl
 

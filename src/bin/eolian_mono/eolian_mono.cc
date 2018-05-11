@@ -32,6 +32,7 @@
 #include <eolian/mono/marshall_type_impl.hh>
 #include <eolian/mono/marshall_annotation.hh>
 #include <eolian/mono/function_pointer.hh>
+#include <eolian/mono/alias_definition.hh>
 
 namespace eolian_mono {
 
@@ -137,13 +138,21 @@ run(options_type const& opts)
                                                         efl::eolian::grammar::context_null());
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
-         if (eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
-             continue;
+         if (eolian_typedecl_type_get(tp) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+           {
+              const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
+              efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER, tp, opts.unit);
+              if (!eolian_mono::function_pointer.generate(iterator, function_def, context))
+                throw std::runtime_error("Failed to generate function pointer wrapper");
+           }
+         else // Regular aliases
+           {
+              efl::eolian::grammar::attributes::alias_def alias(tp, opts.unit);
+              auto alias_cxt = context_add_tag(class_context{class_context::alias}, context);
 
-         const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
-         efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER, tp, opts.unit);
-         if (!eolian_mono::function_pointer.generate(iterator, function_def, context))
-           throw std::runtime_error("Failed to generate function pointer wrapper");
+              if (!eolian_mono::alias_definition.generate(iterator, alias, alias_cxt))
+                throw std::runtime_error("Failed to generate alias.");
+           }
      }
 
    if (klass)

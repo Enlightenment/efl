@@ -208,4 +208,20 @@ class TestKlassMethods
     }
 }
 
+class TestTypedefs
+{
+    public static void basic_typedef_test()
+    {
+        test.ITesting obj = new test.Testing();
+        test.MyInt input = 1900;
+        test.MyInt receiver;
+
+        int ret = obj.BypassTypedef(input, out receiver);
+
+        Test.AssertEquals((test.MyInt)ret, input);
+        Test.AssertEquals(receiver, input);
+
+    }
+}
+
 }
