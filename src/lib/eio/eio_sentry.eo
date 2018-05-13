@@ -1,5 +1,3 @@
-import eina_types;
-
 struct Eio.Sentry.Event
 {
   [[Wraps the data about a monitor event on a file.]]

@@ -1,5 +1,3 @@
-import eldbus_types;
-
 class Eldbus.Model.Object (Eldbus.Model) {
     [[Eldbus model object class]]
 

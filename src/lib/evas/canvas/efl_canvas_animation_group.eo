@@ -1,5 +1,3 @@
-import efl_canvas_animation_types;
-
 abstract Efl.Canvas.Animation_Group (Efl.Canvas.Animation)
 {
    [[Efl group animation abstract class]]

@@ -1,5 +1,3 @@
-import efl_canvas_gesture_types;
-
 class Efl.Canvas.Gesture_Manager (Efl.Object)
 {
    [[EFL Gesture Manager class]]

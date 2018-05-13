@@ -1,5 +1,3 @@
-import eina_types;
-
 class Efl.Loop_Message_Handler (Efl.Object)
 {
    [[Message handlers represent a single message type on the Efl.Loop

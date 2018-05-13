@@ -1,5 +1,3 @@
-import eina_types;
-
 enum Efl.Exe.Signal {
    [[ ]]
    int,

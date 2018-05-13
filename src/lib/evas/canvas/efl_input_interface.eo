@@ -1,5 +1,3 @@
-import eina_types;
-
 interface Efl.Input.Interface ()
 {
    [[An object implementing this interface can send pointer events.

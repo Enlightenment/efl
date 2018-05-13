@@ -1,5 +1,4 @@
 import efl_object;
-import eina_types;
 
 function EFlThreadIOCall {
    [[ A Function to call on the "other end" of a thread obvject ]]

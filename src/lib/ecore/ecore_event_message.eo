@@ -1,5 +1,3 @@
-import eina_types;
-
 class Ecore.Event.Message (Efl.Loop_Message)
 {
    [[ For Legacy API usage Only. Legacy Ecore Events ]]

@@ -1,5 +1,3 @@
-import edje_types;
-
 class Efl.Canvas.Layout_Part_External (Efl.Canvas.Layout_Part, Efl.Content,
                                        Efl.Canvas.Object)
 {

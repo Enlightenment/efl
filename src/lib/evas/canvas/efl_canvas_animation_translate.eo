@@ -1,5 +1,3 @@
-import efl_canvas_animation_types;
-
 class Efl.Canvas.Animation_Translate (Efl.Canvas.Animation)
 {
    [[Efl translate animation class]]

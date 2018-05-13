@@ -1,5 +1,3 @@
-import edje_types;
-
 class Efl.Canvas.Layout_Part_Invalid (Efl.Canvas.Layout_Part, Efl.Content,
                                       Efl.Pack_Linear, Efl.Ui.Direction,
                                       Efl.Pack_Table, Efl.Text,

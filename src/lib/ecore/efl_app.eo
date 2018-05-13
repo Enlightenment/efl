@@ -1,5 +1,4 @@
 import efl_types;
-import eina_types;
 
 class Efl.App (Efl.Loop)
 {

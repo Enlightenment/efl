@@ -1,5 +1,3 @@
-import eina_types;
-
 interface Efl.Pack (Efl.Container)
 {
    [[API common to all UI container objects.]]

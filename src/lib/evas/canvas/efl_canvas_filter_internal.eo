@@ -1,5 +1,4 @@
 // import efl_gfx_types -> need to add Efl.Gfx.Color
-import eina_types;
 
 /* Everything in this file is internal to Evas. It is not meant to be used
    from outside EFL itself! */

@@ -1,5 +1,4 @@
 import elm_interface_scrollable;
-import elm_general;
 
 /* FIXME: Those types make elm_code unusable from pure EO */
 struct @extern Elm_Code; [[Elementary code main data structure]] /* The main interface currently defined in code */

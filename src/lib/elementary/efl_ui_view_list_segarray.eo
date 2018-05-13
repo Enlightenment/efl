@@ -1,4 +1,3 @@
-import elm_general;
 import efl_ui_view_list_types;
 
 class Efl.Ui.View_List_SegArray (Efl.Object)

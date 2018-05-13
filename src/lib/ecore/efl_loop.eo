@@ -1,5 +1,3 @@
-import eina_types;
-
 struct Efl.Loop_Arguments {
    [[EFL loop arguments data structure]]
    argv: const(array<const(stringshare)>); [[Array with loop arguments]]

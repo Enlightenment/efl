@@ -1,5 +1,3 @@
-import efl_canvas_animation_types;
-
 class Efl.Canvas.Animation_Player (Efl.Object, Efl.Player)
 {
    [[Efl animation object class]]
