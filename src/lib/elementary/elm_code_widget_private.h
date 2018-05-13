@@ -15,7 +15,7 @@ typedef struct
    Elm_Code *code;
    Eina_List *grids;
    unsigned int col_count;
-   Evas_Object *scroller, *gridbox;
+   Evas_Object *scroller, *gridbox, *background;
 
    const char *font_name;
    Evas_Font_Size font_size;

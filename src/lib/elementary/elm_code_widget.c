@@ -2261,14 +2261,16 @@ _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    unsigned int i;
    Evas_Object *grid;
 
-   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
-     return EFL_UI_THEME_APPLY_FAILED;
-
    edje = elm_layout_edje_get(obj);
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
    fade = (double) pd->alpha / 255;
+   evas_object_color_set(pd->background, r * fade, g * fade, b * fade, a * fade);
+
+   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
+     return EFL_UI_THEME_APPLY_FAILED;
+
    for (i = 0; i < eina_list_count(pd->grids); i++)
      {
         grid = eina_list_nth(pd->grids, i);
@@ -2295,7 +2297,7 @@ _elm_code_widget_alpha_set(Eo *obj, Elm_Code_Widget_Data *pd, int alpha)
 EOLIAN static void
 _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Evas_Object *gridrows, *scroller;
+   Evas_Object *gridrows, *scroller, *background;
    const char *fontname, *fontsize;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -2303,7 +2305,6 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
-   _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 
    elm_object_focus_allow_set(obj, EINA_TRUE);
    pd->alpha = 255;
@@ -2324,6 +2325,13 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_event_callback_add(scroller, EVAS_CALLBACK_MOUSE_DOWN,
                                   _elm_code_widget_scroller_clicked_cb, obj);
 
+   background = elm_bg_add(scroller);
+   evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(background);
+   elm_object_part_content_set(scroller, "elm.swallow.background", background);
+   pd->background = background;
+
    fontname = edje_object_data_get(elm_layout_edje_get(obj), "font.name");
    fontsize = edje_object_data_get(elm_layout_edje_get(obj), "font.size");
    if (fontname && fontsize)
@@ -2334,6 +2342,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
+
+   _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
