@@ -1,5 +1,4 @@
 import efl_gfx_types;
-import efl_gfx_fill;
 
 enum Efl.Gfx.Image_Content_Hint
 {

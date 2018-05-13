@@ -1,4 +1,3 @@
-import edje_types;
 import elm_interface_scrollable;
 import elm_general;
 

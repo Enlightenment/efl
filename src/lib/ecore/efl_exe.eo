@@ -1,4 +1,3 @@
-import efl_types;
 import eina_types;
 
 enum Efl.Exe.Signal {

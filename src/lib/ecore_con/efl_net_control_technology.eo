@@ -1,5 +1,3 @@
-import efl_net_control_access_point;
-
 enum Efl.Net.Control.Technology_Type {
     [[Technology types
 

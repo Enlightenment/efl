@@ -1,5 +1,4 @@
 import eina_types;
-import efl_gfx_types;
 
 interface Efl.Gfx.Entity {
    [[Efl graphics interface]]

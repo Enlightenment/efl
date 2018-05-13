@@ -1,7 +1,7 @@
 // FIXME: Documentation lacks proper references due to cyclic imports.
 // FIXME: What about AnyRTL? And other strange directions?
 
-import efl_orientation;
+parse efl_orientation;
 
 enum Efl.Ui.Dir
 {

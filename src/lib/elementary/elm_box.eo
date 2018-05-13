@@ -1,5 +1,3 @@
-import evas_box;
-
 class Elm.Box (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary box class]]

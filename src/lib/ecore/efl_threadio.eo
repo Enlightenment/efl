@@ -1,4 +1,4 @@
-import efl_types;
+import efl_object;
 import eina_types;
 
 function EFlThreadIOCall {

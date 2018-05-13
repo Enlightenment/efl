@@ -1,5 +1,4 @@
 import eina_types;
-import edje_types;
 
 interface Efl.Layout.Group
 {

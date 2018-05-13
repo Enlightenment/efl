@@ -1,5 +1,3 @@
-import edje_types;
-
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
