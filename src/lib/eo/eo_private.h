@@ -251,7 +251,9 @@ _eo_condtor_reset(_Eo_Object *obj)
    obj->condtor_done = EINA_FALSE;
 }
 
-void _efl_invalidate(_Eo_Object *obj);
+typedef struct _Efl_Object_Data Efl_Object_Data;
+
+EOLIAN void _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id);
 
 static inline void
 _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
@@ -261,10 +263,27 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
 
    const _Efl_Class *klass = obj->klass;
 
-   // If the object has been invalidated yet, time to do it
+   // If the object hasn't been invalidated yet, time to do it
    // before any destructor kick in. This can happen when
    // the object has no parent and get deleted by efl_unref.
-   _efl_invalidate(obj);
+   if (obj->parent)
+     {
+        Eo *parent = efl_parent_get(_eo_obj_id_get(obj));
+
+        ERR("Destructor path being taken while object [%s] still has a parent [%s] in state %i:%i.",
+            efl_debug_name_get(_eo_obj_id_get(obj)),
+            efl_debug_name_get(parent),
+            obj->is_invalidating, obj->invalidate);
+
+        efl_parent_set(_eo_obj_id_get(obj), NULL);
+
+        if (obj->parent)
+          {
+             CRI("Something is preventing [%s] from disconnecting from its parent, bypassing.",
+                 efl_debug_name_get(_eo_obj_id_get(obj)));
+             _efl_object_parent_set(_eo_obj_id_get(obj), efl_data_scope_get(_eo_obj_id_get(obj), EFL_OBJECT_CLASS), NULL);
+          }
+     }
 
    efl_event_callback_call(_eo_obj_id_get(obj), EFL_EVENT_DEL, NULL);
 
