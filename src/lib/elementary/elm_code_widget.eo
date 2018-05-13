@@ -191,6 +191,9 @@ class Elm.Code_Widget (Efl.Ui.Layout.Object, Efl.Access.Text)
             col: uint; [[The horizontal position of the cursor, starting from column 1]]
          }
       }
+      theme_refresh {
+        [[Update and refresh theme for widget.]]
+      }
       line_refresh {
           [[Refresh code line in widget]]
          params {

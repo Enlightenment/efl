@@ -2252,13 +2252,13 @@ _elm_code_widget_cursor_position_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_
    *col = pd->cursor_col;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
-_elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
+EOLIAN static void
+_elm_code_widget_theme_refresh(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Eo *edje;
    int r, g, b, a;
-   double fade;
    unsigned int i;
+   double fade;
    Evas_Object *grid;
 
    edje = elm_layout_edje_get(obj);
@@ -2268,14 +2268,20 @@ _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    fade = (double) pd->alpha / 255;
    evas_object_color_set(pd->background, r * fade, g * fade, b * fade, a * fade);
 
-   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
-     return EFL_UI_THEME_APPLY_FAILED;
-
    for (i = 0; i < eina_list_count(pd->grids); i++)
      {
         grid = eina_list_nth(pd->grids, i);
         _elm_code_widget_setup_palette(grid, obj, fade);
      }
+}
+
+EOLIAN static Efl_Ui_Theme_Apply
+_elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
+{
+   if (!efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS)))
+     return EFL_UI_THEME_APPLY_FAILED;
+
+   _elm_code_widget_theme_refresh(obj, pd);
 
    return EFL_UI_THEME_APPLY_SUCCESS;
 }
