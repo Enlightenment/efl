@@ -301,6 +301,7 @@ ffi.cdef [[
     const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filepath);
     Eina_Bool eolian_state_all_eo_files_parse(Eolian_State *state);
     Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
+    Eina_Bool eolian_state_check(const Eolian_State *state);
     const Eolian_Unit *eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name);
     Eina_Iterator *eolian_state_units_get(const Eolian_State *state);
 
@@ -683,6 +684,10 @@ ffi.metatype("Eolian_State", {
 
         all_eot_files_parse = function(self)
             return eolian.eolian_state_all_eot_files_parse(self) ~= 0
+        end,
+
+        check = function(self)
+            return eolian.eolian_state_check(self) ~= 0
         end,
 
         eo_file_paths_get = function(self)
