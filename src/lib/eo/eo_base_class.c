@@ -43,7 +43,7 @@ typedef struct
    Eo                      ***wrefs;
 } Efl_Object_Extension;
 
-typedef struct
+struct _Efl_Object_Data
 {
    Eina_Inlist               *children;
    Eo                        *parent;
@@ -68,7 +68,7 @@ typedef struct
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
    Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
-} Efl_Object_Data;
+};
 
 typedef enum
 {
@@ -135,7 +135,6 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
    _efl_pending_futures_clear(pd);
 
    EO_OBJ_POINTER(obj_id, obj);
-   if (obj->invalidate) goto end;
 
    // Finally invalidate itself if it wasn't done already
    // I am not sure this is a good idea, but it force the
@@ -144,9 +143,6 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
    if (!obj->is_invalidating)
      efl_parent_set(obj_id, NULL);
 
-   obj->invalidate = EINA_TRUE;
-
- end:
    EO_OBJ_DONE(obj_id);
 }
 
@@ -189,6 +185,8 @@ _efl_invalidate(_Eo_Object *obj)
      }
 
    eina_array_flush(&stash);
+
+   obj->invalidate = EINA_TRUE;
 }
 
 static void
@@ -711,7 +709,7 @@ _efl_object_reuse(_Eo_Object *obj)
    obj->invalidate = EINA_FALSE;
 }
 
-EOLIAN static void
+EOLIAN void
 _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 {
    Eo *prev_parent = pd->parent;
