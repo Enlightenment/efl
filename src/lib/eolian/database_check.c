@@ -15,12 +15,12 @@ _check_cycle(Eina_Hash *chash, const Eolian_Object *obj)
    return EINA_FALSE;
 }
 
-static void _check_class(const Eolian_Class *cl, Eina_Hash *depset,
-                         Eina_Hash *chash);
-static void _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset,
-                            Eina_Hash *chash);
-static void _check_variable(const Eolian_Variable *v, Eina_Hash *depset,
-                            Eina_Hash *chash);
+static void
+_add_dep(Eina_Hash *depset, const Eolian_Unit *dep)
+{
+   if (!eina_hash_find(depset, &dep))
+     eina_hash_add(depset, &dep, dep);
+}
 
 static void
 _check_type(const Eolian_Type *tp, Eina_Hash *depset, Eina_Hash *chash)
@@ -35,41 +35,30 @@ _check_type(const Eolian_Type *tp, Eina_Hash *depset, Eina_Hash *chash)
           _check_type(ntp, depset, chash);
      }
 
-   if (tp->type == EOLIAN_TYPE_CLASS)
-     _check_class(tp->klass, depset, chash);
-   else if (tp->tdecl)
-     _check_typedecl(tp->tdecl, depset, chash);
+   /* also covers EOLIAN_TYPE_CLASS */
+   if (tp->tdecl)
+     _add_dep(depset, ((const Eolian_Object *)tp->tdecl)->unit);
 }
-
-typedef struct _Check_Cb_Data
-{
-   Eina_Hash *depset;
-   Eina_Hash *chash;
-} Check_Cb_Data;
 
 static void
 _check_expr_cb(const Eolian_Object *obj, void *data)
 {
-   Check_Cb_Data *d = data;
+   Eina_Hash *depset = data;
    switch (obj->type)
      {
       case EOLIAN_OBJECT_TYPEDECL:
-        _check_typedecl((const Eolian_Typedecl *)obj, d->depset, d->chash);
-        break;
       case EOLIAN_OBJECT_VARIABLE:
-        _check_variable((const Eolian_Variable *)obj, d->depset, d->chash);
-        break;
+        _add_dep(depset, obj->unit);
       default:
         break;
      }
 }
 
 static void
-_check_expr(const Eolian_Expression *expr, Eina_Hash *depset, Eina_Hash *chash)
+_check_expr(const Eolian_Expression *expr, Eina_Hash *depset)
 {
-   Check_Cb_Data d = { depset, chash };
    database_expr_eval(expr->base.unit, (Eolian_Expression *)expr,
-                      EOLIAN_MASK_ALL, _check_expr_cb, &d);
+                      EOLIAN_MASK_ALL, _check_expr_cb, depset);
 }
 
 static void
@@ -79,7 +68,7 @@ _check_param(const Eolian_Function_Parameter *arg, Eina_Hash *depset,
    if (arg->type)
      _check_type(arg->type, depset, chash);
    if (arg->value)
-     _check_expr(arg->value, depset, chash);
+     _check_expr(arg->value, depset);
 }
 
 static void
@@ -91,9 +80,9 @@ _check_function(const Eolian_Function *f, Eina_Hash *depset, Eina_Hash *chash)
      _check_type(f->set_ret_type, depset, chash);
 
    if (f->get_ret_val)
-     _check_expr(f->get_ret_val, depset, chash);
+     _check_expr(f->get_ret_val, depset);
    if (f->set_ret_val)
-     _check_expr(f->set_ret_val, depset, chash);
+     _check_expr(f->set_ret_val, depset);
 
    Eina_List *l;
    const Eolian_Function_Parameter *arg;
@@ -125,22 +114,23 @@ _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
    if (_check_cycle(chash, &cl->base))
      return;
 
-   if (!eina_hash_find(depset, &cl->base.unit))
-     eina_hash_add(depset, &cl->base.unit, cl->base.unit);
+   _add_dep(depset, cl->base.unit);
 
    Eina_Iterator *itr = eina_list_iterator_new(cl->inherits);
    const Eolian_Class *icl;
    EINA_ITERATOR_FOREACH(itr, icl)
-     _check_class(icl, depset, chash);
+     _add_dep(depset, icl->base.unit);
    eina_iterator_free(itr);
 
-   const Eolian_Implement *impl;
-   itr = eina_list_iterator_new(cl->implements);
-   EINA_ITERATOR_FOREACH(itr, impl)
-     {
-        _check_function(impl->foo_id, depset, chash);
-        _check_class(impl->klass, depset, chash);
-     }
+   const Eolian_Function *fid;
+   itr = eina_list_iterator_new(cl->properties);
+   EINA_ITERATOR_FOREACH(itr, fid)
+     _check_function(fid, depset, chash);
+   eina_iterator_free(itr);
+
+   itr = eina_list_iterator_new(cl->methods);
+   EINA_ITERATOR_FOREACH(itr, fid)
+     _check_function(fid, depset, chash);
    eina_iterator_free(itr);
 
    const Eolian_Event *ev;
@@ -155,7 +145,7 @@ _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
    const Eolian_Part *part;
    itr = eina_list_iterator_new(cl->parts);
    EINA_ITERATOR_FOREACH(itr, part)
-     _check_class(part->klass, depset, chash);
+     _add_dep(depset, part->klass->base.unit);
    eina_iterator_free(itr);
 }
 
@@ -165,8 +155,7 @@ _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset, Eina_Hash *chash)
    if (_check_cycle(chash, &tp->base))
      return;
 
-   if (!eina_hash_find(depset, &tp->base.unit))
-     eina_hash_add(depset, &tp->base.unit, tp->base.unit);
+   _add_dep(depset, tp->base.unit);
 
    if (tp->base_type)
      _check_type(tp->base_type, depset, chash);
@@ -185,7 +174,7 @@ _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset, Eina_Hash *chash)
                   break;
                 case EOLIAN_TYPEDECL_ENUM:
                   _check_expr(((const Eolian_Enum_Type_Field *)data)->value,
-                              depset, chash);
+                              depset);
                   break;
                 default:
                   break;
@@ -203,12 +192,11 @@ _check_variable(const Eolian_Variable *v, Eina_Hash *depset, Eina_Hash *chash)
    if (_check_cycle(chash, &v->base))
      return;
 
-   if (!eina_hash_find(depset, &v->base.unit))
-     eina_hash_add(depset, &v->base.unit, v->base.unit);
+   _add_dep(depset, v->base.unit);
 
    _check_type(v->base_type, depset, chash);
    if (v->value)
-     _check_expr(v->value, depset, chash);
+     _check_expr(v->value, depset);
 }
 
 static Eina_Bool
