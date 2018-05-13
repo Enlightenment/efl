@@ -1107,7 +1107,7 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
 }
 
 EAPI Eina_Bool
-eolian_state_check(Eolian_State *state)
+eolian_state_check(const Eolian_State *state)
 {
    return database_check(state);
 }

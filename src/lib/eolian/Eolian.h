@@ -845,7 +845,7 @@ EAPI Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_state_check(Eolian_State *state);
+EAPI Eina_Bool eolian_state_check(const Eolian_State *state);
 
 /*
  * @brief Get an Eolian unit by file name.
