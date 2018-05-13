@@ -1247,7 +1247,6 @@ EOLIAN static void
 _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Efl_Input_Device *dev;
-   Evas_Public_Data *edata;
    Evas_Object_Pointer_Data *pdata;
    Evas_Object *proxy;
    Eina_List *l, *l2;
@@ -1262,28 +1261,32 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
    efl_gfx_entity_visible_set((Eo *) eo_obj, EINA_FALSE);
    obj->efl_del_called = EINA_TRUE;
 
-   edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
-
    evas_object_hide(eo_obj);
 
-   if (obj->events) EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     {
-        EINA_LIST_FREE (events->focused_by_seats, dev)
-          {
-             event_id = _evas_event_counter;
-             efl_event_callback_del(dev, EFL_EVENT_DEL,
-                                    _evas_focus_device_del_cb, obj);
-             eina_hash_del_by_key(edata->focused_objects, &dev);
-             _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
-             if ((obj->layer) && (obj->layer->evas))
-               _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
-          }
-        EINA_INLIST_FREE(events->pointer_grabs, pdata)
-          _evas_object_pointer_grab_del(obj, pdata);
-        EINA_LIST_FREE(events->events_whitelist, dev)
-          efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
-     }
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
+   if (obj->events)
+     EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
+       {
+          Evas_Public_Data *edata = NULL;
+
+          if (!efl_invalidated_get(evas_object_evas_get(eo_obj)))
+            edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
+
+          EINA_LIST_FREE (events->focused_by_seats, dev)
+            {
+               event_id = _evas_event_counter;
+               efl_event_callback_del(dev, EFL_EVENT_DEL,
+                                      _evas_focus_device_del_cb, obj);
+               if (edata) eina_hash_del_by_key(edata->focused_objects, &dev);
+               _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
+               if ((obj->layer) && (obj->layer->evas))
+                 _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
+            }
+          EINA_INLIST_FREE(events->pointer_grabs, pdata)
+            _evas_object_pointer_grab_del(obj, pdata);
+          EINA_LIST_FREE(events->events_whitelist, dev)
+            efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
+       }
+     EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
 
    event_id = _evas_object_event_new();
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, event_id, NULL);
