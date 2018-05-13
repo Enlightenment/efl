@@ -1017,23 +1017,6 @@ evas_object_ref_get(const Evas_Object *eo_obj)
    return obj->ref;
 }
 
-EOLIAN static void
-_efl_canvas_object_efl_object_parent_set(Eo *obj, Evas_Object_Protected_Data *pd, Eo *parent)
-{
-   // This look very bad, seems like we are trying to bypass Eo refcounting somehow
-   // to keep the object "usable" event when parent get set to NULL
-   if (pd->legacy.ctor)
-     {
-        if (pd->ref > 0 && !efl_invalidated_get(obj))
-          {
-             pd->del_ref = EINA_TRUE;
-             return ;
-          }
-     }
-
-   efl_parent_set(efl_super(obj, MY_CLASS), parent);
-}
-
 EAPI void
 evas_object_del(Evas_Object *obj)
 {
