@@ -5,6 +5,16 @@
 #include "eo_lexer.h"
 #include "eolian_priv.h"
 
+static Eina_Bool
+_check_cycle(Eina_Hash *chash, const Eolian_Object *obj)
+{
+   /* need to check this for classes, typedecls, vars (toplevel objects) */
+   if (eina_hash_find(chash, &obj))
+     return EINA_TRUE;
+   eina_hash_add(chash, &obj, obj);
+   return EINA_FALSE;
+}
+
 static void _check_class(const Eolian_Class *cl, Eina_Hash *depset,
                          Eina_Hash *chash);
 static void _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset,
@@ -112,10 +122,8 @@ _check_function(const Eolian_Function *f, Eina_Hash *depset, Eina_Hash *chash)
 static void
 _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
 {
-   /* kill cyclic dependencies before stack overflow */
-   if (eina_hash_find(chash, &cl))
+   if (_check_cycle(chash, &cl->base))
      return;
-   eina_hash_add(chash, &cl, cl);
 
    if (!eina_hash_find(depset, &cl->base.unit))
      eina_hash_add(depset, &cl->base.unit, cl->base.unit);
@@ -154,6 +162,9 @@ _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
 static void
 _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset, Eina_Hash *chash)
 {
+   if (_check_cycle(chash, &tp->base))
+     return;
+
    if (!eina_hash_find(depset, &tp->base.unit))
      eina_hash_add(depset, &tp->base.unit, tp->base.unit);
 
@@ -189,6 +200,9 @@ _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset, Eina_Hash *chash)
 static void
 _check_variable(const Eolian_Variable *v, Eina_Hash *depset, Eina_Hash *chash)
 {
+   if (_check_cycle(chash, &v->base))
+     return;
+
    if (!eina_hash_find(depset, &v->base.unit))
      eina_hash_add(depset, &v->base.unit, v->base.unit);
 
