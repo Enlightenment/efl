@@ -1032,7 +1032,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
    if (!_parse_deferred(ret))
      return NULL;
    _merge_units(ret);
-   if (!database_validate(ret))
+   if (!database_validate(&state->staging.unit))
      return NULL;
    _merge_staging(state);
    return ret;
