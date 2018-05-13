@@ -682,6 +682,8 @@ EAPI void
 efl_del(const Eo *obj)
 {
    if (!obj) return ;
+   EO_OBJ_POINTER_RETURN(obj, oid);
+   _efl_ref(oid);
    if (efl_parent_get((Eo *) obj))
      {
         efl_parent_set((Eo *) obj, NULL);
@@ -691,6 +693,8 @@ efl_del(const Eo *obj)
         ERR("Calling efl_del on an object with no parent is not advised any more.");
         efl_unref(obj);
      }
+   _efl_unref(oid);
+   EO_OBJ_DONE(obj);
 }
 
 void
