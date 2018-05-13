@@ -282,6 +282,41 @@ evas_free(Evas *eo_e)
    efl_del(eo_e);
 }
 
+typedef struct _Forced_Death Forced_Death;
+struct _Forced_Death
+{
+   Eina_Bool invalidated;
+   Eina_Bool noref;
+   Eina_Bool destroyed;
+};
+
+static void
+_object_invalidate(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Forced_Death *force = data;
+   force->invalidated = EINA_TRUE;
+}
+
+static void
+_object_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Forced_Death *force = data;
+   force->destroyed = EINA_TRUE;
+}
+
+static void
+_object_noref(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Forced_Death *force = data;
+   force->noref = EINA_TRUE;
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_object_forced_death,
+                           { EFL_EVENT_DEL, _object_del },
+                           { EFL_EVENT_INVALIDATE, _object_invalidate },
+                           { EFL_EVENT_NOREF, _object_noref } );
+
+
 EOLIAN static void
 _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
 {
@@ -341,13 +376,36 @@ _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
    // Killing zombies now
    while ((obj = eina_array_pop(&stash)))
      {
-        ERR("Killing Zombie Object [%s]. Refs: %i:%i",
-            efl_debug_name_get(obj), efl_ref_count(obj), ___efl_ref2_count(obj));
+        Forced_Death force = {
+          efl_invalidated_get(obj),
+          efl_parent_get(obj) ? (efl_ref_count(obj) == 1) : (efl_ref_count(obj) == 0),
+          EINA_FALSE
+        };
+
+        efl_event_callback_array_add(obj, _object_forced_death(), &force);
+
+        ERR("Killing Zombie Object [%s:%i:%i]. Refs: %i:%i",
+            efl_debug_name_get(obj), force.invalidated, force.noref,
+            efl_ref_count(obj), ___efl_ref2_count(obj));
         ___efl_ref2_reset(obj);
         // This code explicitely bypass all refcounting to destroy them
-        while (efl_ref_count(obj) > 1) efl_unref(obj);
-        while (efl_ref_count(obj) < 1) efl_ref(obj);
-        efl_del(obj);
+        if (!force.invalidated) efl_del(obj);
+        while (!force.destroyed) efl_unref(obj);
+
+        if (!force.invalidated)
+          {
+             ERR("Zombie Object [%s] %s@%p could not be invalidated. "
+                 "It seems like the call to efl_invalidated() wasn't "
+                 "propagated to all the parent classes.",
+                 efl_debug_name_get(obj), efl_class_name_get(obj), obj);
+          }
+        if (!force.destroyed)
+          {
+             ERR("Zombie Object [%s] %s@%p could not be destroyed. "
+                 "It seems like the call to efl_destructor() wasn't "
+                 "propagated to all the parent classes.",
+                 efl_debug_name_get(obj), efl_class_name_get(obj), obj);
+          }
 
         // Forcefully remove the object from layers
         EINA_INLIST_FOREACH(e->layers, lay)
@@ -355,7 +413,7 @@ _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
             if (o && (o->object == obj))
               {
                  ERR("Zombie Object [%s] %s@%p could not be removed "
-                     "from the list of objects. Maybe this object "
+                     "from the canvas list of objects. Maybe this object "
                      "was deleted but the call to efl_invalidated() "
                      "was not propagated to all the parent classes? "
                      "Forcibly removing it. This may leak! Refs: %i:%i",
