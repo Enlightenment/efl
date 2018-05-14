@@ -129,7 +129,7 @@ struct _Script_Write
    Code        *cd;
    int          i;
    Ecore_Exe   *exe;
-   int          tmpn_fd, tmpo_fd;
+   int          tmpn_fd;
    Eina_Tmpstr *tmpn;
    Eina_Tmpstr *tmpo;
    char        *errstr;
@@ -2054,7 +2054,7 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
    int size;
    char buf[PATH_MAX];
 
-   f = fdopen(sc->tmpo_fd, "rb");
+   f = fopen(sc->tmpo, "rb");
    if (!f)
      {
         snprintf(buf, sizeof(buf),
@@ -2129,8 +2129,6 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
    eina_tmpstr_del(sc->tmpo);
 // closed by fclose(f) in create_script_file()
 //   close(sc->tmpn_fd);
-// closed by fclose(f) above
-//   close(sc->tmpo_fd);
 }
 
 typedef struct
@@ -2275,6 +2273,7 @@ data_write_scripts(Eet_File *ef)
      {
         Code *cd = eina_list_data_get(l);
         Script_Write *sc;
+        int fd;
         char buf[EINA_PATH_MAX];
 
         if (cd->is_lua)
@@ -2289,14 +2288,18 @@ data_write_scripts(Eet_File *ef)
         if (sc->tmpn_fd < 0)
           error_and_abort(ef, "Unable to open temp file \"%s\" for script "
                               "compilation.", sc->tmpn);
-        sc->tmpo_fd = eina_file_mkstemp("edje_cc.amx-tmp-XXXXXX", &sc->tmpo);
-        if (sc->tmpo_fd < 0)
+        fd = eina_file_mkstemp("edje_cc.amx-tmp-XXXXXX", &sc->tmpo);
+        if (fd < 0)
           {
              unlink(sc->tmpn);
              eina_tmpstr_del(sc->tmpn);
              error_and_abort(ef, "Unable to open temp file \"%s\" for script "
                                  "compilation.", sc->tmpo);
           }
+        //do not carry the fd over the time
+        //we should not unnesseserrily carry filedescriptors over time as this could excede system limits
+        //which have been fetched earlier
+        close(fd);
         create_script_file(ef, sc->tmpn, cd, sc->tmpn_fd);
         snprintf(buf, sizeof(buf),
                  "%s -i %s -o %s %s", embryo_cc_path, inc_path,
