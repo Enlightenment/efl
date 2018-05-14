@@ -5,7 +5,7 @@ AM_DISTCHECK_CONFIGURE_FLAGS = \
 --with-systemdunitdir=. \
 --enable-always-build-examples
 
-SUBDIRS = src data config doc
+SUBDIRS = src data doc
 
 if HAVE_PO
 

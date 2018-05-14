@@ -2,6 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =
 CLEANFILES =
+SUBDIRS =
 
 ########################################################################
 # Embryo
@@ -118,6 +119,8 @@ EXTRA_DIST += $(eluafiles_DATA)
 # Elementary
 
 # themes
+
+SUBDIRS += elementary/config
 
 elementaryfilesdir = $(datadir)/elementary/themes
 elementaryfiles_DATA = elementary/themes/default.edj

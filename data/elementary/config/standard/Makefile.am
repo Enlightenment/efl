@@ -1,13 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-include ../../src/Makefile_Eet_Helper.am
+include ../../../../src/Makefile_Eet_Helper.am
 
 EXTRA_DIST = \
         profile.desktop \
         icon.png \
         base.src.in
 
-filesdir = $(datadir)/elementary/config/mobile
+filesdir = $(datadir)/elementary/config/standard
 files_DATA = \
         profile.desktop \
         icon.png \
@@ -15,8 +15,9 @@ files_DATA = \
 
 %.cfg: %.src
 	$(AM_V_EET) \
-	$(MKDIR_P) $(top_builddir)/config/; \
-	$(EET) -e $(top_builddir)/config/mobile/$@ config $< 1
+	$(MKDIR_P) $(top_builddir)/data/elementary/config/standard/; \
+	$(EET) -e $(top_builddir)/data/elementary/config/standard/$@ config $< 1
 
 clean-local:
 	rm -rf *.cfg *~
+
