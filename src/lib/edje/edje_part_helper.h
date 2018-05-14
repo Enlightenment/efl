@@ -35,12 +35,10 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
    if (*static_var)
      {
         if (*static_var != proxy)
-          efl_del_intercept_set(*static_var, NULL);
-     }
-   if (efl_parent_get(proxy))
-     {
-        efl_ref(proxy);
-        efl_parent_set(proxy, NULL);
+          {
+             efl_del_intercept_set(*static_var, NULL);
+             efl_unref(*static_var);
+          }
      }
    efl_reuse(proxy);
    *static_var = proxy;
