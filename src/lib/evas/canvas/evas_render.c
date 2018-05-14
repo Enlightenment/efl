@@ -3682,7 +3682,7 @@ evas_render_updates_internal(Evas *eo_e,
    for (i = 0; i < e->delete_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->delete_objects, i);
-        evas_object_free(obj->object, EINA_TRUE);
+        evas_object_free(obj, EINA_TRUE);
      }
    eina_array_clean(&e->delete_objects);
    /* if we deleted no objects this frame or we deleted a lot (> 1024) then

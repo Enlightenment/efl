@@ -541,16 +541,13 @@ evas_object_cur_prev(Evas_Object_Protected_Data *obj)
 }
 
 void
-evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
+evas_object_free(Evas_Object_Protected_Data *obj, Eina_Bool clean_layer)
 {
-   Evas_Object_Protected_Data *obj;
-
-   if (!eo_obj) return ;
-   obj = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!obj) return;
-   obj->clean_layer = !!clean_layer;
-
+   Evas_Object *eo_obj;
    int was_smart_child = 0;
+
+   if (!obj) return ;
+   eo_obj = obj->object;
 
    evas_object_callback_shutdown(eo_obj, obj);
    if (efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
@@ -585,15 +582,18 @@ evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
             }
         EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
      }
-   evas_object_grabs_cleanup(eo_obj, obj);
-   evas_object_intercept_cleanup(eo_obj);
-   if (obj->smart.parent) was_smart_child = 1;
-   evas_object_smart_cleanup(eo_obj);
-   if (obj->func->free)
+   if (eo_obj)
      {
-        obj->func->free(eo_obj, obj, obj->private_data);
+        evas_object_grabs_cleanup(eo_obj, obj);
+        evas_object_intercept_cleanup(eo_obj);
+        if (obj->smart.parent) was_smart_child = 1;
+        evas_object_smart_cleanup(eo_obj);
+        if (obj->func->free)
+          {
+             obj->func->free(eo_obj, obj, obj->private_data);
+          }
      }
-   if (!was_smart_child) evas_object_release(eo_obj, obj, obj->clean_layer);
+   if (!was_smart_child) evas_object_release(eo_obj, obj, !!clean_layer);
    if (obj->clip.clipees)
      obj->clip.clipees = eina_list_free(obj->clip.clipees);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
@@ -1363,7 +1363,6 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    if (!obj->layer)
      {
         efl_manual_free_set(eo_obj, EINA_FALSE);
-        obj->clean_layer = 1;
         goto end;
      }
 
