@@ -134,7 +134,9 @@ elm_public_eolian_files += \
 	lib/elementary/efl_ui_check_legacy_part.eo \
 	lib/elementary/efl_ui_progressbar_legacy_part.eo \
 	lib/elementary/elm_spinner.eo \
+	lib/elementary/elm_multibuttonentry.eo \
 	lib/elementary/elm_multibuttonentry_item.eo \
+	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_interface_scrollable.eo \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
@@ -205,7 +207,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_map.eo \
 	lib/elementary/elm_map_pan.eo \
 	lib/elementary/elm_menu.eo \
-	lib/elementary/elm_multibuttonentry.eo \
 	lib/elementary/elm_notify.eo \
 	lib/elementary/elm_panel.eo \
 	lib/elementary/elm_player.eo \
@@ -221,7 +222,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_dayselector_item.eo \
 	lib/elementary/elm_flipselector_item.eo \
 	lib/elementary/elm_menu_item.eo \
-	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_ctxpopup_item.eo \
 	lib/elementary/elm_index_item.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
