@@ -277,21 +277,21 @@ _event_anim_free(Event_Animation *event_anim, Evas_Object_Protected_Data *obj)
 EOLIAN static Eo *
 _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   const char *class_name;
    Eo *parent = NULL;
-   Evas *evas;
+   Evas *evas = NULL;
+
+   class_name = efl_class_name_get(eo_obj);
 
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
+   if (!eo_obj) goto on_error;
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME);
    efl_manual_free_set(eo_obj, EINA_TRUE);
 
    parent = efl_parent_get(eo_obj);
    evas = evas_object_evas_get(parent);
 
-   if (!obj || !_init_cow() || !evas)
-     {
-        ERR("Failed to create a canvas object (evas: %p)", evas);
-        return NULL;
-     }
+   if (!obj || !_init_cow() || !evas) goto on_error;
 
    obj->is_frame = EINA_FALSE;
    obj->object = eo_obj;
@@ -308,6 +308,10 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
    evas_object_callback_init(eo_obj, obj);
 
    return eo_obj;
+
+ on_error:
+   ERR("Failed to create a canvas object (evas: %p) of type '%s'.", evas, class_name);
+   return NULL;
 }
 
 EOLIAN static Eo *
