@@ -1443,7 +1443,7 @@ _profile_fetch_from_conf(void)
           }
      }
 
-   for (i = 0; i < 2; i++)
+   for (i = 0; i < 2 && !_use_build_config; i++)
      {
         // user profile
         if (i == 0)
@@ -1695,21 +1695,24 @@ _config_load(void)
    efl_loop_register(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    efl_loop_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
-   _elm_config = _config_user_load();
-   if (_elm_config)
+   if (!_use_build_config)
      {
-        if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
-           {
-              WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
-              _config_free(_elm_config);
-              _elm_config = NULL;
-           }
-        else
+        _elm_config = _config_user_load();
+        if (_elm_config)
           {
-             if (_elm_config->config_version < ELM_CONFIG_VERSION)
-               _config_update();
-             _env_get();
-             return;
+             if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
+                {
+                   WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
+                   _config_free(_elm_config);
+                   _elm_config = NULL;
+                }
+             else
+               {
+                  if (_elm_config->config_version < ELM_CONFIG_VERSION)
+                    _config_update();
+                  _env_get();
+                  return;
+               }
           }
      }
 
