@@ -1184,7 +1184,6 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   efl_del_called : 1;
    Eina_Bool                   no_render : 1; // since 1.15
-   Eina_Bool                   clean_layer : 1; // destructor option
 
    Eina_Bool                   snapshot_needs_redraw : 1;
    Eina_Bool                   snapshot_no_obscure : 1;
@@ -1553,7 +1552,7 @@ Evas_Object *evas_object_new(Evas *e);
 void evas_object_change_reset(Evas_Object_Protected_Data *obj);
 void evas_object_clip_recalc_do(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *clipper);
 void evas_object_cur_prev(Evas_Object_Protected_Data *obj);
-void evas_object_free(Evas_Object *obj, Eina_Bool clean_layer);
+void evas_object_free(Evas_Object_Protected_Data *obj, Eina_Bool clean_layer);
 void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Smart_Data *s);
 void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
 void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);

@@ -58,7 +58,7 @@ _evas_render2_th_main_delete_objects_clean(Evas_Public_Data *e)
    for (i = 0; i < e->delete_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->delete_objects, i);
-        evas_object_free(obj->object, 1);
+        evas_object_free(obj, 1);
      }
 //   OBJS_ARRAY_CLEAN(&e->delete_objects);
    eina_array_clean(&e->delete_objects);
