@@ -1884,8 +1884,8 @@ efl_unref(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
-   if (EINA_UNLIKELY(obj->user_refcount == 1 &&
-                     obj->parent))
+   if (EINA_UNLIKELY((!obj->unref_compensate && obj->user_refcount == 1 && obj->parent) ||
+                     (obj->unref_compensate && obj->user_refcount == 2 && obj->parent)))
      {
         if (!obj->allow_parent_unref)
           CRI("Calling efl_unref instead of efl_del or efl_parent_set(NULL). Temporary fallback in place triggered.");
@@ -1894,25 +1894,35 @@ efl_unref(const Eo *obj_id)
         return ;
      }
 
-   --(obj->user_refcount);
+   _efl_ref(obj);
 
-   if (EINA_UNLIKELY((obj->user_refcount == 0 && !obj->parent) ||
-                     (obj->user_refcount == 1 && obj->parent)))
+   if (EINA_UNLIKELY((!obj->unref_compensate) &&
+                     ((obj->user_refcount == 1 && !obj->parent) ||
+                      (obj->user_refcount == 2 && obj->parent))))
      {
+        // We need to report efl_ref_count correctly during efl_noref, so fake it
+        // by adjusting efl_ref_count while inside efl_unref (This should avoid
+        // infinite loop)
+        obj->unref_compensate = EINA_TRUE;
+
         // The noref event should happen before any object in the
         // tree get affected by the change in refcount.
         efl_event_callback_call((Eo *) obj_id, EFL_EVENT_NOREF, NULL);
         efl_noref((Eo *) obj_id);
+
+        obj->unref_compensate = EINA_FALSE;
      }
+
+   --(obj->user_refcount);
 
 #ifdef EO_DEBUG
    _eo_log_obj_ref_op(obj, EO_REF_OP_UNREF);
 #endif
-   if (EINA_UNLIKELY(obj->user_refcount <= 0))
+   if (EINA_UNLIKELY((obj->user_refcount <= 0 && !obj->unref_compensate)))
      {
         if (obj->user_refcount < 0)
           {
-             ERR("Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.",
+             CRI("Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.",
                  obj->klass->desc->name, obj_id, obj->user_refcount);
              _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
              EO_OBJ_DONE(obj_id);
@@ -1920,6 +1930,7 @@ efl_unref(const Eo *obj_id)
           }
         _efl_unref(obj);
      }
+   _efl_unref(obj);
    EO_OBJ_DONE(obj_id);
 }
 
@@ -1928,7 +1939,7 @@ efl_ref_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
    int ref;
-   ref = obj->user_refcount;
+   ref = obj->user_refcount - (obj->unref_compensate ? 1 : 0);
    EO_OBJ_DONE(obj_id);
    return ref;
 }

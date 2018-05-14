@@ -118,6 +118,7 @@ struct _Eo_Object
      Eina_Bool invalidate:1;
      Eina_Bool is_invalidating:1;
      Eina_Bool parent : 1;
+     Eina_Bool unref_compensate : 1;
      Eina_Bool allow_parent_unref : 1;
 
      Eina_Bool del_triggered:1;
