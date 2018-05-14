@@ -338,6 +338,12 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
    --(obj->refcount);
    if (EINA_UNLIKELY(obj->refcount <= 0))
      {
+        if (obj->user_refcount > 0)
+          {
+             ERR("Object is still refcounted by users, but internal refcount reached 0. This should never happen. Please report a bug and send a backtrace to EFL developer.");
+             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             return;
+          }
         if (obj->refcount < 0)
           {
              ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.", file, line, func_name, obj, obj->refcount);
