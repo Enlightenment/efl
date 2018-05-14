@@ -254,6 +254,7 @@ _eo_condtor_reset(_Eo_Object *obj)
 typedef struct _Efl_Object_Data Efl_Object_Data;
 
 EOLIAN void _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id);
+void _efl_invalidate(_Eo_Object *obj);
 
 static inline void
 _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
@@ -283,6 +284,10 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
                  efl_debug_name_get(_eo_obj_id_get(obj)));
              _efl_object_parent_set(_eo_obj_id_get(obj), efl_data_scope_get(_eo_obj_id_get(obj), EFL_OBJECT_CLASS), NULL);
           }
+     }
+   else if (!obj->invalidate || !obj->is_invalidating)
+     {
+        _efl_invalidate(obj);
      }
 
    efl_event_callback_call(_eo_obj_id_get(obj), EFL_EVENT_DEL, NULL);
