@@ -249,6 +249,37 @@ _check_unit(const Eolian_Unit *unit)
    return ret;
 }
 
+static Eina_Bool
+_check_namespaces(const Eolian_Unit *src)
+{
+   Eina_Bool ret = EINA_TRUE;
+   Eina_Hash *nsh = eina_hash_string_superfast_new(NULL);
+   Eina_Strbuf *sb = eina_strbuf_new();
+   Eina_Iterator *itr = eina_hash_iterator_data_new(src->objects);
+   const Eolian_Object *obj;
+   EINA_ITERATOR_FOREACH(itr, obj)
+     {
+        if (eina_hash_find(nsh, obj->name))
+          {
+             eolian_state_log_obj(src->state, obj,
+               "object name conflicts with namespace '%s'", obj->name);
+             ret = EINA_FALSE;
+          }
+        char const *dot = strrchr(obj->name, '.');
+        if (!dot)
+          continue;
+        eina_strbuf_reset(sb);
+        eina_strbuf_append_n(sb, obj->name, dot - obj->name);
+        const char *nsn = eina_strbuf_string_get(sb);
+        if (!eina_hash_find(nsh, nsn))
+          eina_hash_add(nsh, nsn, obj);
+     }
+   eina_iterator_free(itr);
+   eina_strbuf_free(sb);
+   eina_hash_free(nsh);
+   return ret;
+}
+
 Eina_Bool
 database_check(const Eolian_State *state)
 {
@@ -263,6 +294,10 @@ database_check(const Eolian_State *state)
           ret = EINA_FALSE;
      }
    eina_iterator_free(itr);
+
+   /* namespace checks */
+   if (!_check_namespaces(&state->main.unit))
+     ret = EINA_FALSE;
 
    return ret;
 }
