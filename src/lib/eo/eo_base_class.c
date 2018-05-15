@@ -65,7 +65,6 @@ struct _Efl_Object_Data
 #endif
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
-   Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
    Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
 };
@@ -693,13 +692,6 @@ efl_del(const Eo *obj)
      }
    _efl_unref(oid);
    EO_OBJ_DONE(obj);
-}
-
-void
-_efl_object_parent_sink_set(Eo *obj, Eina_Bool sink)
-{
-   Efl_Object_Data *pd = efl_data_scope_get(obj, EFL_OBJECT_CLASS);
-   pd->parent_sunk = sink;
 }
 
 void
