@@ -73,7 +73,15 @@ _evas_focus_set(Eo *evas_obj, Efl_Input_Device *key, Eina_Bool focus)
    F_DBG("Focus moved in %d from (%p,%s) to (%p,%s)", efl_input_device_seat_id_get(key), DEBUG_TUPLE(eina_hash_find(edata->focused_objects, &key)), DEBUG_TUPLE(evas_obj));
 
    if (focus)
-     eina_hash_add(edata->focused_objects, &key, evas_obj);
+     {
+        Eo *foc;
+
+        foc = eina_hash_set(edata->focused_objects, &key, evas_obj);
+        if (foc)
+          {
+             F_ERR("Element %p was focused while a other object was unfocused, this is not expected! No unfocus event will be sent to it", foc);
+          }
+     }
    else
      eina_hash_del_by_key(edata->focused_objects, &key);
 }
