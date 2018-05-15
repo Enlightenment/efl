@@ -26,7 +26,6 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sl);
 
    efl::ui::Slider sl2(instantiate, win);
-   sl2.text_set("Counter");
    efl::ui::Image ic(instantiate, win);
    ic.icon_set("home");
    ic.scalable_set(false, false);
@@ -49,13 +48,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sl3);
 
    efl::ui::Slider sl4(instantiate, win);
-   sl4.format_string_set("%1.0f units");
    sl4.range_min_max_set(0, 100);
    sl4.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl4);
 
    efl::ui::Slider sl5(instantiate, win);
-   sl5.indicator().format_string_set("%1.0f rabbit(s)");
    sl5.range_min_max_set(0, 100);
    sl5.range_step_set(1);
    sl5.direction_set(EFL_UI_DIR_UP);
@@ -66,25 +63,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::ui::Slider sl6(instantiate, win);
    sl6.direction_set(EFL_UI_DIR_HORIZONTAL);
    sl6.range_min_max_set(0, 10);
-   auto format_cb = std::bind([](
-                              efl::eina::strbuf_wrapper& sb,
-                              efl::eina::value_view const& value) {
-         try {
-            int d = int(efl::eina::get<double>(value));
-            if (d >= 2) sb.append_printf("%d things", d);
-            else if (!d) sb.append("nothing");
-            else sb.append("one thing");
-         } catch (std::system_error const&)  {
-            sb.append(value.to_string());
-         } }, _1, _2);
-   sl6.format_cb_set(format_cb);
    sl6.hint_align_set(0.5, EFL_GFX_SIZE_HINT_FILL);
    sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
    bx.pack_end(sl6);
 
    efl::ui::Slider sl7(instantiate, win);
-   sl7.format_string_set("%1.3f units");
-//   sl7.indicator_format_function_set(indicator_format, indicator_free);
    sl7.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl7);
 
