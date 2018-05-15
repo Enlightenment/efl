@@ -222,7 +222,6 @@ typedef struct
 /* provide valgrind-like tracking of object allocationg and deletion */
 void _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const char *file, int line);
 
-void _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink);
 void _efl_object_reuse(_Eo_Object *obj);
 
 static inline
