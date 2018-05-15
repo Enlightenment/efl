@@ -341,7 +341,7 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
      {
         if (obj->user_refcount > 0)
           {
-             ERR("Object is still refcounted by users, but internal refcount reached 0. This should never happen. Please report a bug and send a backtrace to EFL developer.");
+             ERR("Object %p is still refcounted %i by users, but internal refcount reached 0. This should never happen. Please report a bug and send a backtrace to EFL developer.", (Eo*) obj->header.id, obj->user_refcount);
              _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
              return;
           }
