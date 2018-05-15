@@ -108,6 +108,7 @@ ecore_file_monitor_backend_shutdown(void)
         ecore_main_fd_handler_del(_fdh);
         if (fd > -1)
           close(fd);
+        _fdh = NULL;
      }
    eina_hash_free(monitor_hash);
    monitor_hash = NULL;
