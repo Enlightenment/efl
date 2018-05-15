@@ -771,8 +771,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
              pd->parent = parent_id;
              parent_pd->children = eina_inlist_append(parent_pd->children,
                                                       EINA_INLIST_GET(eo_obj));
-             if (!prev_parent && pd->parent_sunk) efl_ref(obj);
-             pd->parent_sunk = EINA_TRUE;
+             if (!prev_parent) efl_ref(obj);
           }
         else
           {
