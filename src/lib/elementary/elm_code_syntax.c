@@ -88,7 +88,7 @@ static Elm_Code_Syntax _elm_code_syntax_go =
    "//",
    "/*",
    "*/",
-   { "break", "case", "chan", "const", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto",  \
+   { "break", "case", "chan", "const", "continue", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto",  \
      "if", "import", "interface", "map", "package", "range", "return", "select", "struct", "switch", "type", "var", \
      "true", "false", "iota", "nil", \
      "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr", "float32", \
