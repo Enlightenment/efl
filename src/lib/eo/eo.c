@@ -873,7 +873,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    // Check that in the case of efl_add we do pass a parent.
    if (!ref && !parent_id)
      ERR("Creation of '%s' object at line %i in '%s' is done without parent. This should use efl_add_ref.",
-	 klass->desc->name, line, file);
+         klass->desc->name, line, file);
 
    if (parent_id)
      {
@@ -898,7 +898,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    eina_spinlock_release(&klass->objects.trash_lock);
 
    obj->opt = eina_cow_alloc(efl_object_optional_cow);
-   obj->refcount++;
+   _efl_ref(obj);
    obj->klass = klass;
 
    obj->header.id = _eo_id_allocate(obj, parent_id);
@@ -927,11 +927,11 @@ ok_nomatch_back:
 ok_nomatch:
      {
         EO_OBJ_POINTER_GOTO_PROXY(eo_id, new_obj, err_newid);
-        /* We have two refs at this point. */
+        efl_ref(eo_id);
+        /* We might have two refs on the old object at this point. */
+        efl_parent_set((Eo *) obj->header.id, NULL);
+        efl_unref(_eo_obj_id_get(obj));
         _efl_unref(obj);
-        if (parent_id) efl_del((Eo *) obj->header.id);
-        else _efl_unref(obj);
-        _efl_ref(new_obj);
         EO_OBJ_DONE(eo_id);
      }
    goto ok_nomatch_back;
@@ -939,10 +939,10 @@ ok_nomatch:
 err_noid:
    ERR("in %s:%d: Object of class '%s' - Error while constructing object",
        file, line, klass->desc->name);
-   /* We have two refs at this point. */
+   /* We might have two refs at this point. */
+   efl_parent_set((Eo *) obj->header.id, NULL);
+   efl_unref(_eo_obj_id_get(obj));
    _efl_unref(obj);
-   if (parent_id) efl_del((Eo *) obj->header.id);
-   else _efl_unref(obj);
 err_newid:
    if (parent_id) EO_OBJ_DONE(parent_id);
    return NULL;
@@ -992,9 +992,9 @@ err_condtor:
               klass->desc->name);
      }
 cleanup:
+   efl_parent_set((Eo *) obj->header.id, NULL);
+   efl_unref((Eo *) obj->header.id);
    _efl_unref(obj);
-   if (efl_parent_get(eo_id)) efl_del((Eo *) obj->header.id);
-   else _efl_unref(obj);
    EO_OBJ_DONE(eo_id);
    return NULL;
 }
@@ -1006,13 +1006,9 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
    Eo *ret = efl_finalize(eo_id);
    ret = _efl_add_internal_end(eo_id, ret);
 
-   if (ret && is_ref)
+   if (ret && !is_ref)
      {
-        if (efl_parent_get(eo_id))
-          {
-             efl_ref(eo_id);
-          }
-        _efl_object_parent_sink_set(eo_id, EINA_TRUE);
+        efl_unref(ret);
      }
 
    if (is_fallback)
