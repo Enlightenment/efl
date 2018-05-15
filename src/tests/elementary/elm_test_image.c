@@ -130,6 +130,7 @@ _timeout_cb(void *data)
 EFL_START_TEST (elm_image_async_path)
 {
    Evas_Object *win, *image;
+   Ecore_Timer *t;
    Eina_Bool ok;
    Test_Data td;
 
@@ -147,17 +148,19 @@ EFL_START_TEST (elm_image_async_path)
    ok = elm_image_file_set(image, invalid, NULL);
    ck_assert(ok);
 
-   ecore_timer_add(10.0, _timeout_cb, &td);
+   t = ecore_timer_add(10.0, _timeout_cb, &td);
 
    elm_run();
    ck_assert(td.success == 3);
 
+   ecore_timer_del(t);
 }
 EFL_END_TEST
 
 EFL_START_TEST (elm_image_async_mmap)
 {
    Evas_Object *win, *image;
+   Ecore_Timer *t;
    Eina_Bool ok;
    Test_Data td;
    Eina_File *f;
@@ -181,13 +184,14 @@ EFL_START_TEST (elm_image_async_mmap)
    ok = elm_image_mmap_set(image, f, NULL);
    ck_assert(ok);
 
-   ecore_timer_add(10.0, _timeout_cb, &td);
+   t = ecore_timer_add(10.0, _timeout_cb, &td);
 
    elm_run();
    ck_assert(td.success == 3);
 
    eina_file_close(f);
 
+   ecore_timer_del(t);
 }
 EFL_END_TEST
 
