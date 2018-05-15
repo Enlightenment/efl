@@ -2551,6 +2551,7 @@ void _edje_signal_callback_reset(Edje_Signal_Callback_Flags *flags, unsigned int
 
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *gp);
 
+const char *   _set_translated_string(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_init(void);
 void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_part_on_del(Edje *ed, Edje_Part *ep);

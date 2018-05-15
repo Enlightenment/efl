@@ -438,7 +438,15 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
         else
           {
              ep->typedata.text->text_source = NULL;
-             text = edje_string_get(&chosen_desc->text.text);
+             if (chosen_desc->text.domain)
+               {
+                  if (!chosen_desc->text.text.translated)
+                    chosen_desc->text.text.translated = _set_translated_string(ed, ep);
+                  if (chosen_desc->text.text.translated)
+                    text = chosen_desc->text.text.translated;
+               }
+             if (!text)
+               text = edje_string_get(&chosen_desc->text.text);
              if (ep->typedata.text->text) text = ep->typedata.text->text;
           }
 
