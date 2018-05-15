@@ -1555,6 +1555,8 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
 EAPI int
 ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 {
+   if (!fd_handler) return -1;
+
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
