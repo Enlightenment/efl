@@ -1469,6 +1469,23 @@ EAPI Eo *_efl_added_get(void);
  */
 #define efl_add_ref(klass, parent, ...) _efl_add_common(klass, parent, EINA_TRUE, ##__VA_ARGS__)
 
+/**
+ * @def efl_new
+ * @brief Create a new object
+ *
+ * The object returned by this function has 1 ref which belongs to the caller.
+ * You need to manually remove the ref by calling #efl_unref when you are done
+ * working with the object. The object will be destroyed when all other refs
+ * obtained with #efl_ref have been returned with #efl_unref.
+ *
+ * If the object's class has a constructor, it is called.
+ *
+ * @param klass The class of the object to create.
+ * @param ... The ops to run.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+#define efl_new(klass, ...) efl_add_ref(klass, NULL, __VA_ARGS__)
+
 EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
 
 /**
