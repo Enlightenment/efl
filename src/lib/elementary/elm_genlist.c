@@ -5699,26 +5699,28 @@ _elm_genlist_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Data *sd)
    int i;
 
    elm_genlist_clear(obj);
+   _item_cache_zero(sd);
+
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
+
    for (i = 0; i < 2; i++)
      ELM_SAFE_FREE(sd->stack[i], evas_object_del);
 
    evas_event_callback_del_full(evas_object_evas_get(obj),
                                 EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE,
                                 _evas_viewport_resize_cb, sd);
-   ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
-   _item_cache_zero(sd);
-   ecore_job_del(sd->calc_job);
-   ecore_job_del(sd->update_job);
-   ecore_idle_enterer_del(sd->queue_idle_enterer);
-   ecore_idler_del(sd->must_recalc_idler);
-   ecore_timer_del(sd->multi_timer);
-   eina_stringshare_del(sd->decorate_it_type);
-   eina_hash_free(sd->size_caches);
+   ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
+   ELM_SAFE_FREE(sd->update_job, ecore_job_del);
+   ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
+   ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
+   ELM_SAFE_FREE(sd->must_recalc_idler, ecore_idler_del);
+   ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->size_caches, eina_hash_free);
+
+   eina_stringshare_replace(&sd->decorate_it_type, NULL);
 
    _elm_genlist_tree_effect_stop(sd);
-
-   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
