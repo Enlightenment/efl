@@ -91,7 +91,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list.eo \
 	lib/elementary/efl_ui_panes_part.eo \
 	lib/elementary/efl_ui_progressbar_part.eo \
-	lib/elementary/efl_ui_slider_part_indicator.eo \
+	lib/elementary/elm_slider.eo \
+	lib/elementary/elm_slider_part_indicator.eo \
 	lib/elementary/efl_ui_textpath_part.eo \
 	lib/elementary/efl_ui_widget_part.eo \
 	lib/elementary/efl_ui_widget_part_bg.eo \
@@ -173,7 +174,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_bg_widget_legacy.eo \
 	lib/elementary/efl_ui_video_legacy.eo \
 	lib/elementary/efl_ui_frame_legacy.eo \
-	lib/elementary/efl_ui_slider_legacy.eo \
 	lib/elementary/efl_ui_panes_legacy.eo \
 	lib/elementary/efl_ui_image_zoomable_legacy.eo \
 	lib/elementary/efl_ui_flip_legacy.eo \
@@ -393,7 +393,9 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_scroller.h \
 	lib/elementary/elm_widget_segment_control.h \
 	lib/elementary/elm_widget_separator.h \
+	lib/elementary/elm_widget_slider.h \
 	lib/elementary/efl_ui_slider_private.h \
+	lib/elementary/efl_ui_slider_interval_private.h \
 	lib/elementary/elm_widget_slideshow.h \
 	lib/elementary/elm_widget_spinner.h \
 	lib/elementary/efl_ui_spin_private.h \
@@ -612,7 +614,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_separator_legacy.h \
 	lib/elementary/elm_slider.h \
 	lib/elementary/elm_slider_common.h \
-	lib/elementary/efl_ui_slider_eo.h \
 	lib/elementary/elm_slider_legacy.h \
 	lib/elementary/elm_slideshow.h \
 	lib/elementary/elm_slideshow_common.h \
@@ -762,6 +763,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_scroller.c \
 	lib/elementary/elm_segment_control.c \
 	lib/elementary/elm_separator.c \
+	lib/elementary/elm_slider.c \
 	lib/elementary/efl_ui_slider.c \
 	lib/elementary/efl_ui_slider_interval.c \
 	lib/elementary/efl_ui_spin.c \

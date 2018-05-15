@@ -1,6 +1,6 @@
 import efl_ui;
 
-class Efl.Ui.Slider_Part_Indicator (Efl.Ui.Layout.Part, Efl.Ui.Format)
+class Elm.Slider.Part_Indicator (Efl.Ui.Layout.Part, Efl.Ui.Format)
 {
    [[Elementary slider internal part class]]
    data: null;

@@ -399,6 +399,7 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       part { name: "elm.dragable.slider"; type: RECT;
+         nomouse;
          scale: 1;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
@@ -415,6 +416,7 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -432,6 +434,7 @@ group { name: "elm/slider/horizontal/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -1120,6 +1123,7 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -1135,6 +1139,7 @@ group { name: "elm/slider/vertical/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -1152,6 +1157,7 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -1891,6 +1897,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "elm.swallow.bar";
@@ -1906,6 +1913,7 @@ group { name: "elm/slider/range/horizontal/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -1923,6 +1931,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -1958,6 +1967,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "elm.dragable2.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "elm.swallow.bar";
@@ -1978,6 +1988,7 @@ group { name: "elm/slider/range/horizontal/default";
          }
       }
       part { name: "knob2";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -2000,6 +2011,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "slideevent2"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable2.slider";
          description { state: "default" 0.0;
@@ -2678,6 +2690,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -2693,6 +2706,7 @@ group { name: "elm/slider/range/vertical/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -2710,6 +2724,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -2745,6 +2760,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "elm.dragable2.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -2765,6 +2781,7 @@ group { name: "elm/slider/range/vertical/default";
          }
       }
       part { name: "knob2";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -2787,6 +2804,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "slideevent2"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable2.slider";
          description { state: "default" 0.0;

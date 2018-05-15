@@ -158,7 +158,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x0010
+# define ELM_CONFIG_FILE_GENERATION 0x0011
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -802,6 +802,10 @@ void efl_ui_win_inlined_parent_set(Eo *obj, Efl_Canvas_Object *parent);
 /* Internal EO APIs */
 const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);
 const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);
+void efl_ui_slider_val_fetch(Evas_Object *obj, Eina_Bool user_event);
+void efl_ui_slider_val_set(Evas_Object *obj);
+void efl_ui_slider_down_knob(Evas_Object *obj, double button_x, double button_y);
+void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y);
 //void elm_layout_sizing_eval_eoapi(Eo *obj);
 
 # define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \

@@ -1,19 +1,13 @@
 class Efl.Ui.Slider (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Direction,
-                     Efl.Access.Value, Efl.Text, Efl.Text_Markup, Efl.Ui.Format,
-                     Efl.Ui.Translatable, Efl.Access.Widget.Action,
+                     Efl.Access.Value,
+                     Efl.Access.Widget.Action,
                      Efl.Content)
 {
    [[Elementary slider class]]
-   legacy_prefix: elm_slider;
-   methods {
-   }
-   parts {
-      indicator: Efl.Ui.Slider_Part_Indicator;
-          [[A floating indicator above the slider.]]
-   }
+   legacy_prefix: null;
    implements {
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_calculate;
+      Efl.Object.destructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Focus.Object.on_focus_update;
@@ -26,13 +20,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Text.text { get; set; }
-      Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.Format.format_cb { set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
-      Efl.Part.part;
    }
    events {
       changed; [[Called when slider changed]]

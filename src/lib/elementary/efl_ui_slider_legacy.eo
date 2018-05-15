@@ -1,9 +1,0 @@
-class Efl.Ui.Slider_Legacy (Efl.Ui.Slider, Efl.Ui.Legacy)
-{
-   [[Elementary slider class]]
-   data: null;
-   implements {
-      class.constructor;
-      Efl.Object.constructor;
-   }
-}

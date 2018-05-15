@@ -1,0 +1,26 @@
+class Elm.Slider (Efl.Ui.Slider_Interval, Efl.Ui.Legacy,
+                  Efl.Text, Efl.Text_Markup, Efl.Ui.Format,
+                  Efl.Ui.Translatable)
+{
+   [[Elementary slider class]]
+   eo_prefix: elm_obj_slider;
+   legacy_prefix: elm_slider;
+   parts {
+      indicator: Elm.Slider.Part_Indicator;
+          [[A floating indicator above the slider.]]
+   }
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Text.text { get; set; }
+      Efl.Text_Markup.markup { get; set; }
+      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Part.part;
+   }
+}
