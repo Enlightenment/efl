@@ -1317,8 +1317,8 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
           }
      }
 
-   if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
-   _efl_canvas_object_clip_prev_reset(obj, EINA_FALSE);
+   if (obj->cur && obj->cur->clipper) evas_object_clip_unset(eo_obj);
+   if (obj->prev) _efl_canvas_object_clip_prev_reset(obj, EINA_FALSE);
 
    //Free event animations
    while (obj->event_anims)
@@ -1332,7 +1332,7 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
         _event_anim_free(event_anim, obj);
      }
 
-   evas_object_map_set(eo_obj, NULL);
+   if (obj->map) evas_object_map_set(eo_obj, NULL);
 
    if (obj->is_smart) evas_object_smart_del(eo_obj);
    evas_object_change(eo_obj, obj);
