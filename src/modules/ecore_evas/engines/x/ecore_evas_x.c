@@ -3562,7 +3562,6 @@ _ecore_evas_x_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
    if (!out)
      {
 norandr:
-        if (out) free(out);
         scdpi = ecore_x_dpi_get();
         if (xdpi) *xdpi = scdpi;
         if (ydpi) *ydpi = scdpi;
