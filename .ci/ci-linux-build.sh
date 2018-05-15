@@ -6,7 +6,7 @@ PARALLEL_JOBS=10
 
 CI_BUILD_TYPE=$1
 
-DEFAULT_COPTS="--with-tests=regular --disable-cxx-bindings"
+DEFAULT_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings"
 
 WAYLAND_COPTS="--with-tests=regular --enable-wayland --enable-elput --enable-drm \
 --enable-wayland-ivi-shell --enable-gl-drm --with-opengl=es --enable-egl"
