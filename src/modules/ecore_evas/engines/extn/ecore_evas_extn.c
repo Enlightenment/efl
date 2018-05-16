@@ -2143,7 +2143,7 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
    ee->rotation = 0;
-   ee->visible = 0;
+   ee->visible = 1;
    ee->w = w;
    ee->h = h;
    ee->req.w = ee->w;
