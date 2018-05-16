@@ -766,6 +766,7 @@ static Eina_Bool _evas_textblock_cursor_format_is_visible_get(const Efl_Text_Cur
 static void _evas_textblock_cursor_at_format_set(Efl_Text_Cursor_Cursor *cur, const Evas_Object_Textblock_Node_Format *fmt);
 static void _evas_textblock_cursor_init(Efl_Text_Cursor_Cursor *cur, const Evas_Object *tb);
 static Evas_Filter_Program *_format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format *fmt);
+static const char *_textblock_format_node_from_style_tag(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *fnode, const char *format, size_t format_len);
 #ifdef HAVE_HYPHEN
 /* Hyphenation */
 #include "evas_textblock_hyphenation.x"
@@ -6954,6 +6955,47 @@ evas_textblock_style_free(Evas_Textblock_Style *ts)
    free(ts);
 }
 
+static void
+_evas_textblock_update_format_nodes_from_style_tag(Efl_Canvas_Text_Data *o)
+{
+   Evas_Object_Textblock_Node_Format *fnode = o->format_nodes;
+
+   if (!o)
+     {
+        ERR("The given address Efl_Canvas_Text_Data is NULL");
+        return;
+     }
+
+   while (fnode)
+     {
+        const char *match;
+        size_t format_len = eina_stringshare_strlen(fnode->orig_format);
+        /* Is this safe to use alloca here? Strings might possibly get large */
+
+        if (fnode->own_closer &&
+            (format_len > 0) && (fnode->orig_format[format_len - 1] == '/'))
+          {
+             format_len--;
+          }
+
+        match = _textblock_format_node_from_style_tag(o, fnode, fnode->orig_format,
+                                                      format_len);
+
+        if (match && fnode->format && strcmp(match, fnode->format))
+          {
+             if ((*match == '+') || (*match == '-'))
+               {
+                  match++;
+                  while (*match == ' ') match++;
+               }
+             fnode->is_new = EINA_TRUE;
+             eina_stringshare_replace(&fnode->format, match);
+          }
+
+        fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+     }
+}
+
 EAPI void
 evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 {
@@ -6968,11 +7010,8 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 
    EINA_LIST_FOREACH(ts->objects, l, eo_obj)
      {
-        Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         evas_object_async_block(obj);
-        _evas_textblock_invalidate_all(o);
-        _evas_textblock_changed(o, eo_obj);
      }
 
    _style_replace(ts, text);
@@ -7095,6 +7134,14 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
              p++;
           }
      }
+
+   EINA_LIST_FOREACH(ts->objects, l, eo_obj)
+     {
+        Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+        _evas_textblock_update_format_nodes_from_style_tag(o);
+        _evas_textblock_invalidate_all(o);
+        _evas_textblock_changed(o, eo_obj);
+     }
 }
 
 EAPI const char *
@@ -7167,34 +7214,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
      }
    *obj_ts = ts;
 
-   Evas_Object_Textblock_Node_Format *fnode = o->format_nodes;
-   while (fnode)
-     {
-        const char *match;
-        size_t format_len = eina_stringshare_strlen(fnode->orig_format);
-        /* Is this safe to use alloca here? Strings might possibly get large */
-
-        if (fnode->own_closer &&
-           (format_len > 0) && (fnode->orig_format[format_len - 1] == '/'))
-          {
-             format_len--;
-          }
-
-        match = _textblock_format_node_from_style_tag(o, fnode, fnode->orig_format,
-              format_len);
-
-        if (match && fnode->format && strcmp(match, fnode->format))
-          {
-             if ((*match == '+') || (*match == '-'))
-               {
-                  match++;
-                  while (*match == ' ') match++;
-               }
-             fnode->is_new = EINA_TRUE;
-             eina_stringshare_replace(&fnode->format, match);
-          }
-        fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-     }
+   _evas_textblock_update_format_nodes_from_style_tag(o);
 
    o->format_changed = EINA_TRUE;
    _evas_textblock_invalidate_all(o);

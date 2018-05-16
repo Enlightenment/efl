@@ -3702,6 +3702,16 @@ EFL_START_TEST(evas_textblock_style)
    evas_object_textblock_size_formatted_get(tb, &nw, &nh);
    ck_assert_int_eq(nw, bw);
 
+   evas_textblock_style_set(newst, "DEFAULT='font=Sans font_size=30'small_size='+ font_size=10'");
+   evas_object_textblock_text_markup_set(tb, "Test <small_size>SMALL</small_size>");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_gt(w, 0);
+   ck_assert_int_gt(h, 0);
+
+   evas_textblock_style_set(newst, "DEFAULT='font=Sans font_size=30'small_size='+font_size=50'");
+   evas_object_textblock_size_formatted_get(tb, &nw, &nh);
+   ck_assert_int_gt(nw, w);
+   ck_assert_int_gt(nh, h);
 
    END_TB_TEST();
 }
