@@ -7295,7 +7295,14 @@ _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key,
         ts = evas_textblock_style_new();
         evas_textblock_style_set(ts, style);
         ts->key = eina_stringshare_add(key);
-        o->styles = eina_list_append(o->styles, ts);
+
+        /* If the given key value is NULL, newly created Evas Textblock Style
+         * has to be assigned to o->style. */
+        if (ts->key)
+          o->styles = eina_list_append(o->styles, ts);
+        else
+          o->style = ts;
+
         _textblock_style_generic_set(eo_obj, ts, &tmp);
      }
    else if (ts && style)

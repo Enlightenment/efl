@@ -4480,6 +4480,48 @@ EFL_START_TEST(evas_textblock_annotation)
 }
 EFL_END_TEST;
 
+#define START_EFL_CANVAS_TEXT_TEST() \
+   Evas *evas; \
+   Eo *txt; \
+   Efl_Text_Cursor_Cursor *cur; \
+   evas = EVAS_TEST_INIT_EVAS(); \
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
+   txt = efl_add(EFL_CANVAS_TEXT_CLASS, evas); \
+   fail_if(!txt); \
+   efl_canvas_text_legacy_newline_set(txt, EINA_FALSE); \
+   efl_canvas_text_style_set(txt, NULL, style_buf); \
+   fail_if(!efl_canvas_text_style_get(txt, NULL) || \
+		   strcmp(style_buf, efl_canvas_text_style_get(txt, NULL))); \
+   cur = efl_text_cursor_new(txt); \
+   fail_if(!cur); \
+do \
+{ \
+} \
+while (0)
+
+#define END_EFL_CANVAS_TEXT_TEST() \
+do \
+{ \
+   efl_text_cursor_free(txt, cur); \
+   efl_del(txt); \
+   evas_free(evas); \
+} \
+while (0)
+
+EFL_START_TEST(efl_canvas_text_simple)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+
+   /* It is simple test for Efl_Canvas_Text.
+    * The main object is "txt". */
+   const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
+   efl_text_set(txt, buf);
+   fail_if(strcmp(efl_text_get(txt), buf));
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_canvas_text_cursor)
 {
    START_TB_TEST();
@@ -4541,6 +4583,7 @@ void evas_test_textblock(TCase *tc)
 #endif
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
+   tcase_add_test(tc, efl_canvas_text_simple);
    tcase_add_test(tc, efl_canvas_text_cursor);
 }
 
