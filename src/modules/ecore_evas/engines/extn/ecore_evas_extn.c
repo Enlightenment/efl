@@ -1513,16 +1513,19 @@ _ecore_evas_extn_socket_prepare(Ecore_Evas *ee)
 {
    Extn *extn;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-   int cur_b;
+   void *pixels = NULL;
 
    extn = bdata->data;
    if (!extn) return EINA_FALSE;
 
-   if (bdata->pixels)
+   if (extn->b[extn->cur_b].buf)
      {
-        cur_b = extn->cur_b;
-        bdata->pixels = _extnbuf_lock(extn->b[cur_b].buf, NULL, NULL, NULL);
-        return EINA_TRUE;
+        pixels = _extnbuf_lock(extn->b[extn->cur_b].buf, NULL, NULL, NULL);
+        if (pixels)
+          {
+             bdata->pixels = pixels;
+             return EINA_TRUE;
+          }
      }
    return EINA_FALSE;
 }
