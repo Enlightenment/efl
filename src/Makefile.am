@@ -187,7 +187,7 @@ dist-hook:
 clean-local:
 	find . -type f -name '*.gcno' -delete
 	find . -type f -name '*.gcda' -delete
-	find . -type f -name check-results.xml -delete
+	find . -type f -name check-results*.xml -delete
 	rm -f $(GENERATED_JS_BINDINGS)
 	rm -f $(GENERATED_LUA_BINDINGS)
 	rm -f $(BUILT_SOURCES)
