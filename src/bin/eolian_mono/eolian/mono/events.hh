@@ -81,7 +81,12 @@ struct event_argument_wrapper_generator
         return true;
 
       std::string evt_name = name_helpers::managed_event_name(evt.name);
-      std::string arg_type = (*etype).original_type.visit(name_helpers::get_csharp_type_visitor{});
+      std::string arg_type;
+      if (!as_generator(type).generate(std::back_inserter(arg_type), *etype, efl::eolian::grammar::context_null()))
+        {
+           EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Failed to get argument type for event " << evt.name;
+           return false;
+        }
 
       return as_generator("///<summary>Event argument wrapper for event " << evt_name << ".</summary>\n"
                           << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
@@ -177,7 +182,7 @@ struct event_definition_generator
         {
            wrapper_args_type = name_helpers::managed_event_args_name(evt);
            wrapper_args_template = "<" + wrapper_args_type + ">";
-           std::string arg_initializer = wrapper_args_type + " args = new " + wrapper_args_type + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
+           std::string arg_initializer = wrapper_args_type + " args = new " + wrapper_args_type + "();\n";
 
            arg_initializer += "      args.arg = ";
 

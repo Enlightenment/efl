@@ -291,25 +291,6 @@ inline std::string translate_inherited_event_name(const attributes::event_def &e
    return join_namespaces(klass.namespaces, '_') + klass.cxx_name + "_" + managed_event_name(evt.name);
 }
 
-// Type visistor
-struct get_csharp_type_visitor
-{
-    typedef get_csharp_type_visitor visitor_type;
-    typedef std::string result_type;
-    std::string operator()(attributes::regular_type_def const& type) const
-    {
-        return type_full_managed_name(type);
-    }
-    std::string operator()(attributes::klass_name const& name) const
-    {
-        return klass_full_interface_name(name);
-    }
-    std::string operator()(attributes::complex_type_def const&) const
-    {
-        return "UNSUPPORTED";
-    }
-};
-
 // Open/close namespaces
 template<typename OutputIterator, typename Context>
 bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context context)
