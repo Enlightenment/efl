@@ -5626,7 +5626,10 @@ _efl_ui_win_efl_object_destructor(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
 #endif
    if (pd->finalize_future)
      eina_future_cancel(pd->finalize_future);
+
    efl_destructor(efl_super(obj, MY_CLASS));
+
+   efl_unref(pd->provider);
 }
 
 EOLIAN static Eo *
@@ -5637,7 +5640,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
     * really bad and hacky. Needs fixing. */
 
    pd->obj = obj;
-   pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
+   pd->provider = efl_add_ref(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, NULL);
    pd->profile.available = eina_array_new(4);
 
    // For bindings: if no parent, allow simple unref
