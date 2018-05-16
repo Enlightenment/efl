@@ -7,6 +7,7 @@
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
 #include <Elementary.h>
 
@@ -804,7 +805,7 @@ elm_menu_add(Evas_Object *parent)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_menu_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_menu_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -819,11 +820,6 @@ EOLIAN static Eo *
 _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
 {
    Eo *parent = NULL;
-   Efl_Ui_Focus_Manager *manager;
-
-   manager = efl_ui_widget_focus_manager_create(obj, obj);
-   efl_composite_attach(obj, manager);
-   _efl_ui_focus_manager_redirect_events_add(manager, obj);
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);

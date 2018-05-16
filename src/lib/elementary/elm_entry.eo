@@ -844,7 +844,7 @@ class Elm.Entry (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickabl
       Efl.Layout.Calc.calc_force;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.focus_manager_create;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.on_disabled_update;

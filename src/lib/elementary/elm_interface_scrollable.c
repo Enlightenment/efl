@@ -4,6 +4,8 @@
 
 #include <Elementary.h>
 
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
+
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
 
@@ -4796,7 +4798,7 @@ EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, do
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_interface_scrollable_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_interface_scrollable_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -4811,11 +4813,6 @@ EOLIAN static Efl_Object*
 _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
    Eo *o = efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
-   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-
-   efl_composite_attach(obj, pd->manager);
-
-   _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
 
    return o;
 }

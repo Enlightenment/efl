@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 #define EFL_UI_FOCUS_LAYER_PROTECTED
 
 #include <Elementary.h>
@@ -18,9 +19,10 @@ typedef struct {
 } Efl_Ui_Focus_Layer_Data;
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_layer_efl_ui_widget_focus_manager_create(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_focus_layer_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
-   return efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj, efl_ui_focus_manager_root_set(efl_added, root));
+   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj, efl_ui_focus_manager_root_set(efl_added, root));
+   return pd->manager;
 }
 
 EOLIAN static void
@@ -87,8 +89,6 @@ EOLIAN static Efl_Object*
 _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-   efl_composite_attach(obj, pd->manager);
    pd->enable_on_visible = EINA_TRUE;
    pd->cycle = EINA_TRUE;
    return obj;

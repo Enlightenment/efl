@@ -10,6 +10,7 @@
 #define EFL_GFX_SIZE_HINT_PROTECTED
 #define EFL_UI_VIEW_LIST_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
 #include <Elementary.h>
 #include "efl_ui_view_list_private.h"
@@ -659,7 +660,7 @@ _efl_ui_view_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_View_List_Data *pd)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_view_list_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_view_list_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
@@ -687,8 +688,6 @@ _efl_ui_view_list_efl_object_finalize(Eo *obj, Efl_Ui_View_List_Data *pd)
 EOLIAN static Eo *
 _efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
-   Efl_Ui_Focus_Manager *manager;
-
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
@@ -696,10 +695,6 @@ _efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    pd->segarray = efl_add(EFL_UI_VIEW_LIST_SEGARRAY_CLASS, obj, efl_ui_view_list_segarray_setup(efl_added, 32));
-
-   manager = efl_ui_widget_focus_manager_create(obj, obj);
-   efl_composite_attach(obj, manager);
-   _efl_ui_focus_manager_redirect_events_add(manager, obj);
 
    efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _list_element_focused, NULL);
 

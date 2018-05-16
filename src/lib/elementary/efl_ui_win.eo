@@ -158,7 +158,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
                   Efl.Access.Component, Efl.Access.Widget.Action,
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                   Efl.Gfx.Size_Hint, Efl.Text, Efl.Config_Global, Efl.Part,
-                  Efl.Ui.Focus.Manager, Efl.Ui.Focus.Manager_Window_Root)
+                  Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root)
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
@@ -787,7 +787,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
       Efl.Ui.Widget.focus_highlight_animate { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Widget.focus_manager_create;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Component.extents { get; }

@@ -1,5 +1,5 @@
 class Elm.Menu (Efl.Ui.Widget, Efl.Ui.Clickable,
-                Efl.Access.Selection, Efl.Ui.Focus.Manager, Efl.Ui.Legacy)
+                Efl.Access.Selection, Efl.Ui.Widget_Focus_Manager, Efl.Ui.Legacy)
 {
    [[Elementary menu class]]
    legacy_prefix: elm_menu;
@@ -91,7 +91,7 @@ class Elm.Menu (Efl.Ui.Widget, Efl.Ui.Clickable,
       Efl.Ui.Widget.widget_parent { get; set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
-      Efl.Ui.Widget.focus_manager_create;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Access.Object.access_children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }

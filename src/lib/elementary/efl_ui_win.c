@@ -14,6 +14,7 @@
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIN_BETA
 #define EFL_CANVAS_SCENE_BETA
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -180,7 +181,6 @@ struct _Efl_Ui_Win_Data
 
    Evas_Object *main_menu;
 
-   Efl_Ui_Focus_Manager *manager;
    Efl_Ui_Focus_Parent_Provider_Standard *provider;
 
    struct
@@ -5603,7 +5603,7 @@ _efl_ui_win_efl_canvas_object_legacy_ctor(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_win_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_win_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -5637,16 +5637,12 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
     * really bad and hacky. Needs fixing. */
 
    pd->obj = obj;
-   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
    pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
    pd->profile.available = eina_array_new(4);
 
    // For bindings: if no parent, allow simple unref
    if (!efl_parent_get(obj))
      efl_allow_parent_unref_set(obj, EINA_TRUE);
-
-   efl_composite_attach(obj, pd->manager);
-   _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
 
    return obj;
 }

@@ -27,7 +27,7 @@ enum Elm.Scroller.Single_Direction
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget)
+mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget, Efl.Ui.Widget_Focus_Manager)
 {
    [[Elm scrollable mixin]]
    eo_prefix: elm_interface_scrollable;
@@ -659,7 +659,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.
       class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Focus.Manager.border_elements { get; }
-      Efl.Ui.Widget.focus_manager_create;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Base.mirrored { set; }
    }
    events {

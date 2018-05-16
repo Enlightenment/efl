@@ -8,6 +8,7 @@
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED 1
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -6139,7 +6140,7 @@ _elm_entry_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_entry_efl_ui_widget_focus_manager_create(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_entry_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    return efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
      efl_ui_focus_manager_root_set(efl_added, root)
