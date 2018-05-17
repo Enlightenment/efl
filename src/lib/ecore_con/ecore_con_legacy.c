@@ -88,15 +88,16 @@ typedef struct _Ecore_Con_Lookup_Ctx {
 } Ecore_Con_Lookup_Ctx;
 
 /* allows delete_me to be true */
-#define ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, ...) \
-  do \
-    { \
-       if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER)) \
-         { \
+#define ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, ...)                 \
+  do                                                                    \
+    {                                                                   \
+       if (!svr) return __VA_ARGS__;                                    \
+       if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))             \
+         {                                                              \
             ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __FUNCTION__); \
-            return __VA_ARGS__; \
-         } \
-    } \
+            return __VA_ARGS__;                                         \
+         }                                                              \
+    }                                                                   \
   while (0)
 
 #define ECORE_CON_SERVER_CHECK_RETURN(svr, ...) \
@@ -107,15 +108,16 @@ typedef struct _Ecore_Con_Lookup_Ctx {
     } \
   while (0)
 
-#define ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, ...) \
-  do \
-    { \
-       if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT)) \
-         { \
+#define ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, ...)                  \
+  do                                                                    \
+    {                                                                   \
+       if (!cl) return __VA_ARGS__;                                     \
+       if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))              \
+         {                                                              \
             ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, __FUNCTION__); \
-            return __VA_ARGS__; \
-         } \
-    } \
+            return __VA_ARGS__;                                         \
+         }                                                              \
+    }                                                                   \
   while (0)
 
 #define ECORE_CON_CLIENT_CHECK_RETURN(cl, ...) \
