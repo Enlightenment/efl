@@ -173,8 +173,12 @@ static inline Eina_Bool
 _elm_scrollable_is(const Evas_Object *obj)
 {
    INTERNAL_ENTRY EINA_FALSE;
-   return
-      efl_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
+   if (elm_widget_is_legacy(obj))
+     return
+        efl_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
+   else
+     return
+        efl_isa(obj, EFL_UI_SCROLLABLE_INTERACTIVE_INTERFACE);
 }
 
 static void
@@ -2630,7 +2634,12 @@ _efl_ui_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->scroll_hold == 1)
      {
         if (_elm_scrollable_is(obj))
-           elm_interface_scrollable_hold_set(obj, EINA_TRUE);
+          {
+             if (elm_widget_is_legacy(obj))
+               elm_interface_scrollable_hold_set(obj, EINA_TRUE);
+             else
+               efl_ui_scrollable_scroll_hold_set(obj, EINA_TRUE);
+          }
         else
           {
              Evas_Object *child;
@@ -2639,7 +2648,10 @@ _efl_ui_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
              EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
-                    elm_interface_scrollable_hold_set(child, EINA_TRUE);
+                    if (elm_widget_is_legacy(obj))
+                      elm_interface_scrollable_hold_set(child, EINA_TRUE);
+                    else
+                      efl_ui_scrollable_scroll_hold_set(child, EINA_TRUE);
                }
           }
      }
@@ -2654,7 +2666,12 @@ _efl_ui_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (!sd->scroll_hold)
      {
         if (_elm_scrollable_is(obj))
-           elm_interface_scrollable_hold_set(obj, EINA_FALSE);
+          {
+             if (elm_widget_is_legacy(obj))
+               elm_interface_scrollable_hold_set(obj, EINA_FALSE);
+             else
+               efl_ui_scrollable_scroll_hold_set(obj, EINA_FALSE);
+          }
         else
           {
              Evas_Object *child;
@@ -2663,7 +2680,10 @@ _efl_ui_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
              EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
-                    elm_interface_scrollable_hold_set(child, EINA_FALSE);
+                    if (elm_widget_is_legacy(obj))
+                      elm_interface_scrollable_hold_set(child, EINA_FALSE);
+                    else
+                      efl_ui_scrollable_scroll_hold_set(child, EINA_FALSE);
                }
           }
      }
@@ -2687,7 +2707,12 @@ _efl_ui_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->scroll_freeze == 1)
      {
         if (_elm_scrollable_is(obj))
-           elm_interface_scrollable_freeze_set(obj, EINA_TRUE);
+          {
+             if (elm_widget_is_legacy(obj))
+               elm_interface_scrollable_freeze_set(obj, EINA_TRUE);
+             else
+               efl_ui_scrollable_scroll_freeze_set(obj, EINA_TRUE);
+          }
         else
           {
              Evas_Object *child;
@@ -2696,7 +2721,10 @@ _efl_ui_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
              EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
-                    elm_interface_scrollable_freeze_set(child, EINA_TRUE);
+                    if (elm_widget_is_legacy(obj))
+                      elm_interface_scrollable_freeze_set(child, EINA_TRUE);
+                    else
+                      efl_ui_scrollable_scroll_freeze_set(child, EINA_TRUE);
                }
           }
      }
@@ -2711,7 +2739,12 @@ _efl_ui_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (!sd->scroll_freeze)
      {
         if (_elm_scrollable_is(obj))
-           elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+          {
+             if (elm_widget_is_legacy(obj))
+               elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+             else
+               efl_ui_scrollable_scroll_freeze_set(obj, EINA_FALSE);
+          }
         else
           {
              Evas_Object *child;
@@ -2720,7 +2753,10 @@ _efl_ui_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
              EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
-                    elm_interface_scrollable_freeze_set(child, EINA_FALSE);
+                    if (elm_widget_is_legacy(obj))
+                      elm_interface_scrollable_freeze_set(child, EINA_FALSE);
+                    else
+                      efl_ui_scrollable_scroll_freeze_set(child, EINA_FALSE);
                }
           }
      }

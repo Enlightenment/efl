@@ -46,6 +46,9 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0),
                 efl_content_set(sc, efl_added));
 
+   efl_add(EFL_UI_SLIDER_CLASS, bx,
+           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
+           efl_pack(bx, efl_added));
 
    for (i = 0; i < 3; i++)
       {
