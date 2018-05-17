@@ -714,7 +714,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    if (parent_id != NULL)
      {
         EO_OBJ_POINTER_GOTO(parent_id, parent_obj, err_impossible);
-        bad_parent = parent_obj->invalidate || parent_obj->is_invalidating;
+        bad_parent = parent_obj->invalidate;
         EO_OBJ_DONE(parent_id);
      }
 
@@ -722,13 +722,8 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 
    EO_OBJ_POINTER_GOTO(obj, eo_obj, err_impossible);
 
-   if (eo_obj->is_invalidating && parent_id == NULL)
-     {
-        EO_OBJ_DONE(obj);
-        return ;
-     }
    // Invalidated object can not be bring back to life
-   if (eo_obj->invalidate || eo_obj->is_invalidating)
+   if (eo_obj->invalidate)
      {
         ERR("Call of efl_parent_set(%p, %p) when object of clas '%s' is already invalidated.\n", obj, parent_id, efl_class_name_get(obj));
         goto err_impossible;
