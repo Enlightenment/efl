@@ -1034,6 +1034,7 @@ evas_object_del(Evas_Object *obj)
         return;
      }
    pd = efl_data_scope_get(obj, MY_CLASS);
+   if (pd->delete_me || pd->efl_del_called) return;
    if (pd->ref)
      {
         pd->del_ref = EINA_TRUE;
