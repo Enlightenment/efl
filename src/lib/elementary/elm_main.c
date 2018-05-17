@@ -393,9 +393,9 @@ elm_init(int argc, char **argv)
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
    if (!_elm_config->web_backend)
-     _elm_config->web_backend = "none";
+     _elm_config->web_backend = eina_stringshare_add("none");
    if (!_elm_web_init(_elm_config->web_backend))
-     _elm_config->web_backend = "none";
+     _elm_config->web_backend = eina_stringshare_add("none");
    _elm_code_parse_setup();
 
    // For backward compability, EFL startup time and ELM startup time are made
