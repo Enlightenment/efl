@@ -151,13 +151,17 @@ _efl_input_device_seat_id_get(const Eo *obj, Efl_Input_Device_Data *pd)
 EOLIAN static Efl_Input_Device *
 _efl_input_device_seat_get(const Eo *obj, Efl_Input_Device_Data *pd)
 {
-   for (; obj; obj = efl_parent_get(obj))
-     {
-        if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
-          return pd->eo;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
+   if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
+     return pd->eo;
+
+   while ((obj = efl_parent_get(obj)))
+     {
         if (!efl_isa(obj, MY_CLASS)) break;
         pd = efl_data_scope_get(obj, MY_CLASS);
+        if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
+          return pd->eo;
      }
 
    return NULL;
