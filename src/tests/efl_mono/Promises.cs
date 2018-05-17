@@ -230,6 +230,32 @@ class TestPromises
         Test.Assert(callbackCalled, "Future callback should have been called.");
         Test.AssertEquals(received_value, reference_value);
     }
+
+    public static void test_reject_on_disposal()
+    {
+        bool callbackCalled = false;
+        eina.Error received_error = eina.Error.NO_ERROR;
+
+        efl.ILoop loop = efl.App.GetLoopMain();
+        eina.Promise promise = new eina.Promise();
+        eina.Future future = new eina.Future(promise);
+
+        future = future.Then((eina.Value value) => {
+            callbackCalled = true;
+            value.Get(out received_error);
+            return value;
+        });
+
+        promise.Dispose();
+
+        loop.Iterate();
+
+        Test.Assert(callbackCalled, "Future callback should have been called.");
+        Test.AssertEquals(received_error, eina.Error.ECANCELED);
+
+        Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
+        Test.AssertRaises<ObjectDisposedException>(future.Cancel);
+    }
 }
 
 }

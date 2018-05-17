@@ -66,7 +66,7 @@ static internal class PromiseNativeMethods
 ///
 /// With a Promise you can attach futures to it, which will be used to notify of the value being available.
 /// </summary>
-public class Promise
+public class Promise : IDisposable
 {
     internal IntPtr Handle;
     private GCHandle CleanupHandle;
@@ -114,6 +114,28 @@ public class Promise
         else
             eina.Log.Info("Null promise CancelCb found");
         handle.Free();
+    }
+
+    /// <summary>Dispose this promise, causing its cancellation if it isn't already fulfilled.</summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>Finalizer to be called from the Garbage Collector.</summary>
+    ~Promise()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (Handle != IntPtr.Zero)
+        {
+            eina_promise_reject(Handle, eina.Error.ECANCELED);
+            Handle = IntPtr.Zero;
+        }
     }
 
     private void SanityChecks()
