@@ -12,6 +12,7 @@
 
 static const Efl_Test_Case etc[] = {
   { "Eolian Parsing", eolian_parsing_test},
+  { "Eolian Static Analysis", eolian_static_test},
   { "Eolian Generation", eolian_generation_test},
   { NULL, NULL }
 };
