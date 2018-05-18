@@ -2117,6 +2117,18 @@ eina_value_object_get(Eina_Value *v)
 }
 
 /**
+ * @brief Event triggered when a callback was added to the object
+ */
+#define EFL_EVENT_CALLBACK_ADD (&(_EFL_EVENT_CALLBACK_ADD))
+EAPI extern const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD;
+
+/**
+ * @brief Event triggered when a callback was removed from the object
+ */
+#define EFL_EVENT_CALLBACK_DEL (&(_EFL_EVENT_CALLBACK_DEL))
+EAPI extern const Efl_Event_Description _EFL_EVENT_CALLBACK_DEL;
+
+/**
  * @}
  */
 

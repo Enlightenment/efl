@@ -303,8 +303,6 @@ abstract Efl.Object ()
         class.destructor;
    }
    events {
-      callback,add @hot; [[A callback was added.]]
-      callback,del @hot; [[A callback was deleted.]]
       del @hot; [[Object is being deleted.]]
       invalidate @hot; [[Object is being invalidated and loosing its parent.]]
       noref @hot; [[Object has lost its last reference, only parent relationship is keeping it alive.]]

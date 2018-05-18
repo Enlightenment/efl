@@ -12,6 +12,12 @@
 
 #define EFL_EVENT_SPECIAL_SKIP 1
 
+EAPI const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD =
+    EFL_EVENT_DESCRIPTION_HOT("callback,add");
+
+EAPI const Efl_Event_Description _EFL_EVENT_CALLBACK_DEL =
+    EFL_EVENT_DESCRIPTION_HOT("callback,del");
+
 static int event_freeze_count = 0;
 
 typedef struct _Eo_Callback_Description  Eo_Callback_Description;
