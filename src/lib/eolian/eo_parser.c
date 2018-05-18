@@ -1748,12 +1748,9 @@ parse_event(Eo_Lexer *ls)
         goto end;
      }
 end:
-   if (ls->t.token == ':')
-     {
-        eo_lexer_get(ls);
-        ev->type = eo_lexer_type_release(ls, parse_type_void(ls));
-        ev->type->owned = has_owned;
-     }
+   check_next(ls, ':');
+   ev->type = eo_lexer_type_release(ls, parse_type_void(ls));
+   ev->type->owned = has_owned;
    check(ls, ';');
    eo_lexer_get(ls);
    FILL_DOC(ls, ev, doc);

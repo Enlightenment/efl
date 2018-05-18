@@ -479,14 +479,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
         return EINA_TRUE;
      }
 
-   if (!event->type)
-     {
-        snprintf(buf, sizeof(buf), "event '%s' has no type", event->base.name);
-        _obj_error(&event->base, buf);
-        vals->warned = EINA_TRUE;
-     }
-
-   if (event->type && !_validate_type(vals, event->type))
+   if (!_validate_type(vals, event->type))
      return EINA_FALSE;
 
    if (!_validate_doc(event->doc))
