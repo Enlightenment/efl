@@ -4254,4 +4254,75 @@ class TestEinaIterator
     }
 } // < TestEinaIterator
 
+
+class TestEinaAccessor
+{
+    public static void basic_accessor_list()
+    {
+        var lst = new eina.List<int>();
+        lst.Append(1);
+        lst.Append(2);
+        lst.Append(3);
+        lst.Append(4);
+
+        eina.Accessor<int> accessor = lst.GetAccessor();
+
+        var zipped = accessor.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
+
+        foreach(Tuple<int, int> pair in zipped)
+        {
+            Test.AssertEquals(pair.Item1, pair.Item2);
+        }
+    }
+
+    public static void basic_accessor_array()
+    {
+        var arr = new eina.Array<string>();
+        arr.Append(base_seq_str);
+
+        eina.Accessor<string> accessor = arr.GetAccessor();
+
+        var zipped = accessor.Zip(arr, (first, second) => new Tuple<string, string>(first, second));
+
+        foreach(Tuple<string, string> pair in zipped)
+        {
+            Test.AssertEquals(pair.Item1, pair.Item2);
+        }
+    }
+
+    public static void basic_accessor_inlist()
+    {
+        var lst = new eina.Inlist<int>();
+        lst.Append(1);
+        lst.Append(2);
+        lst.Append(3);
+        lst.Append(4);
+
+        eina.Accessor<int> accessor = lst.GetAccessor();
+
+        var zipped = accessor.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
+
+        foreach(Tuple<int, int> pair in zipped)
+        {
+            Test.AssertEquals(pair.Item1, pair.Item2);
+        }
+    }
+
+    public static void basic_accessor_inarray()
+    {
+        var arr = new eina.Inarray<int>();
+        arr.Append(base_seq_int);
+
+        eina.Accessor<int> accessor = arr.GetAccessor();
+
+        var zipped = accessor.Zip(arr, (first, second) => new Tuple<int, int>(first, second));
+
+        foreach(Tuple<int, int> pair in zipped)
+        {
+            Test.AssertEquals(pair.Item1, pair.Item2);
+        }
+    }
+}
+
+
 }
