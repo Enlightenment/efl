@@ -1352,25 +1352,24 @@ _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
    Evas_Pointer_Data *pdata;
    Evas_Pointer_Seat *pseat;
-   Eo *seat;
+   Evas_Pointer_Seat *hit = NULL;
 
-   seat = efl_input_device_seat_get(pointer);
    EINA_INLIST_FOREACH(edata->seats, pseat)
      {
-        if (pseat->seat != seat) continue;
         EINA_INLIST_FOREACH(pseat->pointers, pdata)
           if (pdata->pointer == pointer)
             {
                pseat->pointers = eina_inlist_remove(pseat->pointers, EINA_INLIST_GET(pdata));
                free(pdata);
+               hit = pseat;
                break;
             }
-        if (pseat->pointers) break;
-        eina_list_free(pseat->object.in);
-        edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(pseat));
-        free(pseat);
-        break;
      }
+   EINA_SAFETY_ON_NULL_RETURN(hit);
+   if (hit->pointers) return;
+   eina_list_free(hit->object.in);
+   edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(hit));
+   free(hit);
 }
 
 Eina_List *
