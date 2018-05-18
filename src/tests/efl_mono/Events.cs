@@ -9,6 +9,7 @@ class TestEoEvents
 {
     public bool called = false;
     public bool correct_sender = false;
+    public efl.ILoop loop { get; set; }
     protected void callback(object sender, EventArgs e) {
         called = true;
         efl.IObject obj = sender as efl.IObject;
@@ -17,20 +18,25 @@ class TestEoEvents
             obj.SetName("loop_called");
             correct_sender = true;
         }
+
+        eina.Value v = new eina.Value(eina.ValueType.Int32);
+        v.Set(0);
+        loop.Quit(v);
     }
     protected void another_callback(object sender, EventArgs e) { }
 
-    public static void callback_add_event()
+    public static void idle_event()
     {
         efl.ILoop loop = new efl.Loop();
         loop.SetName("loop");
         TestEoEvents listener = new TestEoEvents();
-        loop.CallbackAddEvt += listener.callback;
+        listener.loop = loop;
+        loop.IdleEvt += listener.callback;
 
         Test.Assert(!listener.called);
         Test.Assert(!listener.correct_sender);
         Test.AssertEquals("loop", loop.GetName());
-        loop.IdleEvt += listener.another_callback;
+        loop.Begin();
         Test.Assert(listener.called);
         Test.Assert(listener.correct_sender);
         Test.AssertEquals("loop_called", loop.GetName());

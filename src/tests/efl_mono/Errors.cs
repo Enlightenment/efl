@@ -108,11 +108,11 @@ class TestEolianError
         // An event whose managed delegate generates an exception
         // must set an eina_error so it can be reported back to
         // the managed code
-        efl.ILoop loop = new efl.Loop();
+        test.ITesting obj = new test.Testing();
         Listener listener = new Listener();
-        loop.CallbackAddEvt += listener.callback;
+        obj.EvtWithIntEvt += listener.callback;
 
-        Test.AssertRaises<efl.EflException>(() => loop.IdleEvt += listener.another_callback);
+        Test.AssertRaises<efl.EflException>(() => { obj.EmitEventWithInt(2); });
     }
 }
 }
