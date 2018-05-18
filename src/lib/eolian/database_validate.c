@@ -12,7 +12,6 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool event_redef;
-   Eina_Bool event_notype;
 } Validate_State;
 
 static Eina_Bool
@@ -480,7 +479,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
         return EINA_TRUE;
      }
 
-   if (vals->event_notype && !event->type)
+   if (!event->type)
      {
         snprintf(buf, sizeof(buf), "event '%s' has no type", event->base.name);
         _obj_error(&event->base, buf);
@@ -915,8 +914,7 @@ database_validate(const Eolian_Unit *src)
 
    Validate_State vals = {
       EINA_FALSE,
-      !!getenv("EOLIAN_EVENT_REDEF_WARN"),
-      !!getenv("EOLIAN_EVENT_NO_TYPE_WARN")
+      !!getenv("EOLIAN_EVENT_REDEF_WARN")
    };
 
    /* do an initial pass to refill inherits */
