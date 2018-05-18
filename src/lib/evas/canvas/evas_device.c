@@ -76,6 +76,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 static void
 _del_cb(void *data, const Efl_Event *ev)
 {
+   Efl_Input_Device_Type devtype;
    Evas_Public_Data *e = data;
 
    e->devices_modified = EINA_TRUE;
@@ -89,7 +90,8 @@ _del_cb(void *data, const Efl_Event *ev)
    else if (e->default_keyboard == ev->object)
      e->default_keyboard = _new_default_device_find(e, ev->object);
 
-   if ((efl_input_device_type_get(ev->object) == EFL_INPUT_DEVICE_TYPE_SEAT) && (!e->default_seat))
+   devtype = efl_input_device_type_get(ev->object);
+   if ((devtype == EFL_INPUT_DEVICE_TYPE_SEAT) && (!e->default_seat))
      {
         Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, ev->object);
         if (pdata)
@@ -108,7 +110,8 @@ _del_cb(void *data, const Efl_Event *ev)
           }
      }
 
-   _evas_pointer_data_remove(e, ev->object);
+   if (devtype == EFL_INPUT_DEVICE_TYPE_MOUSE)
+     _evas_pointer_data_remove(e, ev->object);
    eina_hash_del_by_key(e->locks.masks, &ev->object);
    eina_hash_del_by_key(e->modifiers.masks, &ev->object);
    efl_event_callback_call(e->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
