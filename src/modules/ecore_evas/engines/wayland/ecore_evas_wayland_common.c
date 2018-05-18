@@ -1193,7 +1193,8 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                     {
                        _ecore_evas_wl_common_device_event_add
                          (ECORE_WL2_EVENT_DEVICE_REMOVED,
-                             ECORE_WL2_DEVICE_TYPE_POINTER, ev->id, NULL, ee);
+                             ECORE_WL2_DEVICE_TYPE_POINTER, ev->id,
+                             device->pointer, ee);
 
                        evas_device_del(device->pointer);
                        device->pointer = NULL;
@@ -1217,7 +1218,8 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                     {
                        _ecore_evas_wl_common_device_event_add
                          (ECORE_WL2_EVENT_DEVICE_REMOVED,
-                             ECORE_WL2_DEVICE_TYPE_KEYBOARD, ev->id, NULL, ee);
+                             ECORE_WL2_DEVICE_TYPE_KEYBOARD, ev->id,
+                             device->keyboard, ee);
 
                        evas_device_del(device->keyboard);
                        device->keyboard = NULL;
@@ -1242,7 +1244,7 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                        _ecore_evas_wl_common_device_event_add
                          (ECORE_WL2_EVENT_DEVICE_REMOVED,
                              ECORE_WL2_DEVICE_TYPE_TOUCH,
-                             ev->id, NULL, ee);
+                             ev->id, device->touch, ee);
 
                        evas_device_del(device->touch);
                        device->touch = NULL;
