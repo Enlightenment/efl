@@ -939,6 +939,8 @@ ecore_con_server_check(const Ecore_Con_Server *svr)
 static Ecore_Con_Server *
 _ecore_con_server_new(Eina_Bool is_dialer, Ecore_Con_Type type, const char *name, int port, const void *data)
 {
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!name || (!name[0]), NULL);
+
    Ecore_Con_Server *svr = calloc(1, sizeof(Ecore_Con_Server));
    EINA_SAFETY_ON_NULL_RETURN_VAL(svr, NULL);
    svr->start_time = ecore_time_get();
@@ -2630,7 +2632,7 @@ ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
      .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED | AI_CANONNAME,
    };
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!name || (!name[0]), EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, EINA_FALSE);
 
    ctx = malloc(sizeof(Ecore_Con_Lookup_Ctx));
