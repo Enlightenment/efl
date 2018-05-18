@@ -4784,7 +4784,7 @@ EOLIAN static const char *
 _elm_widget_item_cursor_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
-   return elm_object_cursor_get(item->view);
+   return elm_object_sub_cursor_get(item->view);
 }
 
 EOLIAN static void
@@ -4817,7 +4817,7 @@ _elm_widget_item_cursor_style_set(Eo *eo_item EINA_UNUSED,
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
 
-   elm_object_cursor_style_set(item->view, style);
+   elm_object_sub_cursor_style_set(item->view, style);
 }
 
 /**
@@ -4836,7 +4836,7 @@ _elm_widget_item_cursor_style_get(const Eo *eo_item EINA_UNUSED,
                                   Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
-   return elm_object_cursor_style_get(item->view);
+   return elm_object_sub_cursor_style_get(item->view);
 }
 
 /**
@@ -4863,7 +4863,7 @@ _elm_widget_item_cursor_engine_only_set(Eo *eo_item EINA_UNUSED,
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
 
-   elm_object_cursor_theme_search_enabled_set(item->view, !engine_only);
+   elm_object_sub_cursor_theme_search_enabled_set(item->view, !engine_only);
 }
 
 /**
@@ -4882,7 +4882,7 @@ EOLIAN static Eina_Bool
 _elm_widget_item_cursor_engine_only_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
-   return !elm_object_cursor_theme_search_enabled_get(item->view);
+   return !elm_object_sub_cursor_theme_search_enabled_get(item->view);
 }
 
 EOLIAN static void
