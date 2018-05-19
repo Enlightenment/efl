@@ -289,34 +289,22 @@ group { "efl/tags/btn";
 }
 
 group { "efl/tags/number";
-   styles {
-      style { name: "textblock_style_efl_tags_default";
-         base: "font="FNBD" font_size=10 text_class=tags_closed style=glow color=#3399ffff glow_color=#3399ff18 align=center glow2_color=#3399ff12 wrap=char";
-         tag: "br" "\n";
-         tag: "ps" "ps";
-         tag: "hilight" "+ font="FNBD;
-         tag: "b" "+ font="FNBD;
-         tag: "tab" "\t";
-      }
-   }
    parts {
-      rect { "bg";
-         desc { "default";
-            color: 0 0 0 0;
-         }
-      }
-      textblock { "efl.text";
+      text { "efl.text";
          nomouse;
+         effect: GLOW;
          scale;
          desc { "default";
-            rel1.offset: 2 2;
-            rel1.to: "bg";
-            rel2.offset: -3 -3;
-            rel2.to: "bg";
-            text { style: "textblock_style_tags_default";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "tags_number";
+            text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
+               align: 0.5 0.5;
+               text_class: "tags_number";
             }
+            rel1.offset: 2 2;
+            rel2.offset: -5 -5;
          }
       }
    }

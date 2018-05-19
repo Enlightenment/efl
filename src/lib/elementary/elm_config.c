@@ -176,6 +176,7 @@ static const Elm_Color_Class _elm_color_classes[] = {
    {"datetime_text", "Datetime Text"},
    {"multibuttonentry_label", "Multibuttonentry Text"},
    {"tags_label", "Tags Text"},
+   {"tags_number", "Tags Number Text"},
    {"spinner", "Spinner Text"},
    {"spinner_disabled", "Spinner Disabled Text"},
    {NULL, NULL}

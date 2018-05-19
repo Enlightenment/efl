@@ -102,7 +102,7 @@ _shrink_mode_set(Eo *obj,
                     }
                   else
                     {
-                       snprintf(buf, sizeof(buf), "+++++ %d", count);
+                       snprintf(buf, sizeof(buf), "+ %d", count);
                        edje_object_part_text_escaped_set(sd->end, "efl.text", buf);
                     }
 
@@ -119,14 +119,14 @@ _shrink_mode_set(Eo *obj,
                   if (sd->format_cb)
                     {
                        eina_strbuf_reset(sd->format_strbuf);
-
                        eina_value_set(&val, count);
+                       sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
                        edje_object_part_text_escaped_set(sd->end, "efl.text",
                                                          eina_strbuf_string_get(sd->format_strbuf));
                     }
                   else
                     {
-                       snprintf(buf, sizeof(buf), "+++++ %d", count);
+                       snprintf(buf, sizeof(buf), "+ %d", count);
                        edje_object_part_text_escaped_set(sd->end, "efl.text", buf);
                     }
 
