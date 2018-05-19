@@ -50,9 +50,22 @@ EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
 static void
 _entry_show(Evas_Object *obj)
 {
+   Efl_Ui_Spin_Special_Value *sv;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+   char buf[32], fmt[32] = "%0.f";
+
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-   char buf[32], fmt[32] = "%0.f";
+
+   EINA_ARRAY_ITER_NEXT(pd->special_values, i, sv, iterator)
+     {
+        if (sv->value == pd->val)
+          {
+             snprintf(buf, sizeof(buf), "%s", sv->label);
+             elm_object_text_set(sd->ent, buf);
+          }
+     }
 
    /* try to construct just the format from given label
     * completely ignoring pre/post words
@@ -169,6 +182,9 @@ _entry_hide(Evas_Object *obj)
 static void
 _entry_value_apply(Evas_Object *obj)
 {
+   Efl_Ui_Spin_Special_Value *sv;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
    const char *str;
    double val;
    char *end;
@@ -183,6 +199,10 @@ _entry_value_apply(Evas_Object *obj)
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
+
+   EINA_ARRAY_ITER_NEXT(pd->special_values, i, sv, iterator)
+      if (sv->value == pd->val)
+        if (!strcmp(sv->label, str)) return;
 
    val = strtod(str, &end);
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - pd->val) < DBL_EPSILON)) return;

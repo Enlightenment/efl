@@ -73,7 +73,23 @@ _is_label_format_integer(const char *fmt)
 static void
 _label_write(Evas_Object *obj)
 {
+   Efl_Ui_Spin_Special_Value *sv;
+   unsigned int i;
+   Eina_Array_Iterator iterator;
+
    Efl_Ui_Spin_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+
+   EINA_ARRAY_ITER_NEXT(sd->special_values, i, sv, iterator)
+     {
+        if (sv->value == sd->val)
+          {
+             char buf[1024];
+             snprintf(buf, sizeof(buf), "%s", sv->label);
+             elm_layout_text_set(obj, "elm.text", buf);
+             sd->templates = sv->label;
+             return;
+          }
+     }
 
    if (sd->format_cb)
      {
@@ -172,6 +188,48 @@ _efl_ui_spin_efl_ui_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_efl_ui_spin_special_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, const Eina_Array *values)
+{
+   EINA_SAFETY_ON_NULL_RETURN(values);
+
+   unsigned int i;
+   Efl_Ui_Spin_Special_Value *sv;
+   Efl_Ui_Spin_Special_Value *temp;
+   Eina_Array_Iterator iterator;
+
+   if (eina_array_count(sd->special_values))
+     {
+        EINA_ARRAY_ITER_NEXT(sd->special_values, i, sv, iterator)
+          {
+             eina_stringshare_del(sv->label);
+             free(sv);
+          }
+        eina_array_clean(sd->special_values);
+     }
+
+   if (eina_array_count(values))
+     EINA_ARRAY_ITER_NEXT(values, i, temp, iterator)
+       {
+          sv = calloc(1, sizeof(*sv));
+          if (!sv) return;
+          sv->value = temp->value;
+          sv->label = eina_stringshare_add(temp->label);
+          eina_array_push(sd->special_values, sv);
+       }
+
+   _label_write(obj);
+}
+
+EOLIAN static const Eina_Array*
+_efl_ui_spin_special_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
+{
+   if (eina_array_count(sd->special_values))
+     return sd->special_values;
+   else
+     return NULL;
+}
+
 EOLIAN static Eo *
 _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
 {
@@ -185,6 +243,7 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
 
    sd->val_max = 100.0;
    sd->step = 1.0;
+   sd->special_values = eina_array_new(sizeof(Efl_Ui_Spin_Special_Value));
 
    if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                     elm_widget_theme_klass_get(obj),
@@ -203,7 +262,19 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
 EOLIAN static void
 _efl_ui_spin_efl_object_destructor(Eo *obj, Efl_Ui_Spin_Data *sd EINA_UNUSED)
 {
+   Efl_Ui_Spin_Special_Value *sv;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
    efl_ui_format_cb_set(obj, NULL, NULL, NULL);
+
+   EINA_ARRAY_ITER_NEXT(sd->special_values, i, sv, iterator)
+     {
+        eina_stringshare_del(sv->label);
+        free(sv);
+     }
+   eina_array_free(sd->special_values);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

@@ -65,5 +65,5 @@ test_ui_spin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _dec_clicked, sp),
            efl_pack(bx, efl_added));
 
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 80));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 120));
 }

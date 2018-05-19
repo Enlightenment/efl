@@ -1,3 +1,10 @@
+struct Efl.Ui.Spin_Special_Value
+{
+   [[Special value]]
+   value: double; [[Target value]]
+   label: string; [[String to replace]]
+}
+
 class Efl.Ui.Spin (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Format,
                    Efl.Access.Value, Efl.Access.Widget.Action)
 {
@@ -8,6 +15,24 @@ class Efl.Ui.Spin (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Format,
 
      @since 1.21
    ]]
+   methods {
+      @property special_value {
+         [[Control special string to display in the place of the numerical value.
+
+           It's useful for cases when a user should select an item that is
+           better indicated by a label than a value. For example, weekdays or months.
+
+           Note: If another label was previously set to $value, it will be replaced
+           by the new label.]]
+         set {
+         }
+         get {
+         }
+         values {
+            values: const(array<ptr(Efl.Ui.Spin_Special_Value)>); [[The array of special values, or NULL if none]]
+         }
+      }
+   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

@@ -3,6 +3,8 @@
 #endif
 #include <Elementary.h>
 
+#define NUM_OF_VALS 12
+
 static void
 _spin_delay_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
@@ -13,6 +15,17 @@ void
 test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win, *bx;
+   int i;
+   Eina_Array *array;
+   Efl_Ui_Spin_Special_Value values[12] = {
+     {1, "January"}, {2, "February"}, {3, "March"}, {4, "April"},
+     {5, "May"}, {6, "June"}, {7, "July"}, {8, "August"},
+     {9, "September"}, {10, "October"}, {11, "November"}, {12, "December"}
+   };
+
+   array = eina_array_new(sizeof(Efl_Ui_Spin_Special_Value));
+   for (i = 0; i < NUM_OF_VALS; i++)
+     eina_array_push(array, &values[i]);
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
@@ -39,5 +52,13 @@ test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
            efl_ui_spin_button_editable_set(efl_added, EINA_FALSE),
            efl_pack(bx, efl_added));
 
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(180, 100));
+   efl_add(EFL_UI_SPIN_BUTTON_CLASS, bx,
+           efl_ui_range_min_max_set(efl_added, 1, 12),
+           efl_ui_range_value_set(efl_added, 1),
+           efl_ui_spin_button_editable_set(efl_added, EINA_FALSE),
+           efl_ui_spin_special_value_set(efl_added, array),
+           efl_pack(bx, efl_added));
+   eina_array_free(array);
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(180, 140));
 }
