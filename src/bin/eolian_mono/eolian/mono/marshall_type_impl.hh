@@ -237,6 +237,11 @@ struct marshall_type_visitor_generate
               return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
+        ,{"accessor", nullptr, nullptr, [&]
+           {
+              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+           }
+        }
       };
 
       auto default_match = [&] (attributes::complex_type_def const& complex)

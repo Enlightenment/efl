@@ -26,11 +26,29 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     /// <summary>Who is in charge of releasing the resources wrapped by this instance.</summary>
     private Ownership Ownership { get; set; }
 
+    // FIXME Part of the implicit EFL Container interface. Need to make it explicit.
+    public bool Own
+    {
+        get
+        {
+            return Ownership == Ownership.Managed;
+        }
+        set
+        {
+            Ownership = value ? Ownership.Managed : Ownership.Unmanaged;
+        }
+    }
+
     /// <summary>Create a new accessor wrapping the given pointer.</summary>
     public Accessor(IntPtr handle, Ownership owner=Ownership.Managed)
     {
         Handle = handle;
         Ownership = owner;
+    }
+
+    public Accessor(IntPtr handle, bool own, bool ownContent=false)
+        : this(handle, own ? Ownership.Managed : Ownership.Unmanaged)
+    {
     }
 
     /// <summary>Release the native resources held by this instance.</summary>

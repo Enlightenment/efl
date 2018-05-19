@@ -52,6 +52,7 @@ typedef struct Test_Testing_Data
   Eo *part1;
   Eo *part2;
   Eina_Promise *promise;
+  Eina_List *list_for_accessor;
 } Test_Testing_Data;
 
 typedef struct Test_Numberwrapper_Data
@@ -3841,6 +3842,20 @@ void _test_testing_reject_promise(Eo *obj, Test_Testing_Data *pd, Eina_Error err
     eina_promise_reject(pd->promise, err);
 }
 
+Eina_Accessor *_test_testing_clone_accessor(Eo *obj, Test_Testing_Data *pd, Eina_Accessor *acc)
+{
+   if (pd->list_for_accessor)
+     eina_list_free(pd->list_for_accessor);
+
+   unsigned int i;
+   int *data;
+   EINA_ACCESSOR_FOREACH(acc, i, data)
+     {
+         pd->list_for_accessor = eina_list_append(pd->list_for_accessor, data);
+     }
+
+   return eina_list_accessor_new(pd->list_for_accessor);
+}
 
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"

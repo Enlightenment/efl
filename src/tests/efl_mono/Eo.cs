@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace TestSuite
 {
@@ -221,6 +222,27 @@ class TestTypedefs
         Test.AssertEquals((test.MyInt)ret, input);
         Test.AssertEquals(receiver, input);
 
+    }
+}
+
+class TestEoAccessors
+{
+    public static void basic_eo_accessors()
+    {
+        test.ITesting obj = new test.Testing();
+        eina.List<int> lst = new eina.List<int>();
+        lst.Append(4);
+        lst.Append(3);
+        lst.Append(2);
+        lst.Append(5);
+        eina.Accessor<int> acc = obj.CloneAccessor(lst.GetAccessor());
+
+        var zipped = acc.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
+
+        foreach(Tuple<int, int> pair in zipped)
+        {
+            Test.AssertEquals(pair.Item1, pair.Item2);
+        }
     }
 }
 

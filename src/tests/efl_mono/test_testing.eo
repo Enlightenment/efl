@@ -1633,6 +1633,14 @@ class Test.Testing (Efl.Object, Efl.Part) {
             @in error: Eina.Error;
          }
       }
+
+      /* Accessors */
+      clone_accessor {
+         params {
+            @in acc: accessor<ptr(int)>;
+         }
+         return: accessor<ptr(int)> @owned;
+      }
    }
    implements {
       class.constructor;
