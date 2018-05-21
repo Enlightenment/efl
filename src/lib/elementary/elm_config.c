@@ -1684,7 +1684,7 @@ _config_load(void)
         efl_del_intercept_set(_efl_config_obj, NULL);
         efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
         efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
-        ELM_SAFE_FREE(_efl_config_obj, efl_unref);
+        ELM_SAFE_FREE(_efl_config_obj, efl_del);
         ELM_SAFE_FREE(_elm_config, _config_free);
         _elm_font_overlays_del_free();
 
