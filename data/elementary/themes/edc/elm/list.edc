@@ -122,6 +122,8 @@ group { name: "elm/list/item/default";
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
+            offscale;
+            min: 0 15;
             rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
@@ -167,7 +169,10 @@ group { name: "elm/list/item/default";
       }
       //##//
       part { name: "elm.swallow.icon"; type: SWALLOW;
+         scale;
          description { state: "default" 0.0;
+            offscale;
+            min: 15 15;
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
@@ -177,7 +182,10 @@ group { name: "elm/list/item/default";
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
+         scale;
          description { state: "default" 0.0;
+            offscale;
+            min: 15 15;
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
@@ -278,6 +286,7 @@ group { name: "elm/list/h_item/default";
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
+            offscale;
             rel1.offset: 4 4;
             rel1.relative: 0.0 1.0;
             rel1.to_y: "elm.swallow.icon";
