@@ -12,7 +12,6 @@
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
@@ -22,34 +21,6 @@
       inherit: _SRC; \
       parts { \
          text { "elm.text"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -83,98 +54,40 @@
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
    }
 
-#define TREEPAD 19
+#define ICMIN 15
+#define TREEPAD (ICMIN+4)
 
 group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
-   
-   images.image: "shadow_square_tiny.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
-   
+
    parts {
-      image { "shadow_vbar";
+      rect { "base";
          desc { "default";
-            rel1.offset: -3 -2;
-            rel1.to: "base_vbar";
-            rel2.offset: 2 4;
-            rel2.to: "base_vbar";
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
+             color: 32 32 32 255;
          }
       }
-      image { "base_vbar";
-         desc { "default";
-            image.normal: "vgrad_med_lighter.png";
-            fill.smooth: 0;
-            min: 5 13;
-            TILED_HORIZ(120)
-         }
-      }
-      image { "bevel_vbar";
-         desc { "default";
-            rel1.to: "base_vbar";
-            rel2.to: "base_vbar";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-            min: 5 5;
-         }
-      }
-      
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color: FN_COL_DEFAULT;
-            color_class: "list_group_item";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -185,56 +98,46 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
          }
          desc { "disabled";
             inherit: "default";
-            color: FN_COL_DISABLE;
-            color_class: "list_group_item_disabled";
+            color: 80 80 80 255;
             link.base: "elm,state,disabled";
          }
       }
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 2;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: 0 -3;
          }
       }
       swallow { "elm.swallow.end"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
-         }
-      }
-      image { "bar";
-         desc { "default";
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            fixed: 0 1;
-            rel1.relative: 0.0 1.0;
-            rel1.offset: -3 -6;
-            rel2.offset: 2 3;
-            link.base: "elm,state,enabled";
-         }
-         desc { "disabled";
-            inherit: "default";
-             color: 255 255 255 64;
-             link.base: "elm,state,disabled";
+            rel2.offset: -5 -5;
          }
       }
    }
@@ -260,11 +163,7 @@ group { "elm/genlist/item_compress/group_index/default"; nomouse;
 }
 
 group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
-   images.image: "bevel_curved_horiz_out.png" COMP;
-   images.image: "shadow_rounded_horiz.png" COMP;
-   images.image: "vgrad_med_dark.png" COMP;
-   images.image: "bevel_horiz_out.png" COMP;
-   target_group: "default" "elm.text" "label2" "label3";
+   target_group: "default" "elm.text";
    parts {
        rect { "event"; mouse;
           desc { "default";
@@ -280,61 +179,18 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
        rect { "base";
           desc { "default";
              color: 64 64 64 255;
-             color_class: "list_item_base";
              link.base: "elm,state,even";
           }
           desc { "odd";
              color: 56 56 56 255;
-             color_class: "list_item_base_odd";
              link.base: "elm,state,odd";
           }
        }
-       image { "bevel";
+       image { "sel_base"; type: RECT; mouse_events: 0;
           desc { "default";
-             image.normal: "bevel_curved_horiz_out.png";
-             image.border: 0 0 2 2;
-             image.middle: 0;
-             fill.smooth: 0;
-          }
-       }
-       image { "sel_shadow";
-          desc { "default";
-             image.normal: "shadow_rounded_horiz.png";
-             image.border: 0 0 9 9;
-             rel1.offset: 0 -4;
-             rel2.offset: -1 5;
-             fill.smooth: 0;
-             link.base: "elm,state,unselected";
+             color: 51 153 255 255;
              hid;
-          }
-          desc { "selected";
-             inherit: "default";
-             link.base: "elm,state,selected";
-             vis;
-          }
-       }
-       image { "sel_base";
-          desc { "default";
-             image.normal: "vgrad_med_dark.png";
-             fill.smooth: 0;
-             hid;
-             TILED_HORIZ(120)
              link.base: "elm,state,unselected";
-          }
-          desc { "selected";
-             inherit: "default";
-             link.base: "elm,state,selected";
-             vis;
-          }
-       }
-       image { "sel_bevel";
-          desc { "default";
-             image.normal: "bevel_horiz_out.png";
-             image.border: 0 0 2 2;
-             image.middle: 0;
-             fill.smooth: 0;
-             link.base: "elm,state,unselected";
-             hid;
           }
           desc { "selected";
              inherit: "default";
@@ -346,26 +202,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
 }
 
 group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
-    images.image: "shine.png" COMP;
     parts {
-       image { "sel_shine";
-          desc { "default";
-             image.normal: "shine.png";
-             rel1.offset: 0 -2;
-             rel1.to: "sel_base";
-             rel2.relative: 1.0 0.0;
-             rel2.offset: -1 2;
-             rel2.to: "sel_base";
-             hid;
-             FIXED_SIZE(69, 5)
-             link.base: "elm,state,unselected";
-          }
-          desc { "selected";
-             inherit: "default";
-             vis;
-             link.base: "elm,state,selected";
-          }
-       }
        rect { "event_block"; mouse;
           desc { "default";
              color: 0 0 0 0;
@@ -382,19 +219,21 @@ group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
 }
 
 group { "genlist_noarrow"; inherit_only: 1; program_source: "elm";
-   parts { 
+   parts {
       rect { "arrow"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             min: 15 15;
             aspect: 1.0 1.0;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -2 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -2 -3;
+            rel2.offset: 0 -5;
             color: 0 0 0 0;
          }
       }
@@ -402,8 +241,8 @@ group { "genlist_noarrow"; inherit_only: 1; program_source: "elm";
 }
 
 group { "elm/genlist/item/default/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -412,17 +251,17 @@ group { "elm/genlist/item/default/default"; nomouse;
    parts {
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -432,60 +271,11 @@ group { "elm/genlist/item/default/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3"; inherit: "label2";
-         effect: GLOW;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel2.offset: -1 1;
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -538,25 +328,30 @@ group { "elm/genlist/item/default/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: 0 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -566,13 +361,16 @@ group { "elm/genlist/item/default/default"; nomouse;
          }
       }
       swallow { "elm.swallow.end"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -590,14 +388,14 @@ COMPRESS("elm/genlist/item_compress/default/default", "elm/genlist/item/default/
 COMPRESS_ODD("elm/genlist/item_compress_odd/default/default", "elm/genlist/item/default/default")
 
 group { "elm/genlist/item/default_style/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
    styles.style { "genlist_style";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#fff style=shadow,bottom shadow_color=#00000080 text_class=list_item";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#a0a0a0 text_class=list_item";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -605,7 +403,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       tag: "tab" "\t";
    }
    styles.style { "genlist_style_selected";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#3399ffff style=shadow,bottom shadow_color=#00000080 text_class=list_item_selected";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#ffffff text_class=list_item_selected";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -613,7 +411,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       tag: "tab" "\t";
    }
    styles.style { "genlist_style_disabled";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=list_item";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#505050 text_class=list_item";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -628,13 +426,14 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       textblock { "elm.text";
          scale;
          desc { "default";
-            rel1.offset: 2 7;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
-            rel2.offset: -3 -4;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -645,56 +444,11 @@ group { "elm/genlist/item/default_style/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      textblock { "label2";
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-               style: "genlist_style_disabled";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      textblock { "label3"; inherit: "label2";
-         desc { "default";
-            color_class: "list_item_selected";
             text.style: "genlist_style_selected";
          }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
          desc { "disabled";
             inherit: "default";
-            hid;
+            text.style: "genlist_style_disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -747,25 +501,30 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: 0 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -775,13 +534,16 @@ group { "elm/genlist/item/default_style/default"; nomouse;
          }
       }
       swallow { "elm.swallow.end"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -803,17 +565,22 @@ group { "elm/genlist/item/indent/default"; nomouse;
    inherit: "elm/genlist/item/default/default";
    parts {
       swallow { "elm.swallow.icon";
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
          desc { "flip_enabled";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
       }
    }
@@ -825,8 +592,8 @@ COMPRESS("elm/genlist/item_compress/indent/default", "elm/genlist/item/indent/de
 COMPRESS_ODD("elm/genlist/item_compress_odd/indent/default", "elm/genlist/item/indent/default")
 
 group { "elm/genlist/item/one_icon/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
@@ -836,15 +603,15 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
-            rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.0 0.5;
@@ -853,60 +620,11 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3"; inherit: "label2";
-         effect: GLOW;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel2.offset: -1 1;
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -959,25 +677,30 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: 0 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -996,8 +719,8 @@ COMPRESS("elm/genlist/item_compress/one_icon/default", "elm/genlist/item/one_ico
 COMPRESS_ODD("elm/genlist/item_compress_odd/one_icon/default", "elm/genlist/item/one_icon/default")
 
 group { "elm/genlist/item/end_icon/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
@@ -1007,17 +730,17 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.icon";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1027,69 +750,11 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1142,22 +807,27 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -1176,8 +846,8 @@ COMPRESS("elm/genlist/item_compress/end_icon/default", "elm/genlist/item/end_ico
 COMPRESS_ODD("elm/genlist/item_compress_odd/end_icon/default", "elm/genlist/item/end_icon/default")
 
 group { "elm/genlist/item/no_icon/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -1186,15 +856,15 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1204,69 +874,11 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1319,12 +931,14 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       //##//
@@ -1337,33 +951,53 @@ COMPRESS("elm/genlist/item_compress/no_icon/default", "elm/genlist/item/no_icon/
 COMPRESS_ODD("elm/genlist/item_compress_odd/no_icon/default", "elm/genlist/item/no_icon/default")
 
 group { "elm/genlist/item/full/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "contents" "elm.swallow.content";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
    inherit: "genlist_base";
    parts {
 
+      text { "sizing.text";
+         scale;
+         desc { "default";
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+      }
       //##//
       swallow { "elm.swallow.content"; mouse;
          scale;
          desc { "default";
-            min: 19 19;
-            rel1.offset: -1 2;
+            offscale;
+            min: ICMIN ICMIN;
+            aspect: 1.0 1.0;
+            rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
          }
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       //##//
@@ -1380,15 +1014,9 @@ group { "elm/genlist/item_compress_odd/full/default";
 }
 
 group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
-   images.image: "sym_left_light_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_left_dark_normal.png" COMP;
-   images.image: "sym_right_light_normal.png" COMP;
-   images.image: "sym_right_glow_normal.png" COMP;
-   images.image: "sym_right_dark_normal.png" COMP;
-   images.image: "sym_down_light_normal.png" COMP;
-   images.image: "sym_down_glow_normal.png" COMP;
-   images.image: "sym_down_dark_normal.png" COMP;
+   images.image: "big_arrow_left.png" COMP;
+   images.image: "big_arrow_right.png" COMP;
+   images.image: "big_arrow_down.png" COMP;
 
    parts {
       image { "arrow_img_l";
@@ -1397,31 +1025,41 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          ignore_flags: ON_HOLD;
          desc { "default";
             fixed: 1 1;
-            min: 15 15;
-            max: 15 15;
+            min: 14 17;
+            max: 14 17;
             rel1.to: "arrow";
             rel2.to: "arrow";
-            image.normal: "sym_right_light_normal.png";
+            image.normal: "big_arrow_right.png";
+            color: 160 160 160 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_right_glow_normal.png";
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            image.normal: "sym_right_dark_normal.png";
+            color: 80 80 80 255;
          }
          desc { "default" 1.0;
             inherit: "default";
-            image.normal: "sym_down_light_normal.png";
+            min: 17 14;
+            max: 17 14;
+            image.normal: "big_arrow_down.png";
+            color: 160 160 160 255;
          }
          desc { "selected" 1.0;
             inherit: "default";
-            image.normal: "sym_down_glow_normal.png";
+            min: 17 14;
+            max: 17 14;
+            image.normal: "big_arrow_down.png";
+            color: 255 255 255 255;
          }
          desc { "disabled" 1.0;
             inherit: "default";
-            image.normal: "sym_down_dark_normal.png";
+            min: 17 14;
+            max: 17 14;
+            image.normal: "big_arrow_down.png";
+            color: 80 80 80 255;
          }
       }
       image { "arrow_img_r";
@@ -1430,45 +1068,54 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          ignore_flags: ON_HOLD;
          desc { "default";
             fixed: 1 1;
-            min: 15 15;
-            max: 15 15;
+            min: 14 17;
+            max: 14 17;
             rel1.to: "arrow";
             rel2.to: "arrow";
-            image.normal: "sym_left_light_normal.png";
+            image.normal: "big_arrow_left.png";
+            color: 160 160 160 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_left_glow_normal.png";
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            image.normal: "sym_left_dark_normal.png";
+            color: 80 80 80 255;
          }
          desc { "default" 1.0;
             inherit: "default";
-            image.normal: "sym_down_light_normal.png";
+            min: 17 14;
+            max: 17 14;
+            image.normal: "big_arrow_down.png";
+            color: 160 160 160 255;
          }
          desc { "selected" 1.0;
             inherit: "default";
-            image.normal: "sym_down_glow_normal.png";
+            min: 17 14;
+            max: 17 14;
+            image.normal: "big_arrow_down.png";
+            color: 255 255 255 255;
          }
          desc { "disabled" 1.0;
             inherit: "default";
-            image.normal: "sym_down_dark_normal.png";
+            min: 17 14;
+            max: 17 14;
+            image.normal: "big_arrow_down.png";
+            color: 80 80 80 255;
          }
       }
       rect { "arrow"; mouse;
+         scale;
          desc { "default";
             fixed: 1 0;
             min: 15 15;
-            aspect: 1.0 1.0;
+//            aspect: 1.0 1.0;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -2 2;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -2 -3;
             color: 0 0 0 0;
          }
       }
@@ -1571,17 +1218,22 @@ group { "elm/genlist/tree/default/default"; nomouse;
 //   alias: "elm/genlist/item/effect_parts/default";
    parts {
       swallow { "elm.swallow.icon";
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
          desc { "flip_enabled";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
       }
    }
@@ -1595,17 +1247,22 @@ group { "elm/genlist/tree/default_style/default";
    inherit: "elm/genlist/item/default_style/default";
    parts {
       swallow { "elm.swallow.icon";
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
          desc { "flip_enabled";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
       }
    }
@@ -1619,17 +1276,22 @@ group { "elm/genlist/tree/one_icon/default";
    inherit: "elm/genlist/item/one_icon/default";
    parts {
       swallow { "elm.swallow.icon";
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
          desc { "flip_enabled";
+            offscale;
+            min: ICMIN ICMIN;
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
       }
    }
@@ -1645,19 +1307,19 @@ group { "elm/genlist/tree/end_icon/default";
       text { "elm.text";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "selected";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "disabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
       }
    }
@@ -1673,19 +1335,19 @@ group { "elm/genlist/tree/no_icon/default";
       text { "elm.text";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "selected";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "disabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
       }
    }
@@ -1701,19 +1363,19 @@ group { "elm/genlist/tree/full/default";
       swallow { "elm.swallow.content";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "selected";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "disabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
       }
    }
@@ -1729,8 +1391,8 @@ group { "elm/genlist/tree_compress_odd/full/default";
 
 
 group { "elm/genlist/tree/tree_effect/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -1778,7 +1440,7 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          }
          desc { "map_transition";
             inherit: "default";
-            color: 50 50 50 255;
+            color: 0 0 0 255;
             map.rotation.x: -90;
             link { base: "elm,action,flip_item";
                after: "rot2";
@@ -1842,16 +1504,15 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.to_y: "elm.swallow.icon";
-            rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1861,69 +1522,11 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: 0 -3;
-            rel1.to: "elm.text";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.5 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1978,14 +1581,14 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
       text { "sizer.content";
          scale;
          desc { "default";
+            offscale;
             fixed: 1 1;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
+            rel2.offset: -5 4;
             align: 0.5 0.0;
-            color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1997,16 +1600,21 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
       }
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 1;
             aspect: 1.0 1.0;
             rel1.to: "sizer.content";
@@ -2034,17 +1642,17 @@ group { "elm/genlist/tree/icon_top_text_bottom/default";
       image { "sizer.content";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
       }
       text { "elm.text";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
       }
    }
@@ -2072,65 +1680,8 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.text.sub"; \
             desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label4"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label5"; \
-            desc { "default"; \
-               fixed: 0 1; \
                text.min: 0 1; \
             } \
             desc { "selected"; \
@@ -2163,63 +1714,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.text.sub"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label4"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2236,14 +1731,13 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
    }
 group { "elm/genlist/item/double_label/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.text.sub";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -2253,18 +1747,18 @@ group { "elm/genlist/item/double_label/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 0.0;
             rel2.to_x: "elm.swallow.end";
             rel2.to_y: "elm.text.sub";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2275,69 +1769,11 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2357,18 +1793,17 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
       }
       text { "elm.text.sub";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
+            offscale;
             fixed: 0 1;
-            rel1.offset: 2 -3;
+            rel1.offset: 4 -5;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.icon";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item_sub";
+            color: 160 160 160 255;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -2379,76 +1814,18 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
          }
       }
-      text { "label4";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.sub";
-            rel2.to: "elm.text.sub";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_sub_disabled";
-            text { font: FN; size: 8;
-               text_source: "elm.text.sub";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label5";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -4;
-            rel1.to: "elm.text.sub";
-            rel2.offset: -1 0;
-            rel2.to: "elm.text.sub";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_sub_selected";
-            text { font: FN; size: 8;
-               text_source: "elm.text.sub";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      target_group: "subgroup" "elm.text.sub" "label4" "label5";
+      target_group: "subgroup" "elm.text.sub";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -2483,25 +1860,30 @@ group { "elm/genlist/item/double_label/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.icon"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: 0 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -2511,13 +1893,16 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
       }
       swallow { "elm.swallow.end"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -2541,15 +1926,15 @@ group { "elm/genlist/tree/double_label/default";
       swallow { "elm.swallow.icon";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
             rel2.to_x: "arrow";
-            rel2.offset: 1 -3;
+            rel2.offset: 4 -5;
          }
       }
    }
@@ -2577,34 +1962,6 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.title.1"; \
             desc { "default"; \
                text.min: 0 1; \
@@ -2619,63 +1976,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         text { "label4"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label5"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.title.2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label6"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label7"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2709,63 +2010,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.title.1"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label4"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2793,45 +2038,16 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         text { "label6"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label7"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
    }
 group { "elm/genlist/item/message/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.title.1 elm.title.2";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -2840,16 +2056,16 @@ group { "elm/genlist/item/message/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 2;
+            rel2.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2861,71 +2077,11 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            fixed: 1 1;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            fixed: 1 1;
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2946,18 +2102,18 @@ group { "elm/genlist/item/message/default"; nomouse;
       }
       //##//
       text { "elm.title.1";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.to_y: "elm.text";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.title.2";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -2967,69 +2123,11 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label4";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.title.1";
-            rel2.to: "elm.title.1";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.title.1";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label5";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.title.1";
-            rel2.offset: -1 1;
-            rel2.to: "elm.title.1";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.title.1";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -3038,15 +2136,15 @@ group { "elm/genlist/item/message/default"; nomouse;
       }
       //##//
       text { "elm.title.2";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 -3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 -5;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             align: 0.0 1.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -3058,76 +2156,18 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
          }
       }
-      text { "label6";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.title.2";
-            rel2.to: "elm.title.2";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.title.2";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label7";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.title.2";
-            rel2.offset: -1 2;
-            rel2.to: "elm.title.2";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.title.2";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      target_group: "message" "elm.title.1" "elm.title.2" "label4" "label5" "label6" "label7";
+      target_group: "message" "elm.title.1" "elm.title.2";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -3162,12 +2202,14 @@ group { "elm/genlist/item/message/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       //##//
@@ -3180,8 +2222,8 @@ COMPRESS_T1T2("elm/genlist/item_compress/message/default", "elm/genlist/item/mes
 COMPRESS_T1T2_ODD("elm/genlist/item_compress_odd/message/default", "elm/genlist/item/message/default")
 
 group { "elm/genlist/item/media/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text.title elm.text.album-artist";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -3190,17 +2232,16 @@ group { "elm/genlist/item/media/default"; nomouse;
 
       //##//
       text { "elm.text.title";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.text.album-artist";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -3211,69 +2252,11 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.title";
-            rel2.to: "elm.text.title";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text.title";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text.title";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text.title";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text.title";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -3293,17 +2276,16 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
       }
       text { "elm.text.album-artist";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
+            offscale;
             fixed: 0 1;
-            rel1.offset: 2 -3;
+            rel1.offset: 4 -5;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 1.0 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item_sub";
+            color: 160 160 160 255;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -3314,76 +2296,18 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
          }
       }
-      text { "label4";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.album-artist";
-            rel2.to: "elm.text.album-artist";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_sub_disabled";
-            text { font: FN; size: 8;
-               text_source: "elm.text.album-artist";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label5";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -4;
-            rel1.to: "elm.text.album-artist";
-            rel2.offset: -1 0;
-            rel2.to: "elm.text.album-artist";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_sub_selected";
-            text { font: FN; size: 8;
-               text_source: "elm.text.album-artist";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      target_group: "media" "elm.text.title" "label2" "label3" "elm.text.album-artist" "label4" "label5";
+      target_group: "media" "elm.text.title" "elm.text.album-artist";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -3418,12 +2342,14 @@ group { "elm/genlist/item/media/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       //##//
@@ -3449,63 +2375,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.text.album-artist"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label4"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3539,63 +2409,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          text { "elm.text.album-artist"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label4"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3612,7 +2426,6 @@ group { "elm/genlist/item/media/default"; nomouse;
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
@@ -3620,10 +2433,10 @@ group { "elm/genlist/item/media/default"; nomouse;
 ODD("elm/genlist/item_odd/media/default", "elm/genlist/item/media/default")
 COMPRESS_MEDIA("elm/genlist/item_compress/media/default", "elm/genlist/item/media/default")
 COMPRESS_MEDIA_ODD("elm/genlist/item_compress_odd/media/default", "elm/genlist/item/media/default")
-      
+
 group { "elm/genlist/item/media-album/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text.title elm.text.trackno elm.text.length";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -3632,18 +2445,18 @@ group { "elm/genlist/item/media-album/default"; nomouse;
 
       //##//
       text { "elm.text.trackno";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_x: "elm.swallow.pad";
             rel2.to_y: "elm.text.length";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -3655,69 +2468,11 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.trackno";
-            rel2.to: "elm.text.trackno";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text.trackno";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text.trackno";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text.trackno";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text.trackno";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -3739,14 +2494,17 @@ group { "elm/genlist/item/media-album/default"; nomouse;
       text { "dot";
          scale;
          desc { "default";
+            offscale;
+            min: 0 ICMIN;
             hid;
             fixed: 1 1;
             align: 0.0 0.0;
             rel1.to: "elm.text.trackno";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 2 0;
+            rel1.offset: 4 0;
             rel2.to: "elm.text.trackno";
-            rel2.offset: 2 -1;
+            rel2.offset: 4 -1;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -3756,21 +2514,22 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "visible";
             inherit: "default";
+            visible: 1;
          }
       }
       text { "elm.text.title";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 0;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 0;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "dot";
             rel1.to_y: "elm.text.trackno";
-            rel2.offset: -3 -1;
+            rel2.offset: -5 -1;
             rel2.relative: 1.0 1.0;
             rel2.to_y: "elm.text.trackno";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -3781,88 +2540,29 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
          }
       }
-      text { "label6";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.title";
-            rel2.to: "elm.text.title";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text.title";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label7";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text.title";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text.title";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text.title";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      
       text { "elm.text.length";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
+            offscale;
+            min: 0 ICMIN;
             fixed: 0 1;
-            rel1.offset: 2 -3;
+            rel1.offset: 4 -5;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
+            rel2.offset: -4 -5;
             rel2.relative: 1.0 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item_sub";
+            color: 160 160 160 255;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -3873,76 +2573,18 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
          }
       }
-      text { "label4";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.length";
-            rel2.to: "elm.text.length";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_sub_disabled";
-            text { font: FN; size: 8;
-               text_source: "elm.text.length";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label5";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -4;
-            rel1.to: "elm.text.length";
-            rel2.offset: -1 0;
-            rel2.to: "elm.text.length";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_sub_selected";
-            text { font: FN; size: 8;
-               text_source: "elm.text.length";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      target_group: "media-album" "elm.text.trackno" "label2" "label3" "elm.text.title" "label6" "label7" "elm.text.length" "label4" "label5";
+      target_group: "media-album" "elm.text.trackno" "elm.text.title" "elm.text.length";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -3977,12 +2619,14 @@ group { "elm/genlist/item/media-album/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       //##//
@@ -4008,34 +2652,6 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      text { "label2";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label3";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
       text { "elm.text.length";
          desc { "default";
             text.min: 0 1;
@@ -4050,35 +2666,7 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      text { "label4";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label5";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-   }
+    }
 }
 group { "elm/genlist/item_compress_odd/media-album/default";
    inherit: "elm/genlist/item_odd/media-album/default";
@@ -4097,63 +2685,7 @@ group { "elm/genlist/item_compress_odd/media-album/default";
             text.min: 0 1;
          }
       }
-      text { "label2";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label3";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
       text { "elm.text.length";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label4";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4171,8 +2703,8 @@ group { "elm/genlist/item_compress_odd/media-album/default";
 }
 
 group { "elm/genlist/item/media-preview/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.text.artist";
    data.item: "contents" "elm.swallow.preview";
    data.item: "treesize" TREEPAD;
@@ -4182,17 +2714,17 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
 
       //##//
       text { "elm.text";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.preview";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.text.artist";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            color: 160 160 160 255;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -4203,69 +2735,11 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -4285,17 +2759,16 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
       }
       text { "elm.text.artist";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
+            offscale;
             fixed: 0 1;
-            rel1.offset: 2 -3;
+            rel1.offset: 4 -5;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.preview";
-            rel2.offset: -3 -3;
+            rel2.offset: -5 -5;
             rel2.relative: 1.0 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item_sub";
+            color: 160 160 160 255;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -4306,76 +2779,18 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
          }
       }
-      text { "label4";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.artist";
-            rel2.to: "elm.text.artist";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_sub_disabled";
-            text { font: FN; size: 8;
-               text_source: "elm.text.artist";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label5";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -4;
-            rel1.to: "elm.text.artist";
-            rel2.offset: -1 0;
-            rel2.to: "elm.text.artist";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_sub_selected";
-            text { font: FN; size: 8;
-               text_source: "elm.text.artist";
-               align: 0.0 1.0;
-               text_class: "list_item_sub";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      target_group: "media-preview" "elm.text.artist" "label4" "label5";
+      target_group: "media-preview" "elm.text.artist";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -4410,25 +2825,29 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       swallow { "elm.swallow.preview"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: 0 -5;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -4460,63 +2879,7 @@ group { "elm/genlist/item_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      text { "label2";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label3";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
       text { "elm.text.artist";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label4";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4549,63 +2912,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      text { "label2";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label3";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
       text { "elm.text.artist";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label4";
-         desc { "default";
-            text.min: 0 1;
-         }
-         desc { "selected";
-            text.min: 0 1;
-         }
-         desc { "disabled";
-            text.min: 0 1;
-         }
-         desc { "flip_enabled";
-            text.min: 0 1;
-         }
-      }
-      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4640,34 +2947,6 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
       } \
    }
 #define COMPRESS_MODE_ODD(_NAME, _SRC) \
@@ -4688,45 +2967,16 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         text { "label2"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
-         text { "label3"; \
-            desc { "default"; \
-               text.min: 0 1; \
-            } \
-            desc { "selected"; \
-               text.min: 0 1; \
-            } \
-            desc { "disabled"; \
-               text.min: 0 1; \
-            } \
-            desc { "flip_enabled"; \
-               text.min: 0 1; \
-            } \
-         } \
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
    }
 group { "elm/genlist/item/mode/default"; nomouse;
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    data.item: "texts" "elm.text.mode";
    data.item: "mode_part" "elm.swallow.original";
    data.item: "treesize" TREEPAD;
@@ -4736,15 +2986,15 @@ group { "elm/genlist/item/mode/default"; nomouse;
 
       //##//
       text { "elm.text.mode";
-         effect: SHADOW BOTTOM;
          scale;
          desc { "default";
-            rel1.offset: 2 3;
+            offscale;
+            min: 0 ICMIN;
+            rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
-            rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -4754,69 +3004,11 @@ group { "elm/genlist/item/mode/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            hid;
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            hid;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label2";
-         effect: SHADOW BOTTOM;
-         scale;
-         desc { "default";
-            rel1.to: "elm.text.mode";
-            rel2.to: "elm.text.mode";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
-               text_source: "elm.text.mode";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            hid;
-         }
-         desc { "disabled";
-            inherit: "default";
-            vis;
-         }
-         desc { "flip_enabled";
-            inherit: "default";
-            hid;
-         }
-      }
-      text { "label3";
-         effect: GLOW;
-         scale;
-         desc { "default";
-            rel1.offset: -2 -3;
-            rel1.to: "elm.text.mode";
-            rel2.offset: -1 1;
-            rel2.to: "elm.text.mode";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text.mode";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "disabled";
-            inherit: "default";
-            hid;
+            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -4835,7 +3027,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
             vis;
          }
       }
-      target_group: "mode" "elm.text.mode" "label2" "label3";
+      target_group: "mode" "elm.text.mode";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -4870,12 +3062,14 @@ group { "elm/genlist/item/mode/default"; nomouse;
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
+         scale;
          desc { "default";
+            offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
+            rel2.offset: 4 -5;
          }
       }
       //##//
@@ -4950,7 +3144,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
       program { "slide_left_finished";
          action: SIGNAL_EMIT "elm,state,slide,passive,finished" "elm";
       }
-      program {      
+      program {
          signal: "elm,state,rotate,active";
          action: STATE_SET "rotate";
          target: "elm.swallow.original";
@@ -4982,7 +3176,6 @@ group { "elm/genlist/item/mode/default"; nomouse;
       program { "rotate_off_finished";
          action: SIGNAL_EMIT "elm,state,rotate,passive,finished" "elm";
       }
-      
    }
    inherit: "genlist_top";
 }
@@ -4996,11 +3189,11 @@ group { "elm/genlist/tree/mode/default";
       text { "elm.text.mode";
          desc { "default";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
-            rel1.offset: 1 2;
+            rel1.offset: 4 4;
          }
       }
    }
@@ -5040,15 +3233,14 @@ COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tre
          rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
-               color_class: "list_item_base_odd"; \
             } \
          } \
       } \
    }
 group { "elm/genlist/item/edit/default"; nomouse;
    data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
-   data.item: "selectraise" "on";
-   data.item: "focusraise" "on";
+//   data.item: "selectraise" "on";
+//   data.item: "focusraise" "on";
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shadow_horiz.png" COMP;
@@ -5057,11 +3249,9 @@ group { "elm/genlist/item/edit/default"; nomouse;
       rect { "base";
          desc { "default";
             color: 64 64 64 255;
-            color_class: "list_item_base";
          }
          desc { "odd";
             color: 56 56 56 255;
-            color_class: "list_item_base_odd";
          }
       }
       program {
@@ -5074,16 +3264,9 @@ group { "elm/genlist/item/edit/default"; nomouse;
          action: STATE_SET "default";
          target: "base";
       }
-      
-      image { "sel_shadow1";
+      rect { "sel_base";
          desc { "default";
-            image.normal: "shadow_horiz.png";
-            image.border: 0 0 9 9;
-            rel1.offset: 0 -4;
-            rel2.offset: -1 5;
-            rel2.to_x: "elm.swallow.decorate.content";
-            rel2.relative: 0.0 1.0;
-            fill.smooth: 0;
+            color: 51 153 255 255;
             hid;
          }
          desc { "selected";
@@ -5091,48 +3274,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
             vis;
          }
       }
-      image { "sel_shadow2";
-         desc { "default";
-            image.normal: "shadow_horiz.png";
-            image.border: 0 0 9 9;
-            rel1.to_x: "elm.swallow.decorate.content";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 0 -4;
-            rel2.offset: -1 5;
-            fill.smooth: 0;
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-      }
-      image { "sel_base";
-         desc { "default";
-            image.normal: "vgrad_med_dark.png";
-            fill.smooth: 0;
-            hid;
-            TILED_HORIZ(120)
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-      }
-      image { "sel_bevel";
-         desc { "default";
-            image.normal: "bevel_horiz_out.png";
-            image.border: 0 0 2 2;
-            image.middle: 0;
-            fill.smooth: 0;
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-      }
-      target_group: "edit" "sel_base" "sel_bevel" "sel_shadow1" "sel_shadow2";
+      target_group: "edit" "sel_base";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
@@ -5145,18 +3287,21 @@ group { "elm/genlist/item/edit/default"; nomouse;
       }
 
       swallow { "elm.edit.icon.1"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: 0 ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
             rel2.relative: 0.0 1.0;
-            rel1.offset: -1 2;
-            rel2.offset: -1 -3;
+            rel1.offset: -1 4;
+            rel2.offset: -1 -5;
          }
          desc { "on";
             inherit: "default";
             align: 0.0 0.5;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
          }
          desc { "disabled";
             inherit: "default";
@@ -5164,36 +3309,41 @@ group { "elm/genlist/item/edit/default"; nomouse;
          }
       }
       swallow { "elm.edit.icon.2"; mouse;
+         scale;
          desc { "default";
+            offscale;
+            min: 0 ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 2;
-            rel2.offset: 1 -3;
+            rel1.offset: 1 4;
+            rel2.offset: 1 -5;
          }
          desc { "on";
             inherit: "default";
             align: 1.0 0.5;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
          }
          desc { "disabled";
             inherit: "default";
             hid;
          }
       }
-      
+
       swallow { "elm.swallow.decorate.content"; mouse;
+         scale;
          desc { "default";
+            offscale;
          }
          desc { "on";
             inherit: "default";
             rel1.to_x: "elm.edit.icon.1";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 3 0;
+            rel1.offset: 0 0;
             rel2.to_x: "elm.edit.icon.2";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -2 -1;
+            rel2.offset: -1 -1;
          }
       }
       target_group: "decorate" "elm.swallow.decorate.content" "elm.edit.icon.1" "elm.edit.icon.2";
