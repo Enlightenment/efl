@@ -10,7 +10,7 @@ abstract Efl.Canvas.Gesture(Efl.Object)
          get {
          }
          values {
-            @cref type: Efl.Event.Description; [[gesture type]]
+            @cref type: Efl.Event_Description; [[gesture type]]
          }
       }
       @property state {

@@ -581,7 +581,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
          get { legacy: null; }
          set { legacy: null; }
          keys {
-            @cref desc: Efl.Event.Description;
+            @cref desc: Efl.Event_Description;
                [[The event description for which the given $animation is set.]]
          }
          values {
