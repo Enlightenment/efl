@@ -1,4 +1,4 @@
-enum Efl.Exe.Signal {
+enum Efl.Exe_Signal {
    [[ ]]
    int,
    quit,
@@ -11,7 +11,7 @@ enum Efl.Exe.Signal {
    usr2
 }
 
-enum Efl.Exe.Flags {
+enum Efl.Exe_Flags {
    [[ ]]
    none             = 0,
    group_leader     = 1,
@@ -25,14 +25,14 @@ class Efl.Exe (Efl.Task)
    methods {
       signal {
          params {
-            sig: Efl.Exe.Signal; [[ Send this signal to the task ]]
+            sig: Efl.Exe_Signal; [[ Send this signal to the task ]]
          }
       }
       @property exe_flags {
         set { }
         get { }
         values {
-          flags: Efl.Exe.Flags; [[ ]]
+          flags: Efl.Exe_Flags; [[ ]]
         }
       }
       @property exit_signal {
