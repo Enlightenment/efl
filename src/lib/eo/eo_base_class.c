@@ -2179,8 +2179,6 @@ composite_obj_back:
    if (pd->parent) goto err_parent;
 err_parent_back:
 
-   _wref_destruct(pd);
-
    // this isn't 100% correct, as the object is still "slightly" alive at this
    // point (so efl_destructed_is() returns false), but triggering the
    // "destruct" event here is the simplest, safest solution.
@@ -2190,6 +2188,8 @@ err_parent_back:
    // remove generic data after this final event, in case they are used in a cb
    _eo_generic_data_del_all(obj, pd);
    _eo_callback_remove_all(pd);
+
+   _wref_destruct(pd);
 
    ext = pd->ext;
    // it is rather likely we dont have any extension section for most objects
