@@ -27,4 +27,10 @@ eo_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const ch
   ctx.did = EINA_FALSE;                          \
   ctx.expected_level = EINA_LOG_LEVEL_ERR
 
+#define TEST_EO_CRITICAL(fn, _msg)               \
+  ctx.msg = _msg;                                \
+  ctx.fnc = fn;                                  \
+  ctx.did = EINA_FALSE;                          \
+  ctx.expected_level = EINA_LOG_LEVEL_CRITICAL
+
 #endif /* _EO_ERROR_MSGS_H */
