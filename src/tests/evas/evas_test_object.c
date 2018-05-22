@@ -20,6 +20,7 @@ EFL_START_TEST(evas_object_various)
    evas_object_unref(obj);
 
    evas = EVAS_TEST_INIT_EVAS();
+   obj = evas_object_rectangle_add(evas);
    efl_ref(obj);
    evas_free(evas);
    efl_unref(obj);
