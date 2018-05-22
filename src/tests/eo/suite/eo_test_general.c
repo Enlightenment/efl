@@ -11,6 +11,8 @@
 
 #include <Eo.h>
 
+#include "eo_internal.h"
+
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 #include "eo_test_class_singleton.h"
