@@ -32,7 +32,7 @@ class Efl.Canvas.Animation (Efl.Object, Efl.Playable)
          get {
          }
          values {
-            mode: Efl.Canvas.Animation.Repeat_Mode; [[Repeat mode. EFL_ANIMATION_REPEAT_MODE_RESTART restarts animation when the animation ends and EFL_ANIMATION_REPEAT_MODE_REVERSE reverses animation when the animation ends.]]
+            mode: Efl.Canvas.Animation_Repeat_Mode; [[Repeat mode. EFL_ANIMATION_REPEAT_MODE_RESTART restarts animation when the animation ends and EFL_ANIMATION_REPEAT_MODE_REVERSE reverses animation when the animation ends.]]
          }
       }
       @property repeat_count {
