@@ -166,8 +166,9 @@ _fake_server_name_request_cb(void *data EINA_UNUSED,
                              const Eldbus_Message *msg,
                              Eldbus_Pending *pending EINA_UNUSED)
 {
-   if (eldbus_message_error_get(msg, NULL, NULL))
-     ck_abort_msg("error on _fake_server_name_request_cb");
+   const char *name, *text;
+   if (eldbus_message_error_get(msg, &name, &text))
+     ck_abort_msg("error on _fake_server_name_request_cb: %s %s", name, text);
 
    unsigned int reply;
    if (!eldbus_message_arguments_get(msg, "u", &reply))
