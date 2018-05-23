@@ -146,7 +146,7 @@ EFL_START_TEST(utc_eldbus_proxy_info_get_call_p)
    Eldbus_Pending *pending = eldbus_proxy_call(proxy, method_name, _proxy_message_cb, &cb_data, -1, empty_string);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -219,7 +219,7 @@ EFL_START_TEST(utc_eldbus_proxy_send_call_p)
    Eldbus_Pending *pending = eldbus_proxy_send(proxy, msg, _proxy_message_cb, &cb_data, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
