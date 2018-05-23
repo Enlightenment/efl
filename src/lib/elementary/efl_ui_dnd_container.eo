@@ -34,7 +34,7 @@ mixin Efl.Ui.Dnd_Container {
       }
       drop_item_add {
          params {
-            @in format: Efl.Selection.Format; [[Accepted data formats]]
+            @in format: Efl.Selection_Format; [[Accepted data formats]]
             @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
