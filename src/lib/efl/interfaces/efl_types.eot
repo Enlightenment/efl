@@ -39,7 +39,7 @@ struct Efl.Version
    build_id: string; [[Contains $EFL_BUILD_ID.]]
 }
 
-struct Efl.Observable.Tuple
+struct Efl.Observable_Tuple
 {
    [[This type describes an observable touple]]
    key: string; [[Touple key]]
