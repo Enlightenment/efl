@@ -100,7 +100,8 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
      }
    if (bdata->image)
       evas_object_image_data_set(bdata->image, bdata->pixels);
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+   else
+     bdata->resized = 1;
 }
 
 static void
@@ -162,6 +163,11 @@ _ecore_evas_buffer_prepare(Ecore_Evas *ee)
         if ((w != ee->w) || (h != ee->h))
            _ecore_evas_resize(ee, w, h);
         bdata->pixels = evas_object_image_data_get(bdata->image, 1);
+     }
+   else if (bdata->resized)
+     {
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        bdata->resized = 0;
      }
 
    return EINA_TRUE;
