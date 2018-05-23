@@ -23,17 +23,6 @@ EFL_START_TEST(eldbus_test_eldbus)
 }
 EFL_END_TEST
 
-EFL_START_TEST(eldbus_test_eldbus_main_loop)
-{
-   Ecore_Timer *timer;
-
-   timer = ecore_timer_add(0.1, _quit_cb, NULL);
-   fail_if(timer == NULL);
-
-   ecore_main_loop_begin();
-}
-EFL_END_TEST
-
 EFL_START_TEST(eldbus_test_eldbus_conn)
 {
    Eldbus_Connection *conn;
@@ -103,7 +92,6 @@ EFL_END_TEST
 void eldbus_test_eldbus_init(TCase *tc)
 {
    tcase_add_test(tc, eldbus_test_eldbus);
-   tcase_add_test(tc, eldbus_test_eldbus_main_loop);
    tcase_add_test(tc, eldbus_test_eldbus_conn);
    tcase_add_test(tc, eldbus_test_eldbus_conn_object);
    tcase_add_test(tc, eldbus_test_eldbus_name_owner_changed);
