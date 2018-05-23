@@ -5314,6 +5314,20 @@ _elm_entry_prediction_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const ch
      (sd->entry_edje, "elm.text", prediction_hint);
 }
 
+EOLIAN static Eina_Bool
+_elm_entry_prediction_hint_hash_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *key, const char *value)
+{
+   return edje_object_part_text_prediction_hint_hash_set
+      (sd->entry_edje, "elm.text", key, value);
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_prediction_hint_hash_del(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *key)
+{
+   return edje_object_part_text_prediction_hint_hash_del
+      (sd->entry_edje, "elm.text", key);
+}
+
 EOLIAN static void
 _elm_entry_imf_context_reset(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {

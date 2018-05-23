@@ -2882,6 +2882,8 @@ Eina_Bool _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp);
 void _edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand);
 Eina_Bool _edje_entry_input_panel_show_on_demand_get(Edje_Real_Part *rp);
 void _edje_entry_prediction_hint_set(Edje_Real_Part *rp, const char *prediction_hint);
+Eina_Bool _edje_entry_prediction_hint_hash_set(Edje_Real_Part *rp, const char *key, const char *value);
+Eina_Bool _edje_entry_prediction_hint_hash_del(Edje_Real_Part *rp, const char *key);
 Eina_Bool _edje_entry_hide_visible_password(Edje *edje, Edje_Real_Part *rp);
 
 void _edje_external_init(void);

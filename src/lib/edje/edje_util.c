@@ -3085,6 +3085,44 @@ _edje_box_layout_part_external_find(const char *name)
             NULL);
 }
 
+EAPI Eina_Bool
+edje_object_part_text_prediction_hint_hash_set(Eo *obj, const char *part, const char *key, const char *value)
+{
+   Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_prediction_hint_hash_set(rp, key, value);
+     }
+   else
+     return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_object_part_text_prediction_hint_hash_del(Eo *obj, const char *part, const char *key)
+{
+   Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_prediction_hint_hash_del(rp, key);
+     }
+   else
+     return EINA_FALSE;
+}
+
 Eina_Bool
 _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void(**free_data) (void *data))
 {

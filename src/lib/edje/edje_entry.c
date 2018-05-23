@@ -4584,6 +4584,45 @@ _edje_entry_prediction_hint_set(Edje_Real_Part *rp, const char *prediction_hint)
 #endif
 }
 
+Eina_Bool
+_edje_entry_prediction_hint_hash_set(Edje_Real_Part *rp, const char *key, const char *value)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
+   en = rp->typedata.text->entry_data;
+   if (!en) return EINA_FALSE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_prediction_hint_hash_set(en->imf_context, key, value);
+#else
+   (void)key;
+   (void)value;
+#endif
+
+   return EINA_FALSE;
+}
+
+Eina_Bool
+_edje_entry_prediction_hint_hash_del(Edje_Real_Part *rp, const char *key)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
+   en = rp->typedata.text->entry_data;
+   if (!en) return EINA_FALSE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_prediction_hint_hash_del(en->imf_context, key);
+#else
+   (void)key;
+#endif
+
+   return EINA_FALSE;
+}
+
 #ifdef HAVE_ECORE_IMF
 
 static Edje_Real_Part *

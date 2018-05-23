@@ -830,6 +830,27 @@ class Elm.Entry (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickabl
             prediction_hint: string; [[The prediction hint text.]]
          }
       }
+      prediction_hint_hash_set {
+         [[Sets the prediction hint data at the specified key.
+
+           @since 1.21
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            key: string; [[The key of the prediction hint.]]
+            value: string; [[The data to replace.]]
+         }
+      }
+      prediction_hint_hash_del {
+         [[Removes the prediction hint data identified by a key.
+
+           @since 1.21
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            key: string; [[The key of the prediction hint.]]
+         }
+      }
    }
    implements {
       class.constructor;
