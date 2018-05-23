@@ -56,7 +56,7 @@ class Efl.Observable (Efl.Object) {
          [[Return a new iterator associated to this observable.
 
            @since 1.19]]
-         return: iterator<ptr(Efl.Observable.Tuple)> @owned; [[Iterator for observer]]
+         return: iterator<ptr(Efl.Observable_Tuple)> @owned; [[Iterator for observer]]
       }
    }
    implements {

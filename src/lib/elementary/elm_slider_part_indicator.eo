@@ -9,7 +9,7 @@ class Elm.Slider.Part_Indicator (Efl.Ui.Layout.Part, Efl.Ui.Format)
          [[Set/Get the visible mode of indicator.
          ]]
          values {
-            mode: Efl.Ui.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
+            mode: Efl.Ui.Slider_Indicator_Visible_Mode; [[The indicator visible mode.]]
          }
       }
    }

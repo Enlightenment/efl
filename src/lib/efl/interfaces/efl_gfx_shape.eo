@@ -113,7 +113,7 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
          get {
          }
          values {
-            fill_rule: Efl.Gfx.Fill.Rule; [[The current fill rule of the shape object.
+            fill_rule: Efl.Gfx.Fill_Rule; [[The current fill rule of the shape object.
                                            One of $EFL_GFX_FILL_RULE_WINDING, $EFL_GFX_FILL_RULE_ODD_EVEN]]
          }
       }

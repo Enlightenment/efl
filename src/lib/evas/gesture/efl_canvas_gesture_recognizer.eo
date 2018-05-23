@@ -23,7 +23,7 @@ abstract Efl.Canvas.Gesture_Recognizer (Efl.Object)
             @in watched: Efl.Object; [[The watched object]]
             @in event: Efl.Canvas.Gesture_Touch; [[The pointer event]]
          }
-         return: Efl.Canvas.Gesture.Recognizer_Result; [[Returns the Efl.Canvas.Gesture event object]]
+         return: Efl.Canvas.Gesture_Recognizer_Result; [[Returns the Efl.Canvas.Gesture event object]]
       }
       /* FIXME: This function is not used? */
       reset {

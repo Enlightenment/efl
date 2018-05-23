@@ -53,16 +53,13 @@ public class Globals {
 
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
               System.IntPtr obj,
-              // FIXME commented to allow passing null stuff during test
-              //ref efl.kw_event.Description desc,
-              //efl.kw_event.Description desc,
               IntPtr desc,
               short priority,
               efl.Event_Cb cb,
               System.IntPtr data);
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
               System.IntPtr obj,
-              efl.kw_event.Description desc,
+              efl.Event_Description desc,
               efl.Event_Cb cb,
               System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr

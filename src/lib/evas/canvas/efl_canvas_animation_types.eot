@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------
 // All the below types are for Efl Animation
 
-struct Efl.Canvas.Animation.Player.Event_Running; [[Information of event running]]
+struct Efl.Canvas.Animation_Player_Event_Running; [[Information of event running]]
 
-enum Efl.Canvas.Animation.Repeat_Mode
+enum Efl.Canvas.Animation_Repeat_Mode
 {
    [[Animation repeat mode]]
 

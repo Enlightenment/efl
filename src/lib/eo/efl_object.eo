@@ -1,6 +1,6 @@
 import eina_types;
 
-struct Efl.Event.Description {
+struct Efl.Event_Description {
     [[This struct holds the description of a specific event.]]
     name: string; [[name of the event.]]
     unfreezable: bool; [[$true if the event cannot be frozen.]]
@@ -230,14 +230,14 @@ abstract Efl.Object ()
       event_callback_forwarder_add {
          [[Add an event callback forwarder for an event and an object.]]
          params {
-            @cref desc: Efl.Event.Description; [[The description of the event to listen to]]
+            @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
             @in new_obj: Efl.Object; [[The object to emit events from]]
          }
       }
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for an event and an object.]]
          params {
-            @cref desc: Efl.Event.Description; [[The description of the event to listen to]]
+            @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
             @in new_obj: Efl.Object; [[The object to emit events from]]
          }
       }
@@ -318,6 +318,6 @@ struct Efl.Event {
       This is the full event information passed to callbacks in C.
     ]]
     object: Efl.Object; [[The object the callback was called on.]]
-    desc: const(ptr(Efl.Event.Description)); [[The event description.]]
+    desc: const(ptr(Efl.Event_Description)); [[The event description.]]
     info: void_ptr; [[Extra event information passed by the event caller]]
 }

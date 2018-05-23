@@ -30,7 +30,7 @@ enum Efl.Gfx.Render_Op {
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Path.Command_Type {
+enum Efl.Gfx.Path_Command_Type {
   [[These values determine how the points are interpreted in a stream of points.
     @since 1.14
   ]]
@@ -66,7 +66,7 @@ enum Efl.Gfx.Join
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Gradient.Spread
+enum Efl.Gfx.Gradient_Spread
 {
   [[Specifies how the area outside the gradient area should be filled.
     $ref efl_gfx_gradient_spread_set()
@@ -78,7 +78,7 @@ enum Efl.Gfx.Gradient.Spread
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Fill.Rule
+enum Efl.Gfx.Fill_Rule
 {
   [[Type defining how an image content get filled.
     @since 1.14
@@ -96,7 +96,7 @@ struct Efl.Gfx.Dash {
   gap: double;     [[Distance between two dashes.]]
 }
 
-struct Efl.Gfx.Gradient.Stop
+struct Efl.Gfx.Gradient_Stop
 {
   [[Type defining gradient stops.
     Describes the location and color of a transition point in a gradient.
@@ -109,7 +109,7 @@ struct Efl.Gfx.Gradient.Stop
   a: int; [[The component A color of the gradient stop]]
 }
 
-struct Efl.Gfx.Stroke.Color
+struct Efl.Gfx.Stroke_Color
 {
   [[Internal structure for @Efl.Gfx.Stroke.]]
   r: int; [[The component R color of the stroke]]
@@ -127,14 +127,14 @@ struct Efl.Gfx.Stroke
   scale: double; [[Stroke scale]]
   width: double; [[Stroke width]]
   centered: double; [[Stroke centered]]
-  color: Efl.Gfx.Stroke.Color; [[Stroke color]]
+  color: Efl.Gfx.Stroke_Color; [[Stroke color]]
   dash: ptr(Efl.Gfx.Dash); [[Stroke dash]]
   dash_length: uint; [[Stroke dash length]]
   cap: Efl.Gfx.Cap; [[Stroke cap]]
   join: Efl.Gfx.Join; [[Stroke join]]
 }
 
-struct Efl.Gfx.Shape.Public
+struct Efl.Gfx.Shape_Public
 {
    [[Public shape]]
    stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
@@ -158,7 +158,7 @@ enum Efl.Gfx.Change_Flag
    all     = 0xffff [[all properties got changed]]
 }
 
-struct Efl.Gfx.Path.Change_Event {
+struct Efl.Gfx.Path_Change_Event {
    what: Efl.Gfx.Change_Flag; [[Indicates what changed.]]
 }
 
@@ -204,7 +204,7 @@ enum Efl.Gfx.Image_Load_Error
    recursive_reference = 10        [[(Edje only) The group/collection set to load from had recursive references on its components]]
 }
 
-enum Efl.Gfx.Color_Class.Layer {
+enum Efl.Gfx.Color_Class_Layer {
    [[Efl Gfx Color Class layer enum]]
    normal = 0, [[Default color]]
    outline, [[Outline color]]

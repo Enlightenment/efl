@@ -70,10 +70,10 @@ public struct Evas_Object_Box_Option {
 };
 #pragma warning restore 0169
 
-namespace efl { namespace kw_event {
+namespace efl {
 
 [StructLayout(LayoutKind.Sequential)]
-public struct Description {
+public struct Event_Description {
     public IntPtr Name;
     [MarshalAs(UnmanagedType.U1)] public bool Unfreezable;
     [MarshalAs(UnmanagedType.U1)] public bool Legacy_is;
@@ -81,7 +81,7 @@ public struct Description {
 
     private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
-    public Description(string name)
+    public Event_Description(string name)
     {
         if (!descriptions.ContainsKey(name))
         {
@@ -100,8 +100,6 @@ public struct Description {
         this.Restart = false;
     }
 };
-
-} // namespace kw_event
 
 
 public delegate void Event_Cb(System.IntPtr data, ref Event evt);

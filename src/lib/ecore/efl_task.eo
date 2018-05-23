@@ -1,4 +1,4 @@
-enum Efl.Task.Priority {
+enum Efl.Task_Priority {
    [[ ]]
    normal,
    background,
@@ -7,7 +7,7 @@ enum Efl.Task.Priority {
    ultra
 }
 
-enum Efl.Task.Flags {
+enum Efl.Task_Flags {
    [[ ]]
    none               = 0,
    use_stdin          = 1,
@@ -121,7 +121,7 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
          get { }
          set { }
          values {
-            priority: Efl.Task.Priority; [[ ]]
+            priority: Efl.Task_Priority; [[ ]]
          }
       }
       @property exit_code {
@@ -135,7 +135,7 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
          set { }
          get { }
          values {
-            flags: Efl.Task.Flags; [[ ]]
+            flags: Efl.Task_Flags; [[ ]]
          }
       }
       run {

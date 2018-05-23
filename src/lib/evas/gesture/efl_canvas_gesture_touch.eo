@@ -48,7 +48,7 @@ class Efl.Canvas.Gesture_Touch(Efl.Object)
       @property state {
          [[This property holds the state of the touch event.]]
          get {
-            return : Efl.Canvas.Gesture.Touch.State; [[touch event state]]
+            return : Efl.Canvas.Gesture_Touch_State; [[touch event state]]
          }
       }
       /* FIXME: finger_list was broken by design - TODO */

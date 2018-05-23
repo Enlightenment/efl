@@ -1,4 +1,4 @@
-enum Efl.Input.Device.Type
+enum Efl.Input.Device_Type
 {
    [[General type of input device.
 
@@ -29,7 +29,7 @@ class Efl.Input.Device (Efl.Object)
       @property device_type {
           [[Device type property]]
          values {
-            klass: Efl.Input.Device.Type; [[Input device class]]
+            klass: Efl.Input.Device_Type; [[Input device class]]
          }
       }
       @property source {
@@ -44,7 +44,7 @@ class Efl.Input.Device (Efl.Object)
            This method will find the seat the device belongs to.
 
            For this, it walk through device's parents looking for a device
-           with @Efl.Input.Device.Type.seat. It may be
+           with @Efl.Input.Device_Type.seat. It may be
            the device itself.
 
            In case no seat is found, $null is returned.

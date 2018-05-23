@@ -1,4 +1,4 @@
-enum Efl.Ui.Pager.Loop
+enum Efl.Ui.Pager_Loop
 {
    [[Efl ui pager loop mode]]
    disabled,
@@ -69,7 +69,7 @@ class Efl.Ui.Pager (Efl.Ui.Layout.Object, Efl.Pack_Linear)
            This property gives the option to make a loop through pages.
          ]]
          values {
-            loop: Efl.Ui.Pager.Loop;
+            loop: Efl.Ui.Pager_Loop;
          }
       }
       @property page_size {

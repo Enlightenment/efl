@@ -73,7 +73,7 @@ interface Efl.Ui.Drag
          ]]
          get {
             [[Gets the draggable direction.]]
-            return: Efl.Ui.Drag.Dir; [[The direction(s) premitted for drag.]]
+            return: Efl.Ui.Drag_Dir; [[The direction(s) premitted for drag.]]
          }
       }
       @property drag_step {

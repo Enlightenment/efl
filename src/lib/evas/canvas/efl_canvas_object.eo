@@ -1,6 +1,6 @@
 import efl_text_types;
 
-struct Efl.Canvas.Object.Animation_Event; [[Information of animation events]]
+struct Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size_Hint,
@@ -444,7 +444,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
            The default paragraph direction is $inherit.
          ]]
          values {
-            dir: Efl.Text.Bidirectional_Type; [[Paragraph direction for the given object.]]
+            dir: Efl.Text_Bidirectional_Type; [[Paragraph direction for the given object.]]
          }
       }
       clipees_has @const {
@@ -581,7 +581,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
          get { legacy: null; }
          set { legacy: null; }
          keys {
-            @cref desc: Efl.Event.Description;
+            @cref desc: Efl.Event_Description;
                [[The event description for which the given $animation is set.]]
          }
          values {
@@ -624,8 +624,8 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
       Efl.Canvas.Pointer.pointer_inside { get; }
    }
    events {
-      anim_started: Efl.Canvas.Object.Animation_Event; [[Animation is started.]]
-      anim_running: Efl.Canvas.Object.Animation_Event; [[Animation is running.]]
-      anim_ended: Efl.Canvas.Object.Animation_Event; [[Animation is ended.]]
+      anim_started: Efl.Canvas.Object_Animation_Event; [[Animation is started.]]
+      anim_running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
+      anim_ended: Efl.Canvas.Object_Animation_Event; [[Animation is ended.]]
    }
 }

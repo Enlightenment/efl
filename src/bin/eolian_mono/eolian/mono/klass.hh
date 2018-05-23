@@ -500,7 +500,7 @@ struct klass
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 1) {\n"
-            << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
+            << scope_tab << scope_tab << scope_tab << "efl.Event_Description desc = new efl.Event_Description(key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"

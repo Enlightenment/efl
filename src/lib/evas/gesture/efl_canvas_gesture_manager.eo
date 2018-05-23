@@ -8,7 +8,7 @@ class Efl.Canvas.Gesture_Manager (Efl.Object)
          params {
             @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
          }
-         return: ptr(const(Efl.Event.Description)); [[Returns the Efl.Event.Description type the recognizer supports]]
+         return: ptr(const(Efl.Event_Description)); [[Returns the Efl.Event_Description type the recognizer supports]]
       }
       recognizer_unregister {
          [[This function is called to unregister a Efl.Canvas.Gesture_Recognizer]]

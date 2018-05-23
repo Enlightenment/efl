@@ -10,7 +10,7 @@ abstract Efl.Canvas.Gesture(Efl.Object)
          get {
          }
          values {
-            @cref type: Efl.Event.Description; [[gesture type]]
+            @cref type: Efl.Event_Description; [[gesture type]]
          }
       }
       @property state {
@@ -20,7 +20,7 @@ abstract Efl.Canvas.Gesture(Efl.Object)
          set {
          }
          values {
-            state: Efl.Canvas.Gesture.State; [[gesture state]]
+            state: Efl.Canvas.Gesture_State; [[gesture state]]
          }
       }
       @property hotspot {
