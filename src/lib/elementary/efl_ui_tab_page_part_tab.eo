@@ -1,4 +1,4 @@
-class Efl.Ui.Tab_Page.Part_Tab (Efl.Ui.Layout.Part, Efl.Text)
+class Efl.Ui.Tab_Page_Part_Tab (Efl.Ui.Layout.Part, Efl.Text)
 {
    [[Tab_Page internal part class]]
    data: null;
