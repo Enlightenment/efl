@@ -368,7 +368,7 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
       activated: void; [[Called when entry is activated]]
       changed: void; [[Called when entry changes]]
       /* FIXME: Sometimes it can be NULL but @nullable does not work on events */
-      changed,user: Efl.Ui.Text.Change_Info;
+      changed,user: Efl.Ui.Text_Change_Info;
          [[The text object has changed due to user interaction]]
       validate: Elm.Validate_Content; [[Called when validating]]
       context,open: void; [[Called when context menu was opened]]
