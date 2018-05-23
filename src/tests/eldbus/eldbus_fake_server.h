@@ -23,7 +23,7 @@ struct _Fake_Server_Data
    int pong_response;
 };
 
-Eldbus_Service_Interface *fake_server_start(Fake_Server_Data *data);
+Eldbus_Service_Interface *fake_server_start(Fake_Server_Data *data, const char *name);
 void fake_server_stop(Eldbus_Service_Interface *interface);
 
 #endif
