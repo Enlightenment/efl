@@ -1234,7 +1234,7 @@ _elm_popup_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *par
    unsigned int i;
    Eina_Bool ret = EINA_TRUE;
 
-   if (!part || !strcmp(part, "default"))
+   if (!part || !strcmp(part, "elm.swallow.content"))
      ret = _content_set(obj, content);
    else if (!strcmp(part, "title,icon"))
      ret = _title_icon_set(obj, content);
@@ -1295,7 +1295,7 @@ _elm_popup_content_get(Eo *obj, Elm_Popup_Data *_pd, const char *part)
    Evas_Object *content = NULL;
    unsigned int i;
 
-   if (!part || !strcmp(part, "default"))
+   if (!part || !strcmp(part, "elm.swallow.content"))
      content = _content_get(_pd);
    else if (!strcmp(part, "title,text"))
      content = _title_icon_get(_pd);
@@ -1363,7 +1363,7 @@ _elm_popup_content_unset(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *p
    Evas_Object *content = NULL;
    unsigned int i;
 
-   if (!part || !strcmp(part, "default"))
+   if (!part || !strcmp(part, "elm.swallow.content"))
      content = _content_unset(obj);
    else if (!strcmp(part, "title,icon"))
      content = _title_icon_unset(obj);
@@ -1840,7 +1840,6 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
-ELM_PART_CONTENT_DEFAULT_GET(elm_popup, "default")
 #include "elm_popup_part.eo.c"
 
 /* Efl.Part end */
@@ -1849,8 +1848,7 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_popup, "default")
 
 #define ELM_POPUP_EXTRA_OPS \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup), \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_popup)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
 #include "elm_popup.eo.c"
 #include "elm_popup_item.eo.c"

@@ -1477,7 +1477,7 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 static void
 _elm_multibuttonentry_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
-   if (!part || !strcmp(part, "default") || !strcmp(part, "elm.text"))
+   if (!part || !strcmp(part, "elm.text"))
      {
         if (label) _label_set(obj, label);
      }
@@ -1494,7 +1494,7 @@ _elm_multibuttonentry_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd, const cha
 {
    const char *text = NULL;
 
-   if (!part || !strcmp(part, "default"))
+   if (!part || !strcmp(part, "elm.text"))
      {
         text = sd->label_str;
      }

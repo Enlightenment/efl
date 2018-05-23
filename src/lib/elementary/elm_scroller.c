@@ -645,7 +645,7 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
 static Eina_Bool
 _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas_Object *content)
 {
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.swallow.content"))
      {
         return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
      }
@@ -688,7 +688,7 @@ _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas
 static Evas_Object*
 _elm_scroller_content_get(const Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.swallow.content"))
      {
         return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
      }
@@ -700,7 +700,7 @@ static Evas_Object*
 _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
    Evas_Object *ret = NULL;
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.swallow.content"))
      {
         return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
      }
@@ -721,19 +721,19 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 EOLIAN static Eina_Bool
 _elm_scroller_efl_content_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
 {
-   return _elm_scroller_content_set(obj, sd, "default", content);
+   return _elm_scroller_content_set(obj, sd, "elm.swallow.content", content);
 }
 
 EOLIAN static Eo *
 _elm_scroller_efl_content_content_get(const Eo *obj, Elm_Scroller_Data *sd)
 {
-   return _elm_scroller_content_get(obj, sd, "default");
+   return _elm_scroller_content_get(obj, sd, "elm.swallow.content");
 }
 
 EOLIAN static Eo *
 _elm_scroller_efl_content_content_unset(Eo *obj, Elm_Scroller_Data *sd)
 {
-   return _elm_scroller_content_unset(obj, sd, "default");
+   return _elm_scroller_content_unset(obj, sd, "elm.swallow.content");
 }
 
 static void
@@ -1370,8 +1370,6 @@ ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
-// FIXME: should be "content" but "default" was legacy API
-ELM_PART_CONTENT_DEFAULT_GET(elm_scroller, "default")
 #include "elm_scroller_part.eo.c"
 
 /* Efl.Part end */
@@ -1379,7 +1377,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_scroller, "default")
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SCROLLER_EXTRA_OPS \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_scroller), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 

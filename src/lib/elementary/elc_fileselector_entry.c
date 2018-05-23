@@ -173,7 +173,7 @@ _elm_fileselector_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Fileselect
 static Eina_Bool
 _elm_fileselector_entry_text_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part, const char *label)
 {
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.text"))
      {
         efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
      }
@@ -185,7 +185,7 @@ _elm_fileselector_entry_text_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const
 static const char *
 _elm_fileselector_entry_text_get(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
 {
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.text"))
      {
         const char *text = NULL;
         text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));

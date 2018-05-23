@@ -407,19 +407,19 @@ _elm_notify_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
 EOLIAN static Eina_Bool
 _elm_notify_efl_content_content_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *content)
 {
-   return _elm_notify_content_set(obj, sd, NULL, content);
+   return _elm_notify_content_set(obj, sd, "default", content);
 }
 
 EOLIAN static Evas_Object*
 _elm_notify_efl_content_content_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
-   return _elm_notify_content_get(obj, sd, NULL);
+   return _elm_notify_content_get(obj, sd, "default");
 }
 
 EOLIAN static Evas_Object*
 _elm_notify_efl_content_content_unset(Eo *obj, Elm_Notify_Data *sd)
 {
-   return _elm_notify_content_unset(obj, sd, NULL);
+   return _elm_notify_content_unset(obj, sd, "default");
 }
 
 static void

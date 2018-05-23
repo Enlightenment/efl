@@ -700,7 +700,7 @@ _elm_ctxpopup_efl_ui_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 static Eina_Bool
 _elm_ctxpopup_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas_Object *content)
 {
-   if ((part) && (strcmp(part, "default")))
+   if ((part) && (strcmp(part, "elm.swallow.content")))
      {
         return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
      }
@@ -733,7 +733,7 @@ _elm_ctxpopup_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas
 static Evas_Object*
 _elm_ctxpopup_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
-   if ((part) && (strcmp(part, "default")))
+   if ((part) && (strcmp(part, "elm.swallow.content")))
      return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 
    return sd->content;
@@ -744,7 +744,7 @@ _elm_ctxpopup_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
    Evas_Object *content = NULL;
 
-   if ((part) && (strcmp(part, "default")))
+   if ((part) && (strcmp(part, "elm.swallow.content")))
      return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 
    content = sd->content;
@@ -1572,7 +1572,6 @@ ELM_PART_OVERRIDE(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
-ELM_PART_CONTENT_DEFAULT_GET(elm_ctxpopup, "default")
 #include "elm_ctxpopup_part.eo.c"
 
 /* Efl.Part end */
@@ -1581,7 +1580,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_ctxpopup, "default")
 
 #define ELM_CTXPOPUP_EXTRA_OPS \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_ctxpopup), \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_ctxpopup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
 
 #include "elm_ctxpopup_item.eo.c"

@@ -739,7 +739,7 @@ _elm_panel_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Objec
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return EINA_FALSE;
           }
-        if (strcmp(part, "default"))
+        if (strcmp(part, "elm.swallow.content") || (content == sd->bx))
           {
              Eina_Bool int_ret = EINA_TRUE;
              int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
@@ -777,7 +777,7 @@ _elm_panel_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return NULL;
           }
-        if (strcmp(part, "default"))
+        if (strcmp(part, "elm.swallow.content"))
           {
              Evas_Object *ret = NULL;
              ret = efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
@@ -801,7 +801,7 @@ _elm_panel_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return NULL;
           }
-        if (strcmp(part, "default"))
+        if (strcmp(part, "elm.swallow.content"))
           {
              ret = efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
              return ret;
