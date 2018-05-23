@@ -1,4 +1,4 @@
-enum Efl.Ui.Zoom.Mode
+enum Efl.Ui.Zoom_Mode
 {
    [[Types of zoom available.]]
    legacy: efl_ui_zoom_mode;
@@ -88,7 +88,7 @@ interface Efl.Ui.Zoom ()
             ]]
          }
          values {
-            mode: Efl.Ui.Zoom.Mode; [[The zoom mode.]]
+            mode: Efl.Ui.Zoom_Mode; [[The zoom mode.]]
          }
       }
    }
