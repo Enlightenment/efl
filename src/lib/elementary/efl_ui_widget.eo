@@ -262,7 +262,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
            See also @.on_orientation_update.
          ]]
          values {
-            mode: Efl.Ui.Widget.Orientation_Mode(Efl.Ui.Widget.Orientation_Mode.default);
+            mode: Efl.Ui.Widget_Orientation_Mode(Efl.Ui.Widget_Orientation_Mode.default);
                [[How window orientation should affect this widget.]]
          }
       }

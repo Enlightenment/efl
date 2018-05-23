@@ -88,7 +88,7 @@ enum Efl.Ui.Activate
    back, [[Activate back]]
 }
 
-enum Efl.Ui.Widget.Orientation_Mode
+enum Efl.Ui.Widget_Orientation_Mode
 {
    [[Widget orientation mode, or how the theme handles screen orientation.
 
