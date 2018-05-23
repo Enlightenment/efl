@@ -72,6 +72,8 @@ _del_hook(Eo *evt)
    Efl_Input_Event *cached;
    const Eo *klass = efl_class_get(evt);
 
+   efl_del_intercept_set(evt, NULL);
+
    cached = eina_hash_find(_cached_events, &klass);
    if (!cached)
      {
@@ -81,7 +83,6 @@ _del_hook(Eo *evt)
      }
    else
      {
-        efl_del_intercept_set(evt, NULL);
         efl_unref(evt);
      }
 }
@@ -111,6 +112,7 @@ efl_input_event_instance_get(Eo *klass, Eo *owner)
         eina_hash_del(_cached_events, &klass, evt);
         efl_parent_set(evt, owner);
         efl_unref(evt); // Remove reference before turning on self destruction
+        efl_del_intercept_set(evt, _del_hook);
         efl_event_callback_add(evt, EFL_EVENT_NOREF, _noref_death, NULL);
      }
    else
