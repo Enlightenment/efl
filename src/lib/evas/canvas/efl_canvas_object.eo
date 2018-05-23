@@ -444,7 +444,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
            The default paragraph direction is $inherit.
          ]]
          values {
-            dir: Efl.Text.Bidirectional_Type; [[Paragraph direction for the given object.]]
+            dir: Efl.Text_Bidirectional_Type; [[Paragraph direction for the given object.]]
          }
       }
       clipees_has @const {

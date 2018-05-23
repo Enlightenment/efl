@@ -1,4 +1,4 @@
-enum Efl.Text.Bidirectional_Type {
+enum Efl.Text_Bidirectional_Type {
    [[Bidirectionaltext type]]
    natural = 0, [[Natural text type, same as neutral]]
    neutral = 0, [[Neutral text type, same as natural]]
