@@ -42,7 +42,7 @@ enum Efl.Ui.Focus.Move_Policy
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum Efl.Ui.Slider.Indicator_Visible_Mode
+enum Efl.Ui.Slider_Indicator_Visible_Mode
 {
    [[Slider's indicator visiblity mode.
 
