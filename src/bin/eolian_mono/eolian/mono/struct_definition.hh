@@ -368,7 +368,7 @@ struct struct_binding_conversion_functions_generator
      // Open conversion class
      if (!as_generator
          (
-          "internal static class " << string << "_StructConversion\n{\n"
+          "public static class " << string << "_StructConversion\n{\n"
          )
          .generate(sink, struct_.cxx_name, context))
        return false;

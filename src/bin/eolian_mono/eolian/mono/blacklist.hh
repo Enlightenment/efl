@@ -56,7 +56,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
 // Blacklist structs that require some kind of manual binding.
 inline bool is_struct_blacklisted(std::string const& full_name)
 {
-   return full_name == "Efl.Event.Description"
+   return full_name == "Efl.Event_Description"
        || full_name == "Eina.Binbuf"
        || full_name == "Eina.Strbuf"
        || full_name == "Eina.Slice"
