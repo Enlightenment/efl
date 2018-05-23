@@ -14,6 +14,7 @@
 static Eina_Bool
 _quit_cb(void *data EINA_UNUSED)
 {
+   ck_abort_msg("dbus timeout triggered!");
    ecore_main_loop_quit();
    return EINA_FALSE;
 }
@@ -66,6 +67,7 @@ void name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
 {
    const char **id = data;
    *id = new_id;
+   ecore_main_loop_quit();
 }
 
 EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
@@ -78,7 +80,7 @@ EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
 
    eldbus_name_owner_changed_callback_add(conn, "org.bus.that.not.exist",
                                          name_owner_changed_cb, &id, EINA_TRUE);
-   ecore_timer_add(0.5, _quit_cb, NULL);
+   ecore_timer_add(0.1, _quit_cb, NULL);
 
    ecore_main_loop_begin();
 
