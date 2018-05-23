@@ -99,7 +99,7 @@ _pending_connection_get()
 {
    const int send_timeout_ms = 500;
 
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!conn)
      {
         return NULL;

@@ -141,7 +141,7 @@ EFL_START_TEST(utc_eldbus_signal_handler_add_p)
 {
    is_success_cb = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -207,7 +207,7 @@ EFL_START_TEST(utc_eldbus_signal_handler_del_p)
 {
    is_success_cb = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -272,7 +272,7 @@ EFL_END_TEST
  */
 EFL_START_TEST(utc_eldbus_signal_handler_get_p)
 {
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, bus, path, interface,
@@ -346,7 +346,7 @@ EFL_START_TEST(utc_eldbus_signal_handler_ref_unref_p)
 {
    is_success_cb = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -417,7 +417,7 @@ EFL_END_TEST
 
 EFL_START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
 {
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = _signal_handler_get(conn);

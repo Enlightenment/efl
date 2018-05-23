@@ -188,7 +188,7 @@ EFL_START_TEST(utc_eldbus_object_send_info_get_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -260,7 +260,7 @@ EFL_START_TEST(utc_eldbus_introspect_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);

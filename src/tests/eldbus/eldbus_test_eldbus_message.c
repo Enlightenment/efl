@@ -622,7 +622,7 @@ _activable_list_get(Eldbus_Message_Cb message_cb)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Pending *pending = eldbus_names_activatable_list(conn, message_cb, NULL);
@@ -727,7 +727,7 @@ EFL_START_TEST(utc_eldbus_message_info_data_get_p)
 
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Message *msg = eldbus_message_method_call_new(bus, path, interface, method_name);
@@ -794,7 +794,7 @@ EFL_START_TEST(utc_eldbus_message_signal_new_p)
 
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -855,7 +855,7 @@ EFL_END_TEST
 
 EFL_START_TEST(utc_eldbus_message_ref_unref_p)
 {
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Message *msg = eldbus_message_method_call_new(bus, path, interface, method_name);
@@ -910,7 +910,7 @@ EFL_START_TEST(utc_eldbus_message_basic_eina_value_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Pending *pending = eldbus_name_owner_has(conn, bus, _response_owner_has_cb, NULL);
@@ -996,7 +996,7 @@ EFL_END_TEST
 EFL_START_TEST(utc_eldbus_message_arguments_vappend_p)
 {
    is_success = EINA_FALSE;
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    message_vparam = eldbus_message_method_call_new(bus, path, interface, "GetNameOwner");
@@ -1055,7 +1055,7 @@ EFL_END_TEST
 EFL_START_TEST(utc_eldbus_message_arguments_vget_p)
 {
    is_success = EINA_FALSE;
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Message *message = eldbus_message_method_call_new(bus, path, interface, "NameHasOwner");
@@ -1571,7 +1571,7 @@ EFL_START_TEST(utc_eldbus_hello_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    eldbus_hello(conn, _hello_cb, &cb_data);

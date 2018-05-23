@@ -110,7 +110,7 @@ EFL_START_TEST(utc_eldbus_pending_data_p)
    const char *member = "GetId";
    const int send_timeout_ms = 500;
 
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    obj = eldbus_object_get(conn, bus, path);
