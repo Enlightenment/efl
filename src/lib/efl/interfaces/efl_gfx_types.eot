@@ -204,7 +204,7 @@ enum Efl.Gfx.Image_Load_Error
    recursive_reference = 10        [[(Edje only) The group/collection set to load from had recursive references on its components]]
 }
 
-enum Efl.Gfx.Color_Class.Layer {
+enum Efl.Gfx.Color_Class_Layer {
    [[Efl Gfx Color Class layer enum]]
    normal = 0, [[Default color]]
    outline, [[Outline color]]

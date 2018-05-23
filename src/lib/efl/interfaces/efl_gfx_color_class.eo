@@ -37,7 +37,7 @@ interface Efl.Gfx.Color_Class
          }
          keys {
             color_class: string; [[The name of color class]]
-            layer: Efl.Gfx.Color_Class.Layer @optional; [[The layer to set the color]]
+            layer: Efl.Gfx.Color_Class_Layer @optional; [[The layer to set the color]]
          }
          values {
             r: int; [[The intensity of the red color]]
