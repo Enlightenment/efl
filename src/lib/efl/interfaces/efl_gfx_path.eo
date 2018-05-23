@@ -18,7 +18,7 @@ mixin Efl.Gfx.Path
          get {
          }
          values {
-            op: ptr(const(Efl.Gfx.Path.Command_Type)); [[Command list]]
+            op: ptr(const(Efl.Gfx.Path_Command_Type)); [[Command list]]
             points: ptr(const(double)); [[Point list]]
          }
       }
@@ -284,6 +284,6 @@ mixin Efl.Gfx.Path
       }
    }
    events {
-      changed: Efl.Gfx.Path.Change_Event; [[Graphics path was changed.]]
+      changed: Efl.Gfx.Path_Change_Event; [[Graphics path was changed.]]
    }
 }
