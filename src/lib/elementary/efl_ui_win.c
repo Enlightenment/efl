@@ -999,6 +999,12 @@ _elm_win_pre_render(Ecore_Evas *ee)
         _elm_win_frame_style_update(sd, 1, 1);
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
 
+        /* set this to handle ecore-evas engine code which incorrectly
+         * assumes that a client resize call is the same as a server resize
+         * event, or which has no server event
+         */
+        sd->deferred_resize_job = EINA_TRUE;
+
         /* force initial sizing on frame to enable sizing of content */
         edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
         evas_object_resize(sd->frame_obj, mw, mh);
