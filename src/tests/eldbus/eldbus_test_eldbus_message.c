@@ -26,9 +26,9 @@ static const char *path = "/org/freedesktop/DBus";
 static const char *method_name = "GetId";
 static const char *signal_name = "NameOwnerChanged";
 
-const char *dbus_session_path = "/org/freedesktop/Test";
-const char *interface_session = "org.freedesktop.Test";
-const char *bus_session = "org.freedesktop.Test";
+static const char *dbus_session_path = "/org/freedesktop/Test";
+static const char *interface_session = "org.freedesktop.Test";
+static const char *bus_session = "org.freedesktop.Test.eldbus_test_eldbus_message";
 
 #define CONTAINER_COUNT 2
 
