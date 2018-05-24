@@ -108,6 +108,8 @@ class Elm.List.Item(Elm.Widget.Item, Efl.Ui.Legacy)
       }
       implements {
            Efl.Object.constructor;
+           Efl.Object.invalidate;
+           Efl.Object.destructor;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.del_pre;
            Elm.Widget.Item.signal_emit;
