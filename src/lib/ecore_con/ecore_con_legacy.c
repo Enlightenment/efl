@@ -270,10 +270,13 @@ _ecore_con_client_socket_close(Ecore_Con_Client *cl)
 static void
 _ecore_con_client_free(Ecore_Con_Client *cl)
 {
-   cl->delete_me = EINA_TRUE;
+   Ecore_Con_Server *svr = cl->svr;
 
-   if (cl->svr)
-     cl->svr->clients = eina_list_remove(cl->svr->clients, cl);
+   cl->delete_me = EINA_TRUE;
+   cl->svr = NULL;
+
+   if (svr)
+     svr->clients = eina_list_remove(svr->clients, cl);
 
    _ecore_con_client_socket_close(cl);
 
@@ -301,6 +304,9 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      }
 
    if (cl->event_count) return;
+
+   if (svr && (!svr->event_count) && (svr->delete_me))
+     _ecore_con_server_free(svr);
 
    cl->data = NULL;
    eina_stringshare_replace(&cl->ip, NULL);
