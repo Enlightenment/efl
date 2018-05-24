@@ -189,6 +189,27 @@ _button_clicked(void *data, const Efl_Event *event EINA_UNUSED)
    _activate(data);
 }
 
+static void _noref_death(void *data EINA_UNUSED, const Efl_Event *event);
+static void _invalidated(void *data EINA_UNUSED, const Efl_Event *event);
+
+EFL_CALLBACKS_ARRAY_DEFINE(noref_death,
+                           { EFL_EVENT_NOREF, _noref_death },
+                           { EFL_EVENT_INVALIDATE, _invalidated });
+
+static void
+_noref_death(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   efl_event_callback_array_del(event->object, noref_death(), NULL);
+   efl_del(event->object);
+}
+
+static void
+_invalidated(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   // This means our parent is dying, EFL_EVENT_NOREF can be called after invalidated
+   efl_event_callback_array_del(event->object, noref_death(), NULL);
+}
+
 EOLIAN static void
 _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
 {
@@ -202,7 +223,9 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
-   priv->fsd.model = efl_add_ref(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, priv->fsd.path));
+   priv->fsd.model = efl_add_ref(EIO_MODEL_CLASS, obj,
+                                 eio_model_path_set(efl_added, priv->fsd.path),
+                                 efl_event_callback_array_add(efl_added, noref_death(), NULL));
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;
