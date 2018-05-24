@@ -323,7 +323,10 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
 EAPI void
 evas_object_smart_member_del(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
+
+   if (!eo_obj) return ;
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
@@ -1477,7 +1480,13 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
                (Evas_Object_Protected_Data *)o->contained;
              Evas_Object *contained_obj = contained->object;
 
-             if (contained->smart.parent != eo_obj)
+             if (!contained_obj)
+               {
+                  ERR("Found an undefined object %p in %s.", contained, efl_debug_name_get(eo_obj));
+                  o->contained = eina_inlist_remove
+                    (o->contained, EINA_INLIST_GET(contained));
+               }
+             else if (contained->smart.parent != eo_obj)
                {
                   Evas_Layer *lay = obj->layer;
 
