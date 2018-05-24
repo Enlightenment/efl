@@ -133,9 +133,20 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
 {
    if (pd->job) return;
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_job(efl_loop_get(o)),
-                                  .success = _efl_io_copier_job,
-                                  .storage = &pd->job);
+   // When invalidated, no need to delay action
+   if (efl_invalidated_get(o))
+     {
+        Eina_Value v = EINA_VALUE_EMPTY;
+
+        v = _efl_io_copier_job(o, v);
+        eina_value_flush(&v);
+     }
+   else
+     {
+        efl_future_Eina_FutureXXX_then(o, efl_loop_job(efl_loop_get(o)),
+                                       .success = _efl_io_copier_job,
+                                       .storage = &pd->job);
+     }
 }
 
 /* NOTE: the returned slice may be smaller than requested since the
