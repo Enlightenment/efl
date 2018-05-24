@@ -939,6 +939,11 @@ static Efl_Object *
 _eio_model_efl_object_finalize(Eo *obj, Eio_Model_Data *pd)
 {
    if (!pd->path) return NULL;
+   if (!efl_provider_find(obj, EFL_LOOP_CLASS))
+     {
+        ERR("Eio.Model require a parent that provide access to the main loop.");
+        return NULL;
+     }
 
    // If we have no info at all, let's check this path first
    if (!pd->info) _eio_build_st(obj, pd);
