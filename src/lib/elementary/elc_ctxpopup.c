@@ -862,17 +862,11 @@ EOLIAN static void
 _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it EINA_UNUSED,
                                            Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
-   ELM_CTXPOPUP_DATA_GET(WIDGET(ctxpopup_it), sd);
-   if (!sd) return ;
-
    if (ctxpopup_it->list_item)
      {
-        efl_unref(ctxpopup_it->list_item);
-        efl_del(ctxpopup_it->list_item);
+        elm_object_item_del(ctxpopup_it->list_item);
         ctxpopup_it->list_item = NULL;
      }
-
-   return ;
 }
 
 EOLIAN static void
@@ -1018,7 +1012,10 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
    list = elm_object_item_widget_get(ctxpopup_it->list_item);
 
    if (ctxpopup_it->list_item)
-      efl_unref(ctxpopup_it->list_item);
+     {
+        elm_object_item_del(ctxpopup_it->list_item);
+        ctxpopup_it->list_item = NULL;
+     }
    sd->items = eina_list_remove(sd->items, eo_ctxpopup_it);
    if (list && eina_list_count(elm_list_items_get(list)) < 2)
      {
@@ -1263,7 +1260,6 @@ _elm_ctxpopup_item_insert_before(Eo *obj, Elm_Ctxpopup_Data *sd, Elm_Object_Item
 
    item->list_item =
      elm_list_item_insert_before(sd->list, before_it->list_item, label, icon, NULL, _item_wrap_cb, item);
-   efl_ref(item->list_item);
    sd->items = eina_list_prepend_relative(sd->items, eo_item, eo_before);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
@@ -1289,7 +1285,6 @@ _elm_ctxpopup_item_insert_after(Eo *obj, Elm_Ctxpopup_Data *sd, Elm_Object_Item 
 
    item->list_item =
      elm_list_item_insert_after(sd->list, after_it->list_item, label, icon, NULL, _item_wrap_cb, item);
-   efl_ref(item->list_item);
    sd->items = eina_list_append_relative(sd->items, eo_item, eo_after);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
@@ -1309,7 +1304,6 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 
    item->list_item =
      elm_list_item_append(sd->list, label, icon, NULL, _item_wrap_cb, item);
-   efl_ref(item->list_item);
    sd->items = eina_list_append(sd->items, eo_item);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
@@ -1425,7 +1419,6 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 
    item->list_item =
      elm_list_item_prepend(sd->list, label, icon, NULL, _item_wrap_cb, item);
-   efl_ref(item->list_item);
    sd->items = eina_list_prepend(sd->items, eo_item);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
