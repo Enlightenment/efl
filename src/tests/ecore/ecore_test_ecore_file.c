@@ -508,6 +508,7 @@ EFL_START_TEST(ecore_test_ecore_file_download)
    fail_if(!job);
    ecore_file_download_abort(job);
    ecore_main_loop_begin();
+   if (timeout_reached) goto end;
    res = ecore_file_remove(dest_name);
    fail_if(res != EINA_TRUE);
 
@@ -519,10 +520,11 @@ EFL_START_TEST(ecore_test_ecore_file_download)
    fail_if(res != EINA_TRUE);
    fail_if(!job);
    ecore_main_loop_begin();
+   if (timeout_reached) goto end;
    fprintf(stderr, "Downloaded %lld bytes\n", ecore_file_size(dest_name));
    res = ecore_file_exists(dest_name);
    fail_if(res != EINA_TRUE);
-
+end:
    res = ecore_file_recursive_rm(download_dir);
    fail_if(res != EINA_TRUE);
 

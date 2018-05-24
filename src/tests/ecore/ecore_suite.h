@@ -3,6 +3,9 @@
 
 #include <check.h>
 #include "../efl_check.h"
+
+extern int timeout_reached;
+
 void ecore_test_ecore(TCase *tc);
 void ecore_test_ecore_idle(TCase *tc);
 void ecore_test_ecore_poller(TCase *tc);
