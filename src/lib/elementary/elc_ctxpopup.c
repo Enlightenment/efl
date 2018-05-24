@@ -1103,17 +1103,16 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Object_Item *it;
 
-   evas_object_event_callback_del_full
-     (sd->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
    evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    _parent_detach(obj);
+
+   //clear the items before clearing the ctxpopup as this will remove the list and all items
+   EINA_LIST_FREE(sd->items, it)
+     efl_del(it);
 
    elm_ctxpopup_clear(obj);
    ELM_SAFE_FREE(sd->arrow, evas_object_del); /* stops _sizing_eval() from going on on deletion */
    ELM_SAFE_FREE(sd->bg, evas_object_del);
-
-   EINA_LIST_FREE(sd->items, it)
-     efl_del(it);
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
