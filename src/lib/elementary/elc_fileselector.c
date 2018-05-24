@@ -2439,21 +2439,21 @@ _properties_ready(void *data, const Efl_Event *ev)
           Eina_Value *value;
           Eina_Bool is_dir = EINA_FALSE;
 
-          value = efl_model_property_get(pd->target, "is_dir");
+          value = efl_model_property_get(ev->object, "is_dir");
           if (eina_value_type_get(value) != EINA_VALUE_TYPE_BOOL)
             {
                ERR("Unexpected type for 'is_dir': '%s' with value '%s'.", eina_value_type_get(value)->name, eina_value_to_string(value));
                return ;
             }
 
-          efl_event_callback_del(pd->target, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
+          efl_event_callback_del(ev->object, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
 
           eina_value_bool_get(value, &is_dir);
 
           if (!is_dir)
             {
                Efl_Model *parent;
-               const char *path = eio_model_path_get(pd->target);
+               const char *path = eio_model_path_get(ev->object);
                char *dir = ecore_file_dir_get(path);
 
                parent = efl_add_ref(EIO_MODEL_CLASS, obj, eio_model_path_set(efl_added, dir),
@@ -2467,14 +2467,14 @@ _properties_ready(void *data, const Efl_Event *ev)
                  }
                efl_model_children_count_get(parent);
 
-               _schedule_populate(obj, pd, parent, pd->target);
+               _schedule_populate(obj, pd, parent, ev->object);
                efl_unref(parent);
                free(dir);
             }
           else
             {
-               efl_model_children_count_get(pd->target);
-               _schedule_populate(obj, pd, pd->target, NULL);
+               efl_model_children_count_get(ev->object);
+               _schedule_populate(obj, pd, ev->object, NULL);
             }
           return ;
        }
