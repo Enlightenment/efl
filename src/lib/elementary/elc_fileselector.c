@@ -92,6 +92,7 @@ static Elm_Fileselector_Item_Data *_selected_item_data_get(Elm_Fileselector_Data
 static void _resource_created(void *, const Efl_Event *);
 static void _resource_deleted(void *, const Efl_Event *);
 static void _listing_request_cleanup(Listing_Request *);
+static void _properties_ready(void *data, const Efl_Event *ev);
 
 EFL_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
                           { EFL_MODEL_EVENT_CHILD_ADDED, _resource_created },
@@ -168,6 +169,13 @@ _invalidated(void *data EINA_UNUSED, const Efl_Event *event)
 {
    // This means our parent is dying, EFL_EVENT_NOREF can be called after invalidated
    efl_event_callback_array_del(event->object, noref_death(), NULL);
+}
+
+static void
+_reset_target(Elm_Fileselector_Data *pd)
+{
+   efl_event_callback_del(pd->target, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, pd->obj);
+   efl_replace(&pd->target, NULL);
 }
 
 static void
@@ -898,7 +906,7 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
              elm_genlist_item_selected_set(item, EINA_TRUE);
              elm_object_text_set(sd->name_entry, it_data->filename);
 
-             efl_replace(&sd->target, NULL);
+             _reset_target(sd);
           }
      }
 
@@ -2461,7 +2469,7 @@ _properties_ready(void *data, const Efl_Event *ev)
                if (!parent)
                  {
                     ERR("Could not create model for '%s'.", dir);
-                    efl_replace(&pd->target, NULL);
+                    _reset_target(pd);
                     free(dir);
                     return ;
                  }
@@ -2489,7 +2497,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *path)
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    ELM_FILESELECTOR_DATA_GET(obj, pd);
 
-   efl_replace(&pd->target, NULL);
+   _reset_target(pd);
 
    if (stat(path, &st)) return EINA_FALSE;
 
@@ -2520,7 +2528,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *path)
    ERR("Unexpected value '%s' when setting path '%s'.", eina_value_to_string(value), path);
 
 clean_up:
-   efl_replace(&pd->target, NULL);
+   _reset_target(pd);
    return EINA_FALSE;
 }
 
@@ -2532,6 +2540,7 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
 
    if (!efl_isa(model, EIO_MODEL_CLASS)) return EINA_FALSE;
 
+   efl_event_callback_del(pd->target, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
    efl_replace(&pd->target, model);
 
    if (!model) return EINA_TRUE;
@@ -2591,7 +2600,7 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
    return EINA_TRUE;
 
  clean_up:
-   efl_replace(&pd->target, NULL);
+   _reset_target(pd);
    return EINA_FALSE;
 }
 
