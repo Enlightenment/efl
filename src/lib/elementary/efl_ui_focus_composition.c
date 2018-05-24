@@ -76,6 +76,12 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
         efl_ui_focus_manager_calc_update_order(manager, obj, eina_list_clone(pd->targets_ordered));
      }
 }
+static void
+_del(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Focus_Composition_Data *pd = efl_data_scope_get(data, EFL_UI_FOCUS_COMPOSITION_MIXIN);
+   pd->register_target = eina_list_remove(pd->register_target, ev->object);
+}
 
 EOLIAN static void
 _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Eina_List *logical_order)
@@ -85,7 +91,10 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
    Eina_List *n;
 
    pd->targets_ordered = eina_list_free(pd->targets_ordered);
-   pd->register_target = eina_list_free(pd->register_target);
+   EINA_LIST_FREE(pd->register_target, elem)
+     {
+        efl_event_callback_del(elem, EFL_EVENT_DEL, _del, obj);
+     }
 
    pd->order = eina_list_free(pd->order);
    pd->order = logical_order;
@@ -108,6 +117,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
              if (efl_isa(elem, EFL_UI_FOCUS_OBJECT_MIXIN))
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
+                  efl_event_callback_add(o, EFL_EVENT_DEL, _del, obj);
                }
              else
                {
