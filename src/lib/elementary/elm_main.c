@@ -818,8 +818,8 @@ elm_quicklaunch_sub_shutdown(void)
         elm_color_class_shutdown();
      }
 
-   _elm_config_shutdown();
    ecore_main_loop_iterate();
+   _elm_config_shutdown();
 
    return _elm_sub_init_count;
 }
