@@ -139,6 +139,7 @@ _model_event_call(Eo *obj, const Efl_Event_Description *evt_desc, Efl_Model *mod
 static void
 _monitoring_start(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model)
 {
+   if (sd->monitoring) return ;
    sd->monitoring = EINA_TRUE;
    efl_event_callback_array_add(model, monitoring_callbacks(), fs);
 }
@@ -146,6 +147,7 @@ _monitoring_start(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *mo
 static void
 _monitoring_stop(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model)
 {
+   if (!sd->monitoring) return ;
    sd->monitoring = EINA_FALSE;
    efl_event_callback_array_del(model, monitoring_callbacks(), fs);
 }
@@ -181,8 +183,7 @@ _reset_target(Elm_Fileselector_Data *pd)
 static void
 _elm_fileselector_replace_model(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model, const char *path)
 {
-   if (sd->model)
-     _monitoring_stop(fs, sd, sd->model);
+   _monitoring_stop(fs, sd, sd->model);
 
    efl_replace(&sd->model, model);
    eina_stringshare_replace(&sd->path, path);
@@ -1076,6 +1077,7 @@ _populate_do(void *data)
 {
    struct sel_data *sdata = data;
    ELM_FILESELECTOR_DATA_GET(sdata->fs, sd);
+
    _populate(sdata->fs, sdata->model, NULL, sdata->selected);
    efl_replace(&sdata->model, NULL);
    efl_replace(&sdata->selected, NULL);
@@ -1133,6 +1135,7 @@ _on_item_activated(void *data, const Efl_Event *event)
 
    if (!sd->double_tap_navigation) return;
 
+   efl_parent_set(it_data->model, data);
    _schedule_populate(data, sd, it_data->model, NULL);
 }
 
@@ -1252,6 +1255,8 @@ _on_item_selected(void *data, const Efl_Event *event)
 
    if (sd->double_tap_navigation) return;
 
+   // Take ownership of the model, to keep it alive
+   efl_parent_set(it_data->model, data);
    _schedule_populate(data, sd, it_data->model, NULL);
 }
 
