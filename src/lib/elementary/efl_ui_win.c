@@ -5764,8 +5764,8 @@ _efl_ui_win_win_role_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 EOLIAN static void
 _efl_ui_win_icon_object_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *icon)
 {
-   if (icon && (!efl_isa(sd->icon, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
-                !efl_isa(sd->icon, EFL_UI_IMAGE_CLASS)))
+   if (icon && (!efl_isa(icon, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
+                !efl_isa(icon, EFL_UI_IMAGE_CLASS)))
      {
         ERR("Icon object type is not supported!");
         efl_del(icon);
