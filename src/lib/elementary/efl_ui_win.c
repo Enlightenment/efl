@@ -4361,7 +4361,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    sd->frame_obj = edje_object_add(sd->evas);
 
    // Verify theme version. Border requires an exact theme API.
-   version = elm_theme_data_get(NULL, "version");
+   version = elm_theme_data_get(elm_widget_theme_get(sd->obj), "version");
    v = version ? atoi(version) : 0;
    if (EINA_LIKELY(v >= FRAME_OBJ_THEME_MIN_VERSION))
      {
