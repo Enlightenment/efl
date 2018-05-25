@@ -24,8 +24,8 @@ START_TEST(eolian_cxx_test_binding_constructor_only_required)
      }
     );
 
-  fail_if(1 != g.req_ctor_a_value_get());
-  fail_if(2 != g.req_ctor_b_value_get());
+  ck_assert_int_eq(1, g.req_ctor_a_value_get());
+  ck_assert_int_eq(2, g.req_ctor_b_value_get());
 }
 END_TEST
 
@@ -55,10 +55,10 @@ START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
     }
     );
   
-  fail_if(2 != g.req_ctor_a_value_get());
-  fail_if(3 != g.opt_ctor_a_value_get());
-  fail_if(4 != g.req_ctor_b_value_get());
-  fail_if(5 != g.opt_ctor_b_value_get());
+  ck_assert_int_eq(2, g.req_ctor_a_value_get());
+  ck_assert_int_eq(3, g.opt_ctor_a_value_get());
+  ck_assert_int_eq(4, g.req_ctor_b_value_get());
+  ck_assert_int_eq(5, g.opt_ctor_b_value_get());
 }
 END_TEST
 
