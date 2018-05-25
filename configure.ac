@@ -5719,6 +5719,22 @@ EFL_LIB_START([Exactness])
 ### Default values
 
 ### Checks for programs
+want_exactness_check="no"
+AC_ARG_ENABLE([exactness-check],
+   [AS_HELP_STRING([--enable-exactness-check],[Enable Exactness check. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_exactness_check="yes"
+    else
+       want_exactness_check="no"
+    fi
+   ],
+   [want_exactness_check="no"])
+
+AM_CONDITIONAL([HAVE_EXACTNESS_CHECK], [test "x${want_exactness_check}" = "xyes"])
+AC_DEFINE_IF([HAVE_EXACTNESS_CHECK], [test "x${want_exactness_check}" = "xyes"],
+  [1], [Enable Exactness check])
+AC_SUBST([want_exactness_check])
 
 ## Compatibility layers
 EFL_PLATFORM_DEPEND([EXACTNESS], [evil])
@@ -6055,12 +6071,15 @@ echo
 
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
-elif test "${build_tests}" = "auto"; then
-echo "Tests...........: make check (inexplicitly enabled)"
-elif test "${build_tests}" = "regular"; then
-echo "Tests...........: make check"
-elif test "${build_tests}" = "coverage"; then
-echo "Tests...........: make lcov-check"
+else
+   if test "${build_tests}" = "auto"; then
+   echo "Tests...........: make check (inexplicitly enabled)"
+   elif test "${build_tests}" = "regular"; then
+   echo "Tests...........: make check"
+   elif test "${build_tests}" = "coverage"; then
+   echo "Tests...........: make lcov-check"
+   fi
+   echo "  Exactness Tests: $want_exactness_check"
 fi
 echo "Examples........: make examples (make install-examples)"
 if test "x${build_doc}" = "xyes"; then
