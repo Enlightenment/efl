@@ -67,12 +67,13 @@ _elm_fileselector_button_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_But
 }
 
 static void
-_selection_done(void *data, const Efl_Event *event)
+_selection_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Fileselector_Button_Data *sd = data;
-   Efl_Model *model = event->info;
+   Efl_Model *model;;
    Evas_Object *del;
 
+   model = elm_interface_fileselector_selected_model_get(sd->fs);
    if (model)
      {
         Eina_Value *path;
