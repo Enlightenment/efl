@@ -106,7 +106,7 @@ public class Globals {
 
     public static IntPtr instantiate_end(IntPtr eo) {
         eina.Log.Debug("efl_add_internal_start returned");
-        eo = efl.eo.Globals._efl_add_end(eo, 0, 0);
+        eo = efl.eo.Globals._efl_add_end(eo, 1, 0);
         eina.Log.Debug("efl_add_end returned");
         return eo;
     }

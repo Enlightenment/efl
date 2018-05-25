@@ -201,7 +201,7 @@ struct klass
              << scope_tab << scope_tab << "if (init_cb != null) {\n"
              << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
              << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_end(handle, 0, 0);\n" // replace handle with the actual final handle
+             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_end(handle, 1, 0);\n" // replace handle with the actual final handle
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
              << scope_tab << "}\n"
