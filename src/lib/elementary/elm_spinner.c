@@ -236,13 +236,24 @@ _delay_change_timer_cb(void *data)
 
 static Eina_Bool
 _value_set(Evas_Object *obj,
-           double new_val)
+           double val, double changed)
 {
+   double new_val;
+
    ELM_SPINNER_DATA_GET(obj, sd);
 
    if (sd->round > 0)
-     new_val = sd->val_base +
-       (double)((((int)(new_val - sd->val_base)) / sd->round) * sd->round);
+     {
+        //Spin value changed by entry input.
+        if (changed != 0)
+          new_val = sd->val_base +
+            (double)((((int)((val + changed) - sd->val_base)) / sd->round) * sd->round);
+        else
+          new_val = sd->val_base +
+            (double)((((int)(val - sd->val_base + (sd->round / 2))) / sd->round) * sd->round);
+     }
+   else
+     new_val = val + changed;
 
    if (sd->wrap)
      {
@@ -336,7 +347,7 @@ _drag_cb(void *data,
    if (!strncmp(style, "vertical", 8)) delta *= -1;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (efl_ui_mirrored_get(obj)) delta *= -1;
-   if (_value_set(data, sd->val + delta)) _label_write(data);
+   if (_value_set(data, sd->val, delta)) _label_write(data);
    sd->dragging = 1;
 }
 
@@ -414,12 +425,8 @@ _entry_value_apply(Evas_Object *obj)
 
    val = strtod(str, &end);
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - sd->val) < DBL_EPSILON)) return;
-   elm_spinner_value_set(obj, val);
 
-   efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
-   ecore_timer_del(sd->delay_change_timer);
-   sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
-                                            _delay_change_timer_cb, obj);
+   if (_value_set(obj, val, 0.0)) _label_write(obj);
 }
 
 static int
@@ -691,7 +698,7 @@ _spin_value(void *data)
    // spin_timer does not exist when _spin_value() is called from wheel event
    if (sd->spin_timer)
      ecore_timer_interval_set(sd->spin_timer, sd->interval);
-   if (_value_set(data, sd->val + real_speed)) _label_write(data);
+   if (_value_set(data, sd->val, real_speed)) _label_write(data);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -1477,7 +1484,9 @@ _elm_spinner_efl_ui_range_range_value_set(Eo *obj, Elm_Spinner_Data *sd, double 
 {
    if (sd->val == val) return;
 
-   sd->val = val;
+   sd->val = (sd->round <= 0) ? val : sd->val_base +
+      (double)((((int)(val - sd->val_base + (sd->round / 2))) / sd->round) * sd->round);
+
    sd->val_updated = EINA_FALSE;
 
    if (sd->val < sd->val_min)
