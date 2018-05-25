@@ -195,6 +195,28 @@ EFL_START_TEST (elm_image_async_mmap)
 }
 EFL_END_TEST
 
+EFL_START_TEST (elm_image_evas_object_color_set)
+{
+   Evas_Object *win, *image;
+   Eina_Bool ok;
+   Test_Data td;
+   Eina_File *f;
+   char path[PATH_MAX];
+   int r = 128, g = 99, b = 3, a = 230;
+   int rr = 0, gg = 0, bb = 0, aa = 0;
+
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = elm_image_add(win);
+   evas_object_color_set(image, r, g, b, a);
+   evas_object_color_get(image, &rr, &gg, &bb, &aa);
+   ck_assert(r == rr);
+   ck_assert(g == gg);
+   ck_assert(b == bb);
+   ck_assert(a == aa);
+}
+EFL_END_TEST
+
 EFL_START_TEST (efl_ui_image_icon)
 {
    Evas_Object *win, *image;
@@ -225,5 +247,6 @@ void elm_test_image(TCase *tc)
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_image_async_path);
    tcase_add_test(tc, elm_image_async_mmap);
+   tcase_add_test(tc, elm_image_evas_object_color_set);
    tcase_add_test(tc, efl_ui_image_icon);
 }

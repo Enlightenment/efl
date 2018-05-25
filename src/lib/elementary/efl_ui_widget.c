@@ -997,6 +997,8 @@ _efl_ui_widget_efl_gfx_color_color_set(Eo *obj, Elm_Widget_Smart_Data *pd, int r
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 0, r, g, b, a))
      return;
 
+   efl_gfx_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
+
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
      {
