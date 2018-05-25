@@ -787,9 +787,21 @@ ecore_con_client_fd_get(const Ecore_Con_Client *cl)
    ECORE_CON_CLIENT_CHECK_RETURN(cl, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    if (cl->socket)
      {
-        if (efl_isa(cl->socket, EFL_LOOP_FD_CLASS))
-          return efl_loop_fd_get(cl->socket);
-        return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
+        Eo *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
+        if (efl_isa(inner_socket, EFL_LOOP_FD_CLASS))
+          {
+             return efl_loop_fd_get(inner_socket);
+          }
+        else
+          {
+             if (efl_isa(inner_socket, EFL_NET_SOCKET_SSL_CLASS))
+               {
+                  Eo* adopted_socket = NULL;
+                  if (efl_net_socket_ssl_adopted_get(inner_socket, &adopted_socket, NULL))
+                    if (efl_isa(adopted_socket, EFL_LOOP_FD_CLASS))
+                      return efl_loop_fd_get(adopted_socket);
+               }
+          }
      }
    return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
 }
@@ -2409,7 +2421,19 @@ ecore_con_server_fd_get(const Ecore_Con_Server *svr)
      {
         Eo *inner_dialer = efl_io_buffered_stream_inner_io_get(svr->dialer);
         if (efl_isa(inner_dialer, EFL_LOOP_FD_CLASS))
-          return efl_loop_fd_get(inner_dialer);
+          {
+             return efl_loop_fd_get(inner_dialer);
+          }
+        else
+          {
+             if (efl_isa(inner_dialer, EFL_NET_DIALER_SSL_CLASS))
+               {
+                  Eo* adopted_dialer = NULL;
+                  if (efl_net_socket_ssl_adopted_get(inner_dialer, &adopted_dialer, NULL))
+                    if (efl_isa(adopted_dialer, EFL_LOOP_FD_CLASS))
+                      return efl_loop_fd_get(adopted_dialer);
+               }
+          }
         return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
      }
    if (svr->server)
