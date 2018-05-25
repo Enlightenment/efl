@@ -461,8 +461,6 @@ _elm_notify_efl_canvas_group_group_del(Eo *obj, Elm_Notify_Data *sd)
    edje_object_signal_callback_del_full
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);
    elm_notify_parent_set(obj, NULL);
-   // Allow events set with TRUE will lead to the destruction of sd->block_events.
-   elm_notify_allow_events_set(obj, EINA_TRUE);
    ecore_timer_del(sd->timer);
 
    ELM_SAFE_FREE(sd->notify, evas_object_del);
