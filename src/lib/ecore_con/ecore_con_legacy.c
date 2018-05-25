@@ -14,7 +14,12 @@
 # include <Evil.h>
 #endif
 
+#define EFL_NET_SOCKET_SSL_PROTECTED
+
 #include "Ecore.h"
+
+#include "Efl_Net.h"
+
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
