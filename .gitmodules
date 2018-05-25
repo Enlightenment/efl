@@ -1,0 +1,3 @@
+[submodule "data/exactness/elm"]
+	path = data/exactness/elm
+	url = https://git.enlightenment.org/tools/exactness-elm-data.git/
