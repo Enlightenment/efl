@@ -47,6 +47,10 @@ struct _Efl_Ui_Textpath_Segment
      };
 };
 
+/* If you need to draw slices using Evas Line,
+ * define the following debug flag manually. */
+//#define EFL_UI_TEXTPATH_LINE_DEBUG
+
 struct _Efl_Ui_Textpath_Data
 {
    Evas_Object *text_obj;
@@ -64,6 +68,9 @@ struct _Efl_Ui_Textpath_Data
 
    Eina_Inlist *segments;
    int total_length;
+#ifdef EFL_UI_TEXTPATH_LINE_DEBUG
+   Eina_List *lines;
+#endif
 };
 
 #define EFL_UI_TEXTPATH_DATA_GET(o, sd) \
@@ -76,26 +83,25 @@ _deg_to_rad(double angle)
 }
 
 static void
-_segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, Evas_Map *map, Eina_Bezier bezier)
+_segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
+              int w1, int cmp, Evas_Map *map, Eina_Bezier bezier,
+              int *last_x1, int *last_y1, int *last_x2, int *last_y2)
 {
-   int i, len, seg_len;
+   int i;
    double u0, u1, v0, v1;
-   double dist, t, dt;
+   double t;
    double px, py, px2, py2;
    double rad;
    Eina_Rect r;
    Eina_Vector2 vec, nvec, vec0, vec1, vec2, vec3;
    Eina_Matrix2 mat;
+#ifdef EFL_UI_TEXTPATH_LINE_DEBUG
+   static Eina_Bool yello_color_flag = EINA_FALSE;
+   yello_color_flag = !yello_color_flag;
+#endif
 
-   len = w2 - w1;
    r = efl_gfx_entity_geometry_get(pd->text_obj);
 
-   seg_len = eina_bezier_length_get(&bezier);
-   if (pd->autofit)
-     dt = len / (seg_len * (double) slice_no);
-   else
-     dt = 1.0 / (double) slice_no;
-   dist = len / (double)slice_no;
    rad = _deg_to_rad(90);
    eina_matrix2_values_set(&mat, cos(rad), -sin(rad), sin(rad), cos(rad));
 
@@ -117,19 +123,46 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, E
    vec2.x = (-vec.x + px);
    vec2.y = (-vec.y + py);
 
+   if (cmp == 0)
+     {
+        *last_x1 = (int) floor(vec1.x + r.x + 0.5);
+        *last_y1 = (int) floor(vec1.y + r.y + 0.5);
+        *last_x2 = (int) floor(vec2.x + r.x + 0.5);
+        *last_y2 = (int) floor(vec2.y + r.y + 0.5);
+     }
+
    //add points to map
    for (i = 0; i < slice_no; i++)
      {
+        int mp0_x, mp0_y;
+        int mp1_x, mp1_y;
+        int mp2_x, mp2_y;
+        int mp3_x, mp3_y;
+        double next_dt = dt;
+
         //v0, v3
         vec0.x = vec1.x;
         vec0.y = vec1.y;
         vec3.x = vec2.x;
         vec3.y = vec2.y;
 
+        //UV
+        u0 = w1 + i * dist;
+        u1 = u0 + dist;
+        if (u1 > r.w)
+          u1 = r.w;
+        v0 = (double) 0;
+        v1 = (double) r.h;
+
+        /* If u1 is modified not to exceed its end,
+         * modify next_dt according to changes of dist. */
+        if (u1 < u0 + dist)
+          next_dt = dt * (u1 - u0) / dist;
+
         //v1, v2
-        t = ((double) (i + 1) * dt);
+        t = (double) (i * dt) + next_dt;
         eina_bezier_point_at(&bezier, t, &px, &py);
-        eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
+        eina_bezier_point_at(&bezier, t + next_dt, &px2, &py2);
 
         vec.x = (px2 - px);
         vec.y = (py2 - py);
@@ -143,21 +176,80 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, E
         vec2.x = (-vec.x + px);
         vec2.y = (-vec.y + py);
 
-        evas_map_point_coord_set(map, cmp + i * 4, (int) vec0.x + r.x, (int) vec0.y + r.y, 0);
-        evas_map_point_coord_set(map, cmp + i * 4 + 1, (int) vec1.x + r.x, (int) vec1.y + r.y, 0);
-        evas_map_point_coord_set(map, cmp + i * 4 + 2, (int) vec2.x + r.x, (int) vec2.y + r.y, 0);
-        evas_map_point_coord_set(map, cmp + i * 4 + 3, (int) vec3.x + r.x, (int) vec3.y + r.y, 0);
+        /* Set mp1, mp2 position according to difference between
+         * previous points and next points.
+         * It improves smoothness of curve's slope changing. */
+        mp0_x = *last_x1;
+        mp0_y = *last_y1;
+        mp1_x = *last_x1 + (int) floor(vec1.x - vec0.x + 0.5);
+        mp1_y = *last_y1 + (int) floor(vec1.y - vec0.y + 0.5);
+        mp2_x = *last_x2 + (int) floor(vec2.x - vec3.x + 0.5);
+        mp2_y = *last_y2 + (int) floor(vec2.y - vec3.y + 0.5);
+        mp3_x = *last_x2;
+        mp3_y = *last_y2;
 
-        //UV
-        u0 = w1 + i * dist;
-        u1 = u0 + dist;
-        v0 = (double) 0;
-        v1 = (double) r.h;
+        evas_map_point_coord_set(map, cmp + i * 4, mp0_x, mp0_y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 1, mp1_x, mp1_y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 2, mp2_x, mp2_y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 3, mp3_x, mp3_y, 0);
 
         evas_map_point_image_uv_set(map, cmp + i * 4, u0, v0);
         evas_map_point_image_uv_set(map, cmp + i * 4 + 1, u1, v0);
         evas_map_point_image_uv_set(map, cmp + i * 4 + 2, u1, v1);
         evas_map_point_image_uv_set(map, cmp + i * 4 + 3, u0, v1);
+
+        *last_x1 = mp1_x;
+        *last_y1 = mp1_y;
+        *last_x2 = mp2_x;
+        *last_y2 = mp2_y;
+
+#ifdef EFL_UI_TEXTPATH_LINE_DEBUG
+        Evas_Object *line = evas_object_line_add(evas_object_evas_get(pd->text_obj));
+        pd->lines = eina_list_append(pd->lines, line);
+        if (yello_color_flag)
+          evas_object_color_set(line, 255, 255, 0, 255);
+        else
+          evas_object_color_set(line, 255, 0, 0, 255);
+        evas_object_line_xy_set(line,
+                                mp0_x, mp0_y,
+                                mp1_x, mp1_y);
+        evas_object_show(line);
+
+        line = evas_object_line_add(evas_object_evas_get(pd->text_obj));
+        pd->lines = eina_list_append(pd->lines, line);
+        if (yello_color_flag)
+          evas_object_color_set(line, 255, 255, 0, 255);
+        else
+          evas_object_color_set(line, 255, 0, 0, 255);
+        evas_object_line_xy_set(line,
+                                mp1_x, mp1_y,
+                                mp2_x, mp2_y);
+        evas_object_show(line);
+
+        line = evas_object_line_add(evas_object_evas_get(pd->text_obj));
+        pd->lines = eina_list_append(pd->lines, line);
+        if (yello_color_flag)
+          evas_object_color_set(line, 255, 255, 0, 255);
+        else
+          evas_object_color_set(line, 255, 0, 0, 255);
+        evas_object_line_xy_set(line,
+                                mp2_x, mp2_y,
+                                mp3_x, mp3_y);
+        evas_object_show(line);
+
+        line = evas_object_line_add(evas_object_evas_get(pd->text_obj));
+        pd->lines = eina_list_append(pd->lines, line);
+        if (yello_color_flag)
+          evas_object_color_set(line, 255, 255, 0, 255);
+        else
+          evas_object_color_set(line, 255, 0, 0, 255);
+        evas_object_line_xy_set(line,
+                                mp3_x, mp3_y,
+                                mp0_x, mp0_y);
+        evas_object_show(line);
+#endif
+
+        if (u1 >= r.w) break;
      }
 }
 
@@ -213,7 +305,7 @@ _map_point_calc(Efl_Ui_Textpath_Data *pd)
           }
         else if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
           {
-             int no = pd->slice_no * seg->length / (double)pd->total_length;
+             int no = (int)ceil(pd->slice_no * seg->length / (double)pd->total_length);
              if (no == 0) no = 1;
              map_no += no;
           }
@@ -228,19 +320,19 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
 {
    Efl_Ui_Textpath_Segment *seg;
    Evas_Map *map;
-   double slice_unit;
    int w1, w2;
    int remained_w;
-   int drawn_slice = 0;
    int cur_map_point = 0, map_point_no;
    Eina_Size2D sz;
+   int last_x1, last_y1, last_x2, last_y2;
+
+   last_x1 = last_y1 = last_x2 = last_y2 = 0;
 
    sz = efl_gfx_entity_size_get(pd->text_obj);
    if (pd->autofit)
      remained_w = sz.w;
    else
      remained_w = pd->total_length;
-   slice_unit = (double)pd->slice_no / pd->total_length;
 
    map_point_no = _map_point_calc(pd);
    if (map_point_no == 0)
@@ -249,6 +341,13 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
         return;
      }
    map = evas_map_new(map_point_no);
+   evas_map_util_object_move_sync_set(map, EINA_TRUE);
+
+#ifdef EFL_UI_TEXTPATH_LINE_DEBUG
+   Evas_Object *line;
+   EINA_LIST_FREE(pd->lines, line)
+      evas_object_del(line);
+#endif
 
    w1 = w2 = 0;
    EINA_INLIST_FOREACH(pd->segments, seg)
@@ -263,22 +362,32 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
           w2 = sz.w;
         if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
           {
-             drawn_slice += 1;
              _text_on_line_draw(pd, w1, w2, cur_map_point, map, seg->line);
              cur_map_point += 4;
           }
         else
           {
+             double slice_value, dt, dist;
              int slice_no;
-             slice_no = pd->slice_no * seg->length / (double)pd->total_length;
-             if (slice_no == 0)
-               slice_no = len * slice_unit + 1;
-             drawn_slice += slice_no;
-             _segment_draw(pd, slice_no, w1, w2, cur_map_point, map, seg->bezier);
+
+             slice_value = pd->slice_no * seg->length / (double)pd->total_length;
+             dt = (double)pd->total_length / (pd->slice_no * seg->length);
+             if (pd->autofit)
+               dist = (double)pd->total_length / (double)pd->slice_no;
+             else
+               dist = (double)pd->total_length * (w2 - w1) / ((double)pd->slice_no * seg->length);
+
+             slice_no = (int)ceil(slice_value);
+             dt = (double)slice_value * dt / (double)slice_no;
+             dist = (double)slice_value * dist / (double)slice_no;
+
+             _segment_draw(pd, slice_no, dt, dist,
+                           w1, cur_map_point, map, seg->bezier,
+                           &last_x1, &last_y1, &last_x2, &last_y2);
              cur_map_point += slice_no * 4;
           }
         w1 = w2;
-        remained_w -= len;
+        remained_w -= seg->length;
      }
    evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
    evas_object_map_set(pd->text_obj, map);
@@ -515,6 +624,12 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
         pd->segments = eina_inlist_remove(pd->segments, EINA_INLIST_GET(seg));
         free(seg);
      }
+
+#ifdef EFL_UI_TEXTPATH_LINE_DEBUG
+   Evas_Object *line;
+   EINA_LIST_FREE(pd->lines, line)
+      evas_object_del(line);
+#endif
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
