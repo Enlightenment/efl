@@ -6340,6 +6340,14 @@ edje_object_part_text_get(const Edje_Object *obj, const char *part)
         ERR("Invalid call on a non-text or non-textblock part: '%s' in group '%s'", part, ed->group);
         return NULL;
      }
+
+   ed = _edje_fetch(obj);
+   if (!ed)
+     {
+        ERR("Failed to get Edje data from object: '%p'", obj);
+        return NULL;
+     }
+
    return _edje_efl_text_text_get(obj, ed, part, EINA_TRUE, EINA_FALSE);
 }
 
