@@ -131,8 +131,6 @@ struct _Ecore_Evas_Engine_Data_X11 {
         unsigned long colormap; // store colormap used to create pixmap
      } pixmap;
    Eina_Bool destroyed : 1; // X window has been deleted and cannot be used
-   Eina_Bool fully_obscured : 1; // X window is fully obscured
-   Eina_Bool configured : 1; // X window has been configured
 };
 
 static Ecore_Evas_Interface_X11 * _ecore_evas_x_interface_x11_new(void);
@@ -1067,15 +1065,14 @@ _ecore_evas_x_event_visibility_change(void *data EINA_UNUSED, int type EINA_UNUS
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 //   printf("VIS CHANGE OBSCURED: %p %i\n", ee, e->fully_obscured);
-   edata->fully_obscured = e->fully_obscured;
    if (e->fully_obscured)
      {
         /* FIXME: round trip */
         if (!ecore_x_screen_is_composited(edata->screen_num))
-          ee->draw_block = !edata->configured;
+          ee->draw_block = EINA_TRUE;
      }
    else
-     ee->draw_block = !edata->configured;
+     ee->draw_block = EINA_FALSE;
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1625,18 +1622,6 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (!edata->configured)
-     {
-        if (edata->fully_obscured)
-          {
-             /* FIXME: round trip */
-             if (!ecore_x_screen_is_composited(edata->screen_num))
-               ee->draw_block = EINA_FALSE;
-          }
-        else
-          ee->draw_block = EINA_FALSE;
-     }
-   edata->configured = 1;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
@@ -3334,18 +3319,12 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
 static void
 _ecore_evas_x_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-
    if (ee->prop.override == on) return;
    if (ee->should_be_visible) ecore_x_window_hide(ee->prop.window);
    ecore_x_window_override_set(ee->prop.window, on);
    if (ee->should_be_visible) ecore_x_window_show(ee->prop.window);
    if (ecore_evas_focus_device_get(ee, NULL)) ecore_x_window_focus(ee->prop.window);
    ee->prop.override = on;
-   if (!on) return;
-   edata->configured = 1;
-   if (!edata->fully_obscured)
-     ee->draw_block = 0;
 }
 
 static void
@@ -4687,8 +4666,6 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
-
-   ee->draw_block = 1;
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    ecore_x_input_multi_select(ee->prop.window);
