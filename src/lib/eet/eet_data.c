@@ -2279,6 +2279,7 @@ eet_data_read_cipher(Eet_File            *ef,
    int required_free = 0;
    int size;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
    ed = eet_dictionary_get(ef);
 
    if (!cipher_key)
@@ -2317,6 +2318,7 @@ eet_data_read_cipher_buffer(Eet_File            *ef,
    int required_free = 0;
    int size;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
    ed = eet_dictionary_get(ef);
 
    if (!cipher_key)
