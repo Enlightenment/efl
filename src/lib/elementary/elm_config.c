@@ -1688,8 +1688,6 @@ _config_load(void)
         ELM_SAFE_FREE(_elm_config, _config_free);
         _elm_font_overlays_del_free();
 
-        _elm_config_profile_derived_shutdown();
-
         ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);
      }
    _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_CLASS, efl_main_loop_get());
