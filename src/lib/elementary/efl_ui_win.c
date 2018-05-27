@@ -4349,6 +4349,30 @@ _elm_object_part_cursor_set(Evas_Object *obj, Evas_Object *edj,
    elm_object_sub_cursor_set(sub, obj, cursor);
 }
 
+static char *
+_efl_system_theme_path_get(void)
+{
+   // Find the default theme from EFL install. Quite ugly.
+   const char *sysdir;
+   char *version;
+   char path[PATH_MAX];
+   int v;
+
+   sysdir = elm_theme_system_dir_get();
+   if (!sysdir) return NULL;
+
+   eina_file_path_join(path, PATH_MAX, sysdir, "default.edj");
+   version = edje_file_data_get(path, "version");
+   v = version ? atoi(version) : 0;
+   free(version);
+   if (v < FRAME_OBJ_THEME_MIN_VERSION)
+     {
+        ERR("Default system theme is too old, something is wrong with your installation of EFL.");
+        return NULL;
+     }
+   return strdup(path);
+}
+
 static void
 _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
 {
@@ -4380,16 +4404,23 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
 
    if (v < FRAME_OBJ_THEME_MIN_VERSION)
      {
+        // Theme compatibility
+        const char *key  = "elm/border/base/default"; // FIXME?
+        char *sys_theme;
+
         WRN("Selected theme does not support the required border theme API "
             "(version = %d, requires >= %d).",
             v, FRAME_OBJ_THEME_MIN_VERSION);
-
-        if (!elm_widget_theme_object_set(sd->obj, sd->frame_obj, "border", element, style))
+        sys_theme = _efl_system_theme_path_get();
+        if (!sys_theme ||
+            !edje_object_file_set(sd->frame_obj, sys_theme, key))
           {
              ERR("Failed to set main border theme for the window.");
              ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
+             free(sys_theme);
              return;
           }
+        free(sys_theme);
      }
 
    edje_object_freeze(sd->frame_obj);
