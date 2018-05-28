@@ -67,6 +67,7 @@ struct _Efl_Ui_Textpath_Data
 
    Eina_Inlist *segments;
    int total_length;
+   Ecore_Job *draw_text_job;
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Eina_List *lines;
 #endif
@@ -315,8 +316,9 @@ _map_point_calc(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_text_draw(Efl_Ui_Textpath_Data *pd)
+_text_draw(void *data)
 {
+   Efl_Ui_Textpath_Data *pd = data;
    Efl_Ui_Textpath_Segment *seg;
    Evas_Map *map;
    int w1, w2;
@@ -383,6 +385,8 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
    evas_object_map_set(pd->text_obj, map);
    evas_map_free(map);
+
+   pd->draw_text_job = NULL;
 }
 
 static void
@@ -501,7 +505,8 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
 static void
 _sizing_eval(Efl_Ui_Textpath_Data *pd)
 {
-   _text_draw(pd);
+   ecore_job_del(pd->draw_text_job);
+   pd->draw_text_job = ecore_job_add(_text_draw, pd);
 }
 
 static void
@@ -615,6 +620,7 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
         pd->segments = eina_inlist_remove(pd->segments, EINA_INLIST_GET(seg));
         free(seg);
      }
+   ecore_job_del(pd->draw_text_job);
 
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Evas_Object *line;
@@ -669,7 +675,7 @@ _efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, 
 {
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    _path_data_get(obj, pd, EINA_FALSE);
-   _text_draw(pd);
+   _sizing_eval(pd);
 }
 
 EOLIAN static void
