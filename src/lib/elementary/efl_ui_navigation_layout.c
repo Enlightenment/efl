@@ -50,11 +50,6 @@ _efl_ui_navigation_layout_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Layo
 }
 
 /* Standard widget overrides */
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_navigation_layout, "efl.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_navigation_layout, Efl_Ui_Navigation_Layout_Data)
-
-/* Internal EO APIs and hidden overrides */
-#define EFL_UI_NAVIGATION_LAYOUT_EXTRA_OPS \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_navigation_layout)
 
 #include "efl_ui_navigation_layout.eo.c"

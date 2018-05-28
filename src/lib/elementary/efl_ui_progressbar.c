@@ -766,15 +766,6 @@ _efl_ui_progressbar_part_efl_ui_range_range_min_max_get(const Eo *obj, void *_pd
 /* Internal EO APIs and hidden overrides */
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
-
-static const char * _efl_ui_progressbar_default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
-{
-   if (elm_widget_is_legacy(obj))
-     return "elm.swallow.content";
-   else
-     return "efl.content";
-}
-
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
@@ -782,8 +773,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_progressbar)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
 

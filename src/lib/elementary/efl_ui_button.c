@@ -353,15 +353,6 @@ _efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSE
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
-
-static const char * _efl_ui_button_default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
-{
-   if (elm_widget_is_legacy(obj))
-     return "elm.swallow.content";
-   else
-     return "efl.content";
-}
-
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 EAPI void
@@ -407,8 +398,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 #define EFL_UI_BUTTON_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
-   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_button)
+   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"
 

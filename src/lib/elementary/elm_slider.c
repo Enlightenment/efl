@@ -31,12 +31,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static Eina_Bool _key_action_drag(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
@@ -1068,7 +1062,6 @@ _elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *sd, void *func
 
 /* Standard widget overrides */
 
-ELM_PART_TEXT_DEFAULT_GET(elm_slider, _text_aliases[0].real_part)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(elm_slider, Elm_Slider_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(elm_slider, Elm_Slider_Data)
 
@@ -1486,16 +1479,13 @@ elm_slider_indicator_visible_mode_get(const Evas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(elm_slider)
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_slider)
 
 #define ELM_SLIDER_EXTRA_OPS \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(elm_slider), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(elm_slider), \
    EFL_UI_SLIDER_VAL_FETCH_OPS(elm_slider), \
    EFL_UI_SLIDER_VAL_SET_OPS(elm_slider), \
    EFL_UI_SLIDER_DOWN_KNOB_OPS(elm_slider), \
-   EFL_UI_SLIDER_MOVE_KNOB_OPS(elm_slider), \
-   ELM_PART_TEXT_DEFAULT_OPS(elm_slider)
+   EFL_UI_SLIDER_MOVE_KNOB_OPS(elm_slider)
 
 #include "elm_slider.eo.c"

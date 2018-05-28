@@ -320,7 +320,6 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
 
 /* Standard widget overrides */
 
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "efl.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
 
 EOLIAN static Eo *
@@ -397,7 +396,6 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_POPUP_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_popup)
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup)
 
 #include "efl_ui_popup.eo.c"
