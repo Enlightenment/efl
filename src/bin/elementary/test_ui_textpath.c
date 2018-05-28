@@ -16,13 +16,6 @@ static Evas_Object *angle_sld, *slice_sld, *dir_chk;
 static int path_type;
 
 static void
-_autofit_changed_cb(void *data, const Efl_Event *event)
-{
-   Evas_Object *txtpath = data;
-   efl_ui_textpath_autofit_set(txtpath, elm_check_state_get(event->object));
-}
-
-static void
 _ellipsis_changed_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *txtpath = data;
@@ -112,7 +105,6 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    txtpath = efl_add(EFL_UI_TEXTPATH_CLASS, win);
    elm_box_pack_end(box, txtpath);
-   efl_ui_textpath_autofit_set(txtpath, EINA_TRUE);
 
    efl_text_set(txtpath, TEST_UI_TEXTPATH_LONG_TEXT);
 
@@ -126,13 +118,6 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_size_hint_align_set(hbox, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL);
    efl_gfx_entity_visible_set(hbox, EINA_TRUE);
    elm_box_pack_end(box, hbox);
-
-   chk = elm_check_add(win);
-   elm_object_text_set(chk, "Autofit");
-   elm_check_state_set(chk, efl_ui_textpath_autofit_get(txtpath));
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_CHANGED, _autofit_changed_cb, txtpath);
-   elm_box_pack_end(hbox, chk);
-   efl_gfx_entity_visible_set(chk, EINA_TRUE);
 
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Ellipsis");

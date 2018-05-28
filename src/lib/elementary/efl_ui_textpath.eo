@@ -18,15 +18,6 @@ class Efl.Ui.Textpath (Efl.Ui.Layout.Object, Efl.Object, Efl.Text, Efl.Gfx.Path)
             @in direction: Efl.Ui.Textpath_Direction; [[Textpath direction]]
          }
       }
-      @property autofit {
-         [[The ability to fit the text within the path.
-           Set it to $true to let text occupy only portion
-           same as its size. Otherwise, text will occupied the whole path.
-           By default, it is $true.]]
-         values {
-            autofit: bool; [[Autofit enabled if $true, $false otherwise]]
-         }
-      }
       @property slice_number {
          [[The number of slices. The larger the number of slice_num is,
            The better the text follows the path.]]

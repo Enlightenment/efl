@@ -63,7 +63,6 @@ struct _Efl_Ui_Textpath_Data
    } circle;
    Efl_Ui_Textpath_Direction direction;
    int slice_no;
-   Eina_Bool autofit;
    Eina_Bool ellipsis;
 
    Eina_Inlist *segments;
@@ -329,10 +328,7 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    last_x1 = last_y1 = last_x2 = last_y2 = 0;
 
    sz = efl_gfx_entity_size_get(pd->text_obj);
-   if (pd->autofit)
-     remained_w = sz.w;
-   else
-     remained_w = pd->total_length;
+   remained_w = sz.w;
 
    map_point_no = _map_point_calc(pd);
    if (map_point_no == 0)
@@ -353,8 +349,6 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    EINA_INLIST_FOREACH(pd->segments, seg)
      {
         int len = seg->length;
-        if (!pd->autofit)
-          len = (double)seg->length * sz.w / (double)pd->total_length;
         if (remained_w <= 0)
           break;
         w2 = w1 + len;
@@ -372,10 +366,7 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
 
              slice_value = pd->slice_no * seg->length / (double)pd->total_length;
              dt = (double)pd->total_length / (pd->slice_no * seg->length);
-             if (pd->autofit)
-               dist = (double)pd->total_length / (double)pd->slice_no;
-             else
-               dist = (double)pd->total_length * (w2 - w1) / ((double)pd->slice_no * seg->length);
+             dist = (double)pd->total_length / (double)pd->slice_no;
 
              slice_no = (int)ceil(slice_value);
              dt = (double)slice_value * dt / (double)slice_no;
@@ -606,7 +597,6 @@ EOLIAN static Efl_Object *
 _efl_ui_textpath_efl_object_constructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   pd->autofit = EINA_TRUE;
    pd->slice_no = SLICE_DEFAULT_NO;
    pd->direction = EFL_UI_TEXTPATH_DIRECTION_CW;
 
@@ -718,20 +708,6 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
                                 radius * 2,  start_angle, 360);
      }
 
-   _sizing_eval(pd);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_textpath_autofit_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
-{
-   return pd->autofit;
-}
-
-EOLIAN static void
-_efl_ui_textpath_autofit_set(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd, Eina_Bool autofit)
-{
-   if (pd->autofit == autofit) return;
-   pd->autofit = autofit;
    _sizing_eval(pd);
 }
 
