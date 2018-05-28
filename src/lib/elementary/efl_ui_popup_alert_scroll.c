@@ -163,7 +163,7 @@ _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
         efl_gfx_size_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         efl_gfx_size_hint_align_set(pd->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-        efl_content_set(efl_part(pd->scroller, "default"), pd->content);
+        efl_content_set(pd->scroller, pd->content);
      }
    else
      {
@@ -194,7 +194,7 @@ _efl_ui_popup_alert_scroll_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data
 
         pd->content = NULL;
 
-        return efl_content_unset(efl_part(pd->scroller, "default"));
+        return efl_content_unset(pd->scroller);
      }
 
    return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));

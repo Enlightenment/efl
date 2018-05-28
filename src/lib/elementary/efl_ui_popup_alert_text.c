@@ -200,7 +200,7 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
              //elm_widget_element_update(obj, pd->message, PART_NAME_TEXT);
              efl_gfx_size_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
                                           EVAS_HINT_EXPAND);
-             efl_content_set(efl_part(pd->scroller, "default"), pd->message);
+             efl_content_set(pd->scroller, pd->message);
           }
         elm_object_text_set(pd->message, label);
         elm_layout_sizing_eval(obj);
