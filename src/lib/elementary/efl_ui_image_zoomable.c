@@ -962,47 +962,28 @@ _scroll_cb(void * data,
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
-   Eina_Rect view = {};
    Eina_Position2D pos = {};
    const char *dir = params;
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
-   Evas_Coord step_x = 0;
-   Evas_Coord step_y = 0;
-   Evas_Coord page_y = 0;
-
+   Evas_Coord step = 100;
    pos = efl_ui_scrollable_content_pos_get(sd->smanager);
-   view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
 
    if (!strcmp(dir, "left"))
      {
-        pos.x -= step_x;
+        pos.x -= step;
      }
    else if (!strcmp(dir, "right"))
      {
-        pos.x += step_x;
+        pos.x += step;
      }
    else if (!strcmp(dir, "up"))
      {
-        pos.y -= step_y;
+        pos.y -= step;
      }
    else if (!strcmp(dir, "down"))
      {
-        pos.y += step_y;
-     }
-   else if (!strcmp(dir, "prior"))
-     {
-        if (page_y < 0)
-          pos.y -= -(page_y * view.h) / 100;
-        else
-          pos.y -= page_y;
-     }
-   else if (!strcmp(dir, "next"))
-     {
-        if (page_y < 0)
-          pos.y += -(page_y * view.h) / 100;
-        else
-          pos.y += page_y;
+        pos.y += step;
      }
    else return EINA_FALSE;
 
