@@ -31,6 +31,7 @@ lib/eo/eo_base_class.c \
 lib/eo/eo_class_class.c \
 lib/eo/eo_add_fallback.c \
 lib/eo/eo_add_fallback.h \
+lib/eo/eo_internal.h \
 lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = \
