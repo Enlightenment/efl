@@ -121,7 +121,7 @@ _on_child_resize(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_on_child_del(void *data, const Efl_Event *event)
+_on_child_invalidate(void *data, const Efl_Event *event)
 {
    Evas_Object *box = data;
 
@@ -166,7 +166,7 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
   { EFL_GFX_ENTITY_EVENT_RESIZE, _on_child_resize },
-  { EFL_EVENT_DEL, _on_child_del },
+  { EFL_EVENT_INVALIDATE, _on_child_invalidate },
   { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
