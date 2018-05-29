@@ -3,6 +3,46 @@ struct Efl.Loop_Arguments {
    argv: const(array<const(stringshare)>); [[Array with loop arguments]]
    initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
 }
+enum Efl.Loop.Coro.Prio {
+   [[Priority class for the coroutine.]]
+
+   high = 0, [[high priority coroutine, scheduled using zero-timers (will expire as soon as possible).]]
+   idle, [[low priority coroutine, scheduled when nothing else should run]]
+
+}
+
+
+function Efl.Loop.Coro.Cb {
+   [[Coroutine function
+
+   It will be called back from the
+   coroutine environment and when executed it's guaranteed that the
+   main loop will be paused, so shared resources are safe to access
+   (no locks are required).
+
+   \@note Eina_Coro may use threads, then take care to handle
+   thread-local-storage (TLS) details properly, eventually you
+   may consider eina_coro_hook_add() to be informed when the
+   main or coroutine will exit and enter. For instance this is
+   used by Efl_Object (handled transparently for the user).
+   ]]
+
+   params {
+        coro: ptr(Eina.Coro); [[The coroutine handle, used to $eina_coro_yield() and voluntarily give back control to the main loop until it's rescheduled.]]
+        loop: Efl.Loop; [[The loop that schedules this coroutine.]]
+   }
+   return: any_value; [[Value that will resolve the promise,
+                            being delivered to the future chain
+                            attached to the coroutine. Note that the
+                            value will be owned by the Efl_Loop_Coro
+                            and Eina_Future subsystems and will be
+                            flushed (eina_value_flush()) once
+                            unused. Its contents must survive the
+                            function return, that is, it shouldn't
+                            keep pointers to the stack.
+                          ]]
+};
+
 
 class Efl.Loop extends Efl.Task
 {
@@ -101,7 +141,7 @@ class Efl.Loop extends Efl.Task
               @in priority: Efl.Loop.Coro.Prio; [[The priority used to schedule the coroutine.]]
               @in func: Efl.Loop.Coro.Cb @nonull; [[The function to run as a coroutine.]]
           }
-          return: future<void> @owned; /* future<> */; [[The future handle, it provides the value returned by $func once it exits.]]
+          return: future<void> @owned; [[The future handle, it provides the value returned by $func once it exits.]]
       }
       timeout {
          [[A future promise that will be resolved from a clean main

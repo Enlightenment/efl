@@ -1506,7 +1506,8 @@ eina_future_await(Eina_Future *f, Eina_Coro *coro, const Eina_Value_Type *succes
             value.type, value.type ? value.type->name : "EMPTY");
 
         eina_value_flush(&value);
-        value = eina_value_error_init(EINVAL);
+        eina_value_setup(&value, EINA_VALUE_TYPE_ERROR);
+        eina_value_set(&value, EINVAL);
      }
 
  log:

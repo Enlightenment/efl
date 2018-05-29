@@ -914,4 +914,184 @@ efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb cancel_cb, const void
                            cancel_cb, data);
 }
 
+typedef struct _Efl_Loop_Coro {
+   Eina_Promise *promise;
+   Eina_Coro *coro;
+   Efl_Loop *loop;
+   Eina_Future *scheduled;
+   Efl_Loop_Coro_Cb func;
+   const void *func_data;
+   Eina_Free_Cb func_free_cb;
+   Efl_Loop_Coro_Prio prio;
+   Eina_Value value;
+} Efl_Loop_Coro;
+
+static void
+_efl_loop_coro_free(Efl_Loop_Coro *lc)
+{
+   if (lc->func_free_cb) lc->func_free_cb((void *)lc->func_data);
+   if (lc->scheduled) eina_future_cancel(lc->scheduled);
+   eina_value_flush(&lc->value);
+   efl_unref(lc->loop);
+   free(lc);
+}
+
+static void _efl_loop_coro_reschedule(Efl_Loop_Coro *lc);
+
+static Eina_Value
+_efl_loop_coro_schedule_resolved(void *data, const Eina_Value value, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Loop_Coro *lc = data;
+   Eina_Future *awaiting = NULL;
+
+   if (value.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
+        eina_value_get(&value, &err);
+        ERR("coro %p scheduled got error %s, try again.",
+            lc, eina_error_msg_get(err));
+     }
+   else if (!eina_coro_run(&lc->coro, NULL, &awaiting))
+     {
+        INF("coroutine %p finished with value type=%p (%s)",
+            lc, lc->value.type,
+            lc->value.type ? lc->value.type->name : "EMPTY");
+
+        eina_promise_resolve(lc->promise, lc->value);
+        lc->value = EINA_VALUE_EMPTY; // owned by promise
+        _efl_loop_coro_free(lc);
+        return value;
+     }
+   else if (awaiting)
+     {
+        DBG("coroutine %p is awaiting for future %p, do not reschedule", lc, awaiting);
+        eina_future_chain(awaiting,
+                          {
+                             .cb = _efl_loop_coro_schedule_resolved,
+                             .data = lc,
+                             .storage = &lc->scheduled,
+                               },
+                          efl_future_cb(lc->loop));
+     }
+   else _efl_loop_coro_reschedule(lc);
+
+   return value;
+}
+
+static void
+_efl_loop_coro_reschedule(Efl_Loop_Coro *lc)
+{
+   Eina_Future *f;
+
+   // high uses 0-timeout instead of job, since job
+   // is implemented using events and the Ecore implementation
+   // will never run timers or anything else, just the new jobs :-/
+   //
+   // TODO: bug report ecore_main loop bug.
+   if (lc->prio == EFL_LOOP_CORO_PRIO_HIGH)
+     f = efl_loop_timeout(lc->loop, 0);
+   else
+     f = efl_loop_idle(lc->loop);
+
+   DBG("coroutine %p rescheduled as future=%p", lc, f);
+
+   // NOTE: efl_future_cb() doesn't allow for extra 'data', so it matches
+   // methods more easily. However we need 'lc' and we can't store in
+   // loop since we'd not know the key for efl_key_data_get().
+   // Easy solution: use 2 futures, one to bind and another to resolve.
+   eina_future_chain(f,
+                     {
+                        .cb = _efl_loop_coro_schedule_resolved,
+                        .data = lc,
+                        .storage = &lc->scheduled,
+                     },
+                     efl_future_cb(lc->loop));
+}
+
+static void
+_efl_loop_coro_cancel(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
+{
+   Efl_Loop_Coro *lc = data;
+
+   INF("canceled coroutine %p (coro=%p)", lc, lc->coro);
+
+   eina_coro_cancel(&lc->coro);
+
+   _efl_loop_coro_free(lc);
+}
+
+static const void *
+_efl_loop_coro_cb(void *data, Eina_Bool canceled, Eina_Coro *coro)
+{
+   Efl_Loop_Coro *lc = data;
+
+   if (canceled) lc->value = eina_value_error_init(ECANCELED);
+   else lc->value = lc->func((void *)lc->func_data, coro, lc->loop);
+
+   return lc;
+}
+
+static Eina_Future *
+_efl_loop_coro(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Efl_Loop_Coro_Prio prio, void *func_data, Efl_Loop_Coro_Cb func, Eina_Free_Cb func_free_cb)
+{
+   Efl_Loop_Coro *lc;
+   Eina_Promise *p;
+   Eina_Future *f;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   lc = calloc(1, sizeof(Efl_Loop_Coro));
+   EINA_SAFETY_ON_NULL_GOTO(lc, calloc_failed);
+
+   lc->loop = efl_ref(obj);
+   lc->func = func;
+   lc->func_data = func_data;
+   lc->func_free_cb = func_free_cb;
+   lc->prio = prio;
+
+   lc->coro = eina_coro_new(_efl_loop_coro_cb, lc, EINA_CORO_STACK_SIZE_DEFAULT);
+   EINA_SAFETY_ON_NULL_GOTO(lc, coro_failed);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_loop_coro_cancel, lc);
+   // lc is dead if p is NULL
+   EINA_SAFETY_ON_NULL_GOTO(p, promise_failed);
+   lc->promise = p;
+
+   // must be done prior to reschedule, as it may resolve on errors
+   // and promises without futures are simply ignored, will remain
+   // alive.
+   f = eina_future_new(p);
+
+   _efl_loop_coro_reschedule(lc);
+
+   INF("new coroutine %p (coro=%p)", lc, lc->coro);
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_then(obj, f);
+
+ promise_failed:
+   // _efl_loop_coro_cancel() was called, func was run... just return.
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_then(obj,
+      eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                           eina_value_error_init(ENOMEM)));
+   /* return eina_future_resolved(efl_loop_future_scheduler_get(obj), */
+   /*                          eina_value_error_init(ENOMEM)); */
+
+ coro_failed:
+   _efl_loop_coro_free(lc);
+
+ calloc_failed:
+   if (func_free_cb) func_free_cb((void *)func_data);
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_then(obj,
+      eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                           eina_value_error_init(ENOMEM)));
+   /* return eina_future_resolved(efl_loop_future_scheduler_get(obj), */
+   /*                         eina_value_error_init(ENOMEM)); */
+}
+
 #include "efl_loop.eo.c"
