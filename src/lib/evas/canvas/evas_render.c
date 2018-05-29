@@ -656,6 +656,20 @@ evas_render_object_render_cache_free(Evas_Object *eo_obj EINA_UNUSED,
    free(rc);
 }
 
+typedef struct
+{
+   Evas_Public_Data *e;
+   Eina_Inarray     *active_objects;
+   Eina_Array       *render_objects;
+   Eina_Array       *snapshot_objects;
+   Eina_Array       *restack_objects;
+   Eina_Array       *delete_objects;
+   int               redraw_all;
+} Phase1_Context;
+
+#define RENDCACHE 1
+
+#ifdef RENDCACHE
 static Render_Cache *
 _evas_render_phase1_object_render_cache_new(void)
 {
@@ -668,17 +682,6 @@ _evas_render_phase1_object_render_cache_new(void)
    rc->update_del       = eina_inarray_new(sizeof(Eina_Rectangle), 16);
    return rc;
 }
-
-typedef struct
-{
-   Evas_Public_Data *e;
-   Eina_Inarray     *active_objects;
-   Eina_Array       *render_objects;
-   Eina_Array       *snapshot_objects;
-   Eina_Array       *restack_objects;
-   Eina_Array       *delete_objects;
-   int               redraw_all;
-} Phase1_Context;
 
 static void
 _evas_render_phase1_object_ctx_render_cache_fill(Phase1_Context *ctx,
@@ -725,6 +728,7 @@ _evas_render_phase1_object_ctx_render_cache_append(Phase1_Context *ctx,
         evas_render_update_del(ctx->e, r->x, r->y, r->w, r->h);
      }
 }
+#endif
 
 static Eina_Bool
 _evas_render_phase1_object_process(Phase1_Context *p1ctx,
@@ -824,8 +828,6 @@ _evas_render_phase1_object_mapped_had_restack(Phase1_Context *p1ctx,
    evas_object_update_bounding_box(eo_obj, obj, NULL);
 }
 
-#define RENDCACHE 1
-
 static Eina_Bool
 _evas_render_phase1_object_changed_smart(Phase1_Context *p1ctx,
                                          Evas_Object_Protected_Data *obj,
@@ -836,8 +838,6 @@ _evas_render_phase1_object_changed_smart(Phase1_Context *p1ctx,
                                          int level)
 {
    Evas_Object_Protected_Data *obj2;
-   Render_Cache *rc = NULL;
-   void *p_del_redir;
    Evas_Object *eo_obj = obj->object;
 
    RD(level, "  changed + smart - render ok\n");
@@ -859,9 +859,12 @@ _evas_render_phase1_object_changed_smart(Phase1_Context *p1ctx,
    else
      {
         Phase1_Context *ctx = p1ctx;
-        Phase1_Context tmpctx;
 
 #ifdef RENDCACHE
+        Render_Cache *rc = NULL;
+        void *p_del_redir;
+        Phase1_Context tmpctx;
+
         if (obj->no_change_render > 3)
           {
              rc = evas_object_smart_render_cache_get(eo_obj);
@@ -966,15 +969,16 @@ _evas_render_phase1_object_no_changed_smart(Phase1_Context *p1ctx,
 {
    Evas_Object_Protected_Data *obj2;
    Phase1_Context *ctx = p1ctx;
-   Phase1_Context tmpctx;
-   Render_Cache *rc = NULL;
-   void *p_del_redir;
    Evas_Object *eo_obj = obj->object;
 
    RD(level, "  smart + visible/was visible + not clip\n");
    OBJ_ARRAY_PUSH(p1ctx->render_objects, obj);
    obj->render_pre = EINA_TRUE;
 #ifdef RENDCACHE
+   void *p_del_redir;
+   Render_Cache *rc = NULL;
+   Phase1_Context tmpctx;
+
    if (obj->no_change_render > 3)
      {
         rc = evas_object_smart_render_cache_get(eo_obj);
