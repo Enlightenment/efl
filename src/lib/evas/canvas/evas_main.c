@@ -378,7 +378,7 @@ _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
      {
         Forced_Death force = {
           efl_invalidated_get(obj),
-          efl_parent_get(obj) ? (efl_ref_count(obj) == 1) : (efl_ref_count(obj) == 0),
+          efl_parent_get(obj) ? (efl_ref_count(obj) <= 1) : (efl_ref_count(obj) <= 0),
           EINA_FALSE
         };
 
