@@ -215,7 +215,7 @@ _efl_canvas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 extern const char *o_rect_type;
 extern const char *o_image_type;
 
-static void _clipper_del_cb(void *data, const Efl_Event *event);
+static void _clipper_invalidated_cb(void *data, const Efl_Event *event);
 
 Eina_Bool
 _efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj,
@@ -306,7 +306,7 @@ _efl_canvas_object_clip_unset_common(Evas_Object_Protected_Data *obj, Eina_Bool 
           }
         evas_object_change(clip->object, clip);
         if (obj->prev->clipper != clip)
-          efl_event_callback_del(clip->object, EFL_EVENT_DEL, _clipper_del_cb, obj->object);
+          efl_event_callback_del(clip->object, EFL_EVENT_INVALIDATE, _clipper_invalidated_cb, obj->object);
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -373,7 +373,7 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
      state_write->clipper = clip;
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
    if (obj->prev->clipper != clip)
-     efl_event_callback_add(clip->object, EFL_EVENT_DEL, _clipper_del_cb, eo_obj);
+     efl_event_callback_add(clip->object, EFL_EVENT_INVALIDATE, _clipper_invalidated_cb, eo_obj);
 
    clip->clip.cache_clipees_answer = eina_list_free(clip->clip.cache_clipees_answer);
    clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
@@ -463,7 +463,7 @@ evas_object_clip_unset(Evas_Object *eo_obj)
 }
 
 static void
-_clipper_del_cb(void *data, const Efl_Event *event)
+_clipper_invalidated_cb(void *data, const Efl_Event *event)
 {
    Evas_Object *eo_obj = data;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -495,7 +495,7 @@ _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cu
              EINA_COW_STATE_WRITE_END(obj, state_write, prev);
           }
         if (clip != obj->cur->clipper)
-          efl_event_callback_del(clip->object, EFL_EVENT_DEL, _clipper_del_cb, obj->object);
+          efl_event_callback_del(clip->object, EFL_EVENT_INVALIDATE, _clipper_invalidated_cb, obj->object);
      }
 }
 
