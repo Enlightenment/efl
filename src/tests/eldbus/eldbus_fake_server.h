@@ -3,9 +3,9 @@
 
 #include <Eldbus.h>
 
-#define FAKE_SERVER_BUS "org.Enlightenment.Test"
-#define FAKE_SERVER_PATH "/org/enlightenment"
-#define FAKE_SERVER_INTERFACE "org.enlightenment.FakeServer"
+#define FAKE_SERVER_BUS "org.Eldbus.Test"
+#define FAKE_SERVER_PATH "/org/eldbus"
+#define FAKE_SERVER_INTERFACE "org.Eldbus.FakeServer"
 #define FAKE_SERVER_READONLY_PROPERTY "r"
 #define FAKE_SERVER_WRITEONLY_PROPERTY "w"
 #define FAKE_SERVER_READWRITE_PROPERTY "rw"
