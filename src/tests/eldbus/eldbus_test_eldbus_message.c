@@ -507,9 +507,13 @@ _response_swap_value(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_P
 {
    Eina_Value *eina_value;
    int swap_value;
+   const char *name, *err;
 
-   if (!eldbus_message_error_get(msg, NULL, NULL))
+   if (eldbus_message_error_get(msg, &name, &err))
+     ck_abort_msg("%s: %s", name, err);
+   else
     {
+
        Eldbus_Message_Iter *iter = eldbus_message_iter_get(msg);
        eina_value = eldbus_message_iter_struct_like_to_eina_value(iter);
        eina_value_struct_get(eina_value, "arg0", &swap_value);
