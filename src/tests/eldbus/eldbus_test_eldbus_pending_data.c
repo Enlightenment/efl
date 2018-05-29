@@ -124,7 +124,7 @@ EFL_START_TEST(utc_eldbus_pending_data_p)
 
    eldbus_pending_data_set(pending, pending_key_store, &pending_data_stored);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();

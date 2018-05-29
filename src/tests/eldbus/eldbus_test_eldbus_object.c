@@ -214,7 +214,7 @@ EFL_START_TEST(utc_eldbus_object_send_info_get_p)
    Eldbus_Pending *pending = eldbus_object_send(obj, msg, _object_message_cb, &cb_data, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -269,7 +269,7 @@ EFL_START_TEST(utc_eldbus_introspect_p)
    Eldbus_Pending *pending = eldbus_object_introspect(obj, _object_message_cb, &cb_data);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.0, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -361,7 +361,7 @@ EFL_START_TEST(utc_eldbus_object_peer_p)
    Eldbus_Pending *pending2 = eldbus_object_peer_ping(obj, _peer_ping_cb, &cb_data);
    ck_assert_ptr_ne(NULL, pending2);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();

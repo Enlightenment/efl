@@ -628,7 +628,7 @@ _activable_list_get(Eldbus_Message_Cb message_cb)
    Eldbus_Pending *pending = eldbus_names_activatable_list(conn, message_cb, NULL);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -745,7 +745,7 @@ EFL_START_TEST(utc_eldbus_message_info_data_get_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _message_method_cb, NULL, timeout_send_ms);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -808,7 +808,7 @@ EFL_START_TEST(utc_eldbus_message_signal_new_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _message_without_body_cb, NULL, timeout_send_ms);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -916,7 +916,7 @@ EFL_START_TEST(utc_eldbus_message_basic_eina_value_p)
    Eldbus_Pending *pending = eldbus_name_owner_has(conn, bus, _response_owner_has_cb, NULL);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1007,7 +1007,7 @@ EFL_START_TEST(utc_eldbus_message_arguments_vappend_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, message_vparam, _message_response_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1067,7 +1067,7 @@ EFL_START_TEST(utc_eldbus_message_arguments_vget_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, message, _message_vget_response_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1173,7 +1173,7 @@ EFL_START_TEST(utc_eldbus_message_eina_p)
    pending = eldbus_proxy_call(proxy, "SwapValue", _response_swap_iter_vget, NULL, -1 , "i", value_from_client);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1291,7 +1291,7 @@ EFL_START_TEST(utc_eldbus_message_container_p)
    Eldbus_Pending *pending = eldbus_proxy_send(proxy, msg, _container_receive_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1374,7 +1374,7 @@ EFL_START_TEST(utc_eldbus_message_error_new_p)
 
    eldbus_proxy_call(proxy, "SendBool", _on_send_bool, NULL, -1, "b", NULL);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1526,7 +1526,7 @@ EFL_START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
    Eldbus_Pending *pending = eldbus_proxy_call(proxy, "SendArrayInt", _on_send_array_int, NULL, -1 , "");
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1576,7 +1576,7 @@ EFL_START_TEST(utc_eldbus_hello_p)
 
    eldbus_hello(conn, _hello_cb, &cb_data);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
