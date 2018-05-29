@@ -251,7 +251,7 @@ _evas_object_table_option_del(Evas_Object *o)
 }
 
 static void
-_on_child_del(void *data, const Efl_Event *event)
+_on_child_invalidate(void *data, const Efl_Event *event)
 {
    Evas_Object *table = data;
    evas_object_table_unpack(table, event->object);
@@ -267,7 +267,7 @@ _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
-  { EFL_EVENT_DEL, _on_child_del },
+  { EFL_EVENT_INVALIDATE, _on_child_invalidate },
   { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
