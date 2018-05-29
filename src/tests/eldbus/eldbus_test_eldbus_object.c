@@ -333,7 +333,7 @@ EFL_END_TEST
 EFL_START_TEST(utc_eldbus_object_peer_p)
 {
    const char *dbus_path = "/org/freedesktop/Test";
-   const char *bus_session = "org.freedesktop.Test";
+   const char *bus_session = "org.freedesktop.Test.utc_eldbus_object_peer_p";
 
    is_success = EINA_FALSE;
    is_register_service = EINA_FALSE;
