@@ -1262,8 +1262,8 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
           EINA_LIST_FREE (events->focused_by_seats, dev)
             {
                event_id = _evas_event_counter;
-               efl_event_callback_del(dev, EFL_EVENT_DEL,
-                                      _evas_focus_device_del_cb, obj);
+               efl_event_callback_del(dev, EFL_EVENT_INVALIDATE,
+                                      _evas_focus_device_invalidate_cb, obj);
                if (edata) eina_hash_del_by_key(edata->focused_objects, &dev);
                _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
                if ((obj->layer) && (obj->layer->evas))

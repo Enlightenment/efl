@@ -153,7 +153,7 @@ _evas_object_unfocus(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat)
 }
 
 void
-_evas_focus_device_del_cb(void *data, const Efl_Event *ev)
+_evas_focus_device_invalidate_cb(void *data, const Efl_Event *ev)
 {
    _evas_object_unfocus(data, ev->object);
 }
@@ -203,8 +203,8 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
              return EINA_FALSE;
           }
 
-        efl_event_callback_del(dev, EFL_EVENT_DEL,
-                               _evas_focus_device_del_cb, obj);
+        efl_event_callback_del(dev, EFL_EVENT_INVALIDATE,
+                               _evas_focus_device_invalidate_cb, obj);
         _evas_object_unfocus(obj, dev);
         return EINA_TRUE;
      }
@@ -269,7 +269,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    //In case intercept focus callback focused object we should return.
    if (_current_focus_get(eo_obj, seat)) goto end;
 
-   efl_event_callback_add(seat, EFL_EVENT_DEL, _evas_focus_device_del_cb, obj);
+   efl_event_callback_add(seat, EFL_EVENT_INVALIDATE, _evas_focus_device_invalidate_cb, obj);
 
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
      events->focused_by_seats = eina_list_append(events->focused_by_seats, seat);
