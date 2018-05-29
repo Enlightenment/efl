@@ -28,12 +28,7 @@ EFL_START_TEST(eldbus_test_eldbus_conn)
 {
    Eldbus_Connection *conn;
 
-   /*
-    * let's use connection type == system, so it works without a session,
-    * however security rules may apply differently depending on the
-    * machine/user
-    */
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    fail_if(conn == NULL);
 
    eldbus_connection_unref(conn);
@@ -45,12 +40,7 @@ EFL_START_TEST(eldbus_test_eldbus_conn_object)
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
 
-   /*
-    * let's use connection type == system, so it works without a D-Bus session.
-    * However security rules may apply differently depending on the
-    * machine/user
-    */
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    fail_if(conn == NULL);
 
    obj = eldbus_object_get(conn, "org.buu", "/org/buu");
@@ -75,7 +65,7 @@ EFL_START_TEST(eldbus_test_eldbus_name_owner_changed)
    Eldbus_Connection *conn;
    const char *id = NULL;
 
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    fail_if(conn == NULL);
 
    eldbus_name_owner_changed_callback_add(conn, "org.bus.that.not.exist",

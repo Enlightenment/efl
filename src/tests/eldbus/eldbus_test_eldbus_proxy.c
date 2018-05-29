@@ -122,7 +122,7 @@ EFL_START_TEST(utc_eldbus_proxy_info_get_call_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -204,7 +204,7 @@ EFL_START_TEST(utc_eldbus_proxy_send_call_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -277,7 +277,7 @@ EFL_START_TEST(utc_eldbus_proxy_send_and_block_p)
    const char *errname, *errmsg;
    char *text_reply = NULL;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -359,7 +359,7 @@ EFL_START_TEST(utc_eldbus_proxy_data_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
