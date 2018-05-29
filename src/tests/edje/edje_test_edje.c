@@ -381,6 +381,26 @@ EFL_START_TEST(edje_test_swallows)
 }
 EFL_END_TEST
 
+EFL_START_TEST(edje_test_swallows_lifetime)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *ly, *o1;
+
+   ly = edje_object_add(evas);
+   fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"), "test_group"));
+
+   fail_unless(edje_object_part_exists(ly, "swallow"));
+
+   o1 = edje_object_add(ly);
+   fail_if(!edje_object_part_swallow(ly, "swallow", o1));
+
+   evas_object_del(ly);
+   fail_if(!efl_parent_get(o1));
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
+
 EFL_START_TEST(edje_test_swallows_eoapi)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -1037,6 +1057,7 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_size_class);
    tcase_add_test(tc, edje_test_color_class);
    tcase_add_test(tc, edje_test_swallows);
+   tcase_add_test(tc, edje_test_swallows_lifetime);
    tcase_add_test(tc, edje_test_swallows_eoapi);
    tcase_add_test(tc, edje_test_access);
    tcase_add_test(tc, edje_test_box);
