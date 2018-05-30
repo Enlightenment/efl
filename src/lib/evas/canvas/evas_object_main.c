@@ -925,7 +925,6 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
         eina_array_clean(rects);
      }
 
- end:
    EINA_ARRAY_ITER_NEXT(rects, i, r, it)
      eina_rectangle_free(r);
    eina_array_clean(rects);
