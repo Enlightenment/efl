@@ -153,7 +153,7 @@ struct _Elm_Genlist_Data
    Eina_Bool                             scr_minh : 1; /* a flag for determining
                                                         * minimum height to limit
                                                         * as their content size */
-   Eina_Bool                             filter;
+   Eina_Bool                             filter : 1;
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
    Eina_Bool                             auto_scroll_enabled : 1;
