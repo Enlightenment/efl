@@ -65,7 +65,7 @@ _timer_fail_flag_cb(void *data)
 
 EFL_START_TEST (elm_win_legacy_type_check)
 {
-   Evas_Object *win;
+   Evas_Object *win, *win_socket, *win_inlined;
    const char *type;
 
    win = win_add(NULL, "win", ELM_WIN_BASIC);
@@ -78,6 +78,25 @@ EFL_START_TEST (elm_win_legacy_type_check)
    ck_assert(type != NULL);
    ck_assert(!strcmp(type, "elm_win"));
 
+   win_socket = win_add(NULL, "win", ELM_WIN_SOCKET_IMAGE);
+
+   type = elm_object_widget_type_get(win_socket);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Win"));
+
+   type = evas_object_type_get(win_socket);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_win"));
+
+   win_inlined = win_add(win, "win", ELM_WIN_INLINED_IMAGE);
+
+   type = elm_object_widget_type_get(win_inlined);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Win"));
+
+   type = evas_object_type_get(win_inlined);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_win"));
 }
 EFL_END_TEST
 

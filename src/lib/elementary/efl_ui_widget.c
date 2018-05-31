@@ -96,6 +96,8 @@ static const char *legacy_type_table[][2] =
      { "Efl.Ui.Radio_Legacy", "Elm_Radio" },
      { "Efl.Ui.Video_Legacy", "Elm_Video" },
      { "Efl.Ui.Win_Legacy", "Elm_Win" },
+     { "Efl.Ui.Win_Socket_Legacy", "Elm_Win" },
+     { "Efl.Ui.Win_Inlined_Legacy", "Elm_Win" },
      { "Elm.Code_Widget_Legacy", "Elm_Code_Widget" },
      { "Elm.Ctxpopup", "Elm_Ctxpopup" },
      { "Elm.Entry", "Elm_Entry" },

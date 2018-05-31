@@ -1,0 +1,9 @@
+class Efl.Ui.Win_Inlined_Legacy (Efl.Ui.Win_Inlined, Efl.Ui.Legacy)
+{
+   [[Elementary window inlined class]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.finalize;
+   }
+}

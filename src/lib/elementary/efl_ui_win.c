@@ -35,6 +35,8 @@
 #include "efl_ui_win_part.eo.h"
 #include "elm_plug.eo.h"
 #include "efl_ui_win_legacy.eo.h"
+#include "efl_ui_win_socket_legacy.eo.h"
+#include "efl_ui_win_inlined_legacy.eo.h"
 
 #define MY_CLASS EFL_UI_WIN_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win"
@@ -8847,8 +8849,8 @@ elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
 
    switch ((int) type)
      {
-      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_CLASS; break;
-      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_CLASS; break;
+      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_LEGACY_CLASS; break;
+      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_LEGACY_CLASS; break;
       default: break;
      }
 

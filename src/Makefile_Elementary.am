@@ -184,6 +184,8 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
 	lib/elementary/efl_ui_layout_legacy.eo \
 	lib/elementary/elm_code_widget_legacy.eo \
+	lib/elementary/efl_ui_win_socket_legacy.eo \
+	lib/elementary/efl_ui_win_inlined_legacy.eo \
 	lib/elementary/elm_interface_fileselector.eo \
 	lib/elementary/elm_calendar.eo \
 	lib/elementary/elm_calendar_item.eo \
