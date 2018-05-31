@@ -127,7 +127,7 @@ group { name: "elm/radio/base/default";
             rel1.to_x: "elm.swallow.content";
             rel2.offset: -5 -5;
             text { font: FN; size: 10;
-               align: 0.5 0.5;
+               align: 0.0 0.5;
                min: 0 0;
             }
             visible: 0;
