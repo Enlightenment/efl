@@ -17,8 +17,17 @@
 static void
 _elm_grid_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
 {
+   Eina_List *l;
+   Efl_Ui_Widget *elem;
+
    Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
    Eina_List *order = evas_object_grid_children_get(wpd->resize_obj);
+
+   EINA_LIST_FOREACH(order, l, elem)
+     {
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
+          order = eina_list_remove(order, elem);
+     }
 
    efl_ui_focus_composition_elements_set(obj, order);
 }
