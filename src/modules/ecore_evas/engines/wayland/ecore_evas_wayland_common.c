@@ -2451,7 +2451,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas *ee = NULL;
    int method = 0;
-   int fw = 0, fh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -2532,12 +2531,12 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    wdata->parent = p;
    wdata->display = ewd;
 
-   wdata->win = ecore_wl2_window_new(ewd, p, x, y, w + fw, h + fh);
+   wdata->win = ecore_wl2_window_new(ewd, p, x, y, w, h);
    ee->prop.window = ecore_wl2_window_id_get(wdata->win);
    ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
    ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
 
-   if (!ecore_evas_evas_new(ee, ee->w + fw, ee->h + fh))
+   if (!ecore_evas_evas_new(ee, ee->w, ee->h))
      {
         ERR("Can not create Canvas.");
         goto eng_err;
