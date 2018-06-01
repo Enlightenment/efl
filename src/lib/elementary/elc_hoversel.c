@@ -13,6 +13,7 @@
 #include "elm_hoversel.eo.h"
 #include "elm_hoversel_item.eo.h"
 #include "elm_widget_hoversel.h"
+#include "efl_ui_button_legacy.eo.h"
 
 #define MY_CLASS ELM_HOVERSEL_CLASS
 

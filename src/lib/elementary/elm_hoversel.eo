@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Hoversel (Efl.Ui.Button, Efl.Ui.Selectable,
+class Elm.Hoversel (Efl.Ui.Button_Legacy, Efl.Ui.Selectable,
                     Efl.Ui.Clickable,
                     Efl.Access.Widget.Action,
                     Efl.Ui.Legacy)
