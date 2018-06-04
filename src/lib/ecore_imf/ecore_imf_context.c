@@ -946,6 +946,9 @@ ecore_imf_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input
           ctx->klass->input_panel_layout_set(ctx, layout);
 
         ctx->input_panel_layout = layout;
+
+        if (layout == ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD)
+          ecore_imf_context_autocapital_type_set(ctx, ECORE_IMF_AUTOCAPITAL_TYPE_NONE);
      }
 }
 
