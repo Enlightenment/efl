@@ -398,15 +398,14 @@ _efl_ui_radio_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
 static void
-_icon_signal_emit(Evas_Object *obj)
+_icon_signal_emit(Evas_Object *obj, Eina_Bool vis)
 {
    char buf[63];
    Eo *edje;
 
    edje = elm_widget_resize_object_get(obj);
    if (!edje) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s", vis ? "visible" : "hidden");
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(edje);
@@ -423,7 +422,7 @@ _efl_ui_radio_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
    /* FIXME: replicated from elm_layout just because radio's icon
     * spot is elm.swallow.content, not elm.swallow.icon. Fix that
     * whenever we can changed the theme API */
-   _icon_signal_emit(obj);
+   _icon_signal_emit(obj, !!elm_layout_content_get(obj, "icon"));
 
    return int_ret;
 }
@@ -439,7 +438,7 @@ _efl_ui_radio_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_pd EINA
    int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
-   _icon_signal_emit(obj);
+   _icon_signal_emit(obj, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -455,7 +454,8 @@ _efl_ui_radio_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const char *par
    int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS), part), content);
    if (!int_ret) return EINA_FALSE;
 
-   _icon_signal_emit(obj);
+   if (content)
+     _icon_signal_emit(obj, EINA_TRUE);
 
    return EINA_TRUE;
 }
