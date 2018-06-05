@@ -5470,6 +5470,7 @@ test_genlist_show_bring(void *data EINA_UNUSED,
 
    elm_genlist_item_class_free(api->itc1);
    gli = elm_genlist_nth_item_get(gl, 1340);
+   elm_genlist_item_selected_set(gli, EINA_TRUE);
    elm_genlist_item_show(gli, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
 
    evas_object_resize(win, 480, 400);
