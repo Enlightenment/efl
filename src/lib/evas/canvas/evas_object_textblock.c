@@ -554,11 +554,17 @@ struct _Efl_Canvas_Text_Style
 {
    const char            *style_text;
    char                  *default_tag;
-   Eina_Stringshare      *key; /* FIXME: Very hacky. */
    Evas_Object_Style_Tag *tags;
    Eina_List             *objects;
    Eina_Bool              delete_me : 1;
+   Eina_Bool              legacy : 1;
 };
+
+typedef struct _User_Style_Entry
+{
+   Evas_Textblock_Style *st;
+   const char *key;
+} User_Style_Entry;
 
 struct _Efl_Text_Cursor_Cursor
 {
@@ -662,6 +668,7 @@ struct _Evas_Object_Textblock
    Eina_Bool                           changed_paragraph_direction : 1;
    Eina_Bool                           multiline : 1;
    Eina_Bool                           wrap_changed : 1;
+   Eina_Bool                           auto_styles : 1;
 };
 
 struct _Evas_Textblock_Selection_Iterator
@@ -773,6 +780,8 @@ static void _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textbl
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_at_pos_get(const Efl_Text_Cursor_Cursor *cur);
 static int _evas_textblock_cursor_text_prepend(Efl_Text_Cursor_Cursor *cur, const char *_text);
 static void _evas_textblock_cursor_copy(Efl_Text_Cursor_Cursor *dst, const Efl_Text_Cursor_Cursor *src);
+static void
+_textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts, const char *key);
 
 /** selection iterator */
 /**
@@ -6658,7 +6667,7 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
    /* setup default base style */
      {
         Eina_List *itr;
-        Evas_Textblock_Style *style;
+        User_Style_Entry *use;
         Eina_Bool finalize = EINA_FALSE;
         if (!c->fmt)
           {
@@ -6671,11 +6680,11 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
              finalize = EINA_TRUE;
           }
 
-        EINA_LIST_FOREACH(c->o->styles, itr, style)
+        EINA_LIST_FOREACH(c->o->styles, itr, use)
           {
-             if ((style) && (style->default_tag))
+             if ((use->st) && (use->st->default_tag))
                {
-                  _format_fill(c->obj, c->fmt, style->default_tag);
+                  _format_fill(c->obj, c->fmt, use->st->default_tag);
                   finalize = EINA_TRUE;
                }
           }
@@ -6880,6 +6889,7 @@ evas_object_textblock_add(Evas *e)
          efl_canvas_object_legacy_ctor(efl_added));
    o = efl_data_scope_get(eo_obj, MY_CLASS);
    o->legacy_newline = EINA_TRUE;
+   o->auto_styles = EINA_FALSE;
    return eo_obj;
 }
 
@@ -6920,6 +6930,8 @@ _efl_canvas_text_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Text_Data *class_
    _FMT(ellipsis) = -1;
    _FMT_INFO(bitmap_scalable) = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
 
+   o->auto_styles = EINA_TRUE;
+
    return eo_obj;
 }
 
@@ -6929,6 +6941,7 @@ evas_textblock_style_new(void)
    Evas_Textblock_Style *ts;
 
    ts = calloc(1, sizeof(Evas_Textblock_Style));
+   ts->legacy = EINA_TRUE;
    return ts;
 }
 
@@ -6942,7 +6955,7 @@ evas_textblock_style_free(Evas_Textblock_Style *ts)
         return;
      }
    _style_clear(ts);
-   eina_stringshare_del(ts->key);
+   // FIXME: free up user style entry
    free(ts);
 }
 
@@ -6994,6 +7007,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
    Evas_Object *eo_obj;
 
    if (!ts) return;
+
    /* If the style wasn't really changed, abort. */
    if ((!ts->style_text && !text) ||
        (ts->style_text && text && !strcmp(text, ts->style_text)))
@@ -7142,11 +7156,11 @@ static const char *
 _textblock_format_node_from_style_tag(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *fnode, const char *format, size_t format_len)
 {
    Eina_List *itr;
-   Evas_Textblock_Style *style;
    const char *match = NULL;
-   EINA_LIST_REVERSE_FOREACH(o->styles, itr, style)
+   User_Style_Entry *use;
+   EINA_LIST_REVERSE_FOREACH(o->styles, itr, use)
      {
-        match = _style_match_tag(style, format, format_len);
+        match = _style_match_tag(use->st, format, format_len);
         if (match)
            break;
      }
@@ -7172,32 +7186,82 @@ _textblock_format_node_from_style_tag(Efl_Canvas_Text_Data *o, Evas_Object_Textb
 
 /* textblock styles */
 
+static Eina_List *_style_cache = NULL;
+
 static void
 _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
-      Evas_Textblock_Style **obj_ts)
+      const char *key)
 {
    TB_HEAD();
-   if (ts == *obj_ts) return;
-   if ((ts) && (ts->delete_me)) return;
-   if (*obj_ts)
+   Eina_List *itr;
+   Evas_Textblock_Style *old_ts = NULL;
+
+   if (!key)
      {
-        Evas_Textblock_Style *old_ts;
+        old_ts = o->style;
+        o->style = ts;
+     }
+   else
+     {
+        User_Style_Entry *us;
+
+        EINA_LIST_FOREACH(o->styles, itr, us)
+          {
+             if (!strcmp(us->key, key))
+               {
+                  //us->st = ts;
+                  break;
+               }
+          }
+        if (ts)
+          {
+             if (!us)
+               {
+                  us = calloc(1, sizeof(*us));
+                  us->key = eina_stringshare_add(key);
+                  o->styles = eina_list_append(o->styles, us);
+               }
+
+             old_ts = us->st;
+             us->st = ts;
+          }
+        else if (us)
+          {
+             o->styles = eina_list_remove_list(o->styles, itr);
+             free(us);
+          }
+     }
+
+   // Verify nothing has changed 
+   if (ts == old_ts) return;
+
+   if ((ts) && (ts->delete_me)) return;
+
+   if (old_ts)
+     {
         if (o->markup_text)
           {
              eina_stringshare_del(o->markup_text);
              o->markup_text = NULL;
           }
 
-        old_ts = *obj_ts;
         old_ts->objects = eina_list_remove(old_ts->objects, eo_obj);
-        if ((old_ts->delete_me) && (!old_ts->objects))
-          evas_textblock_style_free(old_ts);
+        if (o->auto_styles && !old_ts->objects)
+          {
+             _style_cache = eina_list_remove(_style_cache, old_ts);
+             evas_textblock_style_free(old_ts);
+          }
+        else if (!o->auto_styles && (old_ts->delete_me) && (!old_ts->objects))
+          {
+             // Legacy behavior ('delete_me' does not occur in new auto styles)
+             evas_textblock_style_free(old_ts);
+          }
      }
+
    if (ts)
      {
         ts->objects = eina_list_append(ts->objects, eo_obj);
      }
-   *obj_ts = ts;
 
    _evas_textblock_update_format_nodes_from_style_tag(o);
 
@@ -7212,36 +7276,48 @@ evas_object_textblock_style_set(Eo *eo_obj, const Evas_Textblock_Style *ts)
    EINA_SAFETY_ON_NULL_RETURN(eo_obj);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   _textblock_style_generic_set(eo_obj, (Evas_Textblock_Style *) ts, &(o->style));
+   _textblock_style_generic_set(eo_obj, (Evas_Textblock_Style *) ts, NULL);
 }
 
 static Evas_Textblock_Style *
 _style_by_key_find(Efl_Canvas_Text_Data *o, const char *key)
 {
    Eina_List *itr;
-   Evas_Textblock_Style *style;
+   User_Style_Entry *us;
 
    if (!key)
       return o->style;
 
-   EINA_LIST_FOREACH(o->styles, itr, style)
+   EINA_LIST_FOREACH(o->styles, itr, us)
      {
-        if (!strcmp(style->key, key))
-           return style;
+        if (!strcmp(us->key, key))
+           return us->st;
      }
 
    return NULL;
 }
 
-static void
-_style_remove_from_obj(Eo *eo_obj, Efl_Canvas_Text_Data *o, Evas_Textblock_Style *ts, Eina_Bool style_free)
+static Evas_Textblock_Style *
+_style_fetch(const char *style)
 {
-   o->styles = eina_list_remove(o->styles, ts);
-   ts->objects = eina_list_remove(ts->objects, eo_obj);
+   Evas_Textblock_Style *ts = NULL;
+   Eina_List *i;
 
-   if (style_free || (ts->delete_me && !ts->objects))
-     evas_textblock_style_free(ts);
+   if (!style) return NULL;
+
+   EINA_LIST_FOREACH(_style_cache, i, ts)
+     {
+        if (ts->style_text == style) break;
+     }
+
+   if (!ts)
+     {
+        ts = evas_textblock_style_new();
+        ts->legacy = EINA_FALSE;
+        evas_textblock_style_set(ts, style);
+        _style_cache = eina_list_append(_style_cache, ts);
+     }
+   return ts;
 }
 
 EOLIAN static void
@@ -7253,52 +7329,9 @@ _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key,
 
    Evas_Textblock_Style *ts;
 
-   ts = _style_by_key_find(o, key);
+   ts = _style_fetch(style);
 
-   if (!ts && !style)
-     {
-        return;
-     }
-
-   if (ts && !style)
-     {
-        // Delete the style
-        if (!key)
-          {
-             evas_textblock_style_set(ts, "");
-          }
-        else
-          {
-             _style_remove_from_obj(eo_obj, o, ts, EINA_TRUE);
-          }
-     }
-   else if (!ts && style)
-     {
-        Evas_Textblock_Style *tmp = NULL;
-
-        // No entry for respective key, so create one.
-        ts = evas_textblock_style_new();
-        evas_textblock_style_set(ts, style);
-        ts->key = eina_stringshare_add(key);
-
-        /* If the given key value is NULL, newly created Evas Textblock Style
-         * has to be assigned to o->style. */
-        if (ts->key)
-          o->styles = eina_list_append(o->styles, ts);
-        else
-          o->style = ts;
-
-        _textblock_style_generic_set(eo_obj, ts, &tmp);
-     }
-   else if (ts && style)
-     {
-        evas_textblock_style_set(ts, style);
-     }
-
-   o->format_changed = EINA_TRUE;
-   _evas_textblock_invalidate_all(o);
-   _evas_textblock_changed(o, eo_obj);
-   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   _textblock_style_generic_set(eo_obj, ts, key);
 }
 
 EAPI Evas_Textblock_Style *
@@ -7329,24 +7362,7 @@ evas_object_textblock_style_user_push(Eo *eo_obj, Evas_Textblock_Style *ts)
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Evas_Textblock_Style *old_ts, *tmp = NULL;
 
-   old_ts = _style_by_key_find(o, _STYLE_USER);
-
-   if (old_ts == ts) return;
-
-   if (old_ts)
-     _style_remove_from_obj(eo_obj, o, old_ts, EINA_FALSE);
-
-   if (ts)
-     {
-        _textblock_style_generic_set(eo_obj, ts, &tmp);
-        ts->key = eina_stringshare_add(_STYLE_USER);
-        o->styles = eina_list_append(o->styles, ts);
-     }
-
-   o->format_changed = EINA_TRUE;
-   _evas_textblock_invalidate_all(o);
-   _evas_textblock_changed(o, eo_obj);
-   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   _textblock_style_generic_set(eo_obj, ts, _STYLE_USER);
 }
 
 EAPI const Evas_Textblock_Style*
@@ -7370,15 +7386,7 @@ evas_object_textblock_style_user_pop(Eo *eo_obj)
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Evas_Textblock_Style *ts = _style_by_key_find(o, _STYLE_USER);
 
-   if (ts)
-     {
-        _style_remove_from_obj(eo_obj, o, ts, EINA_FALSE);
-
-        o->format_changed = EINA_TRUE;
-        _evas_textblock_invalidate_all(o);
-        _evas_textblock_changed(o, eo_obj);
-        efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
-     }
+   _textblock_style_generic_set(eo_obj, NULL, _STYLE_USER);
 }
 
 EAPI void
@@ -13547,9 +13555,21 @@ evas_object_textblock_free(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Text_Filter_Program *prg;
    Evas_Filter_Data_Binding *db;
+   User_Style_Entry *use;
 
    _evas_object_textblock_clear(eo_obj);
    evas_object_textblock_style_set(eo_obj, NULL);
+
+   EINA_LIST_FREE(o->styles, use)
+     {
+        Evas_Textblock_Style *ts = use->st;
+        ts->objects = eina_list_remove(ts->objects, eo_obj);
+        if (!ts->objects && (ts->delete_me || o->auto_styles))
+          {
+             evas_textblock_style_free(ts);
+          }
+        free(use);
+     }
 
    EINA_INLIST_FREE(o->gfx_filter.programs, prg)
      {
