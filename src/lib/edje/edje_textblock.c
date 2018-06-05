@@ -35,14 +35,30 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
                                                        int *maxw, int *maxh)
 {
    Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
+   unsigned char minx2 = 0, miny2 = 0, maxx2 = 0, maxy2 = 0;
+
+   minx2 = chosen_desc->text.min_x;
+   miny2 = chosen_desc->text.min_y;
+   maxx2 = chosen_desc->text.max_x;
+   maxy2 = chosen_desc->text.max_y;
+
+   // Do not use size from new api if min/max are non-zero in the theme
+   if (!chosen_desc->text.min_x && !chosen_desc->text.min_y &&
+         !chosen_desc->text.max_x && !chosen_desc->text.max_y)
+     {
+        minx2 = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MIN_X;
+        miny2 = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MIN_Y;
+        maxx2 = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MAX_X;
+        maxy2 = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MAX_Y;
+     }
 
    /* Legacy code for Textblock min/max calculation */
-   if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+   if (minx2 || miny2)
      {
         int mw = 0, mh = 0;
 
         tw = th = 0;
-        if (!chosen_desc->text.min_x)
+        if (!minx2)
           {
              efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(TO_INT(params->eval.w),  TO_INT(params->eval.h)));
              efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
@@ -53,22 +69,22 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
                                                &ins_r, &ins_t, &ins_b);
         mw = ins_l + tw + ins_r;
         mh = ins_t + th + ins_b;
-        if (minw && chosen_desc->text.min_x)
+        if (minw && minx2)
           {
              if (mw > *minw) *minw = mw;
           }
-        if (minh && chosen_desc->text.min_y)
+        if (minh && miny2)
           {
              if (mh > *minh) *minh = mh;
           }
      }
 
-   if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+   if ((maxx2) || (maxy2))
      {
         int mw = 0, mh = 0;
 
         tw = th = 0;
-        if (!chosen_desc->text.max_x)
+        if (!maxx2)
           {
              efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(TO_INT(params->eval.w),  TO_INT(params->eval.h)));
              efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
@@ -79,12 +95,12 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
                                                &ins_t, &ins_b);
         mw = ins_l + tw + ins_r;
         mh = ins_t + th + ins_b;
-        if (maxw && chosen_desc->text.max_x)
+        if (maxw && maxx2)
           {
              if (mw > *maxw) *maxw = mw;
              if (minw && (*maxw < *minw)) *maxw = *minw;
           }
-        if (maxh && chosen_desc->text.max_y)
+        if (maxh && maxy2)
           {
              if (mh > *maxh) *maxh = mh;
              if (minh && (*maxh < *minh)) *maxh = *minh;
@@ -102,18 +118,35 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
    Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
    Evas_Coord min_calc_w = 0, min_calc_h = 0;
 
+   unsigned char dminx, dminy, dmaxx, dmaxy;
+
+   dminx = chosen_desc->text.min_x;
+   dminy = chosen_desc->text.min_y;
+   dmaxx = chosen_desc->text.max_x;
+   dmaxy = chosen_desc->text.max_y;
+
+   // Do not use size from new api if min/max are non-zero in the theme
+   if (!chosen_desc->text.min_x && !chosen_desc->text.min_y &&
+         !chosen_desc->text.max_x && !chosen_desc->text.max_y)
+     {
+        dminx = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MIN_X;
+        dminy = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MIN_Y;
+        dmaxx = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MAX_X;
+        dmaxy = ep->typedata.text->expand & EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_MAX_Y;
+     }
+
    /* min_calc_* values need to save calculated minumum size
     * for maximum size calculation */
    if (minw) min_calc_w = *minw;
    if (minh) min_calc_h = *minh;
 
-   if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+   if (dminx || dminy)
      {
         evas_object_textblock_style_insets_get(ep->object, &ins_l,
                                                &ins_r, &ins_t, &ins_b);
 
         tw = th = 0;
-        if (!chosen_desc->text.min_x)
+        if (!dminx)
           {
              /* text.min: 0 1
               * text.max: X X */
@@ -122,11 +155,11 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
 
              if (min_calc_w > temp_w)
                temp_w = min_calc_w;
-             if ((!chosen_desc->text.max_x) &&
+             if ((!dmaxx) &&
                  maxw && (*maxw > -1) && (*maxw < temp_w))
                temp_w = *maxw;
 
-             if (chosen_desc->text.max_y)
+             if (dmaxy)
                {
                   /* text.min: 0 1
                    * text.max: X 1 */
@@ -161,7 +194,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
           {
              /* text.min: 1 X
               * text.max: X X */
-             if (chosen_desc->text.min_y && (!chosen_desc->text.max_x) &&
+             if (dminy && (!dmaxx) &&
                  maxw && (*maxw > -1))
                {
                   /* text.min: 1 1
@@ -174,7 +207,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                   if (min_calc_w > temp_w)
                     temp_w = min_calc_w;
 
-                  if ((!chosen_desc->text.max_y) && maxh && (*maxh > -1))
+                  if ((!dmaxy) && maxh && (*maxh > -1))
                     {
                        /* text.min: 1 1
                         * text.max: 0 0
@@ -210,7 +243,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                   tw += ins_l + ins_r;
                   th += ins_t + ins_b;
 
-                  if (!chosen_desc->text.max_x &&
+                  if (!dmaxx &&
                       (maxw && (*maxw > -1) && (*maxw < tw)))
                     {
                        /* text.min: 1 0
@@ -222,23 +255,23 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
 
         if (tw > min_calc_w) min_calc_w = tw;
         if (th > min_calc_h) min_calc_h = th;
-        if (chosen_desc->text.min_x && minw) *minw = min_calc_w;
-        if (chosen_desc->text.min_y && minh) *minh = min_calc_h;
+        if (dminx && minw) *minw = min_calc_w;
+        if (dminy && minh) *minh = min_calc_h;
      }
 
-   if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+   if ((dmaxx) || (dmaxy))
      {
         evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
                                                &ins_t, &ins_b);
 
         tw = th = 0;
-        if (!chosen_desc->text.max_x)
+        if (!dmaxx)
           {
              /* text.min: X X
               * text.max: 0 1 */
              int temp_w, temp_h;
 
-             if (chosen_desc->text.min_y)
+             if (dminy)
                {
                   /* text.min: X 1
                    * text.max: 0 1
@@ -284,7 +317,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
         else
           {
              /* text.max: 1 X */
-             if (chosen_desc->text.min_x)
+             if (dminx)
                {
                   /* text.min: 1 X
                    * text.max: 1 X
@@ -298,7 +331,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                {
                   /* text.min: 0 X
                    * text.max: 1 X */
-                  if (chosen_desc->text.max_y)
+                  if (dmaxy)
                     {
                        /* text.min: 0 X
                         * text.max: 1 1 */
@@ -312,7 +345,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                        if (min_calc_h > temp_h)
                          temp_h = min_calc_h;
 
-                       if (chosen_desc->text.min_y)
+                       if (dminy)
                          {
                             /* text.min: 0 1
                              * text.max: 1 1
@@ -370,12 +403,12 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                }
           }
 
-        if (maxw && chosen_desc->text.max_x)
+        if (maxw && dmaxx)
           {
              if (tw > *maxw) *maxw = tw;
              if (minw && (*maxw < *minw)) *maxw = *minw;
           }
-        if (maxh && chosen_desc->text.max_y)
+        if (maxh && dmaxy)
           {
              if (th > *maxh) *maxh = th;
              if (minh && (*maxh < *minh)) *maxh = *minh;

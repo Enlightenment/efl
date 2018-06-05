@@ -15561,11 +15561,26 @@ _efl_canvas_text_efl_text_style_backing_color_get(const Eo *obj EINA_UNUSED, Efl
    _FMT_COLOR_RET(backing);
 }
 
+static struct
+{
+   Eina_Bool underline_single : 1;
+   Eina_Bool underline_double : 1;
+   Eina_Bool underline_dashed : 1;
+} _style_underline_map[] = {
+     { 0, 0, 0 },
+     { 1, 0, 0 },
+     { 1, 1, 0 },
+     { 0, 0, 1 }
+};
+
 static void
 _efl_canvas_text_efl_text_style_underline_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
-   _FMT_SET(underline, type);
+   _FMT_SET(underline, _style_underline_map[type].underline_single);
+   _FMT_SET(underline2, _style_underline_map[type].underline_double);
+   _FMT_SET(underline_dash, _style_underline_map[type].underline_dashed);
+
 }
 
 static Efl_Text_Style_Underline_Type
@@ -15637,19 +15652,6 @@ static int
 _efl_canvas_text_efl_text_style_underline_dashed_gap_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
    return _FMT(underline_dash_width);
-}
-
-static void
-_efl_canvas_text_efl_text_style_underline2_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
-{
-   ASYNC_BLOCK;
-   _FMT_SET(underline2, type);
-}
-
-static Efl_Text_Style_Underline_Type
-_efl_canvas_text_efl_text_style_underline2_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
-{
-   return _FMT(underline2);
 }
 
 static void

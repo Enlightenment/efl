@@ -181,7 +181,8 @@ efl_thread_6.c \
 efl_ui_list_example_1.c \
 efl_ui_view_list_example_1.c \
 efl_ui_view_list_example_2.c \
-efl_ui_view_list_example_3.c
+efl_ui_view_list_example_3.c \
+efl_canvas_layout_text.c
 
 SRCS += \
 bg_cxx_example_01.cc \
@@ -398,7 +399,8 @@ efl_thread_6 \
 efl_ui_list_example_1 \
 efl_ui_view_list_example_1 \
 efl_ui_view_list_example_2 \
-efl_ui_view_list_example_3
+efl_ui_view_list_example_3 \
+efl_canvas_layout_text
 #benchmark3d
 #sphere-hunter
 

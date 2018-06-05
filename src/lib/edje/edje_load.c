@@ -1644,6 +1644,25 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                               }
                             eina_stringshare_del(eud->u.string.text);
                             break;
+
+                          case EDJE_USER_TEXT_STYLE:
+                              {
+                                 Edje_Part_Text_Prop *prop;
+                                 EINA_LIST_FREE(eud->u.text_style.props, prop)
+                                   {
+                                      _canvas_layout_user_text_apply(eud, obj,
+                                            prop);
+                                      free(prop);
+                                   }
+                              }
+                            break;
+                          case EDJE_USER_TEXT_EXPAND:
+                              {
+                                 efl_canvas_layout_part_text_expand_set(
+                                       efl_part(obj, eud->part),
+                                       eud->u.text_expand.expand);
+                              }
+                            break;
                          }
                        if (eud) _edje_user_definition_remove(eud, child);
                     }
@@ -1839,10 +1858,15 @@ _edje_object_collect(Edje *ed)
              edje_object_part_unswallow(NULL, eud->u.swallow.child);
              break;
 
+           case EDJE_USER_TEXT_STYLE:
+             _canvas_layout_user_text_collect(ed, eud);
+             break;
+
            case EDJE_USER_DRAG_STEP:
            case EDJE_USER_DRAG_PAGE:
            case EDJE_USER_DRAG_VALUE:
            case EDJE_USER_DRAG_SIZE:
+           case EDJE_USER_TEXT_EXPAND:
              break;
           }
      }

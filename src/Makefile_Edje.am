@@ -300,6 +300,7 @@ tests/edje/data/test_messages.edc \
 tests/edje/data/test_signals.edc \
 tests/edje/data/test_signal_callback_del_full.edc \
 tests/edje/data/test_text_cursor.edc \
+tests/edje/data/test_text.edc \
 tests/edje/data/filter.lua
 
 
@@ -318,6 +319,7 @@ TESTS += tests/edje/edje_suite
 tests_edje_edje_suite_SOURCES = \
 tests/edje/edje_suite.c \
 tests/edje/edje_test_edje.c \
+tests/edje/edje_test_text.c \
 tests/edje/edje_suite.h
 
 tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
@@ -344,6 +346,7 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_signals.edj \
                      tests/edje/data/test_signal_callback_del_full.edj \
                      tests/edje/data/test_text_cursor.edj \
+                     tests/edje/data/test_text.edj \
                      $(NULL)
 
 CLEANFILES += $(EDJE_TEST_FILES)
