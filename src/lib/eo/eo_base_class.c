@@ -62,6 +62,7 @@ struct _Efl_Object_Data
    unsigned short             event_cb_efl_event_callback_add_count;
    unsigned short             event_cb_efl_event_callback_del_count;
    unsigned short             event_cb_efl_event_del_count;
+   unsigned short             event_cb_efl_event_noref_count;
 #endif
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
@@ -1162,6 +1163,8 @@ _special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_del_count);
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_del_count);
+   else if (it->desc == EFL_EVENT_NOREF)
+     CB_COUNT_INC(pd->event_cb_efl_event_noref_count);
    else if (it->desc == EFL_EVENT_DESTRUCT)
      pd->has_destroyed_event_cb = EINA_TRUE;
 }
@@ -1175,6 +1178,8 @@ _special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_del_count);
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
+   else if (it->desc == EFL_EVENT_NOREF)
+     CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
 }
 #endif
 
@@ -1227,6 +1232,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    pd->event_cb_efl_event_callback_add_count = 0;
    pd->event_cb_efl_event_callback_del_count = 0;
    pd->event_cb_efl_event_del_count = 0;
+   pd->event_cb_efl_event_noref_count = 0;
 #endif
 }
 
@@ -1612,6 +1618,8 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_callback_del_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_DEL) &&
             (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
+   else if ((desc == EFL_EVENT_NOREF) &&
+            (pd->event_cb_efl_event_noref_count == 0)) return EINA_FALSE;
 #endif
 
    if (pd->event_frame)
