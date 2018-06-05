@@ -310,7 +310,6 @@ struct _Evas_Object_Style_Tag_Base
    char *tag;  /**< Format Identifier: b=Bold, i=Italic etc. */
    char *replace;  /**< Replacement string. "font_weight=Bold", "font_style=Italic" etc. */
    size_t tag_len;  /**< Strlen of tag. */
-   size_t replace_len;  /**< Strlen of replace. */
 };
 
 struct _Evas_Object_Style_Tag
@@ -351,8 +350,8 @@ struct _Evas_Textblock_Node_Format
 
 /* The default tags to use */
 static const Evas_Object_Style_Tag_Base default_tags[] = {
-          { "b", "+ font_weight=Bold", 1, 18 },
-          { "i", "+ font_style=Italic", 1, 19 }};
+          { "b", "+ font_weight=Bold", 1 },
+          { "i", "+ font_style=Italic", 1 }};
 
 #define ANCHOR_NONE 0
 #define ANCHOR_A 1
@@ -910,7 +909,7 @@ _style_clear(Evas_Textblock_Style *ts)
  * @return The replacement string found.
  */
 static inline const char *
-_style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len, size_t *replace_len)
+_style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len)
 {
    Evas_Object_Style_Tag *tag;
 
@@ -922,7 +921,6 @@ _style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len, 
              if (tag->tag.tag_len != tag_len) continue;
              if (!strncmp(tag->tag.tag, s, tag_len))
                {
-                  *replace_len = tag->tag.replace_len;
                   return tag->tag.replace;
                }
           }
@@ -939,13 +937,11 @@ _style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len, 
            if (btag->tag_len != tag_len) continue;
            if (!strncmp(btag->tag, s, tag_len))
              {
-                *replace_len = btag->replace_len;
                 return btag->replace;
              }
         }
    }
 
-   *replace_len = 0;
    return NULL;
 }
 
@@ -7053,8 +7049,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                   Evas_Object_Style_Tag *tag;
                   const char *val_stop = NULL;
                   size_t tag_len;
-                  size_t replace_len;
-
                     {
                        Eina_Strbuf *buf = eina_strbuf_new();
                        val_stop = val_start;
@@ -7090,7 +7084,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                     }
 
                   tag_len = key_stop - key_start;
-                  replace_len = val_stop - val_start;
 
                   tags = malloc(tag_len + 1);
                   if (tags)
@@ -7114,7 +7107,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                                  tag->tag.tag = tags;
                                  tag->tag.replace = replaces;
                                  tag->tag.tag_len = tag_len;
-                                 tag->tag.replace_len = replace_len;
                                  ts->tags = (Evas_Object_Style_Tag *)eina_inlist_append(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
                               }
                             else
@@ -7157,18 +7149,16 @@ _textblock_format_node_from_style_tag(Efl_Canvas_Text_Data *o, Evas_Object_Textb
    Eina_List *itr;
    Evas_Textblock_Style *style;
    const char *match = NULL;
-   size_t replace_len;
    EINA_LIST_REVERSE_FOREACH(o->styles, itr, style)
      {
-        match = _style_match_tag(style, format, format_len, &replace_len);
+        match = _style_match_tag(style, format, format_len);
         if (match)
            break;
      }
 
    if (!match)
      {
-        match = _style_match_tag(o->style, format, format_len,
-              &replace_len);
+        match = _style_match_tag(o->style, format, format_len);
      }
 
    if (match)
@@ -8110,7 +8100,6 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                   if (ttag)
                     {
                        const char *match = NULL;
-                       size_t replace_len;
                        memcpy(ttag, tag_start, ttag_len);
                        ttag[ttag_len] = 0;
 
@@ -8119,7 +8108,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                          {
                             match = _style_match_tag(
                                   evas_object_textblock_style_get(eo_obj),
-                                  ttag, ttag_len, &replace_len);
+                                  ttag, ttag_len);
                          }
 
                        if (!match) match = ttag;
