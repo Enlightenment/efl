@@ -5747,7 +5747,8 @@ EAPI void
 elm_widget_signal_emit(Eo *obj, const char *emission, const char *source)
 {
    ELM_WIDGET_CHECK(obj);
-   if (evas_object_smart_type_check(obj, "elm_layout"))
+
+   if (efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))
      elm_layout_signal_emit(obj, emission, source);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
