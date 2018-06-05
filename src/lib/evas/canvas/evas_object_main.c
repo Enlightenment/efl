@@ -838,6 +838,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
    if (!obj) return;
    if (!obj->layer) return;
 
+   if (obj->is_smart) goto end;
    /* FIXME: was_v isn't used... why? */
    if (!obj->clip.clipees)
      {

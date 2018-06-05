@@ -1710,19 +1710,11 @@ evas_object_smart_render_pre(Evas_Object *eo_obj,
 			     Evas_Object_Protected_Data *obj,
 			     void *type_private_data EINA_UNUSED)
 {
-   int is_v, was_v;
-
    if (obj->pre_render_done) return;
 
    if (obj->changed_map || obj->changed_src_visible)
-     {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
-                                            eo_obj, obj);
-        is_v = evas_object_is_visible(eo_obj, obj);
-        was_v = evas_object_was_visible(eo_obj,obj);
-        evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes,
-                                              eo_obj, is_v, was_v);
-     }
+     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                         eo_obj, obj);
 
    obj->pre_render_done = EINA_TRUE;
 }
