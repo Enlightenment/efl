@@ -107,19 +107,23 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
 static void
 _dmabuf_lock(Ecore_Wl2_Buffer *b)
 {
+   int ret;
    struct dma_buf_sync s;
 
-   s.flags = DMA_BUF_SYNC_START;
-   ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+   s.flags = DMA_BUF_SYNC_START | DMA_BUF_SYNC_RW;
+   ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+   if (ret) WRN("Failed to lock dmabuf");
 }
 
 static void
 _dmabuf_unlock(Ecore_Wl2_Buffer *b)
 {
+   int ret;
    struct dma_buf_sync s;
 
-   s.flags = DMA_BUF_SYNC_START;
-   ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+   s.flags = DMA_BUF_SYNC_END | DMA_BUF_SYNC_RW;
+   ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+   if (ret) WRN("Failed to unlock dmabuf");
 }
 
 static Buffer_Handle *
