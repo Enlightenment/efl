@@ -1083,18 +1083,14 @@ eng_image_native_set(void *engine, void *image, void *native)
          }
      }
 
-   if ((!ns) && (!img->native.data)) return img;
-
    eng_window_use(ob);
 
-   if (img->native.data)
+   if (!ns)
      {
-        if (img->native.func.free)
-          img->native.func.free(img);
-        glsym_evas_gl_common_image_native_disable(img);
+        glsym_evas_gl_common_image_free(img);
+        return NULL;
      }
 
-   if (!ns) return img;
 
    if (ns->type == EVAS_NATIVE_SURFACE_WL)
      {

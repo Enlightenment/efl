@@ -484,18 +484,13 @@ eng_image_native_set(void *engine, void *image, void *native)
             }
         }
     }
-  if ((!ns) && (!im->native.data)) return im;
-
   gl_generic_window_find(engine);
 
-  if (im->native.data)
-    {
-      if (im->native.func.free)
-        im->native.func.free(im);
-      evas_gl_common_image_native_disable(im);
-    }
-
-  if (!ns) return im;
+   if (!ns)
+     {
+        evas_gl_common_image_free(im);
+        return NULL;
+     }
 
   if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
     {
