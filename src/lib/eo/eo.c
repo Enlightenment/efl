@@ -1912,7 +1912,7 @@ efl_unref(const Eo *obj_id)
 #ifdef EO_DEBUG
    _eo_log_obj_ref_op(obj, EO_REF_OP_UNREF);
 #endif
-   if (EINA_UNLIKELY((obj->user_refcount <= 0 && !obj->unref_compensate)))
+   if (EINA_UNLIKELY((obj->user_refcount <= 0)))
      {
         if (obj->user_refcount < 0)
           {
