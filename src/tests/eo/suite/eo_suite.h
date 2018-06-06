@@ -11,5 +11,5 @@ void eo_test_call_errors(TCase *tc);
 void eo_test_value(TCase *tc);
 void eo_test_threaded_calls(TCase *tc);
 void eo_test_event(TCase *tc);
-
+void eo_test_lifecycle(TCase *tc);
 #endif /* _EO_SUITE_H */
