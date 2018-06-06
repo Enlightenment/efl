@@ -18,6 +18,7 @@ struct ctx {
 
 #ifdef EINA_SAFETY_CHECKS
 struct log_ctx {
+   const char *dom;
    const char *msg;
    const char *fnc;
    int level;
@@ -35,24 +36,32 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
    va_list cp_args;
    const char *str;
 
-   va_copy(cp_args, args);
-   str = va_arg(cp_args, const char *);
-   va_end(cp_args);
-
-   ck_assert_int_eq(level, ctx->level);
-   if (ctx->just_fmt)
-     ck_assert_str_eq(fmt, ctx->msg);
-   else
+   // Avoid checking non-coro messages for errors.
+   if (d && !strcmp(d->name, ctx->dom))
      {
-        ck_assert_str_eq(fmt, "%s");
-        ck_assert_str_eq(ctx->msg, str);
-     }
-   ck_assert_str_eq(ctx->fnc, fnc);
-   ctx->did = EINA_TRUE;
+        va_copy(cp_args, args);
+        str = va_arg(cp_args, const char *);
+        va_end(cp_args);
+
+        if (ctx->just_fmt)
+          ck_assert_str_eq(fmt, ctx->msg);
+        else
+          {
+             ck_assert_str_eq(fmt, "%s");
+             ck_assert_str_eq(ctx->msg, str);
+          }
+        ck_assert_int_eq(level, ctx->level);
+        ck_assert_str_eq(ctx->fnc, fnc);
+        ctx->did = EINA_TRUE;
 
 #ifdef SHOW_LOG
-   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+        eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
 #else
+     }
+   else
+     {
+        eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+     }
    (void)d;
    (void)file;
    (void)line;
@@ -64,6 +73,7 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
 static const void *
 coro_func_noyield(void *data, Eina_Bool canceled, Eina_Coro *coro EINA_UNUSED)
 {
+    EINA_LOG_DBG("entered");
    struct ctx *ctx = data;
 
    ck_assert_ptr_ne(ctx, NULL);
@@ -73,11 +83,13 @@ coro_func_noyield(void *data, Eina_Bool canceled, Eina_Coro *coro EINA_UNUSED)
 
    ctx->b = VAL_B;
 
+   EINA_LOG_DBG("returning normally");
    return RETVAL;
 }
 
 START_TEST(coro_noyield)
 {
+   EINA_LOG_DBG("coro_noyield started");
    Eina_Coro *coro;
    struct ctx ctx = {
      .a = VAL_A,
@@ -88,9 +100,11 @@ START_TEST(coro_noyield)
 
    eina_init();
 
+   EINA_LOG_DBG("Creating coro");
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
    ck_assert_ptr_ne(coro, NULL);
 
+   EINA_LOG_DBG("Looping");
    while (eina_coro_run(&coro, &result, NULL))
      {
         i++;
@@ -102,6 +116,7 @@ START_TEST(coro_noyield)
    ck_assert_ptr_eq(result, RETVAL);
 
    eina_shutdown();
+   EINA_LOG_DBG("coro_noyield finished");
 }
 END_TEST
 
@@ -300,7 +315,8 @@ START_TEST(coro_new_null)
 #endif
    struct log_ctx lctx;
 
-#define TEST_MAGIC_SAFETY(fn, _msg)              \
+#define TEST_MAGIC_SAFETY(_dom, fn, _msg)              \
+   lctx.dom = _dom;                              \
    lctx.msg = _msg;                              \
    lctx.fnc = fn;                                \
    lctx.just_fmt = EINA_FALSE;                   \
@@ -309,7 +325,7 @@ START_TEST(coro_new_null)
 
    eina_log_print_cb_set(_eina_test_safety_print_cb, &lctx);
 
-   TEST_MAGIC_SAFETY("eina_coro_new", "safety check failed: func == NULL");
+   TEST_MAGIC_SAFETY("eina_safety", "eina_coro_new", "safety check failed: func == NULL");
 
    coro = eina_coro_new(NULL, NULL, EINA_CORO_STACK_SIZE_DEFAULT);
    ck_assert_ptr_eq(coro, NULL);
@@ -340,7 +356,8 @@ START_TEST(coro_yield_incorrect)
 #endif
    struct log_ctx lctx;
 
-#define TEST_MAGIC_SAFETY(fn, _msg)             \
+#define TEST_MAGIC_SAFETY(_dom, fn, _msg)        \
+   lctx.dom = _dom;                              \
    lctx.msg = _msg;                              \
    lctx.fnc = fn;                                \
    lctx.just_fmt = EINA_TRUE;                    \
@@ -352,7 +369,7 @@ START_TEST(coro_yield_incorrect)
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
    ck_assert_ptr_ne(coro, NULL);
 
-   TEST_MAGIC_SAFETY("eina_coro_yield", "must be called from coroutine! coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
+   TEST_MAGIC_SAFETY("eina_coro", "eina_coro_yield", "must be called from coroutine! coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
    fail_if(eina_coro_yield(coro));
    fail_unless(lctx.did);
 
@@ -381,7 +398,8 @@ coro_func_run_incorrect(void *data, Eina_Bool canceled, Eina_Coro *coro)
 #endif
    struct log_ctx lctx;
 
-#define TEST_MAGIC_SAFETY(fn, _msg)             \
+#define TEST_MAGIC_SAFETY(_dom, fn, _msg)        \
+   lctx.dom = _dom;                              \
    lctx.msg = _msg;                              \
    lctx.fnc = fn;                                \
    lctx.just_fmt = EINA_TRUE;                    \
@@ -390,7 +408,7 @@ coro_func_run_incorrect(void *data, Eina_Bool canceled, Eina_Coro *coro)
 
    eina_log_print_cb_set(_eina_test_safety_print_cb, &lctx);
 
-   TEST_MAGIC_SAFETY("eina_coro_run", "must be called from main thread! coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
+   TEST_MAGIC_SAFETY("eina_coro", "eina_coro_run", "must be called from main thread! coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
    fail_if(eina_coro_run(&coro, NULL, NULL));
    fail_unless(lctx.did);
 
@@ -462,7 +480,8 @@ START_TEST(coro_hook_failed)
 #endif
    struct log_ctx lctx;
 
-#define TEST_MAGIC_SAFETY(fn, _msg)             \
+#define TEST_MAGIC_SAFETY(_dom, fn, _msg)        \
+   lctx.dom = _dom;                              \
    lctx.msg = _msg;                              \
    lctx.fnc = fn;                                \
    lctx.just_fmt = EINA_TRUE;                    \
@@ -480,7 +499,7 @@ START_TEST(coro_hook_failed)
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
    ck_assert_ptr_ne(coro, NULL);
 
-   TEST_MAGIC_SAFETY("_eina_coro_hooks_coro_enter", "failed hook enter=%p data=%p for coroutine coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
+   TEST_MAGIC_SAFETY("eina_coro", "_eina_coro_hooks_coro_enter", "failed hook enter=%p data=%p for coroutine coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
 
    while (eina_coro_run(&coro, &result, NULL))
      {
@@ -514,7 +533,7 @@ START_TEST(coro_hook_failed)
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
    ck_assert_ptr_ne(coro, NULL);
 
-   TEST_MAGIC_SAFETY("_eina_coro_hooks_main_exit", "failed hook exit=%p data=%p for main routine coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
+   TEST_MAGIC_SAFETY("eina_coro", "_eina_coro_hooks_main_exit", "failed hook exit=%p data=%p for main routine coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
 
    while (eina_coro_run(&coro, &result, NULL))
      {

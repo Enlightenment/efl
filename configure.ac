@@ -2056,48 +2056,28 @@ EFL_ADD_LIBS([ECORE], [${LTLIBINTL}])
 
 # coroutine function specific
 
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <ucontext.h>
-       ]],
-       [[
-ucontext_t test;
-getcontext(&test);
-       ]])],
-   [have_ucontext="yes"],
-   [have_ucontext="no"])
+AC_ARG_WITH([coro],
+   [AS_HELP_STRING([--with-coro=@<:@threads/fcontext@:>@],[select coroutine implementation. @<:default=fcontext:>@])],
+   [want_coro="${withval}"],
+   [want_coro="fcontext"])
 
-AC_MSG_CHECKING([for ucontext])
-AC_MSG_RESULT([${have_ucontext}])
+AC_SUBST([want_coro])
 
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <setjmp.h>
-       ]],
-       [[
-jmp_buf context;
-setjmp(&context);
-       ]])],
-   [have_setjmp="yes"],
-   [have_setjmp="no"])
-
-AC_MSG_CHECKING([for setjmp])
-AC_MSG_RESULT([${have_setjmp}])
-
-if test "X${have_windows}" = "xyes"; then
-   AC_DEFINE(USE_FIBER, 1, [Define to 1 if you have Windows Fiber support.])
-   EFL_ADD_FEATURE([system], [coroutine], [fiber])
-elif test "x${have_ucontext}" = "xyes"; then
-   AC_DEFINE(USE_UCONTEXT, 1, [Define to 1 if you have posix ucontext functions.])
-   EFL_ADD_FEATURE([system], [coroutine], [ucontext])
-elif test "x${have_setjmp}" = "xyes"; then
-   AC_DEFINE(USE_SETJMP, 1, [Define to 1 if you have setjmp/longjmp functions.])
-   EFL_ADD_FEATURE([system], [coroutine], [setjmp])
-else
-   AC_MSG_ERROR([You do not have a working way to implement coroutine. Exiting...])
-fi
+case "$want_coro" in
+     fcontext)
+        if test "x${have_windows}" == "xyes"; then
+          AC_MSG_ERROR([fcontext coroutines are available only in POSIX systems.])
+        fi
+        AC_DEFINE(USE_CORO_FCONTEXT, 1, [Define to 1 if you have posix fcontext functions.])
+        EFL_ADD_FEATURE([system], [coroutine], [fcontext])
+     ;;
+     threads)
+       AC_DEFINE(USE_CORO_THREAD, 1, [Define to 1 if you have thread functions.])
+       EFL_ADD_FEATURE([system], [coroutine], [thread])
+     ;;
+     *) AC_MSG_ERROR([Invalid coroutine implementation (${want_coro}): must be threads, fcontext (ASM).])
+     ;;
+esac
 
 ### Check availability
 
@@ -5935,6 +5915,7 @@ echo "  C#............: ${want_csharp}"
 echo "  JavaScript....: ${want_js}"
 echo "  JavaScript flg: $EINA_JS_LIBS"
 echo "Eina............: yes (${features_eina} unwind=$have_unwind)"
+echo "  Coroutines....: ${want_coro}"
 echo "Eo..............: yes (${features_eo})"
 echo "Eolian..........: yes (${features_eolian})"
 echo "Emile...........: yes (${features_emile})"

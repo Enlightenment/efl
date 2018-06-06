@@ -22,13 +22,18 @@
 
 #include <stdlib.h>
 #include <limits.h>
+#include <signal.h>
+#include <sys/mman.h>
+#include <sys/resource.h>
 
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"
 #include "eina_mempool.h"
 #include "eina_lock.h"
+#if USE_CORO_THREAD
 #include "eina_thread.h"
+#endif
 #include "eina_inarray.h"
 #include "eina_promise.h"
 
@@ -38,6 +43,57 @@
 #include "eina_coro.h"
 #include "eina_value.h"
 #include "eina_value_util.h"
+
+#if HAVE_VALGRIND
+#include <valgrind/valgrind.h>
+#endif
+
+typedef void* fcontext_t;
+
+/**
+ * Structure used to transfer data between contexts.
+ */
+typedef struct {
+    /* The continuation that called this continuation. Usually you jump_context to this continuation
+       in order to make the current continuation 'return' control to it.
+     */
+    fcontext_t ctx;
+    /* Data received from the caller of jump_fcontext. */
+    void *data;
+} transfer_t;
+
+/**
+ * @brief Saves the current context and jumps into another.
+ *
+ * Saves the current continuation and changes into the continuation
+ * pointed by to, passing vp as the data. The current continuation
+ * is passed to the callback associated with to through a transfer_t
+ * instance, either as argument if the new context is starting or
+ * return from a previous jump_fcontext call. This call @b will block
+ * @b until this newly-created continuation is jumped into.
+ *
+ * @param to The continuation to jump into. Must not be #NULL.
+ * @param vp User data to pass to the transfer_t structure.
+ *
+ * @return A context transfer struct with the continuation that called
+ *         jump_fcontext returning to this call.
+ */
+transfer_t ostd_jump_fcontext(
+    fcontext_t const to, void *vp
+);
+
+/**
+ * @brief Initializes a context with the given stack and context function.
+ *
+ *
+ *
+ * @param sp Pointer to the @b base @b of the stack.
+ * @param size The size of the stack for the new continuation.
+// @param fn Callback that will be the starting point of the new continuation.
+ */
+fcontext_t ostd_make_fcontext(
+    void *sp, size_t size, void (*fn)(transfer_t)
+);
 
 static Eina_Mempool *_eina_coro_mp = NULL;
 static Eina_Lock _eina_coro_lock;
@@ -78,9 +134,20 @@ struct _Eina_Coro {
    const void *data;
    Eina_Future *awaiting;
    Eina_Lock lock;
+#if USE_CORO_THREAD
    Eina_Condition condition;
    Eina_Thread main;
    Eina_Thread coroutine;
+#elif USE_CORO_FCONTEXT
+   fcontext_t main;
+   fcontext_t coroutine;
+   unsigned char* stack;
+   size_t stack_size;
+   void *result;
+#if HAVE_VALGRIND
+   int valgrind_stack_id;
+#endif
+#endif
    Eina_Bool finished;
    Eina_Bool canceled;
    Eina_Coro_Turn turn;
@@ -90,6 +157,8 @@ struct _Eina_Coro {
   (((turn) == EINA_CORO_TURN_MAIN) ? "MAIN" : "COROUTINE")
 
 #define CORO_FMT "coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}"
+
+#if USE_CORO_THREAD
 #define CORO_EXP(coro) \
   coro, coro->func, coro->data, \
     CORO_TURN_STR(coro->turn), \
@@ -98,6 +167,24 @@ struct _Eina_Coro {
     (void *)coro->main, \
     eina_thread_self() == coro->main ? '*' : 0, \
     coro->awaiting
+#elif USE_CORO_FCONTEXT
+#define CORO_EXP(coro) \
+  coro, coro->func, coro->data, \
+    CORO_TURN_STR(coro->turn), \
+    &coro->coroutine, \
+    '*', \
+    &coro->main, \
+    '*', \
+    coro->awaiting
+#endif
+
+#if USE_CORO_THREAD
+#define IS_CORO(coro) ((coro)->coroutine == eina_thread_self())
+#define IS_MAIN(coro) ((coro)->main == eina_thread_self())
+#elif USE_CORO_FCONTEXT
+#define IS_CORO(coro) ((coro)->turn == EINA_CORO_TURN_COROUTINE)
+#define IS_MAIN(coro) ((coro)->turn == EINA_CORO_TURN_MAIN)
+#endif
 
 #define EINA_CORO_CHECK(coro, turn, ...)        \
   do \
@@ -107,12 +194,12 @@ struct _Eina_Coro {
             CRIT(#coro "=%p is invalid.", (coro)); \
             return __VA_ARGS__; \
          } \
-       else if ((turn == EINA_CORO_TURN_COROUTINE) && ((coro)->coroutine != eina_thread_self())) \
+       else if ((turn == EINA_CORO_TURN_COROUTINE) && !IS_CORO((coro))) \
          { \
             CRIT("must be called from coroutine! " CORO_FMT, CORO_EXP((coro))); \
             return __VA_ARGS__; \
          } \
-       else if ((turn == EINA_CORO_TURN_MAIN) && ((coro)->main != eina_thread_self())) \
+       else if ((turn == EINA_CORO_TURN_MAIN) && !IS_MAIN((coro))) \
          { \
             CRIT("must be called from main thread! " CORO_FMT, CORO_EXP((coro))); \
             return __VA_ARGS__; \
@@ -128,12 +215,12 @@ struct _Eina_Coro {
             CRIT(#coro "=%p is invalid.", (coro)); \
             goto label; \
          } \
-       else if ((turn == EINA_CORO_TURN_COROUTINE) && ((coro)->coroutine != eina_thread_self())) \
+       else if ((turn == EINA_CORO_TURN_COROUTINE) && !IS_CORO((coro))) \
          { \
             CRIT("must be called from coroutine! " CORO_FMT, CORO_EXP((coro))); \
             goto label; \
          } \
-       else if ((turn == EINA_CORO_TURN_MAIN) && ((coro)->main != eina_thread_self())) \
+       else if ((turn == EINA_CORO_TURN_MAIN) && !IS_MAIN((coro))) \
          { \
             CRIT("must be called from main thread! " CORO_FMT, CORO_EXP((coro))); \
             goto label; \
@@ -268,6 +355,7 @@ _eina_coro_hooks_coro_exit(Eina_Coro *coro)
    eina_lock_release(&_eina_coro_lock);
 }
 
+#if USE_CORO_THREAD
 static void
 _eina_coro_signal(Eina_Coro *coro, Eina_Coro_Turn turn)
 {
@@ -293,6 +381,7 @@ _eina_coro_wait(Eina_Coro *coro, Eina_Coro_Turn turn)
 
    DBG("wait is over: turn=%s " CORO_FMT, CORO_TURN_STR(turn), CORO_EXP(coro));
 }
+#endif
 
 static Eina_Bool
 _eina_coro_hooks_coro_enter_and_get_canceled(Eina_Coro *coro)
@@ -301,6 +390,7 @@ _eina_coro_hooks_coro_enter_and_get_canceled(Eina_Coro *coro)
    return coro->canceled;
 }
 
+#if USE_CORO_THREAD
 static void *
 _eina_coro_thread(void *data, Eina_Thread t EINA_UNUSED)
 {
@@ -323,6 +413,30 @@ _eina_coro_thread(void *data, Eina_Thread t EINA_UNUSED)
 
    return result;
 }
+#elif USE_CORO_FCONTEXT
+static void
+_eina_coro_coro(transfer_t continuation)
+{
+   Eina_Coro *coro = (Eina_Coro*) continuation.data;
+   Eina_Bool canceled = EINA_FALSE;
+
+   canceled = _eina_coro_hooks_coro_enter_and_get_canceled(coro);
+
+   // Saves the context that called jump_fcontext and started this call.
+   coro->main = continuation.ctx;
+   coro->turn = EINA_CORO_TURN_COROUTINE;
+
+   coro->result = (void*)coro->func((void *)coro->data, canceled, coro);
+
+   _eina_coro_hooks_coro_exit(coro);
+
+   coro->finished = EINA_TRUE;
+
+   // Jump back to main explicitly.
+   // fcontext by default exits after the context function finishes.
+   ostd_jump_fcontext(coro->main, coro);
+}
+#endif
 
 static Eina_Coro *
 _eina_coro_alloc(void)
@@ -394,18 +508,39 @@ eina_coro_new(Eina_Coro_Cb func, const void *data, size_t stack_size)
    coro->data = data;
    r = eina_lock_new(&coro->lock);
    EINA_SAFETY_ON_FALSE_GOTO(r, failed_lock);
+#if USE_CORO_THREAD
    r = eina_condition_new(&coro->condition, &coro->lock);
    EINA_SAFETY_ON_FALSE_GOTO(r, failed_condition);
    coro->main = eina_thread_self();
    coro->coroutine = 0;
-   coro->finished = EINA_FALSE;
-   coro->canceled = EINA_FALSE;
-   coro->turn = EINA_CORO_TURN_MAIN;
 
    /* eina_thread_create() doesn't take attributes so we can set stack size */
    if (stack_size)
      DBG("currently stack size is ignored! Using thread default.");
+#elif USE_CORO_FCONTEXT
+   if (stack_size == 0)
+     {
+        struct rlimit limit;
+        getrlimit(RLIMIT_STACK, &limit);
+        stack_size = (size_t)limit.rlim_cur;
+        printf("Setting stack size to %lu\n", stack_size);
+     }
+   // Setup ucontext_t pointers
+   void *stack = mmap(NULL, stack_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+   mprotect(stack, getpagesize(), PROT_NONE);
+   stack = (unsigned char *)stack + stack_size;
+#if HAVE_VALGRIND
+   coro->valgrind_stack_id = VALGRIND_STACK_REGISTER(stack - stack_size, stack);
+#endif
+   coro->stack = stack;
+   coro->stack_size = stack_size;
+   coro->coroutine = ostd_make_fcontext(stack, stack_size, _eina_coro_coro);
+#endif
+   coro->finished = EINA_FALSE;
+   coro->canceled = EINA_FALSE;
+   coro->turn = EINA_CORO_TURN_MAIN;
 
+#if USE_CORO_THREAD
    if (!eina_thread_create(&coro->coroutine,
                            EINA_THREAD_NORMAL, -1,
                            _eina_coro_thread, coro))
@@ -413,14 +548,17 @@ eina_coro_new(Eina_Coro_Cb func, const void *data, size_t stack_size)
         ERR("could not create thread for " CORO_FMT, CORO_EXP(coro));
         goto failed_thread;
      }
+#endif
 
    INF(CORO_FMT, CORO_EXP(coro));
    return coro;
 
+#if USE_CORO_THREAD
  failed_thread:
    eina_condition_free(&coro->condition);
  failed_condition:
    eina_lock_free(&coro->lock);
+#endif
  failed_lock:
    _eina_coro_free(coro);
    return NULL;
@@ -433,8 +571,17 @@ eina_coro_yield(Eina_Coro *coro)
 
    _eina_coro_hooks_coro_exit(coro);
 
+#if USE_CORO_THREAD
    _eina_coro_signal(coro, EINA_CORO_TURN_MAIN);
    _eina_coro_wait(coro, EINA_CORO_TURN_COROUTINE);
+#elif USE_CORO_FCONTEXT
+   DBG("Jumping to switch to main context");
+   transfer_t continuation = ostd_jump_fcontext(coro->main, coro);
+   DBG("Returned to coro context from jump");
+   // Save the point that called jump_fcontext to resume this coroutine.
+   coro->main = continuation.ctx;
+   coro->turn = EINA_CORO_TURN_COROUTINE;
+#endif
 
    return !_eina_coro_hooks_coro_enter_and_get_canceled(coro);
 }
@@ -454,21 +601,38 @@ eina_coro_run(Eina_Coro **p_coro, void **p_result, Eina_Future **p_awaiting)
 
    _eina_coro_hooks_main_exit(coro);
 
+#if USE_CORO_THREAD
    _eina_coro_signal(coro, EINA_CORO_TURN_COROUTINE);
    _eina_coro_wait(coro, EINA_CORO_TURN_MAIN);
+#elif USE_CORO_FCONTEXT
+   transfer_t continuation = ostd_jump_fcontext(coro->coroutine, coro);
+   // Save the point where we should resume the coroutine.
+   coro->coroutine = continuation.ctx;
+   coro->turn = EINA_CORO_TURN_MAIN;
+#endif
 
    _eina_coro_hooks_main_enter(coro);
 
    if (EINA_UNLIKELY(coro->finished)) {
       void *result;
-      DBG("coroutine finished, join thread " CORO_FMT, CORO_EXP(coro));
 
+#if USE_CORO_THREAD
       result = eina_thread_join(coro->coroutine);
+#elif USE_CORO_FCONTEXT
+      result = coro->result;
+#if HAVE_VALGRIND
+      VALGRIND_STACK_DEREGISTER(coro->valgrind_stack_id);
+#endif
+      mprotect(coro->stack - coro->stack_size, getpagesize(), PROT_READ|PROT_WRITE);
+      munmap(coro->stack - coro->stack_size, coro->stack_size);
+#endif
       INF("coroutine finished with result=%p " CORO_FMT,
           result, CORO_EXP(coro));
       if (p_result) *p_result = result;
       if (coro->awaiting) eina_future_cancel(coro->awaiting);
+#if USE_CORO_THREAD
       eina_condition_free(&coro->condition);
+#endif
       eina_lock_free(&coro->lock);
       _eina_coro_free(coro);
       *p_coro = NULL;
