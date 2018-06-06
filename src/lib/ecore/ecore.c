@@ -309,7 +309,7 @@ ecore_init(void)
        _ecore_memory_statistic_file = fopen(tmp, "wb");
 #endif
         _ecore_memory_pid = getpid();
-        ecore_animator_add(_ecore_memory_statistic, NULL);
+        ecore_poller_add(ECORE_POLLER_CORE, 1, _ecore_memory_statistic, NULL);
         _ecore_memory_statistic(NULL);
      }
 #endif
