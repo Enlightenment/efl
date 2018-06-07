@@ -347,7 +347,7 @@ _push_symbol(Eina_List **total, Code_Symbol *sym, Edje_Part_Collection *pc)
         if (!strcmp(sym2->name, sym->name))
           {
              WRN("Symbols in group \"%s\" have same name \"%s\". Latter defined "
-                 "will shadow former one.", pc->part, sym->name);
+                 "will shadow former one.", pc->name, sym->name);
              list = eina_list_remove(list, sym2);
              break;
           }

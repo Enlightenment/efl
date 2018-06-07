@@ -1589,7 +1589,7 @@ _edje_pick_collection_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_Fi
    /* Update all IDs, NAMES in current collection */
    Edje_Part_Collection_Directory_Entry *ce;
 
-   ce = eina_hash_find(o->collection, edc->part);
+   ce = eina_hash_find(o->collection, edc->name);
    edc->id = ce->id;
 
    _edje_pick_resources_process(edc, edf, o);

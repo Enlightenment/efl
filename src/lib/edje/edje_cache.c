@@ -106,7 +106,7 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
 
    if (getenv("EDJE_DUMP_PROGRAMS"))
      {
-        INF("Group '%s' programs:", edc->part);
+        INF("Group '%s' programs:", edc->name);
 #define EDJE_DUMP_PROGRAM(Section)                    \
   for (i = 0; i < edc->programs.Section##_count; i++) \
     INF(#Section " for ('%s', '%s')", edc->programs.Section[i]->signal, edc->programs.Section[i]->source);
@@ -171,7 +171,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 
    EINA_LIST_FOREACH(edf->collection_cache, l, edc)
      {
-        if (!strcmp(edc->part, coll))
+        if (!strcmp(edc->name, coll))
           {
              edc->references = 1;
              ce->ref = edc;
@@ -190,7 +190,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    if (!edc) return NULL;
 
    edc->references = 1;
-   edc->part = ce->entry;
+   edc->name = ce->entry;
 
    /* For Edje file build with Edje 1.0 */
    if (edf->version <= 3 && edf->minor <= 1)
@@ -614,7 +614,7 @@ _edje_cache_coll_clean(Edje_File *edf)
         edc = eina_list_data_get(eina_list_last(edf->collection_cache));
         edf->collection_cache = eina_list_remove_list(edf->collection_cache, eina_list_last(edf->collection_cache));
 
-        ce = eina_hash_find(edf->collection, edc->part);
+        ce = eina_hash_find(edf->collection, edc->name);
         _edje_collection_free(edf, edc, ce);
      }
 }
@@ -633,7 +633,7 @@ _edje_cache_coll_flush(Edje_File *edf)
         edf->collection_cache = eina_list_remove_list(edf->collection_cache,
                                                       last);
 
-        ce = eina_hash_find(edf->collection, edc->part);
+        ce = eina_hash_find(edf->collection, edc->name);
         _edje_collection_free(edf, edc, ce);
      }
 }
@@ -646,10 +646,10 @@ _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
    edc->references--;
    if (edc->references != 0) return;
 
-   ce = eina_hash_find(edf->collection, edc->part);
+   ce = eina_hash_find(edf->collection, edc->name);
    if (!ce)
      {
-        ERR("Something is wrong with reference count of '%s'.", edc->part);
+        ERR("Something is wrong with reference count of '%s'.", edc->name);
      }
    else if (ce->ref)
      {
