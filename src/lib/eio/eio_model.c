@@ -897,6 +897,12 @@ _eio_model_efl_model_children_slice_get(Eo *obj, Eio_Model_Data *pd,
    scheduler = efl_loop_future_scheduler_get(obj);
    if (!scheduler) return NULL;
 
+   if (count == 0)
+     {
+        count = eina_list_count(pd->files);
+        start = 0;
+     }
+
    // Children must have been listed first
    if (count == 0 || (start + count > eina_list_count(pd->files)))
      return eina_future_rejected(scheduler, EFL_MODEL_ERROR_INCORRECT_VALUE);
