@@ -1589,7 +1589,7 @@ New_Object_Handler object_handlers[] =
    {"collections.group.physics.world", NULL},
 #endif
    PROGRAM_OBJECTS("collections.group.parts.part.description")
-   PROGRAM_OBJECTS("collections.group.parts.name")
+   PROGRAM_OBJECTS("collections.group.parts.part")
    PROGRAM_OBJECTS("collections.group.parts")
    PROGRAM_OBJECTS("collections.group")
 };
