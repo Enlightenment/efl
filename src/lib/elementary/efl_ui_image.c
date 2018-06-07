@@ -1782,7 +1782,11 @@ _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
    if (!pd->property.model) return ;
 
    vfile = efl_model_property_get(pd->property.model, pd->property.file);
+   if (!vfile) return;
    vkey = efl_model_property_get(pd->property.model, pd->property.key);
+
+   if (eina_value_type_get(vfile) == EINA_VALUE_TYPE_ERROR)
+     goto err;
 
    if (pd->property.icon)
      {
@@ -1792,7 +1796,8 @@ _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
      }
    else
      {
-        key = eina_value_to_string(vkey);
+        if (vkey && eina_value_type_get(vkey) != EINA_VALUE_TYPE_ERROR)
+          key = eina_value_to_string(vkey);
         if (eina_value_type_get(vfile) == EINA_VALUE_TYPE_FILE)
           {
              eina_value_get(vfile, &f);
@@ -1807,10 +1812,11 @@ _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
           }
      }
 
-   eina_value_free(vfile);
-   eina_value_free(vkey);
    free(file);
    free(key);
+err:
+   eina_value_free(vfile);
+   eina_value_free(vkey);
 }
 
 static void

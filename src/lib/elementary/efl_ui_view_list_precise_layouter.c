@@ -239,7 +239,7 @@ _child_added_cb(void *data, const Efl_Event *event)
    Request *r;
 
    r = calloc(1, sizeof (Request));
-   if (!r) return ;
+   if (!r) return;
 
    r->index = evt->index;
    r->pd = pd;
@@ -310,13 +310,22 @@ _child_removed_cb(void *data, const Efl_Event *event)
    evas_object_smart_changed(pd->modeler);
 }
 
+static void
+_child_count_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_View_List_Precise_Layouter_Data *pd = data;
+   pd->count_total = efl_model_children_count_get(pd->model);
+   if (pd->count_total)
+     efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _child_count_changed_cb, pd);
+}
+
 static Eina_Bool
 _initilize(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Precise_Layouter_Data *pd, Efl_Ui_View_List_Model *modeler, Efl_Ui_View_List_SegArray *segarray)
 {
    if(pd->initialized)
      return EINA_TRUE;
 
-   if(!pd->model)
+   if(!pd->model || !pd->count_total)
      return EINA_FALSE;
 
    pd->recalc = EINA_TRUE;
@@ -325,11 +334,11 @@ _initilize(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Precise_Layouter_Data *pd, Efl_
    pd->modeler = modeler;
    pd->segarray = segarray;
 
-   evas_object_event_callback_add(modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
+   efl_ui_view_list_model_load_range_set(pd->modeler, 0, pd->count_total); // load all
    efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
    efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, pd);
-   efl_ui_view_list_model_load_range_set(modeler, 0, 0); // load all
 
+   evas_object_event_callback_add(modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
    pd->min.w = 0;
    pd->min.h = 0;
 
@@ -345,6 +354,7 @@ _finalize(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Precise_Layouter_Data *pd)
    evas_object_event_callback_del_full(pd->modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
    efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
    efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, pd);
+   pd->count_total = 0;
 
    Eina_Accessor *nodes = efl_ui_view_list_segarray_node_accessor_get(pd->segarray);
    EINA_ACCESSOR_FOREACH(nodes, i, node)
@@ -364,6 +374,7 @@ _finalize(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Precise_Layouter_Data *pd)
    pd->modeler = NULL;
 
    pd->initialized = EINA_FALSE;
+   pd->recalc = EINA_TRUE;
 }
 
 static void
@@ -473,8 +484,6 @@ _calc_size_job(void *data)
    pd = efl_data_scope_get(obj, MY_CLASS);
    if (EINA_UNLIKELY(!pd)) return;
 
-   pd->recalc = EINA_FALSE;
-
    Eina_Accessor *nodes = efl_ui_view_list_segarray_node_accessor_get(pd->segarray);
    while (eina_accessor_data_get(nodes, pd->calc_progress, (void **)&node))
      {
@@ -521,6 +530,7 @@ _calc_size_job(void *data)
    eina_accessor_free(nodes);
    pd->calc_progress = 0;
    pd->calc_job = NULL;
+   pd->recalc = EINA_FALSE;
 
    evas_object_smart_changed(pd->modeler);
 }
@@ -567,17 +577,13 @@ _efl_ui_view_list_precise_layouter_efl_ui_view_list_relayout_model_set(Eo *obj E
 
    efl_replace(&pd->model, model);
 
-   pd->count_total = 0;
-
-   if (model)
+   if (pd->model)
      {
         pd->count_total = efl_model_children_count_get(pd->model);
-
-        if (pd->modeler && (pd->count_total != efl_ui_view_list_segarray_count(pd->segarray)))
-           {
-              pd->recalc = EINA_TRUE;
-              efl_ui_view_list_model_load_range_set(pd->modeler, 0, pd->count_total); // load all
-           }
+        if (pd->count_total && pd->modeler)
+          efl_ui_view_list_model_load_range_set(pd->modeler, 0, pd->count_total); // load all
+        else
+          efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _child_count_changed_cb, pd);
      }
 }
 
