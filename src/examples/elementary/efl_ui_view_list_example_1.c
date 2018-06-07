@@ -42,14 +42,14 @@ _unrealized_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 */
 static Efl_Model*
-_make_model()
+_make_model(Evas_Object *win)
 {
    Eina_Value vtext;
    Efl_Model_Item *model, *child;
    unsigned int i, s;
    char buf[256];
 
-   model = efl_add_ref(EFL_MODEL_ITEM_CLASS, NULL);
+   model = efl_add(EFL_MODEL_ITEM_CLASS, win);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
 
    for (i = 0; i < (NUM_ITEMS); i++)
@@ -80,7 +80,7 @@ elm_main(int argc, char **argv)
 
    elm_win_autodel_set(win, EINA_TRUE);
 
-   model = _make_model();
+   model = _make_model(win);
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_model_connect(factory, "signal/elm,state,%v", "odd_style");
