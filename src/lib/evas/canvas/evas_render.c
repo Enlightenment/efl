@@ -494,16 +494,19 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
 
              _evas_object_gfx_map_update(obj);
 
+             Eina_Bool has_map = _evas_render_has_map(obj);
+
              RD(0, "      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
                 obj->smart.smart,
                 obj->is_smart ? evas_object_smart_members_get_direct(eo_obj) : NULL,
                 obj->map->cur.map, obj->map->cur.usemap,
                 obj->map->prev.map, obj->map->prev.usemap,
-                _evas_render_has_map(obj),
-                _evas_render_had_map(obj));
+                has_map, _evas_render_had_map(obj));
+
              if ((obj->is_smart) &&
-                 (((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
-                 (obj->changed_src_visible))))
+                 ((has_map && !_evas_render_can_map(obj)) ||
+                  (obj->changed_map && !has_map) ||
+                  obj->changed_src_visible))
                {
                   RD(0, "      has map + smart\n");
                   _evas_render_prev_cur_clip_cache_add(e, obj);
