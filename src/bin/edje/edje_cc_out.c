@@ -3721,6 +3721,7 @@ data_process_lookups(void)
              ERR("A collection without a name was detected, that's not allowed.");
              exit(-1);
           }
+
         find = eina_hash_find(edje_file->collection, pc->part);
         if (find && find->id == pc->id)
           {
@@ -3747,17 +3748,21 @@ data_process_lookups(void)
         EINA_LIST_FOREACH(edje_collections, l3, pc)
           {
              Eina_List *l4;
+             Edje_Part_Collection_Directory_Entry *de;
 
              /* Some group could be removed from the collection, but still be referenced by alias */
-             find = eina_hash_find(edje_file->collection, pc->part);
-             if (pc->id != find->id) find = NULL;
-
              /* Update all matching alias */
              EINA_LIST_FOREACH(aliases, l4, alias)
                if (pc->id == alias->id)
                  alias->id = id;
 
-             pc->id = id++;
+             find = eina_hash_find(edje_file->collection, pc->part);
+             if (pc->id != find->id) find = NULL;
+
+             de = eina_hash_find(edje_collections_lookup, &pc->id);
+             eina_hash_set(edje_collections_lookup, &pc->id, NULL);
+             de->id = pc->id = id++;
+             eina_hash_set(edje_collections_lookup, &pc->id, de);
              if (find) find->id = pc->id;
           }
      }
