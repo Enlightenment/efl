@@ -1924,10 +1924,13 @@ static void
 _efl_ui_layout_view_model_property_update(Efl_Ui_Layout_Object_Data *pd, const char *part, const char *fetch)
 {
    Eina_Value *v = NULL;
-   char *value;
+   char *value = NULL;
 
    v = efl_model_property_get(pd->connect.model, fetch);
-   value = eina_value_to_string(v);
+   if (!v) return;
+
+   if (eina_value_type_get(v) != EINA_VALUE_TYPE_ERROR)
+       value = eina_value_to_string(v);
 
    pd->connect.updating = EINA_TRUE; // Prevent recursive call to property_set while updating text
    efl_text_set(efl_part(pd->obj, part), value);
@@ -1945,6 +1948,7 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Object_Data *pd, const cha
    char *value;
 
    v = efl_model_property_get(pd->connect.model, fetch);
+   if (!v) return;
 
    // FIXME: previous implementation would just do that for signal/part == "selected"
    if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
@@ -1955,7 +1959,7 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Object_Data *pd, const cha
         if (bl) value = strdup("selected");
         else value = strdup("unselected");
      }
-   else
+   else if (eina_value_type_get(v) != EINA_VALUE_TYPE_ERROR)
      {
         value = eina_value_to_string(v);
      }

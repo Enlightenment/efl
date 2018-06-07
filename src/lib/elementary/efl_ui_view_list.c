@@ -674,7 +674,7 @@ _efl_ui_view_list_efl_object_finalize(Eo *obj, Efl_Ui_View_List_Data *pd)
 {
 
    if (!pd->factory)
-     pd->factory = efl_add_ref(EFL_UI_LAYOUT_FACTORY_CLASS, NULL);
+     pd->factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, obj);
 
    if(!pd->relayout)
      {
@@ -744,7 +744,6 @@ _efl_ui_view_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Da
    if (pd->model == model)
      return;
 
-
    if (pd->model)
      {
         if (pd->relayout)
@@ -754,11 +753,8 @@ _efl_ui_view_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Da
 
    efl_replace(&pd->model, model);
 
-   if (model)
-     {
-        if (pd->relayout)
-          efl_ui_view_list_relayout_model_set(pd->relayout, model);
-     }
+   if (pd->model && pd->relayout)
+     efl_ui_view_list_relayout_model_set(pd->relayout, pd->model);
 
    evas_object_smart_changed(pd->obj);
 }
@@ -868,6 +864,8 @@ static void
 _efl_ui_view_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_View_List_Relayout *object)
 {
    efl_replace(&pd->relayout, object);
+   if (pd->model && pd->relayout)
+     efl_ui_view_list_relayout_model_set(pd->relayout, pd->model);
 }
 
 static Efl_Ui_View_List_Relayout *
@@ -899,6 +897,7 @@ _children_slice_then(void * data, const Eina_Value v, const Eina_Future *dead_fu
    pd->slice.start = pd->slice.count = 0;
    pd->slice.future = NULL;
 
+   efl_ui_view_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, pd->segarray);
  on_error:
    return v;
 }
@@ -1001,16 +1000,17 @@ _efl_ui_view_list_efl_ui_view_list_model_unrealize(Eo *obj, Efl_Ui_View_List_Dat
 EOLIAN static void
 _efl_ui_view_list_efl_ui_view_list_model_load_range_set(Eo* obj, Efl_Ui_View_List_Data* pd, int first, int count)
 {
-   Eina_Future *f;
-
    if (pd->slice.future) return ;
 
    pd->slice.start = first;
    pd->slice.count = count;
 
-   f = efl_model_children_slice_get(pd->model, first, count);
-   f = eina_future_then(f, _children_slice_then, pd);
-   pd->slice.future = efl_future_Eina_FutureXXX_then(obj, f);
+   if (efl_model_children_count_get(pd->model))
+     {
+        Eina_Future *f = efl_model_children_slice_get(pd->model, first, count);
+        f = eina_future_then(f, _children_slice_then, pd);
+        pd->slice.future = efl_future_Eina_FutureXXX_then(obj, f);
+     }
 }
 
 EOLIAN static int
