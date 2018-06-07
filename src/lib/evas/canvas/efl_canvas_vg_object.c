@@ -490,10 +490,11 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
                                              w, h);
          vd->vg_entry = vg_entry;
      }
-   // if the buffer is not created yet
    root = evas_cache_vg_tree_get(vg_entry);
    if (!root) return;
    buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, root);
+
+   // if the buffer is not created yet
    if (!buffer)
      {
         dupe_root = efl_duplicate(root);
