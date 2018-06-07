@@ -403,7 +403,7 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
    if (epd->image.id == -1 && epd->common.visible)
      WRN("Collection %s(%i): image attributes missing for "
          "part \"%s\", description \"%s\" %f",
-         pc->part, pc->id, ep->name, epd->common.state.name, epd->common.state.value);
+         pc->name, pc->id, ep->name, epd->common.state.name, epd->common.state.value);
 
    for (i = 0; i < epd->image.tweens_count; ++i)
      {
@@ -422,7 +422,7 @@ _source_group_find(const char *source)
    if (!source) return NULL;
    EINA_LIST_FOREACH(edje_collections, l, pc2)
      {
-        if (!strcmp(pc2->part, source))
+        if (!strcmp(pc2->name, source))
           return pc2;
      }
    return NULL;
@@ -469,9 +469,9 @@ check_text_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
                return;
           }
 
-        error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
+        error_and_abort(ef, "Group \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
                             "text.source point to a non TEXT part \"%s\"!",
-                        pc->part, ep->name, epd->common.state.name,
+                        pc->name, ep->name, epd->common.state.name,
                         epd->common.state.value, pc->parts[epd->text.id_source]->name);
      }
 
@@ -489,9 +489,9 @@ check_text_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
                return;
           }
 
-        error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
+        error_and_abort(ef, "Group \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
                             "text.text_source point to a non TEXT part \"%s\"!",
-                        pc->part, ep->name, epd->common.state.name,
+                        pc->name, ep->name, epd->common.state.name,
                         epd->common.state.value, pc->parts[epd->text.id_text_source]->name);
      }
 }
@@ -513,7 +513,7 @@ check_source_links(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_L
    EINA_LIST_FOREACH(edje_collections, l, pc_source)
      {
         /* Find sourced group */
-        if (ep->source && pc_source->part && strcmp(ep->source, pc_source->part) == 0)
+        if (ep->source && pc_source->name && strcmp(ep->source, pc_source->name) == 0)
           {
              /* Go through every part to find parts with type GROUP */
              for (i = 0; i < pc_source->parts_count; ++i)
@@ -530,7 +530,7 @@ check_source_links(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_L
                                                      "already included inside "
                                                      "part '%s' of group '%s'",
                                                  data, pc_source->parts[i]->name,
-                                                 pc->part);
+                                                 pc->name);
                               }
                          }
                        group_path = eina_list_append(group_path, ep->source);
@@ -2848,7 +2848,7 @@ reorder_parts(void)
              ep = (Edje_Part_Parser *)pc->parts[i];
              if (ep->reorder.insert_before && ep->reorder.insert_after)
                error_and_abort(NULL, "In group \"%s\": Unable to use together insert_before and insert_after in part \"%s\".",
-                               pc->part, pc->parts[i]->name);
+                               pc->name, pc->parts[i]->name);
 
              if (ep->reorder.done)
                {
@@ -2865,10 +2865,10 @@ reorder_parts(void)
                             ep2 = (Edje_Part_Parser *)pc->parts[j];
                             if (ep2->reorder.after)
                               error_and_abort(NULL, "In group \"%s\": The part \"%s\" is ambiguous ordered part.",
-                                              pc->part, pc->parts[i]->name);
+                                              pc->name, pc->parts[i]->name);
                             if (ep2->reorder.linked_prev)
                               error_and_abort(NULL, "In group \"%s\": Unable to insert two or more parts in same part \"%s\".",
-                                              pc->part, pc->parts[j]->name);
+                                              pc->name, pc->parts[j]->name);
                             /* Need it to be able to insert an element before the first */
                             if (j == 0) k = 0;
                             else k = j - 1;
@@ -2888,10 +2888,10 @@ reorder_parts(void)
                             ep2 = (Edje_Part_Parser *)pc->parts[j];
                             if (ep2->reorder.before)
                               error_and_abort(NULL, "In group \"%s\": The part \"%s\" is ambiguous ordered part.",
-                                              pc->part, pc->parts[i]->name);
+                                              pc->name, pc->parts[i]->name);
                             if (ep2->reorder.linked_next)
                               error_and_abort(NULL, "In group \"%s\": Unable to insert two or more parts in same part \"%s\".",
-                                              pc->part, pc->parts[j]->name);
+                                              pc->name, pc->parts[j]->name);
                             k = j;
                             found = EINA_TRUE;
                             ep2->reorder.linked_next += ep->reorder.linked_next + 1;
@@ -2910,7 +2910,7 @@ reorder_parts(void)
 
                        if (((i > k) && ((i - ep->reorder.linked_prev) <= k))
                            || ((i < k) && ((i + ep->reorder.linked_next) >= k)))
-                         error_and_abort(NULL, "In group \"%s\": The part order is wrong. It has circular dependency.", pc->part);
+                         error_and_abort(NULL, "In group \"%s\": The part order is wrong. It has circular dependency.", pc->name);
 
                        amount = ep->reorder.linked_prev + ep->reorder.linked_next + 1;
                        linked = i - ep->reorder.linked_prev;
@@ -2954,10 +2954,10 @@ reorder_parts(void)
                     {
                        if (ep->reorder.insert_before)
                          error_and_abort(NULL, "In group \"%s\": Unable to find part \"%s\" for insert_before in part \"%s\".",
-                                         pc->part, ep->reorder.insert_before, pc->parts[i]->name);
+                                         pc->name, ep->reorder.insert_before, pc->parts[i]->name);
                        else
                          error_and_abort(NULL, "In group \"%s\": Unable to find part \"%s\" for insert_after in part \"%s\".",
-                                         pc->part, ep->reorder.insert_after, pc->parts[i]->name);
+                                         pc->name, ep->reorder.insert_after, pc->parts[i]->name);
                     }
                }
           }
@@ -3208,7 +3208,7 @@ copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *dest)
         Edje_Part_Collection_Directory_Entry *de;
         Eina_List *l2, *ll2;
 
-        de = eina_hash_find(edje_file->collection, pl->pc->part);
+        de = eina_hash_find(edje_file->collection, pl->pc->name);
         cd = eina_list_nth(codes, de->id);
 
         EINA_LIST_FOREACH_SAFE(cd->programs, l2, ll2, cp)
@@ -3716,13 +3716,13 @@ data_process_lookups(void)
         unsigned int id = 0;
         unsigned int i;
 
-        if (!pc->part)
+        if (!pc->name)
           {
              ERR("A collection without a name was detected, that's not allowed.");
              exit(-1);
           }
 
-        find = eina_hash_find(edje_file->collection, pc->part);
+        find = eina_hash_find(edje_file->collection, pc->name);
         if (find && find->id == pc->id)
           {
              if (((Edje_Part_Collection_Parser *)pc)->inherit_only)
@@ -3756,7 +3756,7 @@ data_process_lookups(void)
                if (pc->id == alias->id)
                  alias->id = id;
 
-             find = eina_hash_find(edje_file->collection, pc->part);
+             find = eina_hash_find(edje_file->collection, pc->name);
              if (pc->id != find->id) find = NULL;
 
              de = eina_hash_find(edje_collections_lookup, &pc->id);
@@ -3832,7 +3832,7 @@ data_process_lookups(void)
              if ((i == part->key.pc->parts_count) && (!((Edje_Part_Collection_Parser *)part->key.pc)->inherit_only))
                {
                   ERR("Unable to find part name \"%s\" needed in group '%s'.",
-                      alias, part->key.pc->part);
+                      alias, part->key.pc->name);
                   exit(-1);
                }
           }

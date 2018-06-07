@@ -1589,7 +1589,7 @@ New_Object_Handler object_handlers[] =
    {"collections.group.physics.world", NULL},
 #endif
    PROGRAM_OBJECTS("collections.group.parts.part.description")
-   PROGRAM_OBJECTS("collections.group.parts.part")
+   PROGRAM_OBJECTS("collections.group.parts.name")
    PROGRAM_OBJECTS("collections.group.parts")
    PROGRAM_OBJECTS("collections.group")
 };
@@ -4473,7 +4473,7 @@ _group_name(char *name)
      goto double_named_group;
 
    current_de->entry = name;
-   current_pc->part = current_de->entry;
+   current_pc->name = current_de->entry;
 
    older = eina_hash_find(edje_file->collection, current_de->entry);
    if (older) eina_hash_del(edje_file->collection, current_de->entry, older);
@@ -4487,7 +4487,7 @@ _group_name(char *name)
 
           pc = eina_list_nth(edje_collections, older->id);
           INF("overriding alias ('%s' => '%s') by group '%s'",
-              alias->entry, pc->part,
+              alias->entry, pc->name,
               current_de->entry);
           aliases = eina_list_remove_list(aliases, l);
           free(alias);
@@ -5074,7 +5074,7 @@ st_collections_group_inherit(void)
           {
              free(parent_name);
              pc2 = eina_list_nth(edje_collections, alias->id);
-             parent_name = strdup(pc2->part);
+             parent_name = strdup(pc2->name);
              break;
           }
      }
@@ -5083,7 +5083,7 @@ st_collections_group_inherit(void)
      {
         EINA_LIST_FOREACH(edje_collections, l, pc2)
           {
-             if (!strcmp(parent_name, pc2->part))
+             if (!strcmp(parent_name, pc2->name))
                break;
           }
      }
@@ -5293,7 +5293,7 @@ st_collections_group_inherit(void)
    Code_Program *cp, *cp2;
    Edje_Part_Collection_Directory_Entry *de;
 
-   de = eina_hash_find(edje_file->collection, pc2->part);
+   de = eina_hash_find(edje_file->collection, pc2->name);
    cd2 = eina_list_nth(codes, de->id);
    cd = eina_list_data_get(eina_list_last(codes));
 
@@ -5306,7 +5306,7 @@ st_collections_group_inherit(void)
         if (cd->shared)
           {
              WRN("%s:%i. script block in group \"%s\" will be overwritten by inheriting "
-                 "from group \"%s\".", file_in, line - 1, pc->part, pc2->part);
+                 "from group \"%s\".", file_in, line - 1, pc->name, pc2->name);
              free(cd->shared);
           }
         if (cd->original)
@@ -5417,7 +5417,7 @@ st_collections_group_alias(void)
 
           pc = eina_list_nth(edje_collections, tmp->id);
           INF("overriding alias ('%s' => '%s') to ('%s' => '%s')",
-              tmp->entry, pc->part,
+              tmp->entry, pc->name,
               alias->entry, current_de->entry);
           aliases = eina_list_remove_list(aliases, l);
           free(tmp);
@@ -6487,7 +6487,7 @@ _part_type_set(unsigned int type)
         dummy->type = ep->type + 2;
         if (previous)
           {
-             new = _edje_part_description_alloc(type, pc->part, ep->name);
+             new = _edje_part_description_alloc(type, pc->name, ep->name);
              eina_hash_add(desc_hash, &new, ep);
              eina_hash_set(desc_hash, &previous, dummy);
              parent_desc = previous;
@@ -6504,7 +6504,7 @@ _part_type_set(unsigned int type)
         for (i = 0; i < ep->other.desc_count; i++)
           {
              previous = ep->other.desc[i];
-             new = _edje_part_description_alloc(type, pc->part, ep->name);
+             new = _edje_part_description_alloc(type, pc->name, ep->name);
              eina_hash_add(desc_hash, &new, ep);
              eina_hash_set(desc_hash, &previous, dummy);
              parent_desc = previous;
@@ -8513,7 +8513,7 @@ ob_collections_group_parts_part_description(void)
   pc = eina_list_data_get(eina_list_last(edje_collections));
   ep = current_part;
 
-  ed = _edje_part_description_alloc(ep->type, pc->part, ep->name);
+  ed = _edje_part_description_alloc(ep->type, pc->name, ep->name);
   eina_hash_add(desc_hash, &ed, ep);
 
   ed->rel1.id_x = -1;
@@ -9599,7 +9599,7 @@ st_collections_group_parts_part_description_color3(void)
        && current_part->type != EDJE_PART_TYPE_TEXTBLOCK)
      {
         ERR("Setting color3 in part %s from %s not of type TEXT or TEXTBLOCK.",
-            current_part->name, pc->part);
+            current_part->name, pc->name);
         exit(-1);
      }
 

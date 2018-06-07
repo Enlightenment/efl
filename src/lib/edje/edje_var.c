@@ -37,7 +37,7 @@ _edje_var_timer_cb(void *data)
                "OBJECT NAME: '%s', "
                "OBJECT FILE: '%s', "
                "ERROR: '%s'",
-               ed->collection->part,
+               ed->collection->name,
                ed->file->path,
                embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
         }
@@ -47,7 +47,7 @@ _edje_var_timer_cb(void *data)
                "OBJECT NAME: '%s', "
                "OBJECT FILE: '%s', "
                "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
-               ed->collection->part,
+               ed->collection->name,
                ed->file->path,
                embryo_program_max_cycle_run_get(ed->collection->script));
         }
@@ -116,7 +116,7 @@ _edje_var_anim_cb(void *data EINA_UNUSED)
                                    "OBJECT NAME: '%s', "
                                    "OBJECT FILE: '%s', "
                                    "ERROR: '%s'",
-                                   ed->collection->part,
+                                   ed->collection->name,
                                    ed->file->path,
                                    embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
                             }
@@ -126,7 +126,7 @@ _edje_var_anim_cb(void *data EINA_UNUSED)
                                    "OBJECT NAME: '%s', "
                                    "OBJECT FILE: '%s', "
                                    "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
-                                   ed->collection->part,
+                                   ed->collection->name,
                                    ed->file->path,
                                    embryo_program_max_cycle_run_get(ed->collection->script));
                             }

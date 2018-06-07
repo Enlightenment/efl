@@ -4728,7 +4728,7 @@ _edje_embryo_test_run(Edje *ed, Edje_Program *pr, const char *sig, const char *s
                  "SIGNAL: '%s', "
                  "SOURCE: '%s', "
                  "ERROR: '%s'",
-                 ed->collection->part,
+                 ed->collection->name,
                  ed->file->path,
                  fname, pr->name,
                  sig, src,
@@ -4743,7 +4743,7 @@ _edje_embryo_test_run(Edje *ed, Edje_Program *pr, const char *sig, const char *s
                  "SIGNAL: '%s', "
                  "SOURCE: '%s', "
                  "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
-                 ed->collection->part,
+                 ed->collection->name,
                  ed->file->path,
                  fname, pr->name,
                  sig, src,

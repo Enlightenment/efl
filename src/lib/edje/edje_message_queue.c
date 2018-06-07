@@ -822,7 +822,7 @@ _edje_message_process(Edje_Message *em)
             "OBJECT FILE: '%s', "
             "ENTRY POINT: '%s', "
             "ERROR: '%s'",
-            em->edje->collection->part,
+            em->edje->collection->name,
             em->edje->file->path,
             "message",
             embryo_error_string_get(embryo_program_error_get(em->edje->collection->script)));
@@ -834,7 +834,7 @@ _edje_message_process(Edje_Message *em)
             "OBJECT FILE: '%s', "
             "ENTRY POINT: '%s', "
             "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
-            em->edje->collection->part,
+            em->edje->collection->name,
             em->edje->file->path,
             "message",
             embryo_program_max_cycle_run_get(em->edje->collection->script));
