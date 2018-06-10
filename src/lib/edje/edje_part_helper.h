@@ -91,6 +91,8 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
    else \
      { \
         PROXY_STATIC_VAR(type) = NULL; \
+        efl_parent_set(proxy, ed->obj); \
+        efl_unref(proxy); /* efl_reuse gives us one additional reference, give this one up as we gave ownerwhip back to ed->obj */\
         _edje_real_part_set(proxy, ed, rp, part); \
      } \
    __VA_ARGS__; \
