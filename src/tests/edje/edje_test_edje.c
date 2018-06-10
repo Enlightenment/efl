@@ -1043,6 +1043,35 @@ EFL_START_TEST(edje_test_text_cursor)
 }
 EFL_END_TEST
 
+EFL_START_TEST(edje_test_part_caching)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *ly, *o1, *global_p = NULL;
+
+   ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
+    efl_file_set(efl_added, test_layout_get("test_swallows.edj"), "test_group")
+   );
+
+   for (int i = 0; i < 10; ++i)
+     {
+        Evas_Object *p;
+
+        p = efl_part(ly, "swallow");
+        o1 = efl_content_get(p);
+
+        if (global_p)
+          ck_assert_ptr_eq(global_p, p);
+        global_p = p;
+
+        ck_assert_int_eq(efl_ref_count(p), 1);
+        ck_assert_ptr_eq(efl_parent_get(p), NULL);
+
+     }
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -1070,4 +1099,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_signals);
    tcase_add_test(tc, edje_test_signal_callback_del_full);
    tcase_add_test(tc, edje_test_text_cursor);
+   tcase_add_test(tc, edje_test_part_caching);
 }

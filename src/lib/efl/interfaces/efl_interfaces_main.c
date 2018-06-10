@@ -96,6 +96,12 @@ efl_part(const Eo *obj, const char *name)
    if (!r) return NULL;
 
    efl_event_callback_add(r, EFL_EVENT_NOREF, _noref_death, NULL);
+
+   //ensure that the parts that we have here are never leaked
+   //by checking theire references and ownership details
+   EINA_SAFETY_ON_NULL_RETURN_VAL(efl_parent_get(r), r);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_ref_count(r) == 1, r);
+
    ___efl_auto_unref_set(r, EINA_TRUE);
 
    return efl_ref(r);
