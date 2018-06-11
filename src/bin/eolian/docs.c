@@ -74,7 +74,7 @@ _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf,
    Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
    if (!cl)
      {
-        const char *mname;
+        const char *mname = NULL;
         if (!strcmp(sfx, ".get")) ftype = EOLIAN_PROP_GET;
         else if (!strcmp(sfx, ".set")) ftype = EOLIAN_PROP_SET;
         if (ftype != EOLIAN_UNRESOLVED)
