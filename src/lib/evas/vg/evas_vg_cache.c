@@ -177,7 +177,7 @@ static void
 _evas_cache_vg_data_free_cb(void *data)
 {
    Vg_File_Data *val = data;
-   efl_del(val->root);
+   efl_unref(val->root);
    free(val);
 }
 
@@ -189,7 +189,7 @@ _evas_cache_svg_entry_free_cb(void *data)
    eina_stringshare_del(entry->file);
    eina_stringshare_del(entry->key);
    free(entry->hash_key);
-   efl_del(entry->root);
+   efl_unref(entry->root);
    free(entry);
 }
 
