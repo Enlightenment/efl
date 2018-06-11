@@ -152,25 +152,30 @@ _efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Container_Data *pd)
+_efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
+                                             Efl_Canvas_Vg_Container_Data *pd)
 {
    Eina_List *l;
    Efl_VG *child;
-   Efl_VG *cn = NULL;
+   Efl_VG *container;
 
-   cn = efl_duplicate(efl_super(obj, MY_CLASS));
+   container = efl_duplicate(efl_super(obj, MY_CLASS));
+   efl_parent_set(container, efl_parent_get(obj));
+
+   //Copy Children
    EINA_LIST_FOREACH(pd->children, l, child)
      {
-        // parent_set adds the new node to the list of children of cn
-        efl_parent_set(efl_duplicate(child), cn);
+        Efl_VG *eo = efl_duplicate(child);
+        efl_parent_set(eo, container);
      }
-   return cn;
+
+   return container;
 }
 
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
-   return efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, parent);
+   return efl_add(MY_CLASS, parent);
 }
 
 #include "efl_canvas_vg_container.eo.c"

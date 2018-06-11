@@ -177,20 +177,33 @@ _efl_canvas_vg_shape_efl_gfx_path_interpolate(Eo *obj,
 EOLIAN static Efl_Canvas_Vg_Node *
 _efl_canvas_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Shape_Data *pd)
 {
-   Efl_Canvas_Vg_Node *cn = NULL;
-   Efl_Canvas_Vg_Shape_Data *cd = NULL;
+   Efl_Canvas_Vg_Node *node;
+   Efl_Canvas_Vg_Shape_Data *sd;
 
-   cn = efl_duplicate(efl_super(obj, MY_CLASS));
-   cd = efl_data_scope_get(cn, MY_CLASS);
+   node = efl_duplicate(efl_super(obj, MY_CLASS));
+   sd = efl_data_scope_get(node, MY_CLASS);
+
    if (pd->fill)
-     cd->fill = efl_duplicate(pd->fill);
-   if (pd->stroke.fill)
-     cd->stroke.fill = efl_duplicate(pd->stroke.fill);
-   if (pd->stroke.marker)
-     cd->stroke.marker = efl_duplicate(pd->stroke.marker);
+     {
+        sd->fill = efl_duplicate(pd->fill);
+        efl_parent_set(sd->fill, node);
+     }
 
-   efl_gfx_path_copy_from(cn, obj);
-   return cn;
+   if (pd->stroke.fill)
+     {
+        sd->stroke.fill = efl_duplicate(pd->stroke.fill);
+        efl_parent_set(sd->stroke.fill, node);
+     }
+
+   if (pd->stroke.marker)
+     {
+        sd->stroke.marker = efl_duplicate(pd->stroke.marker);
+        efl_parent_set(sd->stroke.marker, node);
+     }
+
+   efl_gfx_path_copy_from(node, obj);
+
+   return node;
 }
 
 EAPI double
