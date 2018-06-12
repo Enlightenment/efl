@@ -5804,15 +5804,10 @@ _genlist_element_focused(void *data, const Efl_Event *ev)
 
    if (!focused) return;
 
-   if (efl_isa(focused, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
-     item = efl_parent_get(focused);
-   else
-     item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, focused);
+   item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
 
-   if (efl_isa(item, ELM_GENLIST_ITEM_CLASS))
-     {
-        elm_object_item_focus_set(item, EINA_TRUE);
-     }
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(item, ELM_GENLIST_ITEM_CLASS));
+   elm_object_item_focus_set(item, EINA_TRUE);
 }
 
 EOLIAN static Eo *

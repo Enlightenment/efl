@@ -4235,20 +4235,16 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
 
    if (!focused) return;
 
-   if (efl_isa(focused, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
-     item = efl_parent_get(focused);
-   else
-     item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, focused);
+   item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
 
-   if (efl_isa(item, ELM_GENGRID_ITEM_CLASS))
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(item, ELM_GENGRID_ITEM_CLASS));
+
+   _elm_gengrid_item_focused(item);
+   _all_items_deselect(pd);
+   if (!_elm_config->item_select_on_focus_disable)
      {
-        _elm_gengrid_item_focused(item);
-        _all_items_deselect(pd);
-        if (!_elm_config->item_select_on_focus_disable)
-          {
-             elm_gengrid_item_selected_set(item, EINA_TRUE);
-             elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
-          }
+        elm_gengrid_item_selected_set(item, EINA_TRUE);
+        elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
      }
 }
 
