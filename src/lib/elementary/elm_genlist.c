@@ -466,6 +466,11 @@ _item_content_realize(Elm_Gen_Item *it,
                   goto out;
                }
              elm_widget_sub_object_add(WIDGET(it), content);
+
+             if (elm_widget_is(content))
+               {
+                  _elm_widget_full_eval(content);
+               }
           }
         *contents = eina_list_append(*contents, content);
 
