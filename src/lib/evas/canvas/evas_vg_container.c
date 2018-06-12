@@ -6,6 +6,23 @@
 #define MY_CLASS EFL_CANVAS_VG_CONTAINER_CLASS
 
 static void
+_invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Efl_Canvas_Vg_Container_Data *pd;
+   Eina_List *l;
+   Efl_VG* child;
+
+   pd = efl_data_scope_get(event->object, MY_CLASS);
+
+   /* Clean up all the references by copying.
+      If the container is copied, it copies its children as well.
+      Since evas_vg_node is duplicated using efl_add_ref(),
+      we definitely call efl_unref() after that. */
+   EINA_LIST_FOREACH(pd->children, l, child)
+      efl_unref(child);
+}
+
+static void
 _efl_canvas_vg_container_render_pre(Eo *obj EINA_UNUSED,
                              Eina_Matrix3 *parent,
                              Ector_Surface *s,
@@ -59,9 +76,7 @@ _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
                                      Efl_Canvas_Vg_Container_Data *pd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_CLASS));
-
    eina_hash_free(pd->names);
-   pd->names = NULL;
 }
 
 static void
@@ -160,6 +175,7 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
    Efl_VG *container;
 
    container = efl_duplicate(efl_super(obj, MY_CLASS));
+   efl_event_callback_add(container, EFL_EVENT_INVALIDATE, _invalidate_cb, NULL);
    efl_parent_set(container, efl_parent_get(obj));
 
    //Copy Children
