@@ -359,7 +359,7 @@ static inline void
 _evas_wrap_del(Evas_Object **eo, Evas_Object_Protected_Data *pd)
 {
    if (!*eo) return ;
-   if (pd->legacy.ctor) evas_object_del(*eo);
+   if (pd && pd->legacy.ctor) evas_object_del(*eo);
    else efl_del(*eo);
    *eo = NULL;
 }
