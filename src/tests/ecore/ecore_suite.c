@@ -41,6 +41,7 @@ int timeout_reached = 0;
 static Eina_Bool
 timeout_cb()
 {
+#if CHECK_MINOR_VERSION >= 11
    const char *tcname = tcase_name();
 
    timeout_reached = 1;
@@ -51,6 +52,7 @@ timeout_cb()
         ecore_main_loop_quit();
      }
    else
+#endif
      ck_abort_msg("test timeout reached!");
    timeout = NULL;
    return EINA_FALSE;
