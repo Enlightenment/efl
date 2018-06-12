@@ -38,6 +38,15 @@
 # endif
 #endif
 
+#define DISABLE_ABORT_ON_CRITICAL_START \
+   do { \
+      int ___val = eina_log_abort_on_critical_get(); \
+      eina_log_abort_on_critical_set(0)
+
+#define DISABLE_ABORT_ON_CRITICAL_END \
+      eina_log_abort_on_critical_set(___val); \
+   } while (0)
+
 typedef struct _Efl_Test_Case Efl_Test_Case;
 struct _Efl_Test_Case
 {
