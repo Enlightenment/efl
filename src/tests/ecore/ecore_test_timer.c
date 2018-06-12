@@ -174,31 +174,36 @@ typedef struct _Test_Inside_Call
 {
    Ecore_Timer *t;
    double start;
+   int it;
 } Test_Inside_Call;
 
 static Eina_Bool
 _timeri_cb(void *data)
 {
-   static int it = 5;
    Test_Inside_Call *c = data;
 
-   fail_if(fabs(((ecore_time_get() - c->start) / (6 - it)) - 0.011) > 0.01);
+   fail_if(fabs((ecore_time_get() - c->start) - 0.011) > 0.01);
    ecore_timer_reset(c->t);
+   c->start = ecore_time_get();
 
-   it--;
+   c->it--;
 
-   if (it == 0) ecore_main_loop_quit();
-   return it != 0;
+   if (c->it > 0) return EINA_TRUE;
+   free(c);
+   ecore_main_loop_quit();
+   return EINA_FALSE;
 }
 
 EFL_START_TEST(ecore_test_timer_inside_call)
 {
-   Test_Inside_Call c;
+   Test_Inside_Call *c;
 
-   c.start = ecore_time_get();
-   c.t = ecore_timer_add(0.01, _timeri_cb, &c);
+   c = malloc(sizeof(Test_Inside_Call));
+   c->start = ecore_time_get();
+   c->it = 5;
+   c->t = ecore_timer_add(0.01, _timeri_cb, c);
 
-   fail_if(!c.t, "Error add timer\n");
+   fail_if(!c->t, "Error add timer\n");
 
    ecore_main_loop_begin();
 }
