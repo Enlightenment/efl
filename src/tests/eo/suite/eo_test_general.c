@@ -1495,8 +1495,11 @@ EFL_START_TEST(eo_domain)
    printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 #ifndef _WIN32
-   signal(SIGALRM, _timeout);
-   alarm(10);
+   if (!eina_streq(getenv("CK_FORK"), "no"))
+     {
+        signal(SIGALRM, _timeout);
+        alarm(10);
+     }
 #endif
 
    fail_if(efl_domain_get() != EFL_ID_DOMAIN_MAIN);
