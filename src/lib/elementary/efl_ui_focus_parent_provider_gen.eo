@@ -13,6 +13,13 @@ class Efl.Ui.Focus.Parent_Provider_Gen(Efl.Object, Efl.Ui.Focus.Parent_Provider)
             container : Efl.Ui.Widget; [[Container widget]]
          }
       }
+      item_fetch {
+         [[Fetch the item where the item is a subchild from]]
+         params {
+            widget : Efl.Ui.Widget;
+         }
+         return : Efl.Ui.Widget;
+      }
    }
    implements {
       Efl.Ui.Focus.Parent_Provider.find_logical_parent;
