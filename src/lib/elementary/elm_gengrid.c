@@ -1087,6 +1087,11 @@ _item_content_realize(Elm_Gen_Item *it,
         snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
         edje_object_signal_emit(target, buf, "elm");
 
+        if (elm_widget_is(content))
+          {
+             _elm_widget_full_eval(content);
+          }
+
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           elm_widget_disabled_set(content, EINA_TRUE);
 
