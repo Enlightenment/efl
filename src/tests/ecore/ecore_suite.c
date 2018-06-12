@@ -35,13 +35,39 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+static Ecore_Timer *timeout;
+int timeout_reached = 0;
+
+static Eina_Bool
+timeout_cb()
+{
+   const char *tcname = tcase_name();
+
+   timeout_reached = 1;
+
+   if (tcname && strstr(tcname, "download"))
+     {
+        fprintf(stderr, "test timeout reached: download failed, probably network issue. skipping\n");
+        ecore_main_loop_quit();
+     }
+   else
+     ck_abort_msg("test timeout reached!");
+   timeout = NULL;
+   return EINA_FALSE;
+}
+
 SUITE_INIT(ecore)
 {
+   timeout_reached = 0;
    ck_assert_int_eq(ecore_init(), 1);
+   timeout = ecore_timer_add(5.0, timeout_cb, NULL);
+   ck_assert_msg(!!timeout, "timeout timer creation failed!");
 }
 
 SUITE_SHUTDOWN(ecore)
 {
+   ecore_timer_del(timeout);
+   timeout = NULL;
    ck_assert_int_eq(ecore_shutdown(), 0);
 }
 
