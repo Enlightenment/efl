@@ -535,7 +535,9 @@ EFL_START_TEST(eo_man_free)
    efl_unref(obj);
    efl_ref(obj);
    efl_unref(obj);
+   DISABLE_ABORT_ON_CRITICAL_START;
    efl_unref(obj);
+   DISABLE_ABORT_ON_CRITICAL_END;
    fail_if(!efl_manual_free(obj));
 
    obj = efl_add_ref(klass, NULL);
@@ -544,9 +546,11 @@ EFL_START_TEST(eo_man_free)
    efl_unref(obj);
    efl_ref(obj);
    efl_unref(obj);
+   DISABLE_ABORT_ON_CRITICAL_START;
    efl_unref(obj);
    efl_unref(obj);
    efl_unref(obj);
+   DISABLE_ABORT_ON_CRITICAL_END;
    fail_if(!efl_manual_free(obj));
 
 }
@@ -675,7 +679,9 @@ EFL_START_TEST(efl_refs)
 
    obj = efl_add_ref(SIMPLE_CLASS, NULL);
    obj2 = efl_add(SIMPLE_CLASS, obj);
+   DISABLE_ABORT_ON_CRITICAL_START;
    efl_unref(obj2);
+   DISABLE_ABORT_ON_CRITICAL_END;
    efl_ref(obj2);
    efl_del(obj2);
    efl_unref(obj);

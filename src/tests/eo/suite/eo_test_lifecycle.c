@@ -131,7 +131,9 @@ EFL_START_TEST(eo_test_del_in_noref)
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _noref2, NULL);
 
    efl_ref(obj);
+   DISABLE_ABORT_ON_CRITICAL_START;
    efl_unref(obj); //this fires noref
+   DISABLE_ABORT_ON_CRITICAL_END;
 
    ck_assert_ptr_eq(efl_class_name_get(obj), NULL);
 
@@ -151,7 +153,9 @@ EFL_START_TEST(eo_test_unref_noref)
 
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _noref3, NULL);
 
+   DISABLE_ABORT_ON_CRITICAL_START;
    efl_unref(obj);
+   DISABLE_ABORT_ON_CRITICAL_END;
 
    ck_assert_ptr_eq(efl_class_name_get(obj), NULL);
 
