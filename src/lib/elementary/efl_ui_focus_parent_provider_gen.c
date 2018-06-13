@@ -66,7 +66,7 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
 }
 
 EOLIAN static Efl_Ui_Widget*
-_efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Efl_Ui_Widget *widget)
+_efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Efl_Ui_Widget *widget)
 {
    //first check if this item is in the map
    Elm_Widget_Item *item, *above_gengrid = widget;
