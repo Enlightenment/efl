@@ -938,16 +938,6 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
           data = (DATA32 *)sl.mem;
      }
 
-   if ((o->cur->orient == EVAS_IMAGE_ORIENT_90) ||
-       (o->cur->orient == EVAS_IMAGE_ORIENT_270) ||
-       (o->cur->orient == EVAS_IMAGE_FLIP_TRANSPOSE) ||
-       (o->cur->orient == EVAS_IMAGE_FLIP_TRANSVERSE))
-     {
-        int tmp = imagew;
-        imagew = imageh;
-        imageh = tmp;
-     }
-
    if (!data)
      {
         int stride;
