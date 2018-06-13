@@ -2314,6 +2314,8 @@ efl_object_init(void)
 
    /* bootstrap EFL_CLASS_CLASS */
    (void) EFL_CLASS_CLASS;
+   /* bootstrap EFL_OBJECT_CLASS */
+   (void) EFL_OBJECT_CLASS;
 
    return EINA_TRUE;
 }
