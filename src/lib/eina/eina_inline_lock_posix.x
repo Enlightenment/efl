@@ -587,6 +587,7 @@ eina_barrier_wait(Eina_Barrier *barrier)
 {
    int ok = pthread_barrier_wait(&(barrier->barrier));
    if (ok == 0) return EINA_TRUE;
+   else if (ok == PTHREAD_BARRIER_SERIAL_THREAD) return EINA_TRUE;
    else EINA_LOCK_ABORT_DEBUG(ok, barrier_wait, barrier);
    return EINA_TRUE;
 }
