@@ -61,6 +61,7 @@ EFL_START_TEST(evil_unistd_pipe)
    int            sockets[2];
    struct timeval t;
    fd_set         rfds;
+   int            ret;
    data          *d;
    DWORD          thread_id;
    HANDLE         h;
