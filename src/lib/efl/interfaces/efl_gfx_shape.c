@@ -62,23 +62,29 @@ _efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
 
 EOLIAN static Eina_Bool
 _efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
-                                        const Eo *from, const Eo *to, double pos_map)
+                                        const Eo *from, const Eo *to,
+                                        double pos_map)
 {
    Efl_Gfx_Shape_Data *from_pd, *to_pd;
    Efl_Gfx_Property property_from, property_to;
    Efl_Gfx_Dash *dash = NULL;
+   double interv;    //interpolated value
    unsigned int i;
+
+   if (!efl_isa(from, EFL_GFX_SHAPE_MIXIN) || !efl_isa(to, EFL_GFX_SHAPE_MIXIN))
+     return EINA_FALSE;
 
    from_pd = efl_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
    to_pd = efl_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
-   if (!efl_isa(from, EFL_GFX_SHAPE_MIXIN) || !efl_isa(to, EFL_GFX_SHAPE_MIXIN))
-     return EINA_FALSE;
+
    if ((pd == from_pd) || (pd == to_pd)) return EINA_FALSE;
 
    _efl_gfx_property_get(from, &property_from);
    _efl_gfx_property_get(to, &property_to);
 
-   if (property_from.dash_length != property_to.dash_length) return EINA_FALSE;
+   //Can be interpolated!
+   if (property_from.dash_length != property_to.dash_length)
+     return EINA_FALSE;
 
    if (property_to.dash_length)
      {
@@ -94,35 +100,39 @@ _efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
           }
      }
 
-   efl_gfx_shape_stroke_scale_set(obj, interpolate(property_from.scale,
-                                                   property_to.scale, pos_map));
+   interv = interpolate(property_from.scale, property_to.scale, pos_map);
+   efl_gfx_shape_stroke_scale_set(obj, interv);
+
    efl_gfx_shape_stroke_color_set(obj,
-                                  interpolatei(property_from.r,
-                                               property_to.r, pos_map),
-                                  interpolatei(property_from.g,
-                                               property_to.g, pos_map),
-                                  interpolatei(property_from.b,
-                                               property_to.b, pos_map),
-                                  interpolatei(property_from.a,
-                                               property_to.a, pos_map));
+                                  interpolatei(property_from.r, property_to.r,
+                                               pos_map),
+                                  interpolatei(property_from.g, property_to.g,
+                                               pos_map),
+                                  interpolatei(property_from.b, property_to.b,
+                                               pos_map),
+                                  interpolatei(property_from.a, property_to.a,
+                                               pos_map));
+   //Color is not a part of Path. Is it correct?...
    efl_gfx_color_set(obj,
                      interpolatei(property_from.fr, property_to.fr, pos_map),
                      interpolatei(property_from.fg, property_to.fg, pos_map),
                      interpolatei(property_from.fb, property_to.fb, pos_map),
                      interpolatei(property_from.fa, property_to.fa, pos_map));
 
-   efl_gfx_shape_stroke_width_set(obj, interpolate(property_from.w,
-                                                   property_to.w, pos_map));
-   efl_gfx_shape_stroke_location_set(obj, interpolate(property_from.centered,
-                                                      property_to.centered,
-                                                      pos_map));
+   interv = interpolate(property_from.w, property_to.w, pos_map);
+   efl_gfx_shape_stroke_width_set(obj, interv);
+
+   interv = interpolate(property_from.centered, property_to.centered, pos_map);
+   efl_gfx_shape_stroke_location_set(obj, interv);
+
    efl_gfx_shape_stroke_dash_set(obj, dash, property_to.dash_length);
    efl_gfx_shape_stroke_cap_set(obj, (pos_map < 0.5) ?
                                 property_from.c : property_to.c);
    efl_gfx_shape_stroke_join_set(obj, (pos_map < 0.5) ?
                                  property_from.j : property_to.j);
 
-   return efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
+   return efl_gfx_path_interpolate(efl_cast(obj, EFL_GFX_PATH_MIXIN),
+                                   from, to, pos_map);
 }
 
 EOLIAN static void

@@ -621,30 +621,33 @@ _efl_canvas_vg_node_interpolation_get(Efl_Canvas_Vg_Node_Data *pd)
 
 static inline void
 _efl_canvas_vg_node_interpolate_point(Eina_Point_3D *d,
-                          const Eina_Point_3D *a, const Eina_Point_3D *b,
-                          double pos_map, double from_map)
+                                      const Eina_Point_3D *a, const Eina_Point_3D *b,
+                                      double pos_map, double from_map)
 {
    d->x = a->x * from_map + b->x * pos_map;
    d->y = a->y * from_map + b->y * pos_map;
    d->z = a->z * from_map + b->z * pos_map;
 }
 
+/* Warning! Node itself doesn't have any path. Don't call super class(Path)'s */
 static Eina_Bool
-_efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
-                         Efl_Canvas_Vg_Node_Data *pd, const Efl_VG *from, const Efl_VG *to,
-                         double pos_map)
+_efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Node_Data *pd, const Efl_VG *from, const Efl_VG *to, double pos_map)
 {
    Efl_Canvas_Vg_Node_Data *fromd, *tod;
    double from_map;
-   Eina_Bool r = EINA_TRUE;
 
-   fromd = efl_data_scope_get(from, EFL_CANVAS_VG_NODE_CLASS);
-   tod = efl_data_scope_get(to, EFL_CANVAS_VG_NODE_CLASS);
+   //Check if both objects have same type
+   if (!(efl_isa(from, MY_CLASS) && efl_isa(to, MY_CLASS)))
+     return EINA_FALSE;
+
+   fromd = efl_data_scope_get(from, MY_CLASS);
+   tod = efl_data_scope_get(to, MY_CLASS);
    from_map = 1.0 - pos_map;
 
    efl_unref(pd->renderer);
    pd->renderer = NULL;
 
+   //Interpolates Node Transform Matrix
    if (fromd->m || tod->m)
      {
         if (!pd->m) pd->m = malloc(sizeof (Eina_Matrix3));
@@ -656,6 +659,7 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
 
              fi = _efl_canvas_vg_node_interpolation_get(fromd);
              if (!fi) fi = &interpolation_identity;
+
              ti = _efl_canvas_vg_node_interpolation_get(tod);
              if (!ti) ti = &interpolation_identity;
 
@@ -672,10 +676,14 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
                                        &fi->skew, &ti->skew,
                                        pos_map, from_map);
 
-             result.perspective.x = fi->perspective.x * from_map + ti->perspective.x * pos_map;
-             result.perspective.y = fi->perspective.y * from_map + ti->perspective.y * pos_map;
-             result.perspective.z = fi->perspective.z * from_map + ti->perspective.z * pos_map;
-             result.perspective.w = fi->perspective.w * from_map + ti->perspective.w * pos_map;
+             result.perspective.x =
+                fi->perspective.x * from_map + ti->perspective.x * pos_map;
+             result.perspective.y =
+                fi->perspective.y * from_map + ti->perspective.y * pos_map;
+             result.perspective.z =
+                fi->perspective.z * from_map + ti->perspective.z * pos_map;
+             result.perspective.w =
+                fi->perspective.w * from_map + ti->perspective.w * pos_map;
 
              eina_quaternion_matrix4_to(&m,
                                         &result.rotation,
@@ -683,13 +691,16 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
                                         &result.translation,
                                         &result.scale,
                                         &result.skew);
+
              eina_matrix4_matrix3_to(pd->m, &m);
           }
      }
 
+   //Position
    pd->x = fromd->x * from_map + tod->x * pos_map;
    pd->y = fromd->y * from_map + tod->y * pos_map;
 
+   //Color
    pd->r = fromd->r * from_map + tod->r * pos_map;
    pd->g = fromd->g * from_map + tod->g * pos_map;
    pd->b = fromd->b * from_map + tod->b * pos_map;
@@ -697,15 +708,17 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj,
 
    pd->visibility = pos_map >= 0.5 ? tod->visibility : fromd->visibility;
 
+   //Interpolates Mask
    if (fromd->mask && tod->mask && pd->mask)
      {
-        r &= efl_gfx_path_interpolate(pd->mask, fromd->mask, tod->mask, pos_map);
+        if (!efl_gfx_path_interpolate(pd->mask,
+                                      fromd->mask, tod->mask, pos_map))
+          return EINA_FALSE;
      }
 
    _efl_canvas_vg_node_changed(obj);
 
-   if (!r) return EINA_FALSE;
-   return efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
+   return EINA_TRUE;
 }
 
 EOLIAN static Efl_VG *

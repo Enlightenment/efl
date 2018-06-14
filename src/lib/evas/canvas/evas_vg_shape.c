@@ -145,30 +145,37 @@ _efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *pd
 
 static Eina_Bool
 _efl_canvas_vg_shape_efl_gfx_path_interpolate(Eo *obj,
-                                      Efl_Canvas_Vg_Shape_Data *pd,
-                                      const Efl_Canvas_Vg_Node *from, const Efl_Canvas_Vg_Node *to,
-                                      double pos_map)
+                                              Efl_Canvas_Vg_Shape_Data *pd,
+                                              const Efl_Canvas_Vg_Node *from,
+                                              const Efl_Canvas_Vg_Node *to,
+                                              double pos_map)
 {
    Efl_Canvas_Vg_Shape_Data *fromd, *tod;
-   Eina_Bool r;
+   Eina_Bool r = EINA_TRUE;
 
-   fromd = efl_data_scope_get(from, EFL_CANVAS_VG_SHAPE_CLASS);
-   tod = efl_data_scope_get(to, EFL_CANVAS_VG_SHAPE_CLASS);
+   //Check if both objects have same type
+   if (!(efl_isa(from, MY_CLASS) && efl_isa(to, MY_CLASS)))
+     return EINA_FALSE;
 
-   r = efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
+   //Is this the best way?
+   r &= efl_gfx_path_interpolate(efl_cast(obj, EFL_CANVAS_VG_NODE_CLASS),
+                                 from, to, pos_map);
+   r &= efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 
+   fromd = efl_data_scope_get(from, MY_CLASS);
+   tod = efl_data_scope_get(to, MY_CLASS);
+
+   //Fill
    if (fromd->fill && tod->fill && pd->fill)
-     {
-        r &= efl_gfx_path_interpolate(pd->fill, fromd->fill, tod->fill, pos_map);
-     }
+     r &= efl_gfx_path_interpolate(pd->fill, fromd->fill, tod->fill, pos_map);
+
+   //Stroke Fill
    if (fromd->stroke.fill && tod->stroke.fill && pd->stroke.fill)
-     {
-        r &= efl_gfx_path_interpolate(pd->stroke.fill, fromd->stroke.fill, tod->stroke.fill, pos_map);
-     }
+     r &= efl_gfx_path_interpolate(pd->stroke.fill, fromd->stroke.fill, tod->stroke.fill, pos_map);
+
+   //Stroke Marker
    if (fromd->stroke.marker && tod->stroke.marker && pd->stroke.marker)
-     {
-        r &= efl_gfx_path_interpolate(pd->stroke.marker, fromd->stroke.marker, tod->stroke.marker, pos_map);
-     }
+     r &= efl_gfx_path_interpolate(pd->stroke.marker, fromd->stroke.marker, tod->stroke.marker, pos_map);
 
    return r;
 }
