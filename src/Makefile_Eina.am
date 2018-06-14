@@ -197,6 +197,10 @@ else
 lib_eina_libeina_la_SOURCES += lib/eina/eina_file.c
 endif
 
+lib_eina_libeina_la_SOURCES += \
+static_libs/fcontext/make_all_gas.S \
+static_libs/fcontext/jump_all_gas.S
+
 EINA_MODULE_COMMON_CFLAGS = \
 @EINA_CFLAGS@ \
 @VALGRIND_CFLAGS@
