@@ -62,6 +62,8 @@ struct _Efl_Canvas_Vg_Node_Data
    Efl_Canvas_Vg_Node *mask;
    Ector_Renderer *renderer;
 
+   Efl_VG *vg_obj;
+
    void (*render_pre)(Eo *obj, Eina_Matrix3 *parent, Ector_Surface *s, void *data, Efl_Canvas_Vg_Node_Data *nd);
    void *data;
 
@@ -71,6 +73,7 @@ struct _Efl_Canvas_Vg_Node_Data
 
    Eina_Bool visibility : 1;
    Eina_Bool changed : 1;
+   Eina_Bool parenting : 1;
 };
 
 struct _Efl_Canvas_Vg_Container_Data
@@ -107,6 +110,8 @@ void                        evas_cache_vg_entry_del(Evas_Cache_Vg_Entry *svg_ent
 Vg_File_Data *              evas_cache_vg_file_info(const char *file, const char *key);
 
 Eina_Bool                   evas_vg_save_to_file(Vg_File_Data *evg_data, const char *file, const char *key, const char *flags);
+
+void                        efl_canvas_vg_node_root_set(Efl_VG *node, Efl_VG *vg_obj);
 
 static inline Efl_Canvas_Vg_Node_Data *
 _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)

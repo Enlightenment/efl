@@ -322,8 +322,23 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 {
    Efl_Canvas_Vg_Container_Data *cd = NULL;
    Efl_Canvas_Vg_Container_Data *old_cd;
+   Efl_Canvas_Vg_Node_Data *nd;
    Efl_VG *old_parent;
    Eina_Bool parent_container = EINA_TRUE;
+
+   nd = efl_data_scope_get(obj, MY_CLASS);
+
+   //No, prevent infinite calls parent_set() -> root_node_set() -> parent_set() -> ...
+   if (nd->parenting) return;
+
+   //Cut off root node from vg object if it does....
+   if (nd->vg_obj)
+     {
+        nd->parenting = EINA_TRUE;
+        evas_object_vg_root_node_set(nd->vg_obj, NULL);
+        nd->parenting = EINA_FALSE;
+        nd->vg_obj = NULL;
+     }
 
    if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
      cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
@@ -706,6 +721,14 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Node_Data *p
 
    return EINA_TRUE;
 }
+
+void
+efl_canvas_vg_node_root_set(Efl_VG *node, Efl_VG *vg_obj)
+{
+   Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(node, MY_CLASS);
+   nd->vg_obj = vg_obj;
+}
+
 
 EOLIAN static Efl_VG *
 _efl_canvas_vg_node_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Node_Data *pd)
