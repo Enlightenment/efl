@@ -1043,6 +1043,7 @@ elementary/themes/edc/efl/textpath.edc \
 elementary/themes/edc/efl/tooltip.edc \
 elementary/themes/edc/efl/video.edc \
 elementary/themes/edc/efl/list.edc \
+elementary/themes/edc/efl/grid.edc \
 elementary/themes/edc/efl/win.edc \
 elementary/themes/edc/efl/pager.edc \
 elementary/themes/edc/efl/tab_pager.edc \

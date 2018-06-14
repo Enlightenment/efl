@@ -9,9 +9,9 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-//#include "efl_ui_grid_item_private.h"?
-#include "efl_ui_item_private.h"
 #include "efl_ui_grid_private.h"
+#include "efl_ui_item_private.h"
+#include "efl_ui_grid_item_private.h"
 
 #define MY_CLASS      EFL_UI_GRID_CLASS
 #define MY_CLASS_PFX  efl_ui_grid
@@ -27,59 +27,140 @@ _need_update(Efl_Ui_Grid_Data *pd)
 }
 
 static void
-_item_place(Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *item)
-{
-
-}
-
-static void
-_relayout(Eo *obj Efl_Ui_Grid_Data *pd)
+_relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
 {
    Eina_List *l;
-   Efl_Ui_Grid_Item_Data *id;
+   Efl_Ui_Grid_Item *item;
    Eina_Position2D ipos;
+   Eina_Position2D cur = {0, 0};
+   int outer;
    int count = 0;
    Eina_Bool horiz = 0;
-   if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
+   Eina_Size2D min, max;
+   Eina_Rect view;
+   min = efl_gfx_size_hint_combined_min_get(pd->pan);
+   max = efl_gfx_size_hint_max_get(pd->pan);
+   view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
 
-   if (!pd->nmax)
+ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h, view.x, view.y, view.w, view.h);
+
+   //if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
+   if (!pd->linemax)
      {
-         if (horiz) pd->nmax = (pd->geo.h / pd->item_size.h);
-         else pd->nmax = (pd->geo.w / pd->item_size.w);
+        pd->linemax =(horiz ?
+                     ((pd->geo.h + pd->item.pad.h) / (pd->item.size.h + pd->item.pad.h)) :
+                     ((pd->geo.w + pd->item.pad.w) / (pd->item.size.w + pd->item.pad.w)));
+        if (!pd->linemax) pd->linemax = 1;
      }
 
-   EINA_LIST_FOREACH(pd->items, l, id)
+
+   outer = (horiz ?
+            (pd->geo.h + pd->item.pad.h) - (pd->linemax * (pd->item.size.h + pd->item.pad.h)) :
+            (pd->geo.w + pd->item.pad.w) - (pd->linemax * (pd->item.size.w + pd->item.pad.w)));
+  // outer left top
+   outer = (horiz ? (outer * pd->item.align.w) : (outer * pd->item.align.h));
+
+   ERR("LSH:: relayout geo[%d,%d] item[%d, %d] linemax : %d, outer %d", pd->geo.w, pd->geo.h, pd->item.size.w, pd->item.size.h, pd->linemax, outer);
+   // Block?
+   EINA_LIST_FOREACH(pd->items, l, item)
      {
+        EFL_UI_GRID_ITEM_DATA_GET(item, id);
+
         if (pd->need_update)
           {
+             // Index begin with zero value :
              id->index = count;
-             if (pd->dir == EFL_UI_DIR_VERTICAL)
+             if (horiz)
                {
-                  
-
+                  id->pos.row = (count % pd->linemax);
+                  id->pos.col = (count / pd->linemax);
+                  //Next Line
+                  if (count == 0)
+                    {
+                      cur.y = outer;
+                    }
+                  else if (id->pos.row == 0)// ((cur.y + pd->item.pad.h + pd->item.size.h) > pd->geo.h)
+                    {
+                      cur.x = cur.x + pd->item.size.w + pd->item.pad.w;
+                      cur.y = outer;
+                    }
+                  else
+                    {
+                      //cur.x = cur.x;
+                      cur.y = cur.y + pd->item.size.h + pd->item.pad.h;
+                    }
                }
              else
                {
+                  id->pos.row = (count / pd->linemax);
+                  id->pos.col = (count % pd->linemax);
+                  //Next Line
+                  ERR("LSH not horiz cur.x: %d, padw:%d, sizew%d geow:%d", cur.x, pd->item.pad.w, pd->item.size.w, pd->geo.w);
+                  if (count == 0)
+                    {
+                      cur.x = outer;
+                    }
+                  else if (id->pos.col == 0)//((cur.x + pd->item.pad.w + pd->item.size.w) > pd->geo.w)
+                    {
+                  ERR("LSH not horiz");
+                      cur.x = outer;
+                      cur.y = cur.y + pd->item.size.h + pd->item.pad.h;
+                    }
+                  else
+                    {
+                  ERR("LSH not horiz");
+                      cur.x = cur.x + pd->item.size.w + pd->item.pad.w;
+                      //cur.y = cur.y;
+                    }
                }
-             pd->pad.w;
-             pd->pad.y;
-             id->geo.x = 
-
+            ERR("LSH [%d] item[%d:%d] pos:[%d,%d]",count, id->pos.row, id->pos.col, cur.x, cur.y);
+             id->geo.x = cur.x;
+             id->geo.y = cur.y;
+             id->geo.w = pd->item.size.w;
+             id->geo.h = pd->item.size.h;
           }
-        ipos.x = pd->geo.x + id->pos.x;
-        ipos.y = pd->geo.y + id->pos.y;
-        efl_gfx_entity_position_set(id->obj, ipos);
+
+        ipos.x = pan.x + id->geo.x;
+        ipos.y = pan.y + id->geo.y;
+        efl_gfx_entity_position_set(item, ipos);
+        efl_gfx_entity_size_set(item, id->geo.size);
+        efl_gfx_size_hint_restricted_min_set(item, id->geo.size);
 
         count++;
+
      }
+
+   if (horiz)
+     pd->geo.w = cur.x + pd->item.size.w + pd->item.pad.w;
+   else
+     pd->geo.h = cur.y + pd->item.size.h + pd->item.pad.h;
+
+     ERR("LSH : geo [%d, %d]", pd->geo.w ,pd->geo.h);
+   efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
 }
 
 static void
-_reposition(Eo *obj Efl_Ui_Grid_Data *pd)
+_reposition(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
 {
+   Efl_Ui_Grid_Item *item;
+   Eina_List *l;
+   Eina_Position2D ipos;
+
+   // Block?
+   EINA_LIST_FOREACH(pd->items, l, item)
+     {
+        EFL_UI_GRID_ITEM_DATA_GET(item, id);
+
+        ipos.x = pan.x + id->geo.x;
+        ipos.y = pan.y + id->geo.y;
+        efl_gfx_entity_position_set(item, ipos);
+        efl_gfx_entity_size_set(item, id->geo.size);
+        //efl_gfx_size_hint_min_set(item, id->geo.size);
+     }
 
 }
 
+//Need to reimplements for grid
 static void
 _item_scroll_internal(Eo *obj,
                       Efl_Ui_Grid_Item *item,
@@ -391,6 +472,16 @@ _scroll_edje_object_detach(Eo *obj)
 }
 
 static void
+_efl_ui_grid_content_moved_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *obj = data;
+   EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
+   if (!pd->smanager) return;
+
+   efl_canvas_group_change(pd->obj);
+}
+
+static void
 _efl_ui_grid_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *obj = data;
@@ -443,11 +534,11 @@ EOLIAN static Eo *
 _efl_ui_grid_efl_object_finalize(Eo *obj,
                                  Efl_Ui_Grid_Data *pd)
 {
-   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   pd->obj = obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   efl_ui_layout_object_theme_set(obj, "list", "base", efl_ui_widget_style_get(obj));
+   efl_ui_layout_object_theme_set(obj, "grid", "base", efl_ui_widget_style_get(obj));
 
    pd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
    efl_ui_mirrored_set(pd->smanager, efl_ui_mirrored_get(obj));
@@ -459,7 +550,18 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
 
    pd->select_mode = EFL_UI_SELECT_SINGLE;
 
+   if ((pd->item.size.w == 0) && (pd->item.size.h == 0))
+     {
+        pd->item.size.w = 1;
+        pd->item.size.h = 1;
+     }
+
    _scroll_edje_object_attach(obj);
+
+
+   //FIXME: Fake Content for pan resize
+   pd->content = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(obj));
+   efl_content_set(pd->pan, pd->content);
 
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
                           _efl_ui_grid_bar_size_changed_cb, obj);
@@ -475,6 +577,8 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
                           _efl_ui_grid_size_hint_changed_cb, obj);
    efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_grid_pan_resized_cb, obj);
+   efl_event_callback_add(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
+                          _efl_ui_grid_content_moved_cb, obj);
 
    elm_layout_sizing_eval(obj);
 
@@ -500,7 +604,11 @@ _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
                           _efl_ui_grid_size_hint_changed_cb, obj);
    efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_grid_pan_resized_cb, obj);
+   efl_event_callback_del(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
+                          _efl_ui_grid_content_moved_cb, obj);
 
+   efl_del(pd->content);
+   pd->content = NULL;
    efl_del(pd->pan);
    pd->pan = NULL;
    efl_del(pd->smanager);
@@ -512,20 +620,27 @@ _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 EOLIAN static void
 _efl_ui_grid_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
+
+   Eina_Position2D pos = efl_ui_scrollable_content_pos_get(pd->smanager);
+   Eina_Rect geo = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
+
+   ERR("LSH:: pos[%d,%d], geo[%d,%d,%d,%d]", pos.x, pos.y, geo.x, geo.y, geo.w, geo.h);
+
+   if (geo.w <= 1 || geo.h <= 1) return;
    // Need to be implemented
-   if (need_update)
+   if (pd->need_update)
      {
-        _relayout(obj, pd);
+        _relayout(obj, pd, pos);
+     }
+   else
+     {
+        if (pd->pre_pos.x != pos.x || pd->pre_pos.y != pos.y)
+          {
+             _reposition(obj, pd, pos);
+          }
      }
 
-   pos = efl_ui_scrollerable_pos_get();
-
-   if (pd->pre_pos.x != pos.x || pd->pre_pos.y != pos.y)
-     {
-        _reposition(obj, pd);
-     }
-
-   pd->pre_pos = efl_ui_scrollerable_pos_get();
+   pd->pre_pos = pos;
 
    efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
@@ -539,16 +654,10 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    double xw = 0.0, yw = 0.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-/*
-   if (pd->box)
-     {
-        min = efl_gfx_size_hint_combined_min_get(pd->box);
-        max = efl_gfx_size_hint_max_get(pd->box);
-        efl_gfx_size_hint_weight_get(pd->box, &xw, &yw);
-     }
-*/
-   min = pd->min;
-   max = pd->max;
+
+
+   min = efl_gfx_size_hint_combined_min_get(obj);
+   max = efl_gfx_size_hint_max_get(obj);
 
    if (pd->smanager)
      view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
@@ -573,8 +682,6 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    else if (min.h > 0)
      view.h = min.h;
 
-   if (pd->box) efl_gfx_entity_size_set(pd->box, EINA_SIZE2D(view.w, view.h));
-
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 
    if (pd->match_content_w) size.w = vmw + min.w;
@@ -583,8 +690,12 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    max = efl_gfx_size_hint_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
-
+ERR("LSH size eval [%d, %d] view [%d, %d]", size.w, size.h, view.w, view.h);
+   pd->geo = view;
    efl_gfx_size_hint_min_set(obj, size);
+
+   _need_update(pd);
+   return;
 }
 
 //FIXME: is this box related API could be improved more?
@@ -598,7 +709,6 @@ EOLIAN static Eina_Iterator *
 _efl_ui_grid_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
   // NEED-TO-IMPLEMENTS
-  // return pd->box ? efl_content_iterate(pd->box) : NULL;
 }
 
 EOLIAN static void
@@ -706,11 +816,11 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    //FIXME: This is tricky workaround for set select mode and parent value.
-   EFL_UI_GRID_ITEM_DATA_GET(it, ld);
+   EFL_UI_GRID_ITEM_DATA_GET(it, gd);
    EFL_UI_ITEM_DATA_GET(it, id);
    id->select_mode = &(pd->select_mode);
    id->parent = obj;
-   ld->parent = obj;
+   gd->parent = obj;
    efl_ui_mirrored_set(it, efl_ui_mirrored_get(obj));
 
    efl_event_callback_add(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
@@ -743,59 +853,46 @@ _grid_item_clear(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, EINA_UNUSED Efl_Ui_G
 EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_pack_clear(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   //Eina_Bool ret = efl_pack_clear(pd->box);
-
-   if (ret)
-     {
-        eina_list_free(pd->items);
-        eina_list_free(pd->selected);
-        pd->items = NULL;
-        pd->selected = NULL;
-     }
-
+   eina_list_free(pd->items);
+   eina_list_free(pd->selected);
+   pd->items = NULL;
+   pd->selected = NULL;
+ 
    elm_layout_sizing_eval(obj);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_unpack_all(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   //Eina_Bool ret = efl_pack_unpack_all(pd->box);
 
-   if (ret)
+   Efl_Ui_Grid_Item *it = NULL;
+   EINA_LIST_FREE(pd->items, it)
      {
-        Efl_Ui_Grid_Item *it = NULL;
-        EINA_LIST_FREE(pd->items, it)
-          {
-             _grid_item_clear(obj, pd, it);
-          }
-        eina_list_free(pd->selected);
-        pd->items = NULL;
-        pd->selected = NULL;
+        _grid_item_clear(obj, pd, it);
      }
+   eina_list_free(pd->selected);
+   pd->items = NULL;
+   pd->selected = NULL;
 
    elm_layout_sizing_eval(obj);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
 {
-   //Eina_Bool ret = efl_pack_unpack(pd->box, subobj);
    Efl_Ui_Grid_Item *item = (Efl_Ui_Grid_Item *)subobj;
 
-   if (ret)
+   pd->items = eina_list_remove(pd->items, item);
+   if (efl_ui_item_selected_get(item))
      {
-        pd->items = eina_list_remove(pd->items, item);
-        if (efl_ui_item_selected_get(item))
-          {
-             pd->selected = eina_list_remove(pd->selected, item);
-          }
-        _grid_item_clear(obj, pd, item);
+        pd->selected = eina_list_remove(pd->selected, item);
      }
+   _grid_item_clear(obj, pd, item);
 
    elm_layout_sizing_eval(obj);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -813,9 +910,9 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Ent
    pd->items = eina_list_append(pd->items, subobj);
 
    pid->update_me = EINA_TRUE;
-   _item_place(pd, subobj);
+   //_item_place(pd, subobj);
    _need_update(pd);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -828,7 +925,7 @@ _efl_ui_grid_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_E
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
    _need_update(pd);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -845,7 +942,7 @@ _efl_ui_grid_efl_pack_linear_pack_before(Eo *obj,
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
    _need_update(pd);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -862,7 +959,7 @@ _efl_ui_grid_efl_pack_linear_pack_after(Eo *obj,
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
    _need_update(pd);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -879,7 +976,7 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
    _need_update(pd);
-   return ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Efl_Gfx_Entity *
@@ -926,9 +1023,9 @@ _efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
                                        double v,
                                        Eina_Bool scalable)
 {
-   pd->padding.h = h;
-   pd->padding.v = v;
-   pd->padding.scalable = !!scalable;
+   pd->item.pad.w = (int )h;
+   pd->item.pad.h = (int) v;
+   pd->pad_scalable = !!scalable;
 
    _need_update(pd);
 }
@@ -941,22 +1038,20 @@ _efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
                                        Eina_Bool *scalable)
 {
    //??
-   *h = pd->padding.h;
-   *v = pd->padding.v;
-   *scalable = !!pd->padding.scalable;
+   *h = (double) pd->item.pad.w;
+   *v = (double) pd->item.pad.h;
+   *scalable = !!pd->pad_scalable;
 }
 
 /* FIXME: align could not work properly on the list
    EOLIAN static void
    _efl_ui_grid_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Grid_Data *pd, double h, double v)
    {
-   efl_pack_align_set(pd->box, h, v);
    }
 
    EOLIAN static void
    _efl_ui_grid_efl_pack_pack_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
    {
-   efl_pack_align_get(pd->box, &h, &v);
    }
  */
 
@@ -1183,17 +1278,15 @@ _efl_ui_grid_selected_items_get(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-efl_ui_grid_table_size_set(Eo *obj, Efl_Ui_Grid_Data *pd, int col, int row)
+_efl_ui_grid_item_size_set(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Size2D size)
 {
-   pd->table.row = row;
-   pd->table.col = col;
+   pd->item.size = size;
 }
 
-EOLIAN static void
-efl_ui_grid_table_size_get(Eo *obj, Efl_Ui_Grid_Data *pd, int *col, int *row)
+EOLIAN static Eina_Size2D
+_efl_ui_grid_item_size_get(const Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   *row = pd->table.row;
-   *col = pd->table.col;
+   return pd->item.size;
 }
 
 /* Internal EO APIs and hidden overrides */

@@ -1,0 +1,24 @@
+
+class Efl.Ui.Grid_Default_Item (Efl.Ui.Grid_Item,
+                                Efl.Text,
+                                Efl.Text_Markup,
+                                Efl.Ui.Translatable,
+                                Efl.Content)
+{
+   [[Grid Default Item class.
+     This class need to be sub object of list widget.
+     text and contents can be appliable by efl_text,
+     efl_content or efl_part APIs.]]
+   data: null;
+   implements {
+      //Efl.Object
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Text.text { get; set; }
+      Efl.Text_Markup.markup { get; set; }
+      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Part.part_get;
+   }
+}
