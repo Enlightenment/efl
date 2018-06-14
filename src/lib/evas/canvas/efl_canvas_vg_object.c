@@ -326,7 +326,10 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
    efl_event_callback_del(e, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _cleanup_reference, pd);
 
    efl_unref(pd->root);
-   pd->root = NULL;
+
+   if (pd->user_entry)
+     free(pd->user_entry);
+
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
@@ -343,6 +346,7 @@ _efl_canvas_vg_object_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Da
    obj->type = o_type;
 
    /* root node */
+   //FIXME: Well. I don't think this is necessary if user set a new root node...
    pd->root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
