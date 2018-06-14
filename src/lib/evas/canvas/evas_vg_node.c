@@ -212,31 +212,17 @@ _efl_canvas_vg_node_parent_checked_get(Eo *obj,
    *parent = efl_parent_get(obj);
 
    if (efl_isa(*parent, EFL_CANVAS_VG_CONTAINER_CLASS))
-     {
-        *cd = efl_data_scope_get(*parent, EFL_CANVAS_VG_CONTAINER_CLASS);
-        if (!*cd)
-          {
-             ERR("Can't get EFL_CANVAS_VG_CONTAINER_CLASS data.");
-             goto on_error;
-          }
-     }
+     *cd = efl_data_scope_get(*parent, EFL_CANVAS_VG_CONTAINER_CLASS);
    else if (efl_isa(*parent, EFL_CANVAS_VG_OBJECT_CLASS))
-     {
-        *cd = NULL;
-        *parent = NULL;
-     }
-   else if (*parent != NULL)
+     *parent = NULL;
+   else if (*parent)
      {
         ERR("Parent of unauthorized class '%s'.", efl_class_name_get(efl_class_get(*parent)));
-        goto on_error;
+        *parent = NULL;
+        return EINA_FALSE;
      }
 
    return EINA_TRUE;
-
- on_error:
-   *parent = NULL;
-   *cd = NULL;
-   return EINA_FALSE;
 }
 
 static Eo *
@@ -336,13 +322,13 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 {
    Efl_Canvas_Vg_Container_Data *cd = NULL;
    Efl_Canvas_Vg_Container_Data *old_cd;
-   Eo *old_parent;
+   Efl_VG *old_parent;
    Eina_Bool parent_container = EINA_TRUE;
 
    if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
-        cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
+     cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
    else if (efl_isa(parent, EFL_CANVAS_VG_OBJECT_CLASS))
-        parent_container = EINA_FALSE;
+     parent_container = EINA_FALSE;
    else if (parent)
      {
         ERR("parent(%p, class = %s) is not allowed by vg node(%p).",

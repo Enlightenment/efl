@@ -173,15 +173,13 @@ _efl_canvas_vg_object_root_node_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Efl_
         // set the parent so that vg canvas can render it.
         efl_parent_set(pd->user_entry->root, pd->root);
      }
-   else
+   else if (pd->user_entry)
      {
-        if (pd->user_entry)
-          {
-             // drop any surface cache attached to it.
-             Evas_Object_Protected_Data *eobj = efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS);
-             eobj->layer->evas->engine.func->ector_surface_cache_drop(_evas_engine_context(eobj->layer->evas), pd->user_entry);
-             free(pd->user_entry);
-          }
+        // drop any surface cache attached to it.
+        Evas_Object_Protected_Data *eobj = efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS);
+        eobj->layer->evas->engine.func->ector_surface_cache_drop(_evas_engine_context(eobj->layer->evas),
+                                                                 pd->user_entry);
+        free(pd->user_entry);
         pd->user_entry = NULL;
      }
 
@@ -389,11 +387,8 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd,
    else
      {
         Efl_Canvas_Vg_Node_Data *nd;
-
         nd = efl_data_scope_get(n, EFL_CANVAS_VG_NODE_CLASS);
-
         obj->layer->evas->engine.func->ector_renderer_draw(engine, output, context, surface, nd->renderer, clips, do_async);
-
         if (do_async)
           eina_array_push(&vd->cleanup, efl_ref(nd->renderer));
      }
@@ -444,6 +439,7 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd
                    context, surface,
                    root, NULL,
                    do_async);
+
    obj->layer->evas->engine.func->image_dirty_region(engine, buffer, 0, 0, 0, 0);
    obj->layer->evas->engine.func->ector_end(engine, buffer,
                                             context, surface,
