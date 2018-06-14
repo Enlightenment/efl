@@ -632,6 +632,11 @@ group { name: "e/comp/frame/menu/fast";
 group { name: "e/comp/frame/everything";
    inherit: "e/comp/frame/popup";
    parts {
+      part { name: "shadow";
+         description { state: "hidden" 0.0;
+            visible: 1;
+         }
+      }
       part { name: "shower";
          description { state: "default" 0.0;
             rel1.relative: -0.3 -0.3;
