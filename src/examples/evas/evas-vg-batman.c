@@ -135,18 +135,23 @@ main(void)
      {
        batmans_vg[i] = evas_vg_shape_add(vg);
        evas_vg_node_origin_set(batmans_vg[i], 100, 150);
-       evas_vg_node_color_set(batmans_vg[i], 0, 0, 0, 255);
-       evas_vg_shape_stroke_color_set(batmans_vg[i], 128, 10,10, 128);
-       evas_vg_shape_stroke_width_set(batmans_vg[i], 4.0);
-       evas_vg_shape_stroke_join_set(batmans_vg[i], EFL_GFX_JOIN_MITER);
+
        if(i % 2)
-       {
-          evas_vg_shape_stroke_color_set(batmans_vg[i], 10, 10,128, 128);
-          evas_vg_shape_stroke_width_set(batmans_vg[i], 2.0);
-          evas_vg_node_color_set(batmans_vg[i], 120, 120, 120, 255);
-          evas_vg_shape_stroke_join_set(batmans_vg[i], EFL_GFX_JOIN_ROUND);
-       }
-        evas_vg_shape_append_svg_path(batmans_vg[i], batmans_path[i]);
+         {
+            evas_vg_node_color_set(batmans_vg[i], 120, 120, 120, 255);
+            evas_vg_shape_stroke_color_set(batmans_vg[i], 10, 10,128, 128);
+            evas_vg_shape_stroke_width_set(batmans_vg[i], 2.0);
+            evas_vg_shape_stroke_join_set(batmans_vg[i], EFL_GFX_JOIN_ROUND);
+         }
+       else
+         {
+            evas_vg_node_color_set(batmans_vg[i], 0, 0, 0, 255);
+            evas_vg_shape_stroke_color_set(batmans_vg[i], 128, 10,10, 128);
+            evas_vg_shape_stroke_width_set(batmans_vg[i], 4.0);
+            evas_vg_shape_stroke_join_set(batmans_vg[i], EFL_GFX_JOIN_MITER);
+         }
+
+       evas_vg_shape_append_svg_path(batmans_vg[i], batmans_path[i]);
      }
 
    animation = ecore_animator_timeline_add(1, _animator, NULL);
