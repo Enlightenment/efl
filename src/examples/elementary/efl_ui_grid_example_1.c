@@ -64,11 +64,12 @@ elm_main(int argc, char **argv)
 
    // TEST#1 : Create Grid
    gd->grid = grid = EoGenerate(EFL_UI_GRID_CLASS, box, EFL_UI_DIR_DEFAULT);
+   efl_gfx_size_hint_weight_set(grid, EFL_GFX_SIZE_HINT_EXPAND, 0.8);
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 100)); // 4X4
    efl_pack_end(box, grid);
    // TEST#2 : Set Item Default Size
 
-   itemmax = 5;
+   itemmax = 15;
    for (i = 0; i < itemmax; i++)
    {
       int r = 0, g = 0, b = 0;
@@ -76,7 +77,7 @@ elm_main(int argc, char **argv)
       gitem = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
       if (i == 0) gd->item = gitem;
       Eo *rect = evas_object_rectangle_add(evas_object_evas_get(win));
-      switch (i % 4)
+      switch (i % 5)
         {
          case 0:
             r = 255;
@@ -90,6 +91,9 @@ elm_main(int argc, char **argv)
          case 3:
             r = g = b = 255;
             break;
+         case 4:
+            r = g = b = 0;
+            break;
       }
       efl_gfx_color_set(rect, r, g, b, 255);
       efl_content_set(gitem, rect);
@@ -98,6 +102,7 @@ elm_main(int argc, char **argv)
    }
 
    upbtn = EoGenerate(EFL_UI_BUTTON_CLASS, box, EFL_UI_DIR_DEFAULT);
+   efl_gfx_size_hint_weight_set(upbtn, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
    efl_text_set(upbtn, "Unpack Item");
    efl_gfx_size_hint_align_set(upbtn, 0.5, 0.5);
    efl_gfx_size_hint_min_set(upbtn, EINA_SIZE2D(200, 25));
@@ -106,6 +111,7 @@ elm_main(int argc, char **argv)
    efl_pack_end(box, upbtn);
 
    allbtn = EoGenerate(EFL_UI_BUTTON_CLASS, box, EFL_UI_DIR_DEFAULT);
+   efl_gfx_size_hint_weight_set(allbtn, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
    efl_text_set(allbtn, "Unpack All");
    efl_gfx_size_hint_align_set(allbtn, 0.5, 0.5);
    efl_gfx_size_hint_min_set(allbtn, EINA_SIZE2D(200, 25));

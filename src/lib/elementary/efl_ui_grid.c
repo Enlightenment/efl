@@ -18,6 +18,8 @@
 
 #define MY_CLASS_NAME "Efl.Ui.Grid"
 
+static void _grid_clear(Eo *obj, Efl_Ui_Grid_Data *pd);
+
 static void
 _need_update(Efl_Ui_Grid_Data *pd)
 {
@@ -45,12 +47,13 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
 ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h, view.x, view.y, view.w, view.h);
 
    //if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
-   if (!pd->linemax)
+   if (!pd->linemax || pd->pan_resized)
      {
         pd->linemax =(horiz ?
                      ((pd->geo.h + pd->item.pad.h) / (pd->item.size.h + pd->item.pad.h)) :
                      ((pd->geo.w + pd->item.pad.w) / (pd->item.size.w + pd->item.pad.w)));
         if (!pd->linemax) pd->linemax = 1;
+        if (pd->pan_resized) pd->pan_resized = EINA_FALSE;
      }
 
 
@@ -120,8 +123,8 @@ ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h
              id->geo.h = pd->item.size.h;
           }
 
-        ipos.x = pan.x + id->geo.x;
-        ipos.y = pan.y + id->geo.y;
+        ipos.x = id->geo.x - pan.x;
+        ipos.y = id->geo.y - pan.y;
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
         efl_gfx_size_hint_restricted_min_set(item, id->geo.size);
@@ -137,6 +140,7 @@ ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h
 
      ERR("LSH : geo [%d, %d]", pd->geo.w ,pd->geo.h);
    efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
+   efl_gfx_entity_size_set(pd->content, pd->geo.size);
 }
 
 static void
@@ -151,8 +155,8 @@ _reposition(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
      {
         EFL_UI_GRID_ITEM_DATA_GET(item, id);
 
-        ipos.x = pan.x + id->geo.x;
-        ipos.y = pan.y + id->geo.y;
+        ipos.x = id->geo.x - pan.x;
+        ipos.y = id->geo.y - pan.y;
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
         //efl_gfx_size_hint_min_set(item, id->geo.size);
@@ -558,9 +562,10 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
 
    _scroll_edje_object_attach(obj);
 
-
-   //FIXME: Fake Content for pan resize
+   //FIXME: Workaround code! fake Content for pan resize.
+  // to remove this code, we need to customize pan class.
    pd->content = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(obj));
+   efl_gfx_color_set(pd->content, 0, 0, 0, 0);
    efl_content_set(pd->pan, pd->content);
 
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
@@ -588,6 +593,7 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
 EOLIAN static void
 _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
+   Efl_Ui_Grid_Item *it = NULL;
    _scroll_edje_object_detach(obj);
 
    efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
@@ -607,6 +613,9 @@ _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
    efl_event_callback_del(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
                           _efl_ui_grid_content_moved_cb, obj);
 
+   _grid_clear(obj, pd);
+
+   efl_content_set(pd->pan, NULL);
    efl_del(pd->content);
    pd->content = NULL;
    efl_del(pd->pan);
@@ -821,6 +830,7 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    id->select_mode = &(pd->select_mode);
    id->parent = obj;
    gd->parent = obj;
+   efl_canvas_group_member_add(pd->pan, it);
    efl_ui_mirrored_set(it, efl_ui_mirrored_get(obj));
 
    efl_event_callback_add(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
@@ -849,15 +859,25 @@ _grid_item_clear(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, EINA_UNUSED Efl_Ui_G
    efl_event_callback_del(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
 }
 
+_grid_clear(Eo *obj, Efl_Ui_Grid_Data *pd)
+{
+   Efl_Ui_Grid_Item *it = NULL;
+   EINA_LIST_FREE(pd->items, it)
+     {
+        _grid_item_clear(obj, pd, it);
+        efl_del(it);
+     }
+   eina_list_free(pd->selected);
+   pd->items = NULL;
+   pd->selected = NULL;
+}
+
 /* Pack APIs */
 EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_pack_clear(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   eina_list_free(pd->items);
-   eina_list_free(pd->selected);
-   pd->items = NULL;
-   pd->selected = NULL;
- 
+  _grid_clear(obj, pd);
+
    elm_layout_sizing_eval(obj);
    return EINA_TRUE;
 }
