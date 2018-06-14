@@ -172,6 +172,8 @@ _efl_canvas_vg_object_root_node_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Efl_
 
         // set the parent so that vg canvas can render it.
         efl_parent_set(pd->user_entry->root, pd->root);
+
+        efl_canvas_vg_node_root_set(root_node, obj);
      }
    else if (pd->user_entry)
      {
