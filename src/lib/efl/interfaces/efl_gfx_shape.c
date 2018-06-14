@@ -42,7 +42,6 @@ struct _Efl_Gfx_Property
    unsigned int dash_length;
 
    int r, g, b, a;
-   int fr, fg, fb, fa;
 };
 
 static inline void
@@ -51,8 +50,6 @@ _efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
    property->scale = efl_gfx_shape_stroke_scale_get(obj);
    efl_gfx_shape_stroke_color_get(obj, &property->r, &property->g,
                                   &property->b, &property->a);
-   efl_gfx_color_get(obj, &property->fr, &property->fg,
-                     &property->fb, &property->fa);
    property->w = efl_gfx_shape_stroke_width_get(obj);
    property->centered = efl_gfx_shape_stroke_location_get(obj);
    efl_gfx_shape_stroke_dash_get(obj, &property->dash, &property->dash_length);
@@ -112,13 +109,6 @@ _efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                                pos_map),
                                   interpolatei(property_from.a, property_to.a,
                                                pos_map));
-   //Color is not a part of Path. Is it correct?...
-   efl_gfx_color_set(obj,
-                     interpolatei(property_from.fr, property_to.fr, pos_map),
-                     interpolatei(property_from.fg, property_to.fg, pos_map),
-                     interpolatei(property_from.fb, property_to.fb, pos_map),
-                     interpolatei(property_from.fa, property_to.fa, pos_map));
-
    interv = interpolate(property_from.w, property_to.w, pos_map);
    efl_gfx_shape_stroke_width_set(obj, interv);
 
