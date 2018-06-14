@@ -100,9 +100,9 @@ EAPI Efreet_Menu     *efreet_menu_get(void);
  * @param func function to call when menu is created
  * @param data user data to return in callback
  *
- * @since 1.8
+ * @deprecated
  */
-EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data);
+EINA_DEPRECATED EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data);
 
 /**
  * @param path The path of the menu to load

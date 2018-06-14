@@ -598,11 +598,15 @@ efreet_menu_get(void)
     return NULL;
 }
 
-EAPI void
+/* deprecated */
+EINA_DEPRECATED EAPI void
 efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data)
 {
     Efreet_Menu_Async *async;
 
+    ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+
+    return;
     async = NEW(Efreet_Menu_Async, 1);
     async->func = func;
     async->data = (void*)data;
