@@ -125,27 +125,25 @@ _efl_canvas_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Contain
 }
 
 static Eina_Bool
-_efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj,
-                                          Efl_Canvas_Vg_Container_Data *pd,
-                                          const Efl_VG *from, const Efl_VG *to,
-                                          double pos_map)
+_efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Container_Data *pd, const Efl_VG *from, const Efl_VG *to, double pos_map)
 {
    Eina_Iterator *from_it, *to_it;
    Eina_List *l;
    Eina_Bool r, res = EINA_TRUE;
    Eo *from_child, *to_child, *child;
 
-   //1. check if both the object are containers
-   if (!(efl_isa(from, EFL_CANVAS_VG_CONTAINER_CLASS) &&
-         efl_isa(to, EFL_CANVAS_VG_CONTAINER_CLASS)))
+   //Check if both objects have same type
+   if (!(efl_isa(from, MY_CLASS) && efl_isa(to, MY_CLASS)))
      return EINA_FALSE;
 
-   r = efl_gfx_path_interpolate(efl_super(obj, EFL_CANVAS_VG_CONTAINER_CLASS), from, to, pos_map);
-
+   //Interpolates this nodes
+   r = efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
    if (!r) return EINA_FALSE;
 
    from_it = efl_canvas_vg_container_children_get((Efl_VG *)from);
    to_it = efl_canvas_vg_container_children_get((Efl_VG *)to);
+
+   //Interpolates children
    EINA_LIST_FOREACH (pd->children, l, child)
      {
         res &= eina_iterator_next(from_it, (void **)&from_child);
@@ -156,10 +154,10 @@ _efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj,
              r = EINA_FALSE;
              break;
           }
-        r &= efl_gfx_path_interpolate(child, from_child, to_child, pos_map);
-        if (!r)
-          break;
+        r = efl_gfx_path_interpolate(child, from_child, to_child, pos_map);
+        if (!r) break;
      }
+
    eina_iterator_free(from_it);
    eina_iterator_free(to_it);
 
