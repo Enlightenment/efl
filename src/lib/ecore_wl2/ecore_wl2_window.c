@@ -1764,10 +1764,10 @@ ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigne
 }
 
 EAPI void
-ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window)
+ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (!window->wl2_surface) return;
-   ecore_wl2_surface_flush(window->wl2_surface, EINA_FALSE);
+   ecore_wl2_surface_flush(window->wl2_surface, purge);
 }
