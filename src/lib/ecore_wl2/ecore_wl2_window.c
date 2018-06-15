@@ -41,6 +41,8 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
 
    window->outputs = eina_list_free(window->outputs);
 
+   ecore_wl2_window_surface_flush(window, EINA_TRUE);
+
    window->commit_pending = EINA_FALSE;
 }
 
