@@ -17,6 +17,7 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 
    ecore_event_handler_del(surface->offscreen_handler);
    surface->funcs->destroy(surface, surface->private_data);
+   surface->wl2_win->wl2_surface = NULL;
    surface->wl2_win = NULL;
 
    free(surface);
