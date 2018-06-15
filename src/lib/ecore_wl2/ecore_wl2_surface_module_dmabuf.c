@@ -217,7 +217,7 @@ _evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s EINA_UNUSED, void *priv_data)
 }
 
 static void
-_evas_dmabuf_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_data, Eina_Bool purge EINA_UNUSED)
+_evas_dmabuf_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_data, Eina_Bool purge)
 {
    Ecore_Wl2_Dmabuf_Private *p;
    Ecore_Wl2_Buffer *b;
@@ -226,7 +226,7 @@ _evas_dmabuf_surface_flush(Ecore_Wl2_Surface *surface EINA_UNUSED, void *priv_da
 
    EINA_LIST_FREE(p->buffers, b)
      {
-        if (!ecore_wl2_buffer_busy_get(b))
+        if (purge || !ecore_wl2_buffer_busy_get(b))
           {
              if (p->current == b)
                p->current = NULL;
