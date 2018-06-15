@@ -251,7 +251,7 @@ static struct {
    while (0)
 
 static void
-_elm_clouseau_unload()
+_elm_old_clouseau_unload()
 {
    if (_clouseau_old_info.is_init)
      {
@@ -266,6 +266,11 @@ _elm_clouseau_unload()
           }
         _clouseau_old_info.is_init = EINA_FALSE;
      }
+}
+
+static void
+_elm_clouseau_unload()
+{
    if (_clouseau_info.is_init)
      {
         if (_clouseau_info.shutdown)
@@ -282,11 +287,11 @@ _elm_clouseau_unload()
 }
 
 Eina_Bool
-_elm_clouseau_reload()
+_elm_old_clouseau_reload()
 {
    if (!_elm_config->clouseau_enable)
      {
-        _elm_clouseau_unload();
+        _elm_old_clouseau_unload();
         return EINA_TRUE;
      }
 
@@ -315,7 +320,12 @@ _elm_clouseau_reload()
              _clouseau_old_info.is_init = EINA_TRUE;
           }
      }
+   return EINA_TRUE;
+}
 
+static Eina_Bool
+_elm_clouseau_load()
+{
    if (!_clouseau_info.is_init)
      {
         _clouseau_info.handle = eina_module_new(
@@ -385,6 +395,8 @@ elm_init(int argc, char **argv)
 
    _prefix_shutdown();
 
+   _elm_clouseau_load();
+
    system_handlers[0] =
      ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
    system_handlers[1] =
@@ -427,6 +439,7 @@ elm_shutdown(void)
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
    _elm_clouseau_unload();
+   _elm_old_clouseau_unload();
 // wrningz :(
 //   _prefix_shutdown();
    ELM_SAFE_FREE(app_name, eina_stringshare_del);
