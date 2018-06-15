@@ -1,5 +1,5 @@
-   #ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
+#ifdef HAVE_CONFIG_H
+#include "elementary_config.h"
 #endif
 
 #define ELM_LAYOUT_PROTECTED
@@ -30,10 +30,11 @@ _need_update(Efl_Ui_Grid_Data *pd)
 }
 
 static void
-_relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
+_relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
 {
    Eina_List *l;
    Efl_Ui_Grid_Item *item;
+   Efl_Ui_Grid_Item_Data *pid = NULL;
    Eina_Position2D ipos;
    Eina_Position2D cur = {0, 0};
    int outer;
@@ -63,10 +64,16 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
      {
         EFL_UI_GRID_ITEM_DATA_GET(item, id);
 
-        if (pd->need_update)
+        if (pd->need_update || id->update_me || id->update_begin)
           {
              // Index begin with zero value :
              id->index = count;
+             if (id->update_me) id->update_me = EINA_FALSE;
+             if (id->update_begin)
+               {
+                  id->update_begin = EINA_FALSE;
+                  pd->need_update = EINA_TRUE;
+               }
              if (horiz)
                {
                   id->pos.row = (count % pd->linemax);
@@ -78,13 +85,13 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
                     }
                   else if (id->pos.row == 0)// ((cur.y + pd->item.pad.h + pd->item.size.h) > pd->geo.h)
                     {
-                      cur.x = cur.x + pd->item.size.w + pd->item.pad.w;
+                      cur.x = pid->geo.x + pd->item.size.w + pd->item.pad.w;
                       cur.y = outer;
                     }
                   else
                     {
                       //cur.x = cur.x;
-                      cur.y = cur.y + pd->item.size.h + pd->item.pad.h;
+                      cur.y = pid->geo.y + pd->item.size.h + pd->item.pad.h;
                     }
                }
              else
@@ -99,28 +106,40 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
                   else if (id->pos.col == 0)//((cur.x + pd->item.pad.w + pd->item.size.w) > pd->geo.w)
                     {
                       cur.x = outer;
-                      cur.y = cur.y + pd->item.size.h + pd->item.pad.h;
+                      cur.y = pid->geo.y + pd->item.size.h + pd->item.pad.h;
                     }
                   else
                     {
-                     cur.x = cur.x + pd->item.size.w + pd->item.pad.w;
+                     cur.x = pid->geo.x + pd->item.size.w + pd->item.pad.w;
                       //cur.y = cur.y;
                     }
                }
+
+             min = efl_gfx_size_hint_min_get(item);
+             max = efl_gfx_size_hint_max_get(item);
+
+             if (pd->item.size.w < min.w) pd->item.size.w = min.w;
+             if (pd->item.size.h < min.h) pd->item.size.h = min.h;
+             if ((max.w > 0) && pd->item.size.w > max.w) pd->item.size.w = max.w;
+             if ((max.h > 0) && pd->item.size.h > max.h) pd->item.size.h = max.h;
+
              id->geo.x = cur.x;
              id->geo.y = cur.y;
              id->geo.w = pd->item.size.w;
              id->geo.h = pd->item.size.h;
+
           }
 
         ipos.x = id->geo.x - pan.x;
         ipos.y = id->geo.y - pan.y;
+
+        //
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
-        efl_gfx_size_hint_restricted_min_set(item, id->geo.size);
+        //efl_gfx_size_hint_restricted_min_set(item, id->geo.size);
 
+        pid = id;
         count++;
-
      }
 
    if (horiz)
@@ -128,12 +147,14 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    else
      pd->geo.h = cur.y + pd->item.size.h + pd->item.pad.h;
 
-   efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
+   //efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
    efl_gfx_entity_size_set(pd->content, pd->geo.size);
+
+   pd->need_update = EINA_FALSE;
 }
 
 static void
-_reposition(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
+_reposition(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
 {
    Efl_Ui_Grid_Item *item;
    Eina_List *l;
@@ -586,7 +607,6 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
 EOLIAN static void
 _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   Efl_Ui_Grid_Item *it = NULL;
    _scroll_edje_object_detach(obj);
 
    efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
@@ -706,14 +726,17 @@ _efl_ui_grid_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *
    return eina_list_count(pd->items);
 }
 
+/* Need to Implements
 EOLIAN static Eina_Iterator *
 _efl_ui_grid_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
   // NEED-TO-IMPLEMENTS
 }
+*/
+
 
 EOLIAN static void
-_efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir dir)
+_efl_ui_grid_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir dir)
 {
    //FIXME: Currently only support horizontal and vertical mode.
    switch (dir)
@@ -742,7 +765,7 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_U
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_ui_grid_efl_ui_direction_direction_get(const Eo *obj, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->dir;
 }
@@ -880,7 +903,8 @@ _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
 }
 
 
-_grid_clear_internal(Eo *obj, Efl_Ui_Grid_Data *pd)
+static void
+_grid_clear_internal(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    Efl_Ui_Grid_Item *it = NULL;
    Eina_List *l, *ll;
@@ -933,7 +957,7 @@ _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subo
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_grid_efl_pack_pack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
+_efl_ui_grid_efl_pack_pack(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    return efl_pack_end(obj, subobj);
 }
@@ -943,12 +967,11 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Ent
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
-   Efl_Ui_Grid_Item *last = eina_list_last(pd->items);
    pd->items = eina_list_append(pd->items, subobj);
 
    pid->update_me = EINA_TRUE;
-   //_item_place(pd, subobj);
-   _need_update(pd);
+
+   efl_canvas_group_change(obj);
    return EINA_TRUE;
 }
 
@@ -957,7 +980,6 @@ _efl_ui_grid_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_E
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
-
    pd->items = eina_list_prepend(pd->items, subobj);
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
@@ -971,13 +993,13 @@ _efl_ui_grid_efl_pack_linear_pack_before(Eo *obj,
                                          Efl_Gfx_Entity *subobj,
                                          const Efl_Gfx_Entity *existing)
 {
-   if (!_list_item_process(obj, pd, subobj)) return EINA_FALSE;
+   if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(existing, EINA_FALSE);
    EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
 
    pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
-   pid->update_me = EINA_TRUE;
+   pid->update_begin = EINA_TRUE;
    _need_update(pd);
    return EINA_TRUE;
 }
@@ -994,7 +1016,7 @@ _efl_ui_grid_efl_pack_linear_pack_after(Eo *obj,
 
    pd->items = eina_list_append_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
-   pid->update_me = EINA_TRUE;
+   pid->update_begin = EINA_TRUE;
    _need_update(pd);
    return EINA_TRUE;
 }
@@ -1011,7 +1033,7 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
 
    pd->items = eina_list_append_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
-   pid->update_me = EINA_TRUE;
+   pid->update_begin = EINA_TRUE;
    _need_update(pd);
    return EINA_TRUE;
 }
@@ -1027,6 +1049,12 @@ _efl_ui_grid_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Dat
 {
    Efl_Gfx_Entity *target = eina_list_nth(pd->items, index);
    pd->items = eina_list_remove(pd->items, target);
+   /*
+   if (after)
+     {
+     }
+   else
+   */
    _need_update(pd);
    return target;
 }
@@ -1036,7 +1064,7 @@ _efl_ui_grid_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
                                             Efl_Ui_Grid_Data *pd,
                                             const Efl_Gfx_Entity *subobj)
 {
-   return eina_list_data_idx(pd->items, subobj);
+   return eina_list_data_idx(pd->items, (void *)subobj);
 }
 
 EOLIAN static void
@@ -1086,7 +1114,7 @@ _efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Grid_Data *pd, double h, double v)
+_efl_ui_grid_efl_pack_pack_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double h, double v)
 {
    pd->item.align.w = h;
    pd->item.align.h = v;
@@ -1323,7 +1351,7 @@ _efl_ui_grid_selected_items_get(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_grid_item_size_set(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Size2D size)
+_efl_ui_grid_item_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Size2D size)
 {
    pd->item.size = size;
    //reset linemax for recalculate layout.
@@ -1333,7 +1361,7 @@ _efl_ui_grid_item_size_set(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Size2D size)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_grid_item_size_get(const Eo *obj, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_item_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->item.size;
 }

@@ -98,7 +98,7 @@ elm_main(int argc, char **argv)
 
    win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
       efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
-      efl_text_set(efl_added, "Efl.Ui.Grid"),
+      efl_text_set(efl_added, "Efl.Ui.Grid Resize"),
       efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    box = EoGenerate(EFL_UI_BOX_CLASS, win, EFL_UI_DIR_VERTICAL);
@@ -165,6 +165,7 @@ elm_main(int argc, char **argv)
                  efl_text_set(efl_added, "Size [W, H]"),
                  efl_text_interactive_editable_set(efl_added, EINA_FALSE));
    efl_gfx_size_hint_weight_set(txt, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
+   efl_gfx_size_hint_align_set(txt, 0.5, 0.5);
 
    efl_pack_end(bbbx, txt);
 
@@ -200,6 +201,7 @@ elm_main(int argc, char **argv)
                  efl_text_set(efl_added, "Pad [W, H]"),
                  efl_text_interactive_editable_set(efl_added, EINA_FALSE));
    efl_gfx_size_hint_weight_set(txt, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
+   efl_gfx_size_hint_align_set(txt, 0.5, 0.5);
 
    efl_pack_end(bbbx, txt);
 
@@ -236,6 +238,7 @@ elm_main(int argc, char **argv)
                  efl_text_set(efl_added, "Align [W, H]"),
                  efl_text_interactive_editable_set(efl_added, EINA_FALSE));
    efl_gfx_size_hint_weight_set(txt, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
+   efl_gfx_size_hint_align_set(txt, 0.5, 0.5);
 
    efl_pack_end(bbbx, txt);
 

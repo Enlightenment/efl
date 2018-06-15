@@ -18,6 +18,7 @@ typedef struct _Efl_Ui_Grid_Item_Data
    /* Boolean Values */
    Eina_Bool  needs_size_calc : 1; /* Flag for Size calculation */
    Eina_Bool  update_me: 1;
+   Eina_Bool  update_begin: 1;
 } Efl_Ui_Grid_Item_Data;
 
 

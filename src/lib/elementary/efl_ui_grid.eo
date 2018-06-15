@@ -23,31 +23,31 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
       item_scroll {
          [[scroll move the item to show in the viewport.]]
          params {
-            @in item: Efl.Ui.Item; [[Target item.]]
+            @in item: Efl.Ui.Grid_Item; [[Target item.]]
             @in animation: bool; [[Boolean value for animation of scroll move.]]
          }
       }
       item_scroll_align {
          [[scroll move the item to show at the align position of the viewport.]]
          params {
-            @in item: Efl.Ui.Item; [[Target item.]]
+            @in item: Efl.Ui.Grid_Item; [[Target item.]]
             @in align: double; [[align value in Viewport.]]
             @in animation: bool; [[Boolean value for animation of scroll move.]]
          }
       }
+*/
       @property last_selected_item {
          [[Property data of last selected item.]]
          get {}
          values {
-            item: Efl.Ui.Item; [[last selected item of grid.]]
+            item: Efl.Ui.Grid_Item; [[last selected item of grid.]]
          }
       }
       selected_items_get {
          [[Get the selected items iterator. The iterator sequence will be decided by selection.]]
-         items: iterator<Efl.Ui.Item> @owned @warn_unused; [[Iterator covered by selected items list.
-                                                              user have to free the iterator after used.]]
+         return: iterator<Efl.Ui.Grid_Item> @owned @warn_unused; [[Iterator covered by selected items list.
+                                                                   user have to free the iterator after used.]]
       }
-*/
    }
    implements {
       //Efl.Object
@@ -60,8 +60,9 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
 /* NEED-TO-IMPLEMENTS
       //Efl.Container
       Efl.Container.content_iterate;
-      Efl.Container.content_count;
 */
+      Efl.Container.content_count;
+
       Efl.Ui.Direction.direction { get; set; }
 
       //Efl.Ui.Widget
@@ -76,20 +77,18 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
       Efl.Pack.unpack;
       Efl.Pack.pack;
       Efl.Pack_Linear.pack_end;
-/* NEED-TO-IMPLEMENTS
+
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_before;
       Efl.Pack_Linear.pack_after;
       Efl.Pack_Linear.pack_at;
-      Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Linear.pack_unpack_at;
       Efl.Pack_Linear.pack_index_get;
-*/
+      Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
       Efl.Pack.pack_padding { get; set; }
       Efl.Pack.pack_align { get; set; }
-
 
       //Efl.Ui.Scrollable
       Efl.Ui.Scrollable_Interactive.scroll;
@@ -102,8 +101,6 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
       Efl.Ui.Scrollbar.bar_mode { get; set; }
 
       //Efl.Ui.Multi_Selectable
-/* NEED-TO-IMPLEMENTS
       Efl.Ui.Multi_Selectable.select_mode {get; set;}
-*/
    }
 }
