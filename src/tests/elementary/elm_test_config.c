@@ -99,7 +99,8 @@ EFL_START_TEST (elm_config_eoapi)
    CONFIG_CHKB(item_select_on_focus_disabled, !old);
    CONFIG_CHKB(first_item_focus_on_first_focusin, 0);
    CONFIG_CHKB(mirrored, 0);
-   CONFIG_CHKB(clouseau_enabled, !old);
+   //see clouseau tests
+   //CONFIG_CHKB(clouseau_enabled, !old);
    CONFIG_CHKD(glayer_long_tap_start_timeout, 0);
    CONFIG_CHKD(glayer_double_tap_timeout, 0);
    //color_overlay
