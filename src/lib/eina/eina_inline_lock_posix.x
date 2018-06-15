@@ -200,9 +200,6 @@ eina_lock_take(Eina_Lock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -270,16 +267,8 @@ eina_lock_take_try(Eina_Lock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
-#endif
-
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
 #endif
 
    ok = pthread_mutex_trylock(&(mutex->mutex));
@@ -317,9 +306,6 @@ eina_lock_release(Eina_Lock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -506,9 +492,6 @@ eina_rwlock_take_read(Eina_RWLock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -529,9 +512,6 @@ eina_rwlock_take_write(Eina_RWLock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -552,9 +532,6 @@ eina_rwlock_release(Eina_RWLock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif

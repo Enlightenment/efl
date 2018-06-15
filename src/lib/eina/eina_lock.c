@@ -88,11 +88,6 @@ _eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
    pthread_mutexattr_t attr;
    Eina_Bool ok = EINA_FALSE;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    if (pthread_mutexattr_init(&attr) != 0) return EINA_FALSE;
    if (recursive)
      {
@@ -114,11 +109,6 @@ _eina_lock_free(Eina_Lock *mutex)
 {
    int ok;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    ok = pthread_mutex_destroy(&(mutex->mutex));
    if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, mutex_destroy, mutex);
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -134,8 +124,6 @@ _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(mutex != NULL);
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
    memset(cond, 0, sizeof (Eina_Condition));
 #endif
 
@@ -178,11 +166,6 @@ _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 EAPI void
 _eina_condition_free(Eina_Condition *cond)
 {
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    pthread_cond_destroy(&(cond->condition));
 #ifdef EINA_HAVE_DEBUG_THREADS
    memset(cond, 0, sizeof (Eina_Condition));
@@ -194,11 +177,6 @@ _eina_rwlock_new(Eina_RWLock *mutex)
 {
    int ok;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    ok = pthread_rwlock_init(&(mutex->mutex), NULL);
    if (ok == 0) return EINA_TRUE;
    else if ((ok == EAGAIN) || (ok == ENOMEM)) return EINA_FALSE;
@@ -209,10 +187,6 @@ _eina_rwlock_new(Eina_RWLock *mutex)
 EAPI void
 _eina_rwlock_free(Eina_RWLock *mutex)
 {
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
    pthread_rwlock_destroy(&(mutex->mutex));
 }
 
