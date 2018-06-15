@@ -35,7 +35,7 @@ volatile int           _eina_debug_sysmon_reset = 0;
 volatile int           _eina_debug_sysmon_active = 0;
 volatile int           _eina_debug_evlog_active = 0;
 
-static Eina_Lock       _sysmon_lock;
+Eina_Lock       _sysmon_lock;
 
 static Eina_Bool       _sysmon_thread_runs = EINA_FALSE;
 static pthread_t       _sysmon_thread;
