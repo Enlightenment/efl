@@ -134,8 +134,10 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
    ewd = ecore_wl2_window_display_get(einfo->info.wl2_win);
    if (ob->ewd != ewd)
      {
+        /* We don't use a purging flush because we don't want to
+         * delete a buffer currently being displayed */
         if (ewd)
-          ecore_wl2_surface_flush(ob->surface);
+          ecore_wl2_surface_flush(ob->surface, EINA_FALSE);
         re->generic.ob->ewd = ewd;
      }
 
