@@ -1580,18 +1580,6 @@ _ecore_evas_wl_common_aux_hints_supported_update(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_wl_common_raise(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   wdata = ee->engine.data;
-   ecore_wl2_window_raise(wdata->win);
-}
-
-static void
 _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -2379,7 +2367,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // shaped_set
    _ecore_evas_wl_common_show,
    _ecore_evas_wl_common_hide,
-   _ecore_evas_wl_common_raise,
+   NULL, // raise
    NULL, // lower
    NULL, // activate
    _ecore_evas_wl_common_title_set,
