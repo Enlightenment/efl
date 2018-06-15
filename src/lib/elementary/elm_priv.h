@@ -597,7 +597,7 @@ void                 _elm_unneed_ethumb(void);
 void                 _elm_unneed_web(void);
 
 void                 _elm_rescale(void);
-Eina_Bool            _elm_clouseau_reload(void);
+Eina_Bool            _elm_old_clouseau_reload(void);
 
 void                 _elm_config_init(void);
 void                 _elm_config_sub_init(void);
