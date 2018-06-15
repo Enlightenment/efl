@@ -34,10 +34,11 @@
 volatile int           _eina_debug_sysmon_reset = 0;
 volatile int           _eina_debug_sysmon_active = 0;
 volatile int           _eina_debug_evlog_active = 0;
+volatile int           _eina_debug_cpu_active = 0;
 
 Eina_Lock       _sysmon_lock;
+static Eina_Condition  _exit_cond;
 
-static Eina_Bool       _sysmon_thread_runs = EINA_FALSE;
 static pthread_t       _sysmon_thread;
 
 // this is a DEDICATED thread tojust collect system info and to have the
@@ -77,6 +78,7 @@ _sysmon(void *_data EINA_UNUSED)
         // wait on a mutex that will be locked for as long as this
         // threead is not meant to go running
         eina_lock_take(&_sysmon_lock);
+        if (!_eina_debug_cpu_active) break;
         // if we need to reset as we just started polling system stats...
         if (_eina_debug_sysmon_reset)
           {
@@ -247,6 +249,8 @@ _sysmon(void *_data EINA_UNUSED)
           }
         usleep(1000); // 1ms sleep
      }
+   eina_condition_signal(&_exit_cond);
+   eina_lock_release(&_sysmon_lock);
    return NULL;
 }
 
@@ -294,39 +298,36 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(_OPS,
 Eina_Bool
 _eina_debug_cpu_init(void)
 {
-   // if it's already running - we're good.
 #ifndef _WIN32
-   if (!_sysmon_thread_runs)
-     {
-        int err;
-        sigset_t oldset, newset;
+   int err;
+   sigset_t oldset, newset;
 
-        eina_lock_new(&_sysmon_lock);
-        eina_lock_take(&_sysmon_lock);
-        sigemptyset(&newset);
-        sigaddset(&newset, SIGPIPE);
-        sigaddset(&newset, SIGALRM);
-        sigaddset(&newset, SIGCHLD);
-        sigaddset(&newset, SIGUSR1);
-        sigaddset(&newset, SIGUSR2);
-        sigaddset(&newset, SIGHUP);
-        sigaddset(&newset, SIGQUIT);
-        sigaddset(&newset, SIGINT);
-        sigaddset(&newset, SIGTERM);
+   eina_lock_new(&_sysmon_lock);
+   eina_lock_take(&_sysmon_lock);
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
 #ifdef SIGPWR
-        sigaddset(&newset, SIGPWR);
+   sigaddset(&newset, SIGPWR);
 #endif
-        pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+   pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+   _eina_debug_cpu_active = 1;
+   eina_condition_new(&_exit_cond, &_sysmon_lock);
 
-        err = pthread_create(&_sysmon_thread, NULL, _sysmon, NULL);
+   err = pthread_create(&_sysmon_thread, NULL, _sysmon, NULL);
 
-        pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-        if (err != 0)
-          {
-             e_debug("EINA DEBUG ERROR: Can't create debug sysmon thread!");
-             abort();
-          }
-        _sysmon_thread_runs = EINA_TRUE;
+   pthread_sigmask(SIG_SETMASK, &oldset, NULL);
+   if (err != 0)
+     {
+        e_debug("EINA DEBUG ERROR: Can't create debug sysmon thread!");
+        abort();
      }
    eina_debug_opcodes_register(NULL, _OPS(), NULL, NULL);
 #endif
@@ -336,6 +337,14 @@ _eina_debug_cpu_init(void)
 Eina_Bool
 _eina_debug_cpu_shutdown(void)
 {
+   if (_eina_debug_sysmon_active)
+     eina_lock_take(&_sysmon_lock);
+   _eina_debug_cpu_active = 0;
+     eina_condition_wait(&_exit_cond);
+   eina_condition_free(&_exit_cond);
+   eina_lock_release(&_sysmon_lock);
+   eina_lock_free(&_sysmon_lock);
+   _eina_debug_sysmon_reset = _eina_debug_sysmon_active = _eina_debug_evlog_active = 0;
    return EINA_TRUE;
 }
 
