@@ -2557,7 +2557,9 @@ _eet_free_unref(Eet_Free *ef)
 }
 
 #define _eet_freelist_add(Ctx, Data) _eet_free_add(&Ctx->freelist, Data);
+#if 0
 #define _eet_freelist_del(Ctx, Data) _eet_free_del(&Ctx->freelist, Data);
+#endif
 #define _eet_freelist_reset(Ctx)     _eet_free_reset(&Ctx->freelist);
 #define _eet_freelist_ref(Ctx)       _eet_free_ref(&Ctx->freelist);
 #define _eet_freelist_unref(Ctx)     _eet_free_unref(&Ctx->freelist);
