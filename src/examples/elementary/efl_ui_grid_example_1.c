@@ -11,7 +11,7 @@
 #include <Efl.h>
 #include <stdio.h>
 
-#define IMAX 5;
+#define IMAX 100;
 
 typedef struct _Grid_Event_Data {
    Eo *grid;
@@ -28,7 +28,6 @@ EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Dir dir)
    return obj;
 }
 
-
 static void
 _unpack_btn_clicked(void *data, const Efl_Event *ev)
 {
@@ -36,12 +35,18 @@ _unpack_btn_clicked(void *data, const Efl_Event *ev)
    efl_pack_unpack(gd->grid, gd->item);
 }
 
-
 static void
-_unpackall_btn_clicked(void *data, const Efl_Event *ev)
+_upkall_btn_clicked(void *data, const Efl_Event *ev)
 {
    Eo *grid = data;
    efl_pack_unpack_all(grid);
+}
+
+static void
+_clear_btn_clicked(void *data, const Efl_Event *ev)
+{
+   Eo *grid = data;
+   efl_pack_clear(grid);
 }
 
 EAPI_MAIN int
@@ -50,7 +55,7 @@ elm_main(int argc, char **argv)
    int itemmax = IMAX;
    int i = 0;
    if (argv[1]) itemmax = atoi(argv[1]);
-   Eo *win, *box, *upbtn, *allbtn;
+   Eo *win, *box, *bbx, *upbtn, *allbtn, *clrbtn;
    Eo *grid, *gitem;
    Grid_Event_Data *gd = calloc(sizeof(Grid_Event_Data *), 1);
 
@@ -64,12 +69,13 @@ elm_main(int argc, char **argv)
 
    // TEST#1 : Create Grid
    gd->grid = grid = EoGenerate(EFL_UI_GRID_CLASS, box, EFL_UI_DIR_DEFAULT);
-   efl_gfx_size_hint_weight_set(grid, EFL_GFX_SIZE_HINT_EXPAND, 0.8);
+   efl_gfx_size_hint_weight_set(grid, EFL_GFX_SIZE_HINT_EXPAND, 0.95);
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 100)); // 4X4
+   efl_pack_padding_set(grid, 2.0, 2.0, EINA_TRUE);
+   efl_pack_align_set(grid, 0.2, 0.2);
    efl_pack_end(box, grid);
    // TEST#2 : Set Item Default Size
 
-   itemmax = 15;
    for (i = 0; i < itemmax; i++)
    {
       int r = 0, g = 0, b = 0;
@@ -101,25 +107,32 @@ elm_main(int argc, char **argv)
       efl_pack_end(grid, gitem);
    }
 
-   upbtn = EoGenerate(EFL_UI_BUTTON_CLASS, box, EFL_UI_DIR_DEFAULT);
-   efl_gfx_size_hint_weight_set(upbtn, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
+   bbx = EoGenerate(EFL_UI_BOX_CLASS, box, EFL_UI_DIR_HORIZONTAL);
+   efl_gfx_size_hint_weight_set(bbx, EFL_GFX_SIZE_HINT_EXPAND, 0.05);
+   efl_pack_end(box, bbx);
+
+   upbtn = EoGenerate(EFL_UI_BUTTON_CLASS, bbx, EFL_UI_DIR_DEFAULT);
    efl_text_set(upbtn, "Unpack Item");
-   efl_gfx_size_hint_align_set(upbtn, 0.5, 0.5);
-   efl_gfx_size_hint_min_set(upbtn, EINA_SIZE2D(200, 25));
+   efl_gfx_size_hint_min_set(upbtn, EINA_SIZE2D(100, 25));
    // TEST#4 : Unpack Item
    efl_event_callback_add(upbtn, EFL_UI_EVENT_CLICKED, _unpack_btn_clicked, gd);
-   efl_pack_end(box, upbtn);
+   efl_pack_end(bbx, upbtn);
 
-   allbtn = EoGenerate(EFL_UI_BUTTON_CLASS, box, EFL_UI_DIR_DEFAULT);
-   efl_gfx_size_hint_weight_set(allbtn, EFL_GFX_SIZE_HINT_EXPAND, 0.1);
+   allbtn = EoGenerate(EFL_UI_BUTTON_CLASS, bbx, EFL_UI_DIR_DEFAULT);
    efl_text_set(allbtn, "Unpack All");
-   efl_gfx_size_hint_align_set(allbtn, 0.5, 0.5);
-   efl_gfx_size_hint_min_set(allbtn, EINA_SIZE2D(200, 25));
+   efl_gfx_size_hint_min_set(allbtn, EINA_SIZE2D(100, 25));
    // TEST#4 : Unpack All
-   efl_event_callback_add(allbtn, EFL_UI_EVENT_CLICKED, _unpack_btn_clicked, grid);
-   efl_pack_end(box, allbtn);
+   efl_event_callback_add(allbtn, EFL_UI_EVENT_CLICKED, _upkall_btn_clicked, grid);
+   efl_pack_end(bbx, allbtn);
 
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(402, 402));
+   clrbtn = EoGenerate(EFL_UI_BUTTON_CLASS, bbx, EFL_UI_DIR_DEFAULT);
+   efl_text_set(clrbtn, "Clear");
+   efl_gfx_size_hint_min_set(clrbtn, EINA_SIZE2D(100, 25));
+   // TEST#4 : Unpack All
+   efl_event_callback_add(clrbtn, EFL_UI_EVENT_CLICKED, _clear_btn_clicked, grid);
+   efl_pack_end(bbx, clrbtn);
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(417, 600));
 
    elm_run();
    return 0;

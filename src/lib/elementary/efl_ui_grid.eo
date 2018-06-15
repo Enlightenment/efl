@@ -102,9 +102,10 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
       Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
-      Efl.Pack.pack_padding { get; set; }
-      //Efl.Pack.pack_align { get; set; }
 */
+      Efl.Pack.pack_padding { get; set; }
+      Efl.Pack.pack_align { get; set; }
+
 
       //Efl.Ui.Scrollable
       Efl.Ui.Scrollable_Interactive.scroll;

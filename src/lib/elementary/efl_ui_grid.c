@@ -18,7 +18,8 @@
 
 #define MY_CLASS_NAME "Efl.Ui.Grid"
 
-static void _grid_clear(Eo *obj, Efl_Ui_Grid_Data *pd);
+static void _grid_clear_internal(Eo *obj, Efl_Ui_Grid_Data *pd);
+static void _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *item);
 
 static void
 _need_update(Efl_Ui_Grid_Data *pd)
@@ -39,12 +40,6 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    int count = 0;
    Eina_Bool horiz = 0;
    Eina_Size2D min, max;
-   Eina_Rect view;
-   min = efl_gfx_size_hint_combined_min_get(pd->pan);
-   max = efl_gfx_size_hint_max_get(pd->pan);
-   view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
-
-ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h, view.x, view.y, view.w, view.h);
 
    //if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
    if (!pd->linemax || pd->pan_resized)
@@ -63,7 +58,6 @@ ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h
   // outer left top
    outer = (horiz ? (outer * pd->item.align.w) : (outer * pd->item.align.h));
 
-   ERR("LSH:: relayout geo[%d,%d] item[%d, %d] linemax : %d, outer %d", pd->geo.w, pd->geo.h, pd->item.size.w, pd->item.size.h, pd->linemax, outer);
    // Block?
    EINA_LIST_FOREACH(pd->items, l, item)
      {
@@ -98,25 +92,21 @@ ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h
                   id->pos.row = (count / pd->linemax);
                   id->pos.col = (count % pd->linemax);
                   //Next Line
-                  ERR("LSH not horiz cur.x: %d, padw:%d, sizew%d geow:%d", cur.x, pd->item.pad.w, pd->item.size.w, pd->geo.w);
-                  if (count == 0)
+                   if (count == 0)
                     {
                       cur.x = outer;
                     }
                   else if (id->pos.col == 0)//((cur.x + pd->item.pad.w + pd->item.size.w) > pd->geo.w)
                     {
-                  ERR("LSH not horiz");
                       cur.x = outer;
                       cur.y = cur.y + pd->item.size.h + pd->item.pad.h;
                     }
                   else
                     {
-                  ERR("LSH not horiz");
-                      cur.x = cur.x + pd->item.size.w + pd->item.pad.w;
+                     cur.x = cur.x + pd->item.size.w + pd->item.pad.w;
                       //cur.y = cur.y;
                     }
                }
-            ERR("LSH [%d] item[%d:%d] pos:[%d,%d]",count, id->pos.row, id->pos.col, cur.x, cur.y);
              id->geo.x = cur.x;
              id->geo.y = cur.y;
              id->geo.w = pd->item.size.w;
@@ -138,7 +128,6 @@ ERR("LSH min[%d, %d], max[%d, %d] view[%d,%d,%d,%d]", min.w, min.h, max.w, max.h
    else
      pd->geo.h = cur.y + pd->item.size.h + pd->item.pad.h;
 
-     ERR("LSH : geo [%d, %d]", pd->geo.w ,pd->geo.h);
    efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
    efl_gfx_entity_size_set(pd->content, pd->geo.size);
 }
@@ -613,7 +602,7 @@ _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
    efl_event_callback_del(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
                           _efl_ui_grid_content_moved_cb, obj);
 
-   _grid_clear(obj, pd);
+   _grid_clear_internal(obj, pd);
 
    efl_content_set(pd->pan, NULL);
    efl_del(pd->content);
@@ -819,6 +808,15 @@ _grid_item_unselected(void *data, const Efl_Event *event)
    efl_event_callback_call(obj, EFL_UI_EVENT_UNSELECTED, item);
 }
 
+static void
+_grid_item_deleted(void *data, const Efl_Event *event)
+{
+   Eo *obj = data;
+   Efl_Ui_Grid_Item *it = event->object;
+   EFL_UI_GRID_DATA_GET(obj, pd);
+   _grid_item_unpack_internal(obj, pd, it);
+}
+
 static Eina_Bool
 _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *it)
 {
@@ -838,12 +836,13 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    efl_event_callback_add(it, EFL_UI_EVENT_LONGPRESSED, _grid_item_longpressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_SELECTED, _grid_item_selected, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
+   efl_event_callback_add(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
 
    return EINA_TRUE;
 }
 
 static void
-_grid_item_clear(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, EINA_UNUSED Efl_Ui_Grid_Item *it)
+_grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
 {
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it);
    EFL_UI_GRID_ITEM_DATA_GET(it, ld);
@@ -852,19 +851,27 @@ _grid_item_clear(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, EINA_UNUSED Efl_Ui_G
    id->parent = NULL;
    ld->parent = NULL;
 
+   pd->items = eina_list_remove(pd->items, it);
+   if (efl_ui_item_selected_get(it))
+     {
+        pd->selected = eina_list_remove(pd->selected, it);
+     }
+
    efl_event_callback_del(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_UNPRESSED, _grid_item_unpressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_LONGPRESSED, _grid_item_longpressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_SELECTED, _grid_item_selected, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
+   efl_event_callback_del(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
 }
 
-_grid_clear(Eo *obj, Efl_Ui_Grid_Data *pd)
+
+_grid_clear_internal(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    Efl_Ui_Grid_Item *it = NULL;
-   EINA_LIST_FREE(pd->items, it)
+   Eina_List *l, *ll;
+   EINA_LIST_FOREACH_SAFE(pd->items, l, ll, it)
      {
-        _grid_item_clear(obj, pd, it);
         efl_del(it);
      }
    eina_list_free(pd->selected);
@@ -876,7 +883,7 @@ _grid_clear(Eo *obj, Efl_Ui_Grid_Data *pd)
 EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_pack_clear(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-  _grid_clear(obj, pd);
+  _grid_clear_internal(obj, pd);
 
    elm_layout_sizing_eval(obj);
    return EINA_TRUE;
@@ -887,9 +894,10 @@ _efl_ui_grid_efl_pack_unpack_all(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
 
    Efl_Ui_Grid_Item *it = NULL;
-   EINA_LIST_FREE(pd->items, it)
+   Eina_List *l, *ll;
+   EINA_LIST_FOREACH_SAFE(pd->items, l, ll, it)
      {
-        _grid_item_clear(obj, pd, it);
+        _grid_item_unpack_internal(obj, pd, it);
      }
    eina_list_free(pd->selected);
    pd->items = NULL;
@@ -904,12 +912,7 @@ _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subo
 {
    Efl_Ui_Grid_Item *item = (Efl_Ui_Grid_Item *)subobj;
 
-   pd->items = eina_list_remove(pd->items, item);
-   if (efl_ui_item_selected_get(item))
-     {
-        pd->selected = eina_list_remove(pd->selected, item);
-     }
-   _grid_item_clear(obj, pd, item);
+   _grid_item_unpack_internal(obj, pd, item);
 
    elm_layout_sizing_eval(obj);
    return EINA_TRUE;
@@ -1045,6 +1048,8 @@ _efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
 {
    pd->item.pad.w = (int )h;
    pd->item.pad.h = (int) v;
+
+   ERR("LSH :pad %d %d, %.2lf %.2lf", pd->item.pad.w, pd->item.pad.h, h, v);
    pd->pad_scalable = !!scalable;
 
    _need_update(pd);
@@ -1063,17 +1068,20 @@ _efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
    *scalable = !!pd->pad_scalable;
 }
 
-/* FIXME: align could not work properly on the list
-   EOLIAN static void
-   _efl_ui_grid_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Grid_Data *pd, double h, double v)
-   {
-   }
+EOLIAN static void
+_efl_ui_grid_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Grid_Data *pd, double h, double v)
+{
+   ERR("LSH :align %.2lf %.2lf", h, v);
+   pd->item.align.w = h;
+   pd->item.align.h = v;
+}
 
-   EOLIAN static void
-   _efl_ui_grid_efl_pack_pack_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
-   {
-   }
- */
+EOLIAN static void
+_efl_ui_grid_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
+{
+   *h = pd->item.align.w;
+   *v = pd->item.align.h;
+}
 
 /* Scroll APIs */
 EOLIAN static Eina_Size2D
