@@ -13,6 +13,7 @@ group { "efl/grid_item";
    images.image: "shine.png" COMP;
    IMGP()
    parts {
+/*
       swallow { "efl.content";
          desc { "default";
             vis;
@@ -42,7 +43,7 @@ group { "efl/grid_item";
             }
          }
       }
-/*
+*/
 //---------------------------------------------------------------------------
 #define BASEP() \
       rect { "event"; \
@@ -338,7 +339,6 @@ group { "efl/grid_item";
       //##//
 
       TOPP()
-      */
    }
 }
 

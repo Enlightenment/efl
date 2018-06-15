@@ -1,4 +1,4 @@
-// gcc -o efl_ui_grid_example_1 efl_ui_grid_example_1.c `pkg-config --cflags --libs elementary`
+// gcc -o efl_ui_grid_test_horizontal efl_ui_grid_test_horizontal.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
 #include "elementary_config.h"
@@ -13,10 +13,6 @@
 
 #define IMAX 500;
 
-typedef struct _Grid_Event_Data {
-   Eo *grid;
-   Eo *item;
-} Grid_Event_Data;
 
 Eo *
 EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Dir dir)
@@ -36,7 +32,6 @@ elm_main(int argc, char **argv)
    if (argv[1]) itemmax = atoi(argv[1]);
    Eo *win, *box, *bbx, *upbtn, *allbtn, *clrbtn;
    Eo *grid, *gitem;
-   Grid_Event_Data *gd = calloc(sizeof(Grid_Event_Data *), 1);
 
    win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
       efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
@@ -47,7 +42,7 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, box);
 
    // TEST#1 : Create Grid
-   gd->grid = grid = EoGenerate(EFL_UI_GRID_CLASS, box, EFL_UI_DIR_HORIZONTAL);
+   grid = EoGenerate(EFL_UI_GRID_CLASS, box, EFL_UI_DIR_HORIZONTAL);
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 120)); // 4X4
    efl_pack_padding_set(grid, 5.0, 5.0, EINA_TRUE);
    efl_pack_align_set(grid, 0.5, 0.5);
@@ -59,7 +54,6 @@ elm_main(int argc, char **argv)
       int r = 0, g = 0, b = 0;
       // TEST#3 : Create Grid Item
       gitem = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
-      if (i == 0) gd->item = gitem;
       Eo *rect = evas_object_rectangle_add(evas_object_evas_get(win));
       switch (i % 5)
         {
@@ -85,7 +79,7 @@ elm_main(int argc, char **argv)
       efl_pack_end(grid, gitem);
    }
 
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(417, 600));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(600, 417));
 
    elm_run();
    return 0;

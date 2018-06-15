@@ -4,6 +4,7 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
+                   Efl.Ui.Direction,
                    Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
                    Efl.Ui.Multi_Selectable)
@@ -19,23 +20,6 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
          }
       }
 /* NEED-TO-IMPLEMENTS
-      @property item_padding {
-         [[Property data of padding between items.]]
-         set {}
-         get {}
-         values {
-            pad: Eina.Size2D; [[last selected item of grid.]]
-         }
-      }
-      @property item_align {
-         [[Property data of padding between items.]]
-         set {}
-         get {}
-         values {
-            h: double; [[double value for horizontal-axis align]]
-            v: double; [[double value for vertical-axis align]]
-         }
-      }
       item_scroll {
          [[scroll move the item to show in the viewport.]]
          params {
@@ -77,9 +61,9 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
       //Efl.Container
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-
-      Efl.Ui.Direction.direction { get; set; }
 */
+      Efl.Ui.Direction.direction { get; set; }
+
       //Efl.Ui.Widget
       Efl.Ui.Widget.theme_apply;
 

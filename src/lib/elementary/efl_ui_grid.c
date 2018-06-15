@@ -41,14 +41,14 @@ _relayout(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    Eina_Bool horiz = 0;
    Eina_Size2D min, max;
 
-   //if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
-   if (!pd->linemax || pd->pan_resized)
+   if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
+
+   if (!pd->linemax)
      {
         pd->linemax =(horiz ?
                      ((pd->geo.h + pd->item.pad.h) / (pd->item.size.h + pd->item.pad.h)) :
                      ((pd->geo.w + pd->item.pad.w) / (pd->item.size.w + pd->item.pad.w)));
         if (!pd->linemax) pd->linemax = 1;
-        if (pd->pan_resized) pd->pan_resized = EINA_FALSE;
      }
 
 
@@ -481,6 +481,10 @@ _efl_ui_grid_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
    if (!pd->smanager) return;
 
+   //reset linemax for recalculate layout.
+   pd->linemax = 0;
+
+   _need_update(pd);
    elm_layout_sizing_eval(obj);
 
    if (!pd->pan_resized)
@@ -622,7 +626,7 @@ _efl_ui_grid_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Grid_Data *pd)
    Eina_Position2D pos = efl_ui_scrollable_content_pos_get(pd->smanager);
    Eina_Rect geo = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
 
-   ERR("LSH:: pos[%d,%d], geo[%d,%d,%d,%d]", pos.x, pos.y, geo.x, geo.y, geo.w, geo.h);
+   //ERR("LSH:: pos[%d,%d], geo[%d,%d,%d,%d]", pos.x, pos.y, geo.x, geo.y, geo.w, geo.h);
 
    if (geo.w <= 1 || geo.h <= 1) return;
    // Need to be implemented
@@ -688,7 +692,6 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    max = efl_gfx_size_hint_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
-ERR("LSH size eval [%d, %d] view [%d, %d]", size.w, size.h, view.w, view.h);
    pd->geo = view;
    efl_gfx_size_hint_min_set(obj, size);
 
@@ -712,6 +715,7 @@ _efl_ui_grid_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data
 EOLIAN static void
 _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir dir)
 {
+   //FIXME: Currently only support horizontal and vertical mode.
    switch (dir)
      {
       case EFL_UI_DIR_RTL:
@@ -719,6 +723,7 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_U
       case EFL_UI_DIR_HORIZONTAL:
       case EFL_UI_DIR_LTR:
         pd->dir = EFL_UI_DIR_HORIZONTAL;
+        ERR("direction is Horizontal");
         break;
 
       case EFL_UI_DIR_UP:
@@ -728,11 +733,19 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_U
       case EFL_UI_DIR_DEFAULT:
       default:
         pd->dir = EFL_UI_DIR_VERTICAL;
+        ERR("direction is Vertical");
         break;
      }
 
    efl_pack_layout_request(obj);
 }
+
+EOLIAN static Efl_Ui_Dir
+_efl_ui_grid_efl_ui_direction_direction_get(const Eo *obj, Efl_Ui_Grid_Data *pd)
+{
+   return pd->dir;
+}
+
 
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_grid_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Grid_Data *pd)
@@ -1049,9 +1062,10 @@ _efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
    pd->item.pad.w = (int )h;
    pd->item.pad.h = (int) v;
 
-   ERR("LSH :pad %d %d, %.2lf %.2lf", pd->item.pad.w, pd->item.pad.h, h, v);
    pd->pad_scalable = !!scalable;
 
+   //reset linemax for recalculate layout
+   pd->linemax = 0;
    _need_update(pd);
 }
 
@@ -1071,9 +1085,9 @@ _efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_ui_grid_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Grid_Data *pd, double h, double v)
 {
-   ERR("LSH :align %.2lf %.2lf", h, v);
    pd->item.align.w = h;
    pd->item.align.h = v;
+   _need_update(pd);
 }
 
 EOLIAN static void
@@ -1309,6 +1323,10 @@ EOLIAN static void
 _efl_ui_grid_item_size_set(Eo *obj, Efl_Ui_Grid_Data *pd, Eina_Size2D size)
 {
    pd->item.size = size;
+   //reset linemax for recalculate layout.
+   pd->linemax = 0;
+
+   _need_update(pd);
 }
 
 EOLIAN static Eina_Size2D
