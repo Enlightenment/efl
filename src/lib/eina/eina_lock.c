@@ -52,9 +52,12 @@ _eina_spinlock_macos_release(Eina_Spinlock *spinlock)
 #endif /* EINA_HAVE_OSX_SPINLOCK */
 
 
+Eina_Bool fork_resetting;
+
 EAPI void
 _eina_lock_debug_abort(int err, const char *fn, const volatile void *ptr)
 {
+   if (fork_resetting) return;
    fprintf(stderr, "EINA ERROR: '%s' on %s %p\n", strerror(err), fn, ptr);
 #ifdef EINA_HAVE_DEBUG_THREADS
    abort();

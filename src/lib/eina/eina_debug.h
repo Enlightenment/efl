@@ -300,6 +300,13 @@ EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_
 EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
 
 /**
+ * @brief Reset the eina debug system after forking
+ *
+ * Call this any time the application forks
+ * @since 1.21
+ * */
+EAPI void eina_debug_fork_reset(void);
+/**
  * @}
  */
 
