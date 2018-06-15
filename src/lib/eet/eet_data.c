@@ -4505,8 +4505,7 @@ eet_data_get_variant(Eet_Free_Context     *context,
                                                       echnk->data,
                                                       echnk->size,
                                                       NULL, 0);
-               if (!data_ret)
-                 break;
+               EINA_SAFETY_ON_TRUE_GOTO(!data_ret, on_error);
 
                /* And point to the variant data. */
                *(void **)data = data_ret;
