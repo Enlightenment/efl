@@ -113,6 +113,7 @@ static int _mt_enabled = 0;
 EAPI int _eina_threads_debug = 0;
 EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
+extern Eina_Lock       _sysmon_lock;
 #endif
 
 /* place module init/shutdown functions here to avoid other modules
@@ -395,17 +396,20 @@ eina_threads_shutdown(void)
    pthread_mutex_lock(&_eina_tracking_lock);
    if (_eina_tracking)
      {
-       fprintf(stderr, "*************************\n");
-       fprintf(stderr, "* The IMPOSSIBLE HAPPEN *\n");
-       fprintf(stderr, "* LOCK STILL TAKEN :    *\n");
-       fprintf(stderr, "*************************\n");
-       EINA_INLIST_FOREACH(_eina_tracking, lk)
-	 {
-            fprintf(stderr, "=======\n");
-            eina_lock_debug(lk);
-	 }
-       fprintf(stderr, "*************************\n");
-       abort();
+        if (((Eina_Lock*)_eina_tracking != (&_sysmon_lock)) || (_eina_tracking->next))
+          {
+             fprintf(stderr, "*************************\n");
+             fprintf(stderr, "* The IMPOSSIBLE HAPPEN *\n");
+             fprintf(stderr, "* LOCK STILL TAKEN :    *\n");
+             fprintf(stderr, "*************************\n");
+             EINA_INLIST_FOREACH(_eina_tracking, lk)
+               {
+                  fprintf(stderr, "=======\n");
+                  eina_lock_debug(lk);
+               }
+             fprintf(stderr, "*************************\n");
+             abort();
+          }
      }
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
