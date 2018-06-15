@@ -236,6 +236,7 @@ static Eina_List *model_lookups = NULL;
 
 static Eina_Hash *part_dest_lookup = NULL;
 static Eina_Hash *part_pc_dest_lookup = NULL;
+static Eina_Hash *groups_sourced = NULL;
 
 static Eet_File *cur_ef;
 static int image_num;
@@ -588,6 +589,35 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
 }
 
 static void
+_part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_Bool ns_required)
+{
+   char buf[1024], *p;
+   size_t len;
+   Edje_Part_Collection_Directory_Entry *de;
+
+   if (!namespace_verify) return;
+   /* this is from a group used as a source, either GROUP or TEXTBLOCK
+    * namespacing not required
+    */
+   if (eina_hash_find(groups_sourced, pc->name)) return;
+
+   de = eina_hash_find(edje_collections_lookup, &pc->id);
+
+   p = strchr(de->entry, '/');
+   if (!p) return;
+
+   len = p - de->entry;
+   if (eina_strlcpy(buf, de->entry, len + 1) >= sizeof(buf)) return;
+
+   p = strchr(ep->name, '.');
+   /* ignore part types without required namespacing or without '.' in name */
+   if ((!ns_required) && (!p)) return;
+
+   if (strncmp(ep->name, buf, len))
+     error_and_abort(ef, "Part '%s' from group %s is not properly namespaced (should begin with '%s.')!", ep->name, de->entry, buf);
+}
+
+static void
 check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    unsigned int i;
@@ -621,6 +651,21 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
           check_text_part_desc(pc, ep, (Edje_Part_Description_Text *)ep->other.desc[i], ef);
      }
 
+   switch (ep->type)
+     {
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_SWALLOW:
+        _part_namespace_verify(pc, ep, ef, 1);
+        break;
+      case EDJE_PART_TYPE_TEXT:
+      case EDJE_PART_TYPE_TEXTBLOCK:
+      case EDJE_PART_TYPE_SPACER:
+        _part_namespace_verify(pc, ep, ef, 0);
+        break;
+      default: break;
+     }
+
    /* FIXME: When smart masks are supported, remove this check */
    if (ep->clip_to_id != -1 &&
        (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
@@ -628,6 +673,33 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
        (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_PROXY))
      error_and_abort(ef, "Collection %i: clip_to point to a non RECT/IMAGE part '%s' !",
                      pc->id, pc->parts[ep->clip_to_id]->name);
+}
+
+static void
+_program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef, const char *sig, const char *src)
+{
+   char buf[1024], *p;
+   size_t len;
+   Edje_Part_Collection_Directory_Entry *de;
+
+   if (!namespace_verify) return;
+   /* this is from a group used as a source, either GROUP or TEXTBLOCK
+    * namespacing not required
+    */
+   if (eina_hash_find(groups_sourced, pc->name)) return;
+
+   /* ignore propagation to GROUP parts */
+   if (strchr(sig, ':')) return;
+
+   de = eina_hash_find(edje_collections_lookup, &pc->id);
+
+   p = strchr(de->entry, '/');
+   if (!p) return;
+   len = p - de->entry;
+   if (eina_strlcpy(buf, de->entry, len + 1) >= sizeof(buf)) return;
+
+   if (strncmp(sig, buf, len))
+     error_and_abort(ef, "SIGNAL_EMIT (%s:%s) does not match group namespace (%s)!", sig, src, de->entry);
 }
 
 static void
@@ -658,6 +730,11 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
         if (pc->parts[i]->type == EDJE_PART_TYPE_CAMERA)
           camera_id = i;
      }
+
+    if ((!ep->targets) && (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT))
+      {
+         _program_signal_namespace_verify(pc, ef, ep->state, ep->state2);
+      }
 
    EINA_LIST_FOREACH(ep->targets, l, et)
      {
@@ -3885,6 +3962,7 @@ data_process_lookups(void)
         free(program);
      }
 
+   groups_sourced = eina_hash_string_superfast_new(NULL);
    EINA_LIST_FREE(group_lookups, group)
      {
         Edje_Part_Collection_Directory_Entry *de;
@@ -3919,6 +3997,7 @@ data_process_lookups(void)
              exit(-1);
           }
 
+        eina_hash_add(groups_sourced, group->name, (void*)1);
 free_group:
         free(group->name);
         free(group);

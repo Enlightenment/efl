@@ -49,6 +49,7 @@ int annotate = 0;
 int no_etc1 = 0;
 int no_etc2 = 0;
 int beta = 0;
+Eina_Bool namespace_verify;
 
 unsigned int max_open_files;
 
@@ -130,6 +131,7 @@ main_help(void)
       "-fastdecomp              Use a faster decompression algorithm (LZ4HC) (mutually exclusive with -fastcomp)\n"
       "-threads                 Compile the edje file using multiple parallel threads (by default)\n"
       "-nothreads               Compile the edje file using only the main loop\n"
+      "-N                       Use the first segment of each group name as a namespace to verify parts/signals\n"
       "-V [--version]           show program version\n"
      , progname);
 }
@@ -325,6 +327,10 @@ main(int argc, char **argv)
         else if (!strcmp(argv[i], "-beta"))
           {
              beta = 1;
+          }
+        else if (!strcmp(argv[i], "-N"))
+          {
+             namespace_verify = 1;
           }
         else if (!file_in)
           file_in = argv[i];
