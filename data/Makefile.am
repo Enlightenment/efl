@@ -131,7 +131,7 @@ include elementary/themes/Makefile.am
 elementary/themes/default.edj: elementary/themes/default.edc $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files) $(top_builddir)/src/bin/edje/edje_cc${EXEEXT}
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/themes/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) $< $@
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) -N $< $@
 
 # desktop files
 
