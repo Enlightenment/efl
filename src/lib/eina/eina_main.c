@@ -170,6 +170,9 @@ struct eina_desc_setup
 static const struct eina_desc_setup _eina_desc_setup[] = {
 #define S(x) {# x, eina_ ## x ## _init, eina_ ## x ## _shutdown}
    /* log is a special case as it needs printf */
+   S(module),
+   S(mempool),
+   S(list),
    S(debug),
    S(evlog),
    S(stringshare),
@@ -180,9 +183,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(accessor),
    S(inarray),
    S(array),
-   S(module),
-   S(mempool),
-   S(list),
    S(binshare),
    S(ustringshare),
    S(matrixsparse),

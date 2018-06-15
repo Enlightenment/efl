@@ -711,9 +711,6 @@ eina_debug_init(void)
      }
    // mark as initted
    _inited = EINA_TRUE;
-   eina_module_init();
-   eina_mempool_init();
-   eina_list_init();
    // For Windows support GetModuleFileName can be used
    // set up thread things
    eina_spinlock_new(&_eina_debug_lock);
