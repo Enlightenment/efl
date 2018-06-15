@@ -179,6 +179,15 @@ eina_lock_recursive_new(Eina_Lock *mutex)
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (mutex->locked)
+     {
+        pthread_mutex_lock(&_eina_tracking_lock);
+        _eina_tracking = eina_inlist_remove(_eina_tracking,
+                                            EINA_INLIST_GET(mutex));
+        pthread_mutex_unlock(&_eina_tracking_lock);
+     }
+#endif
    _eina_lock_free(mutex);
 }
 
