@@ -33,6 +33,8 @@ _unpack_btn_clicked(void *data, const Efl_Event *ev)
 {
    Grid_Event_Data *gd = data;
    efl_pack_unpack(gd->grid, gd->item);
+   efl_del(gd->item);
+   gd->item = NULL;
 }
 
 static void
@@ -101,7 +103,8 @@ elm_main(int argc, char **argv)
       efl_gfx_color_set(rect, r, g, b, 255);
       efl_content_set(gitem, rect);
       // TEST#4 : Pack end
-      efl_pack_end(grid, gitem);
+      if (i % 2) efl_pack_end(grid, gitem);
+      else efl_pack(grid, gitem);
    }
 
    bbx = EoGenerate(EFL_UI_BOX_CLASS, box, EFL_UI_DIR_HORIZONTAL);
