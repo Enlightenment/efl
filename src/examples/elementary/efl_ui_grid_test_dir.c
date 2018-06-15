@@ -103,7 +103,7 @@ elm_main(int argc, char **argv)
 
    efl_pack_end(box, rd);
 
-   efl_ui_nstate_value_set(rdg, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_nstate_value_set(rdg, efl_ui_direction_get(grid));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
