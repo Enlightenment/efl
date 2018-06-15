@@ -82,9 +82,9 @@ EAPI void             efreet_menu_file_set(const char *file);
  * @param func function to call when menu is created
  * @param data user data to return in callback
  *
- * @since 1.8
+ * @deprecated
  */
-EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func, const void *data);
+EINA_DEPRECATED EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func, const void *data);
 
 /**
  * @return Returns the Efreet_Menu representation of the default menu or

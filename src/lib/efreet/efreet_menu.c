@@ -528,12 +528,18 @@ efreet_menu_file_set(const char *file)
     if (file) efreet_menu_file = eina_stringshare_add(file);
 }
 
-EAPI void
+/* deprecated */
+EINA_DEPRECATED EAPI void
 efreet_menu_async_get(Efreet_Menu_Cb func, const void *data)
 {
     char menu[PATH_MAX];
     const char *dir;
     Eina_List *config_dirs, *l;
+
+    ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+
+    return;
+
 
     if (!func) return;
 
