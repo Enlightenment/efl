@@ -64,11 +64,12 @@ struct _Eina_Cow_Ptr
 #endif
    int refcount;
 
+#ifdef EINA_COW_MAGIC_ON
+   unsigned int writing;
+#endif
+
    Eina_Bool hashed : 1;
    Eina_Bool togc : 1;
-#ifdef EINA_COW_MAGIC_ON
-   Eina_Bool writing : 1;
-#endif
 };
 
 struct _Eina_Cow_GC
@@ -475,9 +476,9 @@ eina_cow_write(Eina_Cow *cow,
 #ifdef EINA_COW_MAGIC_ON
         EINA_COW_PTR_MAGIC_CHECK(ref);
 
-        if (ref->writing)
+        if (ref->writing && ref->togc && ref->hashed)
           {
-             ERR("Request writing on an pointer that is already in a writing process %p\n", data);
+             ERR("Request writing on a GC-ed pointer that is already in a writing process %p\n", data);
 #ifdef HAVE_BACKTRACE
              backtrace_symbols_fd((void **) ref->writer_bt,
                                   ref->writer_bt_num, 1);
@@ -499,6 +500,9 @@ eina_cow_write(Eina_Cow *cow,
  allocate:
    ref = eina_mempool_malloc(cow->pool, cow->total_size);
    ref->refcount = 1;
+#ifdef EINA_COW_MAGIC_ON
+   ref->writing = 0;
+#endif
    ref->hashed = EINA_FALSE;
    ref->togc = EINA_FALSE;
 #ifdef EINA_COW_MAGIC_ON
@@ -522,7 +526,7 @@ eina_cow_write(Eina_Cow *cow,
    ref->writer_bt_num = backtrace((void **)(ref->writer_bt),
                                   EINA_DEBUG_BT_NUM);
 # endif
-   ref->writing = EINA_TRUE;
+   ref->writing++;
 #endif
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
@@ -550,7 +554,7 @@ eina_cow_done(Eina_Cow *cow,
    if (!ref->writing)
      ERR("Pointer %p is not in a writable state !", dst);
 
-   ref->writing = EINA_FALSE;
+   ref->writing--;
 #endif
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
