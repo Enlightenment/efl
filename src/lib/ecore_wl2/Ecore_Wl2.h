@@ -840,16 +840,6 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input
 EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int location);
 
 /**
- * Raise a given Ecore_Wl2_Window
- *
- * @param window The Ecore_Wl2_Window which to raise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
-
-/**
  * Get if a given window is alpha
  *
  * @param window The window to get if is alpha

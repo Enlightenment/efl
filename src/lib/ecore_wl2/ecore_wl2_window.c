@@ -770,26 +770,6 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    _ecore_wl2_input_ungrab(input);
 }
 
-EAPI void
-ecore_wl2_window_raise(Ecore_Wl2_Window *window)
-{
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (window->zxdg_toplevel)
-     {
-        struct wl_array states;
-        uint32_t *s;
-
-        wl_array_init(&states);
-        s = wl_array_add(&states, sizeof(*s));
-        *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
-        _zxdg_toplevel_cb_configure(window, window->zxdg_toplevel,
-                                    window->set_config.geometry.w,
-                                    window->set_config.geometry.h, &states);
-        wl_array_release(&states);
-     }
-}
-
 EAPI Eina_Bool
 ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window)
 {
