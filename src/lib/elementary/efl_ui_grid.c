@@ -737,6 +737,7 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_U
         break;
      }
 
+   pd->linemax = 0;
    efl_pack_layout_request(obj);
 }
 
@@ -1041,14 +1042,16 @@ _efl_ui_grid_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_ui_grid_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   elm_layout_sizing_eval(obj);
    _need_update(pd);
+   elm_layout_sizing_eval(obj);
+
    efl_event_callback_legacy_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
 
 EOLIAN static void
 _efl_ui_grid_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
+   _need_update(pd);
    elm_layout_sizing_eval(obj);
 }
 

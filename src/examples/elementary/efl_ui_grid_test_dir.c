@@ -1,4 +1,4 @@
-// gcc -o efl_ui_grid_test_horizontal efl_ui_grid_test_horizontal.c `pkg-config --cflags --libs elementary`
+// gcc -o efl_ui_grid_test_dir efl_ui_grid_test_dir.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
 #include "elementary_config.h"
@@ -13,6 +13,12 @@
 
 #define IMAX 500;
 
+static void
+_radio_changed(void *data, const Efl_Event *ev)
+{
+   Eo *grid = data;
+   efl_ui_direction_set(grid, efl_ui_nstate_value_get(ev->object));
+}
 
 Eo *
 EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Dir dir)
@@ -30,7 +36,7 @@ elm_main(int argc, char **argv)
    int itemmax = IMAX;
    int i = 0;
    if (argv[1]) itemmax = atoi(argv[1]);
-   Eo *win, *box, *bbx, *upbtn, *allbtn, *clrbtn;
+   Eo *win, *box, *rd, *rdg;
    Eo *grid, *gitem;
 
    win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
@@ -43,6 +49,7 @@ elm_main(int argc, char **argv)
 
    // TEST#1 : Create Grid
    grid = EoGenerate(EFL_UI_GRID_CLASS, box, EFL_UI_DIR_HORIZONTAL);
+   efl_gfx_size_hint_weight_set(grid, EFL_GFX_SIZE_HINT_EXPAND, 0.86);
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 120)); // 4X4
    efl_pack_padding_set(grid, 5.0, 5.0, EINA_TRUE);
    efl_pack_align_set(grid, 0.5, 0.5);
@@ -79,7 +86,26 @@ elm_main(int argc, char **argv)
       efl_pack_end(grid, gitem);
    }
 
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(600, 417));
+   rdg = rd = EoGenerate(EFL_UI_RADIO_CLASS, box, EFL_UI_DIR_DEFAULT);
+   efl_gfx_size_hint_weight_set(rd, EFL_GFX_SIZE_HINT_EXPAND, 0.07);
+   efl_ui_radio_state_value_set(rd, EFL_UI_DIR_HORIZONTAL);
+   efl_text_set(rd, "Horizontal");
+   efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, _radio_changed, grid);
+
+   efl_pack_end(box, rd);
+
+   rd = EoGenerate(EFL_UI_RADIO_CLASS, box, EFL_UI_DIR_DEFAULT);
+   efl_gfx_size_hint_weight_set(rd, EFL_GFX_SIZE_HINT_EXPAND, 0.07);
+   efl_ui_radio_group_add(rd, rdg);
+   efl_ui_radio_state_value_set(rd, EFL_UI_DIR_VERTICAL);
+   efl_text_set(rd, "Vertical");
+   efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, _radio_changed, grid);
+
+   efl_pack_end(box, rd);
+
+   efl_ui_nstate_value_set(rdg, EFL_UI_DIR_HORIZONTAL);
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
    elm_run();
    return 0;
