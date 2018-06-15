@@ -337,9 +337,12 @@ _eina_debug_cpu_init(void)
 Eina_Bool
 _eina_debug_cpu_shutdown(void)
 {
+   extern Eina_Bool fork_resetting;
+
    if (_eina_debug_sysmon_active)
      eina_lock_take(&_sysmon_lock);
    _eina_debug_cpu_active = 0;
+   if (!fork_resetting)
      eina_condition_wait(&_exit_cond);
    eina_condition_free(&_exit_cond);
    eina_lock_release(&_sysmon_lock);

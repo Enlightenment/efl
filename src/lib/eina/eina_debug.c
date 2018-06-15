@@ -762,3 +762,14 @@ eina_debug_shutdown(void)
    eina_threads_shutdown();
    return EINA_TRUE;
 }
+
+EAPI void
+eina_debug_fork_reset(void)
+{
+   extern Eina_Bool fork_resetting;
+
+   fork_resetting = EINA_TRUE;
+   eina_debug_shutdown();
+   eina_debug_init();
+   fork_resetting = EINA_FALSE;
+}
