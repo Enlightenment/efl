@@ -108,6 +108,7 @@ struct _Eina_Lock
    Eina_Lock_Bt_Func lock_bt[EINA_LOCK_DEBUG_BT_NUM]; /**< The function that will produce a backtrace on the thread that has the lock */
    int               lock_bt_num; /**< Number of addresses in the backtrace */
    Eina_Bool         locked : 1;  /**< Indicates locked or not locked */
+   Eina_Bool         recursive : 1;  /**< Indicates recursive lock */
 #endif
 };
 
@@ -158,13 +159,21 @@ EAPI Eina_Lock_Result _eina_spinlock_macos_release(Eina_Spinlock *spinlock);
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
-   return _eina_lock_new(mutex, EINA_FALSE);
+   Eina_Bool ret = _eina_lock_new(mutex, EINA_FALSE);
+#ifdef EINA_HAVE_DEBUG_THREADS
+   mutex->recursive = EINA_FALSE;
+#endif
+   return ret;
 }
 
 static inline Eina_Bool
 eina_lock_recursive_new(Eina_Lock *mutex)
 {
-   return _eina_lock_new(mutex, EINA_TRUE);
+   Eina_Bool ret = _eina_lock_new(mutex, EINA_TRUE);
+#ifdef EINA_HAVE_DEBUG_THREADS
+   mutex->recursive = EINA_TRUE;
+#endif
+   return ret;
 }
 
 static inline void
@@ -228,6 +237,8 @@ eina_lock_take(Eina_Lock *mutex)
    else EINA_LOCK_ABORT_DEBUG(ok, lock, mutex);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
+   /* recursive locks can't make use of any of this */
+   if (mutex->recursive) return ret;
    mutex->locked = 1;
    mutex->lock_thread_id = pthread_self();
    mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
@@ -273,6 +284,8 @@ eina_lock_take_try(Eina_Lock *mutex)
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (ret == EINA_LOCK_SUCCEED)
      {
+        /* recursive locks can't make use of any of this */
+        if (mutex->recursive) return ret;
         mutex->locked = 1;
         mutex->lock_thread_id = pthread_self();
         mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
@@ -303,15 +316,18 @@ eina_lock_release(Eina_Lock *mutex)
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_mutex_lock(&_eina_tracking_lock);
-   _eina_tracking = eina_inlist_remove(_eina_tracking,
-                                       EINA_INLIST_GET(mutex));
-   pthread_mutex_unlock(&_eina_tracking_lock);
-
-   mutex->locked = 0;
-   mutex->lock_thread_id = 0;
-   memset(mutex->lock_bt, 0, EINA_LOCK_DEBUG_BT_NUM * sizeof(Eina_Lock_Bt_Func));
-   mutex->lock_bt_num = 0;
+/* recursive locks can't make use of any of this */
+   if (!mutex->recursive)
+     {
+        mutex->locked = 0;
+        mutex->lock_thread_id = 0;
+        memset(mutex->lock_bt, 0, EINA_LOCK_DEBUG_BT_NUM * sizeof(Eina_Lock_Bt_Func));
+        mutex->lock_bt_num = 0;
+        pthread_mutex_lock(&_eina_tracking_lock);
+        _eina_tracking = eina_inlist_remove(_eina_tracking,
+                                            EINA_INLIST_GET(mutex));
+        pthread_mutex_unlock(&_eina_tracking_lock);
+     }
 #endif
    ok = pthread_mutex_unlock(&(mutex->mutex));
    if (ok == 0) ret = EINA_LOCK_SUCCEED;
