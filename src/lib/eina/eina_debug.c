@@ -711,6 +711,7 @@ eina_debug_init(void)
      }
    // mark as initted
    _inited = EINA_TRUE;
+   eina_threads_init();
    // For Windows support GetModuleFileName can be used
    // set up thread things
    eina_spinlock_new(&_eina_debug_lock);
@@ -745,5 +746,6 @@ eina_debug_shutdown(void)
    // yes - we never free on shutdown - this is because the monitor thread
    // never exits. this is not a leak - we intend to never free up any
    // resources here because they are allocated once only ever.
+   eina_threads_shutdown();
    return EINA_TRUE;
 }
