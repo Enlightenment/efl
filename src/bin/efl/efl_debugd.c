@@ -592,7 +592,6 @@ _local_server_create(void)
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    {
       Eo *inner_server = efl_net_server_simple_inner_server_get(_local_server);
-      efl_net_server_unix_unlink_before_bind_set(inner_server, EINA_TRUE);
       efl_net_server_unix_leading_directories_create_set(inner_server, EINA_TRUE, 0700);
    }
 #endif
