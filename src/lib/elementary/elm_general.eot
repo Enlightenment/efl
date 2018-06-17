@@ -248,25 +248,22 @@ enum Elm.Input.Hints
    autofill_credit_card_number            = 0x500, [[ Autofill hint for a credit card number
 
                                                       @since 1.21]]
-   autofill_credit_card_security_code     = 0x600, [[ Autofill hint for a credit card security code
+   autofill_email_address                 = 0x600, [[ Autofill hint for an email address
 
                                                       @since 1.21]]
-   autofill_email_address                 = 0x700, [[ Autofill hint for an email address
+   autofill_name                          = 0x700, [[ Autofill hint for a user's real name
 
                                                       @since 1.21]]
-   autofill_name                          = 0x800, [[ Autofill hint for a user's real name
+   autofill_phone                         = 0x800, [[ Autofill hint for a phone number
 
                                                       @since 1.21]]
-   autofill_phone                         = 0x900, [[ Autofill hint for a phone number
+   autofill_postal_address                = 0x900, [[ Autofill hint for a postal address
 
                                                       @since 1.21]]
-   autofill_postal_address                = 0xA00, [[ Autofill hint for a postal address
+   autofill_postal_code                   = 0xA00, [[ Autofill hint for a postal code
 
                                                       @since 1.21]]
-   autofill_postal_code                   = 0xB00, [[ Autofill hint for a postal code
-
-                                                      @since 1.21]]
-   autofill_id                            = 0xC00  [[ Autofill hint for a user's ID
+   autofill_id                            = 0xB00  [[ Autofill hint for a user's ID
 
                                                       @since 1.21]]
 }
