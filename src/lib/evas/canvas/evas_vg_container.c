@@ -189,6 +189,9 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
+   /* Warn it because the usage has been changed.
+      We can remove this message after v1.21. */
+   if (!parent) CRI("Efl_VG Container doesn't allow null parent!");
    return efl_add(MY_CLASS, parent);
 }
 
