@@ -37,7 +37,12 @@
 
 #ifndef _WIN32
 # include <signal.h>
-# define SIG SIGPROF
+// realtime signals guarantee a minimum of 8, so SIGRTMIN + 7 would be valid
+// at a minimum, so let's choose + 6 ... second last of the minimum set.
+// SIGRTMAX of course is defined too... note the manual pages for sigation say
+// that it calls rt_sigaction transparently for us so... no need for anything
+// else special
+# define SIG (SIGRTMIN + 6)
 #endif
 
 static Eina_Semaphore _wait_for_bts_sem;
