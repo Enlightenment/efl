@@ -206,7 +206,7 @@ static Eina_Value
 _resolve_done(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
    struct resolve_ctx *ctx = data;
-   const Eina_Value_Array desc = { 0 };
+   Eina_Value_Array desc = { 0 };
 
    mark_point();
 
