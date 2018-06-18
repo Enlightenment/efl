@@ -693,7 +693,6 @@ main(int argc, char **argv)
    // init edje
    if (!edje_init())
      goto shutdown_ecore_evas;
-   edje_frametime_set(1.0 / 30.0);
 
    // search the theme file
    struct stat st;
