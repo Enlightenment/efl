@@ -106,7 +106,8 @@ _pack_before_btn_clicked(void *data, const Efl_Event *ev)
    RGB_Color color;
 
    Eo *gitem = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
-   Eo *before = efl_pack_content_get(grid, 10);
+   Eo *before = efl_ui_grid_last_selected_item_get(grid);
+   if (!before) before = efl_pack_content_get(grid, 10);
    Eo *rect = evas_object_rectangle_add(evas_object_evas_get(grid));
    count = efl_content_count(grid);
 
@@ -128,7 +129,8 @@ _pack_after_btn_clicked(void *data, const Efl_Event *ev)
    RGB_Color color;
 
    Eo *gitem = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
-   Eo *after = efl_pack_content_get(grid, 10);
+   Eo *after = efl_ui_grid_last_selected_item_get(grid);
+   if (!after) after = efl_pack_content_get(grid, 10);
    Eo *rect = evas_object_rectangle_add(evas_object_evas_get(grid));
    count = efl_content_count(grid);
 
