@@ -19,7 +19,6 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
             size: Eina.Size2D; [[last selected item of grid.]]
          }
       }
-/* NEED-TO-IMPLEMENTS
       item_scroll {
          [[scroll move the item to show in the viewport.]]
          params {
@@ -35,7 +34,6 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
             @in animation: bool; [[Boolean value for animation of scroll move.]]
          }
       }
-*/
       @property last_selected_item {
          [[Property data of last selected item.]]
          get {}

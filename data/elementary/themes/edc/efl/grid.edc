@@ -13,37 +13,6 @@ group { "efl/grid_item";
    images.image: "shine.png" COMP;
    IMGP()
    parts {
-/*
-      swallow { "efl.content";
-         desc { "default";
-            vis;
-         }
-      }
-      swallow { "efl.end";
-         desc { "default";
-            vis;
-         }
-      }
-      text { "efl.text"; nomouse;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         desc { "default";
-            fixed: 0 1;
-            rel1.relative: 0.0 1.0;
-            rel1.offset: 5 -5;
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -5 -5;
-            color: FN_COL_DEFAULT;
-            color_class: "grid_item";
-            align: 0.5 1.0;
-            text { font: FN; size: 10;
-               min: 0 1;
-               align: 0.5 1.0;
-               text_class: "grid_item";
-            }
-         }
-      }
-*/
 //---------------------------------------------------------------------------
 #define BASEP() \
       rect { "event"; \
@@ -66,12 +35,12 @@ group { "efl/grid_item";
          } \
       } \
       program { \
-         signal: "elm,state,odd"; source: "elm"; \
+         signal: "efl,state,odd"; source: "efl"; \
          action: STATE_SET "odd" 1.0; \
          target: "base"; \
       } \
       program { \
-         signal: "elm,state,even"; source: "elm"; \
+         signal: "efl,state,even"; source: "efl"; \
          action: STATE_SET "default" 0.0; \
          target: "base"; \
       } \
@@ -123,26 +92,26 @@ group { "efl/grid_item";
          } \
       } \
       program { \
-         signal: "elm,state,selected"; source: "elm"; \
+         signal: "efl,state,selected"; source: "efl"; \
          action: STATE_SET "selected" 0.0; \
          target: "sel_shadow"; \
          target: "sel_base"; \
          target: "sel_bevel"; \
       } \
       program { \
-         signal: "elm,state,unselected"; source: "elm"; \
+         signal: "efl,state,unselected"; source: "efl"; \
          action: STATE_SET "default" 0.0; \
          target: "sel_shadow"; \
          target: "sel_base"; \
          target: "sel_bevel"; \
       } \
       program { \
-         signal: "elm,state,disabled"; source: "elm"; \
+         signal: "efl,state,disabled"; source: "efl"; \
          action: STATE_SET "disabled" 0.0; \
          target: "event"; \
       } \
       program { \
-         signal: "elm,state,enabled"; source: "elm"; \
+         signal: "efl,state,enabled"; source: "efl"; \
          action: STATE_SET "default" 0.0; \
          target: "event"; \
       }
@@ -174,22 +143,22 @@ group { "efl/grid_item";
          } \
       } \
       program { \
-         signal: "elm,state,selected"; source: "elm"; \
+         signal: "efl,state,selected"; source: "efl"; \
          action: STATE_SET "selected" 0.0; \
          target: "sel_shine"; \
       } \
       program { \
-         signal: "elm,state,unselected"; source: "elm"; \
+         signal: "efl,state,unselected"; source: "efl"; \
          action: STATE_SET "default" 0.0; \
          target: "sel_shine"; \
       } \
       program { \
-         signal: "elm,state,disabled"; source: "elm"; \
+         signal: "efl,state,disabled"; source: "efl"; \
          action: STATE_SET "disabled" 0.0; \
          target: "event_block"; \
       } \
       program { \
-         signal: "elm,state,enabled"; source: "elm"; \
+         signal: "efl,state,enabled"; source: "efl"; \
          action: STATE_SET "default" 0.0; \
          target: "event_block"; \
       }
@@ -275,21 +244,21 @@ group { "efl/grid_item";
          }
       }
       program {
-         signal: "elm,state,selected"; source: "elm";
+         signal: "efl,state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "efl.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,unselected"; source: "elm";
+         signal: "efl,state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.text";
          target: "label2";
          target: "label3";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "efl.text";
          target: "label2";
@@ -297,7 +266,7 @@ group { "efl/grid_item";
          target: "icon_area";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.text";
          target: "label2";
