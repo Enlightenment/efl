@@ -927,6 +927,7 @@ ok_nomatch_back:
 ok_nomatch:
      {
         EO_OBJ_POINTER_GOTO_PROXY(eo_id, new_obj, err_newid);
+        _efl_ref(new_obj);
         efl_ref(eo_id);
         /* We might have two refs on the old object at this point. */
         efl_parent_set((Eo *) obj->header.id, NULL);
