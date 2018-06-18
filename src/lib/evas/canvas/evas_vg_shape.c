@@ -426,6 +426,9 @@ evas_vg_shape_equal_commands(Eo *obj, const Eo *with)
 EAPI Efl_Canvas_Vg_Node*
 evas_vg_shape_add(Efl_Canvas_Vg_Node *parent)
 {
+   /* Warn it because the usage has been changed.
+      We can remove this message after v1.21. */
+   if (!parent) CRI("Efl_VG Shape doesn't allow null parent!");
    return efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
 }
 
