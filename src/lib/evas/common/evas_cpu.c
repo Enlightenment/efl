@@ -1,14 +1,8 @@
 #include "evas_common_private.h"
-#ifdef BUILD_MMX
-#include "evas_mmx.h"
-#endif
 #ifdef BUILD_NEON
 #ifdef BUILD_NEON_INTRINSICS
 #include <arm_neon.h>
 #endif
-#endif
-#if defined BUILD_SSE3
-#include <immintrin.h>
 #endif
 
 #if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
@@ -37,46 +31,6 @@ evas_common_cpu_catch_segv(int sig EINA_UNUSED)
    siglongjmp(detect_buf, 1);
 }
 #endif
-
-void
-evas_common_cpu_mmx_test(void)
-{
-#ifdef BUILD_MMX
-   pxor_r2r(mm4, mm4);
-#endif
-}
-
-void
-evas_common_cpu_mmx2_test(void)
-{
-#ifdef BUILD_MMX
-   char data[16];
-
-   data[0] = 0;
-   mmx_r2m(movntq, mm0, data);
-   data[0] = 0;
-#endif
-}
-
-void
-evas_common_cpu_sse_test(void)
-{
-#ifdef BUILD_MMX
-   int blah[16];
-
-   movntq_r2m(mm0, blah);
-#endif
-}
-
-void evas_common_op_sse3_test(void);
-
-void
-evas_common_cpu_sse3_test(void)
-{
-#ifdef BUILD_SSE3
-   evas_common_op_sse3_test();
-#endif
-}
 
 #ifdef BUILD_ALTIVEC
 void
@@ -181,36 +135,20 @@ evas_common_cpu_init(void)
    if (getenv("EVAS_CPU_NO_MMX"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX;
    else
-     {
-        cpu_feature_mask |= CPU_FEATURE_MMX *
-          evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
-        evas_common_cpu_end_opt();
-     }
+     cpu_feature_mask |= _cpu_check(EINA_CPU_MMX) * CPU_FEATURE_MMX;
    if (getenv("EVAS_CPU_NO_MMX2"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX2;
-   else
-     {
-        cpu_feature_mask |= CPU_FEATURE_MMX2 *
-          evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
-        evas_common_cpu_end_opt();
-     }
+   else /* It seems "MMX2" is actually part of SSE (and 3DNow)? */
+     cpu_feature_mask |= _cpu_check(EINA_CPU_SSE) * CPU_FEATURE_MMX2;
    if (getenv("EVAS_CPU_NO_SSE"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE;
    else
-     {
-        cpu_feature_mask |= CPU_FEATURE_SSE *
-          evas_common_cpu_feature_test(evas_common_cpu_sse_test);
-        evas_common_cpu_end_opt();
-     }
+     cpu_feature_mask |= _cpu_check(EINA_CPU_SSE) * CPU_FEATURE_SSE;
 # ifdef BUILD_SSE3
    if (getenv("EVAS_CPU_NO_SSE3"))
-     cpu_feature_mask &= ~CPU_FEATURE_SSE3; 
+     cpu_feature_mask &= ~CPU_FEATURE_SSE3;
    else
-     {
-        cpu_feature_mask |= CPU_FEATURE_SSE3 *
-          evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
-        evas_common_cpu_end_opt();
-     }
+     cpu_feature_mask |= _cpu_check(EINA_CPU_SSE3) * CPU_FEATURE_SSE3;
 # endif /* BUILD_SSE3 */
 #endif /* BUILD_MMX */
 #ifdef BUILD_ALTIVEC
