@@ -120,6 +120,15 @@ evas_common_cpu_vis_test(void)
 #endif /* __SPARC__ */
 }
 
+static Eina_Bool
+_cpu_check(Eina_Cpu_Features f)
+{
+   Eina_Cpu_Features features;
+
+   features = eina_cpu_features_get();
+   return (features & f) == f;
+}
+
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
@@ -150,16 +159,13 @@ evas_common_cpu_feature_test(void (*feature)(void))
    sigaction(SIGSEGV, &oact2, NULL);
    return enabled;
 #else
-   Eina_Cpu_Features f;
-
-   f = eina_cpu_features_get();
    if (feature == evas_common_cpu_mmx_test)
-     return (f & EINA_CPU_MMX) == EINA_CPU_MMX;
+     return _cpu_check(EINA_CPU_MMX);
    /* no mmx2 support in eina */
    if (feature == evas_common_cpu_sse_test)
-     return (f & EINA_CPU_SSE) == EINA_CPU_SSE;
+     return _cpu_check(EINA_CPU_SSE);
    if (feature == evas_common_cpu_sse3_test)
-     return (f & EINA_CPU_SSE3) == EINA_CPU_SSE3;
+     return _cpu_check(EINA_CPU_SSE3);
    return 0;
 #endif
 }
