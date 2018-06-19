@@ -8,7 +8,17 @@
 #include "../efl_check.h"
 #include <Eio.h>
 
+EFL_START_TEST(eio_init_test)
+EFL_END_TEST
+
+static void
+eio_test_init(TCase *tc)
+{
+   tcase_add_test(tc, eio_init_test);
+}
+
 static const Efl_Test_Case etc[] = {
+  {"Eio", eio_test_init},
   {"Eio_Monitor", eio_test_monitor},
   {"Eio_Sentry", eio_test_sentry},
   {"Eio Model", eio_model_test_file},
@@ -26,13 +36,12 @@ static const Efl_Test_Case etc[] = {
 
 SUITE_INIT(eio)
 {
-   //T6813
-   //ck_assert_int_eq(eio_init(), 1);
+   ck_assert_int_eq(eio_init(), 1);
 }
 
 SUITE_SHUTDOWN(eio)
 {
-   //ck_assert_int_eq(eio_shutdown(), 0);
+   ck_assert_int_eq(eio_shutdown(), 0);
 }
 
 int

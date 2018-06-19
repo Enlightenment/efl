@@ -138,10 +138,6 @@ EFL_START_TEST(eio_test_xattr_set)
    int num_of_attr = 0, fd;
    unsigned int i;
 
-   ecore_init();
-   eina_init();
-   eio_init();
-
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,
              O_WRONLY | O_CREAT | O_TRUNC,
@@ -182,9 +178,6 @@ EFL_START_TEST(eio_test_xattr_set)
    close(fd);
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
-   eio_shutdown();
-   eina_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -195,10 +188,6 @@ EFL_START_TEST(eio_test_xattr_types_set)
    Eina_Tmpstr *test_file_path;
    int  fd, num_of_attr=0;
    Eio_File *fp;
-
-   ecore_init();
-   eina_init();
-   eio_init();
 
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,
@@ -253,9 +242,6 @@ EFL_START_TEST(eio_test_xattr_types_set)
    close(fd);
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
-   eio_shutdown();
-   eina_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 #endif

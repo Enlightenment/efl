@@ -99,11 +99,6 @@ EFL_START_TEST(eio_model_test_test_monitor_add)
    Eo *filemodel = NULL;
    Eina_Future* future;
 
-   fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
-   fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
-
    tmpdir = eina_environment_tmp_get();
 
    filemodel = efl_add(EIO_MODEL_CLASS,
@@ -121,10 +116,6 @@ EFL_START_TEST(eio_model_test_test_monitor_add)
    ecore_main_loop_begin();
 
    efl_del(filemodel);
-
-   eio_shutdown();
-   ecore_shutdown();
-   eina_shutdown();
 
    fail_if(!children_deleted);
 }

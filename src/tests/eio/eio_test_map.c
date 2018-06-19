@@ -61,10 +61,6 @@ EFL_START_TEST(eio_test_map_simple)
    Eio_File *ef;
    Eina_Tmpstr *file_path;
 
-   ecore_init();
-   eina_init();
-   eio_init();
-
    fd = eina_file_mkstemp(file, &file_path);
    fail_if(fd < 0);
    fail_if(write(fd, data, strlen(data)) != (ssize_t)strlen(data));
@@ -89,9 +85,6 @@ EFL_START_TEST(eio_test_map_simple)
    fail_if(!ef);
 
    eina_tmpstr_del(file_path);
-   eio_shutdown();
-   eina_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 

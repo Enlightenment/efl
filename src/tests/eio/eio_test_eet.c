@@ -73,9 +73,7 @@ EFL_START_TEST(eio_test_eet_cipher_decipher)
    Eio_File *ef;
    Eina_Tmpstr *file;
 
-   ecore_init();
    eet_init();
-   eio_init();
 
    ret = eina_file_mkstemp("eio_eet_example_XXXXXX", &file);
    fail_if(ret == -1);
@@ -107,9 +105,7 @@ EFL_START_TEST(eio_test_eet_cipher_decipher)
    fail_if(!ef);
 
    eina_tmpstr_del(file);
-   eio_shutdown();
    eet_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -167,9 +163,7 @@ EFL_START_TEST(eio_test_eet_data_cipher_decipher)
    Test_Struct *tc;
    Eina_Tmpstr *file;
 
-   ecore_init();
    eet_init();
-   eio_init();
 
    _test_struct_descriptor_init();
    tc = _test_struct_new();
@@ -204,9 +198,7 @@ EFL_START_TEST(eio_test_eet_data_cipher_decipher)
    fail_if(!ef);
 
    eina_tmpstr_del(file);
-   eio_shutdown();
    eet_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 

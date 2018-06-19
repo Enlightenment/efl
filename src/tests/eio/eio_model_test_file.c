@@ -166,11 +166,6 @@ EFL_START_TEST(eio_model_test_test_file)
 
    memset(&reqs, 0, sizeof(struct reqs_t));
 
-   fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
-   fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
-
    filemodel = efl_add(EIO_MODEL_CLASS, efl_main_loop_get(),
                        eio_model_path_set(efl_added, EFL_MODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
@@ -197,10 +192,6 @@ EFL_START_TEST(eio_model_test_test_file)
    ecore_main_loop_begin();
 
    efl_del(filemodel);
-
-   eio_shutdown();
-   ecore_shutdown();
-   eina_shutdown();
 }
 EFL_END_TEST
 
