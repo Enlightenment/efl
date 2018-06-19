@@ -260,6 +260,20 @@ ecore_audio_sndfile_lib_unload(void)
 }
 #endif /* HAVE_SNDFILE */
 
+
+EAPI const char*
+ecore_audio_obj_name_get(const Ecore_Audio_Object* obj)
+{
+   return efl_name_get(obj);
+}
+
+EAPI void
+ecore_audio_obj_name_set(Ecore_Audio_Object* obj, const char *name)
+{
+   efl_name_set(obj, name);
+}
+
+
 /**
  * @}
  */
