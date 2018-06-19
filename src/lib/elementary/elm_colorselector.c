@@ -1419,8 +1419,8 @@ _sub_obj_size_hints_set(Evas_Object *sobj,
    Evas_Coord minw = -1, minh = -1;
 
    elm_coords_finger_size_adjust(timesw, &minw, timesh, &minh);
-   if (sobj && efl_isa(sobj, EFL_CANVAS_LAYOUT_CLASS))
-     edje_object_size_min_restricted_calc(sobj, &minw, &minh, minw, minh);
+   if (!efl_isa(sobj, EFL_CANVAS_LAYOUT_CLASS)) return;
+   edje_object_size_min_restricted_calc(sobj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(sobj, minw, minh);
    evas_object_size_hint_max_set(sobj, -1, -1);
 }
