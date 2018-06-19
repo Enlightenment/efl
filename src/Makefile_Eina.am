@@ -359,7 +359,8 @@ tests/eina/eina_test_safepointer.c \
 tests/eina/eina_test_slice.c \
 tests/eina/eina_test_freeq.c \
 tests/eina/eina_test_slstr.c \
-tests/eina/eina_test_vpath.c
+tests/eina/eina_test_vpath.c \
+tests/eina/eina_test_debug.c
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
