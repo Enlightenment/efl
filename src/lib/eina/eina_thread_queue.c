@@ -57,6 +57,7 @@ struct _Eina_Thread_Queue_Msg_Block
    Eina_Lock                     lock_non_0_ref; // block non-0 ref state
 #ifndef ATOMIC
    Eina_Spinlock                 lock_ref; // lock for ref field
+   Eina_Spinlock                 lock_first; // lock for first field
 #endif
    int                           ref; // the number of open reads/writes
    int                           size; // the total allocated bytes of data[]
@@ -124,6 +125,7 @@ _eina_thread_queue_msg_block_new(int size)
    blk->next = NULL;
 #ifndef ATOMIC
    eina_spinlock_new(&(blk->lock_ref));
+   eina_spinlock_new(&(blk->lock_first));
 #endif
    eina_lock_new(&(blk->lock_non_0_ref));
    blk->size = size;
@@ -144,6 +146,9 @@ _eina_thread_queue_msg_block_real_free(Eina_Thread_Queue_Msg_Block *blk)
    eina_spinlock_take(&(blk->lock_ref));
    eina_spinlock_release(&(blk->lock_ref));
    eina_spinlock_free(&(blk->lock_ref));
+   eina_spinlock_take(&(blk->lock_first));
+   eina_spinlock_release(&(blk->lock_first));
+   eina_spinlock_free(&(blk->lock_first));
 #endif
    free(blk);
 }
@@ -294,7 +299,7 @@ _eina_thread_queue_msg_fetch(Eina_Thread_Queue *thq, Eina_Thread_Queue_Msg_Block
 {
    Eina_Thread_Queue_Msg_Block *blk;
    Eina_Thread_Queue_Msg *msg;
-   int ref;
+   int ref, first;
 
    if (!thq->read)
      {
@@ -321,9 +326,17 @@ _eina_thread_queue_msg_fetch(Eina_Thread_Queue *thq, Eina_Thread_Queue_Msg_Block
         RWLOCK_UNLOCK(&(thq->lock_write));
      }
    blk = thq->read;
+#ifdef ATOMIC
+   __atomic_load(&blk->first, &first, __ATOMIC_RELAXED);
+   msg = (Eina_Thread_Queue_Msg *)((char *)(&(blk->data[0])) + first);
+   first = __atomic_add_fetch(&(blk->first), msg->size, __ATOMIC_RELAXED);
+#else
+   eina_spinlock_take(&blk->lock_first);
    msg = (Eina_Thread_Queue_Msg *)((char *)(&(blk->data[0])) + blk->first);
-   blk->first += msg->size;
-   if (blk->first >= blk->last) thq->read = NULL;
+   first = blk->first += msg->size;
+   eina_spinlock_release(&blk->lock_first);
+#endif
+   if (first >= blk->last) thq->read = NULL;
    *blkret = blk;
 #ifdef ATOMIC
    __atomic_add_fetch(&(blk->ref), 1, __ATOMIC_RELAXED);
@@ -338,17 +351,21 @@ _eina_thread_queue_msg_fetch(Eina_Thread_Queue *thq, Eina_Thread_Queue_Msg_Block
 static void
 _eina_thread_queue_msg_fetch_done(Eina_Thread_Queue_Msg_Block *blk)
 {
-   int ref;
+   int ref, first;
 
 #ifdef ATOMIC
    ref = __atomic_sub_fetch(&(blk->ref), 1, __ATOMIC_RELAXED);
+   __atomic_load(&blk->first, &first, __ATOMIC_RELAXED);
 #else
    eina_spinlock_take(&(blk->lock_ref));
    blk->ref--;
    ref = blk->ref;
    eina_spinlock_release(&(blk->lock_ref));
+   eina_spinlock_take(&blk->lock_first);
+   first = blk->first;
+   eina_spinlock_release(&blk->lock_first);
 #endif
-   if ((blk->first >= blk->last) && (ref == 0))
+   if ((first >= blk->last) && (ref == 0))
      _eina_thread_queue_msg_block_free(blk);
 }
 
