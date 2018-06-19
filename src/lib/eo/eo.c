@@ -911,7 +911,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    efl_ref(eo_id);
 
    /* Reference for the parent if is_ref is done in _efl_add_end */
-   efl_parent_set(eo_id, parent_id);
+   if (parent_id) efl_parent_set(eo_id, parent_id);
 
    /* eo_id can change here. Freeing is done on the resolved object. */
    eo_id = efl_constructor(eo_id);
