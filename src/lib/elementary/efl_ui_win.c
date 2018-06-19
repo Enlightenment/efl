@@ -1324,7 +1324,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
           }
 
         Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
-        efl_ui_focus_object_focus_set(focused, EINA_TRUE);
+        if (focused)
+          efl_ui_focus_object_focus_set(focused, EINA_TRUE);
      }
 
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
