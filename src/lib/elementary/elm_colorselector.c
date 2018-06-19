@@ -1503,6 +1503,7 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
    Evas_Coord minw = -1, minh = -1;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   if (!efl_finalized_get(obj)) return; //not constructed yet
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
@@ -1905,14 +1906,13 @@ _create_colorpalette(Evas_Object *obj)
    if (sd->palette_box) return;
    if (elm_widget_is_legacy(obj))
      {
-        sd->palette_box = elm_legacy_add(EFL_UI_BOX_FLOW_CLASS, obj,
-                                         _palette_box_prepare(efl_added));
+        sd->palette_box = elm_legacy_add(EFL_UI_BOX_FLOW_CLASS, obj);
      }
    else
      {
-        sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
-                                  _palette_box_prepare(efl_added));
+        sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj);
      }
+   _palette_box_prepare(sd->palette_box);
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
