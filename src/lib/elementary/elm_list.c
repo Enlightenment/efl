@@ -697,6 +697,7 @@ _elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
    double xw = 0.0, yw = 0.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   if (!efl_finalized_get(obj)) return; //not constructed yet
 
    evas_object_size_hint_combined_min_get(sd->box, &minw, &minh);
    evas_object_size_hint_max_get(sd->box, &maxw, &maxh);
