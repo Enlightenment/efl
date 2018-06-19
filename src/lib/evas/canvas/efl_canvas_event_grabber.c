@@ -189,7 +189,7 @@ _efl_canvas_object_event_grabber_child_restack(void *data, const Efl_Event *even
 }
 
 static void
-_efl_canvas_object_event_grabber_child_del(void *data, const Efl_Event *event)
+_efl_canvas_object_event_grabber_child_invalidate(void *data, const Efl_Event *event)
 {
    Efl_Object_Event_Grabber_Data *pd = data;
 
@@ -244,7 +244,7 @@ _efl_canvas_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, Efl_Obje
      events->parent = eo_obj;
    EINA_COW_WRITE_END(evas_object_events_cow, sub->events, events);
    _child_insert(pd, sub);
-   efl_event_callback_add(eo_sub, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
+   efl_event_callback_add(eo_sub, EFL_EVENT_INVALIDATE, _efl_canvas_object_event_grabber_child_invalidate, pd);
    if (eo_sub != pd->rect)
      efl_event_callback_add(eo_sub, EFL_GFX_ENTITY_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
 }
@@ -254,7 +254,7 @@ _efl_canvas_event_grabber_efl_canvas_group_group_member_del(Eo *eo_obj EINA_UNUS
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(member, EFL_CANVAS_OBJECT_CLASS);
 
-   efl_event_callback_del(member, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
+   efl_event_callback_del(member, EFL_EVENT_INVALIDATE, _efl_canvas_object_event_grabber_child_invalidate, pd);
    efl_event_callback_del(member, EFL_GFX_ENTITY_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
    pd->contained = eina_list_remove(pd->contained, obj);
 
