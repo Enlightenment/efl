@@ -1554,6 +1554,8 @@ EFL_START_TEST(eo_domain)
    domain_a_set(objs, 1234);
    fail_if(domain_a_get(objs) != 1234);
 
+   ck_assert(SIMPLE_CLASS);
+
    Eina_Thread t;
    Data data;
    data.obj = obj;
