@@ -52,6 +52,10 @@ static int                *_bt_cpu;
 static double _trace_t0 = 0.0;
 static Eina_Debug_Timer *_timer = NULL;
 
+#ifndef _WIN32
+static struct sigaction old_sigprof_action;
+#endif
+
 void
 _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
 {
@@ -196,6 +200,15 @@ _signal_init(void)
 #ifndef _WIN32
    struct sigaction sa;
 
+   memset(&sa, 0, sizeof(struct sigaction));
+
+   sa.sa_handler = SIG_DFL;
+   sa.sa_sigaction = NULL;
+   sa.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&sa.sa_mask);
+   sigaction(SIG, &sa, &old_sigprof_action);
+
+   memset(&sa, 0, sizeof(struct sigaction));
    // set up signal handler for our profiling signal - eevery thread should
    // obey this (this is the case on linux - other OSs may vary)
    sa.sa_sigaction = _signal_handler;
@@ -210,6 +223,12 @@ _signal_init(void)
    sa.sa_flags = 0;
    if (sigaction(SIGPIPE, &sa, 0) == -1) perror(0);
 #endif
+}
+
+static void
+_signal_shutdown(void)
+{
+   sigaction(SIG, &old_sigprof_action, NULL);
 }
 
 static void
@@ -290,6 +309,8 @@ static Eina_Bool
 _prof_on_cb(Eina_Debug_Session *session, int cid EINA_UNUSED, void *buffer, int size)
 {
    unsigned int time;
+
+   _signal_init();
    if (size >= 4)
      {
         memcpy(&time, buffer, 4);
@@ -305,6 +326,7 @@ _prof_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void 
 {
    eina_debug_timer_del(_timer);
    _timer = NULL;
+   _signal_shutdown();
    return EINA_TRUE;
 }
 
@@ -317,7 +339,6 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(_OPS,
 Eina_Bool
 _eina_debug_bt_init(void)
 {
-   _signal_init();
    eina_semaphore_new(&_wait_for_bts_sem, 0);
    eina_debug_opcodes_register(NULL, _OPS(), NULL, NULL);
    return EINA_TRUE;
