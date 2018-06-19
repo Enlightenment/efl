@@ -56,6 +56,7 @@ main(int argc, char **argv)
    putenv("EFL_RUN_IN_TREE=1");
 #endif
 
+   eio_monitoring_interval_set(0.05);
    eina_init();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
