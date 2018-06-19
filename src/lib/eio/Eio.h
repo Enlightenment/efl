@@ -120,6 +120,15 @@ static inline Eina_Bool eio_file_is_dir(const Eina_Stat *stat);
  */
 static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
 
+/**
+ * @ingroup Eio
+ *
+ * @brief Set the polling interval to control the fallback monitor behavior
+ * @param interval The interval (in seconds) to poll
+ * @since 1.21
+ */
+EAPI void eio_monitoring_interval_set(double interval);
+
 #include "eio_inline_helper.x"
 
 #define EIO_VERSION_MAJOR EFL_VERSION_MAJOR
