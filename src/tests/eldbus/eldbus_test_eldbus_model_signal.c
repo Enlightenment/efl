@@ -23,11 +23,13 @@ static Eo *pong_signal = NULL;
 static void
 _setup(void)
 {
-   fake_server = fake_server_start(&fake_server_data);
+   char buf[1024];
+   snprintf(buf, sizeof(buf), FAKE_SERVER_BUS ".%s", basename(__FILE__));
+   fake_server = fake_server_start(&fake_server_data, buf);
 
    fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(),
                                 eldbus_model_connect(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE),
-                                eldbus_model_object_bus_set(efl_added, FAKE_SERVER_BUS),
+                                eldbus_model_object_bus_set(efl_added, buf),
                                 eldbus_model_object_path_set(efl_added, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
