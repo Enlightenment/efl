@@ -9,8 +9,9 @@
 #define DAYSELECOR_DAY_STATE_SELECTED 3
 
 #define DAYSELECTOR_DAY(_pos, _after)\
+   alias: "day"#_pos "elm.swallow.day"#_pos; \
    part {\
-      name: "day"#_pos;\
+      name: "elm.swallow.day"#_pos;\
       type: SWALLOW;\
       scale: 1;\
       clip_to: "clipper";\
@@ -21,12 +22,12 @@
          fixed: 1 0;\
          rel1 {\
             relative: 1.0 0.0;\
-            to: "day"#_after;\
+            to: "elm.swallow.day"#_after;\
             offset: 0 0;\
          }\
          rel2 {\
             relative: 1.0 1.0;\
-            to: "day"#_after;\
+            to: "elm.swallow.day"#_after;\
          }\
       }\
       description { state: "visible" 0.0;\
@@ -38,24 +39,24 @@
    programs{\
       program {\
          name: "day"#_pos"visible";\
-         signal: "day"#_pos",visible";\
+         signal: "elm,day"#_pos",visible";\
          source: "elm";\
          action: STATE_SET "visible" 0.0;\
-         target: "day"#_pos;\
+         target: "elm.swallow.day"#_pos;\
       }\
       program {\
          name: "day"#_pos"notvisible";\
-         signal: "day"#_pos",default";\
+         signal: "elm,day"#_pos",default";\
          source: "elm";\
          action: STATE_SET "default" 0.0;\
-         target: "day"#_pos;\
+         target: "elm.swallow.day"#_pos;\
       }\
    }
 
 group { name: "elm/dayselector/base/default";
    parts {
       part {
-         name: "day0";
+         name: "elm.swallow.day0";
          type: SWALLOW;
          scale: 1;
          clip_to: "clipper";
@@ -82,8 +83,8 @@ group { name: "elm/dayselector/base/default";
          type: RECT;
          description {
             state: "default" 0.0;
-            rel1.to: "day0";
-            rel2.to: "day6";
+            rel1.to: "elm.swallow.day0";
+            rel2.to: "elm.swallow.day6";
          }
          description {
             state: "visible" 0.0;
@@ -125,17 +126,17 @@ group { name: "elm/dayselector/base/default";
       }
       program {
          name: "day0_visible";
-         signal: "day0,visible";
+         signal: "elm,day0,visible";
          source: "elm";
          action: STATE_SET "visible" 0.0;
-         target: "day0";
+         target: "elm.swallow.day0";
       }
       program {
          name: "day0_default";
-         signal: "day0,default";
+         signal: "elm,day0,default";
          source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "day0";
+         target: "elm.swallow.day0";
       }
    }
 }
