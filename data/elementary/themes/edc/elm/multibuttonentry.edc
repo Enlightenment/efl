@@ -18,7 +18,9 @@ group { name: "elm/multibuttonentry/base/default";
             rel2.to: "bg";
          }
       }
-      part { name: "box.swallow"; type: SWALLOW;
+      /* this widget was released with non-namespaced parts in legacy api */
+      alias: "box.swallow" "elm.swallow.box";
+      part { name: "elm.swallow.box"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "bg";
             rel2.to: "bg";

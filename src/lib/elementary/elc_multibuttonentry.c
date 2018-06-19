@@ -1432,7 +1432,8 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 
    elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
    elm_box_homogeneous_set(sd->box, EINA_FALSE);
-   elm_layout_content_set(obj, "box.swallow", sd->box);
+   if (!elm_layout_content_set(obj, "elm.swallow.box", sd->box))
+     elm_layout_content_set(obj, "box.swallow", sd->box);
 
    sd->label = edje_object_add(evas_object_evas_get(obj));
    if (!sd->label) return;
