@@ -111,7 +111,11 @@ _dmabuf_lock(Ecore_Wl2_Buffer *b)
    struct dma_buf_sync s;
 
    s.flags = DMA_BUF_SYNC_START | DMA_BUF_SYNC_RW;
-   ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+   do
+     {
+        ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+     } while (ret && ((errno == EAGAIN) || (errno == EINTR)));
+
    if (ret) WRN("Failed to lock dmabuf");
 }
 
@@ -122,7 +126,11 @@ _dmabuf_unlock(Ecore_Wl2_Buffer *b)
    struct dma_buf_sync s;
 
    s.flags = DMA_BUF_SYNC_END | DMA_BUF_SYNC_RW;
-   ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+   do
+     {
+        ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+     } while (ret && ((errno == EAGAIN) || (errno == EINTR)));
+
    if (ret) WRN("Failed to unlock dmabuf");
 }
 
