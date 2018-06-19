@@ -1532,7 +1532,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             }
          }
          program { name: "button_press2";
-            action: SIGNAL_EMIT "elm,action,press" "";
+            action: SIGNAL_EMIT "elm,action,press" "elm";
             after: "button_press_anim";
          }
          program { name: "button_press_anim";
@@ -1551,7 +1551,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             }
          }
          program { name: "button_unpress2";
-            action: SIGNAL_EMIT "elm,action,unpress" "";
+            action: SIGNAL_EMIT "elm,action,unpress" "elm";
          }
          program { name: "button_unpress_anim";
             action: STATE_SET "default" 0.0;
@@ -1577,7 +1577,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             after: "button_press_anim";
          }
          program { name: "button_click2";
-            action: SIGNAL_EMIT "elm,action,click" "";
+            action: SIGNAL_EMIT "elm,action,click" "elm";
          }
          program { name: "access_pressed";
             signal: "elm,action,anim,activate";
@@ -1714,7 +1714,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             }
          }
          program { name: "button_click2";
-            action: SIGNAL_EMIT "elm,action,click" "";
+            action: SIGNAL_EMIT "elm,action,click" "elm";
          }
          program { name: "disable";
             signal: "elm,state,disabled";
