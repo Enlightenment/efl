@@ -4761,12 +4761,6 @@ dnl TODO: remove these ifdefs from code!
 AC_DEFINE([HAVE_EIO], [1], [Have eio library])
 #### End of Eio
 
-# Eo Id
-if test "x${want_eo_id}" = "xyes" ; then
-   AC_DEFINE([HAVE_EO_ID], [1], [Have eo id])
-fi
-
-
 #### Efreet
 EFL_LIB_START([Efreet])
 
@@ -5877,8 +5871,6 @@ AC_OUTPUT
 
 #### Info
 
-EFL_ADD_FEATURE([EO], [eo-id], [${want_eo_id}])
-
 case $host_cpu in
   i*86|x86_64|amd64)
     EFL_ADD_FEATURE([cpu], [mmx], [${build_cpu_mmx}])
@@ -6126,16 +6118,6 @@ if test -n "$CFOPT_WARNING"; then
     echo "You disabled Gstreamer 1.x support. You likely don't want to do"
     echo "this as it will heavily limit your media support options and render"
     echo "some functionality as useless, leading to visible application bugs."
-    echo "_____________________________________________________________________"
-  fi
-  if test "x${want_eo_id}" = "xno"; then
-    echo "_____________________________________________________________________"
-    echo "Eo's ID abstraction interface is a major safety system that"
-    echo "protects code from crashing or misbehaving in many cases. It does"
-    echo "come at a slight cost, but the safety and protection is worth it."
-    echo "Also by disabling this, you may also introduce security holes in"
-    echo "EFL as well as cause all sorts of previously non-existant crashes."
-    echo "Seriously reconsider disabling EO ID."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_evas_cserve2}" = "xno"; then

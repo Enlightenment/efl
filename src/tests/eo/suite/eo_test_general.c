@@ -1111,8 +1111,6 @@ EFL_END_TEST
 
 EFL_START_TEST(eo_pointers_indirection)
 {
-#ifdef HAVE_EO_ID
-
    static const Efl_Class_Description class_desc = {
         EO_VERSION,
         "Simple",
@@ -1189,8 +1187,6 @@ EFL_START_TEST(eo_pointers_indirection)
    /* Just be sure that we trigger an already freed error */
    efl_unref(objs[0]);
    free(objs);
-
-#endif
 }
 EFL_END_TEST
 
@@ -1233,7 +1229,6 @@ EFL_START_TEST(efl_add_failures)
 }
 EFL_END_TEST
 
-#ifdef HAVE_EO_ID
 static Eina_Bool intercepted = EINA_FALSE;
 
 static void
@@ -1249,11 +1244,9 @@ _del_intercept_reuse(Eo *obj)
 {
    efl_reuse(obj);
 }
-#endif
 
 EFL_START_TEST(efl_del_intercept)
 {
-#ifdef HAVE_EO_ID
 
    static const Efl_Class_Description class_desc = {
         EO_VERSION,
@@ -1294,16 +1287,15 @@ EFL_START_TEST(efl_del_intercept)
    fail_if(!obj);
    ck_assert_int_eq(efl_ref_count(obj), 1);
    efl_parent_set(obj, parent);
-   ck_assert_int_eq(efl_ref_count(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 2);
    efl_del_intercept_set(obj, _del_intercept_reuse);
    efl_del_intercept_set(obj, NULL);
    /* This essentially checks it get unsunk */
-   ck_assert_int_eq(efl_ref_count(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 2);
    efl_parent_set(obj, parent);
-   ck_assert_int_eq(efl_ref_count(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 2);
    efl_unref(obj);
 
-#endif
 }
 EFL_END_TEST
 
