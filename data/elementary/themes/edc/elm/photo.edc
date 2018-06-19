@@ -62,7 +62,7 @@ group { name: "elm/photo/base/shadow";
       }
    }
    parts {
-      part { name: "size"; type: SWALLOW;
+      part { name: "size"; type: SPACER;
          description { state: "default" 0.0;
             rel1.offset: 7 7;
             rel2.offset: -8 -8;
