@@ -14,14 +14,14 @@ group { "efl/radio";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "visible", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -30,14 +30,14 @@ group { "efl/radio";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "disabled", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -46,14 +46,14 @@ group { "efl/radio";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "visible", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -62,14 +62,14 @@ group { "efl/radio";
          } else {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"inset", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"inset", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -143,7 +143,7 @@ group { "efl/radio";
             min: 16 16;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;

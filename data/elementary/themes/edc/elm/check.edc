@@ -14,7 +14,7 @@ group { name: "elm/check/base/default";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"base", "default", 0.0);
@@ -22,7 +22,7 @@ group { name: "elm/check/base/default";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"base", "disabled", 0.0);
@@ -32,7 +32,7 @@ group { name: "elm/check/base/default";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"base", "default", 0.0);
@@ -40,7 +40,7 @@ group { name: "elm/check/base/default";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "disabled", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"base", "disabled", 0.0);
@@ -50,7 +50,7 @@ group { name: "elm/check/base/default";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"base", "default", 0.0);
@@ -58,7 +58,7 @@ group { name: "elm/check/base/default";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"base", "disabled", 0.0);
@@ -68,7 +68,7 @@ group { name: "elm/check/base/default";
          } else {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"base", "default", 0.0);
@@ -76,7 +76,7 @@ group { name: "elm/check/base/default";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"base", "disabled", 0.0);
@@ -175,7 +175,7 @@ group { name: "elm/check/base/default";
             min: 16 16;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -347,7 +347,7 @@ group { name: "elm/check/base/toggle";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
@@ -359,7 +359,7 @@ group { name: "elm/check/base/toggle";
                set_state(PART:"offrect", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -373,7 +373,7 @@ group { name: "elm/check/base/toggle";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
@@ -385,7 +385,7 @@ group { name: "elm/check/base/toggle";
                set_state(PART:"offrect", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "disabled", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -399,7 +399,7 @@ group { name: "elm/check/base/toggle";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
@@ -411,7 +411,7 @@ group { name: "elm/check/base/toggle";
                set_state(PART:"offrect", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -425,7 +425,7 @@ group { name: "elm/check/base/toggle";
          } else {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
@@ -437,7 +437,7 @@ group { name: "elm/check/base/toggle";
                set_state(PART:"offrect", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"shadow", "disabled", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
@@ -679,7 +679,7 @@ group { name: "elm/check/base/toggle";
             min: 16 16;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;

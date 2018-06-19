@@ -29,10 +29,10 @@ group { "efl/progressbar/horizontal";
          }
          if (ic) {
             set_state(PART:"efl.content", "visible", 0.0);
-            set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"efl.content", "default", 0.0);
-            set_state(PART:"sizer.content", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"dis_clip", "default", 0.0);
@@ -92,7 +92,7 @@ group { "efl/progressbar/horizontal";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -589,10 +589,10 @@ group { "efl/progressbar/vertical";
          }
          if (ic) {
             set_state(PART:"efl.content", "visible", 0.0);
-            set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"efl.content", "default", 0.0);
-            set_state(PART:"sizer.content", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"dis_clip", "default", 0.0);
@@ -652,7 +652,7 @@ group { "efl/progressbar/vertical";
             rel2.offset: -3 2;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;

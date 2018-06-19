@@ -28,7 +28,7 @@ group { name: "elm/bubble/top_left/default";
             visible: 1;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -164,13 +164,13 @@ group { name: "elm/bubble/top_left/default";
          signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "edje,state,rtl"; source: "edje";
@@ -217,7 +217,7 @@ group { name: "elm/bubble/top_right/default";
             visible: 1;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -350,13 +350,13 @@ group { name: "elm/bubble/top_right/default";
          signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "edje,state,rtl"; source: "edje";
@@ -404,7 +404,7 @@ group { name: "elm/bubble/bottom_left/default";
             visible: 1;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -534,13 +534,13 @@ group { name: "elm/bubble/bottom_left/default";
          signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "edje,state,rtl"; source: "edje";
@@ -586,7 +586,7 @@ group { name: "elm/bubble/bottom_right/default";
             visible: 1;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -716,13 +716,13 @@ group { name: "elm/bubble/bottom_right/default";
          signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer.content";
+         target: "sizer_content";
       }
       program {
          signal: "edje,state,rtl"; source: "edje";

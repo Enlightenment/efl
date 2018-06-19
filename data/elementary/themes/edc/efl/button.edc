@@ -37,7 +37,7 @@ group { name: "efl/button";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"event", "default", 0.0);
                if (!p) {
                   set_state(PART:"efl.text", "visible", 0.0);
@@ -48,7 +48,7 @@ group { name: "efl/button";
                }
             } else {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -56,7 +56,7 @@ group { name: "efl/button";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"event", "default", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                if (!p)
@@ -65,7 +65,7 @@ group { name: "efl/button";
                   set_state(PART:"icon_clip", "pressed", 0.0);
             } else {
                set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -73,7 +73,7 @@ group { name: "efl/button";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
                if (!p)
@@ -82,7 +82,7 @@ group { name: "efl/button";
                   set_state(PART:"efl.text", "pressed_textonly", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "disabled_textonly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -90,12 +90,12 @@ group { name: "efl/button";
          } else {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
@@ -181,7 +181,7 @@ group { name: "efl/button";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
 //            fixed: 1 1;
@@ -422,14 +422,14 @@ group { name: "efl/button:anchor";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "visible", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"bar", "disabled", 0.0);
@@ -438,14 +438,14 @@ group { name: "efl/button:anchor";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer.content", "icononly", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"bar", "disabled", 0.0);
@@ -454,14 +454,14 @@ group { name: "efl/button:anchor";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "textonly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "disabled_textonly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"bar", "disabled", 0.0);
@@ -470,13 +470,13 @@ group { name: "efl/button:anchor";
          } else {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"bar", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -536,7 +536,7 @@ group { name: "efl/button:anchor";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
             visible: 0;
