@@ -933,6 +933,10 @@ _fork_and_exec(Emotion_Generic_Video *ev)
 
    if (!_player_exec(ev))
      {
+        eina_stringshare_del(ev->shmname);
+        ecore_event_handler_del(ev->player_add);
+        ecore_event_handler_del(ev->player_del);
+        ecore_event_handler_del(ev->player_data);
         ERR("could not start player.");
         return EINA_FALSE;
      }
