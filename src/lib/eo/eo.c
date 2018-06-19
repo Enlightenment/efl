@@ -2330,6 +2330,22 @@ efl_object_shutdown(void)
    if (--_efl_object_init_count > 0)
      return EINA_TRUE;
 
+#ifdef EO_DEBUG
+   {
+      Efl_Object *obj;
+      Eina_Iterator *objects;
+      objects = eo_objects_iterator_new();
+      printf("Objects leaked by EO:\n");
+      printf("class@pointer - user-refcount internal-refcount\n");
+      EINA_ITERATOR_FOREACH(objects, obj)
+        {
+           printf("%s@%p - %d %d \n", efl_class_name_get(obj), obj, efl_ref_count(obj), ___efl_ref2_count(obj));
+        }
+      eina_iterator_free(objects);
+   }
+#endif
+
+
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
