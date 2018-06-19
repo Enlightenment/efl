@@ -495,7 +495,7 @@ _evas_common_map_rgba_span(RGBA_Map_Spans *span,
    span->havea = 0;
    span->direct = 0;
 
-   // find y yop line and y bottom line
+   // find y top line and y bottom line
    ytop = p[0].y;
    if ((p[0].col >> 24) < 0xff) span->havea = 1;
    if (p[0].col == 0xffffffff) span->havecol--;
