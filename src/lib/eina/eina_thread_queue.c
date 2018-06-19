@@ -220,6 +220,7 @@ _eina_thread_queue_msg_alloc(Eina_Thread_Queue *thq, int size, Eina_Thread_Queue
 {
    Eina_Thread_Queue_Msg_Block *blk;
    Eina_Thread_Queue_Msg *msg = NULL;
+   int ref;
 
    // round up to nearest 8
    size = ((size + 7) >> 3) << 3;
@@ -261,16 +262,14 @@ _eina_thread_queue_msg_alloc(Eina_Thread_Queue *thq, int size, Eina_Thread_Queue
      }
    msg->size = size;
 #ifdef ATOMIC
-     {
-        int ref = __atomic_add_fetch(&(blk->ref), 1, __ATOMIC_RELAXED);
-        if (ref == 1) eina_lock_take(&(blk->lock_non_0_ref));
-     }
+   ref = __atomic_add_fetch(&(blk->ref), 1, __ATOMIC_RELAXED);
 #else
    eina_spinlock_take(&(blk->lock_ref));
    blk->ref++;
-   if (blk->ref == 1) eina_lock_take(&(blk->lock_non_0_ref));
+   ref = blk->ref;
    eina_spinlock_release(&(blk->lock_ref));
 #endif
+   if (ref == 1) eina_lock_take(&(blk->lock_non_0_ref));
    *blkret = blk;
    return msg;
 }
@@ -278,17 +277,16 @@ _eina_thread_queue_msg_alloc(Eina_Thread_Queue *thq, int size, Eina_Thread_Queue
 static void
 _eina_thread_queue_msg_alloc_done(Eina_Thread_Queue_Msg_Block *blk)
 {
+   int ref;
 #ifdef ATOMIC
-     {
-        int ref = __atomic_sub_fetch(&(blk->ref), 1, __ATOMIC_RELAXED);
-        if (ref == 0) eina_lock_release(&(blk->lock_non_0_ref));
-     }
+   ref = __atomic_sub_fetch(&(blk->ref), 1, __ATOMIC_RELAXED);
 #else
    eina_spinlock_take(&(blk->lock_ref));
    blk->ref--;
-   if (blk->ref == 0) eina_lock_release(&(blk->lock_non_0_ref));
+   ref = blk->ref;
    eina_spinlock_release(&(blk->lock_ref));
 #endif
+   if (ref == 0) eina_lock_release(&(blk->lock_non_0_ref));
 }
 
 static Eina_Thread_Queue_Msg *
