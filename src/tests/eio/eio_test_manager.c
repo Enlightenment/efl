@@ -202,12 +202,6 @@ EFL_START_TEST(efl_io_manager_test_stat)
    Eina_Bool is_dir = EINA_TRUE;
    int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
-   ret = eio_init();
-   fail_if(ret < 1);
-   ret = eina_init();
-   fail_if(ret < 1);
    ret = ecore_file_init();
    fail_if(ret < 1);
 
@@ -236,9 +230,6 @@ EFL_START_TEST(efl_io_manager_test_stat)
    eina_tmpstr_del(test_dirname);
    eina_tmpstr_del(nested_filename);
    ecore_file_shutdown();
-   eina_shutdown();
-   eio_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -252,12 +243,6 @@ EFL_START_TEST(efl_io_manager_test_ls)
    uint64_t main_files = 0;
    int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
-   ret = eio_init();
-   fail_if(ret < 1);
-   ret = eina_init();
-   fail_if(ret < 1);
    ret = ecore_file_init();
    fail_if(ret < 1);
 
@@ -291,9 +276,6 @@ EFL_START_TEST(efl_io_manager_test_ls)
    eina_tmpstr_del(test_dirname);
    eina_tmpstr_del(nested_filename);
    ecore_file_shutdown();
-   eina_shutdown();
-   eio_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -307,13 +289,7 @@ EFL_START_TEST(efl_io_manager_test_open)
    Eina_Bool opened_file = EINA_FALSE;
    int ret;
 
-   ret = ecore_init();
-   fail_if(ret < 1);
-   ret = eina_init();
-   fail_if(ret < 1);
    ret = ecore_file_init();
-   fail_if(ret < 1);
-   ret = eio_init();
    fail_if(ret < 1);
 
    test_dirname = get_eio_test_file_tmp_dir();
@@ -335,31 +311,24 @@ EFL_START_TEST(efl_io_manager_test_open)
    eina_tmpstr_del(nested_dirname);
    eina_tmpstr_del(test_dirname);
 
-   eio_shutdown();
    eina_tmpstr_del(nested_filename);
    ecore_file_shutdown();
-   eina_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_io_instantiated)
+EFL_START_TEST(efl_io_test_instantiated)
 {
    Efl_Io_Manager *manager;
 
+   ck_assert_int_eq(eio_shutdown(), 0);
    ecore_init();
-
    fail_if(efl_provider_find(efl_main_loop_get(), EFL_IO_MANAGER_CLASS) != NULL);
-
-   eio_init();
+   ecore_shutdown();
+   ck_assert_int_eq(eio_init(), 1);
 
    manager = efl_provider_find(efl_main_loop_get(), EFL_IO_MANAGER_CLASS);
    fail_if(manager == NULL);
    fail_if(!efl_isa(manager, EFL_IO_MANAGER_CLASS));
-
-   eio_shutdown();
-
-   ecore_shutdown();
 }
 EFL_END_TEST
 
@@ -369,5 +338,5 @@ eio_test_job(TCase *tc)
     tcase_add_test(tc, efl_io_manager_test_ls);
     tcase_add_test(tc, efl_io_manager_test_stat);
     tcase_add_test(tc, efl_io_manager_test_open);
-    tcase_add_test(tc, efl_io_instantiated);
+    tcase_add_test(tc, efl_io_test_instantiated);
 }

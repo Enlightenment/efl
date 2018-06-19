@@ -127,10 +127,6 @@ EFL_START_TEST(eio_test_job_xattr_set)
    Eo *job;
    Eina_Future **futures = NULL;
 
-   ecore_init();
-   eina_init();
-   eio_init();
-
    job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
 
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
@@ -189,9 +185,6 @@ EFL_START_TEST(eio_test_job_xattr_set)
    close(fd);
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
-   eio_shutdown();
-   eina_shutdown();
-   ecore_shutdown();
 }
 EFL_END_TEST
 

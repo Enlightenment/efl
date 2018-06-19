@@ -115,7 +115,6 @@ static void _check_event_path(void *data, const Efl_Event *event)
 static Eina_Tmpstr *_common_init()
 {
    Eina_Tmpstr *dirname;
-   fail_if(eio_init() != 1);
    ecore_file_init();
 
    //test timeout
@@ -129,7 +128,6 @@ static void _common_shutdown(Eina_Tmpstr *dirname)
 {
    _delete_directory((void*)dirname);
    ecore_file_shutdown();
-   fail_if(eio_shutdown() != 0);
    eina_tmpstr_del(dirname);
 }
 
