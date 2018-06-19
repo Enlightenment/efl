@@ -200,14 +200,14 @@ EAPI int                 ecore_audio_shutdown(void);
  * @since 1.8
  *
  */
-EAPI const char*         ecore_audio_obj_name_get(const Ecore_Audio_Object* obj);
+EAPI const char*         ecore_audio_obj_name_get(const Efl_Object* obj);
 /**
  * @brief Name of the object
  *
  * @since 1.8
  *
  */
-EAPI void                ecore_audio_obj_name_set(Ecore_Audio_Object* obj, const char *name);
+EAPI void                ecore_audio_obj_name_set(Efl_Object* obj, const char *name);
 
 #include <ecore_audio_obj.h>
 #include <ecore_audio_obj_in.h>
