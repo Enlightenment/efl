@@ -1008,9 +1008,12 @@ _elm_win_pre_render(Ecore_Evas *ee)
          */
         sd->deferred_resize_job = EINA_TRUE;
 
-        /* force initial sizing on frame to enable sizing of content */
-        edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
-        evas_object_resize(sd->frame_obj, mw, mh);
+        if (sd->frame_obj)
+          {
+             /* force initial sizing on frame to enable sizing of content */
+             edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
+             evas_object_resize(sd->frame_obj, mw, mh);
+          }
 
         if (sd->img_obj)
           {
