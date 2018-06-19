@@ -36,7 +36,7 @@ group { name: "elm/actionslider/base/default";
             fill.smooth: 0;
          }
       }
-      part { name: "icon.dragable.area"; type: SPACER;
+      part { name: "icon_dragable_area"; type: SPACER;
          description { state: "default" 0.0;
             rel1.to: "bg";
             rel2.to: "bg";
@@ -105,14 +105,14 @@ group { name: "elm/actionslider/base/default";
             fixed: 1 1;
             min: 40 10;
             align: 0.5 0.5;
-            rel1.to: "icon.dragable.area";
+            rel1.to: "icon_dragable_area";
             rel2 {
                relative: 0.0 1.0;
-               to: "icon.dragable.area";
+               to: "icon_dragable_area";
             }
          }
          dragable {
-            confine: "icon.dragable.area";
+            confine: "icon_dragable_area";
             x: 1 1 0;
             y: 0 0 0;
          }
@@ -123,9 +123,9 @@ group { name: "elm/actionslider/base/default";
             min: 40 10;
             color: 0 0 0 0;
             rel1.to_x: "elm.drag_button_base";
-            rel1.to_y: "icon.dragable.area";
+            rel1.to_y: "icon_dragable_area";
             rel2.to_x: "elm.drag_button_base";
-            rel2.to_y: "icon.dragable.area";
+            rel2.to_y: "icon_dragable_area";
          }
          dragable {
             events: "elm.drag_button_base";
