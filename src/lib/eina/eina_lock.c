@@ -95,7 +95,6 @@ _eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
      }
 #ifdef EINA_HAVE_DEBUG_THREADS
    else if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0) goto fail_release;
-   memset(mutex, 0, sizeof(Eina_Lock));
 #endif
    if (pthread_mutex_init(&(mutex->mutex), &attr) != 0) goto fail_release;
    ok = EINA_TRUE;
@@ -111,9 +110,6 @@ _eina_lock_free(Eina_Lock *mutex)
 
    ok = pthread_mutex_destroy(&(mutex->mutex));
    if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, mutex_destroy, mutex);
-#ifdef EINA_HAVE_DEBUG_THREADS
-   memset(mutex, 0, sizeof(Eina_Lock));
-#endif
 }
 
 EAPI Eina_Bool
@@ -124,7 +120,6 @@ _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(mutex != NULL);
-   memset(cond, 0, sizeof (Eina_Condition));
 #endif
 
    cond->lock = mutex;
@@ -167,9 +162,6 @@ EAPI void
 _eina_condition_free(Eina_Condition *cond)
 {
    pthread_cond_destroy(&(cond->condition));
-#ifdef EINA_HAVE_DEBUG_THREADS
-   memset(cond, 0, sizeof (Eina_Condition));
-#endif
 }
 
 EAPI Eina_Bool

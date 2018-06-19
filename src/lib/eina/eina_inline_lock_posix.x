@@ -162,6 +162,9 @@ eina_lock_new(Eina_Lock *mutex)
    Eina_Bool ret = _eina_lock_new(mutex, EINA_FALSE);
 #ifdef EINA_HAVE_DEBUG_THREADS
    mutex->recursive = EINA_FALSE;
+   mutex->lock_thread_id = 0;
+   mutex->lock_bt_num = 0;
+   mutex->locked = 0;
 #endif
    return ret;
 }
@@ -172,6 +175,9 @@ eina_lock_recursive_new(Eina_Lock *mutex)
    Eina_Bool ret = _eina_lock_new(mutex, EINA_TRUE);
 #ifdef EINA_HAVE_DEBUG_THREADS
    mutex->recursive = EINA_TRUE;
+   mutex->lock_thread_id = 0;
+   mutex->lock_bt_num = 0;
+   mutex->locked = 0;
 #endif
    return ret;
 }
