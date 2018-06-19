@@ -54,6 +54,9 @@ struct _Eio_Monitor_Backend
    Eina_Bool destroyed : 1;
 };
 
+static double fallback_interval = 60.0;
+static Eina_Hash *timer_hash;
+
 static Eina_Bool _eio_monitor_fallback_timer_cb(void *data);
 
 static void
@@ -217,7 +220,8 @@ _eio_monitor_fallback_end_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_Monitor_Backend *backend = data;
 
    backend->work = NULL;
-   backend->timer = ecore_timer_add(60.0, _eio_monitor_fallback_timer_cb, backend);
+   backend->timer = ecore_timer_add(fallback_interval, _eio_monitor_fallback_timer_cb, backend);
+   eina_hash_set(timer_hash, &backend, backend->timer);
 }
 
 static void
@@ -231,7 +235,8 @@ _eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
         free(backend);
         return;
      }
-   backend->timer = ecore_timer_add(60.0, _eio_monitor_fallback_timer_cb, backend);
+   backend->timer = ecore_timer_add(fallback_interval, _eio_monitor_fallback_timer_cb, backend);
+   eina_hash_set(timer_hash, &backend, backend->timer);
 }
 
 static Eina_Bool
@@ -253,6 +258,7 @@ _eio_monitor_fallback_timer_cb(void *data)
    Eio_Monitor_Backend *backend = data;
 
    backend->timer = NULL;
+   eina_hash_set(timer_hash, &backend, NULL);
    backend->idler = ecore_idler_add(_eio_monitor_fallback_idler_cb, backend);
 
    return EINA_FALSE;
@@ -274,10 +280,13 @@ _eio_monitor_fallback_timer_cb(void *data)
     && !defined HAVE_NOTIFY_KEVENT
 void eio_monitor_backend_init(void)
 {
+   timer_hash = eina_hash_pointer_new(NULL);
 }
 
 void eio_monitor_backend_shutdown(void)
 {
+   eina_hash_free(timer_hash);
+   timer_hash = NULL;
 }
 
 void eio_monitor_backend_add(Eio_Monitor *monitor)
@@ -333,6 +342,7 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
    if (backend->work) ecore_thread_cancel(backend->work);
 
    if (backend->timer) ecore_timer_del(backend->timer);
+   eina_hash_set(timer_hash, &backend, NULL);
    backend->timer = NULL;
    if (backend->idler) ecore_idler_del(backend->idler);
    backend->idler = NULL;
@@ -356,3 +366,19 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+
+EAPI void
+eio_monitoring_interval_set(double interval)
+{
+   Eina_Iterator *it;
+   Ecore_Timer *timer;
+
+   EINA_SAFETY_ON_TRUE_RETURN(interval < 0.0);
+   fallback_interval = interval;
+   if (!timer_hash) return;
+   it = eina_hash_iterator_data_new(timer_hash);
+   EINA_ITERATOR_FOREACH(it, timer)
+     ecore_timer_interval_set(timer, fallback_interval);
+   eina_iterator_free(it);
+}
