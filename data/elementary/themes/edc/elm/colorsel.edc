@@ -660,7 +660,8 @@ group { name: "elm/colorselector/item/default";
             color: 255 255 255 64;
          }
       }
-      part { name: "color_obj"; type: SWALLOW;
+      alias: "color_obj" "elm.swallow.color_obj";
+      part { name: "elm.swallow.color_obj"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 3 3;

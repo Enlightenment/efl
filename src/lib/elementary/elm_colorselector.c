@@ -1796,7 +1796,8 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
      (item->color_obj, EVAS_CALLBACK_MOUSE_MOVE, _on_color_moved, item);
    evas_object_event_callback_add
      (item->color_obj, EVAS_CALLBACK_MOUSE_UP, _on_color_released, item);
-   elm_object_part_content_set(VIEW(item), "color_obj", item->color_obj);
+   if (!elm_layout_content_set(VIEW(item), "elm.swallow.color_obj", item->color_obj))
+     elm_layout_content_set(VIEW(item), "color_obj", item->color_obj);
 
    _item_sizing_eval(item);
    evas_object_show(VIEW(item));
