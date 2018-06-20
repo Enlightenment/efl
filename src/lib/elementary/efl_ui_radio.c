@@ -469,7 +469,7 @@ _part_is_efl_ui_radio_legacy_part(const Eo *obj EINA_UNUSED, const char *part)
 }
 
 ELM_PART_OVERRIDE_PARTIAL(efl_ui_radio_legacy, EFL_UI_RADIO_LEGACY, void, _part_is_efl_ui_radio_legacy_part)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_radio_legacy, EFL_UI_RADIO_LEGACY, void)
+ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(efl_ui_radio_legacy)
 #include "efl_ui_radio_legacy_part.eo.c"
 
 /* Efl.Part end */

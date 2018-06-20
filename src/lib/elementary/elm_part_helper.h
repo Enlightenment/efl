@@ -88,89 +88,112 @@ _ ## type ## _efl_part_part_get(const Eo *obj, typedata *priv EINA_UNUSED, const
    return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \
 }
 
-#define ELM_PART_OVERRIDE_CONTENT_SET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata) \
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS);
+
+#define ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD() \
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
+   void *sd = NULL;
+
+#define ELM_PART_OVERRIDE_CONTENT_SET_FULL(full, type, internals) \
 EOLIAN static Eina_Bool \
 _ ## full ## _efl_content_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity *content) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    return _ ## type ## _content_set(pd->obj, sd, pd->part, content); \
 }
 
-#define ELM_PART_OVERRIDE_CONTENT_GET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_CONTENT_GET_FULL(full, type, internals) \
 EOLIAN static Efl_Gfx_Entity * \
 _ ## full ## _efl_content_content_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    return _ ## type ## _content_get(pd->obj, sd, pd->part); \
 }
 
-#define ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(full, type, internals) \
 EOLIAN static Efl_Gfx_Entity * \
 _ ## full ## _efl_content_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    return _ ## type ## _content_unset(pd->obj, sd, pd->part); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(full, type, internals) \
 EOLIAN static void \
 _ ## full ## _efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    _ ## type ## _text_set(pd->obj, sd, pd->part, text); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(full, type, internals) \
 EOLIAN static const char *\
 _ ## full ## _efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    return _ ## type ## _text_get(pd->obj, sd, pd->part); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(full, type, internals) \
 EOLIAN static const char *\
 _ ## full ## _efl_text_markup_markup_get(const Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    return _ ## type ## _text_markup_get(pd->obj, sd, pd->part); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(full, type, TYPE, typedata) \
+#define ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(full, type, internals) \
 EOLIAN static void \
 _ ## full ## _efl_text_markup_markup_set(Eo *obj, void *_pd EINA_UNUSED, const char *markup) \
 { \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
-   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   internals \
    _ ## type ## _text_markup_set(pd->obj, sd, pd->part, markup); \
 }
 
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 #define ELM_PART_OVERRIDE_CONTENT_GET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_CONTENT_GET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_CONTENT_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 #define ELM_PART_OVERRIDE_CONTENT_UNSET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 #define ELM_PART_OVERRIDE_TEXT_SET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 #define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 #define ELM_PART_OVERRIDE_MARKUP_SET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 #define ELM_PART_OVERRIDE_MARKUP_GET(type, TYPE, typedata) \
-   ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(type ## _part, type, TYPE, typedata)
+   ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
+
+#define ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(type) \
+   ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_CONTENT_GET_NO_SD(type) \
+   ELM_PART_OVERRIDE_CONTENT_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_CONTENT_UNSET_NO_SD(type) \
+   ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_TEXT_SET_NO_SD(type) \
+   ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_TEXT_GET_NO_SD(type) \
+   ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_MARKUP_SET_NO_SD(type) \
+   ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_MARKUP_GET_NO_SD(type) \
+   ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
 
 #define ELM_PART_TEXT_DEFAULT_IMPLEMENT(type, typedata) \
 EOLIAN static void \
