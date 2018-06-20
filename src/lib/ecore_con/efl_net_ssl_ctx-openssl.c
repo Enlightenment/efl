@@ -263,14 +263,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
         switch (cfg.cipher)
           {
            case EFL_NET_SSL_CIPHER_AUTO:
-              ctx->ssl_ctx = SSL_CTX_new(SSLv23_client_method());
-              break;
-           case EFL_NET_SSL_CIPHER_SSLV3:
-#ifndef OPENSSL_NO_SSL3_METHOD
-              ctx->ssl_ctx = SSL_CTX_new(SSLv3_client_method());
-#else
-              ctx->ssl_ctx = SSL_CTX_new(SSLv23_client_method());
-#endif
+              ctx->ssl_ctx = SSL_CTX_new(TLS_client_method());
               break;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
            case EFL_NET_SSL_CIPHER_TLSV1:
@@ -301,14 +294,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
         switch (cfg.cipher)
           {
            case EFL_NET_SSL_CIPHER_AUTO:
-              ctx->ssl_ctx = SSL_CTX_new(SSLv23_server_method());
-              break;
-           case EFL_NET_SSL_CIPHER_SSLV3:
-#ifndef OPENSSL_NO_SSL3_METHOD
-              ctx->ssl_ctx = SSL_CTX_new(SSLv3_server_method());
-#else
-              ctx->ssl_ctx = SSL_CTX_new(SSLv23_server_method());
-#endif
+              ctx->ssl_ctx = SSL_CTX_new(TLS_server_method());
               break;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
            case EFL_NET_SSL_CIPHER_TLSV1:
@@ -338,9 +324,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
    options = SSL_CTX_get_options(ctx->ssl_ctx);
    options |= SSL_OP_NO_SSLv2;
    options |= SSL_OP_SINGLE_DH_USE;
-
-   if (cfg.cipher != EFL_NET_SSL_CIPHER_SSLV3)
-     options |= SSL_OP_NO_SSLv3;
+   options |= SSL_OP_NO_SSLv3;
 
    SSL_CTX_set_options(ctx->ssl_ctx, options);
 

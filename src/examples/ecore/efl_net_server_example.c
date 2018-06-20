@@ -467,7 +467,6 @@ static const char * protocols[] = {
 
 static const char *ciphers_strs[] = {
   "auto",
-  "sslv3",
   "tlsv1",
   "tlsv1.1",
   "tlsv1.2",
@@ -702,8 +701,6 @@ efl_main(void *data EINA_UNUSED,
           {
              if (strcmp(cipher_choice, "auto") == 0)
                cipher = EFL_NET_SSL_CIPHER_AUTO;
-             else if (strcmp(cipher_choice, "sslv3") == 0)
-               cipher = EFL_NET_SSL_CIPHER_SSLV3;
              else if (strcmp(cipher_choice, "tlsv1") == 0)
                cipher = EFL_NET_SSL_CIPHER_TLSV1;
              else if (strcmp(cipher_choice, "tlsv1.1") == 0)

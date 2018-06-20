@@ -19,7 +19,6 @@ enum Efl.Net.Ssl.Cipher {
       @since 1.19
     ]]
     auto, [[The default. Use the best your system supports, disables dangerous ciphers]]
-    sslv3, [[SSLv3, insecure and unsupported - DANGEROUS]]
     tlsv1, [[TLSv1, secure and widely available]]
     tlsv1_1, [[TLSv1.1, secure]]
     tlsv1_2, [[TLSv1.2, secure]]
