@@ -1609,7 +1609,10 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
    else if (ssl_type & ECORE_CON_USE_TLS)
      cipher = EFL_NET_SSL_CIPHER_TLSV1;
    else if (ssl_type & ECORE_CON_USE_SSL3)
-     cipher = EFL_NET_SSL_CIPHER_SSLV3;
+     {
+        ERR("SSLv3 is unsupported!");
+        return NULL;
+     }
    else if (ssl_type & ECORE_CON_USE_SSL2)
      {
         ERR("SSLv2 is unsupported!");
@@ -1986,7 +1989,10 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    else if (ssl_type & ECORE_CON_USE_TLS)
      cipher = EFL_NET_SSL_CIPHER_TLSV1;
    else if (ssl_type & ECORE_CON_USE_SSL3)
-     cipher = EFL_NET_SSL_CIPHER_SSLV3;
+     {
+        ERR("SSLv3 is unsupported!");
+        goto error_ssl_ctx;
+     }
    else if (ssl_type & ECORE_CON_USE_SSL2)
      {
         ERR("SSLv2 is unsupported!");
@@ -2078,7 +2084,10 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    else if (ssl_type & ECORE_CON_USE_TLS)
      cipher = EFL_NET_SSL_CIPHER_TLSV1;
    else if (ssl_type & ECORE_CON_USE_SSL3)
-     cipher = EFL_NET_SSL_CIPHER_SSLV3;
+     {
+        ERR("SSLv3 is unsupported!");
+        goto error_ssl_ctx;
+     }
    else if (ssl_type & ECORE_CON_USE_SSL2)
      {
         ERR("SSLv2 is unsupported!");
