@@ -2345,16 +2345,27 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(const Eo *obj,
    return !_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part);
 }
 
+#define CONTENT_FULL(part_typename, typename, CLASS, TYPENAME) \
+  ELM_PART_OVERRIDE_CONTENT_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+  ELM_PART_OVERRIDE_CONTENT_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+  ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME))
+
+
+#define TEXT_FULL(part_typename, typename, CLASS, TYPENAME) \
+  ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+  ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+
+
+#define MARKUP_FULL(part_typename, typename, CLASS, TYPENAME) \
+  ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+  ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+
 /* Efl.Ui.Layout.Part_Content */
-ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
+CONTENT_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
 
 /* Efl.Ui.Layout.Part_Text */
-ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
+TEXT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
+MARKUP_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
@@ -2371,13 +2382,9 @@ _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_set(Eo *obj, void
 }
 
 /* Efl.Ui.Layout.Part_Legacy */
-ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
-ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
+CONTENT_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
+TEXT_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
+MARKUP_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui_Layout_Object_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
