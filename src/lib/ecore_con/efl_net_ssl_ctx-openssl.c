@@ -9,6 +9,14 @@ struct _Efl_Net_Ssl_Ctx
    Eina_Bool is_dialer;
 };
 
+#ifndef TLS_server_method
+# define TLS_server_method TLSv1_2_server_method
+#endif
+
+#ifndef TLS_client_method
+# define TLS_client_method TLSv1_2_client_method
+#endif
+
 #define EFL_NET_SSL_CONTEXT_CIPHERS "aRSA+HIGH:+kEDH:+kRSA:!kSRP:!kPSK:+3DES:!MD5"
 
 #define _efl_net_ssl_ctx_check_errors() \
