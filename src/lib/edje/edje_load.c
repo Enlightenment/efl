@@ -1328,7 +1328,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                    }
                               }
 
-                            if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+                            if ((rp->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+                                  rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                               {
                                  _edje_entry_real_part_init(ed, rp);
                                  if (!ed->has_entries)
