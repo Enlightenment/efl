@@ -228,7 +228,9 @@ _signal_init(void)
 static void
 _signal_shutdown(void)
 {
+#ifndef _WIN32
    sigaction(SIG, &old_sigprof_action, NULL);
+#endif
 }
 
 static void
