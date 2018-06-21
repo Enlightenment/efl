@@ -65,6 +65,8 @@ struct _Node{
   struct _Graph_Node {
     Border directions[NODE_DIRECTIONS_COUNT];
   } graph;
+
+  Eina_Bool on_list : 1;
 };
 
 #define T(n) (n->tree)
@@ -230,6 +232,7 @@ node_item_free(Node *item)
 
    //remove from the dirty parts
    pd->dirty = eina_list_remove(pd->dirty, item);
+   item->on_list = EINA_FALSE;
 
    /*merge tree items*/
 
@@ -369,11 +372,12 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 static void
 dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
-   if (!eina_list_data_find(pd->dirty, node)) return;
+   if (!node->on_list) return;
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
 
    pd->dirty = eina_list_remove(pd->dirty, node);
+   node->on_list = EINA_FALSE;
 
    dirty_flush_node(obj, pd, node);
 }
@@ -387,6 +391,7 @@ dirty_flush_all(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 
    EINA_LIST_FREE(pd->dirty, node)
      {
+        node->on_list = EINA_FALSE;
         dirty_flush_node(obj, pd, node);
      }
 }
@@ -399,10 +404,11 @@ dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty)
         ERR("Only not only logical nodes can be marked dirty");
         return;
      }
+   if (dirty->on_list) return;
 
    //if (eina_list_data_find(pd->dirty, dirty)) return;
-   pd->dirty = eina_list_remove(pd->dirty, dirty);
    pd->dirty = eina_list_append(pd->dirty, dirty);
+   dirty->on_list = EINA_TRUE;
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
 }
@@ -849,9 +855,13 @@ _efl_ui_focus_manager_calc_efl_object_provider_find(const Eo *obj, Efl_Ui_Focus_
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
-   pd->focus_stack = eina_list_free(pd->focus_stack);
-   pd->dirty = eina_list_free(pd->dirty);
+   Node *n;
 
+   pd->focus_stack = eina_list_free(pd->focus_stack);
+   EINA_LIST_FREE(pd->dirty, n)
+     {
+        n->on_list = EINA_FALSE;
+     }
    eina_hash_free(pd->node_hash);
 
    efl_ui_focus_manager_redirect_set(obj, NULL);
