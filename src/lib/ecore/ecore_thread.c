@@ -460,10 +460,13 @@ _ecore_direct_worker_cleanup(void *data)
 
    DBG("cleanup work=%p, thread=%" PRIu64 " (should join)", work, (uint64_t)work->self);
 
+   SLKL(_ecore_pending_job_threads_mutex);
+   _ecore_thread_count--;
    ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
 
    ecore_main_loop_thread_safe_call_async((Ecore_Cb)_ecore_thread_join,
                                           (void *)(intptr_t)PHS());
+   SLKU(_ecore_pending_job_threads_mutex);
 }
 
 static void *
@@ -686,7 +689,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    SLKL(_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
 
-   if (_ecore_thread_count == _ecore_thread_count_max)
+   if (_ecore_thread_count >= _ecore_thread_count_max)
      {
         SLKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)work;
@@ -947,7 +950,12 @@ ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
 
 retry_direct:
         if (PHC(t, _ecore_direct_worker, worker))
-          return (Ecore_Thread *)worker;
+          {
+             SLKL(_ecore_pending_job_threads_mutex);
+             _ecore_thread_count++;
+             SLKU(_ecore_pending_job_threads_mutex);
+             return (Ecore_Thread *)worker;
+          }
         if (!tried)
           {
              _ecore_main_call_flush();
@@ -969,7 +977,7 @@ retry_direct:
    SLKL(_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, worker);
 
-   if (_ecore_thread_count == _ecore_thread_count_max)
+   if (_ecore_thread_count >= _ecore_thread_count_max)
      {
         SLKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)worker;
