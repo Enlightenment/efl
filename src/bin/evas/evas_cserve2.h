@@ -1,6 +1,8 @@
 #ifndef _EVAS_CSERVE2_H
 #define _EVAS_CSERVE2_H
 
+#include <sys/types.h>
+
 #include <Eina.h>
 #include "evas_cs2.h"
 

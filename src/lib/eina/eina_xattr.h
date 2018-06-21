@@ -21,6 +21,8 @@
 
 #include "eina_types.h"
 
+#include <sys/types.h>
+
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
