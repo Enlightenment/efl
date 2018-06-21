@@ -172,7 +172,7 @@ EOLIAN static const char *
 _efl_ui_navigation_bar_part_back_button_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd, EINA_FALSE);
+   EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd, NULL);
 
    return efl_text_get(ppd->back_button);
 }
