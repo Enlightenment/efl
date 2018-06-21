@@ -793,7 +793,6 @@ err_parent:
 err_impossible:
    ERR("CONTACT DEVS!!! SHOULD NEVER HAPPEN!!! Old parent %p for object %p is not a valid Eo object.",
        pd->parent, obj);
-   EO_OBJ_DONE(obj);
 }
 
 EOLIAN static Eo *
