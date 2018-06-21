@@ -1,6 +1,9 @@
 #ifndef ECORE_AUDIO_OBJ_IN_H
 #define ECORE_AUDIO_OBJ_IN_H
 
+/* ssize_t needed in .eo.h */
+#include <sys/types.h>
+
 #include <Eina.h>
 #include <Eo.h>
 

@@ -20,10 +20,13 @@
 #define _EINA_SLICE_H
 
 #include "eina_types.h"
+
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <sys/types.h>
 
 /**
  * @addtogroup Eina_Slice_Group Memory Slices
