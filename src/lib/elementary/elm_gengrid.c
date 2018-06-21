@@ -146,7 +146,8 @@ _item_cache_free(Item_Cache *itc)
    if (!itc) return;
 
    evas_object_del(itc->spacer);
-   evas_object_del(itc->base_view);
+   efl_wref_del(itc->base_view, &itc->base_view);
+   efl_del(itc->base_view);
    eina_stringshare_del(itc->item_style);
    EINA_LIST_FREE(itc->contents, c)
      evas_object_del(c);
@@ -203,7 +204,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
      }
 
    itc->spacer = it->spacer;
-   itc->base_view = VIEW(it);
+   efl_wref_add(VIEW(it), &itc->base_view);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
    itc->contents = contents;
 
@@ -231,7 +232,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    evas_object_hide(itc->base_view);
    evas_object_move(itc->base_view, -9999, -9999);
    it->spacer = NULL;
-   if (!it->base->view) efl_wref_del(it->base->view, &it->base->view);
+   efl_wref_del(it->base->view, &it->base->view);
    VIEW(it) = NULL;
 
    _item_cache_clean(sd);
@@ -264,6 +265,7 @@ _item_cache_find(Elm_Gen_Item *it)
              it->spacer = itc->spacer;
              VIEW_SET(it, itc->base_view);
              itc->spacer = NULL;
+             efl_wref_del(itc->base_view, &itc->base_view);
              itc->base_view = NULL;
 
              itc->contents = eina_list_free(itc->contents);
