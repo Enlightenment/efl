@@ -334,8 +334,8 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 
    for (int i = 0; i < 4; ++i)
      {
-        Efl_Ui_Focus_Direction direction;
-        Efl_Ui_Focus_Graph_Calc_Direction_Result *res;
+        Efl_Ui_Focus_Direction direction = -1;
+        Efl_Ui_Focus_Graph_Calc_Direction_Result *res = NULL;
 
         if (i == 0)
           {
@@ -352,12 +352,13 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
              direction = EFL_UI_FOCUS_DIRECTION_UP;
              res = &result.top;
           }
-       else if (i == 3)
+        else if (i == 3)
           {
              direction = EFL_UI_FOCUS_DIRECTION_DOWN;
              res = &result.bottom;
           }
-        border_onedirection_set(node, direction, res->relation);
+
+       border_onedirection_set(node, direction, res->relation);
      }
 
 #ifdef CALC_DEBUG
