@@ -1090,7 +1090,7 @@ struct _Edje_Part_Collection
    Eina_Hash *aliased; /* invert match of alias */
 
    Embryo_Program   *script; /* all the embryo script code for this group */
-   const char       *name; /* group name */
+   const char       *part;
 
 #ifdef EDJE_PROGRAM_CACHE
    struct {
