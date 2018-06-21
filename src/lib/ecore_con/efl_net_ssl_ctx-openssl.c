@@ -9,11 +9,8 @@ struct _Efl_Net_Ssl_Ctx
    Eina_Bool is_dialer;
 };
 
-#ifndef TLS_server_method
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 # define TLS_server_method TLSv1_2_server_method
-#endif
-
-#ifndef TLS_client_method
 # define TLS_client_method TLSv1_2_client_method
 #endif
 
