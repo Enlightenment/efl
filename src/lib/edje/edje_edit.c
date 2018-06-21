@@ -1799,7 +1799,7 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
    _mempools_add(de);
 
    epc->id = id;
-   epc->name = eina_stringshare_add(copy_name);
+   epc->part = eina_stringshare_add(copy_name);
    snprintf(buf, sizeof(buf), "edje/collections/%i", epc->id);
    eet_data_write(eetf, _edje_edd_edje_part_collection, buf, epc, 1);
 
@@ -1908,7 +1908,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    pc->parts = NULL;
    pc->data = NULL;
    pc->script = NULL;
-   pc->name = eina_stringshare_add(name);
+   pc->part = eina_stringshare_add(name);
 
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
@@ -1944,7 +1944,7 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
 
    EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
      {
-        if (strcmp(g->name, e->entry) == 0)
+        if (strcmp(g->part, e->entry) == 0)
           {
              ed->file->collection_cache =
                eina_list_remove_list(ed->file->collection_cache, l);
@@ -1988,8 +1988,8 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
                {
                   ed->file->collection_cache =
                     eina_list_remove_list(ed->file->collection_cache, l);
-                  e_del = eina_hash_find(ed->file->collection, g->name);
-                  eina_hash_del(ed->file->collection, g->name, e_del);
+                  e_del = eina_hash_find(ed->file->collection, g->part);
+                  eina_hash_del(ed->file->collection, g->part, e_del);
                   _edje_collection_free(ed->file, g, e_del);
                }
           }
@@ -2022,22 +2022,22 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
 
    pc = ed->collection;
 
-   if (!strcmp(pc->name, new_name)) return EINA_TRUE;
+   if (!strcmp(pc->part, new_name)) return EINA_TRUE;
 
    if (edje_edit_group_exist(obj, new_name)) return EINA_FALSE;
 
-   _edje_edit_group_references_update(obj, pc->name, new_name);
+   _edje_edit_group_references_update(obj, pc->part, new_name);
 
    //printf("Set name of current group: %s [id: %d][new name: %s]\n",
-   // pc->name, pc->id, new_name);
+   // pc->part, pc->id, new_name);
 
-   //if (pc->name && ed->file->free_strings) eina_stringshare_del(pc->name); TODO FIXME
-   pce = eina_hash_find(ed->file->collection, pc->name);
+   //if (pc->part && ed->file->free_strings) eina_stringshare_del(pc->part); TODO FIXME
+   pce = eina_hash_find(ed->file->collection, pc->part);
 
    eina_hash_move(ed->file->collection, pce->entry, new_name);
 
    pce->entry = eina_stringshare_add(new_name);
-   pc->name = pce->entry;
+   pc->part = pce->entry;
    eina_stringshare_replace(&ed->group, new_name);
 
    return EINA_TRUE;
