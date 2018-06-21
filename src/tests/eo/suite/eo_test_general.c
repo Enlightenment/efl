@@ -1421,12 +1421,28 @@ thr1(void *data, Eina_Thread t EINA_UNUSED)
    printf("VERIFY finalized_get()\n");
    fail_if(!efl_finalized_get(d->objs));
 
+   s2 = efl_add_ref(DOMAIN_CLASS, obj);
+   ck_assert(s2);
+   efl_parent_set(s2, NULL);
+   efl_unref(s2);
+
    printf("VERIFY parent_set(invalid) -- WILL SHOW ERRORS\n");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    s1 = efl_add_ref(DOMAIN_CLASS, NULL);
    efl_domain_current_pop();
    efl_unref(s1);
    efl_parent_set(d->objs, s1);
+   printf("END OF ERRORS\n");
+
+   printf("VERIFY parent_set(invalid2) -- WILL SHOW ERRORS\n");
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
+   s1 = efl_add_ref(DOMAIN_CLASS, NULL);
+   s2 = efl_add_ref(DOMAIN_CLASS, s1);
+   efl_domain_current_pop();
+   efl_parent_set(s2, NULL);
+   efl_parent_set(s1, s2);
+   efl_unref(s1);
+   efl_unref(s2);
    printf("END OF ERRORS\n");
 
    printf("VERIFY composite\n");
