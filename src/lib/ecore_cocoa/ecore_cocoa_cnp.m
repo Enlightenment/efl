@@ -24,7 +24,8 @@ ecore_cocoa_clipboard_set(const void           *data,
         str = [[NSString alloc] initWithBytes: data
                                        length: size
                                      encoding: NSUTF8StringEncoding];
-        [objects addObject: str];
+        if (str)
+          [objects addObject: str];
      }
    if (type & ECORE_COCOA_CNP_TYPE_MARKUP)
      {
@@ -35,7 +36,8 @@ ecore_cocoa_clipboard_set(const void           *data,
                                        length: strlen(utf8) // XXX strlen() ?
                                      encoding: NSUTF8StringEncoding];
         free(utf8);
-        [objects addObject: str];
+        if (str)
+          [objects addObject: str];
      }
    if (type & ECORE_COCOA_CNP_TYPE_IMAGE)
      {
