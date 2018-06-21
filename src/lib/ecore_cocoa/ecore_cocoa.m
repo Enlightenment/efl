@@ -254,6 +254,7 @@ _ecore_cocoa_feed_events(void *anEvent)
       case NSEventTypeFlagsChanged:
         {
            NSUInteger flags = [event modifierFlags];
+           EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
 
            Ecore_Event_Key *evDown = NULL;
            Ecore_Event_Key *evUp = NULL;
@@ -277,6 +278,8 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            if (evDown->key)
              {
+                evDown->window = (Ecore_Window)window.ecore_window_data;
+                evDown->event_window = evDown->window;
                 evDown->keyname = evDown->key;
                 evDown->timestamp = time;
                 evDown->string = NULL;
@@ -311,6 +314,8 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            if (evUp->key)
              {
+                evUp->window = (Ecore_Window)window.ecore_window_data;
+                evUp->event_window = evUp->window;
                 evUp->keyname = evUp->key;
                 evUp->timestamp = time;
                 evUp->string = NULL;
