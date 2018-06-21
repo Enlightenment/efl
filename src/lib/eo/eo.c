@@ -3135,10 +3135,10 @@ _eo_log_obj_init(void)
    s = getenv("EO_LIFECYCLE_DEBUG");
    if ((s) && (s[0] != '\0'))
      {
-        int lvl = 1;
-
+        char *es;
+        int lvl = (int)strtol(s, &es, 10);
         _eo_log_objs_level = EO_REF_OP_FREE;
-        if (sscanf(s, "%d:%*s", &lvl) == 1)
+        if ((es != s) && (*es == ':'))
           {
              if (lvl >= 3)
                {
@@ -3152,7 +3152,7 @@ _eo_log_obj_init(void)
                   EINA_LOG_DOM_DBG(_eo_log_objs_dom,
                                    "will log new, free, ref and unref");
                }
-             s = strchr(s, ':') + 1;
+             s = es + 1;
           }
 
         if ((strcmp(s, "*") == 0) || (strcmp(s, "1") == 0))
