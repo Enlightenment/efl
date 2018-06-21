@@ -19,7 +19,7 @@ typedef struct
 EOLIAN static Efl_Object*
 _efl_ui_widget_focus_manager_efl_object_constructor(Eo *obj, Efl_Ui_Widget_Focus_Manager_Data *pd)
 {
-   Eo *res;
+   Eo *res = NULL;
 
    pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
 
