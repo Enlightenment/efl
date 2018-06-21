@@ -19,18 +19,8 @@ START_TEST(eldbus_cxx_session_connection)
 }
 END_TEST
 
-START_TEST(eldbus_cxx_system_connection)
-{
-  efl::ecore::ecore_init ecore_init;
-  efl::eldbus::eldbus_init init;
-
-  efl::eldbus::connection c(efl::eldbus::system);
-}
-END_TEST
-
 void
 eldbus_test_connection(TCase* tc)
 {
   tcase_add_test(tc, eldbus_cxx_session_connection);
-  tcase_add_test(tc, eldbus_cxx_system_connection);
 }
