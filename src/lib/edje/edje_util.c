@@ -2052,9 +2052,6 @@ _edje_efl_text_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
 
    if ((!ed) || (!part)) return NULL;
 
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -5220,6 +5217,8 @@ _edje_real_part_recursive_get(Edje **ed, const char *part)
 
    path = eina_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
    if (!path) return NULL;
+
+   _edje_recalc_do(*ed);
 
    rp = _edje_real_part_recursive_get_helper(ed, path);
 
