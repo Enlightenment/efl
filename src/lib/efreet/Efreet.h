@@ -78,6 +78,12 @@
 # undef EAPI
 #endif
 
+#ifdef EFL_BUILD
+# define EFREET_DEPRECATED_API
+#else
+# define EFREET_DEPRECATED_API EINA_DEPRECATED
+#endif
+
 #ifdef _WIN32
 # ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
