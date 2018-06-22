@@ -1072,6 +1072,25 @@ EFL_START_TEST(edje_test_part_caching)
 }
 EFL_END_TEST
 
+EFL_START_TEST(edje_test_textblock)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   const char *buf = "Hello";
+   const char *txt;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
+   edje_object_part_text_set(obj, "text", buf);
+   txt = edje_object_part_text_get(obj, "text");
+   fail_if(!txt || strcmp(txt, buf));
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -1100,4 +1119,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_signal_callback_del_full);
    tcase_add_test(tc, edje_test_text_cursor);
    tcase_add_test(tc, edje_test_part_caching);
+   tcase_add_test(tc, edje_test_textblock);
 }
