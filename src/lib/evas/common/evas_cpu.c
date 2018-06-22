@@ -5,17 +5,32 @@
 #endif
 #endif
 
+static int cpu_feature_mask = 0;
+
+
+#ifdef BUILD_ALTIVEC
+# ifdef __POWERPC__
+#  ifdef __VEC__
+#   define NEED_FEATURE_TEST
+#  endif
+# endif
+#endif
+#ifdef __SPARC__
+#   define NEED_FEATURE_TEST
+#endif
+#if defined(__ARM_ARCH__)
+# ifdef BUILD_NEON
+#   define NEED_FEATURE_TEST
+# endif
+#endif
+
+#ifdef NEED_FEATURE_TEST
 #if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 #include <signal.h>
 #include <setjmp.h>
 #include <errno.h>
 
 static sigjmp_buf detect_buf;
-#endif
-
-static int cpu_feature_mask = 0;
-
-#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 static void evas_common_cpu_catch_ill(int sig);
 static void evas_common_cpu_catch_segv(int sig);
 
@@ -73,7 +88,7 @@ evas_common_cpu_vis_test(void)
 #ifdef __SPARC__
 #endif /* __SPARC__ */
 }
-
+#endif /* NEED_FEATURE_TEST */
 static Eina_Bool
 _cpu_check(Eina_Cpu_Features f)
 {
@@ -83,6 +98,8 @@ _cpu_check(Eina_Cpu_Features f)
    return (features & f) == f;
 }
 
+
+#ifdef NEED_FEATURE_TEST
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
@@ -123,6 +140,7 @@ evas_common_cpu_feature_test(void (*feature)(void))
    return 0;
 #endif
 }
+#endif
 
 EAPI void
 evas_common_cpu_init(void)
