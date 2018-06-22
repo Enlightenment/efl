@@ -7710,7 +7710,10 @@ _item_filtered_get(Elm_Gen_Item *it)
         l = eina_list_data_find_list(sd->filter_queue, it);
         if (l)
           sd->filter_queue = eina_list_remove_list(sd->filter_queue, l);
-        l = eina_list_data_find_list(sd->queue, it);
+        if (it->item->queued)
+          l = eina_list_data_find_list(sd->queue, it);
+        else
+          l = NULL;
         if (l)
           {
              sd->queue = eina_list_remove_list(sd->queue, l);
