@@ -83,6 +83,23 @@ _cpu_check(Eina_Cpu_Features f)
    return (features & f) == f;
 }
 
+#ifdef BUILD_ALTIVEC
+# ifdef __POWERPC__
+#  ifdef __VEC__
+#   define NEED_FEATURE_TEST
+#  endif
+# endif
+#endif
+#ifdef __SPARC__
+#   define NEED_FEATURE_TEST
+#endif
+#if defined(__ARM_ARCH__)
+# ifdef BUILD_NEON
+#   define NEED_FEATURE_TEST
+# endif
+#endif
+
+#ifdef NEED_FEATURE_TEST
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
@@ -123,6 +140,7 @@ evas_common_cpu_feature_test(void (*feature)(void))
    return 0;
 #endif
 }
+#endif
 
 EAPI void
 evas_common_cpu_init(void)
