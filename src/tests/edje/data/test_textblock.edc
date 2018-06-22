@@ -1,0 +1,20 @@
+collections {
+   styles {
+      style { name: "tb_style";
+         base: "font=Sans font_size=20 color=#fff";
+      }
+   }
+   group { name: "test_textblock";
+      parts {
+         part { name: "text";
+            type: TEXTBLOCK;
+            description { state: "default" 0.0;
+               min: 300 300;
+               text {
+                  style: "tb_style";
+               }
+            }
+         }
+      }
+   }
+}

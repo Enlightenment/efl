@@ -300,6 +300,7 @@ tests/edje/data/test_messages.edc \
 tests/edje/data/test_signals.edc \
 tests/edje/data/test_signal_callback_del_full.edc \
 tests/edje/data/test_text_cursor.edc \
+tests/edje/data/test_textblock.edc \
 tests/edje/data/filter.lua
 
 
@@ -344,6 +345,7 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_signals.edj \
                      tests/edje/data/test_signal_callback_del_full.edj \
                      tests/edje/data/test_text_cursor.edj \
+                     tests/edje/data/test_textblock.edj \
                      $(NULL)
 
 CLEANFILES += $(EDJE_TEST_FILES)
