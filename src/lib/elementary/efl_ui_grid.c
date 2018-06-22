@@ -1027,7 +1027,7 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
    Efl_Ui_Grid_Item *existing = eina_list_nth(pd->items, index);
    EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
 
-   pd->items = eina_list_append_relative(pd->items, subobj, existing);
+   pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
    pid->update_begin = EINA_TRUE;
    _need_update(pd);
