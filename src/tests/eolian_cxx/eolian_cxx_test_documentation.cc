@@ -33,7 +33,7 @@ klass_def init_test_data(efl::eolian::eolian_state const& state)
    return klass;
 }
 
-START_TEST(eolian_cxx_test_class_docs)
+EFL_START_TEST(eolian_cxx_test_class_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -57,9 +57,9 @@ START_TEST(eolian_cxx_test_class_docs)
            "@Docs");
    ck_assert_str_eq(doc.since.c_str(), "1.17");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_function_docs)
+EFL_START_TEST(eolian_cxx_test_function_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -105,9 +105,9 @@ START_TEST(eolian_cxx_test_function_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_property_docs)
+EFL_START_TEST(eolian_cxx_test_property_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -145,9 +145,9 @@ START_TEST(eolian_cxx_test_property_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_event_docs)
+EFL_START_TEST(eolian_cxx_test_event_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -161,9 +161,9 @@ START_TEST(eolian_cxx_test_event_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_enum_docs)
+EFL_START_TEST(eolian_cxx_test_enum_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -204,9 +204,9 @@ START_TEST(eolian_cxx_test_enum_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_struct_docs)
+EFL_START_TEST(eolian_cxx_test_struct_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -274,7 +274,7 @@ START_TEST(eolian_cxx_test_struct_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "");
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_documentation(TCase* tc)

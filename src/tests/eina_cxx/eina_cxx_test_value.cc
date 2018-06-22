@@ -6,7 +6,7 @@
 
 #include "eina_cxx_suite.h"
 
-START_TEST(eina_cxx_value_constructors)
+EFL_START_TEST(eina_cxx_value_constructors)
 {
   efl::eina::eina_init init;
 
@@ -38,9 +38,9 @@ START_TEST(eina_cxx_value_constructors)
 
   efl::eina::value vdouble(5.0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_value_get)
+EFL_START_TEST(eina_cxx_value_get)
 {
   efl::eina::eina_init init;
 
@@ -81,9 +81,9 @@ START_TEST(eina_cxx_value_get)
   efl::eina::value vdouble(12.0);
   ck_assert(efl::eina::get<double>(vdouble) == 12.0f);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_value_wrong_get)
+EFL_START_TEST(eina_cxx_value_wrong_get)
 {
   efl::eina::eina_init init;
 
@@ -98,9 +98,9 @@ START_TEST(eina_cxx_value_wrong_get)
   {
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_value_comparison_operators)
+EFL_START_TEST(eina_cxx_value_comparison_operators)
 {
   efl::eina::eina_init init;
 
@@ -162,9 +162,9 @@ START_TEST(eina_cxx_value_comparison_operators)
   ck_assert(vfloat != vdouble);
   ck_assert(vdouble != vfloat);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_value_copying)
+EFL_START_TEST(eina_cxx_value_copying)
 {
   efl::eina::eina_init init;
   char c = 5;
@@ -182,14 +182,14 @@ START_TEST(eina_cxx_value_copying)
   ck_assert(efl::eina::get<int>(vchar) == 10);
   ck_assert(efl::eina::get<int>(vint) == 10);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_value_temporaries)
+EFL_START_TEST(eina_cxx_value_temporaries)
 {
   efl::eina::eina_init init;
   efl::eina::get<std::string>(efl::eina::value(std::string("Matroska")));
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_value(TCase* tc)

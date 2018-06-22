@@ -9,7 +9,7 @@
 
 #include "eolian_cxx_suite.h"
 
-START_TEST(eolian_cxx_test_wrapper_size)
+EFL_START_TEST(eolian_cxx_test_wrapper_size)
 {
   efl::eo::eo_init init;
 
@@ -19,7 +19,7 @@ START_TEST(eolian_cxx_test_wrapper_size)
   fail_if(sizeof(b) != sizeof(Eo*));
   fail_if(sizeof(b) != sizeof(c));
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_wrapper(TCase* tc)

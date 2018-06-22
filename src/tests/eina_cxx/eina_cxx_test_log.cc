@@ -14,7 +14,7 @@ int expensive_call()
   return 11;
 }
 
-START_TEST(eina_cxx_level_log)
+EFL_START_TEST(eina_cxx_level_log)
 {
   efl::eina::eina_init init;
 
@@ -31,9 +31,9 @@ START_TEST(eina_cxx_level_log)
   domain.set_level(efl::eina::log_level::error);
   ck_assert(domain.get_level() == ::EINA_LOG_LEVEL_ERR);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_expensive_log)
+EFL_START_TEST(eina_cxx_expensive_log)
 {
   efl::eina::eina_init init;
 
@@ -44,9 +44,9 @@ START_TEST(eina_cxx_expensive_log)
   EINA_CXX_DOM_LOG_ERR(domain) << "foo " << ::expensive_call();
   ck_assert(!expensive_called);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_domain_log)
+EFL_START_TEST(eina_cxx_domain_log)
 {
   efl::eina::eina_init init;
 
@@ -64,9 +64,9 @@ START_TEST(eina_cxx_domain_log)
   EINA_CXX_LOG_DBG() << "foo " << 5;
   EINA_CXX_LOG_WARN() << "foo " << 5;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_default_domain_log)
+EFL_START_TEST(eina_cxx_default_domain_log)
 {
   efl::eina::eina_init init;
 
@@ -76,9 +76,9 @@ START_TEST(eina_cxx_default_domain_log)
   EINA_CXX_DOM_LOG_DBG(efl::eina::default_domain) << "foo " << 5;
   EINA_CXX_DOM_LOG_WARN(efl::eina::default_domain) << "foo " << 5;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_global_domain_log)
+EFL_START_TEST(eina_cxx_global_domain_log)
 {
   efl::eina::eina_init init;
 
@@ -90,7 +90,7 @@ START_TEST(eina_cxx_global_domain_log)
   EINA_CXX_DOM_LOG_DBG(efl::eina::global_domain) << "foo " << 5;
   EINA_CXX_DOM_LOG_WARN(efl::eina::global_domain) << "foo " << 5;
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_log(TCase* tc)

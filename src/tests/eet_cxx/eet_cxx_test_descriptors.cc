@@ -15,7 +15,7 @@ struct pod_type
   char c;
 };
 
-START_TEST(eet_cxx_descriptors)
+EFL_START_TEST(eet_cxx_descriptors)
 {
   efl::eet::eet_init init;
 
@@ -41,7 +41,7 @@ START_TEST(eet_cxx_descriptors)
 
   eet_close(file);
 }
-END_TEST
+EFL_END_TEST
 
 int constructors_called = 0
     , destructors_called = 0;
@@ -65,7 +65,7 @@ struct non_pod
   int i;
 };
 
-START_TEST(eet_cxx_descriptors_non_pod)
+EFL_START_TEST(eet_cxx_descriptors_non_pod)
 {
   efl::eet::eet_init init;
 
@@ -98,7 +98,7 @@ START_TEST(eet_cxx_descriptors_non_pod)
 
   ck_assert(constructors_called == destructors_called);
 }
-END_TEST
+EFL_END_TEST
 
 struct pod_composited
 {
@@ -115,7 +115,7 @@ struct pod_value_composited
   pod_type member;
 };
 
-START_TEST(eet_cxx_descriptors_composition)
+EFL_START_TEST(eet_cxx_descriptors_composition)
 {
   efl::eet::eet_init init;
 
@@ -222,7 +222,7 @@ START_TEST(eet_cxx_descriptors_composition)
   }
 
 }
-END_TEST
+EFL_END_TEST
 
 void
 eet_cxx_test_descriptors(TCase* tc)

@@ -25,7 +25,7 @@ struct is_eolian_object< ::wrapper> : std::true_type {};
     
 } }
 
-START_TEST(eina_cxx_ptrarray_push_back)
+EFL_START_TEST(eina_cxx_ptrarray_push_back)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -74,9 +74,9 @@ START_TEST(eina_cxx_ptrarray_push_back)
     ck_assert(std::equal(array.rbegin(), array.rend(), rresult_));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrarray_pop_back)
+EFL_START_TEST(eina_cxx_ptrarray_pop_back)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -128,9 +128,9 @@ START_TEST(eina_cxx_ptrarray_pop_back)
     ck_assert(std::equal(array.rbegin(), array.rend(), rresult_));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrarray_insert)
+EFL_START_TEST(eina_cxx_ptrarray_insert)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -277,9 +277,9 @@ START_TEST(eina_cxx_ptrarray_insert)
     ck_assert(std::equal(array.begin(), array.end(), array4.begin()));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrarray_constructors)
+EFL_START_TEST(eina_cxx_ptrarray_constructors)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -319,9 +319,9 @@ START_TEST(eina_cxx_ptrarray_constructors)
     ck_assert(array2 == array4);
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrarray_erase)
+EFL_START_TEST(eina_cxx_ptrarray_erase)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -407,9 +407,9 @@ START_TEST(eina_cxx_ptrarray_erase)
     ck_assert(array1.back() == w5);
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrarray_range)
+EFL_START_TEST(eina_cxx_ptrarray_range)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -479,7 +479,7 @@ START_TEST(eina_cxx_ptrarray_range)
   //   ck_assert(*array.begin() == 0);
   }
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_ptrarray(TCase* tc)
