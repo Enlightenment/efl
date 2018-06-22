@@ -258,29 +258,37 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            Ecore_Event_Key *evDown = NULL;
            Ecore_Event_Key *evUp = NULL;
-
-           evDown = calloc(1, sizeof (Ecore_Event_Key));
-           if (!evDown) return pass;
+           const char *key = NULL;
+           int keylen;
 
            // Turn special key flags on
            if (flags & NSEventModifierFlagShift)
-             evDown->key = "Shift_L";
+             key = "Shift_L";
            else if (flags & NSEventModifierFlagControl)
-             evDown->key = "Control_L";
+             key = "Control_L";
            else if (flags & NSEventModifierFlagOption)
-             evDown->key = "Alt_L";
+             key = "Alt_L";
            else if (flags & NSEventModifierFlagCommand)
-             evDown->key = "Super_L";
+             key = "Super_L";
            else if (flags & NSEventModifierFlagCapsLock)
-             evDown->key = "Caps_Lock";
+             key = "Caps_Lock";
            else if (flags & NSEventModifierFlagNumericPad)
-             evDown->key = "Num_Lock";
+             key = "Num_Lock";
 
-           if (evDown->key)
+           if (key)
              {
+                keylen = strlen(key);
+                evDown = calloc(1, sizeof (Ecore_Event_Key) + (keylen * 2) + 2);
+                if (!evDown) return pass;
+
+                evDown->keyname = (char *)(evDown + 1);
+                evDown->key = evDown->keyname + keylen + 1;
+
+                strcpy((char *) evDown->keyname, key);
+                strcpy((char *) evDown->key, key);
+
                 evDown->window = (Ecore_Window)window.ecore_window_data;
                 evDown->event_window = evDown->window;
-                evDown->keyname = evDown->key;
                 evDown->timestamp = time;
                 evDown->string = NULL;
                 ecore_event_add(ECORE_EVENT_KEY_DOWN, evDown, NULL, NULL);
@@ -288,42 +296,44 @@ _ecore_cocoa_feed_events(void *anEvent)
                 break;
              }
 
-           free(evDown);
-
-           evUp = calloc(1, sizeof (Ecore_Event_Key));
-           if (!evUp)
-             {
-                return pass;
-             }
+           key = NULL;
 
            NSUInteger changed_flags = flags ^ old_flags;
 
            // Turn special key flags off
            if (changed_flags & NSEventModifierFlagShift)
-             evUp->key = "Shift_L";
+             key = "Shift_L";
            else if (changed_flags & NSEventModifierFlagControl)
-             evUp->key = "Control_L";
+             key = "Control_L";
            else if (changed_flags & NSEventModifierFlagOption)
-             evUp->key = "Alt_L";
+             key = "Alt_L";
            else if (changed_flags & NSEventModifierFlagCommand)
-             evUp->key = "Super_L";
+             key = "Super_L";
            else if (changed_flags & NSEventModifierFlagCapsLock)
-             evUp->key = "Caps_Lock";
+             key = "Caps_Lock";
            else if (changed_flags & NSEventModifierFlagNumericPad)
-             evUp->key = "Num_Lock";
+             key = "Num_Lock";
 
-           if (evUp->key)
+           if (key)
              {
+                keylen = strlen(key);
+                evUp = calloc(1, sizeof (Ecore_Event_Key) + (keylen * 2) + 2);
+                if (!evUp) return pass;
+
+                evUp->keyname = (char *)(evUp + 1);
+                evUp->key = evUp->keyname + keylen + 1;
+
+                strcpy((char *) evUp->keyname, key);
+                strcpy((char *) evUp->key, key);
+
                 evUp->window = (Ecore_Window)window.ecore_window_data;
                 evUp->event_window = evUp->window;
-                evUp->keyname = evUp->key;
                 evUp->timestamp = time;
                 evUp->string = NULL;
                 ecore_event_add(ECORE_EVENT_KEY_UP, evUp, NULL, NULL);
                 old_flags = flags;
                 break;
              }
-           free(evUp);
 
            break;
         }
