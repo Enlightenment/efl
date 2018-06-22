@@ -32,7 +32,7 @@ typedef struct _Eina_Debug_Thread Eina_Debug_Thread;
 
 struct _Eina_Debug_Thread
 {
-   pthread_t thread;
+   Eina_Thread thread;
 
    Eina_Debug_Session *cmd_session;
    void *cmd_buffer;
@@ -47,7 +47,7 @@ struct _Eina_Debug_Thread
 
 extern Eina_Spinlock                _eina_debug_lock;
 extern Eina_Spinlock                _eina_debug_thread_lock;
-extern pthread_t                    _eina_debug_thread_mainloop;
+extern Eina_Thread                    _eina_debug_thread_mainloop;
 extern Eina_Debug_Thread           *_eina_debug_thread_active;
 extern int                          _eina_debug_thread_active_num;
 
