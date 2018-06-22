@@ -9,7 +9,7 @@
 
 #include "eina_cxx_suite.h"
 
-START_TEST(eina_cxx_stringshare_constructors)
+EFL_START_TEST(eina_cxx_stringshare_constructors)
 {
   efl::eina::eina_init eina_init;
 
@@ -26,9 +26,9 @@ START_TEST(eina_cxx_stringshare_constructors)
   efl::eina::stringshare string4(string3.begin(), string3.end());
   ck_assert(string2 == string3);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_stringshare_iterators)
+EFL_START_TEST(eina_cxx_stringshare_iterators)
 {
   efl::eina::eina_init eina_init;
 
@@ -44,7 +44,7 @@ START_TEST(eina_cxx_stringshare_iterators)
   ck_assert(std::equal(string.cbegin(), string.cend(), str));
   ck_assert(std::equal(string.crbegin(), string.crend(), rstr));
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_stringshare(TCase *tc)

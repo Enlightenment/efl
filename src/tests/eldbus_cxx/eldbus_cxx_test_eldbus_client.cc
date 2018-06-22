@@ -29,7 +29,7 @@ on_name_request(std::error_code const& ec, efl::eldbus::const_message
      }
 }
 
-START_TEST(eldbus_cxx_client)
+EFL_START_TEST(eldbus_cxx_client)
 {
   namespace edb = efl::eldbus;
 
@@ -452,7 +452,7 @@ START_TEST(eldbus_cxx_client)
 
   std::cout << "out of loop" << std::endl;
 }
-END_TEST
+EFL_END_TEST
 
 void
 eldbus_test_client(TCase* tc)

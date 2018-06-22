@@ -16,10 +16,10 @@ typedef Eo Cyclic2;
 
 #include "eolian_cxx_suite.h"
 
-START_TEST(eolian_cxx_test_cyclic_call)
+EFL_START_TEST(eolian_cxx_test_cyclic_call)
 {
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_cyclic(TCase* tc)

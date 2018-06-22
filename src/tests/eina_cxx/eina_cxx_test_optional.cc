@@ -19,7 +19,7 @@ struct nonpod
   ~nonpod() { nonpod_destructed++; }
 };
 
-START_TEST(eina_cxx_optional_constructors)
+EFL_START_TEST(eina_cxx_optional_constructors)
 {
   namespace eina = efl::eina;
 
@@ -56,9 +56,9 @@ START_TEST(eina_cxx_optional_constructors)
             << " nonpod_destructed " << nonpod_destructed << std::endl;
   ck_assert(::nonpod_constructed == ::nonpod_destructed);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_optional_rel_ops)
+EFL_START_TEST(eina_cxx_optional_rel_ops)
 {
   namespace eina = efl::eina;
 
@@ -87,9 +87,9 @@ START_TEST(eina_cxx_optional_rel_ops)
   ck_assert(!(one != one));
   ck_assert(!(one != one_again));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_optional_assignment)
+EFL_START_TEST(eina_cxx_optional_assignment)
 {
   namespace eina = efl::eina;
 
@@ -132,9 +132,9 @@ START_TEST(eina_cxx_optional_assignment)
 
   assert(a); assert(!b); assert(c); assert(d);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_optional_convertible_types)
+EFL_START_TEST(eina_cxx_optional_convertible_types)
 {
   namespace eina = efl::eina;
 
@@ -184,7 +184,7 @@ START_TEST(eina_cxx_optional_convertible_types)
   fail_if(*b != *b_s);
   fail_if(*c != *c_s);
 }
-END_TEST
+EFL_END_TEST
 
 
 void
