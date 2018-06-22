@@ -605,7 +605,7 @@ _ecore_main_fdh_glib_mark_active(Eo *obj, Efl_Loop_Data *pd)
              fdh->error_active = EINA_TRUE;
           }
 
-        _ecore_try_add_to_call_list(obj, fdh);
+        _ecore_try_add_to_call_list(obj, pd, fdh);
 
         if (fdh->gfd.revents & (G_IO_IN | G_IO_OUT | G_IO_ERR)) ret++;
      }
@@ -627,7 +627,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
 
    if ((!ecore_idling) && (!_ecore_glib_idle_enterer_called))
      {
-        pd->loop_time = _ecore_time_loop_time = ecore_time_get();
+        pd->loop_time = ecore_time_get();
         _efl_loop_timer_expired_timers_call(obj, pd, pd->loop_time);
 
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
@@ -653,7 +653,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                   int r = -1;
                   double t = _efl_loop_timer_next_get(obj, pd);
 
-                  if ((timer_fd >= 0) && (t > 0.0))
+                  if ((pd->timer_fd >= 0) && (t > 0.0))
                     {
                        struct itimerspec ts;
 
@@ -665,13 +665,13 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                        // timerfd cannot sleep for 0 time
                        if (ts.it_value.tv_sec || ts.it_value.tv_nsec)
                          {
-                            r = timerfd_settime(timer_fd, 0, &ts, NULL);
+                            r = timerfd_settime(pd->timer_fd, 0, &ts, NULL);
                             if (r < 0)
                               {
                                  ERR("timer set returned %d (errno=%d)",
                                      r, errno);
-                                 close(timer_fd);
-                                 timer_fd = -1;
+                                 close(pd->timer_fd);
+                                 pd->timer_fd = -1;
                               }
                             else INF("sleeping for %ld s %06ldus",
                                      ts.it_value.tv_sec,
@@ -717,10 +717,10 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
    if (ecore_idling && (!_ecore_main_idlers_exist(pd)) &&
        (!pd->message_queue))
      {
-        if (timer_fd >= 0)
+        if (pd->timer_fd >= 0)
           {
              uint64_t count = 0;
-             int r = read(timer_fd, &count, sizeof count);
+             int r = read(pd->timer_fd, &count, sizeof count);
              if ((r == -1) && (errno == EAGAIN))
                {
                }
@@ -729,8 +729,8 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
                {
                   // unexpected things happened... fail back to old way
                   ERR("timer read returned %d (errno=%d)", r, errno);
-                  close(timer_fd);
-                  timer_fd = -1;
+                  close(pd->timer_fd);
+                  pd->timer_fd = -1;
                }
           }
      }
@@ -1112,8 +1112,12 @@ _ecore_main_loop_iterate(Eo *obj, Efl_Loop_Data *pd)
      }
    else
      {
+#ifndef USE_G_MAIN_LOOP
         pd->loop_time = ecore_time_get();
         _ecore_main_loop_iterate_internal(obj, pd, 1);
+#else
+             g_main_context_iteration(NULL, 0);
+#endif
      }
 }
 
@@ -1146,11 +1150,15 @@ _ecore_main_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
      }
    else
      {
+#ifndef USE_G_MAIN_LOOP
         pd->in_loop++;
         pd->loop_time = ecore_time_get();
         _ecore_main_loop_iterate_internal(obj, pd, !may_block);
         pd->in_loop--;
         return pd->message_queue ? 1 : 0;
+#else
+        return g_main_context_iteration(NULL, may_block);
+#endif
      }
    return 0;
 }
@@ -1204,12 +1212,22 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
      }
    else
      {
+#ifndef USE_G_MAIN_LOOP
         pd->in_loop++;
         pd->loop_time = ecore_time_get();
         while (!pd->do_quit)
           _ecore_main_loop_iterate_internal(obj, pd, 0);
         pd->do_quit = 0;
         pd->in_loop--;
+#else
+        if (!pd->do_quit)
+          {
+             if (!ecore_main_loop)
+               ecore_main_loop = g_main_loop_new(NULL, 1);
+             g_main_loop_run(ecore_main_loop);
+          }
+        pd->do_quit = 0;
+#endif
      }
 }
 
