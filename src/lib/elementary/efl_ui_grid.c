@@ -553,7 +553,6 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
                                  Efl_Ui_Grid_Data *pd)
 {
    pd->obj = obj = efl_finalize(efl_super(obj, MY_CLASS));
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    efl_ui_layout_object_theme_set(obj, "grid", "base", efl_ui_widget_style_get(obj));
@@ -633,7 +632,6 @@ _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
    pd->content = NULL;
    efl_del(pd->pan);
    pd->pan = NULL;
-   efl_del(pd->smanager);
    pd->smanager = NULL;
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -646,7 +644,7 @@ _efl_ui_grid_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Grid_Data *pd)
    Eina_Position2D pos = efl_ui_scrollable_content_pos_get(pd->smanager);
    Eina_Rect geo = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
 
-   //ERR("LSH:: pos[%d,%d], geo[%d,%d,%d,%d]", pos.x, pos.y, geo.x, geo.y, geo.w, geo.h);
+   //ERR("pos[%d,%d], geo[%d,%d,%d,%d]", pos.x, pos.y, geo.x, geo.y, geo.w, geo.h);
 
    if (geo.w <= 1 || geo.h <= 1) return;
    // Need to be implemented
@@ -746,7 +744,6 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Dat
       case EFL_UI_DIR_HORIZONTAL:
       case EFL_UI_DIR_LTR:
         pd->dir = EFL_UI_DIR_HORIZONTAL;
-        ERR("direction is Horizontal");
         break;
 
       case EFL_UI_DIR_UP:
@@ -756,7 +753,6 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Dat
       case EFL_UI_DIR_DEFAULT:
       default:
         pd->dir = EFL_UI_DIR_VERTICAL;
-        ERR("direction is Vertical");
         break;
      }
 
