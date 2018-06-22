@@ -4,9 +4,18 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef _WIN32
+# include <ws2tcpip.h>
+#endif
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
