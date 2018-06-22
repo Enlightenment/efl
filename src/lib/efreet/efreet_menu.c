@@ -529,7 +529,7 @@ efreet_menu_file_set(const char *file)
 }
 
 /* deprecated */
-EINA_DEPRECATED EAPI void
+EFREET_DEPRECATED_API EAPI void
 efreet_menu_async_get(Efreet_Menu_Cb func, const void *data)
 {
     char menu[PATH_MAX];
@@ -605,7 +605,7 @@ efreet_menu_get(void)
 }
 
 /* deprecated */
-EINA_DEPRECATED EAPI void
+EFREET_DEPRECATED_API EAPI void
 efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data)
 {
     Efreet_Menu_Async *async;
