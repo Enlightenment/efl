@@ -284,10 +284,12 @@ _item_text_signals_emit(Elm_Naviframe_Item_Data *it)
 static Evas_Object *
 _access_object_get(Elm_Naviframe_Item_Data *it, const char* part)
 {
-   Evas_Object *po, *ao;
+   Evas_Object *po, *ao, *o;
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(VIEW(it)), part);
+   o = elm_layout_edje_get(VIEW(it));
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, part);
+   edje_object_thaw(o);
    ao = evas_object_data_get(po, "_part_access_obj");
 
    return ao;
