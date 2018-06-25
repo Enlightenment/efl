@@ -1950,6 +1950,15 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Object_Data *pd, const cha
    v = efl_model_property_get(pd->connect.model, fetch);
    if (!v) return;
 
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error error;
+
+        eina_value_get(v, &error);
+        ERR("Failed to fetch signal value. Error: %s", eina_error_msg_get(error));
+        return;
+     }
+
    // FIXME: previous implementation would just do that for signal/part == "selected"
    if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
      {
@@ -1959,7 +1968,7 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Object_Data *pd, const cha
         if (bl) value = strdup("selected");
         else value = strdup("unselected");
      }
-   else if (eina_value_type_get(v) != EINA_VALUE_TYPE_ERROR)
+   else
      {
         value = eina_value_to_string(v);
      }
