@@ -767,7 +767,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
              if (prev_parent) efl_unref(obj);
              // unlikely this error happens, so move it out of execution path
              // to improve l1 cache efficiency
-             goto err_parent;
+             goto err_parent_done;
           }
 
         eo_obj->parent = EINA_TRUE;
@@ -783,10 +783,11 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    EO_OBJ_DONE(obj);
    return;
 
+err_parent_done:
+   EO_OBJ_DONE(obj);
 err_parent:
    ERR("New parent %p for object %p is not a valid Eo object.",
        parent_id, obj);
-   EO_OBJ_DONE(obj);
    return;
 
 err_impossible:
