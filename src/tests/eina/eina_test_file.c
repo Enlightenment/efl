@@ -774,7 +774,9 @@ EFL_START_TEST(eina_test_file_mktemp)
         errno = 0;
         tmpfile = NULL;
         fd = eina_file_mkstemp(patterns[k], &tmpfile);
-        fail_if((fd < 0) || !tmpfile || errno);
+        ck_assert(fd >= 0);
+        ck_assert(!!tmpfile);
+        ck_assert_msg(!errno, "ERROR(%s): %s\n", patterns[k], strerror(errno));
         file = eina_file_open(tmpfile, EINA_FALSE);
         fail_if(!file);
         eina_file_close(file);
