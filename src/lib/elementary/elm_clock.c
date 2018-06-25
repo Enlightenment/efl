@@ -195,7 +195,9 @@ _access_activate_cb(void *data,
    digit = evas_object_smart_parent_get(part_obj);
    if (!digit) return;
 
+   edje_object_freeze(digit);
    inc_btn = (Evas_Object *)edje_object_part_object_get(digit, "access.t");
+   edje_object_thaw(digit);
 
    if (part_obj != inc_btn)
      _on_clock_val_down_start(data, digit, NULL, NULL);
@@ -286,6 +288,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
           }
 
         /* no need to propagate mouse event with acess */
+        edje_object_freeze(sd->digit[i]);
         po = (Evas_Object *)edje_object_part_object_get
                (sd->digit[i], "access.t");
         evas_object_propagate_events_set(po, !is_access);
@@ -293,7 +296,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
         po = (Evas_Object *)edje_object_part_object_get
                (sd->digit[i], "access.b");
         evas_object_propagate_events_set(po, !is_access);
-
+        edje_object_thaw(sd->digit[i]);
      }
 
    /* am, pm edit button  */
@@ -331,6 +334,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
      }
 
     /* no need to propagate mouse event with access */
+   edje_object_freeze(sd->am_pm_obj);
     po = (Evas_Object *)edje_object_part_object_get
            (sd->am_pm_obj, "access.t");
     evas_object_propagate_events_set(po, !is_access);
@@ -338,7 +342,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
     po = (Evas_Object *)edje_object_part_object_get
            (sd->am_pm_obj, "access.b");
     evas_object_propagate_events_set(po, !is_access);
-
+   edje_object_thaw(sd->am_pm_obj);
 }
 
 static Evas_Object*
@@ -346,12 +350,13 @@ _focus_part_get(Evas_Object *part, const char *part_name)
 {
    Evas_Object *po, *adapter;
 
+   edje_object_freeze(part);
    po = (Evas_Object *)edje_object_part_object_get
           (part, part_name);
+   edje_object_thaw(part);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      po = evas_object_data_get(po, "_part_access_obj");
-
 
    adapter = evas_object_data_get(po, "_focus_adapter_object");
 
