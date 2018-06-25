@@ -122,11 +122,13 @@ _hide_effect_finished_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static Evas_Object *
 _access_object_get(const Evas_Object *obj, const char* part)
 {
-   Evas_Object *po, *ao;
+   Evas_Object *po, *ao, *o;
    ELM_POPUP_DATA_GET(obj, sd);
 
-   po = (Evas_Object *)edje_object_part_object_get
-      (elm_layout_edje_get(sd->main_layout), part);
+   o = elm_layout_edje_get(sd->main_layout);
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, part);
+   edje_object_thaw(o);
    ao = evas_object_data_get(po, "_part_access_obj");
 
    return ao;
