@@ -250,6 +250,10 @@ eina_lock_take(Eina_Lock *mutex)
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
+   if (eina_lock_take_try(mutex) == EINA_LOCK_SUCCEED) return EINA_LOCK_SUCCEED;
+#endif
+
+#ifdef EINA_HAVE_DEBUG_THREADS
    if (_eina_threads_debug)
      {
         struct timeval t0, t1;
@@ -653,6 +657,10 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
    int t;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (eina_spinlock_take_try(spinlock) == EINA_LOCK_SUCCEED) return EINA_LOCK_SUCCEED;
+#endif
 
    for (;;)
      {
