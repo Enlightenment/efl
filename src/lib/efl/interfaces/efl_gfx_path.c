@@ -335,7 +335,7 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
                {
                   double *to_pts = to_pd->points;
                   double *from_pts = from_pd->points;
-                  int i, j;
+                  unsigned int i, j;
 
                   for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
                     for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
