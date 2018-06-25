@@ -1226,10 +1226,10 @@ typedef struct _Efl_Net_Dialer_Http_Libproxy_Context {
 } Efl_Net_Dialer_Http_Libproxy_Context;
 
 static void
-_efl_net_dialer_http_libproxy_run(void *data, Ecore_Thread *thread EINA_UNUSED)
+_efl_net_dialer_http_libproxy_run(void *data, Ecore_Thread *thread)
 {
    Efl_Net_Dialer_Http_Libproxy_Context *ctx = data;
-   char **proxies = ecore_con_libproxy_proxies_get(ctx->url);
+   char **proxies = ecore_con_libproxy_proxies_get(ctx->url, thread);
    char **itr;
 
    if (!proxies) return;
