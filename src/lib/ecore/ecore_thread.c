@@ -627,7 +627,7 @@ _ecore_thread_shutdown(void)
           }
         SLKU(_ecore_pending_job_threads_mutex);
         iteration++;
-        if (test) usleep(50000);
+        if (test) usleep(1000);
      } while (test == EINA_TRUE && iteration < 20);
 
    if (iteration == 20 && _ecore_thread_count > 0)
