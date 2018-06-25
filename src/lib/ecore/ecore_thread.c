@@ -150,6 +150,7 @@ static int _ecore_thread_count_max = 0;
 static void _ecore_thread_handler(void *data);
 
 static int _ecore_thread_count = 0;
+static int _ecore_thread_count_no_queue = 0;
 
 static Eina_List *_ecore_running_job = NULL;
 static Eina_List *_ecore_pending_job_threads = NULL;
@@ -460,10 +461,13 @@ _ecore_direct_worker_cleanup(void *data)
 
    DBG("cleanup work=%p, thread=%" PRIu64 " (should join)", work, (uint64_t)work->self);
 
+   SLKL(_ecore_pending_job_threads_mutex);
+   _ecore_thread_count_no_queue--;
    ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
 
    ecore_main_loop_thread_safe_call_async((Ecore_Cb)_ecore_thread_join,
                                           (void *)(intptr_t)PHS());
+   SLKU(_ecore_pending_job_threads_mutex);
 }
 
 static void *
@@ -613,7 +617,7 @@ _ecore_thread_shutdown(void)
    do
      {
         SLKL(_ecore_pending_job_threads_mutex);
-        if (_ecore_thread_count > 0)
+        if (_ecore_thread_count + _ecore_thread_count_no_queue > 0)
           {
              test = EINA_TRUE;
           }
@@ -947,7 +951,12 @@ ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
 
 retry_direct:
         if (PHC(t, _ecore_direct_worker, worker))
-          return (Ecore_Thread *)worker;
+          {
+             SLKL(_ecore_pending_job_threads_mutex);
+             _ecore_thread_count_no_queue++;
+             SLKU(_ecore_pending_job_threads_mutex);
+             return (Ecore_Thread *)worker;
+          }
         if (!tried)
           {
              _ecore_main_call_flush();
