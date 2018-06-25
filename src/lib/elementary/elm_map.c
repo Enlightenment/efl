@@ -4346,16 +4346,49 @@ _elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode m
    efl_ui_zoom_mode_set(efl_super(obj, MY_CLASS), mode);
 }
 
+static inline void
+_convert_map_zoom_mode(Elm_Map_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, Eina_Bool to_legacy)
+{
+   #define CONVERT(LEGACY_MODE, NEW_MODE) \
+      if (to_legacy  && *mode == NEW_MODE) \
+        { \
+           *legacy_mode =LEGACY_MODE; \
+           return; \
+        } \
+      if (!to_legacy && *legacy_mode == LEGACY_MODE) \
+        { \
+           *mode = NEW_MODE; \
+           return; \
+        } \
+
+   CONVERT(ELM_MAP_ZOOM_MODE_MANUAL,    EFL_UI_ZOOM_MODE_MANUAL)
+   CONVERT(ELM_MAP_ZOOM_MODE_AUTO_FIT,  EFL_UI_ZOOM_MODE_AUTO_FIT)
+   CONVERT(ELM_MAP_ZOOM_MODE_AUTO_FILL, EFL_UI_ZOOM_MODE_AUTO_FILL)
+   CONVERT(ELM_MAP_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_LAST)
+   CONVERT(ELM_MAP_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_AUTO_FIT_IN)
+
+   #undef CONVERT
+}
+
 EAPI void
 elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
 {
-   efl_ui_zoom_mode_set(obj, mode);
+   Efl_Ui_Zoom_Mode new_mode;
+
+   _convert_map_zoom_mode(&mode, &new_mode, EINA_FALSE);
+
+   efl_ui_zoom_mode_set(obj, new_mode);
 }
 
 EAPI Elm_Map_Zoom_Mode
 elm_map_zoom_mode_get(const Eo *obj)
 {
-   return efl_ui_zoom_mode_get(obj);
+   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
+   Elm_Map_Zoom_Mode mode;
+
+   _convert_map_zoom_mode(&mode, &new_mode, EINA_TRUE);
+
+   return mode;
 }
 
 EOLIAN static void
