@@ -352,7 +352,7 @@ eina_thread_queue_init(void)
         ERR("Cannot init thread queue block pool spinlock");
         return EINA_FALSE;
      }
-   mempools = eina_hash_int32_new((Eina_Free_Cb)eina_mempool_free);
+   mempools = eina_hash_int32_new((Eina_Free_Cb)eina_mempool_del);
    return EINA_TRUE;
 }
 
