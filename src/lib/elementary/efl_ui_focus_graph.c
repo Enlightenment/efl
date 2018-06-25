@@ -20,19 +20,6 @@ _convert(Efl_Ui_Focus_Graph_Context *ctx, Opaque_Graph_Member *member)
    return *((Efl_Ui_Focus_Object**)(((char*) member) + ctx->offset_focusable));
 }
 
-
-static inline Eina_Position2D
-_middle(Eina_Rect rect)
-{
-  return EINA_POSITION2D(rect.x + rect.w/2, rect.y + rect.h/2);
-}
-
-static inline Eina_Position2D
-_minus(Eina_Position2D r1, Eina_Position2D r2)
-{
-  return EINA_POSITION2D(r2.x - r1.x, r2.y - r1.y);
-}
-
 static inline unsigned int
 _distance(Eina_Rect o, Eina_Rect r2, Quadrant q)
 {
