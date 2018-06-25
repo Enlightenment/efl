@@ -275,12 +275,6 @@ interpolate(double from, double to, double pos_map)
    return (from * (1.0 - pos_map)) + (to * pos_map);
 }
 
-static inline int
-interpolatei(int from, int to, double pos_map)
-{
-   return (from * (1.0 - pos_map)) + (to * pos_map);
-}
-
 static void _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd, char *from, char *to, double pos);
 static void _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd);
 
