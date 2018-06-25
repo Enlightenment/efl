@@ -176,19 +176,27 @@ EFL_START_TEST(edje_test_masking)
    edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
    fail_if(x != 0 || y != 0 || w != 100 || h != 100);
 
+   edje_object_freeze(obj);
    clip = edje_object_part_object_get(obj, "clip2");
+   edje_object_thaw(obj);
    fail_if(!clip);
 
    /* check value of no_render flag as seen from evas land */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* check that text has a clip (based on description.clip_to) */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "text");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_clip_get(sub));
 
    /* test description.clip_to override */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "noclip");
+   edje_object_thaw(obj);
    clip2 = efl_canvas_object_clip_get(sub);
    fail_if(clip != clip2);
 
@@ -211,17 +219,25 @@ EFL_START_TEST(edje_test_filters)
    evas_object_resize(obj, 200, 200);
 
    /* check value of no_render flag as seen from evas land */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* check no_render inheritance */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask2");
+   edje_object_thaw(obj);
    fail_if(efl_canvas_object_no_render_get(sub));
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask3");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* text part: check filter status */
+   edje_object_freeze(obj);
    text = edje_object_part_object_get(obj, "text");
+   edje_object_thaw(obj);
    fail_if(!text);
 
    efl_gfx_filter_program_get(text, &prg, &name);
@@ -251,7 +267,9 @@ EFL_START_TEST(edje_test_snapshot)
    evas_object_resize(obj, 200, 200);
 
    /* check value of no_render flag as seen from evas land */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "snap");
+   edje_object_thaw(obj);
    fail_if(!efl_isa(sub, EFL_CANVAS_SNAPSHOT_CLASS) &&
            !evas_object_image_snapshot_get(sub));
 
@@ -500,7 +518,9 @@ EFL_START_TEST(edje_test_box)
    edje_object_part_box_insert_after(obj, "box", sobjs[4], sobjs[3]);
    edje_object_part_box_insert_at(obj, "box", sobjs[2], 2);
 
+   edje_object_freeze(obj);
    box = edje_object_part_object_get(obj, "box");
+   edje_object_thaw(obj);
    it = evas_object_box_iterator_new(box);
 
    i = 0;
