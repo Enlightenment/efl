@@ -605,6 +605,7 @@ _efl_ui_view_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_View_List_Data *pd)
    Efl_Ui_View_List_Pan_Data *pan_data;
    Eina_Size2D min = {};
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
+   Evas_Object *o;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -626,7 +627,10 @@ _efl_ui_view_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_View_List_Data *pd)
    efl_ui_scrollable_bounce_enabled_set(pd->scrl_mgr, bounce, bounce);
 
    edje_object_part_swallow(wd->resize_obj, "efl.content", pd->pan_obj);
-   efl_gfx_stack_raise((Eo *)edje_object_part_object_get(wd->resize_obj, "efl.dragable.vbar"));
+   edje_object_freeze(wd->resize_obj);
+   o = (Evas_Object *)edje_object_part_object_get(wd->resize_obj, "efl.dragable.vbar");
+   edje_object_thaw(wd->resize_obj);
+   efl_gfx_stack_raise((Eo *)o);
 
    pd->mode = ELM_LIST_COMPRESS;
 
