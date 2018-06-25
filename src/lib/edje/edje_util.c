@@ -5218,8 +5218,6 @@ _edje_real_part_recursive_get(Edje **ed, const char *part)
    path = eina_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
    if (!path) return NULL;
 
-   _edje_recalc_do(*ed);
-
    rp = _edje_real_part_recursive_get_helper(ed, path);
 
    free(*path);
