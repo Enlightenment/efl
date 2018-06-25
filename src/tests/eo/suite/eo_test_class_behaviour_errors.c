@@ -53,7 +53,7 @@ EFL_START_TEST(efl_destructor_unref)
    fail_if(!obj);
 
    DISABLE_ABORT_ON_CRITICAL_START;
-   TEST_EO_CRITICAL("efl_unref", "Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.");
+   TEST_EO_ERROR("efl_unref", "Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.");
    efl_unref(obj);
    DISABLE_ABORT_ON_CRITICAL_END;
 
@@ -83,7 +83,7 @@ EFL_START_TEST(efl_destructor_double_del)
    efl_manual_free_set(obj, EINA_TRUE);
    fail_if(!obj);
 
-   TEST_EO_CRITICAL("efl_unref", "Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.");
+   TEST_EO_ERROR("efl_unref", "Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.");
    efl_unref(obj);
    DISABLE_ABORT_ON_CRITICAL_START;
    efl_unref(obj);
