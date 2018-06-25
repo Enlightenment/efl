@@ -4136,7 +4136,9 @@ _edje_lua_group_mt_index(lua_State *L)
              if (rp)
                {
                   // check if lua userdata exists
+                  edje_object_freeze(obj->eo);
                   Evas_Object *part = (Evas_Object *)edje_object_part_object_get(obj->eo, key);
+                  edje_object_thaw(obj->eo);
                   _edje_lua_get_reg(L, part);
                   if (lua_isnil(L, -1))
                     {
