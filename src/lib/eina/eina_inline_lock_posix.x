@@ -225,7 +225,10 @@ eina_lock_take_try(Eina_Lock *mutex)
         if (mutex->recursive) return ret;
         mutex->locked = 1;
         mutex->lock_thread_id = pthread_self();
+        /* backtrace() can somehow generate EINVAL even though this is not documented anywhere? */
+        int err = errno;
         mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
+        errno = err;
 
         pthread_mutex_lock(&_eina_tracking_lock);
         _eina_tracking = eina_inlist_append(_eina_tracking,
@@ -295,7 +298,10 @@ eina_lock_take(Eina_Lock *mutex)
    if (mutex->recursive) return ret;
    mutex->locked = 1;
    mutex->lock_thread_id = pthread_self();
+   /* backtrace() can somehow generate EINVAL even though this is not documented anywhere? */
+   int err = errno;
    mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
+   errno = err;
 
    pthread_mutex_lock(&_eina_tracking_lock);
    _eina_tracking = eina_inlist_append(_eina_tracking,
