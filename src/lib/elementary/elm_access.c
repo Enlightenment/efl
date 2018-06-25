@@ -1013,7 +1013,9 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 {
    Evas_Object *ao, *po;
 
+   edje_object_freeze((Evas_Object *)eobj);
    po = (Evas_Object *)edje_object_part_object_get(eobj, part);
+   edje_object_thaw((Evas_Object *)eobj);
    if (!obj || !po) return NULL;
 
    /* check previous access object */
@@ -1034,7 +1036,9 @@ _elm_access_edje_object_part_object_unregister(Evas_Object* obj EINA_UNUSED,
 {
    Evas_Object *po;
 
+   edje_object_freeze((Evas_Object *)eobj);
    po = (Evas_Object *)edje_object_part_object_get(eobj, part);
+   edje_object_thaw((Evas_Object *)eobj);
    if (!po) return;
 
    _access_object_unregister(po);
