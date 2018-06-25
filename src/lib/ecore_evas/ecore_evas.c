@@ -3256,6 +3256,8 @@ _ecore_evas_register_animators(Ecore_Evas *ee)
 EAPI void
 _ecore_evas_register(Ecore_Evas *ee)
 {
+   if (ee->registered) return;
+
    ee->registered = 1;
    ecore_evases = (Ecore_Evas *)eina_inlist_prepend
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
