@@ -1923,7 +1923,7 @@ efl_unref(const Eo *obj_id)
      {
         if (obj->user_refcount < 0)
           {
-             CRI("Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.",
+             ERR("Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.",
                  obj->klass->desc->name, obj_id, obj->user_refcount);
              _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
              EO_OBJ_DONE(obj_id);
