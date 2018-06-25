@@ -73,7 +73,7 @@ static int _ecore_con_init_count = 0;
 int _ecore_con_log_dom = -1;
 
 Eina_Bool   _efl_net_proxy_helper_can_do      (void);
-int         _efl_net_proxy_helper_url_req_send(const char *url);
+int         _efl_net_proxy_helper_url_req_send(const char *url, Ecore_Thread *eth);
 char      **_efl_net_proxy_helper_url_wait    (int id);
 void        _efl_net_proxy_helper_init        (void);
 void        _efl_net_proxy_helper_shutdown    (void);
@@ -2038,7 +2038,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
 }
 
 static void
-_efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
+_efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread)
 {
    Efl_Net_Ip_Connect_Async_Data *d = data;
    const char *host, *port, *proxy;
@@ -2076,7 +2076,7 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
           }
         else
           {
-             proxies = ecore_con_libproxy_proxies_get(url);
+             proxies = ecore_con_libproxy_proxies_get(url, thread);
              eina_stringshare_del(url);
           }
      }
@@ -2578,9 +2578,9 @@ efl_net_udp_datagram_size_query(SOCKET fd)
 }
 
 char **
-ecore_con_libproxy_proxies_get(const char *url)
+ecore_con_libproxy_proxies_get(const char *url, Ecore_Thread *eth)
 {
-   int id =  _efl_net_proxy_helper_url_req_send(url);
+   int id =  _efl_net_proxy_helper_url_req_send(url, eth);
    if (id < 0) return NULL;
    return _efl_net_proxy_helper_url_wait(id);
 }
