@@ -4354,7 +4354,11 @@ static inline void
 _elm_object_part_cursor_set(Evas_Object *obj, Evas_Object *edj,
                             const char *part, const char *cursor)
 {
-   Evas_Object *sub = (Evas_Object *) edje_object_part_object_get(edj, part);
+   Evas_Object *sub;
+
+   edje_object_freeze(edj);
+   sub = (Evas_Object *)edje_object_part_object_get(edj, part);
+   edje_object_thaw(edj);
    if (!sub) return;
 
    elm_object_sub_cursor_set(sub, obj, cursor);
