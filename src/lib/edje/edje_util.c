@@ -2080,18 +2080,22 @@ _edje_efl_text_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
           {
              const char *entry;
              if (legacy)
-               {
-                  entry = evas_object_textblock_text_markup_get(rp->object);
-               }
+               entry = rp->typedata.text->text;
              else
                {
                   if (get_markup)
                     {
+#ifdef EDJE_CALC_CACHE
+                       if (rp->invalidate)
+#else
+                       if (ed->dirty)
+#endif
+                         _edje_recalc_do(ed);
                        entry = efl_text_markup_get(rp->object);
                     }
                   else
                     {
-                       entry = efl_text_get(rp->object);
+                       entry = rp->typedata.text->text;
                     }
                }
 
