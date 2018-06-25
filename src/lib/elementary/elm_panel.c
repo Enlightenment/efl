@@ -90,11 +90,13 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 static Evas_Object *
 _access_object_get(const Evas_Object *obj, const char *part)
 {
-   Evas_Object *po, *ao;
+   Evas_Object *po, *ao, *o;
    ELM_PANEL_DATA_GET(obj, sd);
 
-   po = (Evas_Object *)edje_object_part_object_get
-      (elm_layout_edje_get(sd->scr_ly), part);
+   o = elm_layout_edje_get(sd->scr_ly);
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, part);
+   edje_object_thaw(o);
    ao = evas_object_data_get(po, "_part_access_obj");
 
    return ao;
