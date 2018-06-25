@@ -157,16 +157,50 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
    ewm.window_features_region_get(wf, x, y, w, h);
 }
 
+
+static inline void
+_convert_web_zoom_mode(Elm_Web_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, Eina_Bool to_legacy)
+{
+   #define CONVERT(LEGACY_MODE, NEW_MODE) \
+      if (to_legacy  && *mode == NEW_MODE) \
+        { \
+           *legacy_mode =LEGACY_MODE; \
+           return; \
+        } \
+      if (!to_legacy && *legacy_mode == LEGACY_MODE) \
+        { \
+           *mode = NEW_MODE; \
+           return; \
+        } \
+
+   CONVERT(ELM_WEB_ZOOM_MODE_MANUAL,    EFL_UI_ZOOM_MODE_MANUAL)
+   CONVERT(ELM_WEB_ZOOM_MODE_AUTO_FIT,  EFL_UI_ZOOM_MODE_AUTO_FIT)
+   CONVERT(ELM_WEB_ZOOM_MODE_AUTO_FILL, EFL_UI_ZOOM_MODE_AUTO_FILL)
+   CONVERT(ELM_WEB_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_LAST)
+   CONVERT(ELM_WEB_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_AUTO_FIT_IN)
+
+   #undef CONVERT
+}
+
 EAPI void
 elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
 {
-   efl_ui_zoom_mode_set(obj, mode);
+   Efl_Ui_Zoom_Mode new_mode;
+
+   _convert_web_zoom_mode(&mode, &new_mode, EINA_FALSE);
+
+   efl_ui_zoom_mode_set(obj, new_mode);
 }
 
 EAPI Elm_Web_Zoom_Mode
 elm_web_zoom_mode_get(const Evas_Object *obj)
 {
-   return efl_ui_zoom_mode_get(obj);
+   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
+   Elm_Web_Zoom_Mode mode;
+
+   _convert_web_zoom_mode(&mode, &new_mode, EINA_TRUE);
+
+   return mode;
 }
 
 EAPI void
