@@ -563,7 +563,9 @@ _focus_layout_part(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA
 {
    Evas_Object *ed = elm_layout_edje_get(data);
 
+   edje_object_freeze(ed);
    Evas_Object *newfocus = (Evas_Object *)edje_object_part_object_get(ed, "sky");
+   edje_object_thaw(ed);
    const char *type = evas_object_type_get(newfocus);
    printf("evas_object_focus_set(%p, EINA_TRUE) %s\n", newfocus, type);
    evas_object_focus_set(newfocus, EINA_TRUE);;
