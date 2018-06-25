@@ -381,7 +381,7 @@ _access_calendar_item_register(Evas_Object *obj)
 static void
 _access_calendar_spinner_register(Evas_Object *obj)
 {
-   Evas_Object *po;
+   Evas_Object *po, *o;
    Elm_Access_Info *ai;
    ELM_CALENDAR_DATA_GET(obj, sd);
 
@@ -419,13 +419,14 @@ _access_calendar_spinner_register(Evas_Object *obj)
    ai = _elm_access_info_get(sd->year_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar year"));
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(obj), "month_text");
+   o = elm_layout_edje_get(obj);
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, "month_text");
    evas_object_pass_events_set(po, EINA_FALSE);
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(obj), "year_text");
+   po = (Evas_Object *)edje_object_part_object_get(o, "year_text");
    evas_object_pass_events_set(po, EINA_FALSE);
+   edje_object_thaw(o);
 }
 
 static void
@@ -2040,13 +2041,15 @@ EOLIAN static void
 _elm_calendar_item_day_number_set(Eo *obj, Elm_Calendar_Item_Data *pd, int i)
 {
    char pname[14];
-   Evas_Object *po;
+   Evas_Object *po, *o;
 
    pd->v = i;
    snprintf(pname, sizeof(pname), "cit_%i.access", i);
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(efl_parent_get(obj)), pname);
+   o = elm_layout_edje_get(efl_parent_get(obj));
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, pname);
+   edje_object_thaw(o);
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_ON)
      pd->part = po;
