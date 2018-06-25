@@ -324,8 +324,12 @@ _parts_cursors_apply(Efl_Ui_Layout_Object_Data *sd)
 
    EINA_LIST_FOREACH(sd->parts_cursors, l, pc)
      {
-        Evas_Object *obj = (Evas_Object *)edje_object_part_object_get
-            (wd->resize_obj, pc->part);
+        Evas_Object *obj;
+
+        edje_object_freeze(wd->resize_obj);
+        obj = (Evas_Object *)edje_object_part_object_get
+          (wd->resize_obj, pc->part);
+        edje_object_thaw(wd->resize_obj);
 
         if (!obj)
           {
@@ -1745,8 +1749,11 @@ _efl_ui_layout_part_cursor_set(Efl_Ui_Layout_Object_Data *sd, const char *part_n
 
    if (!cursor) return _efl_ui_layout_part_cursor_unset(sd, part_name);
 
+   edje_object_freeze(wd->resize_obj);
    part_obj = (Evas_Object *)edje_object_part_object_get
        (wd->resize_obj, part_name);
+   edje_object_thaw(wd->resize_obj);
+
    if (!part_obj)
      {
         const char *group, *file;
