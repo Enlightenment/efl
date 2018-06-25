@@ -24,6 +24,7 @@ _efl_canvas_vg_node_property_changed(void *data, const Efl_Event *event EINA_UNU
 
    if (!pd->flags) pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
+   if (efl_invalidated_get(event->object)) return;
    parent = efl_parent_get(event->object);
    efl_event_callback_call(parent, event->desc, event->info);
 }
