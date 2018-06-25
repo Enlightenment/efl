@@ -351,6 +351,7 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
             parent, efl_class_name_get(efl_class_get(parent)), obj);
         return;
      }
+   else parent_container = EINA_FALSE;
 
    if (!_efl_canvas_vg_node_parent_checked_get(obj, &old_parent, &old_cd))
      return;
