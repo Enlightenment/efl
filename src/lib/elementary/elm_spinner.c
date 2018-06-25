@@ -980,7 +980,9 @@ _access_activate_cb(void *data,
      increment_part = "right_bt";
 
    eo = elm_layout_edje_get(data);
+   edje_object_freeze(eo);
    inc_btn = (Evas_Object *)edje_object_part_object_get(eo, increment_part);
+   edje_object_thaw(eo);
 
    if (part_obj != inc_btn)
      {
