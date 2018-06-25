@@ -254,7 +254,7 @@ eina_lock_take(Eina_Lock *mutex)
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   if (_eina_threads_debug)
+   if (_eina_threads_debug >= 100)
      {
         struct timeval t0, t1;
         int dt;
@@ -268,7 +268,6 @@ eina_lock_take(Eina_Lock *mutex)
            dt += (t1.tv_usec - t0.tv_usec);
         else
            dt -= t0.tv_usec - t1.tv_usec;
-        dt /= 1000;
 
         if (dt > _eina_threads_debug) abort();
      }
