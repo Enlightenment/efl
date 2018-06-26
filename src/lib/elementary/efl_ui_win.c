@@ -977,8 +977,7 @@ _elm_win_resize_job(void *data)
      }
 
    sd->response++;
-// set to false in _elm_win_pre_render()
-//   sd->req_wh = EINA_FALSE;
+   sd->req_wh = EINA_FALSE;
    evas_object_resize(sd->obj, w, h);
    evas_object_resize(sd->legacy.edje, w, h);
    sd->response--;
@@ -1033,7 +1032,6 @@ _elm_win_pre_render(Ecore_Evas *ee)
         _elm_win_resize_job(sd->obj);
         _elm_win_frame_obj_update(sd, 1);
      }
-   sd->req_wh = EINA_FALSE;
 }
 
 static void
@@ -1552,11 +1550,8 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
      evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    else
      w = ow, h = oh;
-   if (!sd->req_wh)
-     {
-        if (w && h)
-          TRAP(sd, resize, w, h);
-     }
+   if (w && h)
+     TRAP(sd, resize, w, h);
 }
 
 static void
