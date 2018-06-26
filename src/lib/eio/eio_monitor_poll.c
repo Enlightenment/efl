@@ -328,6 +328,7 @@ eio_monitor_fallback_add(Eio_Monitor *monitor)
    backend->children = eina_hash_string_superfast_new(free);
    backend->parent = monitor;
    monitor->backend = backend;
+   monitor->fallback = EINA_TRUE;
    backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
                                     _eio_monitor_fallback_end_cb,
                                     _eio_monitor_fallback_cancel_cb,
