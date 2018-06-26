@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EIO_SENTRY_BETA
+
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -297,10 +299,15 @@ EFL_START_TEST(eio_test_sentry_directory_file_closed_notify)
 
    //monitor directory
    fail_if(!eio_sentry_add(sentry, dirname));
-   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Efl_Event_Cb)_target_notified_cb, filename);
-   ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
+   if (eio_sentry_fallback_check(sentry, dirname))
+     printf("skipping %s: using fallback monitoring\n", "eio_test_sentry_directory_file_closed_notify");
+   else
+     {
+        efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Efl_Event_Cb)_target_notified_cb, filename);
+        ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
-   ecore_main_loop_begin();
+        ecore_main_loop_begin();
+     }
 
    efl_unref(sentry);
 
@@ -462,10 +469,15 @@ EFL_START_TEST(eio_test_sentry_file_file_closed_notify)
 
    //monitor file
    fail_if(!eio_sentry_add(sentry, dirname));
-   efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Efl_Event_Cb)_target_notified_cb, filename);
-   ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
+   if (eio_sentry_fallback_check(sentry, dirname))
+     printf("skipping %s: using fallback monitoring\n", "eio_test_sentry_file_file_closed_notify");
+   else
+     {
+        efl_event_callback_add(sentry, EIO_SENTRY_EVENT_FILE_CLOSED, (Efl_Event_Cb)_target_notified_cb, filename);
+        ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
-   ecore_main_loop_begin();
+        ecore_main_loop_begin();
+     }
 
    efl_unref(sentry);
 
