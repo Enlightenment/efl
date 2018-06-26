@@ -112,8 +112,11 @@ out:
    plane->type = pstate->type.value;
    plane->output = output;
 
+   output->planes = eina_list_append(output->planes, plane);
+
    if (!_fb_atomic_flip_test(output))
      {
+        output->planes = eina_list_remove(output->planes, plane);
         plane->state->in_use = EINA_FALSE;
         free(plane);
 
@@ -122,7 +125,6 @@ out:
 
    _ecore_drm2_fb_ref(fb);
    DBG("FB %d assigned to Plane %d", fb->id, pstate->obj_id);
-   output->planes = eina_list_append(output->planes, plane);
 
    if (fb->status_handler)
      fb->status_handler(fb,
