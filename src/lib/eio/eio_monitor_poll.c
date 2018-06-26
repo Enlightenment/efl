@@ -220,6 +220,14 @@ _eio_monitor_fallback_end_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_Monitor_Backend *backend = data;
 
    backend->work = NULL;
+   if (backend->delete_me)
+     {
+        eina_hash_free(backend->children);
+        free(backend);
+        return;
+     }
+   /* indicates eio shutdown is in progress */
+   if (!timer_hash) return;
    backend->timer = ecore_timer_add(fallback_interval, _eio_monitor_fallback_timer_cb, backend);
    eina_hash_set(timer_hash, &backend, backend->timer);
 }
@@ -232,9 +240,12 @@ _eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    backend->work = NULL;
    if (backend->delete_me)
      {
+        eina_hash_free(backend->children);
         free(backend);
         return;
      }
+   /* indicates eio shutdown is in progress */
+   if (!timer_hash) return;
    backend->timer = ecore_timer_add(fallback_interval, _eio_monitor_fallback_timer_cb, backend);
    eina_hash_set(timer_hash, &backend, backend->timer);
 }
@@ -338,18 +349,16 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
    monitor->backend = NULL;
 
    if (!backend) return;
+   backend->delete_me = EINA_TRUE;
 
-   if (backend->work) ecore_thread_cancel(backend->work);
 
    if (backend->timer) ecore_timer_del(backend->timer);
    eina_hash_set(timer_hash, &backend, NULL);
    backend->timer = NULL;
-   if (backend->idler) ecore_idler_del(backend->idler);
-   backend->idler = NULL;
 
-   if (backend->work && !ecore_thread_wait(backend->work, 0.3))
+   if (backend->work)
      {
-        backend->delete_me = EINA_TRUE;
+        ecore_thread_cancel(backend->work);
         return;
      }
 
