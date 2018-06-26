@@ -130,6 +130,7 @@ static void _common_shutdown(Eina_Tmpstr *dirname)
    _delete_directory((void*)dirname);
    ecore_file_shutdown();
    eina_tmpstr_del(dirname);
+   _cancel_timeout();
 }
 
 /////// tests monitoring a directory
