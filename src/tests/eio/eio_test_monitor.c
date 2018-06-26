@@ -359,16 +359,22 @@ EFL_START_TEST(eio_test_monitor_directory_file_closed_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
+   Eio_Monitor *monitor;
 
    filename = eina_stringshare_printf("%s/eio_test_monitor_directory_file_closed_notify", dirname);
    _create_file((void*)filename);
 
    //monitor directory
-   eio_monitor_add(dirname);
-   ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, (Ecore_Event_Handler_Cb)_file_closed_cb, filename);
-   ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
+   monitor = eio_monitor_add(dirname);
+   if (eio_monitor_fallback_check(monitor))
+     printf("skipping %s: using fallback monitoring\n", "eio_test_monitor_directory_file_closed_notify");
+   else
+     {
+        ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, (Ecore_Event_Handler_Cb)_file_closed_cb, filename);
+        ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
-   ecore_main_loop_begin();
+        ecore_main_loop_begin();
+     }
 
    _common_shutdown(dirname);
 }
@@ -540,16 +546,22 @@ EFL_START_TEST(eio_test_monitor_file_file_closed_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
+   Eio_Monitor *monitor;
 
    filename = eina_stringshare_printf("%s/eio_test_monitor_file_file_closed_notify", dirname);
    _create_file((void*)filename);
 
    //monitor file
-   eio_monitor_add(dirname);
-   ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, (Ecore_Event_Handler_Cb)_file_closed_cb, filename);
-   ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
+   monitor = eio_monitor_add(dirname);
+   if (eio_monitor_fallback_check(monitor))
+     printf("skipping %s: using fallback monitoring\n", "eio_test_monitor_file_file_closed_notify");
+   else
+     {
+        ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, (Ecore_Event_Handler_Cb)_file_closed_cb, filename);
+        ecore_timer_add(TEST_OPERATION_DELAY, _modify_file, filename);
 
-   ecore_main_loop_begin();
+        ecore_main_loop_begin();
+     }
 
    _common_shutdown(dirname);
 }
