@@ -191,23 +191,47 @@ _item_scroll_internal(Eo *obj,
    view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
    vpos = efl_ui_scrollable_content_pos_get(pd->smanager);
 
-   ipos.x = view.x;
-   ipos.w = ipos.w;
+   if (pd->dir == EFL_UI_DIR_HORIZONTAL)
+     {
+       ipos.y = view.y;
+       ipos.h = ipos.h;
 
-   // FIXME: align case will not correctly show in the position because of
-   //        bar size calculation. there are no certain way to know the scroll calcuation finished.
-   if (EINA_DBL_EQ(align, -1.0))
-     {
-        ipos.y = ipos.y + vpos.y - view.y;
-        ipos.h = ipos.h;
+       // FIXME: align case will not correctly show in the position because of
+       //        bar size calculation. there are no certain way to know the scroll calcuation finished.
+       if (EINA_DBL_EQ(align, -1.0)) //Internal Prefix
+         {
+            ipos.x = ipos.x + vpos.x - view.x;
+            ipos.w = ipos.w;
+         }
+       else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
+                (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
+         {
+            ipos.x = ipos.x + vpos.x - view.x - (int)((view.w - ipos.w) * align);
+            ipos.w = view.w;
+         }
+       else ERR("align (%.2lf) is not proper value. it must be the value between [0.0 , 1.0]!", align);
+
      }
-   else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
-            (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
-     {
-        ipos.y = ipos.y + vpos.y - view.y - (int)((view.h - ipos.h) * align);
-        ipos.h = view.h;
-     }
-   else ERR("align (%.2lf) is not proper value. it must be the value between [0.0 , 1.0]!", align);
+  else //VERTICAL
+    {
+       ipos.x = view.x;
+       ipos.w = ipos.w;
+
+       // FIXME: align case will not correctly show in the position because of
+       //        bar size calculation. there are no certain way to know the scroll calcuation finished.
+       if (EINA_DBL_EQ(align, -1.0)) //Internal Prefix
+         {
+            ipos.y = ipos.y + vpos.y - view.y;
+            ipos.h = ipos.h;
+         }
+       else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
+                (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
+         {
+            ipos.y = ipos.y + vpos.y - view.y - (int)((view.h - ipos.h) * align);
+            ipos.h = view.h;
+         }
+       else ERR("align (%.2lf) is not proper value. it must be the value between [0.0 , 1.0]!", align);
+    }
 
    efl_ui_scrollable_scroll(pd->smanager, ipos, anim);
 }
@@ -717,21 +741,65 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    return;
 }
 
-//FIXME: is this box related API could be improved more?
 EOLIAN static int
 _efl_ui_grid_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return eina_list_count(pd->items);
 }
 
-/* Need to Implements
-EOLIAN static Eina_Iterator *
-_efl_ui_grid_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
+static Eina_Bool
+_grid_item_iterator_next(Item_Iterator *it, void **data)
+{
+   Efl_Ui_Grid_Item *item;
+
+   if (!eina_iterator_next(it->real_iterator, (void **)&item))
+     return EINA_FALSE;
+
+   if (data) *data = item;
+   return EINA_TRUE;
+}
+
+static Eo *
+_grid_item_iterator_get_container(Item_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_grid_item_iterator_free(Item_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   eina_list_free(it->list);
+   free(it);
+}
+
+static Eina_Iterator *
+_grid_item_iterator_new(Eo *obj, Eina_List *list)
 {
   // NEED-TO-IMPLEMENTS
-}
-*/
+   Item_Iterator *item;
 
+   item = calloc(1, sizeof(*item));
+   if (!item) return NULL;
+
+   EINA_MAGIC_SET(&item->iterator, EINA_MAGIC_ITERATOR);
+
+   item->list = eina_list_clone(list);
+   item->real_iterator = eina_list_iterator_new(item->list);
+   item->iterator.version = EINA_ITERATOR_VERSION;
+   item->iterator.next = FUNC_ITERATOR_NEXT(_grid_item_iterator_next);
+   item->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_grid_item_iterator_get_container);
+   item->iterator.free = FUNC_ITERATOR_FREE(_grid_item_iterator_free);
+   item->object = obj;
+
+   return &item->iterator;
+}
+
+EOLIAN static Eina_Iterator *
+_efl_ui_grid_efl_container_content_iterate(Eo *obj, Efl_Ui_Grid_Data *pd)
+{
+   return _grid_item_iterator_new(obj, pd->items);
+}
 
 EOLIAN static void
 _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir dir)
@@ -1299,51 +1367,10 @@ _efl_ui_grid_last_selected_item_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data 
    return pd->last_selected;
 }
 
-static Eina_Bool
-_grid_item_iterator_next(Item_Iterator *it, void **data)
-{
-   Efl_Ui_Grid_Item *item;
-
-   if (!eina_iterator_next(it->real_iterator, (void **)&item))
-     return EINA_FALSE;
-
-   if (data) *data = item;
-   return EINA_TRUE;
-}
-
-static Eo *
-_grid_item_iterator_get_container(Item_Iterator *it)
-{
-   return it->object;
-}
-
-static void
-_grid_item_iterator_free(Item_Iterator *it)
-{
-   eina_iterator_free(it->real_iterator);
-   eina_list_free(it->list);
-   free(it);
-}
-
 EOLIAN static Eina_Iterator *
 _efl_ui_grid_selected_items_get(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   Item_Iterator *item;
-
-   item = calloc(1, sizeof(*item));
-   if (!item) return NULL;
-
-   EINA_MAGIC_SET(&item->iterator, EINA_MAGIC_ITERATOR);
-
-   item->list = eina_list_clone(pd->selected);
-   item->real_iterator = eina_list_iterator_new(item->list);
-   item->iterator.version = EINA_ITERATOR_VERSION;
-   item->iterator.next = FUNC_ITERATOR_NEXT(_grid_item_iterator_next);
-   item->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_grid_item_iterator_get_container);
-   item->iterator.free = FUNC_ITERATOR_FREE(_grid_item_iterator_free);
-   item->object = obj;
-
-   return &item->iterator;
+   return _grid_item_iterator_new(obj, pd->selected);
 }
 
 EOLIAN static void
