@@ -869,7 +869,8 @@ ecore_thread_wait(Ecore_Thread *thread, double wait)
         double start, end;
 
         start = ecore_time_get();
-        ecore_main_loop_thread_safe_call_wait(wait);
+        _ecore_main_call_flush();
+        ecore_main_loop_thread_safe_call_wait(0.0001);
         end = ecore_time_get();
 
         wait -= end - start;
