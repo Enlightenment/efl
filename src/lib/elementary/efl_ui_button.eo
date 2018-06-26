@@ -9,6 +9,7 @@ class Efl.Ui.Button (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
    ]]
    legacy_prefix: elm_button;
    implements {
+      class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Autorepeat.autorepeat_initial_timeout { set; get; }
       Efl.Ui.Autorepeat.autorepeat_gap_timeout { set; get; }

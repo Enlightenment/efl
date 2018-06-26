@@ -48,6 +48,14 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
+#define MY_CLASS_NAME_LEGACY "elm_button"
+
+static void
+_efl_ui_button_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
 static void
 _activate(Evas_Object *obj)
 {
@@ -404,14 +412,6 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_button_legacy.eo.h"
 #include "efl_ui_button_legacy_part.eo.h"
-
-#define MY_CLASS_NAME_LEGACY "elm_button"
-
-static void
-_efl_ui_button_legacy_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
 
 EOLIAN static Eo *
 _efl_ui_button_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
