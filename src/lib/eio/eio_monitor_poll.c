@@ -44,7 +44,6 @@ struct _Eio_Monitor_Backend
    Eina_Hash *children;
 
    Ecore_Timer *timer;
-   Ecore_Idler *idler;
    Ecore_Thread *work;
 
    int version;
@@ -251,26 +250,16 @@ _eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static Eina_Bool
-_eio_monitor_fallback_idler_cb(void *data)
-{
-   Eio_Monitor_Backend *backend = data;
-
-   backend->idler = NULL;
-   backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
-                                    _eio_monitor_fallback_end_cb,
-                                    _eio_monitor_fallback_cancel_cb,
-                                    backend);
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _eio_monitor_fallback_timer_cb(void *data)
 {
    Eio_Monitor_Backend *backend = data;
 
    backend->timer = NULL;
    eina_hash_set(timer_hash, &backend, NULL);
-   backend->idler = ecore_idler_add(_eio_monitor_fallback_idler_cb, backend);
+   backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
+                                    _eio_monitor_fallback_end_cb,
+                                    _eio_monitor_fallback_cancel_cb,
+                                    backend);
 
    return EINA_FALSE;
 }
