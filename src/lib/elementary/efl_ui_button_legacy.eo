@@ -7,7 +7,6 @@ class Efl.Ui.Button_Legacy (Efl.Ui.Button, Efl.Ui.Legacy)
    ]]
    data: null;
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_sub_object_del;

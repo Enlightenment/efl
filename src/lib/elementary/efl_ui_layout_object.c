@@ -120,6 +120,14 @@ struct _Efl_Ui_Layout_Sub_Object_Cursor
    Eina_Bool    engine_only : 1;
 };
 
+#define MY_CLASS_NAME_LEGACY "elm_layout"
+
+static void
+_efl_ui_layout_object_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
 static void
 _on_sub_object_size_hint_change(void *data,
                                 Evas *e EINA_UNUSED,
@@ -443,7 +451,7 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Object_Data *sd)
      {
         ret = elm_widget_theme_object_set
                 (obj, wd->resize_obj,
-                elm_widget_theme_klass_get(obj), 
+                elm_widget_theme_klass_get(obj),
                 elm_widget_theme_element_get(obj),
                 elm_widget_theme_style_get(obj));
      }
@@ -2472,13 +2480,6 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_layout_legacy.eo.h"
 
-#define MY_CLASS_NAME_LEGACY "elm_layout"
-
-static void
-_efl_ui_layout_legacy_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
 
 EOLIAN static Eo *
 _efl_ui_layout_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
