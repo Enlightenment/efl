@@ -391,3 +391,10 @@ eio_monitoring_interval_set(double interval)
      ecore_timer_interval_set(timer, fallback_interval);
    eina_iterator_free(it);
 }
+
+EAPI Eina_Bool
+eio_monitor_fallback_check(const Eio_Monitor *monitor)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, EINA_FALSE);
+   return monitor->fallback;
+}

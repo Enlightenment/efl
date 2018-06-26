@@ -21,6 +21,7 @@
 # include <config.h>
 #endif
 
+#define EIO_SENTRY_BETA 1
 
 #include <Eo.h>
 #include "Ecore.h"
@@ -143,6 +144,19 @@ _eio_sentry_remove(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
    eina_hash_del(pd->targets, path, NULL);
+}
+
+Eina_Bool
+_eio_sentry_fallback_check(const Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
+{
+   Eio_Monitor *monitor;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
+
+   monitor = eina_hash_find(pd->targets, path);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, EINA_FALSE);
+   return eio_monitor_fallback_check(monitor);
 }
 
 Efl_Object * _eio_sentry_efl_object_constructor(Eo *obj, Eio_Sentry_Data *pd)
