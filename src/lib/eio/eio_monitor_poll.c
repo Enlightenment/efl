@@ -194,8 +194,10 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    if (backend->initialised && !ecore_thread_check(thread))
      {
         Eina_Hash_Tuple *tuple;
+        Eina_Array *arr;
 
         it = eina_hash_iterator_tuple_new(backend->children);
+        arr = eina_array_new(1);
         ecore_thread_main_loop_begin();
 
         EINA_ITERATOR_FOREACH(it, tuple)
@@ -206,11 +208,14 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
                {
                   _eio_monitor_send(backend->parent, tuple->key,
                                     eio_file_is_dir(&cmp->buffer) ? EIO_MONITOR_DIRECTORY_DELETED : EIO_MONITOR_FILE_DELETED);
-                  eina_hash_del(backend->children, tuple->key, tuple->data);
+                  eina_array_push(arr, tuple->key);
                }
           }
 
         ecore_thread_main_loop_end();
+        while (eina_array_count(arr))
+          eina_hash_del_by_key(backend->children, eina_array_pop);
+        eina_array_free(arr);
         eina_iterator_free(it);
      }
 
