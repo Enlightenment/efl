@@ -15,7 +15,7 @@
 /////////////////timeout function
 
 #define TEST_TIMEOUT_SEC 0.5
-#define TEST_OPERATION_DELAY 0.01
+#define TEST_OPERATION_DELAY 0.05
 
 static Ecore_Timer *test_timeout_timer;
 
