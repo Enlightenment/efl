@@ -280,13 +280,10 @@ _eio_monitor_fallback_timer_cb(void *data)
     && !defined HAVE_NOTIFY_KEVENT
 void eio_monitor_backend_init(void)
 {
-   timer_hash = eina_hash_pointer_new(NULL);
 }
 
 void eio_monitor_backend_shutdown(void)
 {
-   eina_hash_free(timer_hash);
-   timer_hash = NULL;
 }
 
 void eio_monitor_backend_add(Eio_Monitor *monitor)
@@ -303,11 +300,14 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
 void
 eio_monitor_fallback_init(void)
 {
+   timer_hash = eina_hash_pointer_new(NULL);
 }
 
 void
 eio_monitor_fallback_shutdown(void)
 {
+   eina_hash_free(timer_hash);
+   timer_hash = NULL;
 }
 
 void
