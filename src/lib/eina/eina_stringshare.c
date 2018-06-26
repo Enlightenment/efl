@@ -674,7 +674,7 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
    tmp = alloca(sizeof(char) * (len + 1));
 
    va_start(args, fmt);
-   size = vsnprintf(tmp, len + 1, fmt, args);
+   size = vsnprintf(tmp, len, fmt, args);
    va_end(args);
 
    if (size < 1)
