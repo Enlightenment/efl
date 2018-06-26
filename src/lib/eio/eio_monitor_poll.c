@@ -126,8 +126,13 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
 
    if (memcmp(est, &backend->self, sizeof (Eina_Stat)) != 0)
      {
+        int event = EIO_MONITOR_DIRECTORY_MODIFIED;
+
+        if (!S_ISDIR(est->mode))
+          /* regular file: eina_file_direct_ls will return NULL */
+          event = EIO_MONITOR_FILE_MODIFIED;
         ecore_thread_main_loop_begin();
-        _eio_monitor_send(backend->parent, backend->parent->path, EIO_MONITOR_SELF_DELETED);
+        _eio_monitor_send(backend->parent, backend->parent->path, event);
         ecore_thread_main_loop_end();
      }
 
