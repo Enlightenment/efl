@@ -55,10 +55,8 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
 
       //Efl.Canvas
       Efl.Canvas.Group.group_calculate;
-/* NEED-TO-IMPLEMENTS
       //Efl.Container
       Efl.Container.content_iterate;
-*/
       Efl.Container.content_count;
 
       Efl.Ui.Direction.direction { get; set; }
