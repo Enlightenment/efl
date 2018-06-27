@@ -715,6 +715,9 @@ eina_debug_init(void)
    self = pthread_self();
    _eina_debug_thread_mainloop_set(&self);
    _eina_debug_thread_add(&self);
+   _eina_debug_cpu_init();
+   _eina_debug_bt_init();
+   _eina_debug_timer_init();
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    // if we are setuid - don't debug!
    if (getuid() != geteuid()) return EINA_TRUE;
@@ -726,9 +729,6 @@ eina_debug_init(void)
      {
         eina_debug_local_connect(EINA_FALSE);
      }
-   _eina_debug_cpu_init();
-   _eina_debug_bt_init();
-   _eina_debug_timer_init();
    return EINA_TRUE;
 }
 
