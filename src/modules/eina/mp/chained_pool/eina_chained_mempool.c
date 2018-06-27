@@ -623,10 +623,6 @@ eina_chained_mempool_shutdown(void *data)
 
    eina_spinlock_free(&mp->mutex);
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   assert(eina_thread_equal(mp->self, eina_thread_self()));
-#endif
-
    free(mp);
 }
 
