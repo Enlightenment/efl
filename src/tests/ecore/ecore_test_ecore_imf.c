@@ -51,6 +51,7 @@ EFL_START_TEST(ecore_test_ecore_imf_modules)
 {
    Eina_List *modules;
    const char **itr;
+   char *failure = NULL;
 
    putenv("ECORE_IMF_MODULE=");
    ecore_imf_init();
@@ -59,18 +60,20 @@ EFL_START_TEST(ecore_test_ecore_imf_modules)
    for (itr = built_modules; *itr != NULL; itr++)
      {
         Eina_Bool found = _find_list(modules, *itr);
-        fail_if(!found, "imf module should be built, but was not found: %s",
-                *itr);
+        if (!found) failure = eina_strdup(*itr);
+        if (failure) break;
      }
 
    eina_list_free(modules);
    ecore_imf_shutdown();
+   ck_assert_msg(!failure, "compiled imf module not found: %s", failure);
 }
 EFL_END_TEST
 
 EFL_START_TEST(ecore_test_ecore_imf_modules_load)
 {
    const char **itr;
+   char *failure = NULL;
 
    putenv("ECORE_IMF_MODULE=");
    ecore_imf_init();
@@ -84,11 +87,16 @@ EFL_START_TEST(ecore_test_ecore_imf_modules_load)
           }
 
         ctx = ecore_imf_context_add(*itr);
-        fail_if(ctx == NULL, "could not add imf context: %s", *itr);
+        if (!ctx)
+          {
+             failure = eina_strdup(*itr);
+             break;
+          }
         ecore_imf_context_del(ctx);
      }
 
    ecore_imf_shutdown();
+   ck_assert_msg(!failure, "could not add imf context: %s", failure);
 }
 EFL_END_TEST
 
