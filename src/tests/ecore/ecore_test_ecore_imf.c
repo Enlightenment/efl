@@ -35,7 +35,8 @@ _find_list(const Eina_List *lst, const char *item)
    const Eina_List *n;
    const char *s;
 
-   if (eina_streq(item, "xim"))
+   /* these modules (currently) require x11 to run */
+   if (eina_streq(item, "xim") || eina_streq(item, "ibus"))
      {
         if (!getenv("DISPLAY")) return EINA_TRUE;
      }
@@ -81,7 +82,8 @@ EFL_START_TEST(ecore_test_ecore_imf_modules_load)
      {
         Ecore_IMF_Context *ctx;
 
-        if (eina_streq(*itr, "xim"))
+        /* these modules (currently) require x11 to run */
+        if (eina_streq(*itr, "xim") || eina_streq(*itr, "ibus"))
           {
              if (!getenv("DISPLAY")) continue;
           }
