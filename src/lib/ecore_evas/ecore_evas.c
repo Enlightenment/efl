@@ -667,8 +667,8 @@ ecore_evas_shutdown(void)
 
    eina_log_domain_unregister(_ecore_evas_log_dom);
    _ecore_evas_log_dom = -1;
-   evas_shutdown();
    ecore_shutdown();
+   evas_shutdown();
 
    return _ecore_evas_init_count;
 }

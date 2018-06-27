@@ -10,6 +10,7 @@
 
 static const Efl_Test_Case etc[] = {
   { "Evas", evas_test_init },
+  { "Evas New", evas_test_new },
   { "Object", evas_test_object },
   { "Object Textblock", evas_test_textblock },
   { "Object Text", evas_test_text },

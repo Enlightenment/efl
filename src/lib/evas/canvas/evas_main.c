@@ -155,9 +155,19 @@ evas_shutdown(void)
 #endif
    evas_cache_vg_shutdown();
 
+   evas_font_path_global_clear();
+
+   evas_filter_shutdown();
+
+   evas_thread_shutdown();
+   _evas_preload_thread_shutdown();
+   evas_async_events_shutdown();
+   evas_module_shutdown();
+
+   ecore_shutdown();
+
    _efl_gfx_map_shutdown();
 
-   evas_font_path_global_clear();
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);
    eina_cow_del(evas_object_state_cow);
@@ -172,16 +182,8 @@ evas_shutdown(void)
    evas_object_image_load_opts_cow = NULL;
    evas_object_image_state_cow = NULL;
 
-   evas_filter_shutdown();
    eina_cow_del(evas_object_mask_cow);
    evas_object_mask_cow = NULL;
-
-   evas_thread_shutdown();
-   _evas_preload_thread_shutdown();
-   evas_async_events_shutdown();
-   evas_module_shutdown();
-
-   ecore_shutdown();
 
 #ifdef BUILD_LOADER_EET
    eet_shutdown();
