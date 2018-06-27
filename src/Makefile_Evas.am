@@ -2434,6 +2434,7 @@ TESTS += tests/evas/evas_suite
 tests_evas_evas_suite_SOURCES = \
 tests/evas/evas_suite.c \
 tests/evas/evas_test_init.c \
+tests/evas/evas_test_new.c \
 tests/evas/evas_test_object.c \
 tests/evas/evas_test_object_smart.c \
 tests/evas/evas_test_textblock.c \
