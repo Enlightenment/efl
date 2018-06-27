@@ -764,11 +764,10 @@ _calc_job(void *data)
 {
    int in = 0;
    Item_Block *itb, *chb = NULL;
-   Evas_Coord pan_w = 0, pan_h = 0;
    ELM_GENLIST_DATA_GET(data, sd);
    Eina_Bool minw_change = EINA_FALSE;
    Eina_Bool did_must_recalc = EINA_FALSE;
-   Evas_Coord minw = -1, minh = 0, y = 0, ow, dy = 0, vw = 0;
+   Evas_Coord minw = -1, minh = 0, y = 0, ow = 0, vw = 0;
 
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &ow, &sd->h);
    if (sd->mode == ELM_LIST_COMPRESS)
@@ -880,34 +879,11 @@ _calc_job(void *data)
    if (!sd->show_item) sd->check_scroll = EINA_FALSE;
    if (sd->check_scroll)
      {
-        elm_obj_pan_content_size_get(sd->pan_obj, &pan_w, &pan_h);
         if (EINA_INLIST_GET(sd->show_item) == sd->items->last)
           sd->scroll_to_type = ELM_GENLIST_ITEM_SCROLLTO_IN;
 
-        switch (sd->scroll_to_type)
-          {
-           case ELM_GENLIST_ITEM_SCROLLTO_TOP:
-             dy = sd->h;
-             break;
-
-           case ELM_GENLIST_ITEM_SCROLLTO_MIDDLE:
-             dy = sd->h / 2;
-             break;
-
-           case ELM_GENLIST_ITEM_SCROLLTO_IN:
-           default:
-             dy = 0;
-             break;
-          }
         if ((sd->show_item) && (sd->show_item->item->block))
-          {
-             if ((pan_w > (sd->show_item->x + sd->show_item->item->block->x))
-                 && (pan_h > (sd->show_item->y + sd->show_item->item->block->y
-                              + dy)))
-               {
-                  _item_scroll(sd);
-               }
-          }
+          _item_scroll(sd);
      }
 
    sd->calc_job = NULL;
