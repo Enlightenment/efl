@@ -235,8 +235,6 @@ evas_thread_init(void)
    exit_thread = EINA_FALSE;
    evas_thread_exited = 0;
 
-   ecore_init();
-
    if(!eina_threads_init())
      {
         CRI("Could not init eina threads");
@@ -284,7 +282,6 @@ fail_on_lock_creation:
 fail_on_eina_thread_init:
    exit_thread = EINA_TRUE;
    evas_thread_exited = 1;
-   ecore_shutdown();
    return --init_count;
 }
 
@@ -343,8 +340,6 @@ timeout_shutdown:
    eina_inarray_flush(&evas_thread_queue);
 
    eina_threads_shutdown();
-
-   ecore_shutdown();
 
    return 0;
 }
