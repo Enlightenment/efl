@@ -26,6 +26,12 @@ EAPI Eina_Bool lockdebug = EINA_FALSE;
 EAPI int lockmax = 0;
 #endif
 
+#define F_CRI(...) EINA_LOG_DOM_CRIT(_focus_log_domain, __VA_ARGS__)
+#define F_ERR(...) EINA_LOG_DOM_ERR(_focus_log_domain, __VA_ARGS__)
+#define F_WRN(...) EINA_LOG_DOM_WARN(_focus_log_domain, __VA_ARGS__)
+#define F_INF(...) EINA_LOG_DOM_INFO(_focus_log_domain, __VA_ARGS__)
+#define F_DBG(...) EINA_LOG_DOM_DBG(_focus_log_domain, __VA_ARGS__)
+
 static int _evas_init_count = 0;
 int _evas_log_dom_global = -1;
 

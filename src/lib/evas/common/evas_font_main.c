@@ -17,7 +17,14 @@ LK(lock_font_draw); // for freetype2 API calls
 LK(lock_bidi); // for evas bidi internal usage.
 LK(lock_ot); // for evas bidi internal usage.
 
-int _evas_font_log_dom_global = -1;
+#define F_DOM _evas_font_log_dom_global
+#define F_CRI(...) EINA_LOG_DOM_CRIT(F_DOM, __VA_ARGS__)
+#define F_ERR(...) EINA_LOG_DOM_ERR(F_DOM, __VA_ARGS__)
+#define F_WRN(...) EINA_LOG_DOM_WARN(F_DOM, __VA_ARGS__)
+#define F_INF(...) EINA_LOG_DOM_INFO(F_DOM, __VA_ARGS__)
+#define F_DBG(...) EINA_LOG_DOM_DBG(F_DOM, __VA_ARGS__)
+
+int F_DOM = -1;
 
 EAPI void
 evas_common_font_init(void)
@@ -30,9 +37,9 @@ evas_common_font_init(void)
 #else
    35;
 #endif
-   _evas_font_log_dom_global = eina_log_domain_register
+   F_DOM = eina_log_domain_register
      ("evas_font_main", EVAS_FONT_DEFAULT_LOG_COLOR);
-   if (_evas_font_log_dom_global < 0)
+   if (F_DOM < 0)
      {
         EINA_LOG_ERR("Can not create a module log domain.");
      }
@@ -77,7 +84,7 @@ evas_common_font_shutdown(void)
    LKD(lock_font_draw);
    LKD(lock_bidi);
    LKD(lock_ot);
-   eina_log_domain_unregister(_evas_font_log_dom_global);
+   eina_log_domain_unregister(F_DOM);
 }
 
 EAPI void
@@ -844,6 +851,7 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
 EAPI int
 evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl)
 {
+   F_DBG("Searching glyph: %x", gl);
    Eina_List *l;
 
    if (fn->fash)
@@ -854,11 +862,15 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
              if (fm->fint)
                {
                   *fi_ret = fm->fint;
+                  //printf("Found in fash: %s\n", fm->fint->src->name);
                   return fm->index;
                }
              else if (fm->index == -1) return 0;
           }
      }
+
+   F_DBG("Not found in fash. Checking font set (total: %d)",
+         eina_list_count(fn->fonts));
 
    for (l = fn->fonts; l; l = l->next)
      {
@@ -866,6 +878,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
         int idx;
 
         fi = l->data;
+        F_DBG("Trying: %s\n", fi->src->name);
 
 #if 0 /* FIXME: charmap user is disabled and use a deprecated data type. */
 /*
@@ -896,6 +909,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
              idx = evas_common_get_char_index(fi, gl);
              if (idx != 0)
                {
+                  F_DBG("Found!");
                   if (!fi->ft.size)
                     evas_common_font_int_load_complete(fi);
                   if (!fn->fash) fn->fash = _fash_int_new();

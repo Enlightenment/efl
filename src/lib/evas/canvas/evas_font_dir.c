@@ -48,6 +48,12 @@ struct _Fndat
 #endif
 };
 
+#define F_CRI(...) EINA_LOG_DOM_CRIT(_font_log_dom_global, __VA_ARGS__)
+#define F_ERR(...) EINA_LOG_DOM_ERR(_font_log_dom_global, __VA_ARGS__)
+#define F_WRN(...) EINA_LOG_DOM_WARN(_font_log_dom_global, __VA_ARGS__)
+#define F_INF(...) EINA_LOG_DOM_INFO(_font_log_dom_global, __VA_ARGS__)
+#define F_DBG(...) EINA_LOG_DOM_DBG(_font_log_dom_global, __VA_ARGS__)
+
 /* private methods for font dir cache */
 static Eina_Bool font_cache_dir_free(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static Evas_Font_Dir *object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd);
@@ -125,9 +131,25 @@ _file_path_list(char *path, const char *match, int match_case)
    return files;
 }
 
+static int _font_log_dom_global = -1;
+
 static void
 evas_font_init(void)
 {
+   if (_font_log_dom_global < 0)
+     {
+        _font_log_dom_global = eina_log_domain_register
+           ("evas-font-dir", EINA_COLOR_CYAN);
+        if (_font_log_dom_global < 0)
+          {
+             EINA_LOG_ERR("Can not create a module log domain.");
+          }
+        else
+          {
+             F_DBG("Registered evas-font-dir log");
+          }
+     }
+
 #ifdef HAVE_FONTCONFIG
    if (!fc_config)
      {
