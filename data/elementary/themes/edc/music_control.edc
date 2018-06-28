@@ -27,6 +27,9 @@ group { name: "e/modules/music-control/main";
 
 group { name: "e/modules/music-control/popup";
    alias: "modules/music-control/popup";
+#ifdef SKIP_NAMESPACE_VALIDATION
+   skip_namespace_validation: 1;
+#endif
    min: 150 50;
    images.image: "icon_prev.png" COMP;
    images.image: "icon_next.png" COMP;
