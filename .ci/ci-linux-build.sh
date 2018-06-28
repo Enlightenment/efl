@@ -33,10 +33,11 @@ if [ "$CI_BUILD_TYPE" = "" ]; then
   # Normal build test of all targets
   ./autogen.sh $DEFAULT_COPTS
   make -j $PARALLEL_JOBS
-  make -j $PARALLEL_JOBS check-build
-  make -j $PARALLEL_JOBS examples
-  make -j $PARALLEL_JOBS benchmark
-  make -j $PARALLEL_JOBS install
+  #make -j $PARALLEL_JOBS check-build
+  #make -j $PARALLEL_JOBS examples
+  #make -j $PARALLEL_JOBS benchmark
+  #make -j $PARALLEL_JOBS install
+  ./.ci/verbose-make-check.sh
   ./.ci/build-efl-app.sh
 fi
 
