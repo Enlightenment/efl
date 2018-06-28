@@ -71,7 +71,6 @@ _evas_preload_thread_worker(void *data, Ecore_Thread *thread)
 void
 _evas_preload_thread_init(void)
 {
-   ecore_init();
 }
 
 void
@@ -91,7 +90,6 @@ _evas_preload_thread_shutdown(void)
              works = eina_inlist_remove(works, works);
           }
      }
-   ecore_shutdown();
 }
 
 Evas_Preload_Pthread *
