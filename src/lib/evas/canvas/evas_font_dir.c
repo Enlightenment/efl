@@ -873,10 +873,11 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
         /* Handle font fallbacks */
         if (fdesc->fallbacks)
           {
-             while (1)
+             const char *start, *end;
+             start = fdesc->fallbacks;
+
+             while (start)
                {
-                  const char *start, *end;
-                  start = fdesc->fallbacks;
                   end = strchr(start, ',');
                   if (end)
                     {
@@ -884,6 +885,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
                        strncpy(tmp, start, end - start);
                        tmp[end - start] = 0;
                        FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) tmp);
+                       start += end - start + 1;
                     }
                   else
                     {
