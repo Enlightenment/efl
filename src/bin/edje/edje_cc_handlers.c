@@ -257,6 +257,7 @@ static void       st_collections_base_scale(void);
 
 static void       ob_collections_group(void);
 static void       st_collections_group_name(void);
+static void       st_collections_group_skip_namespace_validation(void);
 static void       st_collections_group_inherit_only(void);
 static void       st_collections_group_inherit(void);
 static void       st_collections_group_program_source(void);
@@ -749,6 +750,7 @@ New_Statement_Handler statement_handlers[] =
    },                                                                                          /* dup */
    {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source},   /* dup */
    {"collections.group.name", st_collections_group_name},
+   {"collections.group.skip_namespace_validation", st_collections_group_skip_namespace_validation},
    {"collections.group.program_source", st_collections_group_program_source},
    {"collections.group.inherit", st_collections_group_inherit},
    {"collections.group.inherit_only", st_collections_group_inherit_only},
@@ -4521,6 +4523,30 @@ st_collections_group_name(void)
    _group_name(parse_str(0));
 }
 
+/**
+    @page edcref
+    @property
+        skip_namespace_validation
+    @parameters
+        [1 or 0]
+    @effect
+        This disables namespace validation for the current group if validation has
+        been enabled with edje_cc's -N option.
+        This property can be inherited.
+        Defaults: 0
+
+    @warning Your edc file should always wrap this keyword with #ifdef HAVE_SKIP_NAMESPACE_VALIDATION
+    @since 1.21
+    @endproperty
+ */
+static void
+st_collections_group_skip_namespace_validation(void)
+{
+   Edje_Part_Collection_Parser *pcp = eina_list_last_data_get(edje_collections);
+   check_arg_count(1);
+   pcp->skip_namespace_validation = parse_bool(0);
+}
+
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
 struct _Edje_List_Foreach_Data
 {
@@ -5170,6 +5196,7 @@ st_collections_group_inherit(void)
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp2 = (Edje_Part_Collection_Parser *)pc2;
    pcp->default_mouse_events = pcp2->default_mouse_events;
+   pcp->skip_namespace_validation = pcp2->skip_namespace_validation;
    if (pcp2->inherit_script)
      pcp->inherit_script = pcp2->inherit_script;
 

@@ -167,6 +167,7 @@ struct _Edje_Part_Collection_Parser
    Eina_Bool default_mouse_events;
    Eina_Bool inherit_only;
    Eina_Bool inherit_script : 1;
+   Eina_Bool skip_namespace_validation : 1;
 };
 
 typedef enum

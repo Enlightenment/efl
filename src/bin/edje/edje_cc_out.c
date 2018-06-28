@@ -631,6 +631,7 @@ _part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef EIN
 static void
 check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
+   Edje_Part_Collection_Parser *pcp = (Edje_Part_Collection_Parser*)pc;
    unsigned int i;
    Eina_List *group_path = NULL;
    /* FIXME: check image set and sort them. */
@@ -662,19 +663,22 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
           check_text_part_desc(pc, ep, (Edje_Part_Description_Text *)ep->other.desc[i], ef);
      }
 
-   switch (ep->type)
+   if (!pcp->skip_namespace_validation)
      {
-      case EDJE_PART_TYPE_BOX:
-      case EDJE_PART_TYPE_TABLE:
-      case EDJE_PART_TYPE_SWALLOW:
-        _part_namespace_verify(pc, ep, ef, 1);
-        break;
-      case EDJE_PART_TYPE_TEXT:
-      case EDJE_PART_TYPE_TEXTBLOCK:
-      case EDJE_PART_TYPE_SPACER:
-        _part_namespace_verify(pc, ep, ef, 0);
-        break;
-      default: break;
+        switch (ep->type)
+          {
+           case EDJE_PART_TYPE_BOX:
+           case EDJE_PART_TYPE_TABLE:
+           case EDJE_PART_TYPE_SWALLOW:
+             _part_namespace_verify(pc, ep, ef, 1);
+             break;
+           case EDJE_PART_TYPE_TEXT:
+           case EDJE_PART_TYPE_TEXTBLOCK:
+           case EDJE_PART_TYPE_SPACER:
+             _part_namespace_verify(pc, ep, ef, 0);
+             break;
+           default: break;
+          }
      }
 
    /* FIXME: When smart masks are supported, remove this check */
@@ -716,6 +720,7 @@ _program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef EINA_UNU
 static void
 check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
+   Edje_Part_Collection_Parser *pcp = (Edje_Part_Collection_Parser*)pc;
    switch (ep->action)
      {
       case EDJE_ACTION_TYPE_STATE_SET:
@@ -744,7 +749,8 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 
     if ((!ep->targets) && (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT))
       {
-         _program_signal_namespace_verify(pc, ef, ep->state, ep->state2);
+         if (!pcp->skip_namespace_validation)
+           _program_signal_namespace_verify(pc, ef, ep->state, ep->state2);
       }
 
    EINA_LIST_FOREACH(ep->targets, l, et)

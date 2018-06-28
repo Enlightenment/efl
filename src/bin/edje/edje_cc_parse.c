@@ -22,6 +22,8 @@
 # define EPP_EXT
 #endif
 
+#define SKIP_NAMESPACE_VALIDATION_SUPPORTED " -DSKIP_NAMESPACE_VALIDATION=1 "
+
 #define EDJE_1_18_SUPPORTED " -DEFL_VERSION_1_18=1 "
 #define EDJE_1_19_SUPPORTED " -DEFL_VERSION_1_19=1 "
 #define EDJE_1_20_SUPPORTED " -DEFL_VERSION_1_20=1 "
@@ -1082,7 +1084,7 @@ compile(void)
 
              inc = ecore_file_dir_get(file_in);
              if (depfile)
-               snprintf(buf, sizeof(buf), "\"%s\" -MMD \"%s\" -MT \"%s\" \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" "SKIP_NAMESPACE_VALIDATION_SUPPORTED" -MMD \"%s\" -MT \"%s\" \"%s\""
                                           " -I\"%s\" %s -o \"%s\""
                                           " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
@@ -1090,7 +1092,7 @@ compile(void)
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
-               snprintf(buf, sizeof(buf), "\"%s\" -annotate -a \"%s\" \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" "SKIP_NAMESPACE_VALIDATION_SUPPORTED" -annotate -a \"%s\" \"%s\""
                                           " -I\"%s\" %s -o \"%s\""
                                           " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
@@ -1098,7 +1100,7 @@ compile(void)
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
-               snprintf(buf, sizeof(buf), "\"%s\" -a \"%s\" \"%s\" -I\"%s\" %s"
+               snprintf(buf, sizeof(buf), "\"%s\" "SKIP_NAMESPACE_VALIDATION_SUPPORTED" -a \"%s\" \"%s\" -I\"%s\" %s"
                                           " -o \"%s\""
                                           " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
