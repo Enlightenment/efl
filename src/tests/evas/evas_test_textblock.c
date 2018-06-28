@@ -1863,6 +1863,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    Evas_Coord bw, bh, w, h, nw, nh;
    int i;
    START_TB_TEST();
+#if 0
    evas_object_textblock_text_markup_set(tb, "a");
    evas_object_textblock_size_formatted_get(tb, &bw, &bh);
 
@@ -2188,6 +2189,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    fail_if(-1 == evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch,
             NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE));
 
+#endif
    /* Getting whites back after wrapping. */
    evas_object_resize(tb, 1, 1);
    evas_object_textblock_text_markup_set(tb, "<wrap=word><keyword>return</keyword> <number>0</number>;</wrap>");
@@ -2195,7 +2197,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_eq(w, 32);
    _ck_assert_int(h, >=, 25);
-
+#if 0
    evas_object_resize(tb, 400, 400);
 
    evas_object_textblock_size_formatted_get(tb, &w, &h);
@@ -2291,7 +2293,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    ck_assert_int_eq(bw, w);
 #endif
-
+#endif
    END_TB_TEST();
 }
 EFL_END_TEST
@@ -4557,33 +4559,33 @@ EFL_END_TEST
 
 void evas_test_textblock(TCase *tc)
 {
-   tcase_add_test(tc, evas_textblock_simple);
-   tcase_add_test(tc, evas_textblock_cursor);
-#ifdef HAVE_FRIBIDI
-   tcase_add_test(tc, evas_textblock_split_cursor);
-#endif
-   tcase_add_test(tc, evas_textblock_size);
-   tcase_add_test(tc, evas_textblock_editing);
-   tcase_add_test(tc, evas_textblock_style);
-   tcase_add_test(tc, evas_textblock_style_user);
-   tcase_add_test(tc, evas_textblock_evas);
-   tcase_add_test(tc, evas_textblock_text_getters);
-   tcase_add_test(tc, evas_textblock_formats);
-   tcase_add_test(tc, evas_textblock_format_removal);
-   tcase_add_test(tc, evas_textblock_escaping);
-   tcase_add_test(tc, evas_textblock_set_get);
-   tcase_add_test(tc, evas_textblock_geometries);
-   tcase_add_test(tc, evas_textblock_various);
+//   tcase_add_test(tc, evas_textblock_simple);
+//   tcase_add_test(tc, evas_textblock_cursor);
+//#ifdef HAVE_FRIBIDI
+//   tcase_add_test(tc, evas_textblock_split_cursor);
+//#endif
+//   tcase_add_test(tc, evas_textblock_size);
+//   tcase_add_test(tc, evas_textblock_editing);
+//   tcase_add_test(tc, evas_textblock_style);
+//   tcase_add_test(tc, evas_textblock_style_user);
+//   tcase_add_test(tc, evas_textblock_evas);
+//   tcase_add_test(tc, evas_textblock_text_getters);
+//   tcase_add_test(tc, evas_textblock_formats);
+//   tcase_add_test(tc, evas_textblock_format_removal);
+//   tcase_add_test(tc, evas_textblock_escaping);
+//   tcase_add_test(tc, evas_textblock_set_get);
+//   tcase_add_test(tc, evas_textblock_geometries);
+//   tcase_add_test(tc, evas_textblock_various);
    tcase_add_test(tc, evas_textblock_wrapping);
-   tcase_add_test(tc, evas_textblock_items);
-   tcase_add_test(tc, evas_textblock_delete);
-   tcase_add_test(tc, evas_textblock_obstacle);
-#ifdef HAVE_HYPHEN
-   tcase_add_test(tc, evas_textblock_hyphenation);
-#endif
-   tcase_add_test(tc, evas_textblock_text_iface);
-   tcase_add_test(tc, evas_textblock_annotation);
-   tcase_add_test(tc, efl_canvas_text_simple);
-   tcase_add_test(tc, efl_canvas_text_cursor);
+//   tcase_add_test(tc, evas_textblock_items);
+//   tcase_add_test(tc, evas_textblock_delete);
+//   tcase_add_test(tc, evas_textblock_obstacle);
+//#ifdef HAVE_HYPHEN
+//   tcase_add_test(tc, evas_textblock_hyphenation);
+//#endif
+//   tcase_add_test(tc, evas_textblock_text_iface);
+//   tcase_add_test(tc, evas_textblock_annotation);
+//   tcase_add_test(tc, efl_canvas_text_simple);
+//   tcase_add_test(tc, efl_canvas_text_cursor);
 }
 
