@@ -471,7 +471,8 @@ group { name: "e/modules/illume_mode_toggle/main";
    }
 }
 
-group { name: "modules/illume-indicator/window";
+group { name: "e/modules/illume-indicator/window";
+   alias: "modules/illume-indicator/window";
    data {
 //      item: "shaped" "1";
    }
@@ -564,7 +565,8 @@ group { name: "modules/illume-indicator/window";
    }
 }
 
-group { name: "modules/illume-softkey/window";
+group { name: "e/modules/illume-softkey/window";
+   alias: "modules/illume-softkey/window";
    data {
 //      item: "shaped" "1";
    }
