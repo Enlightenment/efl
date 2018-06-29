@@ -1310,8 +1310,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
 
    F_DBG("Manager: %p focusing object %p %s", obj, node->focusable, efl_class_name_get(node->focusable));
 
-   //make sure this manager is in the chain of redirects
-   _manager_in_chain_set(obj, pd);
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
@@ -1319,6 +1317,9 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
         if (node->redirect_manager == pd->redirect)
           return;
      }
+
+   //make sure this manager is in the chain of redirects
+   _manager_in_chain_set(obj, pd);
 
    node_type = node->type;
    new_focusable = node->focusable;
