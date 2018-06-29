@@ -4689,6 +4689,9 @@ _queue_process(Elm_Genlist_Data *sd)
    double t0, t;
 
    t0 = ecore_time_get();
+
+   if (sd->queue) efl_ui_focus_composition_prepare(sd->obj);
+
    for (n = 0; (sd->queue) && (n < ITEM_QUEUE_MAX); n++)
      {
         Elm_Gen_Item *it;
