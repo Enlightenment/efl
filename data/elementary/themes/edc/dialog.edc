@@ -43,7 +43,7 @@ group { name: "e/widgets/dialog/main";
             rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 0;
-            rel2.to_y: "button.spacer";
+            rel2.to_y: "button_spacer";
             fixed: 1 0;
             visible: 0;
          }
@@ -58,7 +58,7 @@ group { name: "e/widgets/dialog/main";
             rel1.to_x: "base";
             rel2.to_x: "base";
             rel2.offset: -5 -1;
-            rel2.to_y: "button.spacer";
+            rel2.to_y: "button_spacer";
          }
          description { state: "icon" 0.0;
             inherit: "default" 0.0;
@@ -66,7 +66,7 @@ group { name: "e/widgets/dialog/main";
             rel1.to_x: "e.swallow.icon";
          }
       }
-      spacer { "button.spacer";
+      spacer { "button_spacer";
          desc {
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -8;
