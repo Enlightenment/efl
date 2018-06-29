@@ -89,7 +89,7 @@
       }
 
 #define CH(_pos) \
-   part { name: "ch_"#_pos".base"; type: SPACER; \
+   part { name: "ch_"#_pos"_base"; type: SPACER; \
       description { state: "default" 0.0; \
          rel1 { \
             relative: (_pos % 7 / 7) 0.0; \
@@ -101,13 +101,13 @@
          } \
       } \
    } \
-   part { name: "ch_"#_pos".text"; type: TEXT; mouse_events: 0; \
+   part { name: "efl.ch_"#_pos".text"; type: TEXT; mouse_events: 0; \
       effect: SHADOW BOTTOM; \
       scale: 1; \
-      clip_to: "ch_"#_pos".clipper"; \
+      clip_to: "ch_"#_pos"_clipper"; \
       description { state: "default" 0.0; \
-         rel1.to: "ch_"#_pos".base"; \
-         rel2.to: "ch_"#_pos".base"; \
+         rel1.to: "ch_"#_pos"_base"; \
+         rel2.to: "ch_"#_pos"_base"; \
          text { font: FN; size: 8; \
             min: 1 1; \
             ellipsis: -1; \
@@ -116,15 +116,15 @@
          color_class: "calendar_weekday_text"; \
       } \
    } \
-   part { name: "ch_"#_pos".clipper"; type: RECT; \
+   part { name: "ch_"#_pos"_clipper"; type: RECT; \
       description { state: "default" 0.0; \
-         rel1.to: "ch_"#_pos".base"; \
-         rel2.to: "ch_"#_pos".base"; \
+         rel1.to: "ch_"#_pos"_base"; \
+         rel2.to: "ch_"#_pos"_base"; \
       } \
    }
 
 #define CIT(_pos) \
-   part { name: "cit_"#_pos".rect"; type: SPACER; \
+   part { name: "cit_"#_pos"_rect"; type: SPACER; \
       description { state: "default" 0.0; \
          rel1 { \
             relative: (_pos % 7 / 7) \
@@ -138,18 +138,18 @@
          } \
       } \
    } \
-   part { name: "cit_"#_pos".event"; type: RECT; repeat_events: 1; \
+   part { name: "cit_"#_pos"_event"; type: RECT; repeat_events: 1; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".rect"; \
-         rel2.to: "cit_"#_pos".rect"; \
+         rel1.to: "cit_"#_pos"_rect"; \
+         rel2.to: "cit_"#_pos"_rect"; \
          color: 0 0 0 0; \
       } \
    } \
-   part { name: "cit_"#_pos".pat"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_pat"; mouse_events: 0; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".selected"; \
+         rel1.to: "cit_"#_pos"_selected"; \
          rel1.offset: 1 1; \
-         rel2.to: "cit_"#_pos".selected"; \
+         rel2.to: "cit_"#_pos"_selected"; \
          rel2.offset: -2 -2; \
          image.normal: "diagonal_stripes.png"; \
          color: 255 255 255 25; \
@@ -162,10 +162,10 @@
          visible: 1; \
       } \
    } \
-   part { name: "cit_"#_pos".selected"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_selected"; mouse_events: 0; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".rect"; \
-         rel2.to: "cit_"#_pos".rect"; \
+         rel1.to: "cit_"#_pos"_rect"; \
+         rel2.to: "cit_"#_pos"_rect"; \
          image.normal: "outline_glow.png"; \
          image.border: 4 4 4 4; \
          color_class: "calendar_day_selected"; \
@@ -176,10 +176,10 @@
          visible: 1; \
       } \
    } \
-   part { name: "cit_"#_pos".selected2"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_selected2"; mouse_events: 0; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".rect"; \
-         rel2.to: "cit_"#_pos".rect"; \
+         rel1.to: "cit_"#_pos"_rect"; \
+         rel2.to: "cit_"#_pos"_rect"; \
          image.normal: "outline_glow.png"; \
          image.border: 4 4 4 4; \
          color: 255 255 255 128; \
@@ -191,10 +191,10 @@
          visible: 1; \
       } \
    } \
-   part { name: "cit_"#_pos".glow"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_glow"; mouse_events: 0; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".rect"; \
-         rel2.to: "cit_"#_pos".rect"; \
+         rel1.to: "cit_"#_pos"_rect"; \
+         rel2.to: "cit_"#_pos"_rect"; \
          image.normal: "box_glow.png"; \
          image.border: 12 12 12 12; \
          image.middle: 0; \
@@ -206,11 +206,11 @@
          visible: 1; \
       } \
    } \
-   part { name: "cit_"#_pos".text"; type: TEXTBLOCK; mouse_events: 0; \
+   part { name: "efl.cit_"#_pos".text"; type: TEXTBLOCK; mouse_events: 0; \
       scale: 1; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".rect"; \
-         rel2.to: "cit_"#_pos".rect"; \
+         rel1.to: "cit_"#_pos"_rect"; \
+         rel2.to: "cit_"#_pos"_rect"; \
          text.style: "efl_ui_calendar_date_style"; \
          text.min: 1 1; \
          text.ellipsis: -1; \
@@ -224,16 +224,16 @@
          text.style: "efl_ui_calendar_date_disabled_style"; \
       } \
    } \
-   part { name: "cit_"#_pos".check"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_check"; mouse_events: 0; \
       scale: 1; \
       description { state: "default" 0.0; \
          fixed: 1 1; \
          rel1 { \
-            to: "cit_"#_pos".rect"; \
+            to: "cit_"#_pos"_rect"; \
             relative: 0.6 0.5; \
          } \
          rel2 { \
-            to: "cit_"#_pos".rect"; \
+            to: "cit_"#_pos"_rect"; \
             relative: 0.6 0.5; \
          } \
          min: 16 16; \
@@ -249,173 +249,173 @@
          visible: 1; \
       } \
    } \
-   part { name: "cit_"#_pos".access"; type: RECT; repeat_events: 1; \
+   part { name: "efl.cit_"#_pos".access"; type: RECT; repeat_events: 1; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos".event"; \
-         rel2.to: "cit_"#_pos".event"; \
+         rel1.to: "cit_"#_pos"_event"; \
+         rel2.to: "cit_"#_pos"_event"; \
          color: 0 0 0 0; \
       } \
    } \
    programs { \
       program { \
-         name:    "cit_"#_pos".go_active"; \
+         name:    "cit_"#_pos"_go_active"; \
          signal:  "cit_"#_pos",selected"; \
          source:  "efl"; \
          action:  STATE_SET "selected" 0.0; \
-         target:  "cit_"#_pos".pat"; \
-         target:  "cit_"#_pos".selected"; \
+         target:  "cit_"#_pos"_pat"; \
+         target:  "cit_"#_pos"_selected"; \
       } \
       program { \
-         name:    "cit_"#_pos".go_passive"; \
+         name:    "cit_"#_pos"_go_passive"; \
          signal:  "cit_"#_pos",unselected"; \
          source:  "efl"; \
          action:  STATE_SET "default" 0.0; \
-         target:  "cit_"#_pos".pat"; \
-         target:  "cit_"#_pos".selected"; \
+         target:  "cit_"#_pos"_pat"; \
+         target:  "cit_"#_pos"_selected"; \
       } \
       program { \
-         name:    "cit_"#_pos".focus_highlighted"; \
+         name:    "cit_"#_pos"_focus_highlighted"; \
          signal:  "cit_"#_pos",focused"; \
          source:  "efl"; \
          script { \
             set_int(item_focus_enabled, 1); \
             set_int(last_focused_item, _pos); \
             if (get_int(win_focus_enabled) == 1) \
-               set_state(PART:"cit_"#_pos".glow", "focused", 0.0); \
+               set_state(PART:"cit_"#_pos"_glow", "focused", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".focus_unhighlighed"; \
+         name:    "cit_"#_pos"_focus_unhighlighed"; \
          signal:  "cit_"#_pos",unfocused"; \
          source:  "efl"; \
          script { \
             set_int(item_focus_enabled, 0); \
-            set_state(PART:"cit_"#_pos".glow", "default", 0.0); \
+            set_state(PART:"cit_"#_pos"_glow", "default", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".is_today"; \
+         name:    "cit_"#_pos"_is_today"; \
          signal:  "cit_"#_pos",today"; \
          source:  "efl"; \
          action:  STATE_SET "today" 0.0; \
-         target:  "cit_"#_pos".text"; \
+         target:  "efl.cit_"#_pos".text"; \
       } \
       program { \
-         name:    "cit_"#_pos".not_today"; \
+         name:    "cit_"#_pos"_not_today"; \
          signal:  "cit_"#_pos",not_today"; \
          source:  "efl"; \
          action:  STATE_SET "default" 0.0; \
-         target:  "cit_"#_pos".text"; \
+         target:  "efl.cit_"#_pos".text"; \
       } \
       program { \
-         name:    "cit_"#_pos".enable"; \
+         name:    "cit_"#_pos"_enable"; \
          signal:  "cit_"#_pos",enable"; \
          source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
-            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            get_state(PART:"efl.cit_"#_pos".text", st, 30, vl); \
             if (!strcmp(st, "disabled")) \
-              set_state(PART:"cit_"#_pos".text", "default", 0.0); \
+              set_state(PART:"efl.cit_"#_pos".text", "default", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".disable"; \
+         name:    "cit_"#_pos"_disable"; \
          signal:  "cit_"#_pos",disable"; \
          source:  "efl"; \
          action:  STATE_SET "disabled" 0.0; \
-         target:  "cit_"#_pos".text"; \
+         target:  "efl.cit_"#_pos".text"; \
       } \
       program { \
-         source: "cit_"#_pos".clicked"; \
+         source: "cit_"#_pos"_clicked"; \
          signal: "mouse,down,1"; \
-         source: "cit_"#_pos".event"; \
+         source: "cit_"#_pos"_event"; \
          action:  STATE_SET "highlighted" 0.0; \
-         target:  "cit_"#_pos".selected2"; \
+         target:  "cit_"#_pos"_selected2"; \
       } \
       program { \
-         source: "cit_"#_pos".clicked"; \
+         source: "cit_"#_pos"_clicked"; \
          signal: "mouse,up,1"; \
-         source: "cit_"#_pos".event"; \
+         source: "cit_"#_pos"_event"; \
          action:  STATE_SET "default" 0.0; \
-         target:  "cit_"#_pos".selected2"; \
+         target:  "cit_"#_pos"_selected2"; \
       } \
       program { \
-         source: "cit_"#_pos".clicked"; \
+         source: "cit_"#_pos"_clicked"; \
          signal: "mouse,clicked,1"; \
-         source: "cit_"#_pos".event"; \
+         source: "cit_"#_pos"_event"; \
          action: SIGNAL_EMIT "efl,action,selected" #_pos; \
       } \
       program { \
-         name:    "cit_"#_pos".clear"; \
+         name:    "cit_"#_pos"_clear"; \
          signal:  "cit_"#_pos",clear"; \
          source:  "efl"; \
          action:  STATE_SET "default" 0.0; \
-         target:  "cit_"#_pos".check"; \
-         after:   "cit_"#_pos".weekends_clear"; \
-         after:   "cit_"#_pos".holiday_clear"; \
+         target:  "cit_"#_pos"_check"; \
+         after:   "cit_"#_pos"_weekends_clear"; \
+         after:   "cit_"#_pos"_holiday_clear"; \
       } \
       program { \
-         name:    "cit_"#_pos".weekends_clear"; \
+         name:    "cit_"#_pos"_weekends_clear"; \
          script { \
             new st[31]; \
             new Float:vl; \
-            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            get_state(PART:"efl.cit_"#_pos".text", st, 30, vl); \
             if (!strcmp(st, "weekend/day1") || !strcmp(st, "weekend/day2")) \
-              set_state(PART:"cit_"#_pos".text", "default", 0.0); \
+              set_state(PART:"efl.cit_"#_pos".text", "default", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".holiday_clear"; \
+         name:    "cit_"#_pos"_holiday_clear"; \
          script { \
             new st[31]; \
             new Float:vl; \
-            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            get_state(PART:"efl.cit_"#_pos".text", st, 30, vl); \
             if (!strcmp(st, "holiday")) \
-              set_state(PART:"cit_"#_pos".text", "default", 0.0); \
+              set_state(PART:"efl.cit_"#_pos".text", "default", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".checked"; \
+         name:    "cit_"#_pos"_checked"; \
          signal:  "cit_"#_pos",checked"; \
          source:  "efl"; \
          action:  STATE_SET "visible" 0.0; \
-         target:  "cit_"#_pos".check"; \
+         target:  "cit_"#_pos"_check"; \
       } \
       program { \
-         name:    "cit_"#_pos".holiday"; \
+         name:    "cit_"#_pos"_holiday"; \
          signal:  "cit_"#_pos",holiday"; \
          source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
-            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            get_state(PART:"efl.cit_"#_pos".text", st, 30, vl); \
             if (strcmp(st, "today")) \
-              set_state(PART:"cit_"#_pos".text", "holiday", 0.0); \
+              set_state(PART:"efl.cit_"#_pos".text", "holiday", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".weekend/day1"; \
+         name:    "cit_"#_pos"_weekend/day1"; \
          signal:  "cit_"#_pos",weekend/day1"; \
          source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
-            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            get_state(PART:"efl.cit_"#_pos".text", st, 30, vl); \
             if ((strcmp(st, "today")) && (strcmp(st, "holiday")) )\
-              set_state(PART:"cit_"#_pos".text", "weekend/day1", 0.0); \
+              set_state(PART:"efl.cit_"#_pos".text", "weekend/day1", 0.0); \
          } \
       } \
       program { \
-         name:    "cit_"#_pos".weekend/day2"; \
+         name:    "cit_"#_pos"_weekend/day2"; \
          signal:  "cit_"#_pos",weekend/day2"; \
          source:  "efl"; \
          script { \
             new st[31]; \
             new Float:vl; \
-            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            get_state(PART:"efl.cit_"#_pos".text", st, 30, vl); \
             if ((strcmp(st, "today")) && (strcmp(st, "holiday")) )\
-              set_state(PART:"cit_"#_pos".text", "weekend/day2", 0.0); \
+              set_state(PART:"efl.cit_"#_pos".text", "weekend/day2", 0.0); \
          } \
       } \
    }
