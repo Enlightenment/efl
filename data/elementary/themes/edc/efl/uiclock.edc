@@ -1,5 +1,5 @@
 #define DATETIME_FIELD(_pos) \
-   swallow { "field"#_pos; \
+   swallow { "efl.field"#_pos; \
       scale; \
       clip_to: "clip"; \
       desc { "default"; \
@@ -8,9 +8,9 @@
          align: 0.0 0.5; \
          fixed: 1 1; \
          rel1.relative: 1.0 0.0; \
-         rel1.to: "separator"#_pos; \
+         rel1.to: "efl.separator"#_pos; \
          rel2.relative: 1.0 1.0; \
-         rel2.to: "separator"#_pos; \
+         rel2.to: "efl.separator"#_pos; \
       } \
       desc { "enable"; \
          inherit: "default"; \
@@ -23,17 +23,17 @@
          signal: "field"#_pos",enable"; \
          source: "efl"; \
          action: STATE_SET "enable"; \
-         target: "field"#_pos; \
+         target: "efl.field"#_pos; \
       } \
       program { "field_"#_pos"disabled"; \
          signal: "field"#_pos",disable"; \
          source: "efl"; \
          action: STATE_SET "default"; \
-         target: "field"#_pos; \
+         target: "efl.field"#_pos; \
       } \
    }
 #define DATETIME_SEPARATOR(_pos, _after) \
-   text { "separator"#_pos; \
+   text { "efl.separator"#_pos; \
       scale; \
       effect: SHADOW BOTTOM; \
       clip_to: "disclip"; \
@@ -44,11 +44,11 @@
          fixed: 1 0; \
          rel1 { \
             relative: 1.0 0.0; \
-            to: "field"#_after; \
+            to: "efl.field"#_after; \
          } \
          rel2 { \
             relative: 1.0 1.0; \
-            to: "field"#_after; \
+            to: "efl.field"#_after; \
          } \
          color_class: "datetime_separator_text"; \
          text { \
@@ -65,17 +65,17 @@
          min: 8 10; \
       } \
    } \
-   text { "separator"#_pos"d"; \
+   text { "efl.separator"#_pos"d"; \
       scale; \
       effect: SHADOW BOTTOM; \
       clip_to: "disclip2"; \
       desc { "default"; \
          hid; \
-         rel1.to: "separator"#_pos; \
-         rel2.to: "separator"#_pos; \
+         rel1.to: "efl.separator"#_pos; \
+         rel2.to: "efl.separator"#_pos; \
          color_class: "datetime_separator_text_disabled"; \
          text { \
-            text_source: "separator"#_pos; \
+            text_source: "efl.separator"#_pos; \
             font: "Sans"; size: 10; \
             text_class: "datetime_separator_text_disabled"; \
          } \
@@ -90,15 +90,15 @@
          signal: "field"#_after",enable"; \
          source: "efl"; \
          action: STATE_SET "enable"; \
-         target: "separator"#_pos; \
-         target: "separator"#_pos"d"; \
+         target: "efl.separator"#_pos; \
+         target: "efl.separator"#_pos"d"; \
       } \
       program { \
          signal: "field"#_after",disable"; \
          source: "efl"; \
          action: STATE_SET "default"; \
-         target: "separator"#_pos; \
-         target: "separator"#_pos"d"; \
+         target: "efl.separator"#_pos; \
+         target: "efl.separator"#_pos"d"; \
       } \
    }
 
@@ -111,15 +111,15 @@ group { "efl/uiclock";
       }
       rect { "clip";
          desc { "default";
-            rel1.to: "separator0";
-            rel2.to: "separator7";
+            rel1.to: "efl.separator0";
+            rel2.to: "efl.separator7";
          }
       }
       rect { "disclip";
          clip_to: "clip";
          desc { "default";
-            rel1.to: "separator0";
-            rel2.to: "separator7";
+            rel1.to: "efl.separator0";
+            rel2.to: "efl.separator7";
          }
          desc { "disabled";
            inherit: "default";
@@ -129,8 +129,8 @@ group { "efl/uiclock";
       rect { "disclip2";;
          clip_to: "clip";
          desc { "default";
-            rel1.to: "separator0";
-            rel2.to: "separator7";
+            rel1.to: "efl.separator0";
+            rel2.to: "efl.separator7";
             hid;
          }
          desc { "disabled";
@@ -138,7 +138,7 @@ group { "efl/uiclock";
             vis;
          }
       }
-      spacer { "separator0";;
+      spacer { "efl.separator0";;
          scale;
          desc { "default";
             min: 8 10;
@@ -163,17 +163,17 @@ group { "efl/uiclock";
       DATETIME_SEPARATOR(7,6)
       DATETIME_FIELD(7)
       DATETIME_SEPARATOR(8,7)
-      spacer { "separator9";;
+      spacer { "efl.separator9";;
          desc { "default";
-            rel1.to: "separator7";
+            rel1.to: "efl.separator7";
             rel1.relative: 1.0 0.0;
             min: 8 10;
          }
       }
       rect { "discover";;
          desc { "default";
-            rel1.to: "separator0";
-            rel2.to: "separator7";
+            rel1.to: "efl.separator0";
+            rel2.to: "efl.separator7";
             hid;
             color: 0 0 0 0;
          }
