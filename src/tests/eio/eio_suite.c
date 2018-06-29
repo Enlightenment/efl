@@ -37,6 +37,7 @@ static const Efl_Test_Case etc[] = {
 SUITE_INIT(eio)
 {
    ck_assert_int_eq(eio_init(), 1);
+eina_log_level_set(4);
 }
 
 SUITE_SHUTDOWN(eio)

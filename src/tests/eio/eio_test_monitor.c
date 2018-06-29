@@ -14,8 +14,8 @@
 
 /////////////////timeout function
 
-#define TEST_TIMEOUT_SEC 5
-#define TEST_OPERATION_DELAY 1
+#define TEST_TIMEOUT_SEC 0.5
+#define TEST_OPERATION_DELAY 0.05
 
 static Ecore_Timer *test_timeout_timer;
 
@@ -485,7 +485,7 @@ static void _directory_self_deleted_cb(void *data, int type, void *event)
 EFL_START_TEST(eio_test_monitor_directory_directory_self_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
-
+fprintf(stderr, "START TEST eio_test_monitor_directory_directory_self_deleted_notify\n");
    //monitor directory
    eio_monitor_add(dirname);
    ecore_event_handler_add(EIO_MONITOR_SELF_DELETED, (Ecore_Event_Handler_Cb)_directory_self_deleted_cb, dirname);
@@ -504,7 +504,7 @@ EFL_START_TEST(eio_test_monitor_file_file_modified_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
-
+fprintf(stderr, "START TEST eio_test_monitor_file_file_modified_notify\n");
    filename = eina_stringshare_printf("%s/filecreated", dirname);
    _create_file((void*)filename);
 
@@ -571,7 +571,7 @@ EFL_START_TEST(eio_test_monitor_file_file_self_deleted_notify)
 {
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
-
+fprintf(stderr, "START TEST eio_test_monitor_file_file_self_deleted_notify\n");
    filename = eina_stringshare_printf("%s/eio_test_monitor_file_file_self_deleted_notify", dirname);
    _create_file((void*)filename);
 
@@ -677,7 +677,7 @@ EFL_START_TEST(eio_test_monitor_two_files_in_same_directory)
    Eina_Tmpstr *dirname = _common_init();
    Eina_Stringshare *filename;
    Eina_Stringshare *filename2;
-
+fprintf(stderr, "START TEST eio_test_monitor_two_files_in_same_directory\n");
    filename = eina_stringshare_printf("%s/eio_test_monitor_two_files_in_same_directory_1", dirname);
    filename2 = eina_stringshare_printf("%s/eio_test_monitor_two_files_in_same_directory_2", dirname);
    _create_file((void*)filename);
@@ -730,36 +730,9 @@ EFL_END_TEST
 
 void eio_test_monitor(TCase *tc)
 {
-   tcase_add_test(tc, eio_test_monitor_add_and_remove);
-   tcase_add_test(tc, eio_test_monitor_add_remove_add);
-   tcase_add_test(tc, eio_test_monitor_add_add_remove_remove);
-
-   tcase_add_test(tc, eio_test_monitor_directory_file_created_notify);
-   tcase_add_test(tc, eio_test_monitor_directory_multi_file_created_notify);
-   tcase_add_test(tc, eio_test_monitor_directory_file_deleted_notify);
-   tcase_add_test(tc, eio_test_monitor_directory_file_modified_notify);
-#if !defined(_WIN32) && !defined(__MACH__)
-   tcase_add_test(tc, eio_test_monitor_directory_file_closed_notify);
-#endif
-   tcase_add_test(tc, eio_test_monitor_directory_directory_created_notify);
-   tcase_add_test(tc, eio_test_monitor_directory_directory_deleted_notify);
-   tcase_add_test(tc, eio_test_monitor_directory_directory_modified_notify);
-#ifndef __MACH__
    tcase_add_test(tc, eio_test_monitor_directory_directory_self_deleted_notify);
-#endif
 
    tcase_add_test(tc, eio_test_monitor_file_file_modified_notify);
-   tcase_add_test(tc, eio_test_monitor_file_file_attrib_modified_notify);
-#if !defined(_WIN32) && !defined(__MACH__)
-   tcase_add_test(tc, eio_test_monitor_file_file_closed_notify);
-#endif
-#ifndef __MACH__
    tcase_add_test(tc, eio_test_monitor_file_file_self_deleted_notify);
-#endif
-
-   tcase_add_test(tc, eio_test_monitor_two_monitors_one_event);
-   tcase_add_test(tc, eio_test_monitor_two_monitors_one_removed_one_event);
-   tcase_add_test(tc, eio_test_monitor_two_monitors_one_removed_no_event);
    tcase_add_test(tc, eio_test_monitor_two_files_in_same_directory);
-   tcase_add_test(tc, eio_test_monitor_two_files_in_same_directory_one_removed);
 }

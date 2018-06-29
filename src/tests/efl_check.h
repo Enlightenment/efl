@@ -266,7 +266,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    sr = srunner_create(s);
    do_fork = _efl_test_fork_has(sr);
    if (do_fork)
-     can_fork = !!etc[1].test_case /* can't parallelize 1 test */;
+     can_fork = strcmp(suite_name, "Eio") && !!etc[1].test_case /* can't parallelize 1 test */;
 
    for (i = 0; etc[i].test_case; ++i)
      {

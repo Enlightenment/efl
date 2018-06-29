@@ -91,10 +91,10 @@ _eio_inotify_events(Eio_Monitor_Backend *backend, const char *file, int mask)
    unsigned int tmp_length;
    unsigned int i;
    Eina_Bool is_dir;
-
+fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
    if (backend->parent->delete_me)
      return;
-
+fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
    length = file ? strlen(file) : 0;
    tmp_length = eina_stringshare_strlen(backend->parent->path) + length + 2;
    tmp = alloca(sizeof (char) * tmp_length);
@@ -106,16 +106,16 @@ _eio_inotify_events(Eio_Monitor_Backend *backend, const char *file, int mask)
 
 
    is_dir = !!(mask & IN_ISDIR);
-
+fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
    for (i = 0; i < sizeof (match) / sizeof (Eio_Inotify_Table); ++i)
      if (match[i].mask & mask)
-       {
+       {fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
           _eio_monitor_send(backend->parent, tmp, is_dir ? *match[i].ev_dir_code : *match[i].ev_file_code);
        }
 
    /* special case for IN_IGNORED */
    if (mask & IN_IGNORED)
-     {
+     {fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
         _eio_monitor_rename(backend->parent, tmp);
      }
 }
@@ -143,9 +143,10 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 
         // No need to waste time looking up for just destroyed handler
         if ((event->mask & IN_IGNORED)) continue ;
-
+fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
         backend = eina_hash_find(_inotify_monitors, &event->wd);
         if (!backend) continue ;
+        fprintf(stderr, "%s:%u\n", __FILE__, __LINE__);
         if (!backend->parent) continue ;
 
         _eio_inotify_events(backend, (event->len ? event->name : NULL), event->mask);
@@ -196,11 +197,17 @@ void eio_monitor_backend_init(void)
    if (fd < 0)
      return;
 
-   eina_file_close_on_exec(fd, EINA_TRUE);
+   if (!eina_file_close_on_exec(fd, EINA_TRUE))
+     {
+        ERR("CLOEXEC failed!");
+        close(fd);
+        return;
+     }
 
    _inotify_fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _eio_inotify_handler, NULL, NULL, NULL);
    if (!_inotify_fdh)
      {
+        ERR("FDH creation failed!");
         close(fd);
         return;
      }
@@ -262,6 +269,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    backend->hwnd = inotify_add_watch(ecore_main_fd_handler_fd_get(_inotify_fdh), monitor->path, mask);
    if (backend->hwnd < 0)
      {
+        ERR("ERROR adding inotify watch: %s", strerror(errno));
         if (errno != EACCES)
           eio_monitor_fallback_add(monitor);
 

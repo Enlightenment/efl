@@ -150,6 +150,7 @@ eio_monitor_init(void)
    EIO_MONITOR_DIRECTORY_DELETED = ecore_event_type_new();
    EIO_MONITOR_DIRECTORY_MODIFIED = ecore_event_type_new();
    EIO_MONITOR_DIRECTORY_CLOSED = ecore_event_type_new();
+   fprintf(stderr, "EIO_MONITOR_ERROR = %d\n", EIO_MONITOR_ERROR);
 
    eio_monitor_backend_init();
    eio_monitor_fallback_init();
@@ -218,10 +219,10 @@ void
 _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
 {
    Eio_Monitor_Event *ev;
-
+fprintf(stderr, "%s:%u EVENT %d\n", __FILE__, __LINE__, event_code);
    if (monitor->delete_me)
      return;
-
+fprintf(stderr, "%s:%u EVENT %d\n", __FILE__, __LINE__, event_code);
    INF("Event '%s' for monitored path '%s'.",
        _eio_naming_event(event_code), filename);
 
