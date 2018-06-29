@@ -537,7 +537,8 @@ evas_font_desc_cmp(const Evas_Font_Description *a,
    /* FIXME: Do actual comparison, i.e less than and bigger than. */
    return !((a->name == b->name) && (a->weight == b->weight) &&
             (a->slant == b->slant) && (a->width == b->width) &&
-            (a->spacing == b->spacing) && (a->lang == b->lang));
+            (a->spacing == b->spacing) && (a->lang == b->lang) &&
+            (a->fallbacks == b->fallbacks));
 }
 
 const char *
