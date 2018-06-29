@@ -1366,12 +1366,14 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
              sd->scr_panel = evas_object_rectangle_add(evas_object_evas_get(obj));
              evas_object_color_set(sd->scr_panel, 0, 0, 0, 0);
              elm_widget_sub_object_add(obj, sd->scr_panel);
-             elm_layout_content_set(sd->scr_ly, "panel_area", sd->scr_panel);
+             if (!elm_layout_content_set(sd->scr_ly, "elm.panel_area", sd->scr_panel))
+               elm_layout_content_set(sd->scr_ly, "panel_area", sd->scr_panel);
 
              sd->scr_event = evas_object_rectangle_add(evas_object_evas_get(obj));
              evas_object_color_set(sd->scr_event, 0, 0, 0, 0);
              elm_widget_sub_object_add(obj, sd->scr_event);
-             elm_layout_content_set(sd->scr_ly, "event_area", sd->scr_event);
+             if (!elm_layout_content_set(sd->scr_ly, "elm.event_area", sd->scr_event))
+               elm_layout_content_set(sd->scr_ly, "event_area", sd->scr_event);
           }
 
         elm_interface_scrollable_content_set(obj, sd->scr_ly);
