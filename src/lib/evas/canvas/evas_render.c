@@ -505,11 +505,18 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
 
              if ((obj->is_smart) &&
                  ((has_map && !_evas_render_can_map(obj)) ||
-                  (obj->changed_map && !has_map) ||
                   obj->changed_src_visible))
                {
                   RD(0, "      has map + smart\n");
                   _evas_render_prev_cur_clip_cache_add(e, obj);
+               }
+             /* This is the only case that map was just turned off,
+                Need to redraw the previous obj region as well. */
+             else if (!has_map && obj->changed_map &&
+                      _evas_render_object_changed_get(obj))
+               {
+                  _evas_render_prev_cur_clip_cache_add(e, obj);
+                  obj->changed_map = EINA_FALSE;
                }
           }
         else
