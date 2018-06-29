@@ -48,6 +48,7 @@ group { name: "e/modules/music-control/popup";
       }
    }
    parts {
+      alias: "cover_swallow" "e.cover_swallow";
       part { name: "cover_bg";
          description { state: "default" 0;
             min: 90 90;
@@ -56,7 +57,7 @@ group { name: "e/modules/music-control/popup";
             image.normal: "music_control_icon.png";
          }
       }
-      part { name: "cover_swallow"; type: SWALLOW;
+      part { name: "e.cover_swallow"; type: SWALLOW;
          description { state: "default" 0;
             rel1.to: "cover_bg";
             rel2.to: "cover_bg";
