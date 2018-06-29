@@ -1453,7 +1453,15 @@ AC_SUBST([CUSTOM_EXPORTS_MONO_DL_MONO])
 # Eos file/library mapping
 
 # Unescaped sed pattern: sed -n 's/src\/lib\/\([a-z0-9_]*\)\/[a-z\/]*\/\([a-z0-9\._]*\)/\2,\1/pg'
-_configure_path=`realpath $0`
+AC_CHECK_PROG([have_realpath], [realpath], [yes], [no])
+if test "x${have_realpath}" = "xyes" ; then
+  _configure_path=`realpath $0`
+else
+  AC_CHECK_PROG([have_readlink], [readlink], [yes], [no])
+  if test "x${have_readlink}" = "xyes" ; then
+    _configure_path=`readlink -f $0`
+  fi
+fi
 efl_mono_top_srcdir=`dirname ${_configure_path}`
 EFL_MONO_LIBRARY_MAP=`find ${efl_mono_top_srcdir}/src/lib/ -iname "*\.eo" | sed -n 's/.*\/src\/lib\/\(@<:@a-z0-9_@:>@*\)@<:@\/a-z@:>@*\/\(@<:@a-z0-9\._@:>@*\)/\2,\1/pg'`
 
