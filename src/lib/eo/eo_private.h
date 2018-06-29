@@ -203,6 +203,8 @@ struct _Efl_Class
    unsigned int data_offset; /* < Offset of the data within object data. */
    unsigned int ops_count; /* < Offset of the data within object data. */
 
+   Eina_Thread construction_thread; /** < the thread which called the class constructor */
+
    Eina_Bool constructed : 1;
    Eina_Bool functions_set : 1;
    /* [extensions*] + NULL */

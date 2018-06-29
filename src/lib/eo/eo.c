@@ -1298,8 +1298,7 @@ _eo_class_constructor(_Efl_Class *klass)
 {
    klass->constructed = EINA_TRUE;
 
-   if (eina_thread_self() != _efl_object_main_thread)
-     CRI("Calling class constructor from non-main thread! This will crash later!");
+   klass->construction_thread = eina_thread_self();
 
    if (klass->desc->class_constructor)
      klass->desc->class_constructor(_eo_class_id_get(klass));
@@ -1309,9 +1308,12 @@ static void
 eo_class_free(_Efl_Class *klass)
 {
    void *data;
+   Eina_Thread self = eina_thread_self();
 
-   if (eina_thread_self() != _efl_object_main_thread)
-     CRI("Calling class deconstructor from non-main thread! This will crash!");
+   if ((self != _efl_object_main_thread) &&
+       (self != klass->construction_thread))
+     CRI("Calling class deconstructor from thread that did not call constructor and is not main thread!\n"
+         "This will probably crash!");
 
    if (klass->constructed)
      {
