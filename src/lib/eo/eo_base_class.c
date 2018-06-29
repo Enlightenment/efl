@@ -715,7 +715,7 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
    if (parent_id != NULL)
      {
         EO_OBJ_POINTER_GOTO(parent_id, parent_obj, err_impossible);
-        bad_parent = parent_obj->invalidate;
+        bad_parent = parent_obj->invalidate || (obj == parent_id);
         EO_OBJ_DONE(parent_id);
      }
 
@@ -786,8 +786,12 @@ _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id)
 err_parent_done:
    EO_OBJ_DONE(obj);
 err_parent:
-   ERR("New parent %p for object %p is not a valid Eo object.",
-       parent_id, obj);
+   if (obj == parent_id)
+     ERR("New parent %p for object %p will not be set: THIS IS THE SAME OBJECT.",
+         parent_id, obj);
+   else
+     ERR("New parent %p for object %p is not a valid Eo object.",
+         parent_id, obj);
    return;
 
 err_impossible:
