@@ -11,7 +11,8 @@ group { name: "e/modules/notification/logo";
    }
 }
 
-group { name: "e/modules/notification/main";
+group { name: "notification/main";
+   alias: "e/modules/notification/main";
    images.image: "darken_square.png" COMP;
    images.image: "sym_close_light_normal.png" COMP;
    images.image: "sym_close_light_selected.png" COMP;
@@ -45,6 +46,7 @@ group { name: "e/modules/notification/main";
    }
    
    parts {
+      alias: "e.event.close" "notification.event.close";
       part { name: "base";
          description { state: "default" 0.0;
             image.normal: "darken_square.png";
@@ -128,7 +130,7 @@ group { name: "e/modules/notification/main";
             image.normal: "sym_close_light_selected.png";
          }
       }
-      part { name: "e.event.close"; type: RECT;
+      part { name: "notification.event.close"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
