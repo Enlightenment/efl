@@ -106,6 +106,17 @@ extern "C" {
 typedef unsigned long  uid_t;
 typedef unsigned long  gid_t;
 
+#ifdef _MSC_VER
+# ifdef _WIN64
+typedef __int64 pid_t;
+# else
+typedef int pid_t;
+# endif
+typedef SSIZE_T ssize_t;
+typedef unsigned short mode_t;
+# define strdup(str) _strdup(str)
+#endif
+
 
 #include "evil_macro.h"
 #include "evil_dlfcn.h"

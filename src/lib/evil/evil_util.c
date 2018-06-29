@@ -172,37 +172,13 @@ _evil_last_error_display(const char *fct)
 const char *
 evil_tmpdir_get(void)
 {
-   char *tmpdir;
-
-   tmpdir = getenv("TMP");
-   if (!tmpdir) tmpdir = getenv("TEMP");
-   if (!tmpdir) tmpdir = getenv("USERPROFILE");
-   if (!tmpdir) tmpdir = getenv("WINDIR");
-   if (!tmpdir) tmpdir="C:\\";
-
-   return tmpdir;
+   return NULL;
 }
 
 const char *
 evil_homedir_get(void)
 {
-   char *homedir;
-   char *homedrive;
-   char *homepath;
-
-   homedir = getenv("HOME");
-   if (!homedir)
-     {
-       homedrive = getenv("HOMEDRIVE");
-       homepath = getenv("HOMEPATH");
-       if (homedrive && homepath)
-         asprintf(&homedir, "%s%s", homedrive, homepath);
-     }
-   if (!homedir) homedir = getenv("USERPROFILE");
-   if (!homedir) homedir = getenv("WINDIR");
-   if (!homedir) homedir="C:\\";
-
-   return homedir;
+   return NULL;
 }
 
 int
