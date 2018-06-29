@@ -5,6 +5,7 @@ group { name: "e/modules/systray/main";
    data.item: "inset" "64 64 64";
    data.item: "plain" "64 64 64";
    parts {
+      alias: "box" "e.box";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
@@ -15,7 +16,7 @@ group { name: "e/modules/systray/main";
             color: 255 0 0 128;
          }
       }
-      part { name: "box"; type: BOX;
+      part { name: "e.box"; type: BOX;
         description { state: "default" 0.0;
             align: 0 0;
             box {
@@ -38,72 +39,72 @@ group { name: "e/modules/systray/main";
       program {
          signal: "e,action,orient,horiz"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,vert"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,left"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,right"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,top"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,bottom"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_tl"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_tr"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_bl"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_br"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_lt"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_rt"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_lb"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
       program {
          signal: "e,action,orient,corner_rb"; source: "e";
          action: STATE_SET "vertical" 0.0;
-         target: "box";
+         target: "e.box";
       }
    }
 }
