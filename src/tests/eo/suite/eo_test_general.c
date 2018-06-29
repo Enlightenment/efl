@@ -667,7 +667,11 @@ EFL_START_TEST(efl_refs)
    fail_if(!efl_invalidated_get(obj2));
    fail_if(!efl_invalidated_get(obj3));
 
-   efl_parent_set(obj2, obj3);
+   {
+      int ref_pre = efl_ref_count(obj2);
+      efl_parent_set(obj2, obj3);
+      ck_assert_int_eq(ref_pre, efl_ref_count(obj2));
+   }
 
    efl_unref(obj);
    efl_unref(obj2);
