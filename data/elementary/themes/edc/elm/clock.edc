@@ -287,7 +287,7 @@ group { name: "elm/clock/flipampm/default";
 }
 
 #define SWALLOW_PART(_NAME, _R1X, _R1Y, _R2X, _R2Y) \
-   part { name: _NAME; \
+   part { name: "elm."_NAME; \
       type: SWALLOW; \
       description { state: "default" 0.0; \
          rel1.relative: _R1X _R1Y; \
