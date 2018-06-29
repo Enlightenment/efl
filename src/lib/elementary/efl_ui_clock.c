@@ -30,8 +30,8 @@
  * EFL_UI_CLOCK_TYPE_COUNT are in the valid range, and must get in the
  * place of "%d".
  */
-#define EDC_PART_FIELD_STR             "field%d"
-#define EDC_PART_SEPARATOR_STR         "separator%d"
+#define EDC_PART_FIELD_STR             "efl.field%d"
+#define EDC_PART_SEPARATOR_STR         "efl.separator%d"
 #define EDC_PART_FIELD_ENABLE_SIG_STR  "field%d,enable"
 #define EDC_PART_FIELD_DISABLE_SIG_STR "field%d,disable"
 
