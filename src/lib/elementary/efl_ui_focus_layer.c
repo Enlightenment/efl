@@ -62,10 +62,10 @@ _efl_ui_focus_layer_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd E
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(const Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
+_efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
 {
    if (pd->registered_manager)
-     return elm_widget_top_get(obj);
+     return pd->registered_manager;
    else
      return NULL;
 }
@@ -111,6 +111,7 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
         Efl_Ui_Focus_Manager *manager;
 
         pd->registered_manager = elm_widget_top_get(obj);
+        EINA_SAFETY_ON_FALSE_RETURN(efl_isa(pd->registered_manager, EFL_UI_WIN_CLASS));
         manager = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, pd->registered_manager);
 
         efl_ui_focus_manager_calc_register_logical(pd->registered_manager, obj, efl_ui_focus_manager_root_get(pd->registered_manager), obj);
