@@ -125,9 +125,11 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
      {
         Eina_Bool fallback = EINA_TRUE;
 
-        Eo *omanager = pd->registered_manager, *oobj = efl_ui_focus_manager_root_get(omanager);
+        Eo *oobj;
 
         if (!pd->registered_manager) return;
+
+        oobj = efl_ui_focus_manager_root_get(pd->registered_manager);
 
         //restore old focus
         if (pd->old_focus)
@@ -149,7 +151,7 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
 
         efl_ui_focus_manager_calc_unregister(pd->registered_manager, obj);
         pd->registered_manager = NULL;
-        _publish_state_change(obj, omanager, oobj);
+        _publish_state_change(obj, pd->registered_manager, oobj);
      }
 }
 
