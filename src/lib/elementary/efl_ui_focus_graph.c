@@ -46,49 +46,99 @@ _result_get(Quadrant q, Efl_Ui_Focus_Graph_Calc_Result *result)
   else return NULL;
 }
 
+/*
+
+_quadrant_get return in which quadrant the elem is placed, oriented at origin
+
+All this is based on three levels
+
+lvl1:
+       |     |
+       | Top |
+  _____|_____|_____
+       |     |
+  left |clean|right
+  _____|_____|_____
+       |     |
+       | Bot |
+       |     |
+lvl3:
+  \               /
+    \    Top    /
+      \ _____ /
+       |     |
+  left |clean|right
+       |_____|
+      /       \
+    /   Bot     \
+  /               \
+
+lvl3:
+       |     |
+  L & T| Top | R & T
+  _____|_____|_____
+       |     |
+  left |clean|right
+  _____|_____|_____
+       |     |
+  L & B| Bot | R & B
+       |     |
+
+
+ */
+
 static inline void
-_quadrant_get(Eina_Rect origin, Eina_Rect elem, Quadrant *all, Quadrant *clean)
+_quadrant_get(Eina_Rect origin, Eina_Rect elem, Quadrant *lvl2, Quadrant *lvl1, Quadrant *lvl3)
 {
   int dis = 0;
 
-  *clean = 0;
-  *all = 0;
+  *lvl1 = 0;
+  *lvl2 = 0;
+  *lvl3 = 0;
 
   if (eina_rectangle_max_y(&elem.rect) <= origin.y)
     {
        dis = origin.y - elem.y;
 
+       *lvl3 |= Q_TOP;
+
        if (eina_spans_intersect(origin.x - dis, 2*dis + origin.w, elem.x, elem.w))
-         *all |= Q_TOP;
+         *lvl2 |= Q_TOP;
        if (eina_spans_intersect(origin.x, origin.w, elem.x, elem.w))
-         *clean |= Q_TOP;
+         *lvl1 |= Q_TOP;
     }
   if (elem.y >= eina_rectangle_max_y(&origin.rect))
     {
        dis = eina_rectangle_max_y(&elem.rect) - origin.y;
 
+       *lvl3 |= Q_BOTTOM;
+
        if (eina_spans_intersect(origin.x - dis, 2*dis + origin.w, elem.x, elem.w))
-         *all |= Q_BOTTOM;
+         *lvl2 |= Q_BOTTOM;
        if (eina_spans_intersect(origin.x, origin.w, elem.x, elem.w))
-         *clean |= Q_BOTTOM;
+         *lvl1 |= Q_BOTTOM;
     }
   if (elem.x >= eina_rectangle_max_x(&origin.rect))
     {
        dis = eina_rectangle_max_x(&elem.rect) - origin.x;
 
+       *lvl3 |= Q_RIGHT;
+
        if (eina_spans_intersect(origin.y - dis, 2*dis + origin.h, elem.y, elem.h))
-         *all |= Q_RIGHT;
+         *lvl2 |= Q_RIGHT;
        if (eina_spans_intersect(origin.y, origin.h, elem.y, elem.h))
-         *clean |= Q_RIGHT;
+         *lvl1 |= Q_RIGHT;
     }
   if (eina_rectangle_max_x(&elem.rect) <= origin.x)
     {
        dis = origin.x - elem.x;
 
+       *lvl3 |= Q_LEFT;
+
        if (eina_spans_intersect(origin.y - dis, 2*dis + origin.h, elem.y, elem.h))
-         *all |= Q_LEFT;
+         *lvl2 |= Q_LEFT;
        if (eina_spans_intersect(origin.y, origin.h, elem.y, elem.h))
-         *clean |= Q_LEFT;
+         *lvl1 |= Q_LEFT;
     }
 
 }
@@ -105,21 +155,20 @@ efl_ui_focus_graph_calc(Efl_Ui_Focus_Graph_Context *ctx, Eina_Iterator *nodes, O
 
         res = _result_get(q_helper[i], result);
 
-        res->clean = EINA_FALSE;
         res->distance = INT_MAX;
+        res->lvl = INT_MAX;
         res->relation = NULL;
      }
 
    origin = efl_ui_focus_object_focus_geometry_get(_convert(ctx, origin_obj));
 
-   //printf("=========> CALCING %p %s\n", _convert(ctx, origin_obj), elm_object_text_get(_convert(ctx, origin_obj)));
+   //printf("=========> CALCING %p %s\n", _convert(ctx, origin_obj), efl_class_name_get(_convert(ctx, origin_obj)));
 
    EINA_ITERATOR_FOREACH(nodes, elem_obj)
      {
         Efl_Ui_Focus_Graph_Calc_Direction_Result *res;
         unsigned int distance;
-        Quadrant all;
-        Quadrant clean;
+        Quadrant lvl3, lvl2, lvl1;
 
         if (elem_obj == origin_obj) continue;
 
@@ -127,31 +176,45 @@ efl_ui_focus_graph_calc(Efl_Ui_Focus_Graph_Context *ctx, Eina_Iterator *nodes, O
 
         if (eina_rectangle_intersection(&origin.rect, &elem.rect)) continue;
 
-        _quadrant_get(origin, elem, &all, &clean);
+        _quadrant_get(origin, elem, &lvl2, &lvl1, &lvl3);
 
         for (int i = 0; i < 4; ++i)
           {
-            if (q_helper[i] & all)
+            if (q_helper[i] & lvl3)
               {
+                 int lvl;
                  res = _result_get(q_helper[i], result);
                  EINA_SAFETY_ON_NULL_GOTO(res, cont);
 
                  distance = _distance(origin, elem, q_helper[i]);
 
+                 if (q_helper[i] & lvl1)
+                   lvl = 1;
+                 else if (q_helper[i] & lvl2)
+                   lvl = 2;
+                 else //if (q_helper[i] & lvl3)
+                   lvl = 3;
 
-                 if ((res->distance > distance && res->clean == (q_helper[i] & clean)) ||
-                     (!res->clean && q_helper[i] & clean))
+                 if (lvl < res->lvl)
                    {
                       res->relation = eina_list_free(res->relation);
                       res->relation = eina_list_append(res->relation, elem_obj);
                       res->distance = distance;
-                      res->clean = q_helper[i] & clean;
-                      //printf("=========> %p BETTER_NOW     %d \t %p %s\n", res, distance, origin_obj, elm_object_text_get(_convert(ctx, elem_obj)));
+                      res->lvl = lvl;
+                      //printf("=========> %p:%d LVL_DROP     %d \t %d \t %p %s\n", res, i, distance, lvl, origin_obj, efl_class_name_get(_convert(ctx, elem_obj)));
                    }
-                 else if (res->distance == distance)
+                 else if (lvl == res->lvl && res->distance > distance)
+                   {
+                      res->relation = eina_list_free(res->relation);
+                      res->relation = eina_list_append(res->relation, elem_obj);
+                      res->distance = distance;
+                      //printf("=========> %p:%d DIST_DROP    %d \t %d \t %p %s\n", res, i, distance, lvl, origin_obj, efl_class_name_get(_convert(ctx, elem_obj)));
+
+                   }
+                 else if (lvl == res->lvl && res->distance >= distance)
                    {
                       res->relation = eina_list_append(res->relation, elem_obj);
-                      //printf("=========> %p BETTER_NOW_ADD %d \t %p %s\n", res, distance, origin_obj, elm_object_text_get(_convert(ctx, elem_obj)));
+                      //printf("=========> %p:%d DIST_ADD     %d \t %d \t %p %s\n", res, i, distance, lvl, origin_obj, efl_class_name_get(_convert(ctx, elem_obj)));
                    }
               }
           }

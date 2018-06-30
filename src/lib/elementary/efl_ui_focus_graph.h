@@ -10,7 +10,7 @@ typedef struct _Opaque_Graph_Memeber Opaque_Graph_Member;
 
 typedef struct {
   Eina_List *relation;
-  Eina_Bool clean;
+  int lvl;
   unsigned int distance;
 } Efl_Ui_Focus_Graph_Calc_Direction_Result;
 
