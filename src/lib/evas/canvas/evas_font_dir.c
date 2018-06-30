@@ -886,7 +886,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
                        strncpy(tmp, start, end - start);
                        tmp[end - start] = 0;
                        FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) tmp);
-                       start += end - start + 1;
+                       start = end + 1;
                     }
                   else
                     {
