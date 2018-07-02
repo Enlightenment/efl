@@ -10836,7 +10836,7 @@ _evas_textblock_cursor_format_append(Efl_Text_Cursor_Cursor *cur,
         Eina_Unicode insert_char;
         /* Insert a visual representation according to the type of the
            format */
-        if (_IS_PARAGRAPH_SEPARATOR(o, format))
+        if (_IS_PARAGRAPH_SEPARATOR_SIMPLE(format))
            insert_char = _PARAGRAPH_SEPARATOR;
         else if (_IS_LINE_SEPARATOR(format))
            insert_char = _NEWLINE;
