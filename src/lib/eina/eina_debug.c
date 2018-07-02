@@ -132,6 +132,8 @@ struct _Eina_Debug_Session
    void *data; /* User data */
    int cbs_length; /* cbs table size */
    int fd; /* File descriptor */
+   Eina_Lock lock; /* deletion lock */
+   Eina_Bool deleted : 1; /* set if session is dead */
 };
 
 #ifndef _WIN32
@@ -271,6 +273,17 @@ eina_debug_session_terminate(Eina_Debug_Session *session)
    /* Close fd here so the thread terminates its own session by itself */
    if (!session) return;
    close(session->fd);
+   eina_lock_take(&session->lock);
+   if (session->deleted)
+     {
+        eina_lock_release(&session->lock);
+        free(session);
+     }
+   else
+     {
+        session->deleted = 1;
+        eina_lock_release(&session->lock);
+     }
 }
 
 EAPI void
@@ -451,6 +464,7 @@ _session_create(int fd)
    if (!session) return NULL;
    session->dispatch_cb = eina_debug_dispatch;
    session->fd = fd;
+   eina_lock_new(&session->lock);
    eina_spinlock_take(&_thread_delete_lock);
    sessions = eina_list_append(sessions, session);
    eina_spinlock_release(&_thread_delete_lock);
@@ -586,12 +600,8 @@ _monitor(void *_data)
           }
         else
           {
-             close(session->fd);
              _opcodes_unregister_all(session);
-             eina_spinlock_take(&_thread_delete_lock);
-             sessions = eina_list_remove(sessions, session);
-             free(session);
-             eina_spinlock_release(&_thread_delete_lock);
+             eina_debug_session_terminate(session);
              break;
           }
      }
@@ -736,20 +746,11 @@ Eina_Bool
 eina_debug_shutdown(void)
 {
    Eina_Debug_Session *session;
-   Eina_List *l;
    pthread_t self = pthread_self();
 
    eina_spinlock_take(&_thread_delete_lock);
-   EINA_LIST_FOREACH(sessions, l, session)
+   EINA_LIST_FREE(sessions, session)
      eina_debug_session_terminate(session);
-   eina_spinlock_release(&_thread_delete_lock);
-
-   while (1)
-     {
-        eina_spinlock_take(&_thread_delete_lock);
-        if (!sessions) break;
-        eina_spinlock_release(&_thread_delete_lock);
-     }
    eina_spinlock_release(&_thread_delete_lock);
 
    _eina_debug_timer_shutdown();
