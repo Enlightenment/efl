@@ -107,7 +107,6 @@ extern Eina_Bool eina_mempool_init(void);
 extern Eina_Bool eina_list_init(void);
 
 extern Eina_Spinlock _eina_debug_thread_lock;
-static Eina_Spinlock _thread_delete_lock;
 static Eina_List *sessions;
 
 static Eina_Bool _debug_disabled = EINA_FALSE;
@@ -465,9 +464,7 @@ _session_create(int fd)
    session->dispatch_cb = eina_debug_dispatch;
    session->fd = fd;
    eina_lock_new(&session->lock);
-   eina_spinlock_take(&_thread_delete_lock);
    sessions = eina_list_append(sessions, session);
-   eina_spinlock_release(&_thread_delete_lock);
    // start the monitor thread
    _thread_start(session);
    return session;
@@ -721,7 +718,6 @@ eina_debug_init(void)
    // set up thread things
    eina_spinlock_new(&_eina_debug_lock);
    eina_spinlock_new(&_eina_debug_thread_lock);
-   eina_spinlock_new(&_thread_delete_lock);
    self = pthread_self();
    _eina_debug_thread_mainloop_set(&self);
    _eina_debug_thread_add(&self);
@@ -748,10 +744,8 @@ eina_debug_shutdown(void)
    Eina_Debug_Session *session;
    pthread_t self = pthread_self();
 
-   eina_spinlock_take(&_thread_delete_lock);
    EINA_LIST_FREE(sessions, session)
      eina_debug_session_terminate(session);
-   eina_spinlock_release(&_thread_delete_lock);
 
    _eina_debug_timer_shutdown();
    _eina_debug_bt_shutdown();
@@ -759,7 +753,6 @@ eina_debug_shutdown(void)
    _eina_debug_thread_del(&self);
    eina_spinlock_free(&_eina_debug_lock);
    eina_spinlock_free(&_eina_debug_thread_lock);
-   eina_spinlock_free(&_thread_delete_lock);
    eina_threads_shutdown();
    return EINA_TRUE;
 }
