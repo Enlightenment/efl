@@ -2977,6 +2977,21 @@ EFL_START_TEST(evas_textblock_editing)
    evas_textblock_cursor_paragraph_first(cur);
    fail_if(evas_textblock_cursor_paragraph_next(cur));
 
+   /* Test cursor range delete with <br/> tags when legacy newline is enabled.
+    * After deleting first <br/> tag, the second <br/> tag shouldn't be changed to <ps/> */
+   evas_object_textblock_legacy_newline_set(tb, EINA_TRUE);
+   evas_object_textblock_text_markup_set(tb, "A<br/><br/>B");
+   evas_textblock_cursor_paragraph_first(cur);
+   evas_textblock_cursor_paragraph_first(main_cur);
+   evas_textblock_cursor_pos_set(main_cur, 2);
+   ck_assert_str_eq(evas_textblock_cursor_range_text_get(cur, main_cur, EVAS_TEXTBLOCK_TEXT_MARKUP), "A<br/>");
+
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "<br/>B");
+
+   /* Restore legacy newline disabled setting */
+   evas_object_textblock_legacy_newline_set(tb, EINA_FALSE);
+
      {
         /* Limit to 1000 iterations so we'll never get into an infinite loop,
          * even if broken */
