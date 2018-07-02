@@ -2316,6 +2316,8 @@ _elm_toolbar_item_efl_object_invalidate(Eo *eo_item, Elm_Toolbar_Item_Data *item
 
    if (item != sd->more_item)
       efl_ui_widget_theme_apply(obj);
+   else
+      sd->more_item = NULL;
 
    efl_invalidate(efl_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
 }
@@ -3349,14 +3351,6 @@ _elm_toolbar_item_separator_get(const Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_
    return it->separator;
 }
 
-static void
-_cleanup_more_item(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Elm_Toolbar_Data *sd = data;
-
-   sd->more_item = NULL;
-}
-
 EOLIAN static void
 _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_Mode shrink_mode)
 {
@@ -3402,9 +3396,6 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
    else
       elm_interface_scrollable_policy_set
             (obj, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
-
-   if (sd->more_item)
-     efl_event_callback_add(EO_OBJ(sd->more_item), EFL_EVENT_INVALIDATE, _cleanup_more_item, sd);
 
    EINA_INLIST_FOREACH(sd->items, it)
       _item_shrink_signal_emit(VIEW(it), sd->shrink_mode);
