@@ -225,7 +225,7 @@ static void
 _access_calendar_item_register(Evas_Object *obj)
 {
    unsigned int maxdays, i;
-   char day_s[13], pname[14];
+   char day_s[13], pname[18];
    unsigned day = 0;
    Evas_Object *ao;
 
