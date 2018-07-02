@@ -5,6 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_focus_parent_provider_gen.eo.h"
+#include "efl_ui_focus_composition_adapter.eo.h"
 
 typedef struct {
    Eina_Hash *map;
@@ -50,15 +51,27 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
 {
    //first check if this item is in the map
    Elm_Widget_Item *item, *above_gengrid = widget;
-   Efl_Ui_Widget *parent = elm_widget_parent_widget_get(widget);
+   Efl_Ui_Widget *parent;
 
-   if (parent == pd->container)
+   if (efl_isa(widget, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
      {
-        item = eina_hash_find(pd->map, &above_gengrid);
-        efl_ui_focus_object_prepare_logical(pd->container);
+        item = efl_parent_get(widget);
 
-        if (item)
+        if (efl_isa(item, ELM_WIDGET_ITEM_CLASS))
           return item;
+     }
+   else
+     {
+        parent = elm_widget_parent_widget_get(widget);
+
+        if (parent == pd->container)
+          {
+             item = eina_hash_find(pd->map, &above_gengrid);
+             efl_ui_focus_object_prepare_logical(pd->container);
+
+             if (item)
+               return item;
+          }
      }
 
    // We dont have a map entry
@@ -70,7 +83,27 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
 {
    //first check if this item is in the map
    Elm_Widget_Item *item, *above_gengrid = widget;
-   Efl_Ui_Widget *parent = elm_widget_parent_widget_get(widget);
+   Efl_Ui_Widget *parent;
+
+   if (efl_isa(widget, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+     {
+        item = efl_parent_get(widget);
+
+        if (efl_isa(item, ELM_WIDGET_ITEM_CLASS))
+          {
+             efl_ui_focus_object_prepare_logical(pd->container);
+             return item;
+          }
+        else
+          {
+             parent = item;
+          }
+     }
+   else
+     {
+        parent = elm_widget_parent_widget_get(widget);
+     }
+
 
    //move forward so we get the last widget above the gengrid level,
    //this may be the widget out of the map
@@ -79,7 +112,6 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
         above_gengrid = parent;
         parent = elm_widget_parent_widget_get(above_gengrid);
      }
-
    item = eina_hash_find(pd->map, &above_gengrid);
 
    efl_ui_focus_object_prepare_logical(pd->container);
