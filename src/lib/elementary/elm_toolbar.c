@@ -128,6 +128,8 @@ _items_visibility_fix(Elm_Toolbar *obj,
              it->prio.visible = (*iw <= vw);
              it->in_box = sd->bx;
              if (!it->separator) count++;
+             if (!it->prio.visible)
+               *more = EINA_TRUE;
           }
         else
           {
