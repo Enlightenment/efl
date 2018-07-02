@@ -518,7 +518,7 @@ _efl_ui_image_edje_file_set(Evas_Object *obj,
      return _efl_ui_image_async_file_set(obj, sd, file, f, group);
 
    /* FIXME: do i want to update icon on file change ? */
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -628,7 +628,7 @@ _efl_ui_image_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_P
    sd->img_y = pos.y;
 
    /* takes care of moving */
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -643,7 +643,7 @@ _efl_ui_image_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2
    sd->img_h = sz.h;
 
    /* takes care of resizing */
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 
 super:
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
@@ -839,9 +839,9 @@ _efl_ui_image_file_set_do(Evas_Object *obj)
 }
 
 static void
-_on_size_hints_changed(void *data, const Efl_Event *ev)
+_on_size_hints_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   _efl_ui_image_internal_sizing_eval(ev->object, data);
+   _efl_ui_image_sizing_eval(ev->object);
 }
 
 EOLIAN static Eo *
@@ -927,7 +927,7 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
         evas_object_image_preload(sd->img, EINA_FALSE);
      }
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -1300,7 +1300,7 @@ _efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Ef
    efl_orientation_set(sd->img, orient);
 
    sd->orient = orient;
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static Efl_Orient
@@ -1319,7 +1319,7 @@ _efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip 
    efl_orientation_flip_set(sd->img, flip);
 
    sd->flip = flip;
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static Efl_Flip
@@ -1506,7 +1506,7 @@ _efl_ui_image_efl_gfx_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Dat
 
    sd->scale_type = scale_type;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static Efl_Gfx_Image_Scale_Type
@@ -1523,7 +1523,7 @@ _efl_ui_image_scalable_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool up, Eina_Bo
    sd->scale_up = !!up;
    sd->scale_down = !!down;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1551,7 +1551,7 @@ _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double a
    sd->align_x = align_x;
    sd->align_y = align_y;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1991,7 +1991,7 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
         return EINA_FALSE;
      }
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -2015,7 +2015,7 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    else
      sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EAPI Eina_Bool
