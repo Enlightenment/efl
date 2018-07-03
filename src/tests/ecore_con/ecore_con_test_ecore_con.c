@@ -182,7 +182,6 @@ _dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_Bool *err_check = data;
    *err_check = EINA_TRUE;
-   ecore_main_loop_quit();
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -479,7 +478,7 @@ EFL_START_TEST(ecore_test_ecore_con_dns)
    ecore_con_server_timeout_set(client, 5.0);
 
    ecore_main_loop_begin();
-   fail_if (err_check == EINA_FALSE);
+   fail_if (err_check != EINA_FALSE);
    fail_if (ecore_event_handler_del(e_err) != (void *) &err_check);
    fail_if (ecore_event_handler_del(e_add) != (void *) &err_check);
 }
