@@ -359,13 +359,11 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
  *
  * @param name The name of the benchmark.
  * @param run The name of the run.
- * @return @c NULL on failure, non @c NULL otherwise.
+ * @return A valid benchmark on success, or @c NULL on memory allocation
+ * failure.
  *
  * This function creates a new benchmark. @p name and @p run are used
  * to name the gnuplot file that eina_benchmark_run() will create.
- *
- * This function returns a valid benchmark on success, or @c NULL if
- * memory allocation fails.
  *
  * When the new module is not needed anymore, use
  * eina_benchmark_free() to free the allocated memory.
@@ -397,13 +395,12 @@ EAPI void            eina_benchmark_free(Eina_Benchmark *bench);
  *
  * This function adds the test named @p name to @p benchmark. @p
  * bench_cb is the function called when the test is executed. That
- * test can be executed a certain amount of time. @p count_start, @p count_end and
- * @p count_step define a loop with a step increment. The integer that is
- * increasing by @p count_step from @p count_start to @p count_end is passed to @p
- * bench_cb when eina_benchmark_run() is called.
+ * test can be executed a certain number of times, from @p count_start
+ * to @p count_end, with a step increment of @p count_step. This counter
+ * is passed to @p bench_cb when eina_benchmark_run() is called.
  *
- * If @p bench is @c NULL, this function returns immediately.
- * This function returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
+ * If @p bench is @c NULL or @p count_step is 0, this function returns
+ * immediately and does not add any tests to the benchmark.
  */
 EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
                                              const char              *name,
@@ -413,29 +410,26 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
                                              int                      count_step);
 
 /**
- * @brief Runs the benchmark tests that have been registered.
+ * @brief Runs the benchmark's registered tests.
  *
  * @param bench The benchmark.
- * @return The list of names of the test files.
+ * @return A list of gnuplot filenames for the test results, or @c NULL
+ * on failure.
  *
  * This function runs all the tests that have been registered with
- * eina_benchmark_register() and saves the result in a gnuplot
- * file. The name of the file has the following format:
+ * eina_benchmark_register() and saves the result in gnuplot
+ * input files. The filenames have the following format:
  *
  * @code
  * bench_[name]_[run]%s.gnuplot
  * @endcode
  *
  * Where [name] and [run] are the values passed to
- * eina_benchmark_new().
+ * eina_benchmark_new() when registering the test.
  *
  * Each registered test is executed and timed. The time is written to
  * the gnuplot file. The number of times each test is executed is
  * controlled by the parameters passed to eina_benchmark_register().
- *
- * If @p bench is @c NULL, this functions returns @c NULL
- * immediately. Otherwise, it returns the list of the names of each
- * test.
  */
 EAPI Eina_Array *eina_benchmark_run(Eina_Benchmark *bench);
 
