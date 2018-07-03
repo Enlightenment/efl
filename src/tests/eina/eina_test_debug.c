@@ -19,6 +19,7 @@ void
 eina_test_debug(TCase *tc)
 {
 #ifndef _WIN32
-   tcase_add_test_raise_signal(tc, eina_test_debug_sighandler, SIGPROF);
+   if (!eina_streq(getenv("CK_FORK"), "no"))
+     tcase_add_test_raise_signal(tc, eina_test_debug_sighandler, SIGPROF);
 #endif
 }
