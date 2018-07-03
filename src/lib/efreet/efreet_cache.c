@@ -16,6 +16,7 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Ecore_Ipc.h>
+#include <Ecore_Con.h>
 
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_cache_log_dom
@@ -168,9 +169,10 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (disable_cache) return ECORE_CALLBACK_RENEW;
    if (reconnect_count > 10)
      {
+        char *address = ecore_con_local_path_new(EINA_FALSE, "efreetd", 0);
         reconnect_timer = NULL;
-        ERR("efreetd connection failed 10 times! check for stale socket files in %s/.ecore/efreetd",
-          efreet_runtime_dir_get());
+        ERR("efreetd connection failed 10 times! check for stale socket file at %s", address);
+        free(address);
         return EINA_FALSE;
      }
    t = ecore_time_get();
