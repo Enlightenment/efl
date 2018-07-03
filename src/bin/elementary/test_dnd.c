@@ -1216,10 +1216,12 @@ _label_drop_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
 static Eina_Bool
 _image_drop_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
 {
-   const char *f = ev->data;
+   char *f = (char*)eina_memdup(ev->data, ev->len, 1);
+
    printf("%s: obj: %s %p drop data: %s\n", __func__,
           evas_object_type_get(obj), obj, f);
    elm_image_file_set(obj, f, NULL);
+   free(f);
    return EINA_TRUE;
 }
 
