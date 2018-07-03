@@ -1075,11 +1075,8 @@ _x11_general_converter(char *target EINA_UNUSED, void *data, int size EINA_UNUSE
         if (sel->data.mem)
           {
              if (data_ret)
-               {
-                  *data_ret = strdup(sel->data.mem);
-                  ((char **)(data_ret))[0][sel->data.len] = 0;
-               }
-             if (size_ret) *size_ret = strlen(sel->data.mem);
+               *data_ret = eina_memdup(sel->data.mem, sel->data.len, 1);
+             if (size_ret) *size_ret = sel->data.len;
           }
         else
           {
@@ -2673,7 +2670,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
                }
              else
                {
-                  data_ret = strdup(sel->data.mem);
+                  data_ret = eina_memdup(sel->data.mem, sel->data.len, 0);
                   len_ret = sel->data.len;
                }
              break;
