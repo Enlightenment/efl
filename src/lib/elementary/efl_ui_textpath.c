@@ -125,10 +125,10 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
 
    if (cmp == 0)
      {
-        *last_x1 = (int) floor(vec1.x + r.x + 0.5);
-        *last_y1 = (int) floor(vec1.y + r.y + 0.5);
-        *last_x2 = (int) floor(vec2.x + r.x + 0.5);
-        *last_y2 = (int) floor(vec2.y + r.y + 0.5);
+        *last_x1 = (int) round(vec1.x + r.x);
+        *last_y1 = (int) round(vec1.y + r.y);
+        *last_x2 = (int) round(vec2.x + r.x);
+        *last_y2 = (int) round(vec2.y + r.y);
      }
 
    //add points to map
@@ -181,10 +181,10 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
          * It improves smoothness of curve's slope changing. */
         mp0_x = *last_x1;
         mp0_y = *last_y1;
-        mp1_x = *last_x1 + (int) floor(vec1.x - vec0.x + 0.5);
-        mp1_y = *last_y1 + (int) floor(vec1.y - vec0.y + 0.5);
-        mp2_x = *last_x2 + (int) floor(vec2.x - vec3.x + 0.5);
-        mp2_y = *last_y2 + (int) floor(vec2.y - vec3.y + 0.5);
+        mp1_x = *last_x1 + (int) round(vec1.x - vec0.x);
+        mp1_y = *last_y1 + (int) round(vec1.y - vec0.y);
+        mp2_x = *last_x2 + (int) round(vec2.x - vec3.x);
+        mp2_y = *last_y2 + (int) round(vec2.y - vec3.y);
         mp3_x = *last_x2;
         mp3_y = *last_y2;
 
