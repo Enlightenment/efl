@@ -983,6 +983,7 @@ _ecore_con_server_new(Eina_Bool is_dialer, Ecore_Con_Type type, const char *name
 static void
 _ecore_con_server_dialer_close(Ecore_Con_Server *svr)
 {
+   svr->connecting = EINA_FALSE;
    if (!svr->dialer) return;
 
    if (!efl_io_closer_closed_get(svr->dialer))
@@ -1345,8 +1346,8 @@ _ecore_con_server_dialer_error(void *data, const Efl_Event *event)
 
    WRN("error reaching server %s: %s", efl_net_dialer_address_dial_get(svr->dialer), eina_error_msg_get(*perr));
 
-   _ecore_con_server_dialer_close(svr);
    _ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr));
+   _ecore_con_server_dialer_close(svr);
 }
 
 static void
