@@ -790,12 +790,14 @@ _x11_data_preparer_image(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
 static Eina_Bool
 _x11_win_filter(Eo *manager, Ecore_X_Window xwin)
 {
-   Eo *win = efl_parent_get(manager);
-   if (!win) return EINA_TRUE;
-   win = efl_ui_widget_top_get(win);
-   if (!win) return EINA_TRUE;
-   if (xwin != elm_win_xwindow_get(win)) return EINA_TRUE;
-   return EINA_FALSE;
+   Eo *win;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, win)
+     {
+        if (elm_win_window_id_get(win) == xwin) return EINA_FALSE;
+     }
+   return EINA_TRUE;
 }
 
 /*

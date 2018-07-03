@@ -25,16 +25,12 @@ static inline Eo *
 _selection_manager_get(Eo *obj)
 {
    if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return NULL;
-   Eo *top = elm_widget_top_get(obj);
-   if (!top)
-     {
-        top = obj;
-     }
-   Eo *sel_man = efl_key_data_get(top, "__selection_manager");
+   Eo *app = efl_app_get();
+   Eo *sel_man = efl_key_data_get(app, "__selection_manager");
    if (!sel_man)
      {
-        sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, top);
-        efl_key_data_set(top, "__selection_manager", sel_man);
+        sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, app);
+        efl_key_data_set(app, "__selection_manager", sel_man);
      }
    return sel_man;
 }
