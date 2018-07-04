@@ -788,7 +788,7 @@ _x11_data_preparer_image(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
 }
 
 static Eina_Bool
-_x11_win_filter(Eo *manager, Ecore_X_Window xwin)
+_x11_win_filter(Eo *manager EINA_UNUSED, Ecore_X_Window xwin)
 {
    Eo *win;
    const Eina_List *l;
