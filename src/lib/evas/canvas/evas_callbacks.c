@@ -471,12 +471,17 @@ evas_object_event_callback_add(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *cb_info;
    const Efl_Event_Description *desc;
 
-   if (!obj) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_obj);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(eo_obj));
+
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
 
    cb_info = calloc(1, sizeof(*cb_info));
    cb_info->func.object_cb = func;
@@ -494,11 +499,14 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
 EAPI void *
 evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!obj) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    if (!obj->callbacks) return NULL;
 
@@ -521,11 +529,14 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void *
 evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!obj) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    if (!obj->callbacks) return NULL;
 
@@ -555,12 +566,17 @@ evas_event_callback_add(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func,
 EAPI void
 evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Event_Cb_Wrapper_Info *cb_info;
    const Efl_Event_Description *desc;
 
-   if (!e) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(eo_e));
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    cb_info = calloc(1, sizeof(*cb_info));
    cb_info->func.evas_cb = func;
@@ -577,11 +593,14 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
 EAPI void *
 evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!e) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    if (!e->callbacks) return NULL;
 
@@ -604,11 +623,14 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 EAPI void *
 evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!e) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    if (!e->callbacks) return NULL;
 
@@ -631,10 +653,15 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
 EAPI void
 evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Post_Callback *pc;
 
-   if (!e || e->delete_me) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(eo_e));
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   if (e->delete_me) return;
    if (e->current_event == EVAS_CALLBACK_LAST)
      {
         ERR("%s() can only be called from an input event callback!", __FUNCTION__);
@@ -655,11 +682,14 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
 EAPI void
 evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Post_Callback *pc;
    Eina_List *l;
 
-   if (!e) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
         if (pc->func == func)
@@ -673,11 +703,14 @@ evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
 EAPI void
 evas_post_event_callback_remove_full(Evas *eo_e, Evas_Object_Event_Post_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Post_Callback *pc;
    Eina_List *l;
 
-   if (!e) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
         if ((pc->func == func) && (pc->data == data))
