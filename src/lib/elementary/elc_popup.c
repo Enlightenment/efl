@@ -224,6 +224,17 @@ _items_remove(Elm_Popup_Data *sd)
    sd->items = NULL;
 }
 
+static void
+_focus_changed_popup(void *data, const Efl_Event *ev)
+{
+   //mirror property
+   efl_ui_focus_object_focus_set(data, efl_ui_focus_object_focus_get(ev->object));
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
+   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed_popup },
+)
+
 EOLIAN static void
 _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
 {
@@ -237,6 +248,7 @@ _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
+   efl_event_callback_array_del(sd->notify, composition_cb(), obj);
 
    sd->last_button_number = 0;
 
@@ -1425,6 +1437,7 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
    elm_object_mirrored_set(priv->notify, elm_object_mirrored_get(obj));
 
    evas_object_event_callback_add(priv->notify, EVAS_CALLBACK_RESIZE, _notify_resize_cb, obj);
+   efl_event_callback_array_add(priv->notify, composition_cb(), obj);
 
    priv->main_layout = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->main_layout, "popup", "base",
