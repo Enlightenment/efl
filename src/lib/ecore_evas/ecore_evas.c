@@ -149,6 +149,8 @@ ecore_evas_render(Ecore_Evas *ee)
 {
    Eina_Bool rend = EINA_FALSE;
 
+   if (!ee->evas) return EINA_FALSE;
+
    if (ee->in_async_render)
      {
         DBG("ee=%p is rendering, skip.", ee);
@@ -3048,7 +3050,8 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
      {
-        ecore_evas_animator_tick(subee, NULL, loop_time);
+        if (subee->evas)
+          ecore_evas_animator_tick(subee, NULL, loop_time);
      }
 
    // We are a source of sync for general animator.
@@ -3274,9 +3277,11 @@ _ecore_evas_register(Ecore_Evas *ee)
 EAPI void
 _ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee)
 {
-   _ecore_evas_register_animators(ee);
-
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
+
+   if (!ee->evas) return;
+
+   _ecore_evas_register_animators(ee);
 
    if (!ee->engine.func->fn_render)
      evas_event_callback_priority_add(ee->evas, EVAS_CALLBACK_RENDER_POST, EVAS_CALLBACK_PRIORITY_AFTER,
