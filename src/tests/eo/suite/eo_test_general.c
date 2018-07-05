@@ -629,6 +629,9 @@ EFL_START_TEST(efl_refs)
    obj2 = efl_ref(efl_add(SIMPLE_CLASS, obj));
    obj3 = efl_add_ref(SIMPLE_CLASS, NULL);
 
+   efl_parent_set(obj, obj);
+   ck_assert_ptr_eq(efl_parent_get(obj), NULL);
+
    efl_parent_set(obj2, obj3);
    efl_parent_set(obj3, obj);
    ck_assert_int_eq(efl_ref_count(obj2), 2);
