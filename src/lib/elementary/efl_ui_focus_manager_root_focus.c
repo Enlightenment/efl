@@ -180,16 +180,29 @@ _efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager
      {
         efl_ui_focus_composition_adapter_canvas_object_set(pd->rect, pd->replacement_object);
         pd->iterator_list = eina_list_append(pd->iterator_list, pd->replacement_object);
-
      }
 }
 
+static void
+_focus_changed(void *data, const Efl_Event *ev)
+{
+   Eo *root;
+
+   root = efl_ui_focus_manager_root_get(data);
+
+   efl_ui_focus_object_focus_set(root, efl_ui_focus_object_focus_get(ev->object));
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
+   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed },
+)
 
 EOLIAN static Efl_Object*
 _efl_ui_focus_manager_root_focus_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    pd->rect = efl_add_ref(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->rect, NULL);
+   efl_event_callback_array_add(pd->rect, composition_cb(), obj);
 
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
