@@ -37,7 +37,6 @@ struct _Efreet_Old_Cache
 };
 
 static Ecore_Ipc_Server    *ipc = NULL;
-static Eina_Prefix         *pfx = NULL;
 static Ecore_Event_Handler *hnd_add = NULL;
 static Ecore_Event_Handler *hnd_del = NULL;
 static Ecore_Event_Handler *hnd_data = NULL;
@@ -101,6 +100,7 @@ static void icon_cache_update_free(void *data, void *ev);
 static void *hash_array_string_add(void *hash, const char *key, void *data);
 
 static Eina_Bool disable_cache;
+static Eina_Bool run_in_tree;
 
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
@@ -117,8 +117,10 @@ _ipc_launch(void)
    char buf[PATH_MAX];
    int num = 0;
 
-   if (!pfx) snprintf(buf, sizeof(buf), "efreetd");
-   else snprintf(buf, sizeof(buf), "%s/efreetd", eina_prefix_bin_get(pfx));
+   if (run_in_tree)
+     bs_binary_get(buf, sizeof(buf), "efreet", "efreetd");
+   else
+     snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
    ecore_exe_run(buf, NULL);
    while ((!ipc) && (num < 500))
      {
@@ -307,6 +309,8 @@ efreet_cache_init(void)
         ERR("Failed to create directory '%s'", buf);
     }
 
+    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_BUILD = ecore_event_type_new();
@@ -321,9 +325,6 @@ efreet_cache_init(void)
 
     if (efreet_cache_update)
     {
-       pfx = eina_prefix_new
-         (NULL, efreet_icon_cache_file, "EFREET", "efreet", "checkme",
-          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
        if (disable_cache)
          ipc = NULL;
        else
@@ -428,7 +429,6 @@ efreet_cache_shutdown(void)
     IF_RELEASE(util_cache_file);
 
    if (ipc) ecore_ipc_server_del(ipc);
-   if (pfx) eina_prefix_free(pfx);
    if (hnd_add) ecore_event_handler_del(hnd_add);
    if (hnd_del) ecore_event_handler_del(hnd_del);
    if (hnd_data) ecore_event_handler_del(hnd_data);
@@ -436,7 +436,6 @@ efreet_cache_shutdown(void)
    ecore_ipc_shutdown();
 
    ipc = NULL;
-   pfx = NULL;
    hnd_add = NULL;
    hnd_del = NULL;
    hnd_data = NULL;
