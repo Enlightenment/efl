@@ -88,7 +88,7 @@ _efl_net_proxy_helper_spawn(void)
      }
    // find binary location path
    if (run_in_tree == 1)
-     bs_binary_get(buf, sizeof(buf), "ecore_con/utils", "efl_net_proxy_helper");
+     bs_binary_get(buf, sizeof(buf), "ecore_con", "efl_net_proxy_helper");
    else
 #endif
      snprintf
