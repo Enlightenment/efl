@@ -280,7 +280,10 @@ evas_free(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   efl_del(eo_e);
+   if (efl_parent_get(eo_e))
+     efl_del(eo_e);
+   else
+     efl_unref(eo_e);
 }
 
 typedef struct _Forced_Death Forced_Death;
