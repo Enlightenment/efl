@@ -5189,7 +5189,7 @@ AC_ARG_ENABLE([elua],
        want_elua="no"
     fi
    ],
-   [want_elua="no"])
+   [want_elua="yes"])
 have_elua="yes"
 if test "${want_lua_old}" = "yes" -o "x$want_elua" = "xno"; then
   have_elua="no"
