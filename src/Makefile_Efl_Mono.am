@@ -186,7 +186,8 @@ lib/evas/canvas/efl_canvas_image.eo.cs \
 lib/evas/canvas/evas_table.eo.cs \
 lib/evas/canvas/evas_text.eo.cs \
 $(evas_canvas_eolian_type_files:%.eot=%.eot.cs) \
-lib/eo/eina_types.eot.cs
+lib/eo/eina_types.eot.cs \
+lib/ecore/efl_loop_timer.eo.cs
 
 efl_mono_files_gen =\
 $(efl_eolian_mono_files) \
