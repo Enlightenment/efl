@@ -4337,7 +4337,7 @@ _elm_win_wl_configure(void *data, int t EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Window_Configure *ev = event;
    ELM_WIN_DATA_GET(data, sd);
-   if (ecore_wl2_window_id_get(sd->wl.win) != (int)ev->win) return ECORE_CALLBACK_RENEW;
+   if (sd->wl.win != ev->win) return ECORE_CALLBACK_RENEW;
 
    if (sd->resizing && (!ev->edges)) sd->resizing = EINA_FALSE;
    return ECORE_CALLBACK_RENEW;
@@ -8413,14 +8413,14 @@ _elm_win_window_id_get(Efl_Ui_Win_Data *sd)
 {
 #if HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
-     return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
+     return (Ecore_Window)sd->wl.win;
    if (sd->parent)
      {
         Ecore_Wl2_Window *parent;
 
         parent = elm_win_wl_window_get(sd->parent);
         if (parent)
-          return (Ecore_Window)ecore_wl2_window_id_get(parent);
+          return (Ecore_Window)parent;
      }
 #endif
 #ifdef HAVE_ELEMENTARY_X

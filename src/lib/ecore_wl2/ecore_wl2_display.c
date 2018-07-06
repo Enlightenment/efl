@@ -145,7 +145,7 @@ _aux_hints_supported_aux_hints(void *data, struct efl_aux_hints *aux_hints EINA_
      }
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl2_Event_Aux_Hint_Supported)))) return;
-   ev->win = win->id;
+   ev->win = win;
    ev->display = ewd;
    ewd->refs++;
    ecore_event_add(ECORE_WL2_EVENT_AUX_HINT_SUPPORTED, ev, _display_event_free, ewd);
@@ -164,7 +164,7 @@ _aux_hints_allowed_aux_hint(void *data, struct efl_aux_hints *aux_hints  EINA_UN
    if (!win) return;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl2_Event_Aux_Hint_Allowed)))) return;
-   ev->win = win->id;
+   ev->win = win;
    ev->id = id;
    ev->display = ewd;
    ewd->refs++;
@@ -212,7 +212,7 @@ _aux_hints_aux_message(void *data, struct efl_aux_hints *aux_hints EINA_UNUSED, 
           }
      }
 
-   ev->win = win->id;
+   ev->win = win;
    ev->key = eina_stringshare_add(key);
    ev->val = eina_stringshare_add(val);
    ev->options = opt_list;
@@ -1084,16 +1084,9 @@ ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h)
 }
 
 EAPI Ecore_Wl2_Window *
-ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id)
+ecore_wl2_display_window_find(Ecore_Wl2_Display *display EINA_UNUSED, uintptr_t id)
 {
-   Ecore_Wl2_Window *window;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
-
-   EINA_INLIST_FOREACH(display->windows, window)
-     if (window->id == (int)id) return window;
-
-   return NULL;
+   return (Ecore_Wl2_Window *)id;
 }
 
 EAPI struct wl_registry *
