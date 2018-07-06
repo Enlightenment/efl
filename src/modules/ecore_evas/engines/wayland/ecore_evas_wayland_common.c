@@ -1410,7 +1410,6 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    free(wdata);
 
    ecore_event_window_unregister(ee->prop.window);
-   ecore_evas_input_event_unregister(ee);
 
    _ecore_evas_wl_common_shutdown();
 
