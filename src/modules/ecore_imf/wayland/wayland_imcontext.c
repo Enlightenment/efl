@@ -906,8 +906,7 @@ wayland_im_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 
    if (window != NULL)
      {
-        imcontext->window =
-          ecore_wl2_display_window_find(ewd, (Ecore_Window)window);
+        imcontext->window = window;
      }
 }
 

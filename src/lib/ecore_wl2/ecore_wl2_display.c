@@ -1083,12 +1083,6 @@ ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h)
    if (h) *h = oh;
 }
 
-EAPI Ecore_Wl2_Window *
-ecore_wl2_display_window_find(Ecore_Wl2_Display *display EINA_UNUSED, uintptr_t id)
-{
-   return (Ecore_Wl2_Window *)id;
-}
-
 EAPI struct wl_registry *
 ecore_wl2_display_registry_get(Ecore_Wl2_Display *display)
 {
