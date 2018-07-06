@@ -245,17 +245,6 @@ static int cur_image_entry;
 
 static void data_write_images(void);
 
-static void
-print_error(const char *fmt, ...)
-{
-   va_list ap;
-
-   va_start(ap, fmt);
-   eina_log_vprint(_edje_cc_log_dom, EINA_LOG_LEVEL_CRITICAL,
-                   "unknown", "unknown", 0, fmt, ap);
-   va_end(ap);
-}
-
 void
 error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
 {
@@ -600,7 +589,7 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
 }
 
 static void
-_part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef EINA_UNUSED, Eina_Bool ns_required)
+_part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_Bool ns_required)
 {
    char buf[1024], *p;
    size_t len;
@@ -625,7 +614,7 @@ _part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef EIN
    if ((!ns_required) && (!p)) return;
 
    if (strncmp(ep->name, buf, len))
-     print_error("Part '%s' from group %s is not properly namespaced (should begin with '%s.')!", ep->name, de->entry, buf);
+     error_and_abort(ef, "Part '%s' from group %s is not properly namespaced (should begin with '%s.')!", ep->name, de->entry, buf);
 }
 
 static void
@@ -691,7 +680,7 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
-_program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef EINA_UNUSED, const char *sig, const char *src)
+_program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef, const char *sig, const char *src)
 {
    char buf[1024], *p;
    size_t len;
@@ -714,7 +703,7 @@ _program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef EINA_UNU
    if (eina_strlcpy(buf, de->entry, len + 1) >= sizeof(buf)) return;
 
    if (strncmp(sig, buf, len))
-     print_error("SIGNAL_EMIT (%s:%s) does not match group namespace (%s)!", sig, src, de->entry);
+     error_and_abort(ef, "SIGNAL_EMIT (%s:%s) does not match group namespace (%s)!", sig, src, de->entry);
 }
 
 static void
