@@ -115,9 +115,9 @@ _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->window);
+   ee = ecore_event_window_match((Ecore_Window)ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (_ecore_evas_mouse_in_check(ee, ev->dev)) return ECORE_CALLBACK_PASS_ON;
 
    _ecore_evas_mouse_inout_set(ee, ev->dev, EINA_TRUE, EINA_FALSE);
@@ -136,9 +136,9 @@ _ecore_evas_wl_common_cb_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->window);
+   ee = ecore_event_window_match((Ecore_Window)ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (!_ecore_evas_mouse_in_check(ee, ev->dev)) return ECORE_CALLBACK_PASS_ON;
 
    ecore_event_evas_seat_modifier_lock_update(ee->evas,
@@ -158,9 +158,9 @@ _ecore_evas_wl_common_cb_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->window);
+   ee = ecore_event_window_match((Ecore_Window)ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_focus_device_set(ee, ev->dev, EINA_TRUE);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -174,9 +174,9 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->window);
+   ee = ecore_event_window_match((Ecore_Window)ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_focus_device_set(ee, ev->dev, EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -570,9 +570,9 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    wdata = ee->engine.data;
    if (!wdata) return ECORE_CALLBACK_PASS_ON;
@@ -683,10 +683,10 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
 
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
    if (!einfo) return ECORE_CALLBACK_PASS_ON;
@@ -709,9 +709,9 @@ _ecore_evas_wl_common_cb_aux_message(void *data  EINA_UNUSED, int type EINA_UNUS
    Ecore_Wl2_Event_Aux_Message *ev;
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (eina_streq(ev->key, "stack_del"))
      {
         if (ee->func.fn_delete_request)
@@ -729,9 +729,9 @@ _ecore_evas_wl_common_cb_aux_hint_supported(void *data  EINA_UNUSED, int type EI
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    wdata = ee->engine.data;
    EINA_LIST_FREE(ee->prop.aux_hint.supported_list, hint) eina_stringshare_del(hint);
    ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
@@ -747,9 +747,9 @@ _ecore_evas_wl_common_cb_aux_hint_allowed(void *data  EINA_UNUSED, int type EINA
    Ecore_Evas_Aux_Hint *aux;
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    EINA_LIST_FOREACH(ee->prop.aux_hint.hints, l, aux)
      {
@@ -776,9 +776,9 @@ _ecore_evas_wl_common_cb_window_rotate(void *data EINA_UNUSED, int type EINA_UNU
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_wl_common_rotation_set(ee, ev->rotation, ev->resize);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -944,9 +944,9 @@ _ecore_evas_wl_common_cb_www_drag(void *d EINA_UNUSED, int t EINA_UNUSED, void *
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas *ee;
 
-   ee = ecore_event_window_match(ev->window);
+   ee = ecore_event_window_match((Ecore_Window)ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    wdata = ee->engine.data;
    wdata->dragging = !!ev->dragging;
@@ -962,9 +962,9 @@ _ecore_evas_wl_common_cb_www(void *d EINA_UNUSED, int t EINA_UNUSED, void *event
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas *ee;
 
-   ee = ecore_event_window_match(ev->window);
+   ee = ecore_event_window_match((Ecore_Window)ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    wdata = ee->engine.data;
    wdata->x_rel += ev->x_rel;
@@ -992,7 +992,7 @@ _ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type dev
    ev->dev = efl_ref(dev);
    ev->type = device_type;
    ev->seat_id = id;
-   ev->window_id = ee->prop.window;
+   ev->window = (Ecore_Wl2_Window *)ee->prop.window;
 
    ecore_event_add(event_type, ev,
                    _ecore_evas_wl_common_cb_device_event_free, dev);
@@ -1265,10 +1265,10 @@ _ecore_evas_wl_common_cb_iconify_state_change(void *data EINA_UNUSED, int type E
    Ecore_Wl2_Event_Window_Iconify_State_Change *ev;
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match((Ecore_Window)ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    if (!ev->force) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    if (ee->prop.iconified == ev->iconified)
      return ECORE_CALLBACK_PASS_ON;
@@ -2429,7 +2429,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 };
 
 Ecore_Evas *
-_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name)
+_ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name)
 {
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Window *p = NULL;
@@ -2519,7 +2519,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    wdata->display = ewd;
 
    wdata->win = ecore_wl2_window_new(ewd, p, x, y, w, h);
-   ee->prop.window = ecore_wl2_window_id_get(wdata->win);
+   ee->prop.window = (Ecore_Window)wdata->win;
    ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
    ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
 

@@ -76,7 +76,7 @@ _ecore_wl2_surface_cb_offscreen(void *data, int type EINA_UNUSED, void *event)
    Ecore_Wl2_Event_Window_Offscreen *ev = event;
    Ecore_Wl2_Surface *surf = data;
 
-   if (surf->wl2_win->id == (int)ev->win)
+   if (surf->wl2_win == ev->win)
       ecore_wl2_surface_flush(surf, EINA_FALSE);
 
    return ECORE_CALLBACK_RENEW;

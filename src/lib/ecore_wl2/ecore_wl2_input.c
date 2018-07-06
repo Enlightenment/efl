@@ -47,10 +47,10 @@ typedef struct _Ecore_Wl2_Mouse_Down_Info
 {
    EINA_INLIST;
    int device, sx, sy;
-   int last_win;
-   int last_last_win;
-   int last_event_win;
-   int last_last_event_win;
+   Ecore_Wl2_Window *last_win;
+   Ecore_Wl2_Window *last_last_win;
+   Ecore_Wl2_Window *last_event_win;
+   Ecore_Wl2_Window *last_last_event_win;
    unsigned int last_time;
    unsigned int last_last_time;
    Eina_Bool double_click : 1;
@@ -82,14 +82,14 @@ _ecore_wl2_input_mouse_down_info_get(int device)
 }
 
 static Ecore_Wl2_Input_Devices *
-_ecore_wl2_devices_get(const Ecore_Wl2_Input *input, int window_id)
+_ecore_wl2_devices_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Input_Devices *devices;
    Eina_List *l;
 
    EINA_LIST_FOREACH(input->devices_list, l, devices)
      {
-        if (devices->window_id == window_id)
+        if (devices->window == window)
           return devices;
      }
 
@@ -97,11 +97,11 @@ _ecore_wl2_devices_get(const Ecore_Wl2_Input *input, int window_id)
 }
 
 static Eo *
-_ecore_wl2_mouse_dev_get(Ecore_Wl2_Input *input, int window_id)
+_ecore_wl2_mouse_dev_get(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Input_Devices *devices;
 
-   devices = _ecore_wl2_devices_get(input, window_id);
+   devices = _ecore_wl2_devices_get(input, window);
    if (devices && devices->pointer_dev)
      return efl_ref(devices->pointer_dev);
 
@@ -109,11 +109,11 @@ _ecore_wl2_mouse_dev_get(Ecore_Wl2_Input *input, int window_id)
 }
 
 static Eo *
-_ecore_wl2_touch_dev_get(Ecore_Wl2_Input *input, int window_id)
+_ecore_wl2_touch_dev_get(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Input_Devices *devices;
 
-   devices = _ecore_wl2_devices_get(input, window_id);
+   devices = _ecore_wl2_devices_get(input, window);
    if (devices && devices->touch_dev)
      return efl_ref(devices->touch_dev);
 
@@ -121,11 +121,11 @@ _ecore_wl2_touch_dev_get(Ecore_Wl2_Input *input, int window_id)
 }
 
 static Eo *
-_ecore_wl2_seat_dev_get(Ecore_Wl2_Input *input, int window_id)
+_ecore_wl2_seat_dev_get(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Input_Devices *devices;
 
-   devices = _ecore_wl2_devices_get(input, window_id);
+   devices = _ecore_wl2_devices_get(input, window);
    if (devices)
      return efl_ref(devices->seat_dev);
 
@@ -150,11 +150,11 @@ _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
-   ev->window = window->id;
-   ev->event_window = window->id;
+   ev->window = (Ecore_Window)window;
+   ev->event_window = (Ecore_Window)window;
    ev->timestamp = input->timestamp;
    ev->modifiers = input->keyboard.modifiers;
-   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
+   ev->dev = _ecore_wl2_mouse_dev_get(input, window);
 
    ecore_event_add(ECORE_EVENT_MOUSE_IN, ev, _input_event_cb_free, ev->dev);
 }
@@ -169,11 +169,11 @@ _ecore_wl2_input_mouse_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window
 
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
-   ev->window = window->id;
-   ev->event_window = window->id;
+   ev->window = (Ecore_Window)window;
+   ev->event_window = (Ecore_Window)window;
    ev->timestamp = input->timestamp;
    ev->modifiers = input->keyboard.modifiers;
-   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
+   ev->dev = _ecore_wl2_mouse_dev_get(input, window);
 
    ecore_event_add(ECORE_EVENT_MOUSE_OUT, ev, _input_event_cb_free, ev->dev);
 }
@@ -187,8 +187,8 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
 
-   ev->window = window->id;
-   ev->event_window = window->id;
+   ev->window = (Ecore_Window)window;
+   ev->event_window = (Ecore_Window)window;
    ev->timestamp = input->timestamp;
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
@@ -207,9 +207,9 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->multi.root.y = input->pointer.sy;
 
    if ((input->focus.touch) && (input->focus.touch == window))
-     ev->dev = _ecore_wl2_touch_dev_get(input, window->id);
+     ev->dev = _ecore_wl2_touch_dev_get(input, window);
    else if ((input->focus.pointer) && (input->focus.pointer == window))
-     ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
+     ev->dev = _ecore_wl2_mouse_dev_get(input, window);
 
    info = _ecore_wl2_input_mouse_down_info_get(device);
    if (info)
@@ -248,27 +248,27 @@ _ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int
 
    if (input->grab.window)
      {
-        ev->window = input->grab.window->id;
-        ev->event_window = input->grab.window->id;
+        ev->window = (Ecore_Window)input->grab.window;
+        ev->event_window = (Ecore_Window)input->grab.window;
      }
    else if (input->focus.pointer)
      {
-        ev->window = input->focus.pointer->id;
-        ev->event_window = input->focus.pointer->id;
-        ev->dev = _ecore_wl2_mouse_dev_get(input, input->focus.pointer->id);
+        ev->window = (Ecore_Window)input->focus.pointer;
+        ev->event_window = (Ecore_Window)input->focus.pointer;
+        ev->dev = _ecore_wl2_mouse_dev_get(input, input->focus.pointer);
      }
    else if (input->focus.touch)
      {
-        ev->window = input->focus.touch->id;
-        ev->event_window = input->focus.touch->id;
-        ev->dev = _ecore_wl2_touch_dev_get(input, input->focus.touch->id);
+        ev->window = (Ecore_Window)input->focus.touch;
+        ev->event_window = (Ecore_Window)input->focus.touch;
+        ev->dev = _ecore_wl2_touch_dev_get(input, input->focus.touch);
      }
 
    if (!ev->dev)
      {
-        ev->dev = _ecore_wl2_mouse_dev_get(input, ev->window);
+        ev->dev = _ecore_wl2_mouse_dev_get(input, (Ecore_Wl2_Window *)ev->window);
         if (!ev->dev)
-          ev->dev = _ecore_wl2_touch_dev_get(input, ev->window);
+          ev->dev = _ecore_wl2_touch_dev_get(input, (Ecore_Wl2_Window *)ev->window);
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, _input_event_cb_free, ev->dev);
@@ -318,8 +318,8 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
           }
 
         if (((int)(timestamp - info->last_time) <= (int)(1000 * 0.25)) &&
-            ((window) && (window->id == info->last_win) &&
-                (window->id == info->last_event_win)))
+            ((window) && (window == info->last_win) &&
+                (window == info->last_event_win)))
           {
              ev->double_click = 1;
              info->double_click = EINA_TRUE;
@@ -332,10 +332,10 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
 
         if (((int)(timestamp - info->last_last_time) <=
              (int)(2 * 1000 * 0.25)) &&
-            ((window) && (window->id == info->last_win) &&
-                (window->id == info->last_last_win) &&
-                (window->id == info->last_event_win) &&
-                (window->id == info->last_last_event_win)))
+            ((window) && (window == info->last_win) &&
+                (window == info->last_last_win) &&
+                (window == info->last_event_win) &&
+                (window == info->last_last_event_win)))
           {
              ev->triple_click = 1;
              info->triple_click = EINA_TRUE;
@@ -357,13 +357,13 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
 
    if (window)
      {
-        ev->window = window->id;
-        ev->event_window = window->id;
+        ev->window = (Ecore_Window)window;
+        ev->event_window = (Ecore_Window)window;
 
         if ((input->focus.touch) && (input->focus.touch == window))
-          ev->dev = _ecore_wl2_touch_dev_get(input, window->id);
+          ev->dev = _ecore_wl2_touch_dev_get(input, window);
         else if ((input->focus.pointer) && (input->focus.pointer == window))
-          ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
+          ev->dev = _ecore_wl2_mouse_dev_get(input, window);
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev,
@@ -372,9 +372,9 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    if ((info) && (!info->triple_click))
      {
         info->last_last_win = info->last_win;
-        info->last_win = ev->window;
+        info->last_win = (Ecore_Wl2_Window *)ev->window;
         info->last_last_event_win = info->last_event_win;
-        info->last_event_win = ev->window;
+        info->last_event_win = (Ecore_Wl2_Window *)ev->window;
         info->last_last_time = info->last_time;
         info->last_time = timestamp;
      }
@@ -433,13 +433,13 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
    ev->multi.root.x = input->pointer.sx;
    ev->multi.root.y = input->pointer.sy;
 
-   ev->window = window->id;
-   ev->event_window = window->id;
+   ev->window = (Ecore_Window)window;
+   ev->event_window = (Ecore_Window)window;
 
    if ((input->focus.touch) && (input->focus.touch == window))
-     ev->dev = _ecore_wl2_touch_dev_get(input, window->id);
+     ev->dev = _ecore_wl2_touch_dev_get(input, window);
    else if ((input->focus.pointer) && (input->focus.pointer == window))
-     ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
+     ev->dev = _ecore_wl2_mouse_dev_get(input, window);
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev,
                    _input_event_cb_free, ev->dev);
@@ -464,8 +464,8 @@ _ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
    if (!ev) return;
 
    ev->timestamp = input->timestamp;
-   ev->window = window->id;
-   ev->dev = _ecore_wl2_seat_dev_get(input, window->id);
+   ev->window = window;
+   ev->dev = _ecore_wl2_seat_dev_get(input, window);
    ev->display = input->display;
    ev->display->refs++;
    ecore_event_add(ECORE_WL2_EVENT_FOCUS_IN, ev, _input_event_focus_cb_free,
@@ -481,8 +481,8 @@ _ecore_wl2_input_focus_out_send(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input
    if (!ev) return;
 
    ev->timestamp = input->timestamp;
-   ev->window = window->id;
-   ev->dev = _ecore_wl2_seat_dev_get(input, window->id);
+   ev->window = window;
+   ev->dev = _ecore_wl2_seat_dev_get(input, window);
    ev->display = input->display;
    ev->display->refs++;
    ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, _input_event_focus_cb_free,
@@ -609,11 +609,11 @@ _ecore_wl2_input_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, un
 }
 
 static Eo *
-_ecore_wl2_keyboard_dev_get(Ecore_Wl2_Input *input, int window_id)
+_ecore_wl2_keyboard_dev_get(Ecore_Wl2_Input *input, Ecore_Wl2_Window * window)
 {
    Ecore_Wl2_Input_Devices *devices;
 
-   devices = _ecore_wl2_devices_get(input, window_id);
+   devices = _ecore_wl2_devices_get(input, window);
    if (devices && devices->keyboard_dev)
      return efl_ref(devices->keyboard_dev);
 
@@ -649,12 +649,12 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    strcpy((char *)ev->key, key);
    if (comp_len) strcpy((char *)ev->compose, compose);
 
-   ev->window = window->id;
-   ev->event_window = window->id;
+   ev->window = (Ecore_Window)window;
+   ev->event_window = (Ecore_Window)window;
    ev->timestamp = timestamp;
    ev->modifiers = input->keyboard.modifiers;
    ev->keycode = code;
-   ev->dev = _ecore_wl2_keyboard_dev_get(input, window->id);
+   ev->dev = _ecore_wl2_keyboard_dev_get(input, window);
 
    /* DBG("Emitting Key event (%s,%s,%s,%s)\n", ev->keyname, ev->key, ev->compose, ev->string); */
 
@@ -1535,7 +1535,7 @@ _ecore_wl2_cb_device_event(void *data, int type, void *event)
 
    EINA_LIST_FOREACH(input->devices_list, l, devs)
      {
-        if (devs->window_id == ev->window_id)
+        if (devs->window == ev->window)
           {
              devices = devs;
              break;
@@ -1550,7 +1550,7 @@ _ecore_wl2_cb_device_event(void *data, int type, void *event)
              EINA_SAFETY_ON_NULL_RETURN_VAL(devices, ECORE_CALLBACK_PASS_ON);
              input->devices_list =
                eina_list_append(input->devices_list, devices);
-             devices->window_id = ev->window_id;
+             devices->window = ev->window;
           }
 
         if (ev->type == ECORE_WL2_DEVICE_TYPE_POINTER)
@@ -1747,7 +1747,7 @@ _ecore_wl2_input_window_remove(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
      }
 
    EINA_LIST_FOREACH_SAFE(input->devices_list, l, l_next, devices)
-      if (devices->window_id == window->id)
+      if (devices->window == window)
         {
            _ecore_wl2_devices_free(devices);
            input->devices_list = eina_list_remove_list(input->devices_list, l);
@@ -1828,7 +1828,7 @@ ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Wi
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
-   devices = _ecore_wl2_devices_get(input, window->id);
+   devices = _ecore_wl2_devices_get(input, window);
    return devices ?  devices->seat_dev : NULL;
 }
 

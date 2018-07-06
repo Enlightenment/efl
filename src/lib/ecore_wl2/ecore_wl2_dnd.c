@@ -53,21 +53,21 @@ struct _Ecore_Wl2_Offer
    uint32_t serial;
    Eina_List *reads;
    int ref;
-   unsigned int window_id;
+   Ecore_Wl2_Window *window;
    Eina_Bool proxied : 1;
 };
 
-static int
+Ecore_Wl2_Window *
 _win_id_get(Ecore_Wl2_Input *input)
 {
-   int win = 0;
+   Ecore_Wl2_Window *win = NULL;
 
    if (input->focus.pointer)
-     win = input->focus.pointer->id;
+     win = input->focus.pointer;
    else if (input->focus.prev_pointer)
-     win = input->focus.prev_pointer->id;
+     win = input->focus.prev_pointer;
    else if (input->focus.keyboard)
-     win = input->focus.keyboard->id;
+     win = input->focus.keyboard;
 
    return win;
 }
@@ -149,7 +149,7 @@ static void
 event_fill(struct _Ecore_Wl2_Event_Data_Source_Event *ev, Ecore_Wl2_Input *input)
 {
    if (input->focus.keyboard)
-     ev->source = input->focus.keyboard->id;
+     ev->source = input->focus.keyboard;
 
    ev->win = _win_id_get(input);
    ev->action = input->data.drag.action;
@@ -256,7 +256,7 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
         if (input->drag.offer)
           {
              input->drag.offer->serial = serial;
-             input->drag.offer->window_id = window->id;
+             input->drag.offer->window = window;
 
              if (input->display->wl.data_device_manager_version >=
                  WL_DATA_OFFER_SET_ACTIONS_SINCE_VERSION)
@@ -269,14 +269,14 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    else input->drag.offer = NULL;
 
    input->drag.enter_serial = serial;
-   input->drag.window_id = window->id;
+   input->drag.window = window;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Enter));
    if (!ev) return;
 
    if (input->focus.keyboard)
-     ev->source = input->focus.keyboard->id;
-   ev->win = input->drag.window_id;
+     ev->source = input->focus.keyboard;
+   ev->win = input->drag.window;
 
    ev->x = x;
    ev->y = y;
@@ -311,9 +311,9 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
    if (!ev) return;
 
    if (input->focus.keyboard)
-     ev->source = input->focus.keyboard->id;
+     ev->source = input->focus.keyboard;
 
-   ev->win = input->drag.window_id;
+   ev->win = input->drag.window;
    ev->offer = input->drag.offer;
    if (ev->offer)
      ev->offer->ref++;
@@ -321,7 +321,7 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
    ev->display = input->display;
    ev->display->refs++;
 
-   input->drag.window_id = 0;
+   input->drag.window = NULL;
    input->drag.enter_serial = 0;
    input->drag.offer = NULL;
    ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, _delay_offer_destroy, ev->offer);
@@ -342,9 +342,9 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
      input->drag.offer->serial = serial;
 
    if (input->focus.keyboard)
-     ev->source = input->focus.keyboard->id;
+     ev->source = input->focus.keyboard;
 
-   ev->win = input->drag.window_id;
+   ev->win = input->drag.window;
    ev->x = x;
    ev->y = y;
    ev->offer = input->drag.offer;
@@ -364,9 +364,9 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
    if (!ev) return;
 
    if (input->focus.keyboard)
-     ev->source = input->focus.keyboard->id;
+     ev->source = input->focus.keyboard;
 
-   ev->win = input->drag.window_id;
+   ev->win = input->drag.window;
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
    ev->offer = input->drag.offer;
@@ -524,7 +524,7 @@ ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
    if (!ev) return;
 
    if (input->focus.keyboard)
-     ev->source = input->focus.keyboard->id;
+     ev->source = input->focus.keyboard;
 
 
    ev->win = _win_id_get(input);

@@ -54,10 +54,10 @@ _ecore_wl2_window_activate_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Activate));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_ACTIVATE, ev, NULL, NULL);
 }
 
@@ -69,10 +69,10 @@ _ecore_wl2_window_deactivate_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Deactivate));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_DEACTIVATE, ev, NULL, NULL);
 }
 
@@ -84,8 +84,8 @@ _ecore_wl2_window_configure_send(Ecore_Wl2_Window *win)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure));
    if (!ev) return;
 
-   ev->win = win->id;
-   ev->event_win = win->id;
+   ev->win = win;
+   ev->event_win = win;
 
    if ((win->set_config.geometry.w == win->def_config.geometry.w) &&
        (win->set_config.geometry.h == win->def_config.geometry.h))
@@ -124,7 +124,7 @@ _configure_complete(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure_Complete));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE, ev, NULL, NULL);
 
 }
@@ -139,7 +139,7 @@ _www_surface_end_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
 
    ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW_Drag));
    EINA_SAFETY_ON_NULL_RETURN(ev);
-   ev->window = window->id;
+   ev->window = window;
    ev->dragging = 0;
 
    ecore_event_add(_ecore_wl2_event_window_www_drag, ev, NULL, NULL);
@@ -153,7 +153,7 @@ _www_surface_start_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
 
    ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW_Drag));
    EINA_SAFETY_ON_NULL_RETURN(ev);
-   ev->window = window->id;
+   ev->window = window;
    ev->dragging = 1;
 
    ecore_event_add(_ecore_wl2_event_window_www_drag, ev, NULL, NULL);
@@ -167,7 +167,7 @@ _www_surface_status(void *data, struct www_surface *www_surface EINA_UNUSED, int
 
    ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW));
    EINA_SAFETY_ON_NULL_RETURN(ev);
-   ev->window = window->id;
+   ev->window = window;
    ev->x_rel = x_rel;
    ev->y_rel = y_rel;
    ev->timestamp = timestamp;
@@ -465,7 +465,7 @@ _surface_leave(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output
         ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Offscreen));
         if (ev)
           {
-             ev->win = win->id;
+             ev->win = win;
              ecore_event_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN, ev, NULL, NULL);
           }
      }
@@ -514,10 +514,10 @@ _ecore_wl2_window_show_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Show));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_SHOW, ev, NULL, NULL);
 }
 
@@ -529,10 +529,10 @@ _ecore_wl2_window_hide_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Hide));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_HIDE, ev, NULL, NULL);
 }
 
@@ -540,7 +540,6 @@ EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
    Ecore_Wl2_Window *win;
-   static int _win_id = 1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
    if (display->pid) CRI("CANNOT CREATE WINDOW WITH SERVER DISPLAY");
@@ -552,7 +551,6 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
 
    win->display = display;
    win->parent = parent;
-   win->id = _win_id++;
 
    win->set_config.geometry.x = x;
    win->set_config.geometry.y = y;
@@ -571,13 +569,6 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    _ecore_wl2_window_surface_create(win);
 
    return win;
-}
-
-EAPI int
-ecore_wl2_window_id_get(Ecore_Wl2_Window *window)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, -1);
-   return window->id;
 }
 
 EAPI struct wl_surface *
@@ -1257,7 +1248,7 @@ ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot,
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = w;
    ev->h = h;
@@ -1276,7 +1267,7 @@ ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = 0;
    ev->h = 0;
@@ -1296,7 +1287,7 @@ ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Request));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = 0;
    ev->h = 0;
@@ -1316,7 +1307,7 @@ ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, in
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Done));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = w;
    ev->h = h;

@@ -634,8 +634,8 @@ text_input_keysym(void *data,
    strcpy((char *)e->key, key);
    strcpy((char *)e->string, string);
 
-   e->window = ecore_wl2_window_id_get(imcontext->window);
-   e->event_window = ecore_wl2_window_id_get(imcontext->window);
+   e->window = (Ecore_Window)imcontext->window;
+   e->event_window = (Ecore_Window)imcontext->window;
    e->timestamp = time;
 
    e->modifiers = 0;
