@@ -3749,6 +3749,8 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * This macro lets you easily add a variable size array of strings. All
  * the parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC().
  *
+ * @note The strings in this array will be loaded as a single blob of memory.
+ *
  * @since 1.4.0
  */
 #define EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY_STRING(edd, struct_type, name, member) \

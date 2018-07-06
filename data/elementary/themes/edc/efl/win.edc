@@ -1,3 +1,31 @@
 group { "efl/win";
-   inherit: "elm/win/base/default";
+   data.item: "version" "119";
+   parts {
+      rect { "client_clip"; nomouse; }
+      swallow { "efl.menu";
+         clip_to: "client_clip";
+         desc { "default";
+            rel2.relative: 1 0;
+            link.base: "efl,action,hide" "efl";
+            align: 0.5 0.0;
+            hid;
+         }
+         desc { "visible";
+            inherit: "default";
+            link.base: "efl,action,show_menu" "efl";
+            fixed: 0 1;
+            vis;
+         }
+      }
+      swallow { "efl.contents";
+         clip_to: "client_clip";
+         desc { "default";
+         }
+         desc { "with_menu";
+            rel1.to: "efl.menu";
+            rel1.relative: 0 1;
+            link.base: "efl,action,show_menu" "efl";
+         }
+      }
+   }
 }

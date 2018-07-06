@@ -12,7 +12,7 @@
 /* Test the init and shutdown pathes only. Good to do that as we don't set up
  * other things and already triggered problems with this.
  */
-START_TEST(elocation_test_init)
+EFL_START_TEST(elocation_test_init)
 {
    Eina_Bool ret;
 
@@ -21,10 +21,10 @@ START_TEST(elocation_test_init)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Basic address object testing. Creating and freeing the object */
-START_TEST(elocation_test_address_object)
+EFL_START_TEST(elocation_test_address_object)
 {
    Eina_Bool ret;
    Elocation_Address *address = NULL;
@@ -39,10 +39,10 @@ START_TEST(elocation_test_address_object)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Basic position object testing. Creating and freeing the object */
-START_TEST(elocation_test_position_object)
+EFL_START_TEST(elocation_test_position_object)
 {
    Eina_Bool ret;
    Elocation_Position *position = NULL;
@@ -57,7 +57,7 @@ START_TEST(elocation_test_position_object)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Basic testing for the various functions of the GeoCode API */
 static int cb_count = 0;
@@ -74,7 +74,7 @@ event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_DONE;
 }
 
-START_TEST(elocation_test_api_geocode)
+EFL_START_TEST(elocation_test_api_geocode)
 {
    Eina_Bool ret;
    Elocation_Position *position = NULL;
@@ -117,10 +117,10 @@ START_TEST(elocation_test_api_geocode)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Basic testing for position API */
-START_TEST(elocation_test_api_position)
+EFL_START_TEST(elocation_test_api_position)
 {
    Eina_Bool ret;
    Elocation_Position *position = NULL;
@@ -138,10 +138,10 @@ START_TEST(elocation_test_api_position)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Basic testing for address API */
-START_TEST(elocation_test_api_address)
+EFL_START_TEST(elocation_test_api_address)
 {
    Eina_Bool ret;
    Elocation_Address *address = NULL;
@@ -159,10 +159,10 @@ START_TEST(elocation_test_api_address)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* Basic testing for status API */
-START_TEST(elocation_test_api_status)
+EFL_START_TEST(elocation_test_api_status)
 {
    Eina_Bool ret;
    int status = 0;
@@ -175,7 +175,7 @@ START_TEST(elocation_test_api_status)
 
    elocation_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 Suite *
 elocation_suite(void)

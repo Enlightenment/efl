@@ -67,9 +67,12 @@ _handler_clear(Efl_Loop_Handler_Data *pd)
 static Ecore_Fd_Handler_Flags
 _handler_flags_get(Efl_Loop_Handler_Data *pd)
 {
-   return ((pd->references.read  > 0) ? ECORE_FD_READ  : 0) |
-          ((pd->references.write > 0) ? ECORE_FD_WRITE : 0) |
-          ((pd->references.error > 0) ? ECORE_FD_ERROR : 0);
+   return (((pd->flags & EFL_LOOP_HANDLER_FLAGS_READ) &&
+            (pd->references.read > 0)) ? ECORE_FD_READ  : 0) |
+          (((pd->flags & EFL_LOOP_HANDLER_FLAGS_WRITE) &&
+            (pd->references.write > 0)) ? ECORE_FD_WRITE  : 0) |
+          (((pd->flags & EFL_LOOP_HANDLER_FLAGS_ERROR) &&
+            (pd->references.error > 0)) ? ECORE_FD_ERROR  : 0);
 }
 
 static void
@@ -129,7 +132,7 @@ _handler_reset(Eo *obj, Efl_Loop_Handler_Data *pd)
 static Eina_Bool
 _event_references_update(Efl_Loop_Handler_Data *pd, const Efl_Event *event, int increment)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    int i;
    Eina_Bool need_reset = EINA_FALSE;
 
@@ -157,12 +160,14 @@ _cb_handler_fd(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Eo *obj = data;
 
+   efl_ref(obj);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      efl_event_callback_call(obj, EFL_LOOP_HANDLER_EVENT_READ, NULL);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      efl_event_callback_call(obj, EFL_LOOP_HANDLER_EVENT_WRITE, NULL);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      efl_event_callback_call(obj, EFL_LOOP_HANDLER_EVENT_ERROR, NULL);
+   efl_unref(obj);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -222,7 +227,7 @@ _efl_loop_handler_active_set(Eo *obj, Efl_Loop_Handler_Data *pd, Efl_Loop_Handle
 }
 
 static Efl_Loop_Handler_Flags
-_efl_loop_handler_active_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_active_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    return pd->flags;
 }
@@ -237,7 +242,7 @@ _efl_loop_handler_fd_set(Eo *obj, Efl_Loop_Handler_Data *pd, int fd)
 }
 
 static int
-_efl_loop_handler_fd_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_fd_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    if (pd->win32) return -1;
    return pd->file ? -1 : pd->fd;
@@ -253,7 +258,7 @@ _efl_loop_handler_fd_file_set(Eo *obj, Efl_Loop_Handler_Data *pd, int fd)
 }
 
 static int
-_efl_loop_handler_fd_file_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_fd_file_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    if (pd->win32) return -1;
    return pd->file ? pd->fd : -1;
@@ -269,7 +274,7 @@ _efl_loop_handler_win32_set(Eo *obj, Efl_Loop_Handler_Data *pd, void *handle)
 }
 
 static void *
-_efl_loop_handler_win32_get(Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
+_efl_loop_handler_win32_get(const Eo *obj EINA_UNUSED, Efl_Loop_Handler_Data *pd)
 {
    return pd->win32;
 }
@@ -326,12 +331,11 @@ _efl_loop_handler_efl_object_finalize(Eo *obj, Efl_Loop_Handler_Data *pd)
 static void
 _efl_loop_handler_efl_object_destructor(Eo *obj, Efl_Loop_Handler_Data *pd)
 {
-   efl_destructor(efl_super(obj, MY_CLASS));
-
    if (pd->loop_data)
      pd->loop_data->fd_handlers_obj =
        eina_list_remove(pd->loop_data->fd_handlers_obj, obj);
    _handler_clear(pd);
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 #include "efl_loop_handler.eo.c"

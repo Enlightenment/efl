@@ -4,7 +4,7 @@ Eina_Bool _class_simple_a_set(Eo *obj, Evas_Simple_Data *pd, int value);
 
 EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE /* true */, EFL_FUNC_CALL(value), int value);
 
-int _class_simple_a_get(Eo *obj, Evas_Simple_Data *pd);
+int _class_simple_a_get(const Eo *obj, Evas_Simple_Data *pd);
 
 EOAPI EFL_FUNC_BODY_CONST(efl_canvas_object_simple_a_get, int, 100);
 

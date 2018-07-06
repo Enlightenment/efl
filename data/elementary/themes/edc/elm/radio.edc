@@ -52,7 +52,7 @@ group { name: "elm/radio/base/default";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
             visible: 0;

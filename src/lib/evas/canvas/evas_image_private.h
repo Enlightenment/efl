@@ -111,8 +111,8 @@ struct _Evas_Image_Data
    int               pixels_checked_out;
    int               load_error;
 
-   Efl_Image_Scale_Hint   scale_hint;
-   Efl_Image_Content_Hint content_hint;
+   Efl_Gfx_Image_Scale_Hint   scale_hint;
+   Efl_Gfx_Image_Content_Hint content_hint;
    Efl_Flip               flip_value;
    Efl_Orient             orient_value;
 
@@ -163,7 +163,7 @@ Eina_Bool _evas_image_file_set(Eo *eo_obj, const char *file, const char *key);
 void _evas_image_file_get(const Eo *eo_obj, const char **file, const char **key);
 
 /* Efl.Image.Load */
-Efl_Image_Load_Error _evas_image_load_error_get(const Eo *eo_obj);
+Efl_Gfx_Image_Load_Error _evas_image_load_error_get(const Eo *eo_obj);
 void _evas_image_load_post_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void _evas_image_load_async_start(Eo *eo_obj);
 void _evas_image_load_async_cancel(Eo *eo_obj);
@@ -182,10 +182,10 @@ Eina_Bool _evas_image_load_orientation_get(const Eo *eo_obj);
 Eina_Bool _evas_image_load_region_support_get(const Eo *eo_obj);
 void _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient);
 
-/* Efl.Image.Animated */
+/* Efl.Image_Animation_Controller */
 Eina_Bool _evas_image_animated_get(const Eo *eo_obj);
 int _evas_image_animated_frame_count_get(const Eo *eo_obj);
-Efl_Image_Animated_Loop_Hint _evas_image_animated_loop_type_get(const Eo *eo_obj);
+Efl_Gfx_Image_Animation_Controller_Loop_Hint _evas_image_animated_loop_type_get(const Eo *eo_obj);
 int _evas_image_animated_loop_count_get(const Eo *eo_obj);
 double _evas_image_animated_frame_duration_get(const Eo *eo_obj, int start_frame, int frame_num);
 Eina_Bool _evas_image_animated_frame_set(Eo *eo_obj, int frame_index);

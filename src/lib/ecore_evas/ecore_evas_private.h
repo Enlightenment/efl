@@ -213,7 +213,7 @@ struct _Ecore_Evas
    short       rotation;
    Eina_Bool   shaped  : 1;
    Eina_Bool   visible : 1;
-   Eina_Bool   draw_ok : 1;
+   Eina_Bool   draw_block : 1;
    Eina_Bool   should_be_visible : 1;
    Eina_Bool   alpha  : 1;
    Eina_Bool   transparent  : 1;
@@ -486,6 +486,9 @@ Eina_Bool _ecore_evas_cursors_init(Ecore_Evas *ee);
 
 EAPI void ecore_evas_render_wait(Ecore_Evas *ee);
 EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
+
+EAPI Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
+EAPI void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
 
 static inline Eina_Bool
 ecore_evas_render_prepare(Ecore_Evas *ee)

@@ -151,7 +151,7 @@ _efl_net_ssl_context_string_list_free(Eina_List **p_lst)
 }
 
 static Eina_Iterator *
-_efl_net_ssl_context_certificates_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_certificates_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return eina_list_iterator_new(pd->certificates);
 }
@@ -165,7 +165,7 @@ _efl_net_ssl_context_certificates_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Dat
 }
 
 static Eina_Iterator *
-_efl_net_ssl_context_private_keys_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_private_keys_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return eina_list_iterator_new(pd->private_keys);
 }
@@ -179,7 +179,7 @@ _efl_net_ssl_context_private_keys_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Dat
 }
 
 static Eina_Iterator *
-_efl_net_ssl_context_certificate_revocation_lists_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_certificate_revocation_lists_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return eina_list_iterator_new(pd->certificate_revocation_lists);
 }
@@ -193,7 +193,7 @@ _efl_net_ssl_context_certificate_revocation_lists_set(Eo *o EINA_UNUSED, Efl_Net
 }
 
 static Eina_Iterator *
-_efl_net_ssl_context_certificate_authorities_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_certificate_authorities_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return eina_list_iterator_new(pd->certificate_authorities);
 }
@@ -207,7 +207,7 @@ _efl_net_ssl_context_certificate_authorities_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_
 }
 
 static Eina_Bool
-_efl_net_ssl_context_default_paths_load_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_default_paths_load_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return pd->load_defaults;
 }
@@ -220,7 +220,7 @@ _efl_net_ssl_context_default_paths_load_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Conte
 }
 
 static Efl_Net_Ssl_Verify_Mode
-_efl_net_ssl_context_verify_mode_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_verify_mode_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return pd->verify_mode;
 }
@@ -235,7 +235,7 @@ _efl_net_ssl_context_verify_mode_set(Eo *o, Efl_Net_Ssl_Context_Data *pd, Efl_Ne
 }
 
 static Eina_Bool
-_efl_net_ssl_context_hostname_verify_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_hostname_verify_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return pd->hostname_verify;
 }
@@ -250,7 +250,7 @@ _efl_net_ssl_context_hostname_verify_set(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_
 }
 
 static const char *
-_efl_net_ssl_context_hostname_get(Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
+_efl_net_ssl_context_hostname_get(const Eo *o EINA_UNUSED, Efl_Net_Ssl_Context_Data *pd)
 {
    return pd->hostname;
 }
@@ -336,8 +336,6 @@ _efl_net_ssl_context_efl_object_constructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
 EOLIAN static void
 _efl_net_ssl_context_efl_object_destructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
 {
-   efl_destructor(efl_super(o, MY_CLASS));
-
    efl_net_ssl_ctx_teardown(&pd->ssl_ctx);
 
    _efl_net_ssl_context_string_list_free(&pd->certificates);
@@ -346,6 +344,8 @@ _efl_net_ssl_context_efl_object_destructor(Eo *o, Efl_Net_Ssl_Context_Data *pd)
    _efl_net_ssl_context_string_list_free(&pd->certificate_authorities);
 
    eina_stringshare_replace(&pd->hostname, NULL);
+
+   efl_destructor(efl_super(o, MY_CLASS));
 }
 
 static Efl_Net_Ssl_Context *_efl_net_ssl_context_default_dialer = NULL;
@@ -357,11 +357,11 @@ _efl_net_ssl_context_default_dialer_del(void *data EINA_UNUSED, const Efl_Event 
 }
 
 EOLIAN static Efl_Net_Ssl_Context *
-_efl_net_ssl_context_default_dialer_get(Efl_Class *klass, void *pd EINA_UNUSED)
+_efl_net_ssl_context_default_dialer_get(const Efl_Class *klass, void *pd EINA_UNUSED)
 {
    if (!_efl_net_ssl_context_default_dialer)
      {
-        _efl_net_ssl_context_default_dialer = efl_add(klass, NULL,
+        _efl_net_ssl_context_default_dialer = efl_add(klass, efl_main_loop_get(),
                                                       efl_net_ssl_context_verify_mode_set(efl_added, EFL_NET_SSL_VERIFY_MODE_REQUIRED),
                                                       efl_net_ssl_context_hostname_verify_set(efl_added, EINA_TRUE),
                                                       efl_net_ssl_context_default_paths_load_set(efl_added, EINA_TRUE),

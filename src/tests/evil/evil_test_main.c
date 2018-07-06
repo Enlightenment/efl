@@ -24,12 +24,10 @@
 
 #include "evil_suite.h"
 
-START_TEST(evil_main_simple)
+EFL_START_TEST(evil_main_simple)
 {
-   fail_if(evil_init() != 1);
-   fail_if(evil_shutdown() != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void evil_test_main(TCase *tc)
 {

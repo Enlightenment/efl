@@ -1216,7 +1216,7 @@ _rect_same(Eina_Rectangle *rec1, Eina_Rectangle *rec2)
    // this is ok because all the rects being compared will be aligned to 8bytes
    Rectangle_Same *same1 = (Rectangle_Same *)rec1;
    Rectangle_Same *same2 = (Rectangle_Same *)rec2;
-   return ((same1->x == same2->y) && (same1->y == same2->y));
+   return ((same1->x == same2->x) && (same1->y == same2->y));
 }
 
 EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
@@ -1237,7 +1237,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
       return EINA_FALSE;
 
    if (_rect_same(&tmp, &t->last.add))
-      return EINA_FALSE;
+      return EINA_TRUE;
 
    t->last.add = tmp;
    t->last.del.w = t->last.del.h = -1;

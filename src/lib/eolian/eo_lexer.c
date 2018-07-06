@@ -72,9 +72,8 @@ static const char * const ctypes[] =
 
    "void",
 
-   "Eina_Accessor *", "Eina_Array *", "Eina_Iterator *", "Eina_Hash *",
-   "Eina_List *", "Eina_Inarray *", "Eina_Inlist *",
-   "Efl_Future *",
+   "Eina_Accessor *", "Eina_Array *", "Eina_Future *", "Eina_Iterator *",
+   "Eina_Hash *", "Eina_List *", "Eina_Inarray *", "Eina_Inlist *",
    "Eina_Value", "Eina_Value *",
    "char *", "const char *", "Eina_Stringshare *", "Eina_Strbuf *",
 
@@ -108,14 +107,19 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    for (i = 0; i < ls->column; ++i)
      eina_strbuf_append_char(buf, ' ');
    eina_strbuf_append(buf, "^\n");
-   _eolian_log_line(ls->source, ls->line_number, ls->column,
-                    "%s", eina_strbuf_string_get(buf));
+   Eolian_Object tmp;
+   memset(&tmp, 0, sizeof(Eolian_Object));
+   tmp.unit = ls->unit;
+   tmp.file = ls->source;
+   tmp.line = ls->line_number;
+   tmp.column = ls->column;
+   eolian_state_log_obj(ls->state, &tmp, "%s", eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
-   longjmp(ls->err_jmp, EINA_TRUE);
+   longjmp(ls->err_jmp, EO_LEXER_ERROR_NORMAL);
 }
 
-static void
-init_hash(void)
+void
+eo_lexer_init(void)
 {
    unsigned int i;
    if (keyword_map) return;
@@ -124,8 +128,8 @@ init_hash(void)
      eina_hash_add(keyword_map, keywords[i], (void *)(size_t)(i + 1));
 }
 
-static void
-destroy_hash(void)
+void
+eo_lexer_shutdown(void)
 {
    if (keyword_map)
      {
@@ -275,18 +279,18 @@ doc_ref_class(Eo_Lexer *ls, const char *cname)
           *p = tolower(*p);
      }
    memcpy(buf + clen, ".eo", sizeof(".eo"));
-   const char *eop = eina_hash_find(ls->state->filenames_eo, buf);
-   if (!eop)
+   if (!eina_hash_find(ls->state->filenames_eo, buf))
      return;
-   eina_hash_set(ls->state->defer, buf, eop);
+   /* ref'd classes do not become dependencies */
+   database_defer(ls->state, buf, EINA_FALSE);
 }
 
 static void
-doc_ref(Eo_Lexer *ls)
+doc_ref(Eo_Lexer *ls, Eolian_Documentation *doc)
 {
    const char *st = ls->stream, *ste = ls->stream_end;
    size_t rlen = 0;
-   while ((st != ste) && ((*st == '.') || isalnum(*st)))
+   while ((st != ste) && ((*st == '.') || (*st == '_') || isalnum(*st)))
      {
         ++st;
         ++rlen;
@@ -304,6 +308,12 @@ doc_ref(Eo_Lexer *ls)
 
    /* actual full class name */
    doc_ref_class(ls, buf);
+
+   /* it's definitely a reference, add debug info
+    * 20 bits for line and 12 bits for column, good enough
+    */
+   doc->ref_dbg = eina_list_append(doc->ref_dbg,
+     (void *)(size_t)((ls->line_number & 0xFFFFF) | (((ls->column + 1) & 0xFFF) << 20)));
 
    /* method name at the end */
    char *end = strrchr(buf, '.');
@@ -323,7 +333,7 @@ doc_ref(Eo_Lexer *ls)
 }
 
 static int
-doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
+doc_lex(Eo_Lexer *ls, Eolian_Documentation *doc, Eina_Bool *term, Eina_Bool *since)
 {
    int tokret = -1;
    eina_strbuf_reset(ls->buff);
@@ -393,15 +403,15 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
              tokret = DOC_TEXT;
              goto exit_with_token;
           }
-        doc_ref(ls);
+        doc_ref(ls, doc);
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
         /* in-class references */
-        if (ls->tmp.kls && ls->current == '.')
+        if (ls->klass && ls->current == '.')
           {
              next_char(ls);
              if (isalpha(ls->current) || ls->current == '_')
-               eina_strbuf_append(ls->buff, ls->tmp.kls->full_name);
+               eina_strbuf_append(ls->buff, ls->klass->base.name);
              eina_strbuf_append_char(ls->buff, '.');
           }
         continue;
@@ -448,6 +458,7 @@ void doc_error(Eo_Lexer *ls, const char *msg, Eolian_Documentation *doc, Eina_St
 {
    eina_stringshare_del(doc->summary);
    eina_stringshare_del(doc->description);
+   eina_list_free(doc->ref_dbg);
    free(doc);
    eina_strbuf_free(buf);
    eo_lexer_lex_error(ls, msg, -1);
@@ -457,9 +468,14 @@ static void
 read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 {
    Eolian_Documentation *doc = calloc(1, sizeof(Eolian_Documentation));
+   if (!doc)
+     longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
+
+   doc->base.unit = ls->unit;
    doc->base.file = ls->filename;
    doc->base.line = line;
    doc->base.column = column;
+   doc->base.type = EOLIAN_OBJECT_DOCUMENTATION;
 
    Eina_Strbuf *rbuf = eina_strbuf_new();
 
@@ -473,7 +489,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
              term = EINA_TRUE;
           }
         else
-          read = doc_lex(ls, &term, &since);
+          read = doc_lex(ls, doc, &term, &since);
         switch (read)
           {
            case DOC_MANGLED:
@@ -504,8 +520,8 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
    if (!doc->summary)
      doc->summary = eina_stringshare_add("No description supplied.");
-   if (!doc->since && ls->tmp.kls && ls->tmp.kls->doc)
-     doc->since = eina_stringshare_ref(ls->tmp.kls->doc->since);
+   if (!doc->since && ls->klass && ls->klass->doc)
+     doc->since = eina_stringshare_ref(ls->klass->doc->since);
    eina_strbuf_free(rbuf);
    tok->value.doc = doc;
 }
@@ -1014,13 +1030,49 @@ get_filename(Eo_Lexer *ls)
 }
 
 static void
-eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
+_node_free(Eolian_Object *obj)
+{
+#if 0
+   /* for when we have a proper node allocator and collect on shutdown */
+   if (obj->refcount > 1)
+     {
+        eolian_state_log(obj->state, "node %p (type %d, name %s at %s:%d:%d)"
+                         " dangling ref (count: %d)", obj, obj->type, obj->name,
+                         obj->file, obj->line, obj->column, obj->refcount);
+     }
+#endif
+   switch (obj->type)
+     {
+      case EOLIAN_OBJECT_CLASS:
+        database_class_del((Eolian_Class *)obj);
+        break;
+      case EOLIAN_OBJECT_TYPEDECL:
+        database_typedecl_del((Eolian_Typedecl *)obj);
+        break;
+      case EOLIAN_OBJECT_TYPE:
+        database_type_del((Eolian_Type *)obj);
+        break;
+      case EOLIAN_OBJECT_VARIABLE:
+        database_var_del((Eolian_Variable *)obj);
+        break;
+      case EOLIAN_OBJECT_EXPRESSION:
+        database_expr_del((Eolian_Expression *)obj);
+        break;
+      default:
+        /* normally unreachable, just for debug */
+        assert(0);
+        break;
+     }
+}
+
+static void
+eo_lexer_set_input(Eo_Lexer *ls, Eolian_State *state, const char *source)
 {
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
      {
-        _eolian_log("%s", strerror(errno));
-        longjmp(ls->err_jmp, EINA_TRUE);
+        eolian_state_log(state, "%s", strerror(errno));
+        longjmp(ls->err_jmp, EO_LEXER_ERROR_NORMAL);
      }
    ls->lookahead.token = -1;
    ls->state           = state;
@@ -1034,12 +1086,18 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
    ls->iline_number    = ls->line_number = 1;
    ls->icolumn         = ls->column = -1;
    ls->decpoint        = '.';
+   ls->nodes           = eina_hash_pointer_new(EINA_FREE_CB(_node_free));
    next_char(ls);
 
    Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
+   if (!ncunit)
+     {
+        eo_lexer_free(ls);
+        eolian_state_panic(state, "out of memory");
+     }
    ls->unit = ncunit;
-   database_unit_init(state, ncunit);
-   eina_hash_add(state->units, ls->filename, ncunit);
+   database_unit_init(state, ncunit, ls->filename);
+   eina_hash_add(state->staging.units, ls->filename, ncunit);
 
    if (ls->current != 0xEF)
      return;
@@ -1052,31 +1110,25 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
    next_char(ls);
 }
 
-static void
-_temps_free(Eo_Lexer_Temps *tmp)
+Eolian_Object *
+eo_lexer_node_new(Eo_Lexer *ls, size_t objsize)
 {
-   Eina_Strbuf *buf;
-   Eolian_Type *tp;
-   Eolian_Typedecl *tpd;
-   const char *s;
+   Eolian_Object *obj = calloc(1, objsize);
+   if (!obj)
+     longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
+   eina_hash_add(ls->nodes, &obj, obj);
+   eolian_object_ref(obj);
+   return obj;
+}
 
-   if (tmp->kls)
-     database_class_del(tmp->kls);
-
-   if (tmp->var)
-     database_var_del(tmp->var);
-
-   EINA_LIST_FREE(tmp->str_bufs, buf)
-     eina_strbuf_free(buf);
-
-   EINA_LIST_FREE(tmp->type_defs, tp)
-     database_type_del(tp);
-
-   EINA_LIST_FREE(tmp->type_decls, tpd)
-     database_typedecl_del(tpd);
-
-   EINA_LIST_FREE(tmp->strs, s)
-     if (s) eina_stringshare_del(s);
+Eolian_Object *
+eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj)
+{
+   /* just for debug */
+   assert(eina_hash_find(ls->nodes, &obj) && (obj->refcount >= 1));
+   eolian_object_unref(obj);
+   eina_hash_set(ls->nodes, &obj, NULL);
+   return obj;
 }
 
 static void
@@ -1100,6 +1152,29 @@ _free_tok(Eo_Token *tok)
 }
 
 void
+eo_lexer_dtor_push(Eo_Lexer *ls, Eina_Free_Cb free_cb, void *data)
+{
+   Eo_Lexer_Dtor *dt = malloc(sizeof(Eo_Lexer_Dtor));
+   if (!dt)
+     {
+        free_cb(data);
+        longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
+     }
+   dt->free_cb = free_cb;
+   dt->data = data;
+   ls->dtors = eina_list_prepend(ls->dtors, dt);
+}
+
+void
+eo_lexer_dtor_pop(Eo_Lexer *ls)
+{
+   Eo_Lexer_Dtor *dt = eina_list_data_get(ls->dtors);
+   ls->dtors = eina_list_remove_list(ls->dtors, ls->dtors);
+   dt->free_cb(dt->data);
+   free(dt);
+}
+
+void
 eo_lexer_free(Eo_Lexer *ls)
 {
    if (!ls) return;
@@ -1110,14 +1185,22 @@ eo_lexer_free(Eo_Lexer *ls)
 
    _free_tok(&ls->t);
    eo_lexer_context_clear(ls);
-   _temps_free(&ls->tmp);
+
+   Eo_Lexer_Dtor *dtor;
+   EINA_LIST_FREE(ls->dtors, dtor)
+     dtor->free_cb(dtor->data);
+
+   eina_hash_free(ls->nodes);
+
    free(ls);
 }
 
 Eo_Lexer *
-eo_lexer_new(Eolian *state, const char *source)
+eo_lexer_new(Eolian_State *state, const char *source)
 {
    volatile Eo_Lexer *ls = calloc(1, sizeof(Eo_Lexer));
+   if (!ls)
+     eolian_state_panic(state, "out of memory");
 
    if (!setjmp(((Eo_Lexer *)(ls))->err_jmp))
      {
@@ -1226,32 +1309,6 @@ eo_lexer_get_c_type(int kw)
    return ctypes[kw - KW_byte];
 }
 
-static int _init_counter = 0;
-
-int
-eo_lexer_init()
-{
-   if (!_init_counter)
-     {
-        eina_init();
-        init_hash();
-     }
-   return _init_counter++;
-}
-
-int
-eo_lexer_shutdown()
-{
-   if (_init_counter <= 0) return 0;
-   _init_counter--;
-   if (!_init_counter)
-     {
-        destroy_hash();
-        eina_shutdown();
-     }
-   return _init_counter;
-}
-
 static Eina_Bool
 _eo_is_tokstr(int t) {
     return (t == TOK_STRING) || (t == TOK_VALUE);
@@ -1262,10 +1319,7 @@ eo_lexer_context_push(Eo_Lexer *ls)
 {
    Lexer_Ctx *ctx = malloc(sizeof(Lexer_Ctx));
    if (!ctx)
-     {
-        _eolian_log("out of memory pushing context");
-        longjmp(ls->err_jmp, EINA_TRUE);
-     }
+     longjmp(ls->err_jmp, EO_LEXER_ERROR_OOM);
    ctx->line = ls->line_number;
    ctx->column = ls->column;
    ctx->linestr = ls->stream_line;

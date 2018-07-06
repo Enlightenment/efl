@@ -4,7 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
-#include "namespace.hh"
+#include "name_helpers.hh"
 
 namespace eolian_mono {
 
@@ -115,7 +115,7 @@ struct visitor_generate
                       r.base_type = " void";
                   return r;
               }}
-           , {"Error", nullptr, [&] // Eina.Error
+           , {"Eina.Error", nullptr, [&] // Eina.Error
               {
                 return regular_type_def{" eina.Error", regular.base_qualifier, {}};
               }} // TODO
@@ -137,6 +137,10 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " System.String");
               }}
+           , {"strbuf", nullptr, [&]
+              {
+                return regular_type_def{" eina.Strbuf", regular.base_qualifier, {}};
+              }}
            , {"any_value", true, [&]
               { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
               }}
@@ -147,24 +151,12 @@ struct visitor_generate
               { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
               }} // FIXME add proper support for any_value_ptr
         };
-      // if(regular.base_type == "void_ptr")
-      //   {
-      //     if(regular.base_qualifier & qualifier_info::is_ref)
-      //       throw std::runtime_error("ref of void_ptr is invalid");
-      //     return as_generator
-      //        (
-      //         lit("void") << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
-      //         << "*"
-      //         << (is_out ? "&" : "")
-      //        )
-      //        .generate(sink, attributes::unused, *context);
-      //   }
-      // else
+        std::string full_type_name = name_helpers::type_full_eolian_name(regular);
         if(eina::optional<bool> b = call_match
          (match_table
           , [&] (match const& m)
           {
-            return (!m.name || *m.name == regular.base_type)
+            return (!m.name || *m.name == regular.base_type || *m.name == full_type_name)
             && (!m.has_own || *m.has_own == (bool)(regular.base_qualifier & qualifier_info::is_own))
             ;
           }
@@ -229,7 +221,7 @@ struct visitor_generate
       //     else
       //       return false;
       //   }
-      // else if(Eolian_Typedecl const* typedecl = eolian_typedecl_struct_get_by_name(c_type.c_str()))
+      // else if(Eolian_Typedecl const* typedecl = eolian_state_struct_by_name_get(c_type.c_str()))
       //   {
       //   return as_generator
       //        (
@@ -240,40 +232,12 @@ struct visitor_generate
       //   }
       else
         {
-          // as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
-          //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
-          if(as_generator
-             (
-              *(lower_case[string] << ".")
-              << string
-              // << (regular.base_qualifier & qualifier_info::is_const
-              //     || (regular.base_qualifier & qualifier_info::is_ref
-              //         && !is_return && !is_out)
-              //     ? /*" const"*/ "" : "")
-              /*<< (regular.base_qualifier & qualifier_info::is_ref? "&" : "")*/
-             )
-             .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context))
-            return true;
-          else
-            return false;
+          return as_generator(string).generate(sink, name_helpers::type_full_managed_name(regular), *context);
         }
    }
    bool operator()(attributes::klass_name klass) const
    {
-     // as_generator(" Generating: " << *(lower_case[string] << ".") << string << "\n")
-     //   .generate(std::ostream_iterator<char>(std::cerr), std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context);
-     // if(klass.namespaces.size() == 1
-     //    && klass.namespaces[0] == "Eina"
-     //    && klass.eolian_name == "Error")
-     // return
-     //   as_generator(" System.IntPtr")
-     //   .generate(sink, attributes::unused, *context);
-     return
-       as_generator(*(lower_case[string] << ".") << string)
-       .generate(sink, std::make_tuple(eolian_mono::escape_namespace(klass.namespaces), klass.eolian_name), *context)
-       // && (!(klass.base_qualifier & qualifier_info::is_ref)
-       //     || as_generator("&").generate(sink, attributes::unused, *context))
-       ;
+     return as_generator(string).generate(sink, name_helpers::klass_full_interface_name(klass), *context);
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {
@@ -318,19 +282,11 @@ struct visitor_generate
              complex_type_def c = complex;
              c.outer.base_type = "eina.Hash";
              return c;
-           }}
-        , {"promise", nullptr, nullptr, [&]
-           {
-             return replace_outer
-             (complex, regular_type_def{" ::efl::promise", complex.outer.base_qualifier, {}});
-           }           
-          }
+         }}
         , {"future", nullptr, nullptr, [&]
            {
-             (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
+             (*this)(regular_type_def{" eina.Future", complex.outer.base_qualifier, {}});
              return attributes::type_def::variant_type();
-             // return replace_outer
-             // (complex, regular_type_def{" ::efl::shared_future", complex.outer.base_qualifier, {}});
            }           
           }
         , {"iterator", nullptr, nullptr, [&]
@@ -342,10 +298,9 @@ struct visitor_generate
           }
         , {"accessor", nullptr, nullptr, [&]
            {
-             (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
-             return attributes::type_def::variant_type();
-             // return replace_outer
-             // (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}});
+             complex_type_def c = complex;
+             c.outer.base_type = "eina.Accessor";
+             return c;
            }           
           }
       };

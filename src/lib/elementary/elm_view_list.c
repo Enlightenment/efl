@@ -13,13 +13,8 @@
 #define MY_CLASS ELM_VIEW_LIST_CLASS
 #define MY_CLASS_NAME "View List"
 
-struct _Elm_View_List_Data;
 typedef struct _Elm_View_List_Data Elm_View_List_Data;
-
-struct _View_List_ItemData;
 typedef struct _View_List_ItemData View_List_ItemData;
-
-struct _View_List_ValueItem;
 typedef struct _View_List_ValueItem View_List_ValueItem;
 
 struct _Elm_View_List_Data
@@ -29,8 +24,11 @@ struct _Elm_View_List_Data
    View_List_ItemData *rootdata;
    Elm_Genlist_Item_Class *itc;
    Elm_Genlist_Item_Type itype;
-   Eina_Hash *prop_con;
-   Eo *model;
+
+   struct {
+      Eina_Hash *properties;
+      Eo *model;
+   } connect;
 };
 
 struct _View_List_ItemData
@@ -50,7 +48,8 @@ struct _View_List_ValueItem
 };
 
 static void _efl_model_load_children(View_List_ItemData *);
-static void _efl_model_children_count_change_cb(void *, const Efl_Event *event);
+static void _efl_model_children_added_cb(void *, const Efl_Event *event);
+static void _efl_model_children_removed_cb(void *, const Efl_Event *event);
 static void _efl_model_properties_change_cb(void *, const Efl_Event *event);
 
 static void _expand_request_cb(void *data EINA_UNUSED, const Efl_Event *event);
@@ -59,7 +58,8 @@ static void _contracted_cb(void *data EINA_UNUSED, const Efl_Event *event);
 
 /* --- Genlist Callbacks --- */
 EFL_CALLBACKS_ARRAY_DEFINE(model_callbacks,
-                          { EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _efl_model_children_count_change_cb });
+                           { EFL_MODEL_EVENT_CHILD_ADDED, _efl_model_children_added_cb },
+                           { EFL_MODEL_EVENT_CHILD_REMOVED, _efl_model_children_removed_cb });
 EFL_CALLBACKS_ARRAY_DEFINE(genlist_callbacks,
                           { ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb },
                           { ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb },
@@ -79,8 +79,8 @@ static void
 _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
    View_List_ItemData *idata = data;
-   if (!idata)
-      return;
+
+   if (!idata) return;
 
    efl_event_callback_array_del(idata->model, model_callbacks(), idata);
    efl_event_callback_del(idata->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
@@ -94,107 +94,57 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
    free(idata);
 }
 
-static void
-_property_get_cb(void* data, Efl_Event const* event)
-{
-    View_List_ValueItem *vitem = data;
-    Eina_Value *value = (Eina_Value*)((Efl_Future_Event_Success*)event->info)->value;
-    vitem->value = eina_value_new(eina_value_type_get(value));
-    eina_value_copy(value, vitem->value);
-
-    if (vitem->item)
-      elm_genlist_item_update(vitem->item);
-}
-
-static void
-_property_get_error_cb(void* data, Efl_Event const* event EINA_UNUSED)
-{
-    View_List_ValueItem *vitem = data;
-    eina_stringshare_del(vitem->part);
-}
-
-static Eina_Value *
-_item_get_value(View_List_ItemData *idata, const char *part)
-{
-   View_List_ValueItem *vitem = NULL;
-   Eina_Value *value = NULL;
-   Eina_List *l, *ln;
-
-   EINA_LIST_FOREACH_SAFE(idata->values, l, ln, vitem)
-     {
-         if (vitem->part == NULL)
-           {
-              unsigned i = eina_list_count(idata->values);
-              if (i == 1)
-                {
-                   idata->values = eina_list_remove(idata->values, vitem);
-                   free(vitem);
-                   break;
-                }
-              idata->values = eina_list_remove_list(idata->values, l);
-              free(vitem);
-              continue;
-           }
-
-         if (strcmp(vitem->part, part) == 0)
-           {
-               value = vitem->value;
-               break;
-           }
-     }
-
-   if (value == NULL)
-     {
-         Efl_Future *future;
-         vitem = calloc(1, sizeof(View_List_ValueItem));
-         const char *prop = eina_hash_find(idata->priv->prop_con, part);
-
-         if (prop == NULL) prop = part;
-
-         vitem->part = eina_stringshare_add(part);
-         vitem->item = idata->item;
-         idata->values = eina_list_append(idata->values, vitem);
-         future = efl_model_property_get(idata->model, prop);
-         efl_future_then(future, &_property_get_cb,
-                         &_property_get_error_cb, NULL, vitem);
-     }
-   else
-     {
-         unsigned i = eina_list_count(idata->values);
-         idata->values = eina_list_remove(idata->values, vitem);
-         if (i == 1) idata->values = NULL;
-
-         eina_stringshare_del(vitem->part);
-         free(vitem);
-     }
-
-   return value;
-}
-
 static Evas_Object *
 _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    const Eina_Value_Type *vtype;
+   const char *prop;
+   Eina_Value *value = NULL;
    Evas_Object *content = NULL;
    View_List_ItemData *idata = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
-   if (!idata->item)
-     return NULL;
+   if (!idata->item) return NULL;
 
-   Eina_Value *value = _item_get_value(idata, part);
+   prop = eina_hash_find(idata->priv->connect.properties, part);
+   if (!prop) prop = part;
 
-   if (value == NULL)
-     return NULL;
+   value = efl_model_property_get(idata->model, prop);
+   if (value == NULL) return NULL;
 
    vtype = eina_value_type_get(value);
-   if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
+   if (vtype == EINA_VALUE_TYPE_BLOB)
      {
-         char *content_s = NULL;
-         content_s = eina_value_to_string(value);
+        Eina_Value_Blob out;
+
+        eina_value_get(value, &out);
+        if (out.memory != NULL)
+          {
+             content = elm_image_add(obj);
+             //XXX: need copy memory??
+             elm_image_memfile_set(content, out.memory, out.size, NULL, NULL);
+          }
+     }
+   else if (vtype == EINA_VALUE_TYPE_FILE)
+     {
+        Eina_File *f = NULL;
+
+        eina_value_get(value, &f);
+
+        content = elm_image_add(obj);
+        elm_image_mmap_set(content, f, NULL);
+     }
+   else if (vtype == EINA_VALUE_TYPE_OBJECT)
+     {
+        eina_value_get(value, &content);
+     }
+   else
+     {
+         char *str = NULL;
+         str = eina_value_to_string(value);
          content = elm_icon_add(obj);
-         if (elm_icon_standard_set(content, content_s))
+         if (elm_icon_standard_set(content, str))
            {
                evas_object_size_hint_aspect_set(content, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
            }
@@ -203,20 +153,9 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
                evas_object_del(content);
                content = NULL;
            }
-         free(content_s);
+         free(str);
      }
-   else if (vtype == EINA_VALUE_TYPE_BLOB)
-     {
-         Eina_Value_Blob out;
-         eina_value_get(value, &out);
-         if (out.memory != NULL)
-           {
-               content = elm_image_add(obj);
-               //XXX: need copy memory??
-               elm_image_memfile_set(content, out.memory, out.size, NULL, NULL);
-           }
-     }
-   eina_value_flush(value);
+   eina_value_free(value);
 
    return content;
 }
@@ -224,21 +163,24 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 static char *
 _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
+   Eina_Value *value = NULL;
+   const char *prop;
    char *text = NULL;
    View_List_ItemData *idata = data;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-   if (!idata->item)
-     return text;
+   if (!idata->item) return NULL;
 
-   Eina_Value *value = _item_get_value(idata, part);
+   prop = eina_hash_find(idata->priv->connect.properties, part);
+   if (!prop) prop = part;
 
-   if (value)
-     {
-        text = eina_value_to_string(value);
-        eina_value_flush(value);
-     }
+   value = efl_model_property_get(idata->model, prop);
+   if (value == NULL) return NULL;
+
+   text = eina_value_to_string(value);
+
+   eina_value_free(value);
 
    return text;
 }
@@ -300,75 +242,101 @@ _efl_model_properties_change_cb(void *data, const Efl_Event *event)
      elm_genlist_item_update(idata->item);
 }
 
-static void
-_efl_model_load_children_then(void * data, Efl_Event const* event)
+static Eina_Value
+_efl_model_load_children_then(void *data, const Eina_Value v,
+                              const Eina_Future *ev EINA_UNUSED)
 {
    View_List_ItemData *pdata = data;
-   Eina_Accessor *accessor = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
-   Eo *child;
-   unsigned i = 0;
-   EINA_SAFETY_ON_NULL_RETURN(pdata);
-   EINA_SAFETY_ON_NULL_RETURN(pdata->priv);
-   EINA_SAFETY_ON_NULL_RETURN(accessor);
-
    Elm_View_List_Data *priv = pdata->priv;
+   unsigned int i, len;
+   Efl_Model *child = NULL;
 
-   EINA_ACCESSOR_FOREACH(accessor, i, child)
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     goto end;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
         View_List_ItemData *idata = calloc(1, sizeof(View_List_ItemData));
-        EINA_SAFETY_ON_NULL_RETURN(idata);
+        if (!idata) continue ;
+
         idata->priv = priv;
         idata->parent = pdata;
-        idata->model = child;
-        efl_ref(child);
-        efl_event_callback_add(child, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
+        idata->model = efl_ref(child);
+
+        efl_event_callback_add(idata->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_model_properties_change_cb, idata);
+
         idata->item = elm_genlist_item_append(priv->genlist, priv->itc, idata, pdata->item,
-                                                       priv->itype, _item_sel_cb, idata);
+                                              priv->itype, _item_sel_cb, idata);
      }
 
    if (i > 0 && pdata->item)
      elm_genlist_item_expanded_set(pdata->item, EINA_TRUE);
+
+ end:
+   return v;
 }
 
 static void
 _efl_model_load_children(View_List_ItemData *pdata)
 {
-   efl_future_then(efl_model_children_slice_get(pdata->model, 0, 0),
-                   &_efl_model_load_children_then, NULL, NULL, pdata);
+   Eina_Future *f;
+
+   f = efl_model_children_slice_get(pdata->priv->connect.model, 0,
+                                    efl_model_children_count_get(pdata->priv->connect.model));
+   f = eina_future_then(f, _efl_model_load_children_then, pdata);
+   efl_future_Eina_FutureXXX_then(pdata->priv->genlist, f);
 }
 
 static void
-_efl_model_children_count_change_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_model_children_removed_cb(void *data, const Efl_Event *event)
 {
+   Efl_Model_Children_Event* evt = event->info;
    View_List_ItemData *idata = data;
-   EINA_SAFETY_ON_NULL_RETURN(idata);
-   EINA_SAFETY_ON_NULL_RETURN(idata->priv);
-   EINA_SAFETY_ON_NULL_RETURN(idata->priv->genlist);
+   Elm_Object_Item *item;
+   const Eina_List *subitems, *l;
+   unsigned int i = 0;
 
-   elm_genlist_item_subitems_clear(idata->item);
+   subitems = elm_genlist_item_subitems_get(idata->item);
 
-   _efl_model_load_children(idata);
+   EINA_LIST_FOREACH(subitems, l, item)
+     {
+        if (i == evt->index) break ;
+        i++;
+     }
+
+   if (i != evt->index) return ;
+   elm_object_item_del(item);
+}
+
+static void
+_efl_model_children_added_cb(void *data, const Efl_Event *event)
+{
+   Efl_Model_Children_Event* evt = event->info;
+   View_List_ItemData *idata = data;
+   Eina_Future *f;
+
+   f = efl_model_children_slice_get(idata->priv->connect.model, evt->index, 1);
+   f = eina_future_then(f, _efl_model_load_children_then, idata);
+   efl_future_Eina_FutureXXX_then(idata->priv->genlist, f);
 }
 
 static void
 _priv_model_set(Elm_View_List_Data *priv, Eo *model)
 {
-   if (priv->model != NULL)
+   if (priv->connect.model)
      {
-         efl_event_callback_array_del(priv->model, model_callbacks(), priv->rootdata);
-         elm_obj_genlist_clear(priv->genlist);
-         efl_unref(priv->model);
-         priv->model = NULL;
+        efl_event_callback_array_del(priv->connect.model, model_callbacks(), priv->rootdata);
+        elm_obj_genlist_clear(priv->genlist);
      }
 
-   if (model == NULL)
-     return;
+   efl_replace(&priv->connect.model, model);
 
-   priv->model = model;
-   priv->rootdata->model = priv->model;
-   efl_ref(priv->model);
+   if (model == NULL) return;
 
-   efl_event_callback_array_add(priv->model, model_callbacks(), priv->rootdata);
+   priv->rootdata->model = priv->connect.model;
+
+   efl_event_callback_array_add(priv->connect.model, model_callbacks(), priv->rootdata);
    _efl_model_load_children(priv->rootdata);
 }
 
@@ -377,7 +345,7 @@ _priv_model_set(Elm_View_List_Data *priv, Eo *model)
  */
 static void
 _elm_view_list_genlist_set(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genlist,
-                Elm_Genlist_Item_Type itype, const char *istyle)
+                           Elm_Genlist_Item_Type itype, const char *istyle)
 {
    priv->view = obj;
    priv->genlist = genlist;
@@ -395,7 +363,7 @@ _elm_view_list_genlist_set(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genli
    priv->itc->func.content_get = _item_content_get;
    priv->itc->func.state_get = NULL;
    priv->itc->func.del = _item_del;
-   priv->prop_con = eina_hash_string_superfast_new(free);
+   priv->connect.properties = eina_hash_string_superfast_new(free);
 
    efl_event_callback_array_add(priv->genlist, genlist_callbacks(), priv);
    evas_object_event_callback_add(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted, priv);
@@ -408,23 +376,24 @@ _elm_view_list_efl_object_destructor(Eo *obj, Elm_View_List_Data *priv)
    EINA_SAFETY_ON_NULL_RETURN(priv);
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   efl_event_callback_array_del(priv->model, model_callbacks(), priv->rootdata);
+   efl_event_callback_array_del(priv->connect.model, model_callbacks(), priv->rootdata);
 
    elm_obj_genlist_clear(priv->genlist);
    free((void *)priv->itc->item_style);
    elm_genlist_item_class_free(priv->itc);
 
-   eina_hash_free(priv->prop_con);
+   eina_hash_free(priv->connect.properties);
    free(priv->rootdata);
    priv->rootdata = NULL;
+
    if (priv->genlist)
      {
-         evas_object_event_callback_del(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted);
-         efl_event_callback_array_del(priv->genlist, genlist_callbacks(), priv);
-         efl_unref(priv->genlist);
+        evas_object_event_callback_del(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted);
+        efl_event_callback_array_del(priv->genlist, genlist_callbacks(), priv);
+        efl_unref(priv->genlist);
      }
 
-   efl_unref(priv->model);
+   efl_unref(priv->connect.model);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -441,37 +410,26 @@ _elm_view_list_evas_object_get(Eo *obj, Elm_View_List_Data *priv, Evas_Object **
 
 static void
 _elm_view_list_property_connect(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv,
-                const char *property, const char *part)
+                                const char *property, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
-   EINA_SAFETY_ON_NULL_RETURN(priv->prop_con);
+   EINA_SAFETY_ON_NULL_RETURN(priv->connect.properties);
    EINA_SAFETY_ON_NULL_RETURN(property);
    EINA_SAFETY_ON_NULL_RETURN(part);
 
-   free(eina_hash_set(priv->prop_con, part, strdup(property)));
+   free(eina_hash_set(priv->connect.properties, part, strdup(property)));
 }
 
 static void
 _elm_view_list_model_set(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv, Efl_Model *model)
 {
-   EINA_SAFETY_ON_NULL_RETURN(priv);
-   EINA_SAFETY_ON_NULL_RETURN(model);
    _priv_model_set(priv, model);
 }
 
-static void
-_elm_view_list_model_unset(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv)
+static Efl_Model *
+_elm_view_list_model_get(const Eo *obj EINA_UNUSED, Elm_View_List_Data *priv)
 {
-   EINA_SAFETY_ON_NULL_RETURN(priv);
-   _priv_model_set(priv, NULL);
-}
-
-static void
-_elm_view_list_model_get(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv, Eo **model)
-{
-   EINA_SAFETY_ON_NULL_RETURN(priv);
-   EINA_SAFETY_ON_NULL_RETURN(model);
-   *model = priv->model;
+   return priv->connect.model;
 }
 #include "elm_view_list.eo.c"

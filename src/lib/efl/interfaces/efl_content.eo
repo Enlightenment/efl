@@ -13,12 +13,12 @@ interface Efl.Content
          }
          get {}
          values {
-            content: Efl.Gfx; [[The object to swallow.]]
+            content: Efl.Gfx.Entity; [[The object to swallow.]]
          }
       }
       content_unset {
          [[Unswallow the object in the current container and return it.]]
-         return: Efl.Gfx; [[Unswallowed object]]
+         return: Efl.Gfx.Entity; [[Unswallowed object]]
       }
    }
 }

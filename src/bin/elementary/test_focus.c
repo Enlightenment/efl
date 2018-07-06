@@ -563,7 +563,9 @@ _focus_layout_part(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA
 {
    Evas_Object *ed = elm_layout_edje_get(data);
 
+   edje_object_freeze(ed);
    Evas_Object *newfocus = (Evas_Object *)edje_object_part_object_get(ed, "sky");
+   edje_object_thaw(ed);
    const char *type = evas_object_type_get(newfocus);
    printf("evas_object_focus_set(%p, EINA_TRUE) %s\n", newfocus, type);
    evas_object_focus_set(newfocus, EINA_TRUE);;
@@ -1000,7 +1002,7 @@ struct _focus5_obj _focus5_layout_data3[] = {
    {"top R",  80,  0, 20, 10},
    {"bot L",   0, 90, 20, 10},
    {"bot R",  80, 90, 20, 10},
-   {"center", 40, 40, 20, 10},
+   {"center", 40, 45, 20, 10},
    {NULL, 0, 0, 0, 0} /* sentinel */
 };
 
@@ -1087,12 +1089,22 @@ _focus6_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED,
    snprintf(buf, sizeof(buf), "Focus item %d", (int)(uintptr_t)data);
    return strdup(buf);
 }
+
+static void
+_focus6_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *ly = data;
+   Elm_Focus_Direction dir = (uintptr_t)evas_object_data_get(obj, "direction");
+
+   elm_object_focus_next(ly, dir);
+}
+
 void
 test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *ly, *lb, *btn, *gl;
+   Evas_Object *win, *box, *box2, *sep, *ly, *lb, *btn, *gl;
    Elm_Genlist_Item_Class *itc;
-//   Elm_Object_Item *it;
+   Elm_Object_Item *it;
    char buf[PATH_MAX];
    int i;
 
@@ -1100,13 +1112,19 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
 
+   // main vertical box
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
    // main layout
    ly = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "focus_test_6");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_win_resize_object_add(win, ly);
+   elm_box_pack_end(box, ly);
    evas_object_show(ly);
 
    lb = elm_label_add(ly);
@@ -1126,12 +1144,16 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    itc->func.text_get = _focus6_gl_text_get;
    for (i = 0; i < 3; i++)
      {
-//        it = 
-        elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
-                                ELM_GENLIST_ITEM_NONE, NULL, NULL);
-        /* This is another bug! This focus item at start do not work */
-        // if (i == 1)
-           // elm_object_item_focus_set(it, EINA_TRUE);
+        it = elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
+                                     ELM_GENLIST_ITEM_NONE, NULL, NULL);
+        
+        if (i == 1)
+          {
+             elm_genlist_item_selected_set(it, EINA_TRUE);
+
+             /* focus should start from second item */
+             elm_object_item_focus_set(it, EINA_TRUE);
+          }
      }
    elm_genlist_item_class_free(itc);
 
@@ -1143,10 +1165,62 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
         elm_layout_box_append(ly, "box", btn);
         evas_object_show(btn);
         /* focus should start from second button */
-        if (i == 1)
-          elm_object_focus_set(btn, EINA_TRUE);
+        // if (i == 1)
+          // elm_object_focus_set(btn, EINA_TRUE);
      }
 
+   // 4 buttons (not focusable) to test focus move by API
+   sep = elm_separator_add(win);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   elm_box_pack_end(box, sep);
+   evas_object_show(sep);
+
+   box2 = elm_box_add(win);
+   elm_box_horizontal_set(box2, EINA_TRUE);
+   evas_object_size_hint_weight_set(box2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(box2, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(box, box2);
+   evas_object_show(box2);
+
+   lb = elm_label_add(ly);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   elm_object_text_set(lb, "Move the focus using elm_object_focus_next()");
+   elm_box_pack_end(box2, lb);
+   evas_object_show(lb);
+   
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "LEFT");
+   elm_object_focus_allow_set(btn, EINA_FALSE);
+   evas_object_data_set(btn, "direction", (void *)(uintptr_t)ELM_FOCUS_LEFT);
+   evas_object_smart_callback_add(btn, "clicked", _focus6_btn_clicked, ly);
+   elm_box_pack_end(box2, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "UP");
+   elm_object_focus_allow_set(btn, EINA_FALSE);
+   evas_object_data_set(btn, "direction", (void *)(uintptr_t)ELM_FOCUS_UP);
+   evas_object_smart_callback_add(btn, "clicked", _focus6_btn_clicked, ly);
+   elm_box_pack_end(box2, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "DOWN");
+   elm_object_focus_allow_set(btn, EINA_FALSE);
+   evas_object_data_set(btn, "direction", (void *)(uintptr_t)ELM_FOCUS_DOWN);
+   evas_object_smart_callback_add(btn, "clicked", _focus6_btn_clicked, ly);
+   elm_box_pack_end(box2, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "RIGHT");
+   elm_object_focus_allow_set(btn, EINA_FALSE);
+   evas_object_data_set(btn, "direction", (void *)(uintptr_t)ELM_FOCUS_RIGHT);
+   evas_object_smart_callback_add(btn, "clicked", _focus6_btn_clicked, ly);
+   elm_box_pack_end(box2, btn);
+   evas_object_show(btn);
+
+   // size and show the window
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }

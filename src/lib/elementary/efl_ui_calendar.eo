@@ -1,6 +1,6 @@
 import efl_types;
 
-enum Efl.Ui.Calendar.Weekday
+enum Efl.Ui.Calendar_Weekday
 {
    [[A weekday
 
@@ -16,7 +16,7 @@ enum Efl.Ui.Calendar.Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format)
+class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format)
 {
    [[Calendar widget
 
@@ -32,7 +32,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widge
            in France or Sunday in the US).
          ]]
          values {
-            day: Efl.Ui.Calendar.Weekday(Efl.Ui.Calendar.Weekday.sunday);
+            day: Efl.Ui.Calendar_Weekday(Efl.Ui.Calendar_Weekday.sunday);
                [[The first day of the week.]]
          }
       }
@@ -114,6 +114,6 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widge
       Efl.Ui.Format.format_cb { set; }
    }
    events {
-      changed; [[Emitted when the selected date in the calendar is changed]]
+      changed: void; [[Emitted when the selected date in the calendar is changed]]
    }
 }

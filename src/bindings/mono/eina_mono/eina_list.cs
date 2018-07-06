@@ -349,6 +349,12 @@ public class List<T> : IEnumerable<T>, IDisposable
     {
         return this.GetEnumerator();
     }
+
+    /// <summary> Gets an Accessor for this List.</summary>
+    public eina.Accessor<T> GetAccessor()
+    {
+        return new eina.Accessor<T>(eina_list_accessor_new(Handle), Ownership.Managed);
+    }
 }
 
 }

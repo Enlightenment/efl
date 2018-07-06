@@ -12,8 +12,8 @@
 
 typedef struct _App_Data
 {
-   Efl_Animation        *anim[INTERP_NUM];
-   Efl_Animation_Player *anim_obj[INTERP_NUM];
+   Efl_Canvas_Animation        *anim[INTERP_NUM];
+   Efl_Canvas_Animation_Player *anim_obj[INTERP_NUM];
 
    Evas_Object          *btn[INTERP_NUM];
    Evas_Object          *start_all_btn;
@@ -100,8 +100,8 @@ _anim_ended_cb(void *data, const Efl_Event *event)
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Animation_Player_Running_Event_Info *event_info = event->info;
-   double progress = event_info->progress;
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double progress = event_running->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
 
@@ -184,7 +184,7 @@ test_efl_anim_interpolator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         evas_object_smart_callback_add(btn, "clicked", _anim_start, ad);
         ad->btn[i] = btn;
 
-        Efl_Animation *anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, win);
+        Efl_Canvas_Animation *anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
         efl_animation_translate_set(anim, 0, 0, (WIN_W - BTN_W), 0);
         efl_animation_duration_set(anim, 2.0);
         efl_animation_final_state_keep_set(anim, EINA_FALSE);
@@ -194,7 +194,7 @@ test_efl_anim_interpolator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ad->anim[i] = anim;
 
         //Create Animation Object from Animation
-        Efl_Animation_Player *anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+        Efl_Canvas_Animation_Player *anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
                                                  efl_animation_player_animation_set(efl_added, anim),
                                                  efl_animation_player_target_set(efl_added, btn));
         ad->anim_obj[i] = anim_obj;

@@ -23,6 +23,6 @@ class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Popup.popup_size { set;}
       Efl.Text.text { get; set; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
 }

@@ -1,4 +1,4 @@
-interface Efl.Pack.Layout ()
+interface Efl.Pack_Layout ()
 {
    [[Low-level APIs for object that can lay their children out.
 

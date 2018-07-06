@@ -108,6 +108,7 @@ struct _Eina_Lock
    Eina_Lock_Bt_Func lock_bt[EINA_LOCK_DEBUG_BT_NUM]; /**< The function that will produce a backtrace on the thread that has the lock */
    int               lock_bt_num; /**< Number of addresses in the backtrace */
    Eina_Bool         locked : 1;  /**< Indicates locked or not locked */
+   Eina_Bool         recursive : 1;  /**< Indicates recursive lock */
 #endif
 };
 
@@ -158,19 +159,84 @@ EAPI Eina_Lock_Result _eina_spinlock_macos_release(Eina_Spinlock *spinlock);
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
-   return _eina_lock_new(mutex, EINA_FALSE);
+   Eina_Bool ret = _eina_lock_new(mutex, EINA_FALSE);
+#ifdef EINA_HAVE_DEBUG_THREADS
+   mutex->recursive = EINA_FALSE;
+   mutex->lock_thread_id = 0;
+   mutex->lock_bt_num = 0;
+   mutex->locked = 0;
+#endif
+   return ret;
 }
 
 static inline Eina_Bool
 eina_lock_recursive_new(Eina_Lock *mutex)
 {
-   return _eina_lock_new(mutex, EINA_TRUE);
+   Eina_Bool ret = _eina_lock_new(mutex, EINA_TRUE);
+#ifdef EINA_HAVE_DEBUG_THREADS
+   mutex->recursive = EINA_TRUE;
+   mutex->lock_thread_id = 0;
+   mutex->lock_bt_num = 0;
+   mutex->locked = 0;
+#endif
+   return ret;
 }
 
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (mutex->locked)
+     {
+        pthread_mutex_lock(&_eina_tracking_lock);
+        _eina_tracking = eina_inlist_remove(_eina_tracking,
+                                            EINA_INLIST_GET(mutex));
+        pthread_mutex_unlock(&_eina_tracking_lock);
+     }
+#endif
    _eina_lock_free(mutex);
+}
+
+static inline Eina_Lock_Result
+eina_lock_take_try(Eina_Lock *mutex)
+{
+   Eina_Lock_Result ret = EINA_LOCK_FAIL;
+   int ok;
+
+#ifdef EINA_HAVE_ON_OFF_THREADS
+   if (!_eina_threads_activated)
+     {
+        return EINA_LOCK_SUCCEED;
+     }
+#endif
+
+   ok = pthread_mutex_trylock(&(mutex->mutex));
+   if (ok == 0) ret = EINA_LOCK_SUCCEED;
+   else if (ok == EDEADLK)
+     {
+        eina_lock_debug(mutex);
+        ret = EINA_LOCK_DEADLOCK;
+     }
+   else if (ok != EBUSY) EINA_LOCK_ABORT_DEBUG(ok, trylock, mutex);
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (ret == EINA_LOCK_SUCCEED)
+     {
+        /* recursive locks can't make use of any of this */
+        if (mutex->recursive) return ret;
+        mutex->locked = 1;
+        mutex->lock_thread_id = pthread_self();
+        /* backtrace() can somehow generate EINVAL even though this is not documented anywhere? */
+        int err = errno;
+        mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
+        errno = err;
+
+        pthread_mutex_lock(&_eina_tracking_lock);
+        _eina_tracking = eina_inlist_append(_eina_tracking,
+                                            EINA_INLIST_GET(mutex));
+        pthread_mutex_unlock(&_eina_tracking_lock);
+     }
+#endif
+   return ret;
 }
 
 static inline Eina_Lock_Result
@@ -182,15 +248,16 @@ eina_lock_take(Eina_Lock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   if (_eina_threads_debug)
+   if (eina_lock_take_try(mutex) == EINA_LOCK_SUCCEED) return EINA_LOCK_SUCCEED;
+#endif
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (_eina_threads_debug >= 100)
      {
         struct timeval t0, t1;
         int dt;
@@ -204,7 +271,6 @@ eina_lock_take(Eina_Lock *mutex)
            dt += (t1.tv_usec - t0.tv_usec);
         else
            dt -= t0.tv_usec - t1.tv_usec;
-        dt /= 1000;
 
         if (dt > _eina_threads_debug) abort();
      }
@@ -228,9 +294,14 @@ eina_lock_take(Eina_Lock *mutex)
    else EINA_LOCK_ABORT_DEBUG(ok, lock, mutex);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
+   /* recursive locks can't make use of any of this */
+   if (mutex->recursive) return ret;
    mutex->locked = 1;
    mutex->lock_thread_id = pthread_self();
+   /* backtrace() can somehow generate EINVAL even though this is not documented anywhere? */
+   int err = errno;
    mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
+   errno = err;
 
    pthread_mutex_lock(&_eina_tracking_lock);
    _eina_tracking = eina_inlist_append(_eina_tracking,
@@ -238,51 +309,6 @@ eina_lock_take(Eina_Lock *mutex)
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
 
-   return ret;
-}
-
-static inline Eina_Lock_Result
-eina_lock_take_try(Eina_Lock *mutex)
-{
-   Eina_Lock_Result ret = EINA_LOCK_FAIL;
-   int ok;
-
-#ifdef EINA_HAVE_ON_OFF_THREADS
-   if (!_eina_threads_activated)
-     {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-        return EINA_LOCK_SUCCEED;
-     }
-#endif
-
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
-   ok = pthread_mutex_trylock(&(mutex->mutex));
-   if (ok == 0) ret = EINA_LOCK_SUCCEED;
-   else if (ok == EDEADLK)
-     {
-        eina_lock_debug(mutex);
-        ret = EINA_LOCK_DEADLOCK;
-     }
-   else if (ok != EBUSY) EINA_LOCK_ABORT_DEBUG(ok, trylock, mutex);
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (ret == EINA_LOCK_SUCCEED)
-     {
-        mutex->locked = 1;
-        mutex->lock_thread_id = pthread_self();
-        mutex->lock_bt_num = backtrace((void **)(mutex->lock_bt), EINA_LOCK_DEBUG_BT_NUM);
-
-        pthread_mutex_lock(&_eina_tracking_lock);
-        _eina_tracking = eina_inlist_append(_eina_tracking,
-                                            EINA_INLIST_GET(mutex));
-        pthread_mutex_unlock(&_eina_tracking_lock);
-     }
-#endif
    return ret;
 }
 
@@ -295,23 +321,23 @@ eina_lock_release(Eina_Lock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_mutex_lock(&_eina_tracking_lock);
-   _eina_tracking = eina_inlist_remove(_eina_tracking,
-                                       EINA_INLIST_GET(mutex));
-   pthread_mutex_unlock(&_eina_tracking_lock);
-
-   mutex->locked = 0;
-   mutex->lock_thread_id = 0;
-   memset(mutex->lock_bt, 0, EINA_LOCK_DEBUG_BT_NUM * sizeof(Eina_Lock_Bt_Func));
-   mutex->lock_bt_num = 0;
+/* recursive locks can't make use of any of this */
+   if (!mutex->recursive)
+     {
+        mutex->locked = 0;
+        mutex->lock_thread_id = 0;
+        memset(mutex->lock_bt, 0, EINA_LOCK_DEBUG_BT_NUM * sizeof(Eina_Lock_Bt_Func));
+        mutex->lock_bt_num = 0;
+        pthread_mutex_lock(&_eina_tracking_lock);
+        _eina_tracking = eina_inlist_remove(_eina_tracking,
+                                            EINA_INLIST_GET(mutex));
+        pthread_mutex_unlock(&_eina_tracking_lock);
+     }
 #endif
    ok = pthread_mutex_unlock(&(mutex->mutex));
    if (ok == 0) ret = EINA_LOCK_SUCCEED;
@@ -481,9 +507,6 @@ eina_rwlock_take_read(Eina_RWLock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -504,9 +527,6 @@ eina_rwlock_take_write(Eina_RWLock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -527,9 +547,6 @@ eina_rwlock_release(Eina_RWLock *mutex)
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
-#ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
         return EINA_LOCK_SUCCEED;
      }
 #endif
@@ -587,6 +604,7 @@ eina_barrier_wait(Eina_Barrier *barrier)
 {
    int ok = pthread_barrier_wait(&(barrier->barrier));
    if (ok == 0) return EINA_TRUE;
+   else if (ok == PTHREAD_BARRIER_SERIAL_THREAD) return EINA_TRUE;
    else EINA_LOCK_ABORT_DEBUG(ok, barrier_wait, barrier);
    return EINA_TRUE;
 }
@@ -624,10 +642,30 @@ eina_spinlock_free(Eina_Spinlock *spinlock)
 }
 
 static inline Eina_Lock_Result
+eina_spinlock_take_try(Eina_Spinlock *spinlock)
+{
+#if defined(EINA_HAVE_POSIX_SPINLOCK)
+   int t = pthread_spin_trylock(spinlock);
+   if (t == 0) return EINA_LOCK_SUCCEED;
+   else if (t == EBUSY) return EINA_LOCK_FAIL;
+   else EINA_LOCK_ABORT_DEBUG(t, spin_trylock, spinlock);
+   return EINA_LOCK_FAIL;
+#elif defined(EINA_HAVE_OSX_SPINLOCK)
+   return _eina_spinlock_macos_take_try(spinlock);
+#else
+   return eina_lock_take_try(spinlock);
+#endif
+}
+
+static inline Eina_Lock_Result
 eina_spinlock_take(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
    int t;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (eina_spinlock_take_try(spinlock) == EINA_LOCK_SUCCEED) return EINA_LOCK_SUCCEED;
+#endif
 
    for (;;)
      {
@@ -641,22 +679,6 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
    return _eina_spinlock_macos_take(spinlock);
 #else
    return eina_lock_take(spinlock);
-#endif
-}
-
-static inline Eina_Lock_Result
-eina_spinlock_take_try(Eina_Spinlock *spinlock)
-{
-#if defined(EINA_HAVE_POSIX_SPINLOCK)
-   int t = pthread_spin_trylock(spinlock);
-   if (t == 0) return EINA_LOCK_SUCCEED;
-   else if (t == EBUSY) return EINA_LOCK_FAIL;
-   else EINA_LOCK_ABORT_DEBUG(t, spin_trylock, spinlock);
-   return EINA_LOCK_FAIL;
-#elif defined(EINA_HAVE_OSX_SPINLOCK)
-   return _eina_spinlock_macos_take_try(spinlock);
-#else
-   return eina_lock_take_try(spinlock);
 #endif
 }
 

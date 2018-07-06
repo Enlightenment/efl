@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -235,7 +235,7 @@ _elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data
         elm_widget_theme_object_set
           (obj, VIEW(it), "segment_control", "item",
           elm_widget_style_get(obj));
-        edje_object_scale_set(VIEW(it), efl_gfx_scale_get(WIDGET(it)) *
+        edje_object_scale_set(VIEW(it), efl_gfx_entity_scale_get(WIDGET(it)) *
                               elm_config_scale_get());
         edje_object_mirrored_set(VIEW(it), rtl);
      }
@@ -429,7 +429,7 @@ _elm_segment_control_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static const char *
-_elm_segment_control_item_elm_widget_item_part_text_get(Eo *eo_item EINA_UNUSED,
+_elm_segment_control_item_elm_widget_item_part_text_get(const Eo *eo_item EINA_UNUSED,
                                                 Elm_Segment_Control_Item_Data *it,
                                                 const char *part)
 {
@@ -483,7 +483,7 @@ _elm_segment_control_item_elm_widget_item_part_content_set(Eo *eo_item EINA_UNUS
 }
 
 EOLIAN static Evas_Object *
-_elm_segment_control_item_elm_widget_item_part_content_get(Eo *eo_item EINA_UNUSED,
+_elm_segment_control_item_elm_widget_item_part_content_get(const Eo *eo_item EINA_UNUSED,
                                                    Elm_Segment_Control_Item_Data *item,
                                                    const char *part)
 {
@@ -596,8 +596,8 @@ _elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_It
    Evas_Object *parent;
    parent = efl_parent_get(obj);
 
-   VIEW(it) = edje_object_add(evas_object_evas_get(parent));
-   edje_object_scale_set(VIEW(it),efl_gfx_scale_get(WIDGET(it)) *
+   VIEW_SET(it, edje_object_add(evas_object_evas_get(parent)));
+   edje_object_scale_set(VIEW(it),efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_smart_member_add(VIEW(it), parent);
 
@@ -682,7 +682,7 @@ _elm_segment_control_efl_object_constructor(Eo *obj, Elm_Segment_Control_Data *s
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    return obj;
 }
@@ -730,7 +730,7 @@ _elm_segment_control_item_del_at(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNU
    it = _item_find(obj, idx);
    if (!it) return;
 
-   elm_wdg_item_del(EO_OBJ(it));
+   efl_del(EO_OBJ(it));
 }
 
 EOLIAN static const char*
@@ -753,7 +753,7 @@ _elm_segment_control_item_icon_get(const Eo *obj, Elm_Segment_Control_Data *_pd 
 }
 
 EOLIAN static int
-_elm_segment_control_item_count_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
+_elm_segment_control_item_count_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    return eina_list_count(sd->items);
 }
@@ -765,7 +765,7 @@ _elm_segment_control_item_object_get(const Eo *eo_it EINA_UNUSED, Elm_Segment_Co
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_segment_control_item_selected_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
+_elm_segment_control_item_selected_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    return EO_OBJ(sd->selected_item);
 }
@@ -815,9 +815,9 @@ _elm_segment_control_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_Rect
-_elm_segment_control_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
+_elm_segment_control_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
 {
-   return efl_gfx_geometry_get(VIEW(pd));
+   return efl_gfx_entity_geometry_get(VIEW(pd));
 }
 
 /* Internal EO APIs and hidden overrides */

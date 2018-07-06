@@ -17,7 +17,7 @@ enum Elm.Dayselector.Day
    max     [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Elm.Dayselector (Efl.Ui.Layout)
+class Elm.Dayselector (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
 {
    [[Elementary dayselector class]]
    legacy_prefix: elm_dayselector;
@@ -153,9 +153,11 @@ class Elm.Dayselector (Efl.Ui.Layout)
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
+      /* FIXME: Nobody emits this
       dayselector,changed; [[Called when dayselector widget changed]]
+      */
    }
 }

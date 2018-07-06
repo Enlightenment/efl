@@ -115,7 +115,7 @@ progress_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED,
    return ECORE_FILE_PROGRESS_CONTINUE;
 }
 
-START_TEST(ecore_test_ecore_file_init)
+EFL_START_TEST(ecore_test_ecore_file_init)
 {
    int ret;
 
@@ -125,9 +125,9 @@ START_TEST(ecore_test_ecore_file_init)
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_operations)
+EFL_START_TEST(ecore_test_ecore_file_operations)
 {
    const char* dirs[] = {"b", "b/c", "b/c/d", "d", 0};
    char *dirs2[] = {"a2", "b2", "c2", 0};
@@ -215,12 +215,15 @@ START_TEST(ecore_test_ecore_file_operations)
    res = ecore_file_remove(dest_file);
    fail_if(res != EINA_TRUE);
 
+   /* On Windows, symlink/readlink are not supported */
+#ifndef _WIN32
    res = ecore_file_symlink(src_file, dest_file);
    fail_if(res != EINA_TRUE);
    ck_assert_str_eq(ecore_file_readlink(dest_file), src_file);
    ck_assert_str_eq(ecore_file_realpath(dest_file), src_file);
    res = ecore_file_unlink(dest_file);
    fail_if(res != EINA_TRUE);
+#endif
 
    dest_file = get_tmp_file();
    fail_if(!dest_file);
@@ -334,7 +337,7 @@ START_TEST(ecore_test_ecore_file_operations)
    fail_if(ecore_file_cp(not_exist_file, "test_file") != EINA_FALSE);
    fail_if(ecore_file_mv(not_exist_file, "test_file") != EINA_FALSE);
 
-   chdir(eina_environment_tmp_get());
+   ck_assert_int_eq(chdir(eina_environment_tmp_get()), 0);
    fail_if(ecore_file_mkpath(src_dir) != EINA_TRUE);
    fail_if(ecore_file_rmdir(src_dir) != EINA_TRUE);
    fail_if(ecore_file_mkpath(NULL) != EINA_FALSE);
@@ -352,9 +355,9 @@ START_TEST(ecore_test_ecore_file_operations)
    fail_if(ret != 0);
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_path)
+EFL_START_TEST(ecore_test_ecore_file_path)
 {
    const char *src_dir, *src_file, *dest_file;
    char *dup_dir, *path;
@@ -415,9 +418,9 @@ START_TEST(ecore_test_ecore_file_path)
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_monitor)
+EFL_START_TEST(ecore_test_ecore_file_monitor)
 {
    Ecore_File_Monitor *mon;
    const char *src_dir;
@@ -470,13 +473,13 @@ START_TEST(ecore_test_ecore_file_monitor)
    fail_if(ret != 0);
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_file_download)
+EFL_START_TEST(ecore_test_ecore_file_download)
 {
    const char *download_dir;
    const char *download_file;
-   const char *download_url = "http://check.sourceforge.net/xml/check_unittest.xslt";
+   const char *download_url = "http://example.com";
    char dest_name[MAXSIZE] = {'\0'};
    Eina_Bool res;
    Eina_Hash *headers;
@@ -488,22 +491,12 @@ START_TEST(ecore_test_ecore_file_download)
 
    download_dir = get_tmp_dir();
    fail_if(!download_dir);
-   download_file = ecore_file_file_get(download_url);
+   download_file = ecore_file_file_get(download_url); //example.com
    fail_if(!download_file);
    fail_if(!ecore_file_download_protocol_available("http://"));
    strcat(dest_name, download_dir);
    strcat(dest_name, "/");
    strcat(dest_name, download_file);
-   res = ecore_file_download(download_url, dest_name, completion_cb,
-                             progress_cb, NULL, &job);
-   fail_if(res != EINA_TRUE);
-   fail_if(!job);
-   ecore_main_loop_begin();
-   fprintf(stderr, "Downloaded %lld bytes\n", ecore_file_size(dest_name));
-   res = ecore_file_exists(dest_name);
-   fail_if(res != EINA_TRUE);
-   res = ecore_file_unlink(dest_name);
-   fail_if(res != EINA_TRUE);
 
    res = ecore_file_download("xxyyzz", dest_name, completion_cb,
                              progress_cb, NULL, &job);
@@ -515,27 +508,30 @@ START_TEST(ecore_test_ecore_file_download)
    fail_if(!job);
    ecore_file_download_abort(job);
    ecore_main_loop_begin();
+   if (timeout_reached) goto end;
    res = ecore_file_remove(dest_name);
    fail_if(res != EINA_TRUE);
 
    headers = eina_hash_string_small_new(NULL);
-   eina_hash_add(headers, "Content-type", "text/xml");
+   eina_hash_add(headers, "Content-type", "text/html");
 
    res = ecore_file_download_full(download_url, dest_name, completion_cb,
-                                  progress_cb, NULL, NULL, headers);
+                                  progress_cb, NULL, &job, headers);
    fail_if(res != EINA_TRUE);
+   fail_if(!job);
    ecore_main_loop_begin();
+   if (timeout_reached) goto end;
    fprintf(stderr, "Downloaded %lld bytes\n", ecore_file_size(dest_name));
    res = ecore_file_exists(dest_name);
    fail_if(res != EINA_TRUE);
-
+end:
    res = ecore_file_recursive_rm(download_dir);
    fail_if(res != EINA_TRUE);
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_file(TCase *tc)
 {

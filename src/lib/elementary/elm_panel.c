@@ -2,9 +2,10 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_LAYER_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -89,11 +90,13 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 static Evas_Object *
 _access_object_get(const Evas_Object *obj, const char *part)
 {
-   Evas_Object *po, *ao;
+   Evas_Object *po, *ao, *o;
    ELM_PANEL_DATA_GET(obj, sd);
 
-   po = (Evas_Object *)edje_object_part_object_get
-      (elm_layout_edje_get(sd->scr_ly), part);
+   o = elm_layout_edje_get(sd->scr_ly);
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, part);
+   edje_object_thaw(o);
    ao = evas_object_data_get(po, "_part_access_obj");
 
    return ao;
@@ -739,7 +742,7 @@ _elm_panel_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Objec
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return EINA_FALSE;
           }
-        if (strcmp(part, "default"))
+        if (strcmp(part, "elm.swallow.content") || (content == sd->bx))
           {
              Eina_Bool int_ret = EINA_TRUE;
              int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
@@ -777,7 +780,7 @@ _elm_panel_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return NULL;
           }
-        if (strcmp(part, "default"))
+        if (strcmp(part, "elm.swallow.content"))
           {
              Evas_Object *ret = NULL;
              ret = efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
@@ -801,7 +804,7 @@ _elm_panel_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return NULL;
           }
-        if (strcmp(part, "default"))
+        if (strcmp(part, "elm.swallow.content"))
           {
              ret = efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
              return ret;
@@ -895,13 +898,13 @@ _elm_panel_efl_canvas_group_group_del(Eo *obj, Elm_Panel_Data *sd)
 }
 
 EOLIAN static void
-_elm_panel_efl_gfx_position_set(Eo *obj, Elm_Panel_Data *sd, Eina_Position2D pos)
+_elm_panel_efl_gfx_entity_position_set(Eo *obj, Elm_Panel_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 static void
@@ -929,16 +932,16 @@ _scrollable_layout_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord 
 }
 
 EOLIAN static void
-_elm_panel_efl_gfx_size_set(Eo *obj, Elm_Panel_Data *sd, Eina_Size2D sz)
+_elm_panel_efl_gfx_entity_size_set(Eo *obj, Elm_Panel_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    if (!sd->scrollable) return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    _scrollable_layout_resize(obj, sd, sz.w, sz.h);
 }
 
@@ -988,7 +991,7 @@ _elm_panel_efl_object_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
    efl_ui_focus_layer_behaviour_set(obj, EINA_FALSE, EINA_FALSE);
 
@@ -1034,7 +1037,7 @@ _elm_panel_orient_set(Eo *obj, Elm_Panel_Data *sd, Elm_Panel_Orient orient)
 }
 
 EOLIAN static Elm_Panel_Orient
-_elm_panel_orient_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_orient_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->orient;
 }
@@ -1057,7 +1060,7 @@ _elm_panel_hidden_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool hidden)
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_hidden_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_hidden_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->hidden;
 }
@@ -1069,7 +1072,7 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Rect
-_elm_panel_efl_ui_widget_interest_region_get(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_ui_widget_interest_region_get(const Eo *obj, Elm_Panel_Data *sd)
 {
    Eina_Rect r = {};
 
@@ -1278,7 +1281,7 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
 }
 
 EOLIAN static double
-_elm_panel_scrollable_content_size_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_scrollable_content_size_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->content_size_ratio;
 }
@@ -1301,7 +1304,7 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
+_elm_panel_scrollable_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *sd)
 {
    return sd->scrollable;
 }
@@ -1363,12 +1366,14 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
              sd->scr_panel = evas_object_rectangle_add(evas_object_evas_get(obj));
              evas_object_color_set(sd->scr_panel, 0, 0, 0, 0);
              elm_widget_sub_object_add(obj, sd->scr_panel);
-             elm_layout_content_set(sd->scr_ly, "panel_area", sd->scr_panel);
+             if (!elm_layout_content_set(sd->scr_ly, "elm.panel_area", sd->scr_panel))
+               elm_layout_content_set(sd->scr_ly, "panel_area", sd->scr_panel);
 
              sd->scr_event = evas_object_rectangle_add(evas_object_evas_get(obj));
              evas_object_color_set(sd->scr_event, 0, 0, 0, 0);
              elm_widget_sub_object_add(obj, sd->scr_event);
-             elm_layout_content_set(sd->scr_ly, "event_area", sd->scr_event);
+             if (!elm_layout_content_set(sd->scr_ly, "elm.event_area", sd->scr_event))
+               elm_layout_content_set(sd->scr_ly, "event_area", sd->scr_event);
           }
 
         elm_interface_scrollable_content_set(obj, sd->scr_ly);
@@ -1441,7 +1446,7 @@ _elm_panel_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_panel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
+_elm_panel_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "toggle", "toggle", NULL, _key_action_toggle},

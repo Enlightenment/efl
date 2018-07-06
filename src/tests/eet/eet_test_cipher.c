@@ -12,7 +12,7 @@
 #include "eet_suite.h"
 #include "eet_test_common.h"
 
-START_TEST(eet_test_cipher_decipher_simple)
+EFL_START_TEST(eet_test_cipher_decipher_simple)
 {
    const char *buffer = "Here is a string of data to save !";
    const char *key = "This is a crypto key";
@@ -22,8 +22,6 @@ START_TEST(eet_test_cipher_decipher_simple)
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
    int tmpfd;
-
-   eet_init();
 
    fail_if(-1 == (tmpfd = mkstemp(file)));
    fail_if(!!close(tmpfd));
@@ -61,10 +59,8 @@ START_TEST(eet_test_cipher_decipher_simple)
    eet_close(ef);
 
    fail_if(unlink(file) != 0);
-
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_cipher(TCase *tc)
 {

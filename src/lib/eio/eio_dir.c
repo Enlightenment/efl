@@ -238,6 +238,8 @@ _eio_dir_mkdir(Ecore_Thread *thread, Eio_Dir_Copy *order,
    return EINA_TRUE;
 }
 
+/* no symbolic link on Windows */
+#ifndef _WIN32
 static Eina_Bool
 _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
               long long *step, long long count,
@@ -298,6 +300,7 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
    eio_file_thread_error(&order->progress.common, thread);
    return EINA_FALSE;
 }
+#endif
 
 static Eina_Bool
 _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
@@ -416,8 +419,11 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
    file = NULL;
 
    /* recreate link */
+   /* no symbolic link on Windows */
+#ifndef _WIN32
    if (!_eio_dir_link(thread, copy, &step, count, length_source, length_dest))
      goto on_error;
+#endif
 
    /* set directory right back */
    if (!_eio_dir_chmod(thread, copy, &step, count, length_source, length_dest, EINA_FALSE))
@@ -562,8 +568,11 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
    file = NULL;
 
    /* recreate link */
+/* no symbolic link on Windows */
+#ifndef _WIN32
    if (!_eio_dir_link(thread, move, &step, count, length_source, length_dest))
      goto on_error;
+#endif
 
    /* set directory right back */
    if (!_eio_dir_chmod(thread, move, &step, count, length_source, length_dest, EINA_TRUE))

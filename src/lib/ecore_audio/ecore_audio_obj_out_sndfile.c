@@ -116,7 +116,7 @@ _ecore_audio_out_sndfile_ecore_audio_source_set(Eo *eo_obj, Ecore_Audio_Out_Sndf
 }
 
 EOLIAN static const char*
-_ecore_audio_out_sndfile_ecore_audio_source_get(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
+_ecore_audio_out_sndfile_ecore_audio_source_get(const Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
 {
   Ecore_Audio_Object *obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   return obj->source;
@@ -155,7 +155,7 @@ _ecore_audio_out_sndfile_ecore_audio_format_set(Eo *eo_obj, Ecore_Audio_Out_Sndf
 }
 
 EOLIAN static Ecore_Audio_Format
-_ecore_audio_out_sndfile_ecore_audio_format_get(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
+_ecore_audio_out_sndfile_ecore_audio_format_get(const Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
 {
   Ecore_Audio_Object *obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   return obj->format;

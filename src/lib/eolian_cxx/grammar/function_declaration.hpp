@@ -12,6 +12,7 @@
 #include "grammar/type.hpp"
 #include "grammar/parameter.hpp"
 #include "grammar/keyword.hpp"
+#include "grammar/blacklist.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -24,6 +25,9 @@ struct function_declaration_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::function_def const& f, Context const& ctx) const
    {
+      if (blacklist::is_blacklisted(f))
+        return true;
+
       std::string suffix, static_flag, const_flag;
       switch(_klass_name.type)
         {

@@ -1,4 +1,4 @@
-class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
+class Efl.Net.Server_Fd (Efl.Loop_Fd, Efl.Net.Server) {
     [[A generic server based on file descriptors.
 
       @since 1.19
@@ -58,7 +58,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
               It will be one of AF_INET (IPv4), AF_INET6 (IPv6),
               AF_UNIX...
 
-              It must be set before the @Efl.Loop.Fd.fd.set is called
+              It must be set before the @Efl.Loop_Fd.fd.set is called
               with a valid file descriptor.
             ]]
             get { }
@@ -115,7 +115,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
               else, such as in SOCK_DGRAM (UDP) there is no accept(),
               only recvfrom().
 
-              It is called straight from @Efl.Loop.Fd "read" event
+              It is called straight from @Efl.Loop_Fd "read" event
               handler and is provided as a method to allow easy
               extending of the class for various purposes.
             ]]
@@ -155,7 +155,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
         Efl.Object.finalize;
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Loop.Fd.fd { set; }
+        Efl.Loop_Fd.fd { set; }
         Efl.Net.Server.address { get; set; }
         Efl.Net.Server.clients_count { get; set; }
         Efl.Net.Server.clients_limit { get; set; }

@@ -145,7 +145,7 @@ _evas_canvas3d_material_enable_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_D
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_material_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd, Evas_Canvas3D_Material_Attrib attrib)
+_evas_canvas3d_material_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd, Evas_Canvas3D_Material_Attrib attrib)
 {
    return pd->attribs[attrib].enable;
 }
@@ -173,7 +173,7 @@ _evas_canvas3d_material_shininess_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Materia
 }
 
 EOLIAN static Evas_Real
-_evas_canvas3d_material_shininess_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd)
+_evas_canvas3d_material_shininess_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd)
 {
    return pd->shininess;
 }
@@ -198,7 +198,7 @@ _evas_canvas3d_material_texture_set(Eo *obj, Evas_Canvas3D_Material_Data *pd, Ev
 }
 
 EOLIAN static Evas_Canvas3D_Texture *
-_evas_canvas3d_material_texture_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd, Evas_Canvas3D_Material_Attrib attrib)
+_evas_canvas3d_material_texture_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd, Evas_Canvas3D_Material_Attrib attrib)
 {
    return pd->attribs[attrib].texture;
 }

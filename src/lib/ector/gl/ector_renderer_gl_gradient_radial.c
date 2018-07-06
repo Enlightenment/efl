@@ -39,7 +39,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_draw(Eo *obj, Ector_Renderer_G
 }
 
 static Eina_Bool
-_ector_renderer_gl_gradient_radial_ector_renderer_gl_fill(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd, uint64_t flags, GLshort *vertex, unsigned int vertex_count, unsigned int mul_col)
+_ector_renderer_gl_gradient_radial_ector_renderer_gl_op_fill(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd, uint64_t flags, GLshort *vertex, unsigned int vertex_count, unsigned int mul_col)
 {
    // FIXME: The idea here is to select the right shader and push the needed parameter for it
    // along with the other value
@@ -54,7 +54,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_gl_fill(Eo *obj, Ector_Rendere
 }
 
 static void
-_ector_renderer_gl_gradient_radial_ector_renderer_bounds_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gl_gradient_radial_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_GL_Gradient_Radial_Data *pd,
                                                              Eina_Rect *r)
 {
@@ -65,7 +65,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_bounds_get(Eo *obj EINA_UNUSED
 }
 
 static unsigned int
-_ector_renderer_gl_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
+_ector_renderer_gl_gradient_radial_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
 {
    unsigned int crc;
 

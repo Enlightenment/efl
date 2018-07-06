@@ -128,7 +128,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                          efl_io_copier_destination_set(efl_added, ssl),
                          efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                          efl_event_callback_array_add(efl_added, echo_copier_cbs(), ssl),
-                         efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
+                         efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                          );
 
    fprintf(stderr, "INFO: using an echo copier=%p for ssl %s\n",
@@ -157,7 +157,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(server_cbs,
 
 static const char *ciphers_strs[] = {
   "auto",
-  "sslv3",
   "tlsv1",
   "tlsv1.1",
   "tlsv1.2",
@@ -227,7 +226,7 @@ efl_terminate(void *data EINA_UNUSED,
         efl_del(server);
         server = NULL;
 
-        efl_del(ssl_ctx);
+        efl_unref(ssl_ctx);
         ssl_ctx = NULL;
 
         EINA_LIST_FREE(certificates, str) free(str);
@@ -291,8 +290,6 @@ efl_main(void *data EINA_UNUSED,
      {
         if (strcmp(cipher_choice, "auto") == 0)
           cipher = EFL_NET_SSL_CIPHER_AUTO;
-        else if (strcmp(cipher_choice, "sslv3") == 0)
-          cipher = EFL_NET_SSL_CIPHER_SSLV3;
         else if (strcmp(cipher_choice, "tlsv1") == 0)
           cipher = EFL_NET_SSL_CIPHER_TLSV1;
         else if (strcmp(cipher_choice, "tlsv1.1") == 0)
@@ -301,7 +298,7 @@ efl_main(void *data EINA_UNUSED,
           cipher = EFL_NET_SSL_CIPHER_TLSV1_2;
      }
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(crls)),
@@ -363,7 +360,7 @@ efl_main(void *data EINA_UNUSED,
    efl_del(server);
    server = NULL;
  end_ctx:
-   efl_del(ssl_ctx);
+   efl_unref(ssl_ctx);
 
  end:
    EINA_LIST_FREE(certificates, str) free(str);

@@ -70,10 +70,10 @@ public struct Evas_Object_Box_Option {
 };
 #pragma warning restore 0169
 
-namespace efl { namespace kw_event {
+namespace efl {
 
 [StructLayout(LayoutKind.Sequential)]
-public struct Description {
+public struct Event_Description {
     public IntPtr Name;
     [MarshalAs(UnmanagedType.U1)] public bool Unfreezable;
     [MarshalAs(UnmanagedType.U1)] public bool Legacy_is;
@@ -81,7 +81,7 @@ public struct Description {
 
     private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
-    public Description(string name)
+    public Event_Description(string name)
     {
         if (!descriptions.ContainsKey(name))
         {
@@ -101,39 +101,25 @@ public struct Description {
     }
 };
 
-} // namespace kw_event
-
 
 public delegate void Event_Cb(System.IntPtr data, ref Event evt);
 #pragma warning disable 0169
-public struct Callback_Array_Item {
-    IntPtr desc;
-    IntPtr func;
-};
 public struct Dbg_Info {
     IntPtr name;
     IntPtr value;
 };
 #pragma warning restore 0169
 
-namespace text {
-
-namespace cursor {
-
 [StructLayout(LayoutKind.Sequential)]
-public struct Cursor {
+public struct Text_Cursor_Cursor {
     IntPtr obj;
     UIntPtr pos; // UIntPtr to automatically change size_t between 32/64
     IntPtr node;
     [MarshalAsAttribute(UnmanagedType.U1)]bool changed;
 }
 
-} // namespace cursor
-
-namespace annotate {
-
 [StructLayout(LayoutKind.Sequential)]
-public struct Annotation {
+public struct Text_Annotate_Annotation {
     IntPtr list;
     IntPtr obj;
     IntPtr start_node;
@@ -141,50 +127,9 @@ public struct Annotation {
     [MarshalAsAttribute(UnmanagedType.U1)]bool is_item;
 }
 
-} // namespace annotate
-
-} // namespace text
-
 public delegate void Signal_Cb(IntPtr data, IntPtr obj, IntPtr emission, IntPtr source);
 
-
-namespace gfx {
-
-public interface Buffer {}
-
-namespace buffer {
-public struct Access_Mode {}
-}
-        
-} // namespace gfx
-
 namespace access {
-
-public struct State_Set {
-    private ulong mask;
-
-    public static implicit operator State_Set(ulong x)
-    {
-        return new State_Set{mask=x};
-    }
-    public static implicit operator ulong(State_Set x)
-    {
-        return x.mask;
-    }
-}
-
-public struct Relation_Set {
-    private IntPtr mask;
-
-    public static implicit operator Relation_Set(IntPtr x)
-    {
-        return new Relation_Set{mask=x};
-    }
-    public static implicit operator IntPtr(Relation_Set x)
-    {
-        return x.mask;
-    }
-}
 
 public struct Action_Data {
     public IntPtr name;
@@ -194,23 +139,6 @@ public struct Action_Data {
 }
 
 } // namespace access
-
-namespace font {
-
-public struct Size {
-    private int mask;
-
-    public static implicit operator Size(int x)
-    {
-        return new Size{mask=x};
-    }
-    public static implicit operator int(Size x)
-    {
-        return x.mask;
-    }
-}
-
-}
 
 } // namespace efl
 
@@ -515,33 +443,6 @@ public delegate void Change_Cb(IntPtr data, IntPtr obj, IntPtr part);
 
 } // namespace edje
 
-[StructLayout(LayoutKind.Sequential)]
-public struct Elm_Code
-{
-    IntPtr file;
-    IntPtr widgets;
-    IntPtr parsers;
-
-    // Below is inside _Elm_Code_Config
-    [MarshalAsAttribute(UnmanagedType.U1)]bool config;
-}
-
-[StructLayout(LayoutKind.Sequential)]
-public struct Elm_Code_Line
-{
-    IntPtr file;
-    IntPtr content;
-    uint length;
-    uint number;
-    IntPtr modified;
-
-    Elm_Code_Status_Type status;
-    IntPtr tokens;
-
-    IntPtr data;
-    IntPtr status_text;
-}
-
 public enum Elm_Code_Status_Type {
    ELM_CODE_STATUS_TYPE_DEFAULT = 0,
    ELM_CODE_STATUS_TYPE_CURRENT,
@@ -572,9 +473,6 @@ public struct Elm_Atspi_Action
     IntPtr param;
     IntPtr func;
 }
-
-// Some places stil use the non-namespaced Efl_Event_Cb
-public delegate void Efl_Event_Cb(System.IntPtr data, ref efl.Event evt);
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Tm {

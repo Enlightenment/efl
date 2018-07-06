@@ -6,9 +6,11 @@
 
 #include "elm_code_private.h"
 
+#ifndef ELM_CODE_TEST
 EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_SYNTAX = NULL;
 EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF = NULL;
 EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO = NULL;
+#endif
 
 struct _Elm_Code_Parser
 {
@@ -79,7 +81,6 @@ _elm_code_parser_new(void (*parse_line)(Elm_Code_Line *, void *),
    return parser;
 }
 
-#ifndef ELM_CODE_TEST
 EAPI void
 elm_code_parser_add(Elm_Code *code,
                     void (*parse_line)(Elm_Code_Line *, void *),
@@ -105,7 +106,6 @@ elm_code_parser_standard_add(Elm_Code *code, Elm_Code_Parser *parser)
    parser->standard = EINA_TRUE;
    code->parsers = eina_list_append(code->parsers, parser);
 }
-#endif // ELM_CODE_TEST
 
 static void
 _elm_code_parser_diff_trim_leading(Elm_Code_Line *line, unsigned int count)

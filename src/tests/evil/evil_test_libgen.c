@@ -26,7 +26,7 @@
 
 #include "evil_suite.h"
 
-START_TEST(evil_libgen_null)
+EFL_START_TEST(evil_libgen_null)
 {
    char *dname;
    char *bname;
@@ -36,9 +36,9 @@ START_TEST(evil_libgen_null)
    bname = basename(NULL);
    fail_if(strcmp(bname, ".") != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_empty)
+EFL_START_TEST(evil_libgen_empty)
 {
    const char *path = "";
    char *dirc;
@@ -59,9 +59,9 @@ START_TEST(evil_libgen_empty)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_path)
+EFL_START_TEST(evil_libgen_path)
 {
    const char *path = "/usr/lib";
    char *dirc;
@@ -82,9 +82,9 @@ START_TEST(evil_libgen_path)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_path_with_slash)
+EFL_START_TEST(evil_libgen_path_with_slash)
 {
    const char *path = "/usr/";
    char *dirc;
@@ -105,9 +105,9 @@ START_TEST(evil_libgen_path_with_slash)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_folder)
+EFL_START_TEST(evil_libgen_folder)
 {
    const char *path = "usr";
    char *dirc;
@@ -128,9 +128,9 @@ START_TEST(evil_libgen_folder)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_slash)
+EFL_START_TEST(evil_libgen_slash)
 {
    const char *path = "/";
    char *dirc;
@@ -151,9 +151,9 @@ START_TEST(evil_libgen_slash)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_dot)
+EFL_START_TEST(evil_libgen_dot)
 {
    const char *path = ".";
    char *dirc;
@@ -174,9 +174,9 @@ START_TEST(evil_libgen_dot)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_dot_dot)
+EFL_START_TEST(evil_libgen_dot_dot)
 {
    const char *path = "..";
    char *dirc;
@@ -197,9 +197,9 @@ START_TEST(evil_libgen_dot_dot)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_win_dir_1)
+EFL_START_TEST(evil_libgen_win_dir_1)
 {
    const char *path = "c:/foo/bar";
    char *dirc;
@@ -220,9 +220,9 @@ fail_if(strcmp(bname, "bar") != 0);
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_win_dir_2)
+EFL_START_TEST(evil_libgen_win_dir_2)
 {
    const char *path = "c:/foo\\bar";
    char *dirc;
@@ -243,9 +243,9 @@ START_TEST(evil_libgen_win_dir_2)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_win_dir_3)
+EFL_START_TEST(evil_libgen_win_dir_3)
 {
    const char *path = "c:\\foo/bar";
    char *dirc;
@@ -266,9 +266,9 @@ START_TEST(evil_libgen_win_dir_3)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_libgen_win_dir_4)
+EFL_START_TEST(evil_libgen_win_dir_4)
 {
    const char *path = "c:\\foo\\bar";
    char *dirc;
@@ -289,7 +289,7 @@ START_TEST(evil_libgen_win_dir_4)
    free(dirc);
    free(basec);
 }
-END_TEST
+EFL_END_TEST
 
 void evil_test_libgen(TCase *tc)
 {

@@ -194,8 +194,8 @@ _geometry_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_geometry_changes,
-                           { EFL_GFX_EVENT_MOVE, _geometry_changed_cb },
-                           { EFL_GFX_EVENT_RESIZE, _geometry_changed_cb });
+                           { EFL_GFX_ENTITY_EVENT_MOVE, _geometry_changed_cb },
+                           { EFL_GFX_ENTITY_EVENT_RESIZE, _geometry_changed_cb });
 
 static void
 _pivot_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
@@ -208,8 +208,8 @@ _pivot_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_pivot_changes,
-                           { EFL_GFX_EVENT_MOVE, _pivot_changed_cb },
-                           { EFL_GFX_EVENT_RESIZE, _pivot_changed_cb });
+                           { EFL_GFX_ENTITY_EVENT_MOVE, _pivot_changed_cb },
+                           { EFL_GFX_ENTITY_EVENT_RESIZE, _pivot_changed_cb });
 
 static inline void
 _map_dirty(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool reset)
@@ -244,7 +244,7 @@ _map_dirty(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool reset)
 }
 
 static Evas_Map *
-_map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
+_map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
 {
    Gfx_Map_Op *op, *first_op = pd->cow->ops, *last_op;
    Gfx_Map_Pivot *pivot;
@@ -269,7 +269,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
         pivot->changed = EINA_FALSE;
         if (!pivot->is_canvas)
           {
-             pivot->geometry = efl_gfx_geometry_get(pivot->eo_obj);
+             pivot->geometry = efl_gfx_entity_geometry_get(pivot->eo_obj);
           }
         else
           {
@@ -277,7 +277,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
              if (pivot->is_evas)
                evas_output_size_get(pivot->eo_obj, &pivot->geometry.w, &pivot->geometry.h);
              else
-               pivot->geometry.size = efl_gfx_size_get(pivot->eo_obj);
+               pivot->geometry.size = efl_gfx_entity_size_get(pivot->eo_obj);
              pivot->geometry.x = 0;
              pivot->geometry.y = 0;
           }
@@ -518,7 +518,7 @@ _efl_gfx_map_map_reset(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 }
 
 EOLIAN static int
-_efl_gfx_map_map_point_count_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_point_count_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 {
    return pd->cow->count;
 }
@@ -560,7 +560,7 @@ _efl_gfx_map_map_point_count_set(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd, i
 }
 
 EOLIAN static Eina_Bool
-_efl_gfx_map_map_clockwise_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_clockwise_get(const Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_TRUE);
    Evas_Map *m;
@@ -581,7 +581,7 @@ _efl_gfx_map_map_smooth_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool smooth)
 }
 
 EOLIAN static Eina_Bool
-_efl_gfx_map_map_smooth_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_smooth_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 {
    return pd->cow->smooth;
 }
@@ -597,13 +597,13 @@ _efl_gfx_map_map_alpha_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Eina_Bool alpha)
 }
 
 EOLIAN static Eina_Bool
-_efl_gfx_map_map_alpha_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+_efl_gfx_map_map_alpha_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 {
    return pd->cow->alpha;
 }
 
 EOLIAN static void
-_efl_gfx_map_map_coord_absolute_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
+_efl_gfx_map_map_coord_absolute_get(const Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                                     int idx, double *x, double *y, double *z)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -665,7 +665,7 @@ _efl_gfx_map_map_uv_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_map_map_uv_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
+_efl_gfx_map_map_uv_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
                         int idx, double *u, double *v)
 {
    EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count)
@@ -676,7 +676,7 @@ _efl_gfx_map_map_uv_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_map_map_color_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
+_efl_gfx_map_map_color_get(const Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
                            int idx, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -706,7 +706,7 @@ _efl_gfx_map_map_color_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
 
 static Gfx_Map_Op *
 _gfx_map_op_add(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Gfx_Map_Op_Type type,
-                const Efl_Gfx *eo_pivot, double cx, double cy, double cz,
+                const Efl_Gfx_Entity *eo_pivot, double cx, double cy, double cz,
                 Eina_Bool is_absolute)
 {
    Eina_Bool is_self = EINA_FALSE;
@@ -742,7 +742,7 @@ _gfx_map_op_add(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Gfx_Map_Op_Type type,
                        pivot->is_evas = EINA_TRUE;
                        pivot->is_canvas = EINA_TRUE;
                     }
-                  else if (efl_isa(eo_pivot, EFL_CANVAS_INTERFACE))
+                  else if (efl_isa(eo_pivot, EFL_CANVAS_SCENE_INTERFACE))
                     pivot->is_canvas = EINA_TRUE;
                   pivot->map_obj = obj;
                   EINA_INLIST_APPEND(mcow->pivots, pivot);
@@ -817,7 +817,7 @@ _efl_gfx_map_translate(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 
 static inline void
 _map_rotate(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-            double degrees, const Efl_Gfx *pivot, double cx, double cy,
+            double degrees, const Efl_Gfx_Entity *pivot, double cx, double cy,
             Eina_Bool absolute)
 {
    Gfx_Map_Op *op;
@@ -830,7 +830,7 @@ _map_rotate(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 
 EOLIAN static void
 _efl_gfx_map_rotate(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                    double degrees, const Efl_Gfx *pivot, double cx, double cy)
+                    double degrees, const Efl_Gfx_Entity *pivot, double cx, double cy)
 {
    _map_rotate(eo_obj, pd, degrees, pivot, cx, cy, EINA_FALSE);
 }
@@ -844,7 +844,7 @@ _efl_gfx_map_rotate_absolute(Eo *eo_obj, Efl_Gfx_Map_Data *pd, double degrees, d
 static inline void
 _map_rotate_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                double dx, double dy, double dz,
-               const Efl_Gfx *pivot, double cx, double cy, double cz,
+               const Efl_Gfx_Entity *pivot, double cx, double cy, double cz,
                Eina_Bool absolute)
 {
    Gfx_Map_Op *op;
@@ -860,7 +860,7 @@ _map_rotate_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 EOLIAN static void
 _efl_gfx_map_rotate_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                        double dx, double dy, double dz,
-                       const Efl_Gfx *pivot, double cx, double cy, double cz)
+                       const Efl_Gfx_Entity *pivot, double cx, double cy, double cz)
 {
    _map_rotate_3d(eo_obj, pd, dx, dy, dz, pivot, cx, cy, cz, EINA_FALSE);
 }
@@ -875,7 +875,7 @@ _efl_gfx_map_rotate_3d_absolute(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 static inline void
 _map_rotate_quat(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                  double qx, double qy, double qz, double qw,
-                 const Efl_Gfx *pivot, double cx, double cy, double cz,
+                 const Efl_Gfx_Entity *pivot, double cx, double cy, double cz,
                  Eina_Bool absolute)
 {
    Gfx_Map_Op *op;
@@ -892,7 +892,7 @@ _map_rotate_quat(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 EOLIAN static void
 _efl_gfx_map_rotate_quat(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                          double qx, double qy, double qz, double qw,
-                         const Efl_Gfx *pivot, double cx, double cy, double cz)
+                         const Efl_Gfx_Entity *pivot, double cx, double cy, double cz)
 {
    _map_rotate_quat(eo_obj, pd, qx, qy, qz, qw, pivot, cx, cy, cz, EINA_FALSE);
 }
@@ -908,7 +908,7 @@ _efl_gfx_map_rotate_quat_absolute(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 static inline void
 _map_zoom(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
           double zoomx, double zoomy,
-          const Efl_Gfx *pivot, double cx, double cy,
+          const Efl_Gfx_Entity *pivot, double cx, double cy,
           Eina_Bool absolute)
 {
    Gfx_Map_Op *op;
@@ -923,7 +923,7 @@ _map_zoom(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 EOLIAN static void
 _efl_gfx_map_zoom(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
                   double zoomx, double zoomy,
-                  const Efl_Gfx *pivot, double cx, double cy)
+                  const Efl_Gfx_Entity *pivot, double cx, double cy)
 {
    _map_zoom(eo_obj, pd, zoomx, zoomy, pivot, cx, cy, EINA_FALSE);
 }
@@ -937,7 +937,7 @@ _efl_gfx_map_zoom_absolute(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 
 static inline void
 _map_lightning_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                  const Efl_Gfx *pivot, double lx, double ly, double lz,
+                  const Efl_Gfx_Entity *pivot, double lx, double ly, double lz,
                   int lr, int lg, int lb, int ar, int ag, int ab,
                   Eina_Bool absolute)
 {
@@ -956,7 +956,7 @@ _map_lightning_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 
 EOLIAN static void
 _efl_gfx_map_lightning_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                          const Efl_Gfx *pivot, double lx, double ly, double lz,
+                          const Efl_Gfx_Entity *pivot, double lx, double ly, double lz,
                           int lr, int lg, int lb, int ar, int ag, int ab)
 {
    _map_lightning_3d(eo_obj, pd, pivot, lx, ly, lz, lr, lg, lb, ar, ag, ab, EINA_FALSE);
@@ -972,7 +972,7 @@ _efl_gfx_map_lightning_3d_absolute(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 
 static inline void
 _map_perspective_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                    const Efl_Gfx *pivot, double px, double py,
+                    const Efl_Gfx_Entity *pivot, double px, double py,
                     double z0, double foc,
                     Eina_Bool absolute)
 {
@@ -993,7 +993,7 @@ _map_perspective_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 
 EOLIAN static void
 _efl_gfx_map_perspective_3d(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                            const Efl_Gfx *pivot, double px, double py,
+                            const Efl_Gfx_Entity *pivot, double px, double py,
                             double z0, double foc)
 {
    _map_perspective_3d(eo_obj, pd, pivot, px, py, z0, foc, EINA_FALSE);

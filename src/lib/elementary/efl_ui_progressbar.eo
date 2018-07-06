@@ -1,6 +1,6 @@
-class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
+class Efl.Ui.Progressbar (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Format,
                           Efl.Ui.Direction, Efl.Access.Value, Efl.Ui.Translatable,
-                          Efl.Text, Efl.Content, Efl.Text.Markup)
+                          Efl.Text, Efl.Content, Efl.Text_Markup)
 {
    [[Elementary progressbar class]]
    methods {
@@ -15,7 +15,7 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
            without showing the precise progress rate. In the default theme, it will
            animate the bar with content, switching constantly between filling it and back
            to non-filled in a loop. To start and stop this pulsing
-           animation you need to explicitly call elm_progressbar_pulse().
+           animation you need to explicitly call efl_ui_progressbar_pulse_set().
 
            @since 1.20
          ]]
@@ -49,23 +49,21 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_sub_object_add;
-      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Range.range_value { get; set; }
+      Efl.Ui.Range.range_min_max {get; set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Ui.Format.format_cb { set; }
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Access.Value.value_and_text { get; }
       Efl.Text.text { get; set; }
-      Efl.Text.Markup.markup { get; set; }
+      Efl.Text_Markup.markup { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Ui.Translatable.translatable_text { get; set; }
    }
    events {
-      changed; [[Called when progressbar changed]]
+      changed: void; [[Called when progressbar changed]]
    }
 }

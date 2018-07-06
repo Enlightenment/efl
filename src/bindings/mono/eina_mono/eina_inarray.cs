@@ -321,6 +321,12 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     {
         return this.GetEnumerator();
     }
+
+    /// <summary> Gets an Accessor for this Array.</summary>
+    public eina.Accessor<T> GetAccessor()
+    {
+        return new eina.AccessorInArray<T>(eina_inarray_accessor_new(Handle), Ownership.Managed);
+    }
 }
 
 }

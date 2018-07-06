@@ -1,6 +1,6 @@
 class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
                     Efl.Access.Widget.Action,
-                    Elm.Entry, Elm.Genlist, Elm.Hover)
+                    Elm.Entry, Elm.Genlist, Elm.Hover, Efl.Ui.Legacy)
 {
    [[Elementary combobox class]]
    legacy_prefix: elm_combobox;
@@ -37,8 +37,8 @@ class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.widget_event;
@@ -48,11 +48,13 @@ class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
       //Efl.Part.part; // TODO?
    }
    events {
-      dismissed; [[Called when combobox was dismissed]]
-      expanded; [[Called when combobox was expanded]]
+      dismissed: void; [[Called when combobox was dismissed]]
+      expanded: void; [[Called when combobox was expanded]]
+      /* FIXME: Nobody is emitting this
       clicked; [[Called when combobox was clicked]]
-      item,selected; [[Called when combobox item was selected]]
-      item,pressed; [[Called when combobox item was pressed]]
-      filter,done; [[Called when combobox filter was done]]
+      */
+      item,selected: Efl.Object; [[Called when combobox item was selected]]
+      item,pressed: Efl.Object; [[Called when combobox item was pressed]]
+      filter,done: Efl.Object; [[Called when combobox filter was done]]
    }
 }

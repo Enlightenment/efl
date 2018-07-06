@@ -5,6 +5,8 @@
 #include <Efl.h>
 #include <Ecore.h>
 
+#include "ecore_internal.h"
+
 #define MY_CLASS EFL_MODEL_ITEM_CLASS
 
 typedef struct _Efl_Model_Item_Data Efl_Model_Item_Data;
@@ -12,7 +14,7 @@ struct _Efl_Model_Item_Data
 {
    Eina_Hash                        *properties;
    Eina_Array                       *defined_properties;
-   Eina_List                        *children;
+   Eina_List                        *childrens;
 };
 
 static void
@@ -46,7 +48,7 @@ _efl_model_item_efl_object_destructor(Eo *obj, Efl_Model_Item_Data *sd)
 {
    Efl_Model *child;
 
-   EINA_LIST_FREE(sd->children, child)
+   EINA_LIST_FREE(sd->childrens, child)
      {
         if (child)
           efl_parent_set(child, NULL);
@@ -60,146 +62,143 @@ _efl_model_item_efl_object_destructor(Eo *obj, Efl_Model_Item_Data *sd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static const Eina_Array *
-_efl_model_item_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd)
+static Eina_Array *
+_efl_model_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Item_Data *pd)
 {
-   return sd->defined_properties;
+   return pd->defined_properties;
 }
 
-
-static Efl_Future*
-_efl_model_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd, const char *property, const Eina_Value *value)
+static Eina_Future *
+_efl_model_item_efl_model_property_set(Eo *obj, Efl_Model_Item_Data *pd, const char *property, Eina_Value *value)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future* future = efl_promise_future_get(promise);
+   Eina_Stringshare *prop;
+   Eina_Value *exist;
    Efl_Model_Property_Event evt;
 
-   Eina_Stringshare *sshared = eina_stringshare_add(property);
-   Eina_Value *p_v = eina_hash_find(sd->properties, sshared);
-   if (p_v)
-     {
-        eina_stringshare_del(sshared);
-        if (!eina_value_copy(value, p_v))
-          goto err1;
-     }
-   else
-     {
-        if (!eina_array_push(sd->defined_properties, sshared))
-          goto err2;
+   prop = eina_stringshare_add(property);
+   exist = eina_hash_find(pd->properties, prop);
 
-        p_v = eina_value_new(eina_value_type_get(value));
-        if (!p_v)
-          goto err3;
+   if (!exist)
+     {
+        exist = eina_value_new(eina_value_type_get(value));
+        if (!exist)
+          goto value_failed;
 
-        if (!eina_value_copy(value, p_v) ||
-            !eina_hash_direct_add(sd->properties, sshared, p_v))
-          goto err4;
+        if (!eina_hash_direct_add(pd->properties, eina_stringshare_ref(prop), exist))
+          goto hash_failed;
      }
 
-   efl_promise_value_set(promise, p_v, NULL);
+   if (!eina_value_copy(value, exist))
+     goto value_failed;
 
-   evt.changed_properties = eina_array_new(20);
-   eina_array_push(evt.changed_properties, property);
+   {
+      char *v = eina_value_to_string(value);
+      char *e = eina_value_to_string(exist);
+
+      free(v);
+      free(e);
+   }
+
+   eina_stringshare_del(prop);
+
+   evt.changed_properties = eina_array_new(1);
+   eina_array_push(evt.changed_properties, prop);
+
    efl_event_callback_call(obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+
    eina_array_free(evt.changed_properties);
 
-   return future;
+   return eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                               eina_value_reference_copy(value));
 
-err4:
-   eina_value_free(p_v);
-err3:
-   eina_array_pop(sd->defined_properties);
-err2:
-   eina_stringshare_del(sshared);
-err1:
-   efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
-   return future;
+ hash_failed:
+   eina_value_free(exist);
+ value_failed:
+   eina_stringshare_del(prop);
+
+   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+                               ENOMEM);
 }
 
-static Efl_Future *
-_efl_model_item_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd, const char *property)
+static Eina_Value *
+_efl_model_item_efl_model_property_get(const Eo *obj EINA_UNUSED,
+                                       Efl_Model_Item_Data *pd,
+                                       const char *property)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future *rfuture = efl_promise_future_get(promise);
+   Eina_Stringshare *prop;
+   Eina_Value *value;
 
-   Eina_Stringshare *sshare = eina_stringshare_add(property);
-   Eina_Value *p_v = eina_hash_find(sd->properties, sshare);
-   eina_stringshare_del(sshare);
-   if (p_v)
-     efl_promise_value_set(promise, p_v, NULL);
-   else
-     efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+   prop = eina_stringshare_add(property);
+   value = eina_hash_find(pd->properties, prop);
+   eina_stringshare_del(prop);
 
-   return rfuture;
+   if (!value)
+     return eina_value_error_new(EFL_MODEL_ERROR_NOT_FOUND);
+
+   return eina_value_dup(value);
 }
 
-static Efl_Future *
-_efl_model_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd, unsigned int start, unsigned int count)
+static Eina_Future *
+_efl_model_item_efl_model_children_slice_get(Eo *obj, Efl_Model_Item_Data *pd, unsigned int start, unsigned int count)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future *rfuture = efl_promise_future_get(promise);
+   Eina_Value v;
 
-   Eina_Accessor* accessor = efl_model_list_slice(sd->children, start, count);
-   efl_promise_value_set(promise, accessor, (Eina_Free_Cb)&eina_accessor_free);
-
-   return rfuture;
+   v = efl_model_list_value_get(pd->childrens, start, count);
+   return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
 }
 
-static Efl_Future *
-_efl_model_item_efl_model_children_count_get(Eo *obj EINA_UNUSED, Efl_Model_Item_Data *sd)
+static unsigned int
+_efl_model_item_efl_model_children_count_get(const Eo *obj EINA_UNUSED, Efl_Model_Item_Data *pd)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future *rfuture = efl_promise_future_get(promise);
-
-   unsigned int *count = calloc(1, sizeof(unsigned int));
-   *count = eina_list_count(sd->children);
-   efl_promise_value_set(promise, count, &free);
-
-   return rfuture;
+   return eina_list_count(pd->childrens);
 }
 
 static Eo *
 _efl_model_item_efl_model_child_add(Eo *obj, Efl_Model_Item_Data *sd)
 {
    Efl_Model_Children_Event cevt;
-   Efl_Model *child = efl_add(EFL_MODEL_ITEM_CLASS, obj);
+   Efl_Model *child;
+
+   child = efl_add(EFL_MODEL_ITEM_CLASS, obj);
    if (!child)
      {
         EINA_LOG_ERR("Could not allocate Efl.Model.Item");
         eina_error_set(EFL_MODEL_ERROR_UNKNOWN);
         return NULL;
      }
-   cevt.index = eina_list_count(sd->children);
-   sd->children = eina_list_append(sd->children, child);
-   cevt.child = child;
+
+   cevt.index = eina_list_count(sd->childrens);
+   sd->childrens = eina_list_append(sd->childrens, child);
+
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
-   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &cevt.index);
+   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
+
    return child;
 }
 
 static void
 _efl_model_item_efl_model_child_del(Eo *obj, Efl_Model_Item_Data *sd, Eo *child)
 {
-   Eina_List *l;
    Efl_Model *data;
+   Eina_List *l;
    unsigned int i = 0;
-   EINA_LIST_FOREACH(sd->children, l, data)
+
+   EINA_LIST_FOREACH(sd->childrens, l, data)
      {
         if (data == child)
           {
              Efl_Model_Children_Event cevt;
-             sd->children = eina_list_remove_list(sd->children, l);
 
-             cevt.child = efl_ref(child);
+             sd->childrens = eina_list_remove_list(sd->childrens, l);
+
              cevt.index = i;
+
+             efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
 
              efl_parent_set(child, NULL);
 
-             efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
-             efl_unref(child);
+             efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
 
-             i = eina_list_count(sd->children);
-             efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &i);
              break;
           }
         ++i;

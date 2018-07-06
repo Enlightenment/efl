@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -1013,7 +1013,9 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 {
    Evas_Object *ao, *po;
 
+   edje_object_freeze((Evas_Object *)eobj);
    po = (Evas_Object *)edje_object_part_object_get(eobj, part);
+   edje_object_thaw((Evas_Object *)eobj);
    if (!obj || !po) return NULL;
 
    /* check previous access object */
@@ -1034,7 +1036,9 @@ _elm_access_edje_object_part_object_unregister(Evas_Object* obj EINA_UNUSED,
 {
    Evas_Object *po;
 
+   edje_object_freeze((Evas_Object *)eobj);
    po = (Evas_Object *)edje_object_part_object_get(eobj, part);
+   edje_object_thaw((Evas_Object *)eobj);
    if (!po) return;
 
    _access_object_unregister(po);
@@ -1505,7 +1509,7 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_access_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "highlight", NULL, "highlight", _access_atspi_action_do},
@@ -1522,10 +1526,10 @@ _elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_access_efl_access_state_set_get(Eo *obj, void *pd EINA_UNUSED)
+_elm_access_efl_access_object_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, ELM_ACCESS_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, ELM_ACCESS_CLASS));
 
    Elm_Access_Info *info = _elm_access_info_get(obj);
    if (info && !evas_object_visible_get(info->part_object))

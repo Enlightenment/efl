@@ -60,7 +60,7 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 {
    Ector_Renderer_Data *pd = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
    cairo_pattern_t *pat;
-   cairo_matrix_t *pd_m;
+   cairo_matrix_t pd_m;
 
    pat = cairo_pattern_create_radial(grd->focal.x, grd->focal.y, 0,
                                      grd->radial.x, grd->radial.y, grd->radius);
@@ -70,14 +70,13 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
 
-   pd_m = malloc(sizeof (cairo_matrix_t));
    if (pd->m)
      {
-        cairo_matrix_init(pd_m,
+        cairo_matrix_init(&pd_m,
                           pd->m->xx, pd->m->yx,
                           pd->m->xy, pd->m->yy,
                           pd->m->xz, pd->m->yz);
-        cairo_pattern_set_matrix(pat, pd_m);
+        cairo_pattern_set_matrix(pat, &pd_m);
      }
 
    return pat;
@@ -114,7 +113,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_draw(Eo *obj, Ector_Rendere
 
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
-_ector_renderer_cairo_gradient_radial_ector_renderer_cairo_fill(Eo *obj,
+_ector_renderer_cairo_gradient_radial_ector_renderer_cairo_op_fill(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Radial_Data *pd,
                                                                      unsigned int mul_col)
 {
@@ -136,7 +135,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_cairo_fill(Eo *obj,
 }
 
 static void
-_ector_renderer_cairo_gradient_radial_ector_renderer_bounds_get(Eo *obj EINA_UNUSED,
+_ector_renderer_cairo_gradient_radial_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
                                                                 Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
                                                                 Eina_Rect *r)
 {
@@ -198,7 +197,7 @@ _ector_renderer_cairo_gradient_radial_efl_gfx_gradient_stop_set(Eo *obj,
 }
 
 static unsigned int
-_ector_renderer_cairo_gradient_radial_ector_renderer_crc_get(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
+_ector_renderer_cairo_gradient_radial_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
 {
    Ector_Renderer_Gradient_Radial_Data *grd;
    Ector_Renderer_Gradient_Data *gd;

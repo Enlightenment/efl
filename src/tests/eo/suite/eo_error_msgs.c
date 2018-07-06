@@ -8,12 +8,6 @@ eo_test_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *fil
    if (level > _EINA_LOG_MAX)
       return;
 
-   ck_assert_int_eq(level, myctx->expected_level);
-   if (myctx->msg)
-      ck_assert_str_eq(myctx->msg, fmt);
-   ck_assert_str_eq(myctx->fnc, fnc);
-   myctx->did = EINA_TRUE;
-
 #ifdef SHOW_LOG
    eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
 #else
@@ -21,6 +15,12 @@ eo_test_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *fil
    (void)file;
    (void)line;
 #endif
+
+   ck_assert_int_eq(level, myctx->expected_level);
+   if (myctx->msg)
+      ck_assert_str_eq(myctx->msg, fmt);
+   ck_assert_str_eq(myctx->fnc, fnc);
+   myctx->did = EINA_TRUE;
 }
 
 void
@@ -33,6 +33,14 @@ eo_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const ch
    if (level > _EINA_LOG_MAX)
      return;
 
+#ifdef SHOW_LOG
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+#else
+   (void)d;
+   (void)file;
+   (void)line;
+#endif
+
    va_copy(cp_args, args);
    str = va_arg(cp_args, const char *);
    va_end(cp_args);
@@ -42,12 +50,4 @@ eo_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const ch
    ck_assert_str_eq(myctx->msg, str);
    ck_assert_str_eq(myctx->fnc, fnc);
    myctx->did = EINA_TRUE;
-
-#ifdef SHOW_LOG
-   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
-#else
-   (void)d;
-   (void)file;
-   (void)line;
-#endif
 }

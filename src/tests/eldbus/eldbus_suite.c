@@ -4,6 +4,7 @@
 
 #include "eldbus_suite.h"
 #include "../efl_check.h"
+#include <Eldbus.h>
 
 static const Efl_Test_Case etc[] = {
   { "eldbus_init", eldbus_test_eldbus_init },
@@ -22,6 +23,17 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(eldbus)
+{
+   ck_assert_int_eq(eldbus_init(), 1);
+}
+
+SUITE_SHUTDOWN(eldbus)
+{
+   //T6814
+   ck_assert_int_eq(eldbus_shutdown(), 0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -35,7 +47,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eldbus", etc);
+                                           "Eldbus", etc, SUITE_INIT_FN(eldbus), SUITE_SHUTDOWN_FN(eldbus));
 
    return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

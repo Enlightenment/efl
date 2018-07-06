@@ -1,28 +1,24 @@
-class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model, Efl.Ui.View)
+class Efl.Model_Composite_Boolean (Efl.Model_Composite)
 {
    [[Efl model composite boolean class]]
    methods {
-      property_add {
-         [[Adds property]]
+      boolean_add {
+         [[Add a new named boolean property with a defined default value.]]
          params {
-            @in name: string; [[Property name]]
-            @in initial_value: bool; [[Initial property value $bool]]
-         }
+            @in name: string;
+            @in default_value: bool;
+	 }
+      }
+      boolean_del {
+         [[Delete an existing named boolean property]]
+         params {
+            @in name: string;
+	 }
       }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Model.properties { get; }
-      Efl.Model.property_get;
-      Efl.Model.property_set;
       Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
-      Efl.Model.child_add;
-      Efl.Model.child_del;
-      Efl.Ui.View.model { set; get; }
-   }
-   constructors {
-      Efl.Ui.View.model;
-      .property_add @optional;
    }
 }

@@ -39,11 +39,10 @@ typedef uint32_t Eina_Unicode;
 EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex);
 EAPI unsigned int eina_mempool_alignof(unsigned int size);
 
-START_TEST(eina_unicode_utf8)
+EFL_START_TEST(eina_unicode_utf8)
 {
    int ind;
    unsigned char ch;
-   eina_init();
 
    /* Valid utf-8 cases */
    /* First possible sequence of a certain length */
@@ -240,21 +239,15 @@ START_TEST(eina_unicode_utf8)
    fail_if((eina_unicode_utf8_get_next("\xFC\x83\xBF\xBF\xBF\xBF", &ind) != 0xDCFC) ||
            (ind != 1));
    /* Add some more error cases here */
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_alignof)
+EFL_START_TEST(eina_alignof)
 {
-   eina_init();
-
    fail_if(eina_mempool_alignof(6) != 8);
    fail_if((eina_mempool_alignof(10) & 0x7) != 0);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_abi(TCase *tc)

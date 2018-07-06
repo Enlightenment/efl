@@ -193,7 +193,7 @@ _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_path_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_path_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                   const Efl_Gfx_Path_Command **commands,
                   const double **points)
 {
@@ -202,7 +202,7 @@ _efl_gfx_path_path_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_length_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                          unsigned int *commands, unsigned int *points)
 {
    if (commands) *commands = pd->commands_count;
@@ -210,7 +210,7 @@ _efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *r)
+_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *r)
 {
    double minx, miny, maxx, maxy;
    unsigned int i;
@@ -236,7 +236,7 @@ _efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *
 }
 
 EOLIAN static void
-_efl_gfx_path_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_current_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                            double *x, double *y)
 {
    if (x) *x = pd->current.x;
@@ -244,7 +244,7 @@ _efl_gfx_path_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_current_ctrl_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+_efl_gfx_path_current_ctrl_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                                 double *x, double *y)
 {
    if (x) *x = pd->current_ctrl.x;
@@ -275,89 +275,49 @@ interpolate(double from, double to, double pos_map)
    return (from * (1.0 - pos_map)) + (to * pos_map);
 }
 
-static inline int
-interpolatei(int from, int to, double pos_map)
-{
-   return (from * (1.0 - pos_map)) + (to * pos_map);
-}
-
-typedef struct _Efl_Gfx_Property Efl_Gfx_Property;
-struct _Efl_Gfx_Property
-{
-   double scale;
-   double w;
-   double centered;
-
-   Efl_Gfx_Cap c;
-   Efl_Gfx_Join j;
-
-   const Efl_Gfx_Dash *dash;
-   unsigned int dash_length;
-
-   int r, g, b, a;
-   int fr, fg, fb, fa;
-};
-
-static inline void
-_efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
-{
-
-   property->scale = efl_gfx_shape_stroke_scale_get(obj);
-   efl_gfx_shape_stroke_color_get(obj, &property->r, &property->g, &property->b, &property->a);
-   efl_gfx_color_get(obj, &property->fr, &property->fg, &property->fb, &property->fa);
-   property->w = efl_gfx_shape_stroke_width_get(obj);
-   property->centered = efl_gfx_shape_stroke_location_get(obj);
-   efl_gfx_shape_stroke_dash_get(obj, &property->dash, &property->dash_length);
-   property->c = efl_gfx_shape_stroke_cap_get(obj);
-   property->j = efl_gfx_shape_stroke_join_get(obj);
-}
-
-
-
 static void _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd, char *from, char *to, double pos);
 static void _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd);
 
 EOLIAN static Eina_Bool
 _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
-                           const Eo *from, const Eo *to, double pos_map)
+                          const Eo *from, const Eo *to, double pos_map)
 {
    Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    Efl_Gfx_Path_Data *from_pd, *to_pd;
    Efl_Gfx_Path_Command *cmds;
-   Efl_Gfx_Property property_from, property_to;
-   Efl_Gfx_Dash *dash = NULL;
+   double interv;    //interpolated value
    double *pts;
-   unsigned int i, j;
+
+   if (!efl_isa(from, EFL_GFX_PATH_MIXIN) || !efl_isa(to, EFL_GFX_PATH_MIXIN))
+     return EINA_FALSE;
 
    from_pd = efl_data_scope_get(from, EFL_GFX_PATH_MIXIN);
    to_pd = efl_data_scope_get(to, EFL_GFX_PATH_MIXIN);
-   if (!efl_isa(from, EFL_GFX_PATH_MIXIN) || !efl_isa(to, EFL_GFX_PATH_MIXIN))
-     return EINA_FALSE;
+
+   //just in case
    if (pd == from_pd || pd == to_pd) return EINA_FALSE;
-
-
-   _efl_gfx_property_get(from, &property_from);
-   _efl_gfx_property_get(to, &property_to);
-
-   if (property_from.dash_length != property_to.dash_length) return EINA_FALSE;
 
    if (from_pd->path_data && to_pd->path_data)
      {
         _efl_gfx_path_reset(obj, pd);
-        _path_interpolation(obj, pd, from_pd->path_data, to_pd->path_data, pos_map);
+        _path_interpolation(obj, pd,
+                            from_pd->path_data, to_pd->path_data, pos_map);
      }
    else
      {
         if (!_efl_gfx_path_equal_commands_internal(from_pd, to_pd))
           return EINA_FALSE;
+
         cmds = realloc(pd->commands,
-                       sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
-        if (!cmds && from_pd->commands_count) return EINA_FALSE;
+                       sizeof(Efl_Gfx_Path_Command) * from_pd->commands_count);
+        if (!cmds && (from_pd->commands_count > 0)) return EINA_FALSE;
+
         pd->commands = cmds;
 
         pts = realloc(pd->points,
-                      sizeof (double) * from_pd->points_count);
-        if (!pts && from_pd->points_count) return EINA_FALSE;
+                      sizeof(double) * from_pd->points_count);
+        if (!pts && (from_pd->points_count > 0)) return EINA_FALSE;
+
         pd->points = pts;
 
         if (cmds)
@@ -369,12 +329,12 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
                {
                   double *to_pts = to_pd->points;
                   double *from_pts = from_pd->points;
+                  unsigned int i, j;
 
                   for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
                     for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
                       {
                          *pts = interpolate(*from_pts, *to_pts, pos_map);
-
                          pts++;
                          from_pts++;
                          to_pts++;
@@ -385,51 +345,23 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
         pd->points_count = from_pd->points_count;
         pd->commands_count = from_pd->commands_count;
 
-        pd->current.x = interpolate(from_pd->current.x,
-                                    to_pd->current.x,
-                                    pos_map);
-        pd->current.y = interpolate(from_pd->current.y,
-                                    to_pd->current.y,
-                                    pos_map);
-        pd->current_ctrl.x = interpolate(from_pd->current_ctrl.x,
-                                         to_pd->current_ctrl.x,
-                                         pos_map);
-        pd->current_ctrl.y = interpolate(from_pd->current_ctrl.y,
-                                         to_pd->current_ctrl.y,
-                                         pos_map);
+        interv = interpolate(from_pd->current.x, to_pd->current.x, pos_map);
+        pd->current.x = interv;
+
+        interv = interpolate(from_pd->current.y, to_pd->current.y, pos_map);
+        pd->current.y = interv;
+
+        interv = interpolate(from_pd->current_ctrl.x, to_pd->current_ctrl.x,
+                             pos_map);
+        pd->current_ctrl.x = interv;
+
+        interv = interpolate(from_pd->current_ctrl.y, to_pd->current_ctrl.y,
+                             pos_map);
+        pd->current_ctrl.y = interv;
+
    }
 
-   if (property_to.dash_length)
-     {
-        dash = malloc(sizeof (Efl_Gfx_Dash) * property_to.dash_length);
-        if (!dash) return EINA_FALSE;
-
-        for (i = 0; i < property_to.dash_length; i++)
-          {
-             dash[i].length = interpolate(property_from.dash[i].length,
-                                          property_to.dash[i].length, pos_map);
-             dash[i].gap = interpolate(property_from.dash[i].gap,
-                                       property_to.dash[i].gap, pos_map);
-          }
-     }
-
-
-   efl_gfx_shape_stroke_scale_set(obj, interpolate(property_from.scale, property_to.scale, pos_map));
-   efl_gfx_shape_stroke_color_set(obj, interpolatei(property_from.r, property_to.r, pos_map),
-                                      interpolatei(property_from.g, property_to.g, pos_map),
-                                      interpolatei(property_from.b, property_to.b, pos_map),
-                                      interpolatei(property_from.a, property_to.a, pos_map));
-    efl_gfx_color_set(obj, interpolatei(property_from.fr, property_to.fr, pos_map),
-                           interpolatei(property_from.fg, property_to.fg, pos_map),
-                           interpolatei(property_from.fb, property_to.fb, pos_map),
-                           interpolatei(property_from.fa, property_to.fa, pos_map));
-    efl_gfx_shape_stroke_width_set(obj, interpolate(property_from.w, property_to.w, pos_map));
-    efl_gfx_shape_stroke_location_set(obj, interpolate(property_from.centered, property_to.centered, pos_map));
-    efl_gfx_shape_stroke_dash_set(obj, dash, property_to.dash_length);
-    efl_gfx_shape_stroke_cap_set(obj, pos_map < 0.5 ? property_from.c : property_to.c);
-    efl_gfx_shape_stroke_join_set(obj, pos_map < 0.5 ? property_from.j : property_to.j);
-
-    efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 
    return EINA_TRUE;
 }

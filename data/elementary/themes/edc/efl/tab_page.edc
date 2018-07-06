@@ -1,0 +1,15 @@
+group { "efl/tab_page";
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+         }
+      }
+      swallow { "efl.content";
+         scale;
+         desc { "default";
+            rel.to: "base";
+         }
+      }
+   }
+}

@@ -11,8 +11,10 @@ class Ecore.Audio.Out.Wasapi (Ecore.Audio.Out)
       Ecore.Audio.Out.input_detach;
    }
    events {
-      context,ready; [[Called when the output is ready for playback.]]
-      context,fail; [[Called when context fails.]]
-      stop; [[Called when need to stop.]]
+      /* FIXME: Make sure that this event is actually emitted */
+      context,ready: void; [[Called when the output is ready for playback.]]
+      /* FIXME: Make sure that this event is actually emitted */
+      context,fail: void; [[Called when context fails.]]
+      stop: void; [[Called when need to stop.]]
    }
 }

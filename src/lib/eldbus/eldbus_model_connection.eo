@@ -1,53 +1,10 @@
-import eldbus_types;
-
-class Eldbus.Model.Connection (Efl.Object, Efl.Model) {
+class Eldbus.Model.Connection (Eldbus.Model) {
     [[Eldbus model connection class]]
 
-    methods {
-        constructor {
-            [[Custom Eldbus_Model_Connection constructor.
-
-              @since 1.16]]
-            params {
-                @in type: Eldbus.Connection.Type; [[The connection type]]
-                @in address: string; [[Remote address of DBus]]
-                @in private_: bool; [[Non shared dbus connection]]
-            }
-        }
-    @property type {
-            [[Connection type]]
-            get { }
-            values {
-                type: Eldbus.Connection.Type; [[Connection type]]
-            }
-        }
-    @property address {
-            [[Remote DBus address]]
-            get { }
-            values {
-                address: string; [[Address]]
-            }
-        }
-    @property private {
-            [[Indicate if the DBus connection is shared or private]]
-            get { }
-            values {
-                private_: bool; [[Private DBus connection]]
-            }
-        }
-    }
     implements {
         Efl.Object.constructor;
-        Efl.Object.destructor;
-        Efl.Model.properties { get; }
-        Efl.Model.property_set;
-        Efl.Model.property_get;
-        Efl.Model.child_add;
-        Efl.Model.child_del;
+        Efl.Object.invalidate;
         Efl.Model.children_slice_get;
-        Efl.Model.children_count_get;
-    }
-    constructors {
-        .constructor;
+        Efl.Model.children_count { get; }
     }
 }

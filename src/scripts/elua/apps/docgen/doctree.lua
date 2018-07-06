@@ -38,6 +38,23 @@ M.Node = util.Object:clone {
         PROTECTED = eolian.object_scope.PROTECTED
     },
 
+    __ctor = function(self, obj)
+        self._obj = obj
+        assert(self._obj)
+    end,
+
+    name_get = function(self)
+        return self.obj:name_get()
+    end,
+
+    short_name_get = function(self)
+        return self.obj:short_name_get()
+    end,
+
+    namespaces_get = function(self)
+        return self._obj:namespaces_get():to_array()
+    end,
+
     nspaces_get = function(self, root)
         local tbl = self:namespaces_get()
         -- temporary workaround
@@ -48,7 +65,7 @@ M.Node = util.Object:clone {
             tbl[i] = tbl[i]:lower()
         end
 
-        tbl[#tbl + 1] = self:name_get():lower()
+        tbl[#tbl + 1] = self:short_name_get():lower()
         if root ~= nil then
             tbl[#tbl + 1] = not not root
         end
@@ -90,36 +107,32 @@ local add_since = function(str, since)
 end
 
 M.Doc = Node:clone {
-    __ctor = function(self, doc)
-        self.doc = doc
-    end,
-
     summary_get = function(self)
-        if not self.doc then
+        if not self._obj then
             return nil
         end
-        return self.doc:summary_get()
+        return self._obj:summary_get()
     end,
 
     description_get = function(self)
-        if not self.doc then
+        if not self._obj then
             return nil
         end
-        return self.doc:description_get()
+        return self._obj:description_get()
     end,
 
     since_get = function(self)
-        if not self.doc then
+        if not self._obj then
             return nil
         end
-        return self.doc:since_get()
+        return self._obj:since_get()
     end,
 
     brief_get = function(self, doc2)
-        if not self.doc and (not doc2 or not doc2.doc) then
+        if not self._obj and (not doc2 or not doc2._obj) then
             return "No description supplied."
         end
-        local doc1, doc2 = self.doc, doc2 and doc2.doc or nil
+        local doc1, doc2 = self._obj, doc2 and doc2._obj or nil
         if not doc1 then
             doc1, doc2 = doc2, doc1
         end
@@ -127,10 +140,10 @@ M.Doc = Node:clone {
     end,
 
     full_get = function(self, doc2, write_since)
-        if not self.doc and (not doc2 or not doc2.doc) then
+        if not self._obj and (not doc2 or not doc2._obj) then
             return "No description supplied."
         end
-        local doc1, doc2 = self.doc, doc2 and doc2.doc or nil
+        local doc1, doc2 = self._obj, doc2 and doc2._obj or nil
         if not doc1 then
             doc1, doc2 = doc2, doc1
         end
@@ -160,7 +173,7 @@ M.Doc = Node:clone {
     end,
 
     exists = function(self)
-        return not not self.doc
+        return not not self._obj
     end
 }
 
@@ -181,25 +194,8 @@ M.Class = Node:clone {
     MIXIN = eolian.class_type.MIXIN,
     INTERFACE = eolian.class_type.INTERFACE,
 
-    __ctor = function(self, cl)
-        self.class = cl
-        assert(self.class)
-    end,
-
-    full_name_get = function(self)
-        return self.class:full_name_get()
-    end,
-
-    name_get = function(self)
-        return self.class:name_get()
-    end,
-
-    namespaces_get = function(self)
-        return self.class:namespaces_get():to_array()
-    end,
-
     type_get = function(self)
-        return self.class:type_get()
+        return self._obj:type_get()
     end,
 
     type_str_get = function(self)
@@ -216,15 +212,15 @@ M.Class = Node:clone {
     end,
 
     doc_get = function(self)
-        return M.Doc(self.class:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     legacy_prefix_get = function(self)
-        return self.class:legacy_prefix_get()
+        return self._obj:legacy_prefix_get()
     end,
 
     eo_prefix_get = function(self)
-        return self.class:eo_prefix_get()
+        return self._obj:eo_prefix_get()
     end,
 
     inherits_get = function(self)
@@ -233,7 +229,7 @@ M.Class = Node:clone {
             return ret
         end
         ret = {}
-        for cl in self.class:inherits_get() do
+        for cl in self._obj:inherits_get() do
             ret[#ret + 1] = M.Class(cl)
         end
         self._cache_inhc = ret
@@ -241,7 +237,7 @@ M.Class = Node:clone {
     end,
 
     children_get = function(self)
-        return revh[self:full_name_get()] or {}
+        return revh[self:name_get()] or {}
     end,
 
     functions_get = function(self, ft)
@@ -251,25 +247,25 @@ M.Class = Node:clone {
         end
         ret = {}
         self._cache_funcs = ret
-        for fn in self.class:functions_get(ft) do
+        for fn in self._obj:functions_get(ft) do
             ret[#ret + 1] = M.Function(fn)
         end
         return ret
     end,
 
-    function_get_by_name = function(self, fn, ft)
+    function_by_name_get = function(self, fn, ft)
         local fun = self._cache_func
         if fun then
             return fun
         end
-        fun = M.Function(self.class:function_get_by_name(fn, ft))
+        fun = M.Function(self._obj:function_by_name_get(fn, ft))
         self._cache_func = fun
         return fun
     end,
 
     events_get = function(self)
         local ret = {}
-        for ev in self.class:events_get() do
+        for ev in self._obj:events_get() do
             ret[#ret + 1] = M.Event(ev)
         end
         return ret
@@ -277,14 +273,14 @@ M.Class = Node:clone {
 
     implements_get = function(self)
         local ret = {}
-        for impl in self.class:implements_get() do
+        for impl in self._obj:implements_get() do
             ret[#ret + 1] = M.Implement(impl)
         end
         return ret
     end,
 
     c_get_function_name_get = function(self)
-        return self.class:c_get_function_name_get()
+        return self._obj:c_get_function_name_get()
     end,
 
     nspaces_get = function(self, root)
@@ -292,7 +288,7 @@ M.Class = Node:clone {
     end,
 
     is_same = function(self, other)
-        return self.class == other.class
+        return self._obj == other._obj
     end,
 
     -- static getters
@@ -303,8 +299,7 @@ M.Class = Node:clone {
         if ret then
             return ret
         end
-        -- FIXME: unit
-        local v = eolian.class_get_by_name(eos:unit_get(), name)
+        local v = eos:class_by_name_get(name)
         if not v then
             return nil
         end
@@ -319,8 +314,7 @@ M.Class = Node:clone {
         if ret then
             return ret
         end
-        -- FIXME: unit
-        local v = eolian.class_get_by_file(eos:unit_get(), name)
+        local v = eos:class_by_file_get(name)
         if not v then
             return nil
         end
@@ -333,7 +327,7 @@ M.Class = Node:clone {
         local ret, had = get_cache(M.Class, "_cache_all")
         if not had then
             -- FIXME: unit
-            for cl in eolian.all_classes_get(eos:unit_get()) do
+            for cl in eos:classes_get() do
                 local cls = M.Class(cl)
                 if matches_filter(cls) then
                    ret[#ret + 1] = cls
@@ -362,17 +356,8 @@ M.Function = Node:clone {
     METHOD = eolian.function_type.METHOD,
     FUNCTION_POINTER = eolian.function_type.FUNCTION_POINTER,
 
-    __ctor = function(self, fn)
-        self.func = fn
-        assert(self.func)
-    end,
-
-    name_get = function(self)
-        return self.func:name_get()
-    end,
-
     type_get = function(self)
-        return self.func:type_get()
+        return self._obj:type_get()
     end,
 
     type_str_get = function(self)
@@ -380,44 +365,44 @@ M.Function = Node:clone {
     end,
 
     scope_get = function(self, ft)
-        return self.func:scope_get(ft)
+        return self._obj:scope_get(ft)
     end,
 
     full_c_name_get = function(self, ft, legacy)
-        return self.func:full_c_name_get(ft, legacy)
+        return self._obj:full_c_name_get(ft, legacy)
     end,
 
     legacy_get = function(self, ft)
-        return self.func:legacy_get(ft)
+        return self._obj:legacy_get(ft)
     end,
 
     implement_get = function(self)
-        return M.Implement(self.func:implement_get())
+        return M.Implement(self._obj:implement_get())
     end,
 
     is_legacy_only = function(self, ft)
-        return self.func:is_legacy_only(ft)
+        return self._obj:is_legacy_only(ft)
     end,
 
     is_class = function(self)
-        return self.func:is_class()
+        return self._obj:is_class()
     end,
 
     is_beta = function(self)
-        return self.func:is_beta()
+        return self._obj:is_beta()
     end,
 
     is_constructor = function(self, klass)
-        return self.func:is_constructor(klass.class)
+        return self._obj:is_constructor(klass.class)
     end,
 
     is_function_pointer = function(self)
-        return self.func:is_function_pointer()
+        return self._obj:is_function_pointer()
     end,
 
     property_keys_get = function(self, ft)
         local ret = {}
-        for par in self.func:property_keys_get(ft) do
+        for par in self._obj:property_keys_get(ft) do
             ret[#ret + 1] = M.Parameter(par)
         end
         return ret
@@ -425,7 +410,7 @@ M.Function = Node:clone {
 
     property_values_get = function(self, ft)
         local ret = {}
-        for par in self.func:property_values_get(ft) do
+        for par in self._obj:property_values_get(ft) do
             ret[#ret + 1] = M.Parameter(par)
         end
         return ret
@@ -433,14 +418,14 @@ M.Function = Node:clone {
 
     parameters_get = function(self)
         local ret = {}
-        for par in self.func:parameters_get() do
+        for par in self._obj:parameters_get() do
             ret[#ret + 1] = M.Parameter(par)
         end
         return ret
     end,
 
     return_type_get = function(self, ft)
-        local v = self.func:return_type_get(ft)
+        local v = self._obj:return_type_get(ft)
         if not v then
             return nil
         end
@@ -448,7 +433,7 @@ M.Function = Node:clone {
     end,
 
     return_default_value_get = function(self, ft)
-        local v = self.func:return_default_value_get(ft)
+        local v = self._obj:return_default_value_get(ft)
         if not v then
             return nil
         end
@@ -456,15 +441,15 @@ M.Function = Node:clone {
     end,
 
     return_doc_get = function(self, ft)
-        return M.Doc(self.func:return_documentation_get(ft))
+        return M.Doc(self._obj:return_documentation_get(ft))
     end,
 
     return_is_warn_unused = function(self, ft)
-        return self.func:return_is_warn_unused(ft)
+        return self._obj:return_is_warn_unused(ft)
     end,
 
     is_const = function(self)
-        return self.func:is_const()
+        return self._obj:is_const()
     end,
 
     nspaces_get = function(self, cl, root)
@@ -478,11 +463,11 @@ M.Function = Node:clone {
     end,
 
     is_same = function(self, other)
-        return self.func == other.func
+        return self._obj == other._obj
     end,
 
     id_get = function(self)
-        return tonumber(ffi.cast("uintptr_t", self.func))
+        return tonumber(ffi.cast("uintptr_t", self._obj))
     end
 }
 
@@ -492,13 +477,8 @@ M.Parameter = Node:clone {
     OUT = eolian.parameter_dir.OUT,
     INOUT = eolian.parameter_dir.INOUT,
 
-    __ctor = function(self, par)
-        self.param = par
-        assert(self.param)
-    end,
-
     direction_get = function(self)
-        return self.param:direction_get()
+        return self._obj:direction_get()
     end,
 
     direction_name_get = function(self)
@@ -512,7 +492,7 @@ M.Parameter = Node:clone {
     end,
 
     type_get = function(self)
-        local v = self.param:type_get()
+        local v = self._obj:type_get()
         if not v then
             return nil
         end
@@ -520,50 +500,37 @@ M.Parameter = Node:clone {
     end,
 
     default_value_get = function(self)
-        local v = self.param:default_value_get()
+        local v = self._obj:default_value_get()
         if not v then
             return nil
         end
         return M.Expression(v)
     end,
 
-    name_get = function(self)
-        return self.param:name_get()
-    end,
-
     doc_get = function(self)
-        return M.Doc(self.param:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     is_nonull = function(self)
-        return self.param:is_nonull()
+        return self._obj:is_nonull()
     end,
 
     is_nullable = function(self)
-        return self.param:is_nullable()
+        return self._obj:is_nullable()
     end,
 
     is_optional = function(self)
-        return self.param:is_optional()
+        return self._obj:is_optional()
     end,
 
     is_same = function(self, other)
-        return self.param == other.param
+        return self._obj == other._obj
     end
 }
 
 M.Event = Node:clone {
-    __ctor = function(self, ev)
-        self.event = ev
-        assert(self.event)
-    end,
-
-    name_get = function(self)
-        return self.event:name_get()
-    end,
-
     type_get = function(self)
-        local v = self.event:type_get()
+        local v = self._obj:type_get()
         if not v then
             return nil
         end
@@ -571,27 +538,27 @@ M.Event = Node:clone {
     end,
 
     doc_get = function(self)
-        return M.Doc(self.event:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     scope_get = function(self)
-        return self.event:scope_get()
+        return self._obj:scope_get()
     end,
 
     c_name_get = function(self)
-        return self.event:c_name_get()
+        return self._obj:c_name_get()
     end,
 
     is_beta = function(self)
-        return self.event:is_beta()
+        return self._obj:is_beta()
     end,
 
     is_hot = function(self)
-        return self.event:is_hot()
+        return self._obj:is_hot()
     end,
 
     is_restart = function(self)
-        return self.event:is_restart()
+        return self._obj:is_restart()
     end,
 
     nspaces_get = function(self, cl, root)
@@ -606,21 +573,12 @@ M.Event = Node:clone {
 }
 
 M.StructField = Node:clone {
-    __ctor = function(self, fl)
-        self.field = fl
-        assert(self.field)
-    end,
-
-    name_get = function(self)
-        return self.field:name_get()
-    end,
-
     doc_get = function(self)
-        return M.Doc(self.field:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     type_get = function(self)
-        local v = self.field:type_get()
+        local v = self._obj:type_get()
         if not v then
             return nil
         end
@@ -629,25 +587,16 @@ M.StructField = Node:clone {
 }
 
 M.EnumField = Node:clone {
-    __ctor = function(self, fl)
-        self.field = fl
-        assert(self.field)
-    end,
-
-    name_get = function(self)
-        return self.field:name_get()
-    end,
-
     c_name_get = function(self)
-        return self.field:c_name_get()
+        return self._obj:c_name_get()
     end,
 
     doc_get = function(self)
-        return M.Doc(self.field:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     value_get = function(self, force)
-        local v = self.field:value_get(force)
+        local v = self._obj:value_get(force)
         if not v then
             return nil
         end
@@ -680,21 +629,16 @@ M.Type = Node:clone {
     CLASS = eolian.type_type.CLASS,
     UNDEFINED = eolian.type_type.UNDEFINED,
 
-    __ctor = function(self, tp)
-        self.type = tp
-        assert(self.type)
-    end,
-
     type_get = function(self)
-        return self.type:type_get()
+        return self._obj:type_get()
     end,
 
     file_get = function(self)
-        return self.type:file_get()
+        return self._obj:file_get()
     end,
 
     base_type_get = function(self)
-        local v = self.type:base_type_get()
+        local v = self._obj:base_type_get()
         if not v then
             return nil
         end
@@ -702,7 +646,7 @@ M.Type = Node:clone {
     end,
 
     next_type_get = function(self)
-        local v = self.type:next_type_get()
+        local v = self._obj:next_type_get()
         if not v then
             return nil
         end
@@ -710,7 +654,7 @@ M.Type = Node:clone {
     end,
 
     typedecl_get = function(self)
-        local v = self.type:typedecl_get()
+        local v = self._obj:typedecl_get()
         if not v then
             return nil
         end
@@ -718,7 +662,7 @@ M.Type = Node:clone {
     end,
 
     aliased_base_get = function(self)
-        local v = self.type:aliased_base_get()
+        local v = self._obj:aliased_base_get()
         if not v then
             return nil
         end
@@ -726,40 +670,27 @@ M.Type = Node:clone {
     end,
 
     class_get = function(self)
-        -- FIXME: unit
-        return self.type:class_get(eos:unit_get())
+        return self._obj:class_get()
     end,
 
     is_owned = function(self)
-        return self.type:is_owned()
+        return self._obj:is_owned()
     end,
 
     is_const = function(self)
-        return self.type:is_const()
+        return self._obj:is_const()
     end,
 
     is_ptr = function(self)
-        return self.type:is_ptr()
+        return self._obj:is_ptr()
     end,
 
     c_type_get = function(self)
-        return self.type:c_type_get(eolian.c_type_type.DEFAULT)
-    end,
-
-    name_get = function(self)
-        return self.type:name_get()
-    end,
-
-    full_name_get = function(self)
-        return self.type:full_name_get()
-    end,
-
-    namespaces_get = function(self)
-        return self.type:namespaces_get()
+        return self._obj:c_type_get(eolian.c_type_type.DEFAULT)
     end,
 
     free_func_get = function(self)
-        return self.type:free_func_get()
+        return self._obj:free_func_get()
     end,
 
     -- utils
@@ -767,7 +698,7 @@ M.Type = Node:clone {
     serialize = function(self)
         local tpt = self:type_get()
         if tpt == self.UNKNOWN then
-            error("unknown type: " .. self:full_name_get())
+            error("unknown type: " .. self:name_get())
         elseif tpt == self.VOID then
             return wrap_type_attrs(self, "void")
         elseif tpt == self.UNDEFINED then
@@ -780,10 +711,10 @@ M.Type = Node:clone {
                     stypes[#stypes + 1] = stp:serialize()
                     stp = stp:next_type_get()
                 end
-                return wrap_type_attrs(self, self:full_name_get() .. "<"
+                return wrap_type_attrs(self, self:name_get() .. "<"
                     .. table.concat(stypes, ", ") .. ">")
             end
-            return wrap_type_attrs(self, self:full_name_get())
+            return wrap_type_attrs(self, self:name_get())
         end
         error("unhandled type type: " .. tpt)
     end
@@ -822,13 +753,8 @@ M.Typedecl = Node:clone {
     ALIAS = eolian.typedecl_type.ALIAS,
     FUNCTION_POINTER = eolian.typedecl_type.FUNCTION_POINTER,
 
-    __ctor = function(self, tp)
-        self.typedecl = tp
-        assert(self.typedecl)
-    end,
-
     type_get = function(self)
-        return self.typedecl:type_get()
+        return self._obj:type_get()
     end,
 
     type_str_get = function(self)
@@ -843,14 +769,14 @@ M.Typedecl = Node:clone {
 
     struct_fields_get = function(self)
         local ret = {}
-        for fl in self.typedecl:struct_fields_get() do
+        for fl in self._obj:struct_fields_get() do
             ret[#ret + 1] = M.StructField(fl)
         end
         return ret
     end,
 
     struct_field_get = function(self, name)
-        local v = self.typedecl:struct_field_get(name)
+        local v = self._obj:struct_field_get(name)
         if not v then
             return nil
         end
@@ -859,14 +785,14 @@ M.Typedecl = Node:clone {
 
     enum_fields_get = function(self)
         local ret = {}
-        for fl in self.typedecl:enum_fields_get() do
+        for fl in self._obj:enum_fields_get() do
             ret[#ret + 1] = M.EnumField(fl)
         end
         return ret
     end,
 
     enum_field_get = function(self, name)
-        local v = self.typedecl:enum_field_get(name)
+        local v = self._obj:enum_field_get(name)
         if not v then
             return nil
         end
@@ -874,19 +800,19 @@ M.Typedecl = Node:clone {
     end,
 
     enum_legacy_prefix_get = function(self)
-        return self.typedecl:enum_legacy_prefix_get()
+        return self._obj:enum_legacy_prefix_get()
     end,
 
     doc_get = function(self)
-        return M.Doc(self.typedecl:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     file_get = function(self)
-        return self.typedecl:file_get()
+        return self._obj:file_get()
     end,
 
     base_type_get = function(self)
-        local v = self.typedecl:base_type_get()
+        local v = self._obj:base_type_get()
         if not v then
             return nil
         end
@@ -894,7 +820,7 @@ M.Typedecl = Node:clone {
     end,
 
     aliased_base_get = function(self)
-        local v = self.typedecl:aliased_base_get()
+        local v = self._obj:aliased_base_get()
         if not v then
             return nil
         end
@@ -902,31 +828,19 @@ M.Typedecl = Node:clone {
     end,
 
     is_extern = function(self)
-        return self.typedecl:is_extern()
+        return self._obj:is_extern()
     end,
 
     c_type_get = function(self)
-        return self.typedecl:c_type_get()
-    end,
-
-    name_get = function(self)
-        return self.typedecl:name_get()
-    end,
-
-    full_name_get = function(self)
-        return self.typedecl:full_name_get()
-    end,
-
-    namespaces_get = function(self)
-        return self.typedecl:namespaces_get():to_array()
+        return self._obj:c_type_get()
     end,
 
     free_func_get = function(self)
-        return self.typedecl:free_func_get()
+        return self._obj:free_func_get()
     end,
 
     function_pointer_get = function(self)
-        local v = self.typedecl:function_pointer_get()
+        local v = self._obj:function_pointer_get()
         if not v then
             return nil
         end
@@ -941,8 +855,7 @@ M.Typedecl = Node:clone {
 
     all_aliases_get = function()
         local ret = {}
-        -- FIXME: unit
-        for tp in eolian.typedecl_all_aliases_get(eos:unit_get()) do
+        for tp in eos:aliases_get() do
             local tpo = M.Typedecl(tp)
             if matches_filter(tpo) then
                 ret[#ret + 1] = tpo
@@ -953,8 +866,7 @@ M.Typedecl = Node:clone {
 
     all_structs_get = function()
         local ret = {}
-        -- FIXME: unit
-        for tp in eolian.typedecl_all_structs_get(eos:unit_get()) do
+        for tp in eos:structs_get() do
             local tpo = M.Typedecl(tp)
             if matches_filter(tpo) then
                 ret[#ret + 1] = tpo
@@ -965,8 +877,7 @@ M.Typedecl = Node:clone {
 
     all_enums_get = function()
         local ret = {}
-        -- FIXME: unit
-        for tp in eolian.typedecl_all_enums_get(eos:unit_get()) do
+        for tp in eos:enums_get() do
             local tpo = M.Typedecl(tp)
             local tpn = tpo:nspaces_get()
             if matches_filter(tpo) then
@@ -978,8 +889,7 @@ M.Typedecl = Node:clone {
 
     aliases_by_file_get = function(fn)
         local ret = {}
-        -- FIXME: unit
-        for tp in eolian.typedecl_aliases_get_by_file(eos:unit_get(), fn) do
+        for tp in eos:aliases_by_file_get(fn) do
             ret[#ret + 1] = M.Typedecl(tp)
         end
         return ret
@@ -987,8 +897,7 @@ M.Typedecl = Node:clone {
 
     structs_by_file_get = function(fn)
         local ret = {}
-        -- FIXME: unit
-        for tp in eolian.typedecl_structs_get_by_file(eos:unit_get(), fn) do
+        for tp in eos:struts_by_file_get(fn) do
             ret[#ret + 1] = M.Typedecl(tp)
         end
         return ret
@@ -996,16 +905,14 @@ M.Typedecl = Node:clone {
 
     enums_by_file_get = function(fn)
         local ret = {}
-        -- FIXME: unit
-        for tp in eolian.typedecl_enums_get_by_file(eos:unit_get(), fn) do
+        for tp in eeos:enums_by_file_get(fn) do
             ret[#ret + 1] = M.Typedecl(tp)
         end
         return ret
     end,
 
     alias_by_name_get = function(tn)
-        -- FIXME: unit
-        local v = eolian.typedecl_alias_get_by_name(eos:unit_get(), tn)
+        local v = eos:alias_by_name_get(tn)
         if not v then
             return nil
         end
@@ -1013,8 +920,7 @@ M.Typedecl = Node:clone {
     end,
 
     struct_by_name_get = function(tn)
-        -- FIXME: unit
-        local v = eolian.typedecl_struct_get_by_name(eos:unit_get(), tn)
+        local v = eos:struct_by_name_get(tn)
         if not v then
             return nil
         end
@@ -1022,8 +928,7 @@ M.Typedecl = Node:clone {
     end,
 
     enum_by_name_get = function(tn)
-        -- FIXME: unit
-        local v = eolian.typedecl_enum_get_by_name(eos:unit_get(), tn)
+        local v = eos:enum_by_name_get(tn)
         if not v then
             return nil
         end
@@ -1035,12 +940,12 @@ M.Typedecl = Node:clone {
     serialize = function(self)
         local tpt = self:type_get()
         if tpt == self.UNKNOWN then
-            error("unknown typedecl: " .. self:full_name_get())
+            error("unknown typedecl: " .. self:name_get())
         elseif tpt == self.STRUCT or
                tpt == self.STRUCT_OPAQUE then
             local buf = { "struct " }
             add_typedecl_attrs(self, buf)
-            buf[#buf + 1] = self:full_name_get()
+            buf[#buf + 1] = self:name_get()
             if tpt == self.STRUCT_OPAQUE then
                 buf[#buf + 1] = ";"
                 return table.concat(buf)
@@ -1063,7 +968,7 @@ M.Typedecl = Node:clone {
         elseif tpt == self.ENUM then
             local buf = { "enum " }
             add_typedecl_attrs(self, buf)
-            buf[#buf + 1] = self:full_name_get()
+            buf[#buf + 1] = self:name_get()
             local fields = self:enum_fields_get()
             if #fields == 0 then
                 buf[#buf + 1] = " {}"
@@ -1089,7 +994,7 @@ M.Typedecl = Node:clone {
         elseif tpt == self.ALIAS then
             local buf = { "type " }
             add_typedecl_attrs(self, buf)
-            buf[#buf + 1] = self:full_name_get()
+            buf[#buf + 1] = self:name_get()
             buf[#buf + 1] = ": "
             buf[#buf + 1] = self:base_type_get():serialize()
             buf[#buf + 1] = ";"
@@ -1103,11 +1008,11 @@ M.Typedecl = Node:clone {
     serialize_c = function(self, ns)
         local tpt = self:type_get()
         if tpt == self.UNKNOWN then
-            error("unknown typedecl: " .. self:full_name_get())
+            error("unknown typedecl: " .. self:name_get())
         elseif tpt == self.STRUCT or
                tpt == self.STRUCT_OPAQUE then
             local buf = { "typedef struct " }
-            local fulln = self:full_name_get():gsub("%.", "_");
+            local fulln = self:name_get():gsub("%.", "_");
             keyref.add(fulln, ns, "c")
             buf[#buf + 1] = "_" .. fulln;
             if tpt == self.STRUCT_OPAQUE then
@@ -1129,7 +1034,7 @@ M.Typedecl = Node:clone {
             return table.concat(buf)
         elseif tpt == self.ENUM then
             local buf = { "typedef enum" }
-            local fulln = self:full_name_get():gsub("%.", "_");
+            local fulln = self:name_get():gsub("%.", "_");
             keyref.add(fulln, ns, "c")
             local fields = self:enum_fields_get()
             if #fields == 0 then
@@ -1162,7 +1067,7 @@ M.Typedecl = Node:clone {
             buf[#buf + 1] = "} " .. fulln .. ";"
             return table.concat(buf)
         elseif tpt == self.ALIAS then
-            local fulln = self:full_name_get():gsub("%.", "_");
+            local fulln = self:name_get():gsub("%.", "_");
             keyref.add(fulln, ns, "c")
             return "typedef "
                 .. M.type_cstr_get(self:base_type_get(), fulln) .. ";"
@@ -1178,13 +1083,8 @@ M.Variable = Node:clone {
     CONSTANT = eolian.variable_type.CONSTANT,
     GLOBAL = eolian.variable_type.GLOBAL,
 
-    __ctor = function(self, var)
-        self.variable = var
-        assert(self.variable)
-    end,
-
     type_get = function(self)
-        return self.variable:type_get()
+        return self._obj:type_get()
     end,
 
     type_str_get = function(self)
@@ -1196,15 +1096,15 @@ M.Variable = Node:clone {
     end,
 
     doc_get = function(self)
-        return M.Doc(self.variable:documentation_get())
+        return M.Doc(self._obj:documentation_get())
     end,
 
     file_get = function(self)
-        return self.variable:file_get()
+        return self._obj:file_get()
     end,
 
     base_type_get = function(self)
-        local v = self.variable:base_type_get()
+        local v = self._obj:base_type_get()
         if not v then
             return nil
         end
@@ -1212,27 +1112,15 @@ M.Variable = Node:clone {
     end,
 
     value_get = function(self)
-        local v = self.variable:value_get()
+        local v = self._obj:value_get()
         if not v then
             return nil
         end
         return M.Expression(v)
     end,
 
-    name_get = function(self)
-        return self.variable:name_get()
-    end,
-
-    full_name_get = function(self)
-        return self.variable:full_name_get()
-    end,
-
-    namespaces_get = function(self)
-        return self.variable:namespaces_get():to_array()
-    end,
-
     is_extern = function(self)
-        return self.variable:is_extern()
+        return self._obj:is_extern()
     end,
 
     nspaces_get = function(self, root)
@@ -1249,7 +1137,7 @@ M.Variable = Node:clone {
         if self:is_extern() then
             buf[#buf + 1] = "@extern "
         end
-        buf[#buf + 1] = self:full_name_get()
+        buf[#buf + 1] = self:name_get()
         buf[#buf + 1] = ": "
         buf[#buf + 1] = self:base_type_get():serialize()
         local val = self:value_get()
@@ -1264,7 +1152,7 @@ M.Variable = Node:clone {
     serialize_c = function(self, ns)
         local buf = {}
         local bt = self:base_type_get()
-        local fulln = self:full_name_get():gsub("%.", "_"):upper()
+        local fulln = self:name_get():gsub("%.", "_"):upper()
         keyref.add(fulln, ns, "c")
         if self:type_get() == self.GLOBAL then
             local ts = bt:c_type_get()
@@ -1305,8 +1193,7 @@ M.Variable = Node:clone {
 
     all_globals_get = function()
         local ret = {}
-        -- FIXME: unit
-        for v in eolian.variable_all_globals_get(eos:unit_get()) do
+        for v in eos:globals_get() do
             ret[#ret + 1] = M.Variable(v)
         end
         return ret
@@ -1314,8 +1201,7 @@ M.Variable = Node:clone {
 
     all_constants_get = function()
         local ret = {}
-        -- FIXME: unit
-        for v in eolian.variable_all_constants_get(eos:unit_get()) do
+        for v in eos:constants_get() do
             ret[#ret + 1] = M.Variable(v)
         end
         return ret
@@ -1323,8 +1209,7 @@ M.Variable = Node:clone {
 
     globals_by_file_get = function(fn)
         local ret = {}
-        -- FIXME: unit
-        for v in eolian.variable_globals_get_by_file(eos:unit_get(), fn) do
+        for v in eos:globals_by_file_get(fn) do
             ret[#ret + 1] = M.Variable(v)
         end
         return ret
@@ -1332,16 +1217,14 @@ M.Variable = Node:clone {
 
     constants_by_file_get = function(fn)
         local ret = {}
-        -- FIXME: unit
-        for v in eolian.variable_constants_get_by_file(eos:unit_get(), fn) do
+        for v in eos:constants_by_file_get(fn) do
             ret[#ret + 1] = M.Variable(v)
         end
         return ret
     end,
 
     global_by_name_get = function(vn)
-        -- FIXME: unit
-        local v = eolian.variable_global_get_by_name(eos:unit_get(), vn)
+        local v = eos:global_by_name_get(vn)
         if not v then
             return nil
         end
@@ -1349,8 +1232,7 @@ M.Variable = Node:clone {
     end,
 
     constant_by_name_get = function(vn)
-        -- FIXME: unit
-        local v = eolian.variable_constant_get_by_name(eos:unit_get(), vn)
+        local v = eos:constant_by_name_get(vn)
         if not v then
             return nil
         end
@@ -1359,41 +1241,27 @@ M.Variable = Node:clone {
 }
 
 M.Expression = Node:clone {
-    __ctor = function(self, expr)
-        self.expr = expr
-        assert(self.expr)
-    end,
-
     eval_enum = function(self)
-        return self.expr:eval(eolian.expression_mask.INT)
+        return self._obj:eval(eolian.expression_mask.INT)
     end,
 
     eval_type = function(self, tp)
-        return self.expr:eval_type(tp.type)
+        return self._obj:eval_type(tp.type)
     end,
 
     serialize = function(self)
-        return self.expr:serialize()
+        return self._obj:serialize()
     end
 }
 
 M.Implement = Node:clone {
-    __ctor = function(self, impl)
-        self.impl = impl
-        assert(self.impl)
-    end,
-
-    full_name_get = function(self)
-        return self.impl:full_name_get()
-    end,
-
     class_get = function(self)
         local ccl = self._cache_cl
         if ccl then
             return ccl
         end
         -- so that we don't re-instantiate, it gets cached over there too
-        ccl = M.Class.by_name_get(self.impl:class_get():full_name_get())
+        ccl = M.Class.by_name_get(self._obj:class_get():name_get())
         self._cache_cl = ccl
         return ccl
     end,
@@ -1403,14 +1271,14 @@ M.Implement = Node:clone {
         if func then
             return func, tp
         end
-        func, tp = self.impl:function_get()
+        func, tp = self._obj:function_get()
         func = M.Function(func)
         self._cache_func, self._cache_tp = func, tp
         return func, tp
     end,
 
     doc_get = function(self, ftype, inh)
-        return M.Doc(self.impl:documentation_get(ftype))
+        return M.Doc(self._obj:documentation_get(ftype))
     end,
 
     fallback_doc_get = function(self, inh)
@@ -1424,31 +1292,31 @@ M.Implement = Node:clone {
     end,
 
     is_auto = function(self, ftype)
-        return self.impl:is_auto(ftype)
+        return self._obj:is_auto(ftype)
     end,
 
     is_empty = function(self, ftype)
-        return self.impl:is_empty(ftype)
+        return self._obj:is_empty(ftype)
     end,
 
     is_pure_virtual = function(self, ftype)
-        return self.impl:is_pure_virtual(ftype)
+        return self._obj:is_pure_virtual(ftype)
     end,
 
     is_prop_get = function(self)
-        return self.impl:is_prop_get()
+        return self._obj:is_prop_get()
     end,
 
     is_prop_set = function(self)
-        return self.impl:is_prop_set()
+        return self._obj:is_prop_set()
     end,
 
     is_overridden = function(self, cl)
-        return cl.class ~= self.impl:class_get()
+        return cl.class ~= self._obj:class_get()
     end
 }
 
-M.DocTokenizer = Node:clone {
+M.DocTokenizer = util.Object:clone {
     UNKNOWN          = eolian.doc_token_type.UNKNOWN,
     TEXT             = eolian.doc_token_type.TEXT,
     REF              = eolian.doc_token_type.REF,
@@ -1478,15 +1346,15 @@ M.DocTokenizer = Node:clone {
         return self.tok:type_get()
     end,
 
-    ref_get = function(self, root)
+    ref_resolve = function(self, root)
         -- FIXME: unit
-        local tp, d1, d2 = self.tok:ref_get(eos:unit_get())
+        local tp, d1, d2 = self.tok:ref_resolve(eos)
         local reft = eolian.doc_ref_type
         local ret = {}
         if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then
             if not class_type_str[d1:type_get()] then
                 error("unknown class type for class '"
-                      .. d1:full_name_get() .. "'")
+                      .. d1:name_get() .. "'")
             end
         elseif tp == reft.ALIAS then
         elseif tp == reft.STRUCT or tp == reft.STRUCT_FIELD then
@@ -1497,7 +1365,7 @@ M.DocTokenizer = Node:clone {
         else
             error("invalid reference '" .. self:text_get() .. "'")
         end
-        for tok in d1:full_name_get():gmatch("[^%.]+") do
+        for tok in d1:name_get():gmatch("[^%.]+") do
             ret[#ret + 1] = tok:lower()
         end
         if tp == reft.FUNC then
@@ -1516,12 +1384,12 @@ M.DocTokenizer = Node:clone {
 
 M.scan_directory = function(dir)
     if not dir then
-        if not eos:system_directory_scan() then
+        if not eos:system_directory_add() then
             error("failed scanning system directory")
         end
         return
     end
-    if not eos:directory_scan(dir) then
+    if not eos:directory_add(dir) then
         error("failed scanning directory: " .. dir)
     end
 end
@@ -1539,16 +1407,16 @@ M.parse = function(st)
             error("failed parsing eo files")
         end
     end
-    -- build reverse inheritance hierarchy, FIXME: unit
-    for cl in eolian.all_classes_get(eos:unit_get()) do
-        local cln = cl:full_name_get()
+    -- build reverse inheritance hierarchy
+    for cl in eos:classes_get() do
+        local cln = cl:name_get()
         for icl in cl:inherits_get() do
             local t = revh[icl]
             if not t then
                 t = {}
                 revh[icl] = t
             end
-            t[#t + 1] = M.Class.by_name_get(cl:full_name_get())
+            t[#t + 1] = M.Class.by_name_get(cl:name_get())
         end
     end
 end

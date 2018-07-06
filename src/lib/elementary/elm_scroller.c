@@ -2,8 +2,9 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -384,7 +385,7 @@ static void
 _mirrored_set(Evas_Object *obj,
               Eina_Bool mirrored)
 {
-   elm_interface_scrollable_mirrored_set(obj, mirrored);
+   efl_ui_mirrored_set(obj, mirrored);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
@@ -645,7 +646,7 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
 static Eina_Bool
 _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas_Object *content)
 {
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.swallow.content"))
      {
         return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
      }
@@ -686,9 +687,9 @@ _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas
 }
 
 static Evas_Object*
-_elm_scroller_content_get(Eo *obj, Elm_Scroller_Data *sd, const char *part)
+_elm_scroller_content_get(const Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.swallow.content"))
      {
         return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
      }
@@ -700,7 +701,7 @@ static Evas_Object*
 _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
    Evas_Object *ret = NULL;
-   if (part && strcmp(part, "default"))
+   if (part && strcmp(part, "elm.swallow.content"))
      {
         return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
      }
@@ -721,19 +722,19 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 EOLIAN static Eina_Bool
 _elm_scroller_efl_content_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
 {
-   return _elm_scroller_content_set(obj, sd, "default", content);
+   return _elm_scroller_content_set(obj, sd, "elm.swallow.content", content);
 }
 
 EOLIAN static Eo *
-_elm_scroller_efl_content_content_get(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_content_content_get(const Eo *obj, Elm_Scroller_Data *sd)
 {
-   return _elm_scroller_content_get(obj, sd, "default");
+   return _elm_scroller_content_get(obj, sd, "elm.swallow.content");
 }
 
 EOLIAN static Eo *
 _elm_scroller_efl_content_content_unset(Eo *obj, Elm_Scroller_Data *sd)
 {
-   return _elm_scroller_content_unset(obj, sd, "default");
+   return _elm_scroller_content_unset(obj, sd, "elm.swallow.content");
 }
 
 static void
@@ -817,23 +818,23 @@ _elm_scroller_efl_canvas_group_group_add(Eo *obj, Elm_Scroller_Data *priv)
 }
 
 EOLIAN static void
-_elm_scroller_efl_gfx_position_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Position2D pos)
+_elm_scroller_efl_gfx_entity_position_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void
-_elm_scroller_efl_gfx_size_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Size2D sz)
+_elm_scroller_efl_gfx_entity_size_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
 }
 
 EOLIAN static void
@@ -867,14 +868,14 @@ _focused_element(void *data, const Efl_Event *event)
    if (!focus) return;
 
    geom = efl_ui_focus_object_focus_geometry_get(focus);
-   pos = efl_gfx_position_get(obj);
+   pos = efl_gfx_entity_position_get(obj);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
    geom.x = geom.x + pan_x - pos.x;
    geom.y = geom.y + pan_y - pos.y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 
-   geom = efl_gfx_geometry_get(obj);
+   geom = efl_gfx_entity_geometry_get(obj);
    geom.x = geom.y = 0;
    elm_widget_show_region_set(obj, geom, EINA_TRUE);
 
@@ -886,7 +887,7 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
    efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, obj);
    return obj;
 }
@@ -982,7 +983,7 @@ elm_scroller_single_direction_get(const Evas_Object *obj)
 }
 
 EOLIAN static Elm_Scroller_Single_Direction
-_elm_scroller_elm_interface_scrollable_single_direction_get(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
+_elm_scroller_elm_interface_scrollable_single_direction_get(const Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
    return elm_interface_scrollable_single_direction_get(efl_super(obj, MY_CLASS));
 }
@@ -1198,10 +1199,10 @@ elm_scroller_movement_block_set(Evas_Object *obj,
    Efl_Ui_Scroll_Block mode = EFL_UI_SCROLL_BLOCK_NONE;
 
    // legacy -> eo
-   if (block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
-     mode |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
-   if (block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
-     mode |= EFL_UI_SCROLL_BLOCK_VERTICAL;
+   if (block == ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
+     mode = EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+   else if (block == ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
+     mode = EFL_UI_SCROLL_BLOCK_VERTICAL;
 
    elm_interface_scrollable_movement_block_set(obj, mode);
 }
@@ -1209,7 +1210,6 @@ elm_scroller_movement_block_set(Evas_Object *obj,
 EAPI Elm_Scroller_Movement_Block
 elm_scroller_movement_block_get(const Evas_Object *obj)
 {
-   Elm_Scroller_Movement_Block block = ELM_SCROLLER_MOVEMENT_NO_BLOCK;
    Efl_Ui_Scroll_Block mode;
 
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
@@ -1217,12 +1217,12 @@ elm_scroller_movement_block_get(const Evas_Object *obj)
    mode = elm_interface_scrollable_movement_block_get(obj);
 
    // eo -> legacy
-   if (mode & EFL_UI_SCROLL_BLOCK_HORIZONTAL)
-     block |= ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL;
-   if (mode & EFL_UI_SCROLL_BLOCK_VERTICAL)
-     block |= ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL;
+   if (mode == EFL_UI_SCROLL_BLOCK_HORIZONTAL)
+     return ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL;
+   else if (mode == EFL_UI_SCROLL_BLOCK_VERTICAL)
+     return ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL;
 
-   return block;
+   return ELM_SCROLLER_MOVEMENT_NO_BLOCK;
 }
 
 EAPI void
@@ -1260,7 +1260,7 @@ elm_scroller_loop_set(Evas_Object *obj,
    sd->loop_h = loop_h;
    sd->loop_v = loop_v;
 
-   elm_interface_scrollable_loop_set(obj, loop_h, loop_v);
+   elm_interface_scrollable_content_loop_set(obj, loop_h, loop_v);
 
    if (sd->content)
      {
@@ -1298,7 +1298,7 @@ elm_scroller_loop_get(const Evas_Object *obj,
 {
    ELM_SCROLLABLE_CHECK(obj);
 
-   elm_interface_scrollable_loop_get(obj, loop_h, loop_v);
+   elm_interface_scrollable_content_loop_get(obj, loop_h, loop_v);
 }
 
 EAPI void
@@ -1345,7 +1345,7 @@ _elm_scroller_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EIN
 
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_scroller_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
+_elm_scroller_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},
@@ -1371,8 +1371,6 @@ ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
-// FIXME: should be "content" but "default" was legacy API
-ELM_PART_CONTENT_DEFAULT_GET(elm_scroller, "default")
 #include "elm_scroller_part.eo.c"
 
 /* Efl.Part end */
@@ -1380,7 +1378,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_scroller, "default")
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SCROLLER_EXTRA_OPS \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_scroller), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 

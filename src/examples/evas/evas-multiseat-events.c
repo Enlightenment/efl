@@ -212,15 +212,15 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
    printf("The seat '%s' - description: '%s' was '%s'\n",
           efl_name_get(dev),
           efl_comment_get(dev),
-          event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
+          event->desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED ? "added" : "removed");
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_callbacks,
-                           { EFL_CANVAS_EVENT_OBJECT_FOCUS_IN,
+                           { EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
                            _canvas_focus_in_cb },
-                           { EFL_CANVAS_EVENT_DEVICE_ADDED,
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                            _dev_added_or_removed },
-                           { EFL_CANVAS_EVENT_DEVICE_REMOVED,
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                            _dev_added_or_removed });
 
 EFL_CALLBACKS_ARRAY_DEFINE(callbacks,

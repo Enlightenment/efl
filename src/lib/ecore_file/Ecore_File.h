@@ -319,9 +319,10 @@ EAPI Eina_Bool      ecore_file_mv           (const char *src, const char *dst);
  * @param  dest The name of link.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
- * This function create the symbolic link @p dest of @p src. This
- * function does not work on Windows. It returns @c EINA_TRUE on success,
- * @c EINA_FALSE otherwise.
+ * This function creates the symbolic link @p dest of @p src. It returns
+ * @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @note On windows, this function always returns @c EINA_FALSE.
  */
 EAPI Eina_Bool      ecore_file_symlink      (const char *src, const char *dest);
 
@@ -426,9 +427,10 @@ EAPI Eina_Bool      ecore_file_can_exec     (const char *file);
  * @return The path pointed by link or NULL.
  *
  * This function returns the path pointed by @p link as a newly
- * allocated string. This function does not work on Windows. On
- * failure, the function returns @c NULL. When not needed anymore, the
- * returned value must be freed.
+ * allocated string. On failure, the function returns @c NULL. When not
+ * needed anymore, the returned value must be freed.
+ *
+ * @note On windows, this function always returns @c NULL.
  */
 EAPI char          *ecore_file_readlink     (const char *link);
 

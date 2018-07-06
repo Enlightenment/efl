@@ -1,0 +1,50 @@
+import efl_types;
+
+class Efl.Datetime.Manager (Efl.Object)
+{
+   [[Efl datetime manager class for Datepicker and Timepicker]]
+   methods {
+      @property value {
+         [[The value of a date, time for Datepicker or Timepicker.
+            
+           The value for Datepicker contains year, month, and day. (tm_year, tm_mon, and tm_mday in Efl_Time)
+           The value for Timepicker contains hour, and min. (tm_hour, and tm_min in Efl_Time)
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            newtime: Efl.Time; [[Time structure containing date or time value.]]
+         }
+      }
+      @property format {
+         [[The format of date or time.
+		    
+           Default format is taken as per the system locale settings.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            fmt: string; [[The format string]]
+         }
+      }
+      @property string {
+         get {
+            [[Get the string that matches with the format.]]
+         }
+         keys {
+            fmt: string; [[The format string]]
+         }
+         values {
+            string: string; [[The string that matches with the format]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

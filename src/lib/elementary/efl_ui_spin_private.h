@@ -24,6 +24,8 @@ struct _Efl_Ui_Spin_Data
    Eina_Free_Cb          format_free_cb;
    void                  *format_cb_data;
    Eina_Strbuf           *format_strbuf;
+
+   Eina_Array            *special_values;
 };
 
 #endif

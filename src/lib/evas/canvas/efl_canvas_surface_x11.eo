@@ -1,11 +1,11 @@
-struct Efl.Canvas.Surface.X11_Pixmap
+struct Efl.Canvas.Surface_X11_Pixmap
 {
    [[The type used by @Efl.Canvas.Surface.native_buffer.]]
    visual: void_ptr; [[X11 Visual for this Pixmap.]]
    pixmap: ulong;  [[X11 Pixmap ID.]]
 }
 
-class Efl.Canvas.Surface.X11 (Efl.Object, Efl.Canvas.Surface)
+class Efl.Canvas.Surface_X11 (Efl.Object, Efl.Canvas.Surface)
 {
    [[Native X11 surface for Efl canvas]]
 

@@ -50,22 +50,22 @@ static void _generic_optional_ctor_b(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_
    pd->opt_ctor_b_val = value;
 }
 
-static int _generic_req_ctor_a_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
+static int _generic_req_ctor_a_value_get(const Eo *obj EINA_UNUSED, Generic_Data *pd)
 {
    return pd->req_ctor_a_val;
 }
 
-static int _generic_req_ctor_b_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
+static int _generic_req_ctor_b_value_get(const Eo *obj EINA_UNUSED, Generic_Data *pd)
 {
    return pd->req_ctor_b_val;
 }
 
-static int _generic_opt_ctor_a_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
+static int _generic_opt_ctor_a_value_get(const Eo *obj EINA_UNUSED, Generic_Data *pd)
 {
    return pd->opt_ctor_a_val;
 }
 
-static int _generic_opt_ctor_b_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
+static int _generic_opt_ctor_b_value_get(const Eo *obj EINA_UNUSED, Generic_Data *pd)
 {
    return pd->opt_ctor_b_val;
 }

@@ -1036,7 +1036,7 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
 
    EINA_INLIST_FOREACH(en->item_objs, io)
      {
-        if (!io->an && io->name && !strcmp(an->name, io->name))
+        if (!io->an && io->name && !strcmp(an->name ? an->name : "", io->name))
           {
              io->an = an;
              return io->obj;
@@ -1060,7 +1060,7 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
    evas_object_pass_events_set(obj, EINA_TRUE);
 
    io->an = an;
-   io->name = strdup(an->name);
+   io->name = strdup(an->name ? an->name : "");
    io->obj = obj;
    en->item_objs = (Item_Obj *)eina_inlist_append(EINA_INLIST_GET(en->item_objs),
                                                   EINA_INLIST_GET(io));
@@ -1493,7 +1493,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                }
              else if (!evas_textblock_cursor_compare(an->start, an->end))
                {
-                  if (an->name) free(an->name);
+                  free(an->name);
                   evas_textblock_cursor_free(an->start);
                   evas_textblock_cursor_free(an->end);
                   en->anchors = eina_list_remove(en->anchors, an);
@@ -2875,9 +2875,9 @@ _edje_entry_init(Edje *ed)
                                   _edje_key_down_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb, ed);
-   efl_event_callback_add(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_IN,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_add(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_OUT,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
@@ -2896,9 +2896,9 @@ _edje_entry_shutdown(Edje *ed)
                                   _edje_key_down_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb);
-   efl_event_callback_del(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_IN,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_del(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_OUT,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
@@ -4582,6 +4582,45 @@ _edje_entry_prediction_hint_set(Edje_Real_Part *rp, const char *prediction_hint)
 #else
    (void)prediction_hint;
 #endif
+}
+
+Eina_Bool
+_edje_entry_prediction_hint_hash_set(Edje_Real_Part *rp, const char *key, const char *value)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
+   en = rp->typedata.text->entry_data;
+   if (!en) return EINA_FALSE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_prediction_hint_hash_set(en->imf_context, key, value);
+#else
+   (void)key;
+   (void)value;
+#endif
+
+   return EINA_FALSE;
+}
+
+Eina_Bool
+_edje_entry_prediction_hint_hash_del(Edje_Real_Part *rp, const char *key)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
+   en = rp->typedata.text->entry_data;
+   if (!en) return EINA_FALSE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_prediction_hint_hash_del(en->imf_context, key);
+#else
+   (void)key;
+#endif
+
+   return EINA_FALSE;
 }
 
 #ifdef HAVE_ECORE_IMF

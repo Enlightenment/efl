@@ -14,7 +14,7 @@ _object_impl_a_set(Eo *obj, Object_Impl_Data *pd, const char *part, const Eina_L
 }
 
 EOLIAN static Eina_List *
-_object_impl_a_get(Eo *obj, Object_Impl_Data *pd, const char *part)
+_object_impl_a_get(const Eo *obj, Object_Impl_Data *pd, const char *part)
 {
 
 }
@@ -82,7 +82,7 @@ _object_impl_add_c_set(Eo *obj, Object_Impl_Data *pd, Eina_List *value)
 }
 
 EOLIAN static Eina_List *
-_object_impl_add_c_get(Eo *obj, Object_Impl_Data *pd)
+_object_impl_add_c_get(const Eo *obj, Object_Impl_Data *pd)
 {
 
 }

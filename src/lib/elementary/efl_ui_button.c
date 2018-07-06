@@ -3,21 +3,20 @@
 #endif
 
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_button_private.h"
 #include "elm_widget_layout.h"
-#include "efl_ui_button_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_BUTTON_CLASS
 #define MY_CLASS_PFX efl_ui_button
 
 #define MY_CLASS_NAME "Efl.Ui.Button"
-#define MY_CLASS_NAME_LEGACY "elm_button"
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_REPEATED[] = "repeated";
@@ -42,18 +41,20 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
    {NULL, NULL}
 };
+
+#define MY_CLASS_NAME_LEGACY "elm_button"
+
+static void
+_efl_ui_button_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
 
 static void
 _activate(Evas_Object *obj)
@@ -95,72 +96,12 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
    efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_CLICKED, NULL);
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+      (obj, EFL_UI_EVENT_CLICKED, NULL);
 
-   return EINA_TRUE;
-}
-
-/* FIXME: replicated from elm_layout just because button's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   char buf[64];
-
-   if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-   edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_layout_sizing_eval(obj);
-}
-
-/* FIXME: replicated from elm_layout just because button's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-
-   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
-   _icon_signal_emit(obj);
-
-   return int_ret;
-}
-
-/* FIXME: replicated from elm_layout just because button's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, Evas_Object *sobj)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
-   if (!int_ret) return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-
-   return EINA_TRUE;
-}
-
-/* FIXME: replicated from elm_layout just because button's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-static Eina_Bool
-_efl_ui_button_content_set(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
-   if (!int_ret) return EINA_FALSE;
-
-   _icon_signal_emit(obj);
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,anim,activate", "efl");
 
    return EINA_TRUE;
 }
@@ -168,7 +109,10 @@ _efl_ui_button_content_set(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, const c
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,anim,activate", "efl");
    _activate(obj);
    return EINA_TRUE;
 }
@@ -276,15 +220,30 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click", "*",
-     _on_clicked_signal, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,press", "*",
-     _on_pressed_signal, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,unpress", "*",
-     _on_unpressed_signal, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,click", "*",
+            _on_clicked_signal, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,press", "*",
+            _on_pressed_signal, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,unpress", "*",
+            _on_unpressed_signal, obj);
+     }
+   else
+     {
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,click", "*",
+            _on_clicked_signal, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,press", "*",
+            _on_pressed_signal, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "efl,action,unpress", "*",
+            _on_unpressed_signal, obj);
+     }
 
    _elm_access_object_register(obj, wd->resize_obj);
    _elm_access_text_set
@@ -303,20 +262,12 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
      CRI("Failed to set layout!");
 }
 
-EAPI Evas_Object *
-elm_button_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_button_efl_object_constructor(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
 
    return obj;
 }
@@ -341,13 +292,13 @@ _internal_efl_ui_button_autorepeat_supported_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_get(Eo *obj, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_get(const Eo *obj, Efl_Ui_Button_Data *sd)
 {
    return (_AR_CAPABLE(obj) & sd->autorepeat);
 }
@@ -367,7 +318,7 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_set(Eo *obj, Efl_Ui_
 }
 
 EOLIAN static double
-_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(Eo *obj, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(const Eo *obj, Efl_Ui_Button_Data *sd)
 {
    if (!_AR_CAPABLE(obj))
       return 0.0;
@@ -391,13 +342,13 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_set(Eo *obj, Efl_Ui_Butt
 }
 
 EOLIAN static double
-_efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd)
 {
    return sd->ar_gap_timeout;
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
+_efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate },
@@ -406,32 +357,11 @@ _efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl
    return &atspi_actions[0];
 }
 
-static void
-_efl_ui_button_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_button, _content_aliases[0].real_part)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
-
-/* Efl.Part begin */
-
-static Eina_Bool
-_part_is_efl_ui_button_part(const Eo *obj EINA_UNUSED, const char *part)
-{
-   return eina_streq(part, "elm.swallow.content");
-}
-
-ELM_PART_OVERRIDE_PARTIAL(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data, _part_is_efl_ui_button_part)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data)
-#include "efl_ui_button_part.eo.c"
-
-/* Efl.Part end */
 
 EAPI void
 elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
@@ -472,12 +402,108 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"
+
+#include "efl_ui_button_legacy.eo.h"
+#include "efl_ui_button_legacy_part.eo.h"
+
+EOLIAN static Eo *
+_efl_ui_button_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+/* FIXME: replicated from elm_layout just because button's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static void
+_icon_signal_emit(Evas_Object *obj)
+{
+   char buf[64];
+
+   if (!elm_widget_resize_object_get(obj)) return;
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(elm_layout_edje_get(obj));
+   elm_layout_sizing_eval(obj);
+}
+
+/* FIXME: replicated from elm_layout just because button's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Efl_Ui_Theme_Apply
+_efl_ui_button_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS));
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   _icon_signal_emit(obj);
+
+   return int_ret;
+}
+
+/* FIXME: replicated from elm_layout just because button's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Eina_Bool
+_efl_ui_button_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *sobj)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* FIXME: replicated from elm_layout just because button's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_efl_ui_button_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS), part), content);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* Efl.Part begin */
+
+static Eina_Bool
+_part_is_efl_ui_button_legacy_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return eina_streq(part, "elm.swallow.content");
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_button_legacy, EFL_UI_BUTTON_LEGACY, void, _part_is_efl_ui_button_legacy_part)
+ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(efl_ui_button_legacy)
+#include "efl_ui_button_legacy_part.eo.c"
+
+/* Efl.Part end */
+
+EAPI Evas_Object *
+elm_button_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_BUTTON_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_button_legacy.eo.c"

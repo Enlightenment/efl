@@ -2225,6 +2225,16 @@ _eina_value_type_stringshare_pset(const Eina_Value_Type *type EINA_UNUSED, void 
 }
 
 static Eina_Bool
+_eina_value_type_stringshare_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   const Eina_Stringshare * const *src = mem;
+   Eina_Stringshare **dst = ptr;
+
+   *dst = eina_stringshare_ref(*src);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _eina_value_type_string_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
 {
    char **tmem = mem;
@@ -5197,7 +5207,7 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
     NULL, /* no convert from */
     _eina_value_type_stringshare_vset,
     _eina_value_type_stringshare_pset,
-    _eina_value_type_string_common_pget
+    _eina_value_type_stringshare_pget
   },
   {
     EINA_VALUE_TYPE_VERSION,
@@ -5433,6 +5443,7 @@ eina_value_init(void)
      }
 
    EINA_VALUE_TYPE_UCHAR       = _EINA_VALUE_TYPE_BASICS +  0;
+   EINA_VALUE_TYPE_BOOL        = EINA_VALUE_TYPE_UCHAR;
    EINA_VALUE_TYPE_USHORT      = _EINA_VALUE_TYPE_BASICS +  1;
    EINA_VALUE_TYPE_UINT        = _EINA_VALUE_TYPE_BASICS +  2;
    EINA_VALUE_TYPE_ULONG       = _EINA_VALUE_TYPE_BASICS +  3;
@@ -5534,6 +5545,7 @@ EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_VALUE = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ERROR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BOOL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ULONG = NULL;
@@ -5577,6 +5589,13 @@ eina_value_new(const Eina_Value_Type *type)
 {
    Eina_Value *value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value) return NULL;
+   if (!type)
+     {
+        const Eina_Value empty = EINA_VALUE_EMPTY;
+
+        memcpy(value, &empty, sizeof (empty));
+        return value;
+     }
    if (!eina_value_setup(value, type))
      {
         eina_mempool_free(_eina_value_mp, value);

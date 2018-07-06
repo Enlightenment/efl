@@ -1,4 +1,4 @@
-enum Efl.Net.Control.Technology.Type {
+enum Efl.Net.Control.Technology_Type {
     [[Technology types
 
       @since 1.19
@@ -15,20 +15,20 @@ enum Efl.Net.Control.Technology.Type {
     p2p, [[Type: Peer-2-Peer]]
 }
 
-class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
+class Efl.Net.Control.Technology (Efl.Loop_Consumer) {
     [[A technology that allows control of network access points.
 
-      The @Efl.Net.Control is composed of multiple technologies, each
+      The @Efl.Net.Control.Manager is composed of multiple technologies, each
       can be disabled/enabled with @.powered property.
 
       When powered, the technology will dynamically create and remove
       access points in
-      @Efl.Net.Control.access_points.
+      @Efl.Net.Control.Manager.access_points.
 
       @since 1.19
     ]]
     events {
-        changed; [[Called when some properties were changed.]]
+        changed: void; [[Called when some properties were changed.]]
     }
 
     methods {
@@ -65,19 +65,11 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
             }
         }
 
-        @property name {
-            [[The user-friendly technology name]]
-            get { }
-            values {
-                name: string; [[Technology name]]
-            }
-        }
-
         @property type {
             [[The technology type, such as "ethernet" or "wifi"]]
             get { }
             values {
-                type: Efl.Net.Control.Technology.Type; [[Technology type]]
+                type: Efl.Net.Control.Technology_Type; [[Technology type]]
             }
         }
 
@@ -86,7 +78,7 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
 
               The scan will happen asynchronously in the background,
               with the results being delivered by events in the
-              technology, @Efl.Net.Control or @Efl.Net.Control.Access_Point
+              technology, @Efl.Net.Control.Manager or @Efl.Net.Control.Access_Point
               associated with the technology. For example, a scan on
               WiFi will add and remove access points.
 
@@ -96,11 +88,12 @@ class Efl.Net.Control.Technology (Efl.Loop.Consumer) {
               state. Otherwise allow the system to perform
               passive scans in a timely manner.
             ]]
-            return: ptr(Eina.Future) @owned; [[Future return for finished background scan]]
+            return: future<void> @owned; [[Future return for finished background scan]]
         }
     }
 
     implements {
         Efl.Object.destructor;
+        Efl.Object.name { get; }
     }
 }

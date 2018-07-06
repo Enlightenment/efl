@@ -87,15 +87,13 @@ _eet_connection_write(const void *data,
    return EINA_TRUE;
 }
 
-START_TEST(eet_test_connection_check)
+EFL_START_TEST(eet_test_connection_check)
 {
    Eet_Data_Descriptor *edd;
    Eet_Data_Descriptor_Class eddc;
    Eet_Connection_Data ecd;
    Eet_Test_Ex_Type etbt;
    Eina_Bool on_going;
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -139,10 +137,8 @@ START_TEST(eet_test_connection_check)
    fail_if(!eet_connection_close(ecd.conn, &on_going));
 
    fail_if(on_going);
-
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_connection(TCase *tc)
 {

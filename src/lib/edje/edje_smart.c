@@ -1,5 +1,6 @@
 #define EFL_CANVAS_GROUP_PROTECTED
 #define EFL_CANVAS_GROUP_BETA
+#define EFL_PART_PROTECTED
 
 #include "edje_private.h"
 
@@ -20,7 +21,7 @@ EAPI Evas_Object *
 edje_object_add(Evas *evas)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -45,6 +46,34 @@ _efl_canvas_layout_efl_object_constructor(Eo *obj, Edje *ed)
    ed->canvas_animator = !!tmp;
 
    return obj;
+}
+
+
+EOLIAN static void
+_efl_canvas_layout_efl_object_invalidate(Eo *obj, Edje *ed)
+{
+   _edje_file_callbacks_del(ed, NULL);
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   //invalidate is done, this means the legacy evas deletion event is called.
+   for (int i = 0; i < ed->table_parts_size; ++i)
+     {
+        Edje_Real_Part *rp = ed->table_parts[i];
+        switch(rp->type)
+          {
+            case EDJE_RP_TYPE_SWALLOW:
+              _edje_real_part_swallow_clear(ed, rp);
+            break;
+
+            case EDJE_RP_TYPE_CONTAINER:
+              if (rp->part->type == EDJE_PART_TYPE_BOX)
+                _edje_real_part_box_remove_all(ed, rp, 0);
+              else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+                _edje_real_part_table_clear(ed, rp, 0);
+            break;
+          }
+     }
 }
 
 EOLIAN static void
@@ -155,14 +184,14 @@ _efl_canvas_layout_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_gfx_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
+_efl_canvas_layout_efl_gfx_entity_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
 {
    unsigned short i;
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    if ((ed->x == pos.x) && (ed->y == pos.y)) return;
    ed->x = pos.x;
@@ -258,7 +287,7 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
+_efl_canvas_layout_efl_gfx_entity_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -294,7 +323,7 @@ _efl_canvas_layout_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
    _edje_emit(ed, "resize", NULL);
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void
@@ -303,7 +332,7 @@ _edje_object_show(Eo *obj, Edje *ed)
    Eina_List *l;
    Edje *edg;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_show(ed);
@@ -330,7 +359,7 @@ _edje_object_hide(Eo *obj, Edje *ed)
    Eina_List *l;
    Edje *edg;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_hide(ed);
@@ -342,7 +371,7 @@ _edje_object_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_gfx_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
+_efl_canvas_layout_efl_gfx_entity_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -392,7 +421,7 @@ _efl_canvas_layout_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_file_mmap_get(Eo *obj EINA_UNUSED, Edje *pd,
+_efl_canvas_layout_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Edje *pd,
                                const Eina_File **f, const char **key)
 {
    if (f) *f = pd->file ? pd->file->f : NULL;
@@ -479,7 +508,7 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_playable_get(Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+_efl_canvas_layout_efl_player_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -522,7 +551,7 @@ _efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool 
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_play_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_player_play_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;
@@ -539,7 +568,7 @@ _efl_canvas_layout_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , dou
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
+_efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
 {
    return 1.0/pd->duration_scale;
 }

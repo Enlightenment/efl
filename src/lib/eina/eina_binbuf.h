@@ -37,10 +37,10 @@ typedef struct _Eina_Strbuf Eina_Binbuf;
 /**
  * @brief Creates a new string buffer.
  *
- * @return Newly allocated string buffer instance.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_binbuf_free().
+ * This function creates a new string buffer. To free the resources, use
+ * eina_binbuf_free().
  *
  * @see eina_binbuf_free()
  * @see eina_binbuf_append()
@@ -55,10 +55,10 @@ EAPI Eina_Binbuf *eina_binbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  *
  * @param str The string to manage.
  * @param length The length of the string.
- * @return Newly allocated string buffer instance.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_binbuf_free().
+ * This function creates a new string buffer. To free the resources, use
+ * eina_binbuf_free().
  *
  * @see eina_binbuf_manage_new()
  * @since 1.2.0
@@ -73,14 +73,13 @@ EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t lengt
  * @param str The string to start from.
  * @param length The length of the string.
  * @param ro The passed string will not be touched if set to EINA_TRUE.
- * @return Newly allocated string buffer instance.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_binbuf_free(). It will
- * not touch the buffer if ro is set to @c EINA_TRUE, but it will also not
- * copy it. If ro is set to @c EINA_TRUE any change operation will
- * create a fresh new memory, copy old data there and starting modifying
- * that one.
+ * This function creates a new string buffer. To free the resources, use
+ * eina_binbuf_free(). It will not touch the buffer if ro is set to @c
+ * EINA_TRUE, but it will also not copy it. If ro is set to @c EINA_TRUE
+ * any change operation will create a fresh new memory, copy old data
+ * there and starting modifying that one.
  *
  * @see eina_binbuf_manage_new()
  * @see eina_binbuf_manage_new_length()
@@ -97,13 +96,12 @@ EAPI Eina_Binbuf *eina_binbuf_manage_new(const unsigned char *str, size_t length
  *
  * @param str The string to start from.
  * @param length The length of the string.
- * @return Newly allocated string buffer instance.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_binbuf_free(). It will
- * not touch the internal buffer. Any changing operation will
- * create a fresh new memory, copy old data there and starting modifying
- * that one.
+ * This function creates a new string buffer. To free the resources, use
+ * eina_binbuf_free(). It will not touch the internal buffer. Any
+ * changing operation will create a fresh new memory, copy old data
+ * there and starting modifying that one.
  *
  * @see eina_binbuf_manage_new()
  * @since 1.9.0
@@ -188,14 +186,13 @@ EAPI Eina_Bool eina_binbuf_use(Eina_Binbuf *buf, size_t extra_bytes) EINA_ARG_NO
  * @param buf The string buffer to append to.
  * @param str The string to append.
  * @param length The exact length to use.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure such as if @p
+ * buf can't be appended.
  *
  * This function appends @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_binbuf_append() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_stringshare. If @p buf
- * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * with strings of known size, such as eina_stringshare.
  *
  * @see eina_stringshare_length()
  * @see eina_binbuf_append()
@@ -208,10 +205,10 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *
  *
  * @param buf The string buffer to append to.
  * @param slice The slice to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure such as if
+ * @p buf can't be appended.
  *
- * This function appends @p slice to @p buf. If @p buf can't append
- * it, #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * This function appends @p slice to @p buf.
  *
  * @since 1.19
  */
@@ -222,12 +219,12 @@ EAPI Eina_Bool eina_binbuf_append_slice(Eina_Binbuf *buf, const Eina_Slice slice
  *
  * @param buf The string buffer to append to.
  * @param data The string buffer to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure such as if @p
+ * buf can't be appended.
  *
  * This function appends @p data to @p buf. @p data must be allocated and
  * different from @c NULL. It is slightly faster than eina_binbuf_append() as
- * it does not compute the size of @p str. If @p buf can't append it,
- * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * it does not compute the size of @p str.
  *
  * @see eina_binbuf_append()
  * @see eina_binbuf_append_n()
@@ -242,10 +239,9 @@ EAPI Eina_Bool eina_binbuf_append_buffer(Eina_Binbuf *buf, const Eina_Binbuf *da
  *
  * @param buf The string buffer to append to.
  * @param c The char to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @pc could not be inserted.
  *
- * This function inserts @p c to @p buf. If it can not insert it, #EINA_FALSE
- * is returned, otherwise #EINA_TRUE is returned.
+ * This function inserts @p c to @p buf.
  */
 EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_ARG_NONNULL(1);
 
@@ -256,14 +252,12 @@ EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_A
  * @param str The string to insert.
  * @param length The exact length to use.
  * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be inserted.
  *
  * This function inserts @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_binbuf_insert() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_stringshare. If @p buf
- * can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * with strings of known size, such as eina_stringshare.
  *
  * @see eina_stringshare_length()
  * @see eina_binbuf_insert()
@@ -277,11 +271,9 @@ EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const unsigned char *
  * @param buf The string buffer to insert to.
  * @param slice The slice to insert.
  * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p slice could not be inserted.
  *
- * This function inserts @p slice to @p buf at position @p pos. If @p
- * buf can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE
- * is returned.
+ * This function inserts @p slice to @p buf at position @p pos.
  *
  * @since 1.19.0
  */
@@ -294,11 +286,9 @@ EAPI Eina_Bool eina_binbuf_insert_slice(Eina_Binbuf *buf, const Eina_Slice slice
  * @param buf The string buffer to insert to.
  * @param c The char to insert.
  * @param pos The position to insert the char.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p c could not be inserted.
  *
- * This function inserts @p c to @p buf at position @p pos. If @p buf
- * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This function inserts @p c to @p buf at position @p pos.
  */
 EAPI Eina_Bool eina_binbuf_insert_char(Eina_Binbuf *buf, unsigned char c, size_t pos) EINA_ARG_NONNULL(1);
 
@@ -314,7 +304,7 @@ EAPI Eina_Bool eina_binbuf_insert_char(Eina_Binbuf *buf, unsigned char c, size_t
  *
  * This function removes a slice of @p buf, starting at @p start
  * (inclusive) and ending at @p end (non-inclusive). Both values are
- * in bytes. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
+ * in bytes.
  */
 
 EAPI Eina_Bool eina_binbuf_remove(Eina_Binbuf *buf, size_t start, size_t end) EINA_ARG_NONNULL(1);
@@ -323,12 +313,12 @@ EAPI Eina_Bool eina_binbuf_remove(Eina_Binbuf *buf, size_t start, size_t end) EI
  * @brief Retrieves a pointer to the contents of a string buffer.
  *
  * @param buf The string buffer.
- * @return The current string in the string buffer.
+ * @return The string that is contained in @p buf.
  *
  * This function returns the string contained in @p buf. The returned
  * value must not be modified and will no longer be valid if @p buf is
  * modified. In other words, any eina_binbuf_append() or similar will
- * make that pointer invalid.
+ * make the pointer invalid.
  *
  * @see eina_binbuf_string_steal()
  */
@@ -337,8 +327,8 @@ EAPI const unsigned char *eina_binbuf_string_get(const Eina_Binbuf *buf) EINA_AR
 /**
  * @brief Steals the contents of a string buffer.
  *
- * @param buf The string buffer to steal.
- * @return The current string in the string buffer.
+ * @param buf The string buffer.
+ * @return The string that was contained in @p buf.
  *
  * This function returns the string contained in @p buf. @p buf is
  * then initialized and does not own the returned string anymore. The
@@ -393,12 +383,15 @@ EAPI Eina_Slice eina_binbuf_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_R
  * @since 1.19
  */
 EAPI Eina_Rw_Slice eina_binbuf_rw_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
 /**
- * @brief Gets the content of the buffer and free the buffer.
+ * @brief Gets the content of the buffer and frees the buffer.
  *
  * @param buf the buffer to get the content from and which will be freed
  *
- * @return The content contained by buf. The caller must release the memory of the returned content by calling
+ * @return The content contained by buf.
+ *
+ * The caller must release the memory of the returned content by calling
  * free().
  *
  * @since 1.19

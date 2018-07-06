@@ -5,27 +5,7 @@ type Elm_Map_Overlay: __undefined_type; [[Elementary map overlay type]]
 type Elm_Map_Name: __undefined_type; [[Elementary map name type]]
 type Elm_Map_Name_Cb: __undefined_type; [[Elementary map name callback type]]
 type Elm_Map_Name_List_Cb: __undefined_type; [[Elementary map name list callback type]]
-
-enum Elm.Map.Zoom_Mode
-{
-   [[
-     Set map's zoom behavior. It can be set to manual or automatic.
-
-     Default value is #ELM_MAP_ZOOM_MODE_MANUAL.
-
-     Values <b> don't </b> work as bitmask, only one can be chosen.
-
-     Valid sizes are 2^zoom, consequently the map may be smaller
-     than the scroller view.
-
-     See @Elm.Map.zoom_mode.set()
-     See @Elm.Map.zoom_mode.get()
-   ]]
-   manual,    [[Zoom controlled manually by elm_map_zoom_set(). It's set by default.]]
-   auto_fit,  [[Zoom until map fits inside the scroll frame with no pixels outside this area.]]
-   auto_fill, [[Zoom until map fills scroll, ensuring no pixels are left unfilled.]]
-   last       [[Sentinel value to indicate last enum field during iteration]]
-}
+type Evas.Event_Mouse_Down: __undefined_type;
 
 enum Elm.Map.Source_Type
 {
@@ -71,44 +51,13 @@ enum Elm.Map.Route_Method
 
 class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
                Efl.Access.Widget.Action,
-               Efl.Ui.Clickable)
+               Efl.Ui.Clickable, Efl.Ui.Legacy, Efl.Ui.Zoom)
 {
    [[Elementary map class]]
    legacy_prefix: elm_map;
    eo_prefix: elm_obj_map;
    event_prefix: elm_map;
    methods {
-      @property zoom {
-         set {
-            [[Set the zoom level of the map.
-
-              This sets the zoom level.
-
-              It will respect limits defined by @.zoom_min.set and
-              @.zoom_max.set.
-
-              By default these values are 0 (world map) and 18 (maximum zoom).
-
-              This function should be used when zoom mode is set to
-              #ELM_MAP_ZOOM_MODE_MANUAL. This is the default mode, and
-              can be set with @.zoom_mode.set.
-            ]]
-         }
-         get {
-            [[Get the zoom level of the map.
-
-              This returns the current zoom level of the map object.
-
-              Note that if you set the fill mode to other than
-              #ELM_MAP_ZOOM_MODE_MANUAL (which is the default), the zoom
-              level may be changed at any time by the map object itself
-              to account for map size and map viewport size.
-            ]]
-         }
-         values {
-            zoom: int; [[The zoom level.]]
-         }
-      }
       @property paused {
          set {
             [[Pause or unpause the map.
@@ -134,26 +83,6 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
                             to unpause it.]]
          }
       }
-      @property wheel_disabled {
-         set {
-            [[Enable or disable mouse wheel to be used to zoom in / out the
-              map.
-
-              Wheel is enabled by default.
-            ]]
-         }
-         get {
-            [[Get a value whether mouse wheel is enabled or not.
-
-              Mouse wheel can be used for the user to zoom in or zoom out
-              the map.
-            ]]
-         }
-         values {
-            disabled: bool; [[Use $true to disable mouse wheel or $false
-                              to enable it.]]
-         }
-      }
       @property zoom_min {
          set {
             [[Set the minimum zoom of the source.]]
@@ -165,12 +94,14 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
             zoom: int(-1); [[Minimum zoom value to be used.]]
          }
       }
-      @property rotate {
+      @property map_rotate {
          set {
             [[Rotate the map.]]
+            legacy: elm_map_rotate_set;
          }
          get {
             [[Get the rotate degree of the map.]]
+            legacy: elm_map_rotate_get;
          }
          values {
             degree: double; [[Angle from 0.0 to 360.0 to rotate around Z axis.]]
@@ -209,46 +140,12 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
             zoom: int(-1); [[Maximum zoom value to be used.]]
          }
       }
-      @property zoom_mode {
-         set {
-            [[Set the zoom mode used by the map object.
-
-              This sets the zoom mode to manual or one of the automatic
-              levels. Manual (#ELM_MAP_ZOOM_MODE_MANUAL) means that zoom
-              is set manually by @.zoom_mode.set and will stay at that
-              level until changed by code or until zoom mode is changed.
-              This is the default mode.
-
-              The Automatic modes will allow the map object to
-              automatically adjust zoom mode based on properties.
-              #ELM_MAP_ZOOM_MODE_AUTO_FIT will adjust zoom so the map
-              fits inside the scroll frame with no pixels outside this
-              area. #ELM_MAP_ZOOM_MODE_AUTO_FILL will be similar but
-              ensure no pixels within the frame are left unfilled. Do not
-              forget that the valid sizes are 2^zoom, consequently the map
-              may be smaller than the scroller view.
-            ]]
-         }
-         get {
-            [[Get the zoom mode used by the map object.
-
-              This function returns the current zoom mode used by the ma
-              object.
-            ]]
-         }
-         values {
-            mode: Elm.Map.Zoom_Mode; [[The zoom mode of the map, being it
-                                       one of #ELM_MAP_ZOOM_MODE_MANUAL
-                                       (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT,
-                                       or #ELM_MAP_ZOOM_MODE_AUTO_FILL.]]
-         }
-      }
       @property region {
          get {
             [[Get the current geographic coordinates of the map.
 
               This gets the current center coordinates of the map object.
-              It can be set by @.region_bring_in and @.region_show.
+              It can be set by @.map_region_bring_in and @.region_show.
             ]]
          }
          values {
@@ -469,7 +366,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
            containing the given $lat and $lon, that will be moved to the
            center of the map.
 
-           See @.region_bring_in for a function to move with animation.
+           See @.map_region_bring_in for a function to move with animation.
          ]]
          params {
             @in lon: double; [[Longitude to center at.]]
@@ -512,7 +409,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
             @in data: void_ptr @optional; [[The user callback data.]]
          }
       }
-      region_bring_in {
+      map_region_bring_in {
          [[Animatedly bring in given coordinates to the center of the map.
 
            This causes map to jump to the given $lat and $lon coordinates
@@ -522,6 +419,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
 
            See @.region_show for a function to avoid animation.
          ]]
+         legacy: elm_map_region_bring_in;
          params {
             @in lon: double; [[Longitude to center at.]]
             @in lat: double; [[Latitude to center at.]]
@@ -535,7 +433,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
            to the given $lat and $lon coordinates and show it (by scrolling)
            in the center of the viewport concurrently.
 
-           See also @.region_bring_in.
+           See also @.map_region_bring_in.
 
            @since 1.11
          ]]
@@ -627,28 +525,32 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Object.invalidate;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Zoom.zoom_level { set; }
+      Efl.Ui.Zoom.zoom_mode { set; }
+      Elm.Interface_Scrollable.wheel_disabled { set; }
    }
    events {
-      press; [[Called when map was pressed]]
-      zoom,change; [[Called when map zoom changed]]
-      loaded; [[Called when map loaded]]
-      tile,load; [[Called when title load started]]
-      tile,loaded; [[Called when title load finished]]
-      tile,loaded,fail; [[Called when title load failed]]
-      route,load; [[Called when route load started]]
-      route,loaded; [[Called when route load finished]]
-      route,loaded,fail; [[Called when route load failed]]
-      name,load; [[Called when name load started]]
-      name,loaded; [[Called when name load finished]]
-      name,loaded,fail; [[Called when name load failed]]
-      overlay,clicked; [[Called when overlay was clicked]]
-      overlay,del; [[Called when overlay was deleted]]
+      press: Evas.Event_Mouse_Down; [[Called when map was pressed]]
+      loaded: void; [[Called when map loaded]]
+      tile,load: void; [[Called when title load started]]
+      tile,loaded: void; [[Called when title load finished]]
+      tile,loaded,fail: void; [[Called when title load failed]]
+      route,load: Elm_Map_Route; [[Called when route load started]]
+      route,loaded: void; [[Called when route load finished]]
+      route,loaded,fail: void; [[Called when route load failed]]
+      /* FIXME: Can be Elm_Map_Name or list<Elm_Map_Name> */
+      name,load: void; [[Called when name load started]]
+      name,loaded: void; [[Called when name load finished]]
+      name,loaded,fail: void; [[Called when name load failed]]
+      overlay,clicked: Elm_Map_Overlay; [[Called when overlay was clicked]]
+      overlay,del: Elm_Map_Overlay; [[Called when overlay was deleted]]
    }
 }

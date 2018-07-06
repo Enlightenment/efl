@@ -1835,7 +1835,8 @@ group { name: "e/fileman/default/progress";
    }
 }
 
-group { name: "modules/efm_navigation/main";
+group { name: "e/modules/efm_navigation/main";
+   alias: "modules/efm_navigation/main";
    images.image: "shadow_inset_light.png" COMP;
    images.image: "shadow_angled_in_light.png" COMP;
    images.image: "sym_left_light_normal.png" COMP;
@@ -1991,7 +1992,9 @@ group { name: "modules/efm_navigation/main";
    }
 }
 
-group { name: "modules/efm_navigation/pathbar_button";
+group { name: "e/modules/efm_navigation/pathbar_button";
+   alias: "modules/efm_navigation/pathbar_button";
+   images.image: "horizontal_separated_bar_small_glow.png" COMP;
    parts {
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
@@ -2050,7 +2053,8 @@ group { name: "modules/efm_navigation/pathbar_button";
    }
 }
 
-group { name: "modules/efm_navigation/pathbar_scrollframe";
+group { name: "e/modules/efm_navigation/pathbar_scrollframe";
+   alias: "modules/efm_navigation/pathbar_scrollframe";
    images.image: "sym_left_light_normal.png" COMP;
    images.image: "sym_right_light_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;

@@ -131,7 +131,7 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
    const Eolian_Typedecl *tdcl = eolian_type_typedecl_get(btp);
    if (tdcl && (eolian_typedecl_type_get(tdcl) == EOLIAN_TYPEDECL_STRUCT))
      {
-        char *sn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tdcl));
+        char *sn = eo_gen_c_full_name_get(eolian_typedecl_name_get(tdcl));
         if (eina_streq(sn, "Eina_Rect"))
           eina_strbuf_append(buf, "(EINA_RECT_EMPTY())");
         else
@@ -156,7 +156,7 @@ _generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Str
    const char *free_func = eolian_type_free_func_get(type);
    if (!free_func)
      {
-        printf("No free type %s\n", eolian_type_name_get(type));
+        printf("No free type %s\n", eolian_type_short_name_get(type));
         return;
      }
 
@@ -315,9 +315,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    Eina_Strbuf *params_full_imp = eina_strbuf_new(); /* as above, for impl */
    Eina_Strbuf *params_init = eina_strbuf_new(); /* default value inits */
    Eina_Strbuf *fallback_free_ownership = eina_strbuf_new(); /* list of function calls that are freeing the owned parameters, or doing nothing on the normal parameters, NULL if there is nothing owned*/
-
-   Eina_Stringshare *promise_param_name = NULL;
-   Eina_Stringshare *promise_param_type = NULL;
 
    /* property keys */
    {
@@ -533,7 +530,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(buf, func_suffix);
              /* ([const ]Eo *obj, Data_Type *pd, impl_full_params); */
              eina_strbuf_append_char(buf, '(');
-             if (eolian_function_object_is_const(fid))
+             if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
                eina_strbuf_append(buf, "const ");
              eina_strbuf_append(buf, "Eo *obj, ");
              eina_strbuf_append(buf, dt);
@@ -564,7 +561,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              eina_strbuf_append(buf, eolian_function_name_get(fid));
              eina_strbuf_append(buf, func_suffix);
              eina_strbuf_append_char(buf, '(');
-             if (eolian_function_object_is_const(fid))
+             if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
                eina_strbuf_append(buf, "const ");
              eina_strbuf_append(buf, "Eo *obj");
              if (is_empty || is_auto)
@@ -726,9 +723,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    free(ocnamel);
 
    eina_stringshare_del(rtpn);
-
-   eina_stringshare_del(promise_param_name);
-   eina_stringshare_del(promise_param_type);
 
    eina_strbuf_free(params);
    eina_strbuf_free(params_full);
@@ -937,7 +931,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    eina_strbuf_append(buf, cnamel);
    eina_strbuf_append(buf, "_class_desc = {\n"
                            "   EO_VERSION,\n");
-   eina_strbuf_append_printf(buf, "   \"%s\",\n", eolian_class_full_name_get(cl));
+   eina_strbuf_append_printf(buf, "   \"%s\",\n", eolian_class_name_get(cl));
 
    switch (eolian_class_type_get(cl))
      {
@@ -1147,7 +1141,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
 
    eina_strbuf_append_printf(buf, "\n%s(", fname);
 
-   if (eolian_function_object_is_const(fid))
+   if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
      eina_strbuf_append(buf, "const ");
 
    eina_strbuf_append(buf, "Eo *obj, ");

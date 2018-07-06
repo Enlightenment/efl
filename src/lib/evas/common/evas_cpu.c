@@ -1,27 +1,36 @@
 #include "evas_common_private.h"
-#ifdef BUILD_MMX
-#include "evas_mmx.h"
-#endif
 #ifdef BUILD_NEON
 #ifdef BUILD_NEON_INTRINSICS
 #include <arm_neon.h>
 #endif
 #endif
-#if defined BUILD_SSE3
-#include <immintrin.h>
+
+static int cpu_feature_mask = 0;
+
+
+#ifdef BUILD_ALTIVEC
+# ifdef __POWERPC__
+#  ifdef __VEC__
+#   define NEED_FEATURE_TEST
+#  endif
+# endif
+#endif
+#ifdef __SPARC__
+#   define NEED_FEATURE_TEST
+#endif
+#if defined(__ARM_ARCH__)
+# ifdef BUILD_NEON
+#   define NEED_FEATURE_TEST
+# endif
 #endif
 
+#ifdef NEED_FEATURE_TEST
 #if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 #include <signal.h>
 #include <setjmp.h>
 #include <errno.h>
 
 static sigjmp_buf detect_buf;
-#endif
-
-static int cpu_feature_mask = 0;
-
-#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
 static void evas_common_cpu_catch_ill(int sig);
 static void evas_common_cpu_catch_segv(int sig);
 
@@ -37,46 +46,6 @@ evas_common_cpu_catch_segv(int sig EINA_UNUSED)
    siglongjmp(detect_buf, 1);
 }
 #endif
-
-void
-evas_common_cpu_mmx_test(void)
-{
-#ifdef BUILD_MMX
-   pxor_r2r(mm4, mm4);
-#endif
-}
-
-void
-evas_common_cpu_mmx2_test(void)
-{
-#ifdef BUILD_MMX
-   char data[16];
-
-   data[0] = 0;
-   mmx_r2m(movntq, mm0, data);
-   data[0] = 0;
-#endif
-}
-
-void
-evas_common_cpu_sse_test(void)
-{
-#ifdef BUILD_MMX
-   int blah[16];
-
-   movntq_r2m(mm0, blah);
-#endif
-}
-
-void evas_common_op_sse3_test(void);
-
-void
-evas_common_cpu_sse3_test(void)
-{
-#ifdef BUILD_SSE3
-   evas_common_op_sse3_test();
-#endif
-}
 
 #ifdef BUILD_ALTIVEC
 void
@@ -119,7 +88,18 @@ evas_common_cpu_vis_test(void)
 #ifdef __SPARC__
 #endif /* __SPARC__ */
 }
+#endif /* NEED_FEATURE_TEST */
+static Eina_Bool
+_cpu_check(Eina_Cpu_Features f)
+{
+   Eina_Cpu_Features features;
 
+   features = eina_cpu_features_get();
+   return (features & f) == f;
+}
+
+
+#ifdef NEED_FEATURE_TEST
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
@@ -150,19 +130,17 @@ evas_common_cpu_feature_test(void (*feature)(void))
    sigaction(SIGSEGV, &oact2, NULL);
    return enabled;
 #else
-   Eina_Cpu_Features f;
-
-   f = eina_cpu_features_get();
    if (feature == evas_common_cpu_mmx_test)
-     return (f & EINA_CPU_MMX) == EINA_CPU_MMX;
+     return _cpu_check(EINA_CPU_MMX);
    /* no mmx2 support in eina */
    if (feature == evas_common_cpu_sse_test)
-     return (f & EINA_CPU_SSE) == EINA_CPU_SSE;
+     return _cpu_check(EINA_CPU_SSE);
    if (feature == evas_common_cpu_sse3_test)
-     return (f & EINA_CPU_SSE3) == EINA_CPU_SSE3;
+     return _cpu_check(EINA_CPU_SSE3);
    return 0;
 #endif
 }
+#endif
 
 EAPI void
 evas_common_cpu_init(void)
@@ -175,36 +153,20 @@ evas_common_cpu_init(void)
    if (getenv("EVAS_CPU_NO_MMX"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX;
    else
-     {
-        cpu_feature_mask |= CPU_FEATURE_MMX *
-          evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
-        evas_common_cpu_end_opt();
-     }
+     cpu_feature_mask |= _cpu_check(EINA_CPU_MMX) * CPU_FEATURE_MMX;
    if (getenv("EVAS_CPU_NO_MMX2"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX2;
-   else
-     {
-        cpu_feature_mask |= CPU_FEATURE_MMX2 *
-          evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
-        evas_common_cpu_end_opt();
-     }
+   else /* It seems "MMX2" is actually part of SSE (and 3DNow)? */
+     cpu_feature_mask |= _cpu_check(EINA_CPU_SSE) * CPU_FEATURE_MMX2;
    if (getenv("EVAS_CPU_NO_SSE"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE;
    else
-     {
-        cpu_feature_mask |= CPU_FEATURE_SSE *
-          evas_common_cpu_feature_test(evas_common_cpu_sse_test);
-        evas_common_cpu_end_opt();
-     }
+     cpu_feature_mask |= _cpu_check(EINA_CPU_SSE) * CPU_FEATURE_SSE;
 # ifdef BUILD_SSE3
    if (getenv("EVAS_CPU_NO_SSE3"))
-     cpu_feature_mask &= ~CPU_FEATURE_SSE3; 
+     cpu_feature_mask &= ~CPU_FEATURE_SSE3;
    else
-     {
-        cpu_feature_mask |= CPU_FEATURE_SSE3 *
-          evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
-        evas_common_cpu_end_opt();
-     }
+     cpu_feature_mask |= _cpu_check(EINA_CPU_SSE3) * CPU_FEATURE_SSE3;
 # endif /* BUILD_SSE3 */
 #endif /* BUILD_MMX */
 #ifdef BUILD_ALTIVEC
@@ -237,9 +199,15 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_NEON;
    else
      {
+        /* On linux eina_cpu sets this up with getauxval() */
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+        cpu_feature_mask |= CPU_FEATURE_NEON *
+          !!(eina_cpu_features_get() & EINA_CPU_NEON);
+#else
         cpu_feature_mask |= CPU_FEATURE_NEON *
           evas_common_cpu_feature_test(evas_common_cpu_neon_test);
         evas_common_cpu_end_opt();
+#endif
      }
 # endif
 #endif

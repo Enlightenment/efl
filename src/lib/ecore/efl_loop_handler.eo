@@ -1,5 +1,3 @@
-import eina_types;
-
 enum Efl.Loop.Handler.Flags {
    [[ A set of flags that can be OR'd together to indicate which are
    desired ]]
@@ -9,7 +7,7 @@ enum Efl.Loop.Handler.Flags {
    error = 4, [[ Error channel input is desired ]]
 }
 
-class Efl.Loop.Handler (Efl.Object)
+class Efl.Loop_Handler (Efl.Object)
 {
    [[ An object that describes an low-level source of I/O to listen to
    for available data to be read or written, depending on the OS and data
@@ -56,11 +54,11 @@ class Efl.Loop.Handler (Efl.Object)
       }
    }
    events {
-      read; [[ Called when a read occurs on the descriptor. ]]
-      write; [[ Called when a write occurs on the descriptor. ]]
-      error; [[ Called when a error occurrs on the descriptor. ]]
-      buffer; [[ Called when buffered data already read from the descriptor should be processed. ]]
-      prepare; [[ Called when preparing a descriptor for listening. ]]
+      read: void; [[ Called when a read occurs on the descriptor. ]]
+      write: void; [[ Called when a write occurs on the descriptor. ]]
+      error: void; [[ Called when a error occurrs on the descriptor. ]]
+      buffer: void; [[ Called when buffered data already read from the descriptor should be processed. ]]
+      prepare: void; [[ Called when preparing a descriptor for listening. ]]
    }
 
    implements {

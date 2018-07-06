@@ -597,6 +597,100 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
 }
 
 static void
+_edje_real_part_image_error_check(Edje_Real_Part *ep)
+{
+   switch (evas_object_image_load_error_get(ep->object))
+     {
+      case EVAS_LOAD_ERROR_GENERIC:
+        ERR("Error type: EVAS_LOAD_ERROR_GENERIC");
+        break;
+
+      case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
+        ERR("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST");
+        break;
+
+      case EVAS_LOAD_ERROR_PERMISSION_DENIED:
+        ERR("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED");
+        break;
+
+      case EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
+        ERR("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED");
+        break;
+
+      case EVAS_LOAD_ERROR_CORRUPT_FILE:
+        ERR("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE");
+        break;
+
+      case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
+        ERR("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT");
+        break;
+
+      default:
+        ERR("Error type: ???");
+        break;
+     }
+}
+
+static Eina_Bool
+_edje_real_part_image_internal_set(Edje_File *edf, Edje_Real_Part *ep, int image_id)
+{
+   char buf[1024] = "edje/images/";
+
+   /* Replace snprint("edje/images/%i") == memcpy + itoa */
+   eina_convert_itoa(image_id, buf + 12); /* No need to check length as 2³² need only 10 characteres. */
+
+   evas_object_image_mmap_set(ep->object, edf->f, buf);
+   if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Error loading image collection \"%s\" from "
+            "file \"%s\". Missing EET Evas loader module?",
+            buf, edf->path);
+        _edje_real_part_image_error_check(ep);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_edje_real_part_image_external_set(Edje_File *edf, Edje_Real_Part *ep, int image_id)
+{
+   Edje_Image_Directory_Entry *ie;
+
+   if (!edf->image_dir) return EINA_FALSE;
+   ie = edf->image_dir->entries + (-image_id) - 1;
+   if ((ie) &&
+       (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_USER) &&
+       (ie->entry))
+     {
+        evas_object_image_file_set(ep->object, ie->entry, NULL);
+        _edje_real_part_image_error_check(ep);
+        return EINA_TRUE;
+     }
+   else if ((ie) &&
+       (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
+       (ie->entry))
+     {
+        Edje_File *edff;
+        Eina_List *l, *ll;
+
+        l = eina_hash_find(_edje_id_hash, ie->external_id);
+        EINA_LIST_FOREACH(l, ll, edff)
+          {
+             Edje_Image_Hash *eih = eina_hash_find(edff->image_id_hash, ie->entry);
+
+             if (!eih) continue;
+             if (eih->id < 0)
+               return _edje_real_part_image_external_set(edff, ep, eih->id);
+             else
+               _edje_real_part_image_internal_set(edff, ep, eih->id);
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   return EINA_FALSE;
+}
+
+static void
 _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set, FLOAT_T pos)
 {
    int image_id;
@@ -609,16 +703,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
    if (set) *set = ep->param1.set;
    if (image_id < 0)
      {
-        Edje_Image_Directory_Entry *ie;
-
-        if (!ed->file->image_dir) ie = NULL;
-        else ie = ed->file->image_dir->entries + (-image_id) - 1;
-        if ((ie) &&
-            (ie->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) &&
-            (ie->entry))
-          {
-             evas_object_image_file_set(ep->object, ie->entry, NULL);
-          }
+        _edje_real_part_image_external_set(ed->file, ep, image_id);
      }
    else
      {
@@ -659,58 +744,18 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
           }
         if (image_id < 0)
           {
-             ERR("Part \"%s\" description, "
-                 "\"%s\" %3.3f with image %i index has a missing image id in a set of %i !!!",
-                 ep->part->name,
-                 ep->param1.description->state.name,
-                 ep->param1.description->state.value,
-                 image_num,
-                 image_count);
+             if (!_edje_real_part_image_external_set(ed->file, ep, image_id))
+               ERR("Part \"%s\" description, "
+                   "\"%s\" %3.3f with image %i index has a missing image id in a set of %i !!!",
+                   ep->part->name,
+                   ep->param1.description->state.name,
+                   ep->param1.description->state.value,
+                   image_num,
+                   image_count);
           }
         else
           {
-             char buf[1024] = "edje/images/";
-
-             /* Replace snprint("edje/images/%i") == memcpy + itoa */
-             eina_convert_itoa(image_id, buf + 12); /* No need to check length as 2³² need only 10 characteres. */
-
-             evas_object_image_mmap_set(ep->object, ed->file->f, buf);
-             if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
-               {
-                  ERR("Error loading image collection \"%s\" from "
-                      "file \"%s\". Missing EET Evas loader module?",
-                      buf, ed->file->path);
-                  switch (evas_object_image_load_error_get(ep->object))
-                    {
-                     case EVAS_LOAD_ERROR_GENERIC:
-                       ERR("Error type: EVAS_LOAD_ERROR_GENERIC");
-                       break;
-
-                     case EVAS_LOAD_ERROR_DOES_NOT_EXIST:
-                       ERR("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST");
-                       break;
-
-                     case EVAS_LOAD_ERROR_PERMISSION_DENIED:
-                       ERR("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED");
-                       break;
-
-                     case EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
-                       ERR("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED");
-                       break;
-
-                     case EVAS_LOAD_ERROR_CORRUPT_FILE:
-                       ERR("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE");
-                       break;
-
-                     case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
-                       ERR("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT");
-                       break;
-
-                     default:
-                       ERR("Error type: ???");
-                       break;
-                    }
-               }
+             _edje_real_part_image_internal_set(ed->file, ep, image_id);
           }
      }
 }
@@ -1503,7 +1548,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
      return;
 
    // Note: No need to add padding to that, it's already in the geometry
-   sz = efl_gfx_size_get(ep->object);
+   sz = efl_gfx_entity_size_get(ep->object);
    mw = sz.w;
    mh = sz.h;
 
@@ -1671,7 +1716,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
              evas_obj_text_style_set(ep->object, style);
              evas_obj_text_set(ep->object, text);
-             ts = efl_gfx_size_get(ep->object);
+             ts = efl_gfx_entity_size_get(ep->object);
              if (chosen_desc->text.max_x)
                {
                   int l, r;
@@ -3045,7 +3090,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      }
 
    efl_gfx_fill_set(ep->object, (Eina_Rect) p3->type.common->fill);
-   efl_image_smooth_scale_set(ep->object, p3->smooth);
+   efl_gfx_image_smooth_scale_set(ep->object, p3->smooth);
    evas_object_image_source_visible_set(ep->object, chosen_desc->proxy.source_visible);
    evas_object_image_source_clip_set(ep->object, chosen_desc->proxy.source_clip);
 }
@@ -3085,7 +3130,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      }
 
    efl_gfx_fill_set(ep->object, (Eina_Rect) p3->type.common->fill);
-   efl_image_smooth_scale_set(ep->object, p3->smooth);
+   efl_gfx_image_smooth_scale_set(ep->object, p3->smooth);
    if (chosen_desc->image.border.scale)
      {
         if (p3->type.common->spec.image.border_scale_by > FROM_DOUBLE(0.0))
@@ -3145,20 +3190,20 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
         snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_svg);
 
         efl_file_set(ep->object, ed->file->path, src_key);
-        src_root = efl_canvas_vg_root_node_get(ep->object);
+        src_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(src_root);
 
         efl_file_set(ep->object, ed->file->path, dest_key);
-        dest_root = efl_canvas_vg_root_node_get(ep->object);
+        dest_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(dest_root);
 
         root = efl_duplicate(src_root);
 
-        if (!evas_vg_node_interpolate(root, src_root, dest_root, pos))
+        if (!efl_gfx_path_interpolate(root, src_root, dest_root, pos))
           {
              ERR("Can't interpolate check the svg file");
           }
-        efl_canvas_vg_root_node_set(ep->object, root);
+        efl_canvas_vg_object_root_node_set(ep->object, root);
         efl_unref(src_root);
         efl_unref(dest_root);
      }
@@ -4657,7 +4702,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_EXTERNAL:
              /* visibility and color have no meaning on SWALLOW and GROUP part. */
 #ifdef HAVE_EPHYSICS
-             efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+             efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
              if ((ep->part->physics_body) && (!ep->body))
                {
                   if (_edje_physics_world_geometry_check(ed->world))
@@ -4677,16 +4722,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                     }
                }
              else
-               efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+               efl_gfx_entity_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
 #else
-             efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-             efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+             efl_gfx_entity_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+             efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
 #endif
 
              if (ep->nested_smart) /* Move, Resize all nested parts */
                {   /* Not really needed but will improve the bounding box evaluation done by Evas */
-                  efl_gfx_position_set(ep->nested_smart, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_size_set(ep->nested_smart, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                  efl_gfx_entity_position_set(ep->nested_smart, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+                  efl_gfx_entity_size_set(ep->nested_smart, EINA_SIZE2D(pf->final.w,  pf->final.h));
                }
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                _edje_entry_real_part_configure(ed, ep);
@@ -4721,16 +4766,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 Evas_Canvas3D_Camera *camera = NULL;
                 Edje_Part_Description_Camera *pd_camera;
 
-                efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->req.w,  pf->req.h));
+                efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->req.w,  pf->req.h));
 
                 pd_camera = (Edje_Part_Description_Camera*) ep->chosen_description;
 
-                efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y)),
-                efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                efl_gfx_entity_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y)),
+                efl_gfx_entity_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
 
                 viewport = evas_object_image_source_get(ep->object);
 
-                efl_gfx_size_set(viewport, EINA_SIZE2D(pf->req.w,  pf->req.h));
+                efl_gfx_entity_size_set(viewport, EINA_SIZE2D(pf->req.w,  pf->req.h));
 
                 evas_object_image_source_visible_set(ep->object, EINA_FALSE);
                 evas_object_image_source_events_set(ep->object, EINA_TRUE);
@@ -4976,9 +5021,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                   if (ep->part->type == EDJE_PART_TYPE_GROUP)
                     vis = evas_object_visible_get(ed->obj);
-                  efl_gfx_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
-                  efl_gfx_visible_set(ep->typedata.swallow->swallowed_object, vis);
+                  efl_gfx_entity_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+                  efl_gfx_entity_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                  efl_gfx_entity_visible_set(ep->typedata.swallow->swallowed_object, vis);
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;

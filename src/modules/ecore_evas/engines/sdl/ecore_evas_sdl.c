@@ -510,12 +510,13 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    ee->prop.hwsurface = hwsurface;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
-   evas_output_method_set(ee->evas, rmethod);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        goto on_error;
+     }
 
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
+   evas_output_method_set(ee->evas, rmethod);
 
    gl = !(rmethod == evas_render_method_lookup("buffer"));
    ee->can_async_render = gl ? EINA_FALSE : EINA_TRUE;
@@ -611,18 +612,12 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
      }
 
    _ecore_evas_sdl_init(w, h);
+   ee->prop.window = SDL_GetWindowID(swd->w);
 
-   ecore_event_window_register(SDL_GetWindowID(swd->w), ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(SDL_GetWindowID(swd->w), _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
+
    SDL_SetWindowData(swd->w, "_Ecore_Evas", ee);
-
    SDL_ShowCursor(SDL_ENABLE);
-
-   _ecore_evas_register(ee);
 
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    ecore_evas_sdl_count++;

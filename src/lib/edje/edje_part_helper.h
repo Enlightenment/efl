@@ -35,12 +35,10 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
    if (*static_var)
      {
         if (*static_var != proxy)
-          efl_del_intercept_set(*static_var, NULL);
-     }
-   if (efl_parent_get(proxy))
-     {
-        efl_ref(proxy);
-        efl_parent_set(proxy, NULL);
+          {
+             efl_del_intercept_set(*static_var, NULL);
+             efl_unref(*static_var);
+          }
      }
    efl_reuse(proxy);
    *static_var = proxy;
@@ -52,7 +50,7 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
    do { if (PROXY_STATIC_VAR(type)) \
      { \
         efl_del_intercept_set(PROXY_STATIC_VAR(type), NULL); \
-        efl_del(PROXY_STATIC_VAR(type)); \
+        efl_unref(PROXY_STATIC_VAR(type)); \
         PROXY_STATIC_VAR(type) = NULL; \
      } } while (0)
 
@@ -93,12 +91,12 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
    else \
      { \
         PROXY_STATIC_VAR(type) = NULL; \
+        efl_parent_set(proxy, ed->obj); \
+        efl_unref(proxy); /* efl_reuse gives us one additional reference, give this one up as we gave ownerwhip back to ed->obj */\
         _edje_real_part_set(proxy, ed, rp, part); \
      } \
    __VA_ARGS__; \
    if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
-   efl_allow_parent_unref_set(proxy, 1); \
-   ___efl_auto_unref_set(proxy, 1); \
    return proxy; \
 }
 

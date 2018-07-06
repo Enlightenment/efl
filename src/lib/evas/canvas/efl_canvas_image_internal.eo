@@ -1,5 +1,5 @@
-abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Internal,
-                                    Efl.Image, Efl.Gfx.Buffer,
+abstract Efl.Canvas.Image_Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Internal,
+                                    Efl.Gfx.Image, Efl.Gfx.Buffer,
                                     Efl.Gfx.Fill, Efl.Gfx.View,
                                     Efl.Orientation, Efl.File)
 {
@@ -13,14 +13,14 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
       Efl.File.save;
       Efl.Orientation.orientation { get; set; }
       Efl.Orientation.flip { get; set; }
-      Efl.Image.smooth_scale { get; set; }
-      Efl.Image.ratio { get; }
-      Efl.Image.border { get; set; }
-      Efl.Image.border_scale { get; set; }
-      Efl.Image.border_center_fill { get; set; }
-      Efl.Image.scale_hint { get; set; }
-      Efl.Image.content_hint { get; set; }
-      Efl.Image.image_size { get; }
+      Efl.Gfx.Image.smooth_scale { get; set; }
+      Efl.Gfx.Image.ratio { get; }
+      Efl.Gfx.Image.border { get; set; }
+      Efl.Gfx.Image.border_scale { get; set; }
+      Efl.Gfx.Image.border_center_fill { get; set; }
+      Efl.Gfx.Image.scale_hint { get; set; }
+      Efl.Gfx.Image.content_hint { get; set; }
+      Efl.Gfx.Image.image_size { get; }
       Efl.Gfx.Buffer.alpha { get; set; }
       Efl.Gfx.Buffer.buffer_update_add;
       Efl.Gfx.Buffer.colorspace { get; }

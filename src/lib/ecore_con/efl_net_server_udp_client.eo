@@ -1,5 +1,5 @@
-class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
-    [[A UDP client child of Efl.Net.Server.Udp
+class Efl.Net.Server_Udp_Client (Efl.Object, Efl.Net.Socket) {
+    [[A UDP client child of Efl.Net.Server_Udp
 
       Unlike connection protocols such as TCP or Local, UDP doesn't
       create extra sockets for its "clients". This thin class
@@ -26,10 +26,11 @@ class Efl.Net.Server.Udp.Client (Efl.Object, Efl.Net.Socket) {
 
     implements {
         Efl.Object.finalize;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Closer.close_on_exec { get; set; }
         Efl.Io.Reader.can_read { get; set; }
         Efl.Io.Reader.eos { get; set; }

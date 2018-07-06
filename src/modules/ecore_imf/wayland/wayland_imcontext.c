@@ -762,6 +762,8 @@ wayland_im_context_del(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_del");
 
+   _clear_hide_timer();
+
    if (imcontext->language)
      {
         free(imcontext->language);

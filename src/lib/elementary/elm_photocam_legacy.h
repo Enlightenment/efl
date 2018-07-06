@@ -1,5 +1,7 @@
 #include "interfaces/efl_ui_zoom.eo.legacy.h"
 
+typedef Eo Elm_Photocam;
+
 /**
  * @brief Add a new Photocam object
  *

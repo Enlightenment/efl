@@ -115,6 +115,11 @@ struct _Eo_Object
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
      Eina_Bool super:1;
+     Eina_Bool invalidate:1;
+     Eina_Bool is_invalidating:1;
+     Eina_Bool parent : 1;
+     Eina_Bool unref_compensate : 1;
+     Eina_Bool allow_parent_unref : 1;
 
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
@@ -198,6 +203,8 @@ struct _Efl_Class
    unsigned int data_offset; /* < Offset of the data within object data. */
    unsigned int ops_count; /* < Offset of the data within object data. */
 
+   Eina_Thread construction_thread; /** < the thread which called the class constructor */
+
    Eina_Bool constructed : 1;
    Eina_Bool functions_set : 1;
    /* [extensions*] + NULL */
@@ -217,7 +224,7 @@ typedef struct
 /* provide valgrind-like tracking of object allocationg and deletion */
 void _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const char *file, int line);
 
-void _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink);
+void _efl_object_reuse(_Eo_Object *obj);
 
 static inline
 Eo *_eo_header_id_get(const Eo_Header *header)
@@ -246,6 +253,11 @@ _eo_condtor_reset(_Eo_Object *obj)
    obj->condtor_done = EINA_FALSE;
 }
 
+typedef struct _Efl_Object_Data Efl_Object_Data;
+
+EOLIAN void _efl_object_parent_set(Eo *obj, Efl_Object_Data *pd, Eo *parent_id);
+void _efl_invalidate(_Eo_Object *obj);
+
 static inline void
 _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
 {
@@ -253,6 +265,32 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
    obj->refcount++;
 
    const _Efl_Class *klass = obj->klass;
+
+   // If the object hasn't been invalidated yet, time to do it
+   // before any destructor kick in. This can happen when
+   // the object has no parent and get deleted by efl_unref.
+   if (obj->parent)
+     {
+        Eo *parent = efl_parent_get(_eo_obj_id_get(obj));
+
+        ERR("Destructor path being taken while object [%s] still has a parent [%s] in state %i:%i.",
+            efl_debug_name_get(_eo_obj_id_get(obj)),
+            efl_debug_name_get(parent),
+            obj->is_invalidating, obj->invalidate);
+
+        efl_parent_set(_eo_obj_id_get(obj), NULL);
+
+        if (obj->parent)
+          {
+             CRI("Something is preventing [%s] from disconnecting from its parent, bypassing.",
+                 efl_debug_name_get(_eo_obj_id_get(obj)));
+             _efl_object_parent_set(_eo_obj_id_get(obj), efl_data_scope_get(_eo_obj_id_get(obj), EFL_OBJECT_CLASS), NULL);
+          }
+     }
+   else if (!obj->invalidate || !obj->is_invalidating)
+     {
+        _efl_invalidate(obj);
+     }
 
    efl_event_callback_call(_eo_obj_id_get(obj), EFL_EVENT_DEL, NULL);
 
@@ -302,6 +340,12 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
    --(obj->refcount);
    if (EINA_UNLIKELY(obj->refcount <= 0))
      {
+        if (obj->user_refcount > 0)
+          {
+             ERR("Object %p is still refcounted %i by users, but internal refcount reached 0. This should never happen. Please report a bug and send a backtrace to EFL developer.", (Eo*) obj->header.id, obj->user_refcount);
+             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
+             return;
+          }
         if (obj->refcount < 0)
           {
              ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.", file, line, func_name, obj, obj->refcount);
@@ -375,8 +419,5 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
           _efl_ref(obj); /* If we manual free, we keep a phantom ref. */
      }
 }
-
-Eina_Bool efl_future_init(void);
-Eina_Bool efl_future_shutdown(void);
 
 #endif

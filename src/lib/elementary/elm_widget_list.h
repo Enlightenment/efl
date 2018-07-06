@@ -34,7 +34,7 @@ struct _Elm_List_Data
 {
    Evas_Object                          *box, *hit_rect;
 
-   Eina_List                            *items, *selected, *to_delete;
+   Eina_List                            *items, *selected;
    Elm_Object_Item                      *last_selected_item;
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
@@ -103,7 +103,7 @@ struct _Elm_List_Item_Data
   ELM_LIST_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -112,7 +112,7 @@ struct _Elm_List_Item_Data
   ELM_LIST_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return val;                                   \
     }

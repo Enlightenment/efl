@@ -2,7 +2,7 @@ import efl_gfx_types;
 import eina_types;
 
 /* FIXME: this is very very low level. expose to apps? */
-enum Efl.Gfx.Buffer.Access_Mode {
+enum Efl.Gfx.Buffer_Access_Mode {
    [[Graphics buffer access mode]]
    none      = 0x0, [[No buffer access]]
    read      = 0x1, [[Read access to buffer]]
@@ -129,7 +129,7 @@ interface Efl.Gfx.Buffer ()
            be negative.
          ]]
          params {
-            @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
+            @in mode: Efl.Gfx.Buffer_Access_Mode; [[Specifies whether to map for read-only,
                                                     write-only or read-write access (OR combination of flags).]]
             @cref region: Eina.Rect @optional; [[The region to map.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If different from the internal cspace,

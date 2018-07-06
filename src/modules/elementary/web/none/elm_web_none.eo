@@ -1,4 +1,4 @@
-class Elm.Web.None (Elm.Web)
+class Elm.Web.None (Elm.Web, Efl.Ui.Legacy)
 {
    [[Elementary web module class]]
    implements {
@@ -33,8 +33,8 @@ class Elm.Web.None (Elm.Web)
       Elm.Web.forward_possible { get; }
       Elm.Web.navigate_possible_get;
       Elm.Web.history_enabled { get; set; }
-      Elm.Web.zoom { get; set; }
-      Elm.Web.zoom_mode { get; set; }
+      Efl.Ui.Zoom.zoom_level { get; set; }
+      Efl.Ui.Zoom.zoom_mode { get; set; }
       Elm.Web.region_show;
       Elm.Web.region_bring_in;
       Elm.Web.inwin_mode { get; set; }

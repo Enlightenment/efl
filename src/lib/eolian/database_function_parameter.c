@@ -8,8 +8,8 @@
 void
 database_parameter_del(Eolian_Function_Parameter *pdesc)
 {
-   if (pdesc->base.file) eina_stringshare_del(pdesc->base.file);
-   eina_stringshare_del(pdesc->name);
+   eina_stringshare_del(pdesc->base.file);
+   eina_stringshare_del(pdesc->base.name);
 
    database_type_del(pdesc->type);
    database_expr_del(pdesc->value);

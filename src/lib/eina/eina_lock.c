@@ -52,9 +52,12 @@ _eina_spinlock_macos_release(Eina_Spinlock *spinlock)
 #endif /* EINA_HAVE_OSX_SPINLOCK */
 
 
+Eina_Bool fork_resetting;
+
 EAPI void
 _eina_lock_debug_abort(int err, const char *fn, const volatile void *ptr)
 {
+   if (fork_resetting) return;
    fprintf(stderr, "EINA ERROR: '%s' on %s %p\n", strerror(err), fn, ptr);
 #ifdef EINA_HAVE_DEBUG_THREADS
    abort();
@@ -88,19 +91,13 @@ _eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
    pthread_mutexattr_t attr;
    Eina_Bool ok = EINA_FALSE;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    if (pthread_mutexattr_init(&attr) != 0) return EINA_FALSE;
    if (recursive)
      {
         if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) goto fail_release;
      }
 #ifdef EINA_HAVE_DEBUG_THREADS
-   if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0) goto fail_release;
-   memset(mutex, 0, sizeof(Eina_Lock));
+   else if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0) goto fail_release;
 #endif
    if (pthread_mutex_init(&(mutex->mutex), &attr) != 0) goto fail_release;
    ok = EINA_TRUE;
@@ -114,16 +111,8 @@ _eina_lock_free(Eina_Lock *mutex)
 {
    int ok;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    ok = pthread_mutex_destroy(&(mutex->mutex));
    if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, mutex_destroy, mutex);
-#ifdef EINA_HAVE_DEBUG_THREADS
-   memset(mutex, 0, sizeof(Eina_Lock));
-#endif
 }
 
 EAPI Eina_Bool
@@ -134,9 +123,6 @@ _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(mutex != NULL);
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-   memset(cond, 0, sizeof (Eina_Condition));
 #endif
 
    cond->lock = mutex;
@@ -178,26 +164,13 @@ _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 EAPI void
 _eina_condition_free(Eina_Condition *cond)
 {
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
-
    pthread_cond_destroy(&(cond->condition));
-#ifdef EINA_HAVE_DEBUG_THREADS
-   memset(cond, 0, sizeof (Eina_Condition));
-#endif
 }
 
 EAPI Eina_Bool
 _eina_rwlock_new(Eina_RWLock *mutex)
 {
    int ok;
-
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
 
    ok = pthread_rwlock_init(&(mutex->mutex), NULL);
    if (ok == 0) return EINA_TRUE;
@@ -209,10 +182,6 @@ _eina_rwlock_new(Eina_RWLock *mutex)
 EAPI void
 _eina_rwlock_free(Eina_RWLock *mutex)
 {
-#ifdef EINA_HAVE_DEBUG_THREADS
-   if (!_eina_threads_activated)
-     assert(pthread_equal(_eina_main_loop, pthread_self()));
-#endif
    pthread_rwlock_destroy(&(mutex->mutex));
 }
 

@@ -53,7 +53,7 @@
 
 static int _ecore_evas_init_count = 0;
 
-static Ecore_Event_Handler *ecore_evas_event_handlers[13];
+static Ecore_Event_Handler *ecore_evas_event_handlers[14];
 
 static int leader_ref = 0;
 static Ecore_X_Window leader_win = 0;
@@ -131,6 +131,8 @@ struct _Ecore_Evas_Engine_Data_X11 {
         unsigned long colormap; // store colormap used to create pixmap
      } pixmap;
    Eina_Bool destroyed : 1; // X window has been deleted and cannot be used
+   Eina_Bool fully_obscured : 1; // X window is fully obscured
+   Eina_Bool configured : 1; // X window has been configured
 };
 
 static Ecore_Evas_Interface_X11 * _ecore_evas_x_interface_x11_new(void);
@@ -227,6 +229,7 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
    Ecore_X_Atom protos[3];
    unsigned int num = 0, tmp = 0;
 
+   if (ee->deleted) return;
    if (ee->func.fn_delete_request)
      protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    protos[num++] = ECORE_X_ATOM_NET_WM_PING;
@@ -254,6 +257,7 @@ _ecore_evas_x_sync_set(Ecore_Evas *ee)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Ecore_X_Sync_Counter sync_counter = edata->sync_counter;
 
+   if (ee->deleted) return;
    if (((ee->should_be_visible) || (ee->visible)) &&
        ((ecore_x_e_comp_sync_supported_get(edata->win_root)) &&
            (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync)))
@@ -670,7 +674,7 @@ _render_updates_process(Ecore_Evas *ee, Eina_List *updates)
                }
           }
      }
-   else if (((ee->visible) && (ee->draw_ok)) ||
+   else if (((ee->visible) && (!ee->draw_block)) ||
             ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
             ((ee->should_be_visible) && (ee->prop.override)))
      {
@@ -1063,15 +1067,41 @@ _ecore_evas_x_event_visibility_change(void *data EINA_UNUSED, int type EINA_UNUS
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 //   printf("VIS CHANGE OBSCURED: %p %i\n", ee, e->fully_obscured);
+   edata->fully_obscured = e->fully_obscured;
    if (e->fully_obscured)
      {
         /* FIXME: round trip */
         if (!ecore_x_screen_is_composited(edata->screen_num))
-          ee->draw_ok = 0;
+          ee->draw_block = !edata->configured;
      }
-   else
-     ee->draw_ok = 1;
+   else if (ee->draw_block)
+     {
+        if (!edata->configure_coming)
+          edata->configured = 1;
+        ee->draw_block = !edata->configured;
+     }
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_x_event_window_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Create *e = event;
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Data_X11 *edata;
+
+   ee = ecore_event_window_match(e->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   edata = ee->engine.data;
+   if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (!ee->draw_block) return ECORE_CALLBACK_RENEW;
+   if ((ee->req.w == e->w) && (ee->req.h == e->h))
+     {
+        /* window created with desired size: canvas can be drawn */
+        ee->draw_block = EINA_FALSE;
+        edata->configured = EINA_TRUE;
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -1620,6 +1650,18 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (!edata->configured)
+     {
+        if (edata->fully_obscured)
+          {
+             /* FIXME: round trip */
+             if (!ecore_x_screen_is_composited(edata->screen_num))
+               ee->draw_block = EINA_FALSE;
+          }
+        else
+          ee->draw_block = EINA_FALSE;
+     }
+   edata->configured = 1;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
@@ -2017,6 +2059,9 @@ _ecore_evas_x_init(void)
    ecore_evas_event_handlers[12] =
      ecore_event_handler_add(ECORE_X_EVENT_CLIENT_MESSAGE,
                              _ecore_evas_x_event_client_message, NULL);
+   ecore_evas_event_handlers[13] =
+     ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CREATE,
+                             _ecore_evas_x_event_window_create, NULL);
    ecore_event_evas_init();
    return _ecore_evas_init_count;
 }
@@ -2209,11 +2254,10 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
           }
      }
 
+   if ((!changed) && (ee->w == w) && (ee->h == h)) return;
    _ecore_evas_x_shadow_update(ee);
    if (edata->direct_resize)
      {
-        if ((ee->w == w) && (ee->h == h)) return;
-
         ee->w = w;
         ee->h = h;
         if (changed) edata->configure_reqs++;
@@ -2336,6 +2380,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
           }
         else
           {
+             if ((!changed) && (ee->w == w) && (ee->h == h)) return;
              edata->configure_coming = 1;
              if (changed) edata->configure_reqs++;
              if (ee->prop.window) ecore_x_window_resize(ee->prop.window, vw, vh);
@@ -3562,7 +3607,6 @@ _ecore_evas_x_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
    if (!out)
      {
 norandr:
-        if (out) free(out);
         scdpi = ecore_x_dpi_get();
         if (xdpi) *xdpi = scdpi;
         if (ydpi) *ydpi = scdpi;
@@ -4089,7 +4133,13 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
      ee->can_async_render = 1;
 
    /* init evas here */
-   ee->evas = evas_new();
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create a Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
+
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
@@ -4097,10 +4147,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
 			     _ecore_evas_x_render_updates, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    edata->win_root = parent;
    edata->screen_num = 0;
@@ -4216,14 +4263,10 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
-   _ecore_evas_register(ee);
+   ee->draw_block = EINA_TRUE;
+
    ecore_x_input_multi_select(ee->prop.window);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    return ee;
 }
@@ -4292,22 +4335,24 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
      ee->can_async_render = 1;
 
    /* init evas here */
-   ee->evas = evas_new();
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE, 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
                            _ecore_evas_x_render_pre, ee);
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
 			     _ecore_evas_x_render_updates, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    edata->win_root = parent;
    edata->screen_num = 0;
@@ -4435,7 +4480,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
 
-   ee->draw_ok = 1;
+   ee->draw_block = EINA_FALSE;
 
    /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
@@ -4611,13 +4656,15 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    edata->state.sticky = 0;
 
    /* init evas here */
-   ee->evas = evas_new();
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (parent == 0) parent = ecore_x_window_root_first_get();
    edata->win_root = parent;
@@ -4663,15 +4710,12 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
 
+   ee->draw_block = 1;
+
    ee->engine.func->fn_render = _ecore_evas_x_render;
-   _ecore_evas_register(ee);
    ecore_x_input_multi_select(ee->prop.window);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
+   ecore_evas_done(ee, EINA_FALSE);
 
    return ee;
 }
@@ -4752,17 +4796,19 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
    edata->state.sticky = 0;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, 
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_x_flush_pre, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE, 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
                            _ecore_evas_x_render_pre, ee);
-   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
@@ -4863,6 +4909,8 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
+
+   ee->draw_block = EINA_TRUE;
 
    /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */

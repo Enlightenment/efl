@@ -1,8 +1,8 @@
-class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io.Closer.Fd, Efl.Io.Sizer.Fd, Efl.Io.Positioner.Fd) {
+class Efl.Io.File (Efl.Loop_Fd, Efl.File, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Io.Sizer_Fd, Efl.Io.Positioner_Fd) {
     [[File access (open, close, read, write, lseek, ftruncate)
 
       @Efl.Io.Closer.close_on_exec and
-      @Efl.Io.Closer.close_on_destructor are respected and default to
+      @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true. @Efl.Io.Closer.close_on_exec.set sets flag O_CLOEXEC.
 
       @since 1.19
@@ -50,7 +50,7 @@ class Efl.Io.File (Efl.Loop.Fd, Efl.File, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Ef
         Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Object.finalize;
-        Efl.Loop.Fd.fd_file { set; }
+        Efl.Loop_Fd.fd_file { set; }
         Efl.File.file { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Writer.write;

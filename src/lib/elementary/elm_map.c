@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -324,9 +324,6 @@ static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
-static const char SIG_ZOOM_START[] = "zoom,start";
-static const char SIG_ZOOM_STOP[] = "zoom,stop";
-static const char SIG_ZOOM_CHANGE[] = "zoom,change";
 static const char SIG_LOADED[] = "loaded";
 static const char SIG_TILE_LOAD[] = "tile,load";
 static const char SIG_TILE_LOADED[] = "tile,loaded";
@@ -350,9 +347,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL_DRAG_STOP, ""},
    {SIG_SCROLL_ANIM_START, ""},
    {SIG_SCROLL_ANIM_STOP, ""},
-   {SIG_ZOOM_START, ""},
-   {SIG_ZOOM_STOP, ""},
-   {SIG_ZOOM_CHANGE, ""},
    {SIG_LOADED, ""},
    {SIG_TILE_LOAD, ""},
    {SIG_TILE_LOADED, ""},
@@ -1153,7 +1147,7 @@ _zoom_do(Elm_Map_Data *sd,
    if (sd->obj)
      sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
    efl_event_callback_legacy_call
-     (sd->obj, ELM_MAP_EVENT_ZOOM_CHANGE, NULL);
+     (sd->obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
 
    efl_event_callback_legacy_call
      (sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
@@ -3737,7 +3731,7 @@ _zoom_mode_set(Elm_Map_Data *sd, double zoom)
 {
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->mode == ELM_MAP_ZOOM_MODE_MANUAL)
+   if (sd->mode == EFL_UI_ZOOM_MODE_MANUAL)
      {
         if (sd->paused) _zoom_do(sd, zoom);
         else _zoom_with_animation(sd, zoom, 10);
@@ -3752,7 +3746,7 @@ _zoom_mode_set(Elm_Map_Data *sd, double zoom)
         h = sd->size.h;
         _viewport_coord_get(sd, NULL, NULL, &vw, &vh);
 
-        if (sd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
+        if (sd->mode == EFL_UI_ZOOM_MODE_AUTO_FIT)
           {
              if ((w < vw) && (h < vh))
                {
@@ -3776,7 +3770,7 @@ _zoom_mode_set(Elm_Map_Data *sd, double zoom)
                   zoom -= diff;
                }
           }
-        else if (sd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
+        else if (sd->mode == EFL_UI_ZOOM_MODE_AUTO_FILL)
           {
              if ((w < vw) || (h < vh))
                {
@@ -3870,14 +3864,14 @@ _elm_map_pan_elm_pan_pos_set(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord x, Evas_
 }
 
 EOLIAN static void
-_elm_map_pan_elm_pan_pos_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
+_elm_map_pan_elm_pan_pos_get(const Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    if (x) *x = psd->wsd->pan_x;
    if (y) *y = psd->wsd->pan_y;
 }
 
 EOLIAN static void
-_elm_map_pan_elm_pan_pos_max_get(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
+_elm_map_pan_elm_pan_pos_max_get(const Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord ow, oh;
 
@@ -3892,29 +3886,29 @@ _elm_map_pan_elm_pan_pos_max_get(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord *x, 
 }
 
 EOLIAN static void
-_elm_map_pan_elm_pan_pos_min_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
+_elm_map_pan_elm_pan_pos_min_get(const Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
 {
    if (x) *x = 0;
    if (y) *y = 0;
 }
 
 EOLIAN static void
-_elm_map_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd, Evas_Coord *w, Evas_Coord *h)
+_elm_map_pan_elm_pan_content_size_get(const Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd, Evas_Coord *w, Evas_Coord *h)
 {
    if (w) *w = psd->wsd->size.w;
    if (h) *h = psd->wsd->size.h;
 }
 
 EOLIAN static void
-_elm_map_pan_efl_gfx_size_set(Eo *obj, Elm_Map_Pan_Data *psd, Eina_Size2D sz)
+_elm_map_pan_efl_gfx_entity_size_set(Eo *obj, Elm_Map_Pan_Data *psd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), sz);
 
    _sizing_eval(psd->wsd->obj);
-   elm_map_zoom_mode_set(psd->wobj, psd->wsd->mode);
+   efl_ui_zoom_mode_set(psd->wobj, psd->wsd->mode);
    evas_object_smart_changed(obj);
 }
 
@@ -3935,12 +3929,12 @@ _elm_map_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_map_pan_efl_gfx_position_set(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Eina_Position2D pos)
+_elm_map_pan_efl_gfx_entity_position_set(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_PAN_CLASS), pos);
    evas_object_smart_changed(obj);
 }
 
@@ -4118,7 +4112,7 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    elm_interface_scrollable_animate_stop_cb_set(obj, _scroll_animate_stop_cb);
    elm_interface_scrollable_scroll_cb_set(obj, _scroll_cb);
 
-   priv->pan_obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
+   priv->pan_obj = efl_add(MY_PAN_CLASS, obj);
    pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    efl_data_ref(obj, MY_CLASS);
    pan_data->wobj = obj;
@@ -4171,7 +4165,7 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
 
    _zoom_do(priv, 0);
 
-   priv->mode = ELM_MAP_ZOOM_MODE_MANUAL;
+   priv->mode = EFL_UI_ZOOM_MODE_MANUAL;
 
    if (!elm_need_efreet())
      ERR("Efreet initialization failed!");
@@ -4191,12 +4185,30 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
 }
 
 EOLIAN static void
+_elm_map_efl_object_invalidate(Eo *obj, Elm_Map_Data *sd)
+{
+   Evas_Object *track;
+
+   EINA_LIST_FREE(sd->track, track)
+     evas_object_del(track);
+
+   ELM_SAFE_FREE(sd->copyright, evas_object_del);
+
+   // pan_obj was created with efl_add and will die after invalidate.
+   // Technically it will bring down all the object above, and there is
+   // no need to explicitely destroy them, but we were doing that
+   // explicitely in the past, so keep it explicit.
+   sd->pan_obj = NULL;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
 _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
 {
    Elm_Map_Route *r;
    Elm_Map_Name *na;
    Eina_List *l, *ll;
-   Evas_Object *track;
    Elm_Map_Overlay *overlay;
 
    EINA_LIST_FOREACH_SAFE(sd->routes, l, ll, r)
@@ -4216,9 +4228,6 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
    eina_list_free(sd->group_overlays);
    eina_list_free(sd->all_overlays);
 
-   EINA_LIST_FREE(sd->track, track)
-     evas_object_del(track);
-
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
    eina_stringshare_del(sd->user_agent);
@@ -4237,38 +4246,33 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
       char buf[4096];
 
       snprintf(buf, sizeof(buf), "%s" CACHE_ROOT, efreet_cache_home_get());
-      if (!ecore_file_recursive_rm(buf))
-        ERR("Deletion of %s failed", buf);
+      ecore_file_recursive_rm(buf);
    }
 
    ecore_timer_del(sd->loaded_timer);
    if (sd->map) evas_map_free(sd->map);
 
-   evas_object_del(sd->pan_obj);
-   sd->pan_obj = NULL;
-
-   ELM_SAFE_FREE(sd->copyright, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_map_efl_gfx_position_set(Eo *obj, Elm_Map_Data *sd, Eina_Position2D pos)
+_elm_map_efl_gfx_entity_position_set(Eo *obj, Elm_Map_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void
-_elm_map_efl_gfx_size_set(Eo *obj, Elm_Map_Data *sd, Eina_Size2D sz)
+_elm_map_efl_gfx_entity_size_set(Eo *obj, Elm_Map_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
 }
 
 EOLIAN static void
@@ -4295,18 +4299,18 @@ _elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *sd)
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
 
    return obj;
 }
 
 EOLIAN static void
-_elm_map_zoom_set(Eo *obj, Elm_Map_Data *sd, int zoom)
+_elm_map_efl_ui_zoom_zoom_level_set(Eo *obj, Elm_Map_Data *sd, double zoom)
 {
    ELM_MAP_CHECK(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd->src_tile);
 
-   if (sd->mode != ELM_MAP_ZOOM_MODE_MANUAL) return;
+   if (sd->mode != EFL_UI_ZOOM_MODE_MANUAL) return;
    if (zoom < 0) zoom = 0;
    if (sd->zoom == zoom) return;
 
@@ -4314,30 +4318,77 @@ _elm_map_zoom_set(Eo *obj, Elm_Map_Data *sd, int zoom)
    sd->calc_job.zoom_mode_set = _zoom_mode_set;
 
    evas_object_smart_changed(sd->pan_obj);
+   efl_ui_zoom_level_set(efl_super(obj, MY_CLASS), zoom);
 }
 
-EOLIAN static int
-_elm_map_zoom_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+EAPI void
+elm_map_zoom_set(Eo *obj, int zoom)
 {
-   return sd->zoom;
+   efl_ui_zoom_level_set(obj, zoom);
+}
+
+EAPI int
+elm_map_zoom_get(const Eo *obj)
+{
+   return efl_ui_zoom_level_get(obj);
 }
 
 EOLIAN static void
-_elm_map_zoom_mode_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Zoom_Mode mode)
+_elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode mode)
 {
-   if ((mode == ELM_MAP_ZOOM_MODE_MANUAL) && (sd->mode == !!mode)) return;
+   if ((mode == EFL_UI_ZOOM_MODE_MANUAL) && (sd->mode == !!mode)) return;
 
    sd->mode = mode;
    sd->calc_job.zoom = sd->zoom_detail;
    sd->calc_job.zoom_mode_set = _zoom_mode_set;
 
    evas_object_smart_changed(sd->pan_obj);
+   efl_ui_zoom_mode_set(efl_super(obj, MY_CLASS), mode);
 }
 
-EOLIAN static Elm_Map_Zoom_Mode
-_elm_map_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+static inline void
+_convert_map_zoom_mode(Elm_Map_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, Eina_Bool to_legacy)
 {
-   return sd->mode;
+   #define CONVERT(LEGACY_MODE, NEW_MODE) \
+      if (to_legacy  && *mode == NEW_MODE) \
+        { \
+           *legacy_mode =LEGACY_MODE; \
+           return; \
+        } \
+      if (!to_legacy && *legacy_mode == LEGACY_MODE) \
+        { \
+           *mode = NEW_MODE; \
+           return; \
+        } \
+
+   CONVERT(ELM_MAP_ZOOM_MODE_MANUAL,    EFL_UI_ZOOM_MODE_MANUAL)
+   CONVERT(ELM_MAP_ZOOM_MODE_AUTO_FIT,  EFL_UI_ZOOM_MODE_AUTO_FIT)
+   CONVERT(ELM_MAP_ZOOM_MODE_AUTO_FILL, EFL_UI_ZOOM_MODE_AUTO_FILL)
+   CONVERT(ELM_MAP_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_LAST)
+   CONVERT(ELM_MAP_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_AUTO_FIT_IN)
+
+   #undef CONVERT
+}
+
+EAPI void
+elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
+{
+   Efl_Ui_Zoom_Mode new_mode;
+
+   _convert_map_zoom_mode(&mode, &new_mode, EINA_FALSE);
+
+   efl_ui_zoom_mode_set(obj, new_mode);
+}
+
+EAPI Elm_Map_Zoom_Mode
+elm_map_zoom_mode_get(const Eo *obj)
+{
+   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
+   Elm_Map_Zoom_Mode mode;
+
+   _convert_map_zoom_mode(&mode, &new_mode, EINA_TRUE);
+
+   return mode;
 }
 
 EOLIAN static void
@@ -4349,7 +4400,7 @@ _elm_map_zoom_max_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int zoom)
 }
 
 EOLIAN static int
-_elm_map_zoom_max_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_zoom_max_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_tile, -1);
 
@@ -4365,7 +4416,7 @@ _elm_map_zoom_min_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int zoom)
 }
 
 EOLIAN static int
-_elm_map_zoom_min_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_zoom_min_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_tile, -1);
 
@@ -4373,7 +4424,7 @@ _elm_map_zoom_min_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 }
 
 EOLIAN static void
-_elm_map_region_bring_in(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double lat)
+_elm_map_map_region_bring_in(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double lat)
 {
    sd->calc_job.bring_in = EINA_TRUE;
    sd->calc_job.lon = lon;
@@ -4401,7 +4452,7 @@ _elm_map_region_zoom_bring_in(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int zoom, d
 }
 
 EOLIAN static void
-_elm_map_region_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *lon, double *lat)
+_elm_map_region_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *lon, double *lat)
 {
    double tlon, tlat;
    Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0;
@@ -4438,13 +4489,13 @@ _elm_map_paused_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
 }
 
 EOLIAN static Eina_Bool
-_elm_map_paused_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_paused_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    return sd->paused;
 }
 
 EOLIAN static void
-_elm_map_rotate_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double degree, Evas_Coord cx, Evas_Coord cy)
+_elm_map_map_rotate_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double degree, Evas_Coord cx, Evas_Coord cy)
 {
    sd->rotate.d = degree;
    sd->rotate.cx = cx;
@@ -4454,7 +4505,7 @@ _elm_map_rotate_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double degree, Evas_C
 }
 
 EOLIAN static void
-_elm_map_rotate_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *degree, Evas_Coord *cx, Evas_Coord *cy)
+_elm_map_map_rotate_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *degree, Evas_Coord *cx, Evas_Coord *cy)
 {
    if (degree) *degree = sd->rotate.d;
    if (cx) *cx = sd->rotate.cx;
@@ -4462,7 +4513,7 @@ _elm_map_rotate_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *degree, Evas_
 }
 
 EOLIAN static void
-_elm_map_wheel_disabled_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool disabled)
+_elm_map_elm_interface_scrollable_wheel_disabled_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool disabled)
 {
    if ((!sd->wheel_disabled) && (disabled))
      evas_object_event_callback_del_full
@@ -4471,16 +4522,11 @@ _elm_map_wheel_disabled_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool disabled)
      evas_object_event_callback_add
        (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
    sd->wheel_disabled = !!disabled;
-}
-
-EOLIAN static Eina_Bool
-_elm_map_wheel_disabled_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
-{
-   return sd->wheel_disabled;
+   elm_interface_scrollable_wheel_disabled_set(efl_super(obj, ELM_MAP_CLASS), disabled);
 }
 
 EOLIAN static void
-_elm_map_tile_load_status_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int *try_num, int *finish_num)
+_elm_map_tile_load_status_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int *try_num, int *finish_num)
 {
    if (try_num) *try_num = sd->try_num;
    if (finish_num) *finish_num = sd->finish_num;
@@ -4518,7 +4564,7 @@ _elm_map_user_agent_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, const char *user_
 }
 
 EOLIAN static const char*
-_elm_map_user_agent_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_user_agent_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    return sd->user_agent;
 }
@@ -4777,7 +4823,7 @@ _elm_map_overlay_add(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double l
 }
 
 EOLIAN static Eina_List *
-_elm_map_overlays_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_overlays_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    Eina_List *l;
    Elm_Map_Overlay *ovl;
@@ -5436,6 +5482,18 @@ elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble)
    evas_object_smart_changed(bubble->wsd->pan_obj);
 }
 
+EAPI void
+elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   elm_interface_scrollable_wheel_disabled_set(obj, disabled);
+}
+
+EAPI Eina_Bool
+elm_map_wheel_disabled_get(const Evas_Object *obj)
+{
+   return elm_interface_scrollable_wheel_disabled_get(obj);
+}
+
 EOLIAN static Elm_Map_Overlay*
 _elm_map_overlay_route_add(Eo *obj, Elm_Map_Data *sd, const Elm_Map_Route *route)
 {
@@ -5601,7 +5659,7 @@ _elm_map_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_map_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Map_Data *pd EINA_UNUSED)
+_elm_map_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},

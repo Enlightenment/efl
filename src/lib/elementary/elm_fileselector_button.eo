@@ -1,4 +1,5 @@
-class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector)
+class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector,
+                               Efl.Ui.Legacy)
 {
    [[Elementary fileselector button class]]
    event_prefix: elm_fileselector_button;
@@ -9,17 +10,17 @@ class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector)
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.expandable { get; set; }
       Elm.Interface.Fileselector.thumbnail_size { get; set; }
-      Elm.Interface.Fileselector.selected_model_get;
-      Elm.Interface.Fileselector.selected_model_set;
+      Elm.Interface.Fileselector.selected_model { get; set; }
       Elm.Interface.Fileselector.hidden_visible { get; set; }
       Elm.Interface.Fileselector.is_save { get; set; }
-      Elm.Interface.Fileselector.model { get; set; }
+      Efl.Ui.View.model { get; set; }
       Elm.Interface.Fileselector.sort_method { get; set; }
       Elm.Interface.Fileselector.multi_select { get; set; }
       Elm.Interface.Fileselector.folder_only { get; set; }
       Elm.Interface.Fileselector.mode { get; set; }
    }
    events {
-      file,chosen; [[Called when a file was chosen in the fileselector]]
+      /* FIXME: Can be Efl.Model, string and NULL */
+      file,chosen: void; [[Called when a file was chosen in the fileselector]]
    }
 }

@@ -10,12 +10,6 @@
 #define MY_CLASS EFL_MODEL_CONTAINER_ITEM_CLASS
 
 static void
-_item_value_free_cb(void *data)
-{
-   eina_value_free(data);
-}
-
-EOLIAN static void
 _efl_model_container_item_define(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd, void *parent_data, unsigned int index)
 {
    sd->parent_data = parent_data;
@@ -23,158 +17,134 @@ _efl_model_container_item_define(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_D
 }
 
 EOLIAN static void
-_efl_model_container_item_invalidate(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
+_efl_model_container_item_efl_object_invalidate(Eo *obj, Efl_Model_Container_Item_Data *sd)
 {
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
    sd->parent_data = NULL;
    sd->index = 0;
 }
 
-EOLIAN static const Eina_Array *
-_efl_model_container_item_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
+static Eina_Array *
+_efl_model_container_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
 {
-   if (!sd->parent_data)
+   // FIXME: Not to sure here, shouldn't we extend a child of the parent actually ?
+   return efl_model_properties_get(sd->parent_data->obj);
+}
+
+static Efl_Object *
+_efl_model_container_item_efl_object_finalize(Eo *obj, Efl_Model_Container_Item_Data *pd)
+{
+   if (!pd->parent_data)
      return NULL;
 
-   return sd->parent_data->defined_properties;
+   return obj;
 }
 
-Efl_Future *
-_efl_model_container_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd, const char *property, const Eina_Value *value)
+static Eina_Future *
+_efl_model_container_item_efl_model_property_set(Eo *obj,
+                                                 Efl_Model_Container_Item_Data *sd,
+                                                 const char *property, Eina_Value *value)
 {
-   Eina_Stringshare *prop_name;
+   Eina_Stringshare *name;
    Child_Property_Data *cpd;
+   Eina_Value v = EINA_VALUE_EMPTY;
    void *data, *new_data;
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future* future = efl_promise_future_get(promise);
 
-   if (!sd->parent_data)
-     {
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_INVALID_OBJECT);
-        return future;
-     }
 
-   prop_name = eina_stringshare_add(property);
-   cpd = eina_hash_find(sd->parent_data->property_data, prop_name);
-   eina_stringshare_del(prop_name);
-   if (!cpd || !cpd->property_values ||
-       sd->index >= eina_array_count_get(cpd->property_values))
-     {
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-        return future;
-     }
+   name = eina_stringshare_add(property);
+   cpd = eina_hash_find(sd->parent_data->properties, name);
+   eina_stringshare_del(name);
 
-   if (cpd->property_type != eina_value_type_get(value))
-     {
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_INCORRECT_VALUE);
-        return future;
-     }
+   if (!cpd || !cpd->values ||
+       sd->index >= eina_array_count_get(cpd->values))
+     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+                                 EFL_MODEL_ERROR_NOT_FOUND);
 
-   data = calloc(1, cpd->property_type->value_size);
-   if (!data || !eina_value_pget(value, data))
-     {
-        if (data)
-          free(data);
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
-        return future;
-     }
+   eina_value_setup(&v,cpd->type);
+   if (!eina_value_convert(value, &v))
+     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+                                 EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-   new_data = _value_copy_alloc(data, cpd->property_type);
+   // FIXME: This is trying to optimize and avoid the use of Eina_Value,
+   // but this put restriction on the type that can be stored in this container.
+   data = calloc(1, cpd->type->value_size);
+   if (!data || !eina_value_pget(&v, data))
+     goto on_error;
+
+   new_data = _value_copy_alloc(data, cpd->type);
+
+   _value_free(eina_array_data_get(cpd->values, sd->index), cpd->type);
+
+   eina_array_data_set(cpd->values, sd->index, new_data);
+
    free(data);
 
-   _value_free(eina_array_data_get(cpd->property_values, sd->index), cpd->property_type);
-   eina_array_data_set(cpd->property_values, sd->index, new_data);
+   return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
 
-   {
-      Eina_Value *v = eina_value_new(cpd->property_type);
-      if (v && eina_value_copy(value, v))
-        efl_promise_value_set(promise, v, _item_value_free_cb);
-      else
-        {
-           if (v)
-             eina_value_free(v);
-           efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
-        }
-   }
+ on_error:
+   eina_value_flush(&v);
+   free(data);
 
-   return future;
+   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+                               EFL_MODEL_ERROR_UNKNOWN);
 }
 
-Efl_Future *
-_efl_model_container_item_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd, const char *property)
+static Eina_Value *
+_efl_model_container_item_efl_model_property_get(const Eo *obj EINA_UNUSED,
+                                                 Efl_Model_Container_Item_Data *sd,
+                                                 const char *property)
 {
-   Eina_Stringshare *prop_name;
+   Eina_Stringshare *name;
    Child_Property_Data *cpd;
    Eina_Value *value;
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future* future = efl_promise_future_get(promise);
+   void *data;
+   Eina_Bool r = EINA_FALSE;
 
-   if (!sd->parent_data)
-     {
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_INVALID_OBJECT);
-        return future;
-     }
+   name = eina_stringshare_add(property);
+   cpd = eina_hash_find(sd->parent_data->properties, name);
+   eina_stringshare_del(name);
 
-   prop_name = eina_stringshare_add(property);
-   cpd = eina_hash_find(sd->parent_data->property_data, prop_name);
-   eina_stringshare_del(prop_name);
-   if (!cpd || !cpd->property_values ||
-       sd->index >= eina_array_count_get(cpd->property_values))
-     {
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-        return future;
-     }
+   if (!cpd || !cpd->values ||
+       sd->index >= eina_array_count_get(cpd->values))
+     return eina_value_error_new(EFL_MODEL_ERROR_NOT_FOUND);
 
-   value = eina_value_new(cpd->property_type);
-   if (!value)
-        efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
+   data = eina_array_data_get(cpd->values, sd->index);
+
+   value = eina_value_new(cpd->type);
+   if (cpd->type == EINA_VALUE_TYPE_STRINGSHARE ||
+       cpd->type == EINA_VALUE_TYPE_STRING)
+     r = eina_value_set(value, data);
    else
+     r = eina_value_pset(value, data);
+
+   if (!r)
      {
-        Eina_Bool r = EINA_FALSE;
-        void *data = eina_array_data_get(cpd->property_values, sd->index);
-
-        if (cpd->property_type == EINA_VALUE_TYPE_STRINGSHARE ||
-            cpd->property_type == EINA_VALUE_TYPE_STRING)
-          r = eina_value_set(value, data);
-        else
-          r = eina_value_pset(value, data);
-
-        if (r)
-          efl_promise_value_set(promise, value, _item_value_free_cb);
-        else
-          {
-             efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
-             eina_value_free(value);
-          }
+        eina_value_free(value);
+        value = eina_value_error_new(EFL_MODEL_ERROR_UNKNOWN);
      }
-   return future;
+   return value;
 }
 
-EOLIAN static Efl_Future *
-_efl_model_container_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd EINA_UNUSED, unsigned int start EINA_UNUSED, unsigned int count EINA_UNUSED)
+EOLIAN static Eina_Future *
+_efl_model_container_item_efl_model_children_slice_get(Eo *obj,
+                                                       Efl_Model_Container_Item_Data *sd EINA_UNUSED,
+                                                       unsigned int start EINA_UNUSED,
+                                                       unsigned int count EINA_UNUSED)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future* future = efl_promise_future_get(promise);
-
-   efl_promise_value_set(promise, NULL, NULL);
-
-   return future;
+   return eina_future_resolved(efl_loop_future_scheduler_get(obj), EINA_VALUE_EMPTY);
 }
 
-EOLIAN static Efl_Future *
-_efl_model_container_item_efl_model_children_count_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd EINA_UNUSED)
+EOLIAN static unsigned int
+_efl_model_container_item_efl_model_children_count_get(const Eo *obj EINA_UNUSED,
+                                                       Efl_Model_Container_Item_Data *sd EINA_UNUSED)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
-   Efl_Future* future = efl_promise_future_get(promise);
-
-   unsigned int *count = calloc(1, sizeof(unsigned int));
-   *count = 0;
-   efl_promise_value_set(promise, count, &free);
-
-   return future;
+   return 0;
 }
 
 EOLIAN static Eo *
-_efl_model_container_item_efl_model_child_add(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd EINA_UNUSED)
+_efl_model_container_item_efl_model_child_add(Eo *obj EINA_UNUSED,
+                                              Efl_Model_Container_Item_Data *sd EINA_UNUSED)
 {
    EINA_LOG_WARN("child_add not supported by Efl.Model.Container.Item");
    eina_error_set(EFL_MODEL_ERROR_NOT_SUPPORTED);
@@ -183,7 +153,9 @@ _efl_model_container_item_efl_model_child_add(Eo *obj EINA_UNUSED, Efl_Model_Con
 }
 
 EOLIAN static void
-_efl_model_container_item_efl_model_child_del(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd EINA_UNUSED, Eo *child EINA_UNUSED)
+_efl_model_container_item_efl_model_child_del(Eo *obj EINA_UNUSED,
+                                              Efl_Model_Container_Item_Data *sd EINA_UNUSED,
+                                              Eo *child EINA_UNUSED)
 {
    EINA_LOG_WARN("child_del not supported by Efl.Model.Container.Item");
    eina_error_set(EFL_MODEL_ERROR_NOT_SUPPORTED);

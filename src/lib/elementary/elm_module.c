@@ -3,7 +3,7 @@
 #endif
 
 #include <Elementary.h>
-
+#include "../../static_libs/buildsystem/buildsystem.h"
 #include "elm_priv.h"
 
 /* what are moodules in elementary for? for modularising behavior and features
@@ -133,10 +133,9 @@ _elm_module_load(Elm_Module *m)
    if (strchr(m->name, '/')) return EINA_FALSE;
 
 #ifdef NEED_RUN_IN_TREE
-   if (getenv("ELM_RUN_IN_TREE"))
+   if (getenv("EFL_RUN_IN_TREE"))
      {
-        snprintf(buf, sizeof(buf),
-             ELM_TOP_BUILD_DIR "/src/modules/elementary/%s/.libs/module"EFL_SHARED_EXTENSION, m->name);
+        bs_mod_get(buf, sizeof(buf), "elementary", m->name);
      }
    else
 #endif

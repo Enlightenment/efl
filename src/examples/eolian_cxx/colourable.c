@@ -83,7 +83,7 @@ _ns_colourable_colour_mask(Eo *obj EINA_UNUSED, Colourable_Data *self, int mask)
 }
 
 void
-_ns_colourable_composite_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self, int* r, int* g, int* b)
+_ns_colourable_composite_colour_get(const Eo *obj EINA_UNUSED, Colourable_Data *self, int* r, int* g, int* b)
 {
    *r = self->r;
    *g = self->g;
@@ -104,7 +104,7 @@ _ns_colourable_composite_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, 
 }
 
 int
-_ns_colourable_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self)
+_ns_colourable_colour_get(const Eo *obj EINA_UNUSED, Colourable_Data *self)
 {
    int rgb =
      ((self->r << 16)& 0x00ff0000) |

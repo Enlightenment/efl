@@ -110,7 +110,7 @@ interface Efl.Layout.Group
            does not exist, and this will return $true if the part is of type
            $SPACER in the EDC file ($SPACER parts have type $NONE).
 
-           See also @Efl.Canvas.Layout.Part.part_type.
+           See also @Efl.Canvas.Layout_Part.part_type.
          ]]
          get { [[Returns $true if the part exists in the EDC group.]] }
          keys {

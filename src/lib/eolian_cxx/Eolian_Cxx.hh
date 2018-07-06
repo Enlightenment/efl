@@ -26,14 +26,14 @@ struct eolian_init
 
 struct eolian_state
 {
-   Eolian *value;
+   Eolian_State *value;
    eolian_state()
    {
-       value = ::eolian_new();
+       value = ::eolian_state_new();
    }
    ~eolian_state()
    {
-     ::eolian_free(value);
+     ::eolian_state_free(value);
    }
 
    inline Eolian_Unit const* as_unit() const

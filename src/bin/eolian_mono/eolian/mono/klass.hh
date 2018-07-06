@@ -4,17 +4,20 @@
 #include "grammar/integral.hpp"
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
-#include "function_blacklist.hh"
+#include "blacklist.hh"
 
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "type.hh"
-#include "namespace.hh"
+#include "name_helpers.hh"
+#include "async_function_definition.hh"
 #include "function_definition.hh"
 #include "function_registration.hh"
 #include "function_declaration.hh"
 #include "documentation.hh"
+#include "part_definition.hh"
+#include "events.hh"
 #include "grammar/string.hpp"
 #include "grammar/attribute_replace.hpp"
 #include "grammar/integral.hpp"
@@ -28,15 +31,15 @@
 namespace eolian_mono {
 
 template <typename OutputIterator, typename Context>
-static bool generate_static_cast_method(OutputIterator sink, const std::string &class_name, Context const &context)
+static bool generate_static_cast_method(OutputIterator sink, grammar::attributes::klass_def const& cls, Context const &context)
 {
    return as_generator(
        scope_tab << "///<summary>Casts obj into an instance of this type.</summary>\n"
-       << scope_tab << "public static " << class_name << " static_cast(efl.Object obj)\n"
+       << scope_tab << "public static " << name_helpers::klass_interface_name(cls) << " static_cast(efl.IObject obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "if (obj == null)\n"
        << scope_tab << scope_tab << scope_tab << "throw new System.ArgumentNullException(\"obj\");\n"
-       << scope_tab << scope_tab << "return new " << class_name << "Concrete(obj.raw_handle);\n"
+       << scope_tab << scope_tab << "return new " << name_helpers::klass_concrete_name(cls) << "(obj.raw_handle);\n"
        << scope_tab << "}\n"
        ).generate(sink, nullptr, context);
 }
@@ -48,7 +51,7 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
        scope_tab << "///<summary>Verifies if the given object is equals to this.</summary>\n" 
        << scope_tab << "public override bool Equals(object obj)\n"
        << scope_tab << "{\n"
-       << scope_tab << scope_tab << "var other = obj as efl.Object;\n"
+       << scope_tab << scope_tab << "var other = obj as efl.IObject;\n"
        << scope_tab << scope_tab << "if (other == null)\n"
        << scope_tab << scope_tab << scope_tab << "return false;\n"
        << scope_tab << scope_tab << "return this.raw_handle == other.raw_handle;\n"
@@ -58,74 +61,38 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "return this.raw_handle.ToInt32();\n"
        << scope_tab << "}\n"
+       << scope_tab << "///<summary>How native pointer in string representation.</summary>\n"
+       << scope_tab << "public override String ToString()\n"
+       << scope_tab << "{\n"
+       << scope_tab << scope_tab << "return $\"{this.GetType().Name}@[{this.raw_handle.ToInt32():x}]\";\n"
+       << scope_tab << "}\n"
       ).generate(sink, nullptr, context);
 }
 
 /* Get the actual number of functions of a class, checking for blacklisted ones */
 static std::size_t
-get_function_count(grammar::attributes::klass_def const& cls)
+get_inheritable_function_count(grammar::attributes::klass_def const& cls)
 {
    auto methods = cls.get_all_methods();
    return std::count_if(methods.cbegin(), methods.cend(), [](grammar::attributes::function_def const& func)
      {
-        return !is_function_blacklisted(func.c_name);
+        return !blacklist::is_function_blacklisted(func.c_name) && !func.is_static;
      });
 }
 
-struct get_csharp_type_visitor
+template<typename Context>
+static bool
+is_inherit_context(Context const& context)
 {
-    typedef get_csharp_type_visitor visitor_type;
-    typedef std::string result_type;
-    std::string operator()(grammar::attributes::regular_type_def const& type) const
-    {
-        std::stringstream csharp_name;
-        for (auto&& i  : escape_namespace(type.namespaces))
-           csharp_name << utils::to_lowercase(i) << ".";
-        csharp_name << type.base_type;
-
-        return csharp_name.str();
-    }
-    std::string operator()(grammar::attributes::klass_name const& name) const
-    {
-        std::stringstream csharp_name;
-        for (auto&& i  : escape_namespace(name.namespaces))
-           csharp_name << utils::to_lowercase(i) << ".";
-        csharp_name << name.eolian_name;
-
-        return csharp_name.str();
-    }
-    std::string operator()(attributes::complex_type_def const&) const
-    {
-        return "UNSUPPORTED";
-    }
-};
-
-struct get_event_args_visitor
-{
-
-    std::string arg_type;
-
-    typedef get_event_args_visitor visitor_type;
-    typedef std::string result_type;
-    std::string operator()(grammar::attributes::regular_type_def const&) const
-    {
-        return "(" + arg_type + ")Marshal.PtrToStructure(evt.Info, typeof(" + arg_type + "))";
-    }
-    std::string operator()(grammar::attributes::klass_name const&) const
-    {
-        return "new " + arg_type + "Concrete(evt.Info)";
-    }
-    std::string operator()(attributes::complex_type_def const&) const
-    {
-        return "UNSUPPORTED";
-    }
-};
+   return context_find_tag<class_context>(context).current_wrapper_kind == class_context::inherit;
+}
 
 struct klass
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
+     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "klass_generator: " << cls.eolian_name << std::endl;
      std::string suffix, class_type;
      switch(cls.type)
        {
@@ -144,32 +111,10 @@ struct klass
          break;
        }
 
-     std::vector<std::string> namespaces = escape_namespace(cls.namespaces);
-     auto open_namespace = *("namespace " << string << " { ") << "\n";
-     if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(context))) return false;
+     if (!name_helpers::open_namespaces(sink, cls.namespaces, context))
+       return false;
+
      auto methods = cls.get_all_methods();
-
-     // FIXME Generate local event argument wrappers
-     for (auto&& e : cls.events)
-       {
-          efl::eina::optional<grammar::attributes::type_def> etype = e.type;
-          if (!etype.is_engaged())
-            continue;
-
-          std::string evt_name = utils::to_uppercase(e.name);
-          std::replace(evt_name.begin(), evt_name.end(), ',', '_');
-          std::string arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
-
-          if (!as_generator("///<summary>Event argument wrapper for event " << string << ".</summary>\n"
-                      ).generate(sink, evt_name, context))
-            return false;
-
-          if (!as_generator("public class " << evt_name << "_Args : EventArgs {\n"
-                      << scope_tab << "///<summary>Actual event payload.</summary>\n"
-                      << scope_tab << "public " << arg_type << " arg { get; set; }\n"
-                      << "}\n").generate(sink, NULL, context))
-              return false;
-       }
 
      // Interface class
      {
@@ -182,60 +127,51 @@ struct klass
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
          )
-        .generate(sink, cls.cxx_name, iface_cxt))
+        .generate(sink, name_helpers::klass_interface_name(cls), iface_cxt))
        return false;
      for(auto first = std::begin(cls.immediate_inherits)
            , last = std::end(cls.immediate_inherits); first != last; ++first)
        {
-         if(!as_generator("\n" << scope_tab << *(lower_case[string] << ".") << string << " ,")
-            .generate(sink, std::make_tuple(escape_namespace(first->namespaces), first->eolian_name), iface_cxt))
+         if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
            return false;
-         // if(std::next(first) != last)
-         //   *sink++ = ',';
        }
-     // if(cls.immediate_inherits.empty())
-       if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt)) return false;
-     if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt)) return false;
-     
-     if(!as_generator(*(scope_tab << function_declaration))
-        .generate(sink, cls.functions, iface_cxt)) return false;
 
-     // FIXME Move the event generator into another generator like function?
-     for (auto &&e : cls.events)
-       {
-          std::string wrapper_args_type;
-          std::string evt_name = utils::to_uppercase(e.name);
-          std::replace(evt_name.begin(), evt_name.end(), ',', '_');
+     if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
+       return false;
 
-          efl::eina::optional<grammar::attributes::type_def> etype = e.type;
-          if (etype.is_engaged())
-              wrapper_args_type = "<" + evt_name + "_Args>";
+     if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
+       return false;
 
+     if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
+       return false;
 
-         if (!as_generator(documentation(1)).generate(sink, e, iface_cxt))
-           return false;
+     if(!as_generator(*(scope_tab << async_function_declaration)).generate(sink, cls.functions, iface_cxt))
+       return false;
 
-         //FIXME Add a way to generate camelcase names
-         if (!as_generator(
-                     scope_tab << "event EventHandler" << wrapper_args_type << " " 
-                     << evt_name << ";\n"
-                     ).generate(sink, NULL, iface_cxt))
-             return false;
-       }
+     if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
+       return false;
+
+     for (auto &&p : cls.parts)
+       if (!as_generator(
+              documentation(1)
+              << name_helpers::klass_full_interface_name(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
+            ).generate(sink, p, iface_cxt))
+         return false;
 
      // End of interface declaration
      if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
 
-     auto class_get_name = *(lower_case[string] << "_") << lower_case[string] << "_class_get";
      // Concrete class
      // if(class_type == "class")
        {
          auto concrete_cxt = context_add_tag(class_context{class_context::concrete}, context);
+         auto concrete_name = name_helpers::klass_concrete_name(cls);
+         auto interface_name = name_helpers::klass_interface_name(cls);
          if(!as_generator
             (
              documentation
-             << "sealed public class " << string << "Concrete : " << string << "\n{\n"
+             << "sealed public class " << concrete_name << " : " << interface_name << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
@@ -246,42 +182,43 @@ struct klass
              << scope_tab << scope_tab << "get { return efl.eo.Globals.efl_class_get(handle); }\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
+             << scope_tab << "public delegate void ConstructingMethod(" << interface_name << " obj);\n"
+             << scope_tab << "///<summary>Returns the pointer the unerlying Eo class object. Used internally on class methods.</summary>\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
-             << ")] private static extern System.IntPtr\n"
-             << scope_tab << scope_tab << class_get_name << "();\n"
+             << ")] public static extern System.IntPtr\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << (class_type == "class" ? "" : "/*")
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << string << "Concrete(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << concrete_name << "(efl.IObject parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "System.IntPtr klass = " << class_get_name << "();\n"
+             << scope_tab << scope_tab << "System.IntPtr klass = " << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "if(parent != null)\n"
              << scope_tab << scope_tab << scope_tab << "parent_ptr = parent.raw_handle;\n"
-             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_internal_start(\"file\", 0, klass, parent_ptr, 0, 0);\n"
+             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_internal_start(\"file\", 0, klass, parent_ptr, 1, 0);\n"
              << scope_tab << scope_tab << "if (init_cb != null) {\n"
              << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
              << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_end(handle, 0, 0);\n" // replace handle with the actual final handle
+             << scope_tab << scope_tab << "handle = efl.eo.Globals._efl_add_end(handle, 1, 0);\n" // replace handle with the actual final handle
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
              << scope_tab << "}\n"
              << (class_type == "class" ? "" : "*/")
              << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
-             << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
+             << scope_tab << "public " << concrete_name << "(System.IntPtr raw)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "handle = raw;\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Destructor.</summary>\n"
-             << scope_tab << "~" << string << "Concrete()\n"
+             << scope_tab << "~" << concrete_name << "()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
-             << scope_tab << "protected void Dispose(bool disposing)\n"
+             << scope_tab << "internal void Dispose(bool disposing)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "efl.eo.Globals.efl_unref(handle);\n"
@@ -295,15 +232,10 @@ struct klass
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
             )
-            .generate(sink
-              , std::make_tuple( cls,
-                cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
-                , cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
-                , cls.cxx_name)
-              , concrete_cxt))
+            .generate(sink, cls, concrete_cxt))
            return false;
 
-         if (!generate_static_cast_method(sink, cls.cxx_name, concrete_cxt))
+         if (!generate_static_cast_method(sink, cls, concrete_cxt))
            return false;
 
          if (!generate_equals_method(sink, concrete_cxt))
@@ -315,9 +247,20 @@ struct klass
          if (!generate_events_registration(sink, cls, concrete_cxt))
              return false;
 
+         // Parts
+         if(!as_generator(*(part_definition))
+            .generate(sink, cls.get_all_parts(), concrete_cxt)) return false;
+
          // Concrete function definitions
          if(!as_generator(*(function_definition))
             .generate(sink, methods, concrete_cxt)) return false;
+
+         // Async wrappers
+         if(!as_generator(*(async_function_definition)).generate(sink, methods, concrete_cxt))
+           return false;
+
+         if(!as_generator(*(event_argument_wrapper)).generate(sink, cls.events, context))
+           return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
        }
@@ -329,10 +272,15 @@ struct klass
         bool cls_has_string_return = has_string_return(cls);
         bool cls_has_stringshare_return = has_stringshare_return(cls);
 
+        auto interface_name = name_helpers::klass_interface_name(cls);
+        auto inherit_name = name_helpers::klass_inherit_name(cls);
+        auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
+
+
          if(!as_generator
             (
              documentation
-             << "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
+             << "public " << class_type << " " << inherit_name << " : " << interface_name << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "internal static System.IntPtr klass = System.IntPtr.Zero;\n"
              << scope_tab << "private static readonly object klassAllocLock = new object();\n"
@@ -347,20 +295,19 @@ struct klass
              << scope_tab << scope_tab << "get { return klass; }\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
+             << scope_tab << "public delegate void ConstructingMethod(" << interface_name << " obj);\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(inherit_cxt).actual_library_name(cls.filename)
              << ")] private static extern System.IntPtr\n"
-             << scope_tab << scope_tab << class_get_name << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << string << "Inherit(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << inherit_name << "(efl.IObject parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer), " << class_get_name << "());\n"
-             //<< scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(null/*new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer)*/, " << class_get_name << "());\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << native_inherit_name << ".class_initializer), \"" << cls.eolian_name << "\", " << name_helpers::klass_get_name(cls) << "());\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "}\n"
@@ -374,7 +321,7 @@ struct klass
              << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Destructor.</summary>\n"
-             << scope_tab << "~" << string << "Inherit()\n"
+             << scope_tab << "~" << inherit_name << "()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
@@ -395,15 +342,7 @@ struct klass
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
             )
-            .generate(sink
-              , std::make_tuple(
-                cls, cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
-                , cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
-                , cls.cxx_name)
-              , inherit_cxt))
-           return false;
-
-         if (!generate_static_cast_method(sink, cls.cxx_name, inherit_cxt))
+            .generate(sink, cls, inherit_cxt))
            return false;
 
          if (!generate_equals_method(sink, inherit_cxt))
@@ -415,14 +354,22 @@ struct klass
          if (!generate_events_registration(sink, cls, inherit_cxt))
              return false;
 
+         // Parts
+         if(!as_generator(*(part_definition))
+            .generate(sink, cls.get_all_parts(), inherit_cxt)) return false;
+
          // Inherit function definitions
          if(!as_generator(*(function_definition(true)))
             .generate(sink, methods, inherit_cxt)) return false;
 
+         // Async wrappers
+         if(!as_generator(*(async_function_definition(true))).generate(sink, methods, inherit_cxt))
+           return false;
+
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 
-     std::size_t function_count = get_function_count(cls);
+     std::size_t function_count = get_inheritable_function_count(cls);
 
      int function_registration_index = 0;
      auto index_generator = [&function_registration_index]
@@ -434,14 +381,15 @@ struct klass
      if(class_type == "class")
        {
          auto inative_cxt = context_add_tag(class_context{class_context::inherit_native}, context);
+         auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          if(!as_generator
             (
-             "internal " << class_type << " " << string << "NativeInherit {\n"
+             "internal " << class_type << " " << native_inherit_name << " {\n"
              << scope_tab << "public static byte class_initializer(IntPtr klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Efl_Op_Description[] descs = new Efl_Op_Description[" << grammar::int_ << "];\n"
             )
-            .generate(sink, std::make_tuple(cls.cxx_name, function_count), inative_cxt))
+            .generate(sink, function_count, inative_cxt))
            return false;
 
          // Native wrapper registration
@@ -463,22 +411,22 @@ struct klass
              << scope_tab << scope_tab << "Marshal.StructureToPtr(ops, ops_ptr, false);\n"
              << scope_tab << scope_tab << "efl.eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);\n"
             ).generate(sink, attributes::unused, inative_cxt)) return false;
-         
-         
+
+
          if(!as_generator(scope_tab << scope_tab << "return 1;\n"
                           << scope_tab << "}\n")
             .generate(sink, attributes::unused, inative_cxt)) return false;
-     
+         //
          // Native method definitions
          if(!as_generator(*(native_function_definition(cls)))
             .generate(sink, methods, inative_cxt)) return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }
-     
-     auto close_namespace = *(lit("} ")) << "\n";
-     if(!as_generator(close_namespace).generate(sink, namespaces, context)) return false;
-     
+
+     if(!name_helpers::close_namespaces(sink, cls.namespaces, context))
+       return false;
+
      return true;
    }
 
@@ -496,29 +444,16 @@ struct klass
      // Generate event registrations here
 
      // Assigning the delegates
-     for (auto&& e : cls.events)
-       {
-           if (!as_generator(scope_tab << scope_tab << "evt_" << grammar::string_replace(',', '_') << "_delegate = "
-                       << "new efl.Event_Cb(on_" << grammar::string_replace(',', '_') << "_NativeCallback);\n")
-                   .generate(sink, std::make_tuple(e.name, e.name), context))
-                return false;
-       }
+     if (!as_generator(*(event_registration())).generate(sink, cls.events, context))
+       return false;
 
      for (auto&& c : cls.inherits)
        {
           attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
 
-          for (auto&& e : klass.events)
-            {
-               std::string wrapper_event_name = translate_inherited_event_name(e, klass);
-
-               if (!as_generator(scope_tab << scope_tab << "evt_" << wrapper_event_name << "_delegate = "
-                           << "new efl.Event_Cb(on_" << wrapper_event_name << "_NativeCallback);\n")
-                       .generate(sink, NULL, context))
-                   return false;
-            }
+          if (!as_generator(*(event_registration(&klass))).generate(sink, klass.events, context))
+             return false;
        }
-     
 
      if (!as_generator(
             scope_tab << "}\n"
@@ -528,27 +463,14 @@ struct klass
      return true;
    }
 
-   static std::string translate_inherited_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
-   {
-       std::stringstream s;
-
-       for (auto&& n : klass.namespaces)
-         {
-            s << n;
-            s << '_';
-         }
-       std::string evt_name = utils::to_uppercase(evt.name);
-       std::replace(evt_name.begin(), evt_name.end(), ',', '_');
-       s << klass.cxx_name << '_' << evt_name;
-       return s.str();
-   }
-
    template <typename OutputIterator, typename Context>
    bool generate_events(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
 
      if (!has_events(cls))
          return true;
+
+     std::string visibility = is_inherit_context(context) ? "protected" : "private";
 
      if (!as_generator(scope_tab << "private readonly object eventLock = new object();\n"
              << scope_tab << "private Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
@@ -578,7 +500,7 @@ struct klass
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 1) {\n"
-            << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
+            << scope_tab << scope_tab << scope_tab << "efl.Event_Description desc = new efl.Event_Description(key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"
@@ -597,173 +519,15 @@ struct klass
          return false;
 
      // Self events
-     for (auto&& e : cls.events)
-       {
-           std::string upper_name = utils::to_uppercase(e.name);
-           std::replace(upper_name.begin(), upper_name.end(), ',', '_');
-           std::string upper_c_name = utils::to_uppercase(e.c_name);
-           std::string event_name = e.name;
-           std::replace(event_name.begin(), event_name.end(), ',', '_');
-
-           std::string wrapper_args_type = "EventArgs";
-           std::string wrapper_args_template = "";
-           std::string event_args = "EventArgs args = EventArgs.Empty;\n";
-
-           efl::eina::optional<grammar::attributes::type_def> etype = e.type;
-           if (etype.is_engaged())
-             {
-                wrapper_args_type = upper_name + "_Args";
-                wrapper_args_template = "<" + wrapper_args_type + ">";
-                std::string arg_type = wrapper_args_type + " args = new " + wrapper_args_type + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
-                std::string actual_arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
-                arg_type += "args.arg = " + (*etype).original_type.visit(get_event_args_visitor{actual_arg_type}) + ";\n";
-
-                event_args = arg_type;
-             }
-           // Marshal.PtrToStructure for value types
-
-           // Wrapper event declaration
-          if(!as_generator(documentation(1)).generate(sink, e, context))
-            return false;
-
-          if(!as_generator(
-                scope_tab << "protected event EventHandler" << wrapper_args_template << " " << upper_name << ";\n"
-                << scope_tab << "///<summary>Method to raise event "<< event_name << ".</summary>\n"
-                << scope_tab << "protected void On_" << event_name << "(" << wrapper_args_type << " e)\n"
-                << scope_tab << "{\n"
-                << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
-                << scope_tab << scope_tab << "lock (eventLock) {\n"
-                << scope_tab << scope_tab << scope_tab << "evt = " << upper_name << ";\n"
-                << scope_tab << scope_tab << "}\n"
-                << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
-                << scope_tab << "}\n"
-                << scope_tab << "private void on_" << event_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
-                << scope_tab << "{\n"
-                << scope_tab << scope_tab << event_args
-                << scope_tab << scope_tab << "try {\n"
-                << scope_tab << scope_tab << scope_tab << "On_" << event_name << "(args);\n"
-                << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
-                << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.ToString());\n"
-                << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
-                << scope_tab << scope_tab << "}\n"
-                << scope_tab << "}\n"
-                << scope_tab << "efl.Event_Cb evt_" << event_name << "_delegate;\n"
-                << scope_tab << "event EventHandler" << wrapper_args_template << " " << cls.cxx_name << "." << upper_name << "{\n")
-                  .generate(sink, NULL, context))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << "add {\n"
-                      << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " += value;\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error adding proxy for event {key}\");\n"
-                      << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
-                      << scope_tab << scope_tab << "}\n"
-                      << scope_tab << scope_tab << "remove {\n"
-                      << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " -= value;\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error removing proxy for event {key}\");\n"
-                      << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
-                      << scope_tab << scope_tab << "}\n"
-                      << scope_tab << "}\n")
-                  .generate(sink, NULL, context))
-              return false;
-       }
+     if (!as_generator(*(event_definition(cls))).generate(sink, cls.events, context))
+       return false;
 
      // Inherited events
      for (auto&& c : cls.inherits)
        {
           attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
-
-          // FIXME Enable inherited events registration. Beware of conflicting events
-          for (auto&& e : klass.events)
-            {
-
-               std::string wrapper_evt_name = translate_inherited_event_name(e, klass);
-               std::string upper_name = utils::to_uppercase(e.name);
-               std::replace(upper_name.begin(), upper_name.end(), ',', '_');
-               std::string upper_c_name = utils::to_uppercase(e.c_name);
-
-               std::stringstream wrapper_args_type;
-               std::string wrapper_args_template;
-               std::string event_args = "EventArgs args = EventArgs.Empty;\n";
-
-               efl::eina::optional<grammar::attributes::type_def> etype = e.type;
-               if (etype.is_engaged())
-                 {
-                   for (auto&& i : klass.namespaces) 
-                     {
-                         wrapper_args_type << escape_keyword(utils::to_lowercase(i)) << ".";
-                     }
-                   wrapper_args_type << upper_name << "_Args";
-                   wrapper_args_template = "<" + wrapper_args_type.str() + ">";
-                   std::string arg_type = wrapper_args_type.str() + " args = new " + wrapper_args_type.str() + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
-                   std::string actual_arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
-                arg_type += "args.arg = " + (*etype).original_type.visit(get_event_args_visitor{actual_arg_type}) + ";\n";
-                   event_args = arg_type;
-                 }
-               else
-                 {
-                   wrapper_args_type << "EventArgs";
-                 }
-
-               if (!as_generator(documentation(1)).generate(sink, e, context))
-                 return false;
-
-               if (!as_generator(
-                     scope_tab << "protected event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
-                    << scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
-                     << scope_tab << "protected void On_" << wrapper_evt_name << "(" << wrapper_args_type.str() << " e)\n"
-                     << scope_tab << "{\n"
-                     << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
-                     << scope_tab << scope_tab << "lock (eventLock) {\n"
-                     << scope_tab << scope_tab << scope_tab << "evt = " << wrapper_evt_name << ";\n"
-                     << scope_tab << scope_tab << "}\n"
-                     << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
-                     << scope_tab << "}\n"
-                     << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
-                     << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)"
-                     << scope_tab << "{\n"
-                     << scope_tab << scope_tab << event_args
-                    << scope_tab << scope_tab << "try {\n"
-                    << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
-                    << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
-                    << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.ToString());\n"
-                    << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
-                    << scope_tab << scope_tab << "}\n"
-                     << scope_tab << "}\n"
-                     << scope_tab << "event EventHandler" << wrapper_args_template << " " << *(lower_case[string] << ".") << klass.cxx_name << ".")
-                       .generate(sink, escape_namespace(klass.namespaces), context))
-                   return false;
-               if (!as_generator(upper_name << " {\n"
-                          << scope_tab << scope_tab << "add {\n"
-                          << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " += value;\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error adding proxy for event {key}\");\n"
-                          << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
-                          << scope_tab << scope_tab << "}\n"
-                          << scope_tab << scope_tab << "remove {\n"
-                          << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " -= value;\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error removing proxy for event {key}\");\n"
-                          << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
-                          << scope_tab << scope_tab << "}\n"
-                     << scope_tab << "}\n")
-                 .generate(sink, NULL, context))
-                   return false;
-            }
+          if (!as_generator(*(event_definition(klass, true))).generate(sink, klass.events, context))
+            return false;
        }
      return true;
    }

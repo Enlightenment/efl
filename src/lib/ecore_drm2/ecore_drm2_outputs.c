@@ -87,8 +87,6 @@ _output_event_send(Ecore_Drm2_Output *output)
 {
    Ecore_Drm2_Event_Output_Changed *ev;
 
-   if ((!output->enabled) && (!output->connected)) return;
-
    ev = calloc(1, sizeof(Ecore_Drm2_Event_Output_Changed));
    if (!ev) return;
 
@@ -919,6 +917,7 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
    eina_stringshare_del(output->make);
    eina_stringshare_del(output->model);
    eina_stringshare_del(output->serial);
+   eina_stringshare_del(output->relative.to);
 
    sym_drmModeFreeProperty(output->dpms);
    free(output->edid.blob);
@@ -1383,7 +1382,8 @@ EAPI Eina_Bool
 ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
-   return output->cloned;
+   return (output->cloned ||
+           output->relative.mode == ECORE_DRM2_RELATIVE_MODE_CLONE);
 }
 
 EAPI unsigned int
@@ -1454,6 +1454,13 @@ ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data)
    EINA_SAFETY_ON_NULL_RETURN(o);
 
    o->user_data = data;
+}
+
+EAPI void *
+ecore_drm2_output_user_data_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   return output->user_data;
 }
 
 EAPI void
@@ -1654,4 +1661,32 @@ ecore_drm2_output_pending_get(Ecore_Drm2_Output *output)
    if (output->pending.fb) return EINA_TRUE;
 
    return EINA_FALSE;
+}
+
+EAPI void
+ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative_Mode mode)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   output->relative.mode = mode;
+}
+
+EAPI Ecore_Drm2_Relative_Mode
+ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, ECORE_DRM2_RELATIVE_MODE_UNKNOWN);
+   return output->relative.mode;
+}
+
+EAPI void
+ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const char *relative)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   eina_stringshare_replace(&output->relative.to, relative);
+}
+
+EAPI const char *
+ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   return output->relative.to;
 }

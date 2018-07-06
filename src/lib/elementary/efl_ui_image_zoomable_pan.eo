@@ -5,8 +5,8 @@ class Efl.Ui.Image_Zoomable_Pan (Efl.Ui.Pan)
    implements {
       class.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Pan.content_size { get; }
       Efl.Ui.Pan.pan_position { get; set; }
@@ -14,6 +14,7 @@ class Efl.Ui.Image_Zoomable_Pan (Efl.Ui.Pan)
       Efl.Ui.Pan.pan_position_max { get; }
    }
    events {
+      /* FIXME: Nobody is emitting these
       load; [[Called when load started]]
       loaded; [[Called when load finished]]
       load,detail; [[Called when load details started]]
@@ -22,5 +23,6 @@ class Efl.Ui.Image_Zoomable_Pan (Efl.Ui.Pan)
       download,progress; [[Called with download progress updates]]
       download,done; [[Called when download finished]]
       download,error; [[Called when download failed with an error]]
+      */
    }
 }

@@ -1899,7 +1899,6 @@ eng_image_data_slice_add(void *engdata, void *image,
              for (int y = 0; y < (h / 2); y++)
                cs_data[h + (h / 2) + y] = slice->bytes + (y * stride);
           }
-        else goto fail;
         evas_common_image_colorspace_dirty(im);
         break;
 
@@ -2773,7 +2772,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 static void
 evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
 {
-   if (m->count - offset < 3) return;
+   if (m->count - offset < 4) return;
 
    if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
        (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
@@ -2834,7 +2833,7 @@ evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context
 
    if (m->count > 4)
      {
-        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 2);
+        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 4);
      }
 }
 
@@ -4327,12 +4326,12 @@ eng_ector_create(void *engine EINA_UNUSED)
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = efl_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_FALSE;
      }
    else
      {
-        ector = efl_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    efl_domain_current_pop();
@@ -4387,7 +4386,7 @@ eng_ector_surface_cache_drop(void *engine, void *key)
 static void
 eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 {
-   if (ector) efl_del(ector);
+   if (ector) efl_unref(ector);
 }
 
 static Ector_Buffer *
@@ -4400,7 +4399,7 @@ eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 
    if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
      return NULL;
-   buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
+   buf = efl_add_ref(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
                  evas_ector_buffer_engine_image_set(efl_added, data, ie));
    efl_domain_current_pop();
 
@@ -4574,7 +4573,7 @@ _draw_thread_ector_surface_set(void *data)
         memset(pixels, 0, (w * h * 4));
      }
 
-   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
    ector_surface_reference_point_set(ector_surface->ector, x, y);
 
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
@@ -4612,7 +4611,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         // clear the surface before giving to ector
         memset(pixels, 0, (w * h * 4));
 
-        ector_buffer_pixels_set(ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
 }
@@ -4636,7 +4635,7 @@ eng_ector_end(void *engine EINA_UNUSED, void *surface EINA_UNUSED,
      }
    else
      {
-        ector_buffer_pixels_set(ector, NULL, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         evas_common_cpu_end_opt();
      }
 }

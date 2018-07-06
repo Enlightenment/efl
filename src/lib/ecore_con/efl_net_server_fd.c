@@ -153,13 +153,13 @@ _efl_net_server_fd_efl_net_server_address_set(Eo *o EINA_UNUSED, Efl_Net_Server_
 }
 
 EOLIAN static const char *
-_efl_net_server_fd_efl_net_server_address_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_efl_net_server_address_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
 {
    return pd->address;
 }
 
 EOLIAN static unsigned int
-_efl_net_server_fd_efl_net_server_clients_count_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_efl_net_server_clients_count_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
 {
    return pd->clients_count;
 }
@@ -186,7 +186,7 @@ _efl_net_server_fd_efl_net_server_clients_limit_set(Eo *o EINA_UNUSED, Efl_Net_S
 }
 
 EOLIAN static void
-_efl_net_server_fd_efl_net_server_clients_limit_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd, unsigned int *limit, Eina_Bool *reject_excess)
+_efl_net_server_fd_efl_net_server_clients_limit_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd, unsigned int *limit, Eina_Bool *reject_excess)
 {
    if (limit) *limit = pd->clients_limit;
    if (reject_excess) *reject_excess = pd->clients_reject_excess;
@@ -209,7 +209,7 @@ _efl_net_server_fd_efl_net_server_serve(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_fd_efl_net_server_serving_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_efl_net_server_serving_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
 {
    return pd->serving;
 }
@@ -296,7 +296,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_fd_close_on_exec_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_close_on_exec_get(const Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
 #ifdef FD_CLOEXEC
    SOCKET fd;
@@ -347,7 +347,7 @@ _efl_net_server_fd_reuse_address_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_fd_reuse_address_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_reuse_address_get(const Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
    SOCKET fd;
    int value = 0;
@@ -402,7 +402,7 @@ _efl_net_server_fd_reuse_port_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Bool r
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_fd_reuse_port_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_reuse_port_get(const Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
 #ifdef SO_REUSEPORT
    SOCKET fd;
@@ -438,7 +438,7 @@ _efl_net_server_fd_family_set(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd, int
 }
 
 EOLIAN static int
-_efl_net_server_fd_family_get(Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
+_efl_net_server_fd_family_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Fd_Data *pd)
 {
    return pd->family;
 }

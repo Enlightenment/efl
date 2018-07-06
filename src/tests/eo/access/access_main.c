@@ -13,7 +13,7 @@ main(int argc, char *argv[])
    (void) argv;
    efl_object_init();
 
-   Eo *obj = efl_add(INHERIT_CLASS, NULL);
+   Eo *obj = efl_add_ref(INHERIT_CLASS, NULL);
 
    simple_a_set(obj, 1);
    inherit_prot_print(obj);

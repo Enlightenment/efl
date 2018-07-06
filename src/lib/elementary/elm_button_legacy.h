@@ -1,3 +1,5 @@
+typedef Eo Elm_Button;
+
 /**
  * Add a new button to the parent's canvas
  *

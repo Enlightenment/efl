@@ -441,7 +441,7 @@ struct _Elm_Map_Data
       int tile;    // Current pixel size of a grid item
    } size;
 
-   Elm_Map_Zoom_Mode                     mode;
+   Efl_Ui_Zoom_Mode                     mode;
 
    struct
    {
@@ -516,7 +516,7 @@ struct _Elm_Map_Pan_Data
   ELM_MAP_DATA_GET(o, ptr);                     \
   if (EINA_UNLIKELY(!ptr))                      \
     {                                           \
-       CRI("No widget data for object %p (%s)", \
+       ERR("No widget data for object %p (%s)", \
            o, evas_object_type_get(o));         \
        return;                                  \
     }
@@ -525,7 +525,7 @@ struct _Elm_Map_Pan_Data
   ELM_MAP_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                          \
     {                                               \
-       CRI("No widget data for object %p (%s)",     \
+       ERR("No widget data for object %p (%s)",     \
            o, evas_object_type_get(o));             \
        return val;                                  \
     }

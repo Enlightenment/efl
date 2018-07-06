@@ -2,9 +2,10 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -17,7 +18,6 @@
 #define MY_CLASS_PFX efl_ui_radio
 
 #define MY_CLASS_NAME "Efl.Ui.Radio"
-#define MY_CLASS_NAME_LEGACY "elm_radio"
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
@@ -56,8 +56,16 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
              // so that we can distinguish between state change by user or state change
              // by calling state_change() api. Keep both the signal for backward compatibility
              // and only emit "elm,state,radio,on" when activate is false  when we can break ABI.
-             if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,on", "elm");
-             elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
+             if (elm_widget_is_legacy(obj))
+               {
+                  if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,on", "elm");
+                  elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
+               }
+             else
+               {
+                  if (activate) elm_layout_signal_emit(obj, "efl,activate,radio,on", "efl");
+                  elm_layout_signal_emit(obj, "efl,state,radio,on", "efl");
+               }
           }
         else
           {
@@ -65,8 +73,16 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
              // so that we can distinguish between state change by user or state change
              // by calling state_change() api. Keep both the signal for backward compatibility
              // and only emit "elm,state,radio,off"when activate is false when we can break ABI.
-             if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,off", "elm");
-             elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+             if (elm_widget_is_legacy(obj))
+               {
+                  if (activate) elm_layout_signal_emit(obj, "elm,activate,radio,off", "elm");
+                  elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+               }
+             else
+               {
+                  if (activate) elm_layout_signal_emit(obj, "efl,activate,radio,off", "efl");
+                  elm_layout_signal_emit(obj, "efl,state,radio,off", "efl");
+               }
           }
         if (_elm_config->atspi_mode)
           {
@@ -131,24 +147,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-/* FIXME: replicated from elm_layout just because radio's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   char buf[64];
-   Eo *edje;
-
-   edje = elm_widget_resize_object_get(obj);
-   if (!edje) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-   edje_object_message_signal_process(edje);
-}
-
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
 {
@@ -157,15 +155,18 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
-   if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
-   else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
+        else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+     }
+   else
+     {
+        if (sd->state) elm_layout_signal_emit(obj, "efl,state,radio,on", "efl");
+        else elm_layout_signal_emit(obj, "efl,state,radio,off", "efl");
+     }
 
    edje_object_message_signal_process(wd->resize_obj);
-
-   /* FIXME: replicated from elm_layout just because radio's icon
-    * spot is elm.swallow.content, not elm.swallow.icon. Fix that
-    * whenever we can changed the theme API */
-   _icon_signal_emit(obj);
 
    elm_layout_sizing_eval(obj);
 
@@ -209,19 +210,23 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "radio");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-   elm_layout_signal_callback_add
-     (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
+
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_callback_add
+        (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
+   else
+     elm_layout_signal_callback_add
+        (obj, "efl,action,radio,toggle", "*", _radio_on_cb, obj);
 
    pd->group = calloc(1, sizeof(Group));
    pd->group->radios = eina_list_append(pd->group->radios, obj);
 
    elm_layout_sizing_eval(obj);
 
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
    _elm_access_text_set
      (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
    _elm_access_callback_set
@@ -275,7 +280,7 @@ _efl_ui_radio_state_value_set(Eo *obj, Efl_Ui_Radio_Data *sd, int value)
 }
 
 EOLIAN static int
-_efl_ui_radio_state_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_state_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->value;
 }
@@ -290,7 +295,7 @@ _efl_ui_radio_efl_ui_nstate_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd
 }
 
 EOLIAN static int
-_efl_ui_radio_efl_ui_nstate_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_efl_ui_nstate_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->group->value;
 }
@@ -311,7 +316,7 @@ _efl_ui_radio_value_pointer_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int 
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_radio_selected_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_selected_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -337,14 +342,8 @@ _efl_ui_radio_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Radio_Data *_pd E
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_efl_ui_radio_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_radio_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -354,21 +353,16 @@ _efl_ui_radio_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN Efl_Access_State_Set
-_efl_ui_radio_efl_access_state_set_get(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
 
-   ret = efl_access_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
 
    return ret;
 }
-
-/* Part APIs */
-
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_radio, "elm.swallow.content")
-ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
 
 /* Internal EO APIs and hidden overrides */
 
@@ -380,13 +374,111 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
 
+#include "efl_ui_radio_legacy.eo.h"
+#include "efl_ui_radio_legacy_part.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_radio"
 /* Legacy APIs */
+
+static void
+_efl_ui_radio_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_radio_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static void
+_icon_signal_emit(Evas_Object *obj)
+{
+   char buf[63];
+   Eo *edje;
+
+   edje = elm_widget_resize_object_get(obj);
+   if (!edje) return;
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(edje);
+   elm_layout_sizing_eval(obj);
+}
+
+EOLIAN static Efl_Ui_Theme_Apply
+_efl_ui_radio_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS));
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+
+   /* FIXME: replicated from elm_layout just because radio's icon
+    * spot is elm.swallow.content, not elm.swallow.icon. Fix that
+    * whenever we can changed the theme API */
+   _icon_signal_emit(obj);
+
+   return int_ret;
+}
+
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Eina_Bool
+_efl_ui_radio_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *sobj)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_efl_ui_radio_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS), part), content);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* Efl.Part begin */
+
+static Eina_Bool
+_part_is_efl_ui_radio_legacy_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return eina_streq(part, "elm.swallow.content");
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_radio_legacy, EFL_UI_RADIO_LEGACY, void, _part_is_efl_ui_radio_legacy_part)
+ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(efl_ui_radio_legacy)
+#include "efl_ui_radio_legacy_part.eo.c"
+
+/* Efl.Part end */
 
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
+   return elm_legacy_add(EFL_UI_RADIO_LEGACY_CLASS, parent);
 }
 
 EAPI void
@@ -400,3 +492,5 @@ elm_radio_value_get(const Evas_Object *obj)
 {
    return efl_ui_nstate_value_get(obj);
 }
+
+#include "efl_ui_radio_legacy.eo.c"

@@ -1,4 +1,4 @@
-class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition)
+class Elm.Segment_Control (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary segment control class]]
    legacy_prefix: elm_segment_control;
@@ -142,6 +142,6 @@ class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition)
       Efl.Ui.Translatable.translation_update;
    }
    events {
-      changed; [[Called when segment control changed]]
+      changed: Efl.Object; [[Called when segment control changed]]
    }
 }

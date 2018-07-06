@@ -9,11 +9,12 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-START_TEST (elm_code_create_test)
+EFL_START_TEST (elm_code_create_test)
 {
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
 
    ck_assert(!!code);
@@ -21,26 +22,27 @@ START_TEST (elm_code_create_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_open_test)
+EFL_START_TEST (elm_code_open_test)
 {
    char *path = TESTS_SRC_DIR "/testfile.txt";
    char realpath1[PATH_MAX], realpath2[PATH_MAX];
    Elm_Code *code;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    elm_code_file_open(code, path);
 
-   realpath(path, realpath1);
-   realpath(elm_code_file_path_get(code->file), realpath2);
+   ck_assert_ptr_ne(realpath(path, realpath1), NULL);
+   ck_assert_ptr_ne(realpath(elm_code_file_path_get(code->file), realpath2), NULL);
    ck_assert(!!code);
    ck_assert_str_eq(realpath1, realpath2);
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 void elm_code_test_basic(TCase *tc)

@@ -1,31 +1,6 @@
 import elm_general;
 
-type @extern Elm.Gengrid.Item.Class: __undefined_type; [[External elm gengrid item class]]
-
-enum Elm.Gengrid.Item.Scrollto_Type
-{
-   [[Defines where to position the item in the genlist.]]
-   legacy: elm_gengrid_item_scrollto;
-   none = 0,   [[No scrollto.]]
-   in = (1 << 0),   [[To the nearest viewport.]]
-   top = (1 << 1),   [[To the top of viewport.]]
-   middle = (1 << 2),   [[To the middle of viewport.]]
-   bottom = (1 << 3)   [[To the bottom of viewport.]]
-}
-
-enum Elm.Gengrid.Item.Field_Type
-{
-   [[Defines the type of the item part Used while updating item's parts.
-     It can be used at updating multi fields.]]
-   legacy: elm_gengrid_item_field;
-   all = 0, [[Type all]]
-   text = (1 << 0), [[Type text]]
-   content = (1 << 1), [[Type content]]
-   state = (1 << 2) [[Type state]]
-}
-
-
-class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object)
+class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
 {
       [[Elementary gengrid item class]]
       legacy_prefix: elm_gengrid_item;
@@ -243,7 +218,7 @@ class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object)
            Elm.Widget.Item.del_pre;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.signal_emit;
-           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.part_text { get; }
            Elm.Widget.Item.part_content { get; }
            Elm.Widget.Item.tooltip_text_set;
@@ -253,8 +228,8 @@ class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object)
            Elm.Widget.Item.tooltip_unset;
            Elm.Widget.Item.cursor { set; }
            Elm.Widget.Item.cursor_unset;
-           Efl.Access.name { get; }
-           Efl.Access.state_set { get; }
-           Efl.Ui.Focus.Object.prepare_logical;
+           Efl.Access.Object.i18n_name { get; }
+           Efl.Access.Object.state_set { get; }
+           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
       }
 }

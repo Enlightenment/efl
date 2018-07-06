@@ -1,7 +1,6 @@
-import eina_types;
 import efl_text_types;
 
-interface Efl.Text.Annotate {
+interface Efl.Text_Annotate {
    [[Cursor API
 
      @since 1.20
@@ -27,23 +26,23 @@ interface Efl.Text.Annotate {
             legacy: null;
          }
          keys {
-            annotation: ptr(Efl.Text.Annotate.Annotation); [[Given annotation]]
+            annotation: ptr(Efl.Text_Annotate_Annotation); [[Given annotation]]
          }
          values {
             format: string; [[The new format for the given annotation]]
          }
       }
-      range_annotations_get {
+      range_annotations_get @const {
          [[Returns an iterator of all the handles in a range.
 
            @since 1.18
          ]]
          legacy: null;
          params {
-              @in start: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
-              @in end:   ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
+              @in start: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
+              @in end:   ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
          }
-         return: iterator<ptr(Efl.Text.Annotate.Annotation)> @owned; [[Handle of the Annotation]]
+         return: iterator<ptr(Efl.Text_Annotate_Annotation)> @owned; [[Handle of the Annotation]]
       }
       annotation_insert {
          [[Inserts an annotation format in a specified range [$start, $end - 1].
@@ -55,11 +54,11 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-              @in start: ptr(Efl.Text.Cursor.Cursor); [[Start of range]]
-              @in end:   ptr(Efl.Text.Cursor.Cursor); [[End of range]]
+              @in start: ptr(Efl.Text_Cursor_Cursor); [[Start of range]]
+              @in end:   ptr(Efl.Text_Cursor_Cursor); [[End of range]]
               @in format: string; [[Annotation format]]
          }
-         return: ptr(Efl.Text.Annotate.Annotation); [[Handle of inserted annotation]]
+         return: ptr(Efl.Text_Annotate_Annotation); [[Handle of inserted annotation]]
       }
       annotation_del {
          [[Deletes given annotation.
@@ -71,7 +70,7 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-            @in annotation: ptr(Efl.Text.Annotate.Annotation); [[Annotation to be
+            @in annotation: ptr(Efl.Text_Annotate_Annotation); [[Annotation to be
                 removed]]
          }
          return: bool; [[$true on success, $false otherwise.]]
@@ -86,11 +85,11 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-             @in annotation: ptr(const(Efl.Text.Annotate.Annotation)); [[Annotation
+             @in annotation: ptr(const(Efl.Text_Annotate_Annotation)); [[Annotation
                  handle to query]]
-             @in start: ptr(Efl.Text.Cursor.Cursor); [[Cursor to be set to the start
+             @in start: ptr(Efl.Text_Cursor_Cursor); [[Cursor to be set to the start
              position of the annotation in the text]]
-             @in end: ptr(Efl.Text.Cursor.Cursor); [[Cursor to be set to the end
+             @in end: ptr(Efl.Text_Cursor_Cursor); [[Cursor to be set to the end
              position of the annotation in the text]]
          }
       }
@@ -106,7 +105,7 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-            annotation: ptr(Efl.Text.Annotate.Annotation); [[Given annotation]]
+            annotation: ptr(Efl.Text_Annotate_Annotation); [[Given annotation]]
          }
          return: bool; [[$true if given annotation is an object item, $false otherwise]]
       }
@@ -119,7 +118,7 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-            @in an: ptr(const(Efl.Text.Annotate.Annotation)); [[Given annotation to query]]
+            @in an: ptr(const(Efl.Text_Annotate_Annotation)); [[Given annotation to query]]
             @out x: int; [[X coordinate of the annotation]]
             @out y: int; [[Y coordinate of the annotation]]
             @out w: int; [[Width of the annotation]]
@@ -134,10 +133,10 @@ interface Efl.Text.Annotate {
             legacy: null;
          }
          values {
-            annotation: ptr(Efl.Text.Annotate.Annotation); [[Annotation]]
+            annotation: ptr(Efl.Text_Annotate_Annotation); [[Annotation]]
          }
          keys {
-            cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
+            cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_item_insert {
@@ -149,14 +148,14 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
+            cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
             @in item: string;   [[Item key to be used in higher-up
                                   code to query and decided what image, emoticon
                                   etc. to embed.]]
             @in format: string; [[Size format of the inserted item.
                                   This hints how to size the item in the text.]]
          }
-         return: ptr(Efl.Text.Annotate.Annotation); [[The annotation handle of the
+         return: ptr(Efl.Text_Annotate_Annotation); [[The annotation handle of the
          inserted item.]]
       }
    }

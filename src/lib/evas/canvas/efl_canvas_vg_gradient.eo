@@ -1,0 +1,11 @@
+abstract Efl.Canvas.Vg.Gradient (Efl.Canvas.Vg.Node, Efl.Gfx.Gradient)
+{
+   [[Efl vectopr graphics gradient abstract class]]
+   legacy_prefix: evas_vg_gradient;
+   implements {
+      Efl.Gfx.Gradient.stop { get; set; }
+      Efl.Gfx.Gradient.spread { get; set; }
+      Efl.Gfx.Path.interpolate;
+      Efl.Duplicate.duplicate;
+   }
+}

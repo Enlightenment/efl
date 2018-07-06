@@ -510,7 +510,7 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
              Eina_Size2D sz;
 
              fill = efl_gfx_fill_get(obj);
-             sz = efl_gfx_size_get(obj);
+             sz = efl_gfx_entity_size_get(obj);
              w = sz.w;
              h = sz.h;
 

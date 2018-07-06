@@ -38,62 +38,6 @@ EAPI double evil_time_get(void);
 
 
 /*
- * Symbolic links and directory related functions
- *
- */
-
-/**
- * @brief Create a shell link.
- *
- * @param oldpath The file name to be linked.
- * @param newpath The file name to create.
- * @return 0 on success, -1 otherwise.
- *
- * Create a shell link @p newpath to @p oldpath (@p newpath is the
- * name of the file created, @p oldpath is the string used in
- * creating the shell link).
- *
- * On success, this function returns 0. Otherwise, it returns -1 and
- * errno may be set to the following value:
- * - ENOMEM: Not enough memory.
- *
- * On Windows, the symbolic links do not exist. Nevertheless
- * shell links can be created. This function is named like the Unix
- * function for portability reasons.
- *
- * Conformity: None.
- *
- * Supported OS: Windows XP.
- */
-EAPI int symlink(const char *oldpath, const char *newpath);
-
-/**
- * @brief Read value of a shell link.
- *
- * @param path The file name to be linked.
- * @param buf The file name to create.
- * @param bufsiz The size of the buffer.
- * @return 0 on success, -1 otherwise.
- *
- * Place the content of the shell link @p path in the buffer
- * @p buf, which has size @p bufzsiz.
- *
- * On success, this function returns 0. Otherwise, it returns -1 and
- * errno may be set to the following value:
- * - ENOMEM: Not enough memory.
- *
- * On Windows, the symbolic links do not exist. Nevertheless
- * shell links can be managed. This function is named like the Unix
- * function for portability reasons.
- *
- * Conformity: None.
- *
- * Supported OS: Windows XP.
- */
-EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
-
-
-/*
  * file related functions
  *
  */

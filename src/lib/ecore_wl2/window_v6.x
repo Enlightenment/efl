@@ -11,13 +11,15 @@ _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA
      {
         window->saved.w = window->set_config.geometry.w;
         window->saved.h = window->set_config.geometry.h;
-        _configure_complete(window);
      }
    if (window->pending.configure && window->updating)
      ERR("Window shouldn't be rendering before initial configure");
 
    if (!window->updating)
      _ecore_wl2_window_configure_send(window);
+
+   if (window->pending.configure)
+     _configure_complete(window);
 }
 
 static const struct zxdg_surface_v6_listener _zxdg_surface_listener =
@@ -31,7 +33,6 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
    Ecore_Wl2_Window *win = data;
    uint32_t *s;
 
-   win->def_config.minimized = EINA_FALSE;
    win->def_config.maximized = EINA_FALSE;
    win->def_config.fullscreen = EINA_FALSE;
    win->def_config.focused = EINA_FALSE;
@@ -54,7 +55,6 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
              break;
            case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
              win->def_config.focused = EINA_TRUE;
-             win->def_config.minimized = EINA_FALSE;
            default:
              break;
           }
@@ -162,6 +162,10 @@ _window_v6_shell_surface_create(Ecore_Wl2_Window *window)
         zxdg_toplevel_v6_set_user_data(window->zxdg_toplevel, window);
         zxdg_toplevel_v6_add_listener(window->zxdg_toplevel,
                                       &_zxdg_toplevel_listener, window);
+
+        if (window->deferred_minimize)
+          zxdg_toplevel_v6_set_minimized(window->zxdg_toplevel);
+        window->deferred_minimize = EINA_FALSE;
 
         if (window->title)
           zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);

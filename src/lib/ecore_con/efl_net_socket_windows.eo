@@ -1,4 +1,4 @@
-class Efl.Net.Socket.Windows (Efl.Loop.Consumer, Efl.Net.Socket) {
+class Efl.Net.Socket_Windows (Efl.Loop_Consumer, Efl.Net.Socket) {
     [[A base Windows NamedPipe socket.
 
       This is the common class and takes an existing file HANDLE,
@@ -14,7 +14,7 @@ class Efl.Net.Socket.Windows (Efl.Loop.Consumer, Efl.Net.Socket) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { get; set; }
         Efl.Io.Reader.eos { get; set; }

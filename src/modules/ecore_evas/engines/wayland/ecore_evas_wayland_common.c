@@ -55,10 +55,12 @@ _ecore_evas_wl_common_animator_register(Ecore_Evas *ee)
    edata = (Ecore_Evas_Engine_Wl_Data *)ee->engine.data;
 
    EINA_SAFETY_ON_TRUE_RETURN(edata->ticking);
+   EINA_SAFETY_ON_TRUE_RETURN(edata->frame != NULL);
 
    edata->frame = ecore_wl2_window_frame_callback_add(edata->win,
                                                       _anim_cb_tick, ee);
-   if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render)
+   if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render &&
+       !ee->animator_ticked && !ee->animator_ran && !ee->draw_block)
      ecore_wl2_window_false_commit(edata->win);
    edata->ticking = EINA_TRUE;
 }
@@ -70,7 +72,8 @@ _ecore_evas_wl_common_animator_unregister(Ecore_Evas *ee)
 
    edata = ee->engine.data;
    edata->ticking = EINA_FALSE;
-   ecore_wl2_window_frame_callback_del(edata->frame);
+   if (edata->frame)
+     ecore_wl2_window_frame_callback_del(edata->frame);
    edata->frame = NULL;
 }
 
@@ -211,10 +214,81 @@ _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED
         wdata->defer_show = EINA_TRUE;
         ee->visible = EINA_FALSE;
         wdata->reset_pending = 1;
-        ecore_evas_manual_render_set(ee, 1);
+        ee->draw_block = EINA_TRUE;
         _ee_display_unset(ee);
      }
    return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+ee_needs_alpha(Ecore_Evas *ee)
+{
+   return ee->shadow.l || ee->shadow.r || ee->shadow.t || ee->shadow.b ||
+          ee->alpha;
+}
+
+static void
+_ecore_evas_wayland_window_update(Ecore_Evas *ee, Ecore_Evas_Engine_Wl_Data *wdata, Eina_Bool new_alpha)
+{
+   Evas_Engine_Info_Wayland *einfo;
+   Eina_Bool has_shadow, needs_alpha, change;
+   int w, h, fw, fh, shw = 0, shh = 0;
+   int fullw, fullh;
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+
+   change = ee->shadow.changed || (new_alpha != ee->alpha);
+   ee->alpha = new_alpha;
+   has_shadow = ee->shadow.l || ee->shadow.r || ee->shadow.t || ee->shadow.b;
+
+   needs_alpha = ee_needs_alpha(ee);
+
+   if (einfo->info.destination_alpha != needs_alpha)
+     {
+        ecore_wl2_window_alpha_set(wdata->win, needs_alpha);
+        einfo->info.destination_alpha = needs_alpha;
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+
+        change |= EINA_TRUE;
+     }
+
+   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
+   if (has_shadow)
+     {
+        shh = ee->shadow.r + ee->shadow.l;
+        shw = ee->shadow.t + ee->shadow.b;
+     }
+
+   fullw = w + fw - shw;
+   fullh = h + fh - shh;
+
+   if (has_shadow && !ee->alpha)
+     {
+        ecore_wl2_window_opaque_region_set(wdata->win,
+                                           ee->shadow.l, ee->shadow.t,
+                                           fullw, fullh);
+     }
+   else
+     {
+        ecore_wl2_window_opaque_region_set(wdata->win, 0, 0, 0, 0);
+     }
+   ecore_wl2_window_input_region_set(wdata->win,
+                                     ee->shadow.l, ee->shadow.t,
+                                     fullw, fullh);
+   ecore_wl2_window_geometry_set(wdata->win,
+                                 ee->shadow.l, ee->shadow.t,
+                                 fullw, fullh);
+   if (!change) return;
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+      evas_damage_rectangle_add(ee->evas, 0, 0, fullw, fullh);
+   else
+      evas_damage_rectangle_add(ee->evas, 0, 0, fullh, fullw);
+
+   ee->shadow.changed = EINA_FALSE;
 }
 
 static void
@@ -417,6 +491,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
+   _ecore_evas_wayland_window_update(ee, wdata, ee->alpha);
 }
 
 static void
@@ -488,8 +563,9 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl2_Event_Window_Configure *ev;
-   int nw = 0, nh = 0, fw, fh, pfw, pfh;
-   Eina_Bool active, prev_max, prev_full, state_change = EINA_FALSE;
+   int nw = 0, nh = 0, fw, fh, sw, sh, contentw, contenth;
+   int framew, frameh;
+   Eina_Bool active, prev_max, prev_full;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -516,35 +592,29 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nw = ev->w;
    nh = ev->h;
 
-   pfw = fw = wdata->win->set_config.geometry.w - wdata->content.w;
-   pfh = fh = wdata->win->set_config.geometry.h - wdata->content.h;
+   sw = ee->shadow.l + ee->shadow.r;
+   sh = ee->shadow.t + ee->shadow.b;
+   evas_output_framespace_get(ee->evas, NULL, NULL, &framew, &frameh);
+   contentw = wdata->win->set_config.geometry.w - (framew - sw);
+   contenth = wdata->win->set_config.geometry.h - (frameh - sh);
+   fw = wdata->win->set_config.geometry.w - contentw;
+   fh = wdata->win->set_config.geometry.h - contenth;
 
    if ((prev_max != ee->prop.maximized) ||
        (prev_full != ee->prop.fullscreen) ||
        (active != wdata->activated))
      {
-        state_change = EINA_TRUE;
         _ecore_evas_wl_common_state_update(ee);
-        fw = wdata->win->set_config.geometry.w - wdata->content.w;
-        fh = wdata->win->set_config.geometry.h - wdata->content.h;
+        sw = ee->shadow.l + ee->shadow.r;
+        sh = ee->shadow.t + ee->shadow.b;
+        evas_output_framespace_get(ee->evas, NULL, NULL, &framew, &frameh);
+        contentw = wdata->win->set_config.geometry.w - (framew - sw);
+        contenth = wdata->win->set_config.geometry.h - (frameh - sh);
+        fw = wdata->win->set_config.geometry.w - contentw;
+        fh = wdata->win->set_config.geometry.h - contenth;
      }
-
    if ((!nw) && (!nh))
-     {
-        if ((wdata->win->set_config.serial != wdata->win->req_config.serial) &&
-            wdata->win->req_config.serial && wdata->win->surface &&
-            ((!state_change) || ((pfw == fw) && (pfh == fh))))
-          {
-             if (wdata->win->xdg_configure_ack)
-               wdata->win->xdg_configure_ack(wdata->win->xdg_surface,
-                                              wdata->win->req_config.serial);
-             if (wdata->win->zxdg_configure_ack)
-               wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
-                                              wdata->win->req_config.serial);
-             wdata->win->set_config.serial = wdata->win->req_config.serial;
-          }
-        return ECORE_CALLBACK_RENEW;
-     }
+     return ECORE_CALLBACK_RENEW;
 
    if (!ee->prop.borderless)
      {
@@ -597,6 +667,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
           }
      }
 
+   _ecore_evas_wayland_window_update(ee, wdata, ee->alpha);
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -624,8 +696,8 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
      ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
 
    wdata = ee->engine.data;
+   ee->draw_block = EINA_FALSE;
    if (wdata->frame) ecore_evas_manual_render(ee);
-   ecore_evas_manual_render_set(ee, 0);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -927,7 +999,7 @@ _ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type dev
 }
 
 static EE_Wl_Device *
-_ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id)
+_ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id, const char *name)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
    EE_Wl_Device *device;
@@ -937,9 +1009,13 @@ _ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id)
    device = calloc(1, sizeof(EE_Wl_Device));
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
 
-   snprintf(buf, sizeof(buf), "seat-%u", id);
+   if (!name)
+     {
+        snprintf(buf, sizeof(buf), "seat-%u", id);
+        name = buf;
+     }
    dev =
-     evas_device_add_full(ee->evas, buf, "Wayland seat", NULL, NULL,
+     evas_device_add_full(ee->evas, name, "Wayland seat", NULL, NULL,
                           EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_SUBCLASS_NONE);
    EINA_SAFETY_ON_NULL_GOTO(dev, err_dev);
    evas_device_seat_id_set(dev, id);
@@ -987,7 +1063,7 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
         if (already_present)
           continue;
 
-        if (!_ecore_evas_wl_common_seat_add(ee, ev->id))
+        if (!_ecore_evas_wl_common_seat_add(ee, ev->id, NULL))
           break;
      }
 
@@ -1117,7 +1193,8 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                     {
                        _ecore_evas_wl_common_device_event_add
                          (ECORE_WL2_EVENT_DEVICE_REMOVED,
-                             ECORE_WL2_DEVICE_TYPE_POINTER, ev->id, NULL, ee);
+                             ECORE_WL2_DEVICE_TYPE_POINTER, ev->id,
+                             device->pointer, ee);
 
                        evas_device_del(device->pointer);
                        device->pointer = NULL;
@@ -1141,7 +1218,8 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                     {
                        _ecore_evas_wl_common_device_event_add
                          (ECORE_WL2_EVENT_DEVICE_REMOVED,
-                             ECORE_WL2_DEVICE_TYPE_KEYBOARD, ev->id, NULL, ee);
+                             ECORE_WL2_DEVICE_TYPE_KEYBOARD, ev->id,
+                             device->keyboard, ee);
 
                        evas_device_del(device->keyboard);
                        device->keyboard = NULL;
@@ -1166,7 +1244,7 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
                        _ecore_evas_wl_common_device_event_add
                          (ECORE_WL2_EVENT_DEVICE_REMOVED,
                              ECORE_WL2_DEVICE_TYPE_TOUCH,
-                             ev->id, NULL, ee);
+                             ev->id, device->touch, ee);
 
                        evas_device_del(device->touch);
                        device->touch = NULL;
@@ -1502,18 +1580,6 @@ _ecore_evas_wl_common_aux_hints_supported_update(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_wl_common_raise(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   wdata = ee->engine.data;
-   ecore_wl2_window_raise(wdata->win);
-}
-
-static void
 _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1810,61 +1876,22 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
 static void
 _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha)
 {
-   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   int fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
    if (ee->alpha == alpha) return;
-   ee->alpha = alpha;
-   wdata = ee->engine.data;
-   if (!wdata->sync_done) return;
 
-   if (wdata->win) ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
+   wdata = ee->engine.data;
+   if (!wdata->sync_done)
+     {
+        ee->alpha = alpha;
+        return;
+     }
+   _ecore_evas_wayland_window_update(ee, wdata, alpha);
 
    _ecore_evas_wl_common_wm_rotation_protocol_set(ee);
-
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
-     {
-        einfo->info.destination_alpha = EINA_TRUE;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-     }
-}
-
-static void
-_ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent)
-{
-   Evas_Engine_Info_Wayland *einfo;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   int fw, fh;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   if (ee->transparent == transparent) return;
-   ee->transparent = transparent;
-
-   wdata = ee->engine.data;
-   if (!wdata->sync_done) return;
-
-   if (wdata->win)
-     ecore_wl2_window_transparent_set(wdata->win, ee->transparent);
-
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
-     {
-        einfo->info.destination_alpha = EINA_TRUE;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-     }
 }
 
 static void
@@ -1876,11 +1903,6 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
      {
         _ecore_evas_wayland_alpha_do(ee, ee->delayed.alpha);
         ee->delayed.alpha_changed = EINA_FALSE;
-     }
-   if (ee->delayed.transparent_changed)
-     {
-        _ecore_evas_wayland_transparent_do(ee, ee->delayed.transparent);
-        ee->delayed.transparent_changed = EINA_FALSE;
      }
    if (ee->delayed.rotation_changed)
      {
@@ -1934,30 +1956,26 @@ _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, 
 }
 
 static void
-_ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi, int *ydpi)
+_ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
 {
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
    int dpi = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    if (xdpi) *xdpi = 0;
    if (ydpi) *ydpi = 0;
 
    /* FIXME: Ideally this needs to get the DPI from a specific screen */
 
-   /* TODO */
-   /* dpi = ecore_wl_dpi_get(); */
+   win = ecore_evas_wayland2_window_get(ee);
+   output = ecore_wl2_window_output_find(win);
+   dpi = ecore_wl2_output_dpi_get(output);
+
    if (xdpi) *xdpi = dpi;
    if (ydpi) *ydpi = dpi;
-}
-
-static void
-_ecore_evas_wayland_resize_edge_set(Ecore_Evas *ee, int edge)
-{
-   Evas_Engine_Info_Wayland *einfo;
-
-   if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
-     einfo->info.edges = edge;
 }
 
 static void
@@ -1970,10 +1988,7 @@ _ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
    if (!ee) return;
    wdata = ee->engine.data;
    if (wdata->win)
-     {
-        _ecore_evas_wayland_resize_edge_set(ee, location);
-        ecore_wl2_window_resize(wdata->win, NULL, location);
-     }
+     ecore_wl2_window_resize(wdata->win, NULL, location);
 }
 
 static void
@@ -2086,6 +2101,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
         wdata->defer_show = EINA_TRUE;
         return;
      }
+   ee->visible = 1;
 
    if (wdata->win)
      {
@@ -2112,15 +2128,15 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
              wdata->win->pending.max = 0;
           }
 
+        _ecore_evas_wayland_window_update(ee, wdata, ee->alpha);
+
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-        ecore_wl2_window_geometry_set(wdata->win, 0, 0, ee->w, ee->h);
         ecore_wl2_window_show(wdata->win);
-        ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
-
         einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
+             einfo->info.destination_alpha = ee_needs_alpha(ee);
              einfo->info.wl2_win = wdata->win;
              einfo->info.hidden = wdata->win->pending.configure; //EINA_FALSE;
              einfo->www_avail = !!wdata->win->www_surface;
@@ -2137,10 +2153,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 
-   if (ee->visible) return;
-   ee->visible = 1;
    ee->should_be_visible = 1;
-   ee->draw_ok = EINA_TRUE;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
@@ -2179,7 +2192,6 @@ _ecore_evas_wl_common_hide(Ecore_Evas *ee)
    if (!ee->visible) return;
    ee->visible = 0;
    ee->should_be_visible = 0;
-   ee->draw_ok = EINA_FALSE;
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
@@ -2195,19 +2207,6 @@ _ecore_evas_wl_common_alpha_set(Ecore_Evas *ee, int alpha)
      }
 
    _ecore_evas_wayland_alpha_do(ee, alpha);
-}
-
-static void
-_ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent)
-{
-   if (ee->in_async_render)
-     {
-        ee->delayed.transparent = transparent;
-        ee->delayed.transparent_changed = EINA_TRUE;
-        return;
-     }
-
-   _ecore_evas_wayland_transparent_do(ee, transparent);
 }
 
 static void
@@ -2241,13 +2240,13 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.destination_alpha = EINA_TRUE;
+        einfo->info.destination_alpha = ee_needs_alpha(ee);
         einfo->info.rotation = ee->rotation;
         einfo->info.wl2_win = wdata->win;
 
         if (wdata->reset_pending)
           {
-             ecore_evas_manual_render_set(ee, 0);
+             ee->draw_block = EINA_FALSE;
           }
         if (evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -2286,10 +2285,12 @@ _ecore_wl2_devices_setup(Ecore_Evas *ee, Ecore_Wl2_Display *display)
         EE_Wl_Device *device;
         Ecore_Wl2_Seat_Capabilities cap;
         unsigned int id;
+        Eina_Stringshare *name;
 
         id = ecore_wl2_input_seat_id_get(input);
         cap = ecore_wl2_input_seat_capabilities_get(input);
-        device = _ecore_evas_wl_common_seat_add(ee, id);
+        name = ecore_wl2_input_name_get(input);
+        device = _ecore_evas_wl_common_seat_add(ee, id, name);
 
         if (!device)
           {
@@ -2366,7 +2367,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // shaped_set
    _ecore_evas_wl_common_show,
    _ecore_evas_wl_common_hide,
-   _ecore_evas_wl_common_raise,
+   NULL, // raise
    NULL, // lower
    NULL, // activate
    _ecore_evas_wl_common_title_set,
@@ -2389,7 +2390,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func sticky set
    _ecore_evas_wl_common_ignore_events_set,
    _ecore_evas_wl_common_alpha_set,
-   _ecore_evas_wl_common_transparent_set,
+   _ecore_evas_wl_common_alpha_set, // transparent set
    NULL, // func profiles set
    NULL, // func profile set
    NULL, // window group set
@@ -2438,7 +2439,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas *ee = NULL;
    int method = 0;
-   int fw = 0, fh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -2519,16 +2519,18 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    wdata->parent = p;
    wdata->display = ewd;
 
-   wdata->win = ecore_wl2_window_new(ewd, p, x, y, w + fw, h + fh);
+   wdata->win = ecore_wl2_window_new(ewd, p, x, y, w, h);
    ee->prop.window = ecore_wl2_window_id_get(wdata->win);
    ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
    ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
 
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, ee->w, ee->h))
+     {
+        ERR("Can not create Canvas.");
+        goto eng_err;
+     }
+
    evas_output_method_set(ee->evas, method);
-   evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
                            _ecore_evas_wl_common_render_updates, ee);
@@ -2541,7 +2543,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
         wdata->sync_done = EINA_TRUE;
         if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
           {
-             einfo->info.destination_alpha = EINA_TRUE;
+             einfo->info.destination_alpha = ee_needs_alpha(ee);
              einfo->info.rotation = ee->rotation;
              einfo->info.depth = 32;
              einfo->info.wl2_win = wdata->win;
@@ -2568,29 +2570,22 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    _ecore_evas_wl_common_wm_rotation_protocol_set(ee);
 
-   _ecore_evas_register(ee);
-   ecore_evas_input_event_register(ee);
-
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window,
-                                     _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    wdata->sync_handler =
      ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
 
    ee_list = eina_list_append(ee_list, ee);
 
-   ecore_evas_manual_render_set(ee, 1);
+   ee->draw_block = EINA_TRUE;
 
    return ee;
 
 eng_err:
    /* ecore_evas_free() will call ecore_wl2_display_disconnect()
-    * and free(ee) */
+    * and free(ee), it will also call ecore_wl2_shutdown(), so we
+    * take an extra reference here to keep the count right. */
+   ecore_wl2_init();
    ecore_evas_free(ee);
    ee = NULL;
 w_err:

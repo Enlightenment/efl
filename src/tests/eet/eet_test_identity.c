@@ -52,7 +52,7 @@ badpass_get(char            *pass,
    return strlen(pass);
 }
 
-START_TEST(eet_test_identity_simple)
+EFL_START_TEST(eet_test_identity_simple)
 {
    const char *buffer = "Here is a string of data to save !";
    const void *tmp;
@@ -65,8 +65,6 @@ START_TEST(eet_test_identity_simple)
    int fd;
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   eet_init();
 
    fail_if(-1 == (fd = mkstemp(file)));
    fail_if(!!close(fd));
@@ -129,15 +127,12 @@ START_TEST(eet_test_identity_simple)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_identity_open_simple)
+EFL_START_TEST(eet_test_identity_open_simple)
 {
    Eet_Key *k = NULL;
-
-   eet_init();
 
    k = eet_identity_open(_cert_pem, _key_pem, NULL);
    fail_if(!k);
@@ -145,15 +140,12 @@ START_TEST(eet_test_identity_open_simple)
    if (k)
      eet_identity_close(k);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_identity_open_pkcs8)
+EFL_START_TEST(eet_test_identity_open_pkcs8)
 {
    Eet_Key *k = NULL;
-
-   eet_init();
 
    k = eet_identity_open(_cert_pem, _key_enc_none_pem, NULL);
    fail_if(!k);
@@ -161,15 +153,12 @@ START_TEST(eet_test_identity_open_pkcs8)
    if (k)
      eet_identity_close(k);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_identity_open_pkcs8_enc)
+EFL_START_TEST(eet_test_identity_open_pkcs8_enc)
 {
    Eet_Key *k = NULL;
-
-   eet_init();
 
    k = eet_identity_open(_cert_pem, _key_enc_pem, NULL);
    fail_if(k);
@@ -189,9 +178,8 @@ START_TEST(eet_test_identity_open_pkcs8_enc)
    if (k)
      eet_identity_close(k);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static const char *_cert_dir_find(const char *_argv0)
 {

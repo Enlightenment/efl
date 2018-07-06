@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -70,7 +70,7 @@ _elm_separator_efl_object_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SEPARATOR);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SEPARATOR);
 
    return obj;
 }
@@ -87,7 +87,7 @@ _elm_separator_horizontal_set(Eo *obj, Elm_Separator_Data *sd, Eina_Bool horizon
 }
 
 EOLIAN static Eina_Bool
-_elm_separator_horizontal_get(Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
+_elm_separator_horizontal_get(const Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
 {
    return sd->horizontal;
 }

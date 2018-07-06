@@ -452,7 +452,7 @@ efl_main(void *data EINA_UNUSED,
 
    if (strcmp(input_fname, ":stdin:") == 0)
      {
-        input = efl_add(EFL_IO_STDIN_CLASS, NULL,
+        input = efl_add_ref(EFL_IO_STDIN_CLASS, NULL,
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL));
         if (!input)
           {
@@ -662,7 +662,7 @@ efl_main(void *data EINA_UNUSED,
    else
      {
         /* regular file, open with flags: read-only and close-on-exec */
-        input = efl_add(EFL_IO_FILE_CLASS, NULL,
+        input = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
                         efl_file_set(efl_added, input_fname, NULL), /* mandatory */
                         efl_io_file_flags_set(efl_added, O_RDONLY), /* default */
                         efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
@@ -679,7 +679,7 @@ efl_main(void *data EINA_UNUSED,
 
    if (strcmp(output_fname, ":stdout:") == 0)
      {
-        output = efl_add(EFL_IO_STDOUT_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_STDOUT_CLASS, NULL,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
@@ -691,7 +691,7 @@ efl_main(void *data EINA_UNUSED,
      }
    else if (strcmp(output_fname, ":stderr:") == 0)
      {
-        output = efl_add(EFL_IO_STDERR_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_STDERR_CLASS, NULL,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
@@ -718,7 +718,7 @@ efl_main(void *data EINA_UNUSED,
          * When finished get the efl_io_buffer_slice_get(), see
          * _copier_done().
          */
-        output = efl_add(EFL_IO_BUFFER_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, output_buffer_cbs(), NULL) /* optional */
                          );
@@ -938,7 +938,7 @@ efl_main(void *data EINA_UNUSED,
         /* regular file, open with flags: write-only, close-on-exec,
          * create if did not exist and truncate if exist.
          */
-        output = efl_add(EFL_IO_FILE_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
                          efl_file_set(efl_added, output_fname, NULL), /* mandatory */
                          efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT | O_TRUNC), /* mandatory for write */
                          efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */

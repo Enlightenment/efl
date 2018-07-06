@@ -484,18 +484,13 @@ eng_image_native_set(void *engine, void *image, void *native)
             }
         }
     }
-  if ((!ns) && (!im->native.data)) return im;
-
   gl_generic_window_find(engine);
 
-  if (im->native.data)
-    {
-      if (im->native.func.free)
-        im->native.func.free(im);
-      evas_gl_common_image_native_disable(im);
-    }
-
-  if (!ns) return im;
+   if (!ns)
+     {
+        evas_gl_common_image_free(im);
+        return NULL;
+     }
 
   if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
     {
@@ -1023,7 +1018,7 @@ eng_image_data_put(void *engine, void *image, DATA32 *image_data)
                         }
                       else if (im->gc->shared->info.sec_image_map)
                         {
-                           void *disp = disp = egl_display_get(engine);
+                           void *disp = egl_display_get(engine);
                            secsym_eglUnmapImageSEC(disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
                         }
                    }
@@ -2513,16 +2508,16 @@ eng_ector_create(void *engine EINA_UNUSED)
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = efl_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
      }
    else if (ector_backend && !strcasecmp(ector_backend, "experimental"))
      {
-        ector = efl_add(ECTOR_GL_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_GL_SURFACE_CLASS, NULL);
         use_gl = EINA_TRUE;
      }
    else
      {
-        ector = efl_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    efl_domain_current_pop();
@@ -2532,7 +2527,7 @@ eng_ector_create(void *engine EINA_UNUSED)
 static void
 eng_ector_destroy(void *engine EINA_UNUSED, Ector_Surface *ector)
 {
-   if (ector) efl_del(ector);
+   if (ector) efl_unref(ector);
 }
 
 static Ector_Buffer *
@@ -2657,7 +2652,7 @@ eng_ector_begin(void *engine, void *output,
         memset(pixels, 0, stride * h);
 
         // it just uses the software backend to draw for now
-        ector_buffer_pixels_set(ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, pixels, w, h, stride, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
    else
@@ -2681,7 +2676,7 @@ eng_ector_end(void *engine, void *output,
 
         eng_image_data_put(engine, glim, pixels);
         eng_image_data_put(engine, glim, pixels);
-        ector_buffer_pixels_set(ector, NULL, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         evas_common_cpu_end_opt();
      }
    else if (use_gl)

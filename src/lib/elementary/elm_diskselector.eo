@@ -1,7 +1,7 @@
 class Elm.Diskselector (Efl.Ui.Widget, Elm.Interface_Scrollable,
                         Efl.Access.Widget.Action,
                         Efl.Ui.Clickable, Efl.Ui.Scrollable,
-                        Efl.Ui.Selectable)
+                        Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary diskselector class]]
    legacy_prefix: elm_diskselector;
@@ -198,8 +198,8 @@ class Elm.Diskselector (Efl.Ui.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.theme_apply;

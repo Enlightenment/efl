@@ -21,16 +21,14 @@ static Eina_Bool _anim_cb(void *data EINA_UNUSED, double pos)
   return EINA_TRUE;
 }
 
-START_TEST(ecore_test_animators)
+EFL_START_TEST(ecore_test_animators)
 {
    Ecore_Animator *animator;
    double interval1 = 0.02;
    double interval2 = 0.01;
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-
    ecore_animator_frametime_set(interval1);
-   animator = ecore_animator_timeline_add(1, _anim_cb, &interval1);
+   animator = ecore_animator_timeline_add(0.1, _anim_cb, &interval1);
 
    fail_if(!animator);
 
@@ -38,15 +36,13 @@ START_TEST(ecore_test_animators)
 
    ecore_animator_frametime_set(interval2);
    prev = 0;
-   animator = ecore_animator_timeline_add(1, _anim_cb, &interval2);
+   animator = ecore_animator_timeline_add(0.1, _anim_cb, &interval2);
    fail_if(!animator);
 
    ecore_main_loop_begin();
 
-   ecore_shutdown();
-
 }
-END_TEST
+EFL_END_TEST
 
 Eina_Bool test_pos(Ecore_Pos_Map posmap, double v1, double v2, double (*testmap)(double val, double v1, double v2))
 {
@@ -88,14 +84,14 @@ double _sinusoidal(double val, double v1 EINA_UNUSED, double v2 EINA_UNUSED)
   return  (1 - cos(val * M_PI)) / 2;
 }
 
-START_TEST(ecore_test_pos_map)
+EFL_START_TEST(ecore_test_pos_map)
 {
   fail_if(!test_pos(ECORE_POS_MAP_LINEAR, 0, 0, _linear));
   fail_if(!test_pos(ECORE_POS_MAP_ACCELERATE, 0, 0, _accel));
   fail_if(!test_pos(ECORE_POS_MAP_DECELERATE, 0, 0, _decel));
   fail_if(!test_pos(ECORE_POS_MAP_SINUSOIDAL, 0, 0, _sinusoidal));
 }
-END_TEST
+EFL_END_TEST
 
 static void _animator_called_cb(void *data)
 {
@@ -124,15 +120,13 @@ static Eina_Bool _quit_cb(void* data EINA_UNUSED)
    return ECORE_CALLBACK_CANCEL;
 }
 
-START_TEST(ecore_test_begin_end_tick)
+EFL_START_TEST(ecore_test_begin_end_tick)
 {
    Ecore_Timer *timer1, *timer2;
    Ecore_Animator *animator;
    Eina_Bool is_animator_cb_called = EINA_FALSE;
    Eina_Bool is_begin_cb_called = EINA_FALSE;
    Eina_Bool is_end_cb_called = EINA_FALSE;
-
-   ecore_init();
 
    ecore_animator_custom_source_tick_begin_callback_set(_animator_called_cb, &is_begin_cb_called);
    ecore_animator_custom_source_tick_end_callback_set(_animator_called_cb, &is_end_cb_called);
@@ -153,10 +147,8 @@ START_TEST(ecore_test_begin_end_tick)
    fail_if(!is_begin_cb_called);
    fail_if(!is_end_cb_called);
    fail_if(!is_animator_cb_called);
-
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_animator(TCase *tc)
 {

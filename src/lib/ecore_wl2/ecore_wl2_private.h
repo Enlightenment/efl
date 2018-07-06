@@ -156,7 +156,6 @@ typedef struct _Ecore_Wl2_Window_Configure_State
 {
    uint32_t serial;
    Eina_Rectangle geometry;
-   Eina_Bool minimized : 1;
    Eina_Bool maximized : 1;
    Eina_Bool fullscreen : 1;
    Eina_Bool focused : 1;
@@ -224,13 +223,13 @@ struct _Ecore_Wl2_Window
    Eina_List *supported_aux_hints;
    Eina_List *frame_callbacks;
 
+   Eina_List *outputs;
+
    Ecore_Wl2_Window_Configure_State set_config;
    Ecore_Wl2_Window_Configure_State req_config;
    Ecore_Wl2_Window_Configure_State def_config;
 
-   Eina_Bool moving : 1;
    Eina_Bool alpha : 1;
-   Eina_Bool transparent : 1;
 
    Eina_Bool input_set : 1;
    Eina_Bool opaque_set : 1;
@@ -262,6 +261,7 @@ struct _Ecore_Wl2_Window
      } wm_rot;
    Eina_Bool has_buffer : 1;
    Eina_Bool updating : 1;
+   Eina_Bool deferred_minimize : 1;
 };
 
 struct _Ecore_Wl2_Output
@@ -556,21 +556,13 @@ typedef struct _Ecore_Wl2_Buffer
 
 typedef struct _Ecore_Wl2_Surface
 {
+   void *private_data;
    Ecore_Wl2_Window *wl2_win;
-   Ecore_Wl2_Buffer *current;
-   Eina_List *buffers;
 
    int w, h;
+   Ecore_Wl2_Surface_Interface *funcs;
+   Ecore_Event_Handler *offscreen_handler;
    Eina_Bool alpha : 1;
-   struct
-     {
-        void (*destroy)(Ecore_Wl2_Surface *surface);
-        void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-        void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
-        int  (*assign)(Ecore_Wl2_Surface *surface);
-        void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-        void (*flush)(Ecore_Wl2_Surface *surface);
-     } funcs;
 } Ecore_Wl2_Surface;
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
@@ -614,5 +606,7 @@ EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double
 
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
+
+Ecore_Wl2_Output *_ecore_wl2_output_find(Ecore_Wl2_Display *dsp, struct wl_output *op);
 
 #endif

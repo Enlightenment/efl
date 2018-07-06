@@ -494,8 +494,8 @@ _bounce_cb(void *data)
    if (!bounce->y1)
      {
         elm_interface_scrollable_bounce_allow_set(bounce->scroller, 0, 1);
-        bounce->y1 = efl_gfx_position_get(bounce->it1).y;
-        bounce->y2 = efl_gfx_position_get(bounce->it2).y;
+        bounce->y1 = efl_gfx_entity_position_get(bounce->it1).y;
+        bounce->y2 = efl_gfx_entity_position_get(bounce->it2).y;
      }
 
    bounce->state++;
@@ -522,8 +522,8 @@ _bounce_cb(void *data)
         unsigned long long tll, t0ll, tdll, frames;
 
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
-        t0ll = (t0.tv_sec * 1000000000) + t0.tv_nsec;
-        tll = (t.tv_sec * 1000000000) + t.tv_nsec;
+        t0ll = ((unsigned long long) t0.tv_sec * 1000000000ULL) + t0.tv_nsec;
+        tll = ((unsigned long long) t.tv_sec * 1000000000ULL) + t.tv_nsec;
         tdll = tll - t0ll;
         frames = bounce->frames ?: 1;
         printf("NS since frame 2 = %llu , %llu frames = %llu / frame\n",

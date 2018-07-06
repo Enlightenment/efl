@@ -1,11 +1,11 @@
 import efl_text_types;
 
-struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
+struct Efl.Canvas.Text_Style; [[EFL text style data structure]]
 
-class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
-                       Efl.Canvas.Filter.Internal, Efl.Text.Font,
-                       Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor,
-                       Efl.Text.Annotate, Efl.Text.Markup, Efl.Ui.Base)
+class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
+                       Efl.Canvas.Filter.Internal, Efl.Text_Font,
+                       Efl.Text_Style, Efl.Text_Format, Efl.Text_Cursor,
+                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Ui.Base)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
@@ -33,8 +33,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
-            @in start: ptr(Efl.Text.Cursor.Cursor); [[Range start position]]
-            @in end: ptr(Efl.Text.Cursor.Cursor); [[Range end position]]
+            @in start: ptr(Efl.Text_Cursor_Cursor); [[Range start position]]
+            @in end: ptr(Efl.Text_Cursor_Cursor); [[Range end position]]
          }
       }
       @property style_insets {
@@ -155,7 +155,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
             h: int; [[The height returned.]]
          }
       }
-      range_text_get {
+      range_text_get @const {
          [[Returns the text in the range between $cur1 and $cur2.
 
            @since 1.18
@@ -163,8 +163,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          legacy: null;
          return: mstring @owned; [[The text in the given range]]
          params {
-            @cref cur1: Efl.Text.Cursor.Cursor; [[Start of range]]
-            @cref cur2: Efl.Text.Cursor.Cursor; [[End of range]]
+            @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
+            @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
          }
       }
       range_geometry_get {
@@ -177,8 +177,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          ]]
          legacy: null;
          params {
-             @cref cur1: Efl.Text.Cursor.Cursor; [[Start of range]]
-             @cref cur2: Efl.Text.Cursor.Cursor; [[End of range]]
+             @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
+             @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
          }
          return: iterator<ptr(Eina.Rect)> @owned; [[
             Iterator on all geoemtries of the given range
@@ -195,8 +195,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          ]]
          legacy: null;
          params {
-             @cref cur1: Efl.Text.Cursor.Cursor; [[Start of range]]
-             @cref cur2: Efl.Text.Cursor.Cursor; [[End of range]]
+             @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
+             @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
          }
          return: iterator<ptr(Eina.Rect)> @owned; [[
             Iterator on all simple geometries of the given range
@@ -209,8 +209,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          ]]
          legacy: null;
          params {
-            @in cur1: ptr(Efl.Text.Cursor.Cursor); [[Range start position]]
-            @in cur2: ptr(Efl.Text.Cursor.Cursor); [[Range end position]]
+            @in cur1: ptr(Efl.Text_Cursor_Cursor); [[Range start position]]
+            @in cur2: ptr(Efl.Text_Cursor_Cursor); [[Range end position]]
          }
       }
       // Obstacles
@@ -263,7 +263,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
            @since 1.21
          ]]
          legacy: null;
-         return: ptr(Eina.Future) @owned; [[Future for layout result]]
+         return: future<Eina.Rect> @owned; [[Future for layout result]]
       }
    }
    implements {
@@ -277,86 +277,86 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
       Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_state_prepare;
-      Efl.Text.Font.font { get; set; }
-      Efl.Text.Font.font_source { get; set; }
-      Efl.Text.Font.font_fallbacks { get; set; }
-      Efl.Text.Font.font_lang { get; set; }
-      Efl.Text.Font.font_weight { get; set; }
-      Efl.Text.Font.font_slant { get; set; }
-      Efl.Text.Font.font_width { get; set; }
-      Efl.Text.Font.font_bitmap_scalable { get; set; }
-      Efl.Text.Style.normal_color { get; set; }
-      Efl.Text.Style.backing_type { get; set; }
-      Efl.Text.Style.backing_color { get; set; }
-      Efl.Text.Style.underline_type { get; set; }
-      Efl.Text.Style.underline_color { get; set; }
-      Efl.Text.Style.underline_height { get; set; }
-      Efl.Text.Style.underline_dashed_color { get; set; }
-      Efl.Text.Style.underline_dashed_width { get; set; }
-      Efl.Text.Style.underline_dashed_gap { get; set; }
-      Efl.Text.Style.underline2_type { get; set; }
-      Efl.Text.Style.underline2_color { get; set; }
-      Efl.Text.Style.strikethrough_type { get; set; }
-      Efl.Text.Style.strikethrough_color { get; set; }
-      Efl.Text.Style.effect_type { get; set; }
-      Efl.Text.Style.outline_color { get; set; }
-      Efl.Text.Style.shadow_direction { get; set; }
-      Efl.Text.Style.shadow_color { get; set; }
-      Efl.Text.Style.glow_color { get; set; }
-      Efl.Text.Style.glow2_color { get; set; }
-      Efl.Text.Style.gfx_filter { get; set; }
-      Efl.Text.Format.ellipsis { get; set; }
-      Efl.Text.Format.wrap { get; set; }
-      Efl.Text.Format.multiline { get; set; }
-      Efl.Text.Format.halign { get; set; }
-      Efl.Text.Format.halign_auto_type { get; set; }
-      Efl.Text.Format.valign { get; set; }
-      Efl.Text.Format.linegap { get; set; }
-      Efl.Text.Format.linerelgap { get; set; }
-      Efl.Text.Format.tabstops { get; set; }
-      Efl.Text.Format.password { get; set; }
-      Efl.Text.Format.replacement_char { get; set; }
-      Efl.Text.Cursor.cursor { get; }
-      Efl.Text.Cursor.cursor_position { set; get; }
-      Efl.Text.Cursor.cursor_content { get; }
-      Efl.Text.Cursor.cursor_geometry { get; }
-      Efl.Text.Cursor.cursor_new;
-      Efl.Text.Cursor.cursor_free;
-      Efl.Text.Cursor.cursor_equal;
-      Efl.Text.Cursor.cursor_compare;
-      Efl.Text.Cursor.cursor_copy;
-      Efl.Text.Cursor.cursor_char_next;
-      Efl.Text.Cursor.cursor_char_prev;
-      Efl.Text.Cursor.cursor_paragraph_char_first;
-      Efl.Text.Cursor.cursor_paragraph_char_last;
-      Efl.Text.Cursor.cursor_word_start;
-      Efl.Text.Cursor.cursor_word_end;
-      Efl.Text.Cursor.cursor_line_char_first;
-      Efl.Text.Cursor.cursor_line_char_last;
-      Efl.Text.Cursor.cursor_paragraph_first;
-      Efl.Text.Cursor.cursor_paragraph_last;
-      Efl.Text.Cursor.cursor_paragraph_next;
-      Efl.Text.Cursor.cursor_paragraph_prev;
-      Efl.Text.Cursor.cursor_line_jump_by;
-      Efl.Text.Cursor.cursor_coord_set;
-      Efl.Text.Cursor.cursor_text_insert;
-      Efl.Text.Cursor.cursor_char_delete;
-      Efl.Text.Annotate.annotation { set; get; }
-      Efl.Text.Annotate.range_annotations_get;
-      Efl.Text.Annotate.annotation_insert;
-      Efl.Text.Annotate.annotation_del;
-      Efl.Text.Annotate.annotation_is_item;
-      Efl.Text.Annotate.item_geometry_get;
-      Efl.Text.Annotate.annotation_positions_get;
-      Efl.Text.Annotate.cursor_item_annotation { get; }
-      Efl.Text.Annotate.cursor_item_insert;
-      Efl.Text.Markup.markup { set; get; }
-      Efl.Text.Markup.cursor_markup_insert;
-      Efl.Gfx.scale { set; }
+      Efl.Text_Font.font { get; set; }
+      Efl.Text_Font.font_source { get; set; }
+      Efl.Text_Font.font_fallbacks { get; set; }
+      Efl.Text_Font.font_lang { get; set; }
+      Efl.Text_Font.font_weight { get; set; }
+      Efl.Text_Font.font_slant { get; set; }
+      Efl.Text_Font.font_width { get; set; }
+      Efl.Text_Font.font_bitmap_scalable { get; set; }
+      Efl.Text_Style.normal_color { get; set; }
+      Efl.Text_Style.backing_type { get; set; }
+      Efl.Text_Style.backing_color { get; set; }
+      Efl.Text_Style.underline_type { get; set; }
+      Efl.Text_Style.underline_color { get; set; }
+      Efl.Text_Style.underline_height { get; set; }
+      Efl.Text_Style.underline_dashed_color { get; set; }
+      Efl.Text_Style.underline_dashed_width { get; set; }
+      Efl.Text_Style.underline_dashed_gap { get; set; }
+      Efl.Text_Style.underline2_type { get; set; }
+      Efl.Text_Style.underline2_color { get; set; }
+      Efl.Text_Style.strikethrough_type { get; set; }
+      Efl.Text_Style.strikethrough_color { get; set; }
+      Efl.Text_Style.effect_type { get; set; }
+      Efl.Text_Style.outline_color { get; set; }
+      Efl.Text_Style.shadow_direction { get; set; }
+      Efl.Text_Style.shadow_color { get; set; }
+      Efl.Text_Style.glow_color { get; set; }
+      Efl.Text_Style.glow2_color { get; set; }
+      Efl.Text_Style.gfx_filter { get; set; }
+      Efl.Text_Format.ellipsis { get; set; }
+      Efl.Text_Format.wrap { get; set; }
+      Efl.Text_Format.multiline { get; set; }
+      Efl.Text_Format.halign { get; set; }
+      Efl.Text_Format.halign_auto_type { get; set; }
+      Efl.Text_Format.valign { get; set; }
+      Efl.Text_Format.linegap { get; set; }
+      Efl.Text_Format.linerelgap { get; set; }
+      Efl.Text_Format.tabstops { get; set; }
+      Efl.Text_Format.password { get; set; }
+      Efl.Text_Format.replacement_char { get; set; }
+      Efl.Text_Cursor.text_cursor { get; }
+      Efl.Text_Cursor.cursor_position { set; get; }
+      Efl.Text_Cursor.cursor_content { get; }
+      Efl.Text_Cursor.cursor_geometry { get; }
+      Efl.Text_Cursor.cursor_new;
+      Efl.Text_Cursor.cursor_free;
+      Efl.Text_Cursor.cursor_equal;
+      Efl.Text_Cursor.cursor_compare;
+      Efl.Text_Cursor.cursor_copy;
+      Efl.Text_Cursor.cursor_char_next;
+      Efl.Text_Cursor.cursor_char_prev;
+      Efl.Text_Cursor.cursor_paragraph_char_first;
+      Efl.Text_Cursor.cursor_paragraph_char_last;
+      Efl.Text_Cursor.cursor_word_start;
+      Efl.Text_Cursor.cursor_word_end;
+      Efl.Text_Cursor.cursor_line_char_first;
+      Efl.Text_Cursor.cursor_line_char_last;
+      Efl.Text_Cursor.cursor_paragraph_first;
+      Efl.Text_Cursor.cursor_paragraph_last;
+      Efl.Text_Cursor.cursor_paragraph_next;
+      Efl.Text_Cursor.cursor_paragraph_prev;
+      Efl.Text_Cursor.cursor_line_jump_by;
+      Efl.Text_Cursor.cursor_coord_set;
+      Efl.Text_Cursor.cursor_text_insert;
+      Efl.Text_Cursor.cursor_char_delete;
+      Efl.Text_Annotate.annotation { set; get; }
+      Efl.Text_Annotate.range_annotations_get;
+      Efl.Text_Annotate.annotation_insert;
+      Efl.Text_Annotate.annotation_del;
+      Efl.Text_Annotate.annotation_is_item;
+      Efl.Text_Annotate.item_geometry_get;
+      Efl.Text_Annotate.annotation_positions_get;
+      Efl.Text_Annotate.cursor_item_annotation { get; }
+      Efl.Text_Annotate.cursor_item_insert;
+      Efl.Text_Markup.markup { set; get; }
+      Efl.Text_Markup.cursor_markup_insert;
+      Efl.Gfx.Entity.scale { set; }
    }
    events {
-      cursor,changed; [[Called when cursor changed]]
-      changed; [[Called when canvas text changed ]]
-      style_insets,changed; [[Called when the property @.style_insets changed.]]
+      cursor,changed: void; [[Called when cursor changed]]
+      changed: void; [[Called when canvas text changed ]]
+      style_insets,changed: void; [[Called when the property @.style_insets changed.]]
    }
 }

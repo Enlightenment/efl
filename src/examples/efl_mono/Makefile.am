@@ -4,6 +4,11 @@ include $(top_srcdir)/src/Makefile_Eolian_Helper.am
 include $(top_srcdir)/src/Makefile_Eolian_Mono_Helper.am
 include $(top_srcdir)/src/Makefile_Efl_Mono_MSBuild_Gen_Helper.am
 
+# Eolian_Files_Helper
+# Thus we need to override it here in order to make its pattern
+# rules work properly.
+_EOLIAN_GEN_DEP = ../../bin/eolian/eolian_gen${EXEEXT}
+
 SRCS = example_numberwrapper.c
 EXTRA_FILES = example_numberwrapper.eo
 EXTRA_PROGRAMS =
@@ -38,13 +43,6 @@ COMMON_FLAGS += \
 -fPIC -DPIC
 endif
 
-
-%.eo.c: %.eo
-	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) -gc -o c:$@ $<
-
-%.eo.h: %.eo
-	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) -gh -o h:$@ $<
-
 example_numberwrapper.c: example_numberwrapper.eo.h example_numberwrapper.eo.c
 
 noinst_lib_LTLIBRARIES = libexample_numberwrapper.la
@@ -66,11 +64,11 @@ example_numberwrapper.eo.cs: example_numberwrapper.eo
 	$(AM_V_EOLMONO) \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport example_numberwrapper -o $@ -r $(top_builddir)/src/bindings/mono/efl_mono/efl_libs.csv $<
 
-EoInherit01_SOURCES = EoInherit01.cs example_numberwrapper.eo.cs
+EoInherit01_SOURCES = EoInherit01.cs
 #EoInherit01_files = $(EoInherit01_exe_srcs) example_numberwrapper.eo.cs
-EoInherit01$(EXEEXT): $(EoInherit01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll libexample_numberwrapper.la EoInherit01$(EXEEXT).config
+EoInherit01$(EXEEXT): $(EoInherit01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll libexample_numberwrapper.la EoInherit01$(EXEEXT).config example_numberwrapper.eo.cs
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 EoInherit01.csproj: $(EoInherit01_SOURCES) $(am_dirstamp) libexample_numberwrapper.la
 	@rm -f $@
@@ -87,10 +85,10 @@ EoInherit01$(EXEEXT).config:
 	echo "  </runtime>" >> $@
 	echo "</configuration>" >> $@
 
-FunctionPointer01_SOURCES = FunctionPointer01.cs example_numberwrapper.eo.cs
-FunctionPointer01$(EXEEXT): $(FunctionPointer01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll libexample_numberwrapper.la
+FunctionPointer01_SOURCES = FunctionPointer01.cs
+FunctionPointer01$(EXEEXT): $(FunctionPointer01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll libexample_numberwrapper.la example_numberwrapper.eo.cs
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 FunctionPointer01.csproj: $(FunctionPointer01_SOURCES) $(am_dirstamp) libexample_numberwrapper.la
 	@rm -f $@

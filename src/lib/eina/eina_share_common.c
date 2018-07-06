@@ -85,6 +85,14 @@
  * @cond LOCAL
  */
 
+/** The global Eina stringshare log domain */
+extern int _eina_share_stringshare_log_dom;
+
+#ifdef DBG_STRINGSHARE
+#undef DBG_STRINGSHARE
+#endif
+#define DBG_STRINGSHARE(...) EINA_LOG_DOM_DBG(_eina_share_stringshare_log_dom, __VA_ARGS__)
+
 #define EINA_SHARE_COMMON_BUCKETS 256
 #define EINA_SHARE_COMMON_MASK 0xFF
 #define EINA_SHARE_COMMON_BUCKET_IDX(h) ((h >> 8) & EINA_SHARE_COMMON_MASK)
@@ -216,23 +224,19 @@ _eina_share_common_population_stats(Eina_Share *share)
 {
    unsigned int i;
 
-      fprintf(stderr, "eina share_common statistic:\n");
-      fprintf(stderr,
-           " * maximum shared strings : %i\n",
-           share->population.max);
-      fprintf(stderr,
-           " * maximum shared strings per node : %i\n",
-           share->max_node_population);
+      DBG_STRINGSHARE("eina share_common statistic:");
+      DBG_STRINGSHARE(" * maximum shared strings : %i",
+                      share->population.max);
+      DBG_STRINGSHARE(" * maximum shared strings per node : %i",
+                      share->max_node_population);
 
    for (i = 0;
         i < sizeof (share->population_group) /
         sizeof (share->population_group[0]);
         ++i)
-      fprintf(stderr,
-              "DDD: %i strings of length %u, max strings: %i\n",
-              share->population_group[i].count,
-              i,
-              share->population_group[i].max);
+      DBG_STRINGSHARE("DDD: %i strings of length %u, max strings: %i",
+                      share->population_group[i].count, i,
+                      share->population_group[i].max);
 }
 
 static void
@@ -568,8 +572,8 @@ eina_iterator_array_check(const Eina_Rbtree *rbtree EINA_UNUSED,
    fdata->used += sizeof(Eina_Share_Common_Head);
    for (node = head->head; node; node = node->next)
      {
-        printf("DDD: %5i %5i ", node->length, node->references);
-        printf("'%.*s'\n", node->length, ((char *)node) + sizeof(Eina_Share_Common_Node));
+        EINA_LOG_DBG("DDD: %5i %5i ", node->length, node->references);
+        EINA_LOG_DBG("'%.*s'", node->length, ((char *)node) + sizeof(Eina_Share_Common_Node));
         fdata->used += sizeof(Eina_Share_Common_Node);
         fdata->used += node->length;
         fdata->saved += (node->references - 1) * node->length;
@@ -903,19 +907,15 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    di.saved = 0;
    di.dups = 0;
    di.unique = 0;
-   printf("DDD:   len   ref string\n");
-   printf("DDD:-------------------\n");
 
    eina_spinlock_take(&_mutex_big);
    for (i = 0; i < EINA_SHARE_COMMON_BUCKETS; i++)
      {
         if (!share->share->buckets[i])
           {
-             continue; //	printf("DDD: BUCKET # %i (HEAD=%i, NODE=%i)\n", i,
-
+             continue;
           }
 
-//	       sizeof(Eina_Share_Common_Head), sizeof(Eina_Share_Common_Node));
         it = eina_rbtree_iterator_prefix(
               (Eina_Rbtree *)share->share->buckets[i]);
         eina_iterator_foreach(it, EINA_EACH_CB(eina_iterator_array_check), &di);
@@ -929,26 +929,24 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    di.saved += share->population_group[0].count * sizeof(char);
    di.saved += share->population_group[1].count * sizeof(char) * 2;
 #endif
-   printf("DDD:-------------------\n");
-   printf("DDD: usage (bytes) = %i, saved = %i (%3.0f%%)\n",
-          di.used, di.saved, di.used ? (di.saved * 100.0 / di.used) : 0.0);
-   printf("DDD: unique: %d, duplicates: %d (%3.0f%%)\n",
-          di.unique, di.dups, di.unique ? (di.dups * 100.0 / di.unique) : 0.0);
+   EINA_LOG_DBG("DDD:-------------------");
+   EINA_LOG_DBG("DDD: usage (bytes) = %i, saved = %i (%3.0f%%)",
+                di.used, di.saved, di.used ? (di.saved * 100.0 / di.used) : 0.0);
+   EINA_LOG_DBG("DDD: unique: %d, duplicates: %d (%3.0f%%)",
+                di.unique, di.dups, di.unique ? (di.dups * 100.0 / di.unique) : 0.0);
 
 #ifdef EINA_STRINGSHARE_USAGE
-   printf("DDD: Allocated strings: %i\n",     share->population.count);
-   printf("DDD: Max allocated strings: %i\n", share->population.max);
-   printf("DDD: Max shared strings per node : %i\n", share->max_node_population);
+   DBG_STRINGSHARE("DDD: Allocated strings: %i", share->population.count);
+   DBG_STRINGSHARE("DDD: Max allocated strings: %i", share->population.max);
+   DBG_STRINGSHARE("DDD: Max shared strings per node : %i", share->max_node_population);
 
    for (i = 0;
         i < sizeof (share->population_group) /
         sizeof (share->population_group[0]);
         ++i)
-      fprintf(stderr,
-              "DDD: %i strings of length %u, max strings: %i\n",
-              share->population_group[i].count,
-              i,
-              share->population_group[i].max);
+      DBG_STRINGSHARE("DDD: %i strings of length %u, max strings: %i",
+                      share->population_group[i].count, i,
+                      share->population_group[i].max);
 #endif
 
    eina_spinlock_release(&_mutex_big);

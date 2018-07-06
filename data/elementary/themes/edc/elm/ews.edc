@@ -126,7 +126,7 @@ group { name: "elm/ews/decoration/default";
             rel2.relative: 1.0 0.85;
          }
       }
-      part { name: "e.swallow.icon"; type: SWALLOW; nomouse;
+      part { name: "elm.swallow.icon"; type: SWALLOW; nomouse;
          description { state: "default" 0.0;
             rel1.to: "icon";
             rel1.relative: 0.15 0.15;

@@ -90,7 +90,7 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj2");
-   h = efl_gfx_size_get(o).h;
+   h = efl_gfx_entity_size_get(o).h;
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
@@ -105,7 +105,7 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj3");
-   EINA_SIZE2D(w, h) = efl_gfx_size_get(o);
+   EINA_SIZE2D(w, h) = efl_gfx_entity_size_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
@@ -122,13 +122,13 @@ _anim_cb(void *data)
                                  -256, 255, 255, 255, 0, 0, 0);
      }
    if (ad->backface_culling)
-     efl_gfx_visible_set(o, efl_gfx_map_clockwise_get(o));
+     efl_gfx_entity_visible_set(o, efl_gfx_map_clockwise_get(o));
    else
-     efl_gfx_visible_set(o, 1);
+     efl_gfx_entity_visible_set(o, 1);
 
 
    o = evas_object_name_find(ad->canvas, "obj4");
-   rect = efl_gfx_geometry_get(o);
+   rect = efl_gfx_entity_geometry_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);

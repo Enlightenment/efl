@@ -1,4 +1,4 @@
-enum Efl.Canvas.Layout.Part_Type
+enum Efl.Canvas.Layout_Part_Type
 {
    [[Type of a part in an Efl.Canvas.Layout object (edje object).]]
    none      = 0,  [[None type value, indicates invalid parts.]]

@@ -1,7 +1,177 @@
-group { "efl/focus_highlight/top";
-   inherit: "elm/focus_highlight/top/default";
+group { name: "efl/focus_highlight/top";
+   images.image: "box_glow.png" COMP;
+   images.image: "box_outline.png" COMP;
+   data.item: "animate" "on";
+   script {
+      public s_x, s_y, s_w, s_h; /* source */
+      public difx, dify, difw, difh;
+      public g_anim_id;
+
+      public animator1(val, Float:pos) {
+         new x, y, w, h, dx, dy, dw, dh, Float:p;
+         p = 1.0 - ((1.0 - pos) * (1.0 - pos) * (1.0 - pos));
+         dx = round(float_mul(float(get_int(difx)), p));
+         x = get_int(s_x) + dx;
+         dy = round(float_mul(float(get_int(dify)), p));
+         y = get_int(s_y) + dy;
+         dw = round(float_mul(float(get_int(difw)), p));
+         w = get_int(s_w) + dw;
+         dh = round(float_mul(float(get_int(difh)), p));
+         h = get_int(s_h) + dh;
+         update_offset(x, y, w, h);
+
+         if (pos >= 1.0) {
+            set_int(g_anim_id, 0);
+         }
+      }
+
+      public update_offset(x, y, w, h) {
+         set_state_val(PART:"base", STATE_REL1_OFFSET, x, y);
+         set_state_val(PART:"base", STATE_REL2_OFFSET, x + w, y + h);
+      }
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            new x1, y1, w1, h1, x2, y2, w2, h2;
+            new anim_id;
+            
+            anim_id = get_int(g_anim_id);
+            if (anim_id != 0) {
+               cancel_anim(anim_id);
+            }
+
+            x1 = getarg(2);
+            y1 = getarg(3);
+            w1 = getarg(4);
+            h1 = getarg(5);
+            x2 = getarg(6);
+            y2 = getarg(7);
+            w2 = getarg(8);
+            h2 = getarg(9);
+
+            set_int(s_x, x1);
+            set_int(s_y, y1);
+            set_int(s_w, w1);
+            set_int(s_h, h1);
+            set_int(difx, x2 - x1);
+            set_int(dify, y2 - y1);
+            set_int(difw, w2 - w1);
+            set_int(difh, h2 - h1);
+
+            custom_state(PART:"base", "default", 0.0);
+            set_state_val(PART:"base", STATE_REL1, 0.0, 0.0);
+            set_state_val(PART:"base", STATE_REL2, 0.0, 0.0);
+            update_offset(x1, y1, w1, h1);
+            set_state(PART:"base", "custom", 0.0);
+            
+            anim_id = anim(0.2, "animator1", 1);
+            set_int(g_anim_id, anim_id);
+         }
+      }
+   }
+   parts {
+      part { name: "base"; type: SPACER;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "glow";
+            rel2.to: "glow";
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "glow"; mouse_events: 0;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            image.normal: "box_glow.png";
+            image.border: 12 12 12 12;
+            image.middle: 0;
+            fill.smooth: 0;
+            rel1.to: "base";
+            rel1.offset: -7 -7;
+            rel2.to: "base";
+            rel2.offset: 5 5;
+         }
+      }
+      part { name: "sel"; mouse_events: 0;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            image.normal: "box_outline.png";
+            image.border: 12 12 12 12;
+            image.middle: 0;
+            fill.smooth: 0;
+            rel1.to: "glow";
+            rel2.to: "glow";
+            color: 255 255 255 0;
+         }
+         description { state: "hi" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "efl,action,focus,show"; source: "efl";
+         action: ACTION_STOP;
+         target: "pulse";
+         target: "pulse2";
+         after: "go2";
+      }
+      program { name: "go2";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.2;
+         target: "clip";
+         after: "pulse";
+         after: "go3";
+      }
+      program { name: "go3";
+         action: SIGNAL_EMIT "efl,action,focus,show,end" "efl";
+      }
+      program {
+         signal: "efl,action,focus,hide"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.4;
+         target: "clip";
+         after: "stop2";
+      }
+      program { name: "stop2";
+         action: SIGNAL_EMIT "efl,action,focus,hide,end" "efl";
+         after: "stop3";
+      }
+      program { name: "stop3";
+         action: ACTION_STOP;
+         target: "pulse";
+         target: "pulse2";
+      }
+      program { name: "pulse";
+         action: STATE_SET "hi" 0.0;
+         transition: SINUSOIDAL 0.2;
+         in: 3.0 0.0;
+         target: "sel";
+         after: "pulse2";
+      }
+      program { name: "pulse2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.4;
+         target: "sel";
+         after: "pulse";
+      }
+      program {
+         signal: "efl,state,anim,stop"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
 }
 
-group { "efl/focus_highlight/top:blank";
-   inherit: "elm/focus_highlight/top/blank";
+group { name: "efl/focus_highlight/top:blank";
+   parts {
+   }
 }

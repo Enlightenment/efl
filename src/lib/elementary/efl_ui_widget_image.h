@@ -48,7 +48,6 @@ struct _Efl_Ui_Image_Data
    Evas_Object          *prev_img;
    Ecore_Timer          *anim_timer;
 
-
    struct {
       Eo                *copier;
       Eina_Binbuf       *binbuf;
@@ -76,14 +75,17 @@ struct _Efl_Ui_Image_Data
    } async;
 
    Efl_Ui_Image_Preload_Status preload_status;
-   Efl_Image_Scale_Type scale_type;
+   Efl_Gfx_Image_Scale_Type scale_type;
 
    const char           *stdicon;
 
-   Efl_Model            *model;
-   Efl_Future           *pfuture;
-   Eina_Stringshare     *prop_con;
-   Eina_Stringshare     *prop_key;
+   struct {
+      Efl_Model         *model;
+      Eina_Stringshare  *file;
+      Eina_Stringshare  *key;
+
+      Eina_Bool          icon : 1;
+   } property;
 
    struct {
       int       requested_size;
@@ -102,7 +104,6 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             async_enable : 1;
    Eina_Bool             scale_up : 1;
    Eina_Bool             scale_down : 1;
-   Eina_Bool             con_icon : 1;
    Eina_Bool             legacy_align : 1;
 };
 
@@ -117,7 +118,7 @@ struct _Efl_Ui_Image_Data
   EFL_UI_IMAGE_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -126,7 +127,7 @@ struct _Efl_Ui_Image_Data
   EFL_UI_IMAGE_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",       \
+       ERR("No widget data for object %p (%s)",       \
            o, evas_object_type_get(o));               \
        return val;                                    \
     }

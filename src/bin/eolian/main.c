@@ -282,7 +282,7 @@ void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
                             char **cnameu, char **cnamel)
 {
    char *cn = NULL, *cnu = NULL, *cnl = NULL;
-   cn = eo_gen_c_full_name_get(eolian_class_full_name_get(cl));
+   cn = eo_gen_c_full_name_get(eolian_class_name_get(cl));
    if (!cn)
      abort();
    if (cname)
@@ -318,17 +318,17 @@ void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
 }
 
 static Eina_Bool
-_write_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
+_write_header(const Eolian_State *eos, const Eolian_State *state, const char *ofname,
               const char *ifname, Eina_Bool legacy)
 {
    INF("generating header: %s (legacy: %d)", ofname, legacy);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   eo_gen_types_header_gen(src, eolian_declarations_get_by_file(eos, ifname),
+   eo_gen_types_header_gen(state, eolian_state_objects_by_file_get(eos, ifname),
                            buf, EINA_TRUE, legacy);
    buf = _include_guard(ifname, "TYPES", buf);
 
-   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(src, ifname);
+   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(eos, ifname);
    if (cltd)
      {
         cltd = _include_guard(ifname, "CLASS_TYPE", cltd);
@@ -337,8 +337,8 @@ _write_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
         eina_strbuf_free(cltd);
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
-   eo_gen_header_gen(src, cl, buf, legacy);
+   const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
+   eo_gen_header_gen(state, cl, buf, legacy);
    if (cl || !legacy)
      {
         buf = _include_guard(_get_filename(ofname), NULL, buf);
@@ -354,16 +354,16 @@ _write_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
 }
 
 static Eina_Bool
-_write_stub_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
+_write_stub_header(const Eolian_State *eos, const Eolian_State *state, const char *ofname,
                    const char *ifname)
 {
    INF("generating stub header: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   eo_gen_types_header_gen(src, eolian_declarations_get_by_file(eos, ifname),
+   eo_gen_types_header_gen(state, eolian_state_objects_by_file_get(eos, ifname),
                            buf, EINA_FALSE, EINA_FALSE);
 
-   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(src, ifname);
+   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(eos, ifname);
    if (cltd)
      {
         eina_strbuf_prepend_char(buf, '\n');
@@ -379,14 +379,14 @@ _write_stub_header(const Eolian *eos, const Eolian_Unit *src, const char *ofname
 }
 
 static Eina_Bool
-_write_source(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
+_write_source(const Eolian_State *eos, const char *ofname,
               const char *ifname, Eina_Bool eot)
 {
    INF("generating source: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
-   eo_gen_types_source_gen(eolian_declarations_get_by_file(eos, ifname), buf);
+   const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
+   eo_gen_types_source_gen(eolian_state_objects_by_file_get(eos, ifname), buf);
    eo_gen_source_gen(cl, buf);
    if (cl || (eot && eina_strbuf_length_get(buf)))
      {
@@ -402,11 +402,11 @@ _write_source(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
 }
 
 static Eina_Bool
-_write_impl(const Eolian_Unit *src, const char *ofname, const char *ifname)
+_write_impl(const Eolian_State *eos, const char *ofname, const char *ifname)
 {
    INF("generating impl: %s", ofname);
 
-   const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
+   const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
    if (!cl)
      return EINA_FALSE;
 
@@ -432,7 +432,7 @@ main(int argc, char **argv)
    eina_init();
    eolian_init();
 
-   Eolian *eos = eolian_new();
+   Eolian_State *eos = eolian_state_new();
 
    const char *dom = "eolian_gen";
    _eolian_gen_log_dom = eina_log_domain_register(dom, EINA_COLOR_GREEN);
@@ -534,7 +534,7 @@ main(int argc, char **argv)
 
    if (scan_system)
      {
-        if (!eolian_system_directory_scan(eos))
+        if (!eolian_state_system_directory_add(eos))
           {
              fprintf(stderr, "eolian: could not scan system directory\n");
              goto end;
@@ -544,15 +544,14 @@ main(int argc, char **argv)
    const char *inc;
    EINA_LIST_FREE(includes, inc)
      {
-        if (!eolian_directory_scan(eos, inc))
+        if (!eolian_state_directory_add(eos, inc))
           {
              fprintf(stderr, "eolian: could not scan '%s'\n", inc);
              goto end;
           }
      }
 
-   const Eolian_Unit *src = eolian_file_parse(eos, input);
-   if (!src)
+   if (!eolian_state_file_parse(eos, input))
      {
         fprintf(stderr, "eolian: could not parse file '%s'\n", input);
         goto end;
@@ -567,15 +566,15 @@ main(int argc, char **argv)
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
-     succ = _write_header(eos, src, outs[_get_bit_pos(GEN_H)], eobn, EINA_FALSE);
+     succ = _write_header(eos, eos, outs[_get_bit_pos(GEN_H)], eobn, EINA_FALSE);
    if (succ && (gen_what & GEN_H_LEGACY))
-     succ = _write_header(eos, src, outs[_get_bit_pos(GEN_H_LEGACY)], eobn, EINA_TRUE);
+     succ = _write_header(eos, eos, outs[_get_bit_pos(GEN_H_LEGACY)], eobn, EINA_TRUE);
    if (succ && (gen_what & GEN_H_STUB))
-     succ = _write_stub_header(eos, src, outs[_get_bit_pos(GEN_H_STUB)], eobn);
+     succ = _write_stub_header(eos, eos, outs[_get_bit_pos(GEN_H_STUB)], eobn);
    if (succ && (gen_what & GEN_C))
-     succ = _write_source(eos, src, outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
+     succ = _write_source(eos, outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
    if (succ && (gen_what & GEN_C_IMPL))
-     succ = _write_impl(src, outs[_get_bit_pos(GEN_C_IMPL)], eobn);
+     succ = _write_impl(eos, outs[_get_bit_pos(GEN_C_IMPL)], eobn);
 
    if (!succ)
      goto end;
@@ -593,7 +592,7 @@ end:
      free(outs[i]);
    free(basen);
 
-   eolian_free(eos);
+   eolian_state_free(eos);
    eolian_shutdown();
    eina_shutdown();
 

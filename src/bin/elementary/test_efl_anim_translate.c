@@ -5,9 +5,9 @@
 
 typedef struct _App_Data
 {
-   Efl_Animation        *translate_rb_anim;
-   Efl_Animation        *translate_lt_anim;
-   Efl_Animation_Player *anim_obj;
+   Efl_Canvas_Animation        *translate_rb_anim;
+   Efl_Canvas_Animation        *translate_lt_anim;
+   Efl_Canvas_Animation_Player *anim_obj;
 
    Eina_Bool             is_btn_translated;
 } App_Data;
@@ -27,8 +27,8 @@ _anim_ended_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Animation_Player_Running_Event_Info *event_info = event->info;
-   double progress = event_info->progress;
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double progress = event_running->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
 
@@ -83,13 +83,13 @@ test_efl_anim_translate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_show(btn);
 
    //Translate Animation to right bottom relatively
-   Efl_Animation *translate_rb_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, win);
+   Efl_Canvas_Animation *translate_rb_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
    efl_animation_translate_set(translate_rb_anim, 0, 0, 100, 100);
    efl_animation_duration_set(translate_rb_anim, 1.0);
    efl_animation_final_state_keep_set(translate_rb_anim, EINA_TRUE);
 
    //Translate Animation to left top relatively
-   Efl_Animation *translate_lt_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, win);
+   Efl_Canvas_Animation *translate_lt_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
    efl_animation_translate_set(translate_lt_anim, 100, 100, 0, 0);
    efl_animation_duration_set(translate_lt_anim, 1.0);
    efl_animation_final_state_keep_set(translate_lt_anim, EINA_TRUE);
@@ -97,7 +97,7 @@ test_efl_anim_translate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    //Initialize App Data
    ad->translate_rb_anim = translate_rb_anim;
    ad->translate_lt_anim = translate_lt_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+   ad->anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
                           efl_animation_player_target_set(efl_added, btn));
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
@@ -149,13 +149,13 @@ test_efl_anim_translate_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_U
    evas_object_show(abs_center);
 
    //Translate Animation to right bottom absolutely
-   Efl_Animation *translate_rb_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, win);
+   Efl_Canvas_Animation *translate_rb_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
    efl_animation_translate_absolute_set(translate_rb_anim, 0, 0, 100, 100);
    efl_animation_duration_set(translate_rb_anim, 1.0);
    efl_animation_final_state_keep_set(translate_rb_anim, EINA_TRUE);
 
    //Translate Animation to left top absolutely
-   Efl_Animation *translate_lt_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, win);
+   Efl_Canvas_Animation *translate_lt_anim = efl_add(EFL_CANVAS_ANIMATION_TRANSLATE_CLASS, win);
    efl_animation_translate_absolute_set(translate_lt_anim, 100, 100, 0, 0);
    efl_animation_duration_set(translate_lt_anim, 1.0);
    efl_animation_final_state_keep_set(translate_lt_anim, EINA_TRUE);
@@ -164,7 +164,7 @@ test_efl_anim_translate_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_U
    ad->translate_rb_anim = translate_rb_anim;
    ad->translate_lt_anim = translate_lt_anim;
    ad->is_btn_translated = EINA_FALSE;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+   ad->anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
                           efl_animation_player_target_set(efl_added, btn));
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);

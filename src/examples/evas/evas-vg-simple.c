@@ -309,7 +309,7 @@ _1_basic_shape_test()
   evas_object_event_callback_add(d.vg, EVAS_CALLBACK_KEY_DOWN, _basic_shape_key_handle, NULL);
   puts(basic_shape_menu);
 
-  container = evas_vg_container_add(NULL);
+  container = evas_vg_container_add(d.vg);
 
   // Line
   shape = evas_vg_shape_add(container);
@@ -471,25 +471,26 @@ _2_interpolation_test()
   Efl_VG *shape;
 
   reset_test();
+
   evas_object_event_callback_add(d.vg, EVAS_CALLBACK_KEY_DOWN, _interpolation_key_handle, NULL);
   animator = ecore_animator_timeline_add(1, _interpolation_keyframe, NULL);
   puts(interpolation_menu);
 
-  shape = evas_vg_shape_add(NULL);
+  shape = evas_vg_shape_add(d.vg);
   evas_vg_shape_append_svg_path(shape, morph1[0]);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
   evas_vg_node_origin_set(shape, 100, 100);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
-  shape = evas_vg_shape_add(NULL);
+  shape = evas_vg_shape_add(d.vg);
   evas_vg_shape_append_svg_path(shape, morph1[1]);
   evas_vg_shape_stroke_color_set(shape, 0, 0, 255, 255);
   evas_vg_shape_stroke_width_set(shape, 10);
   evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
-  shape = evas_vg_shape_add(NULL);
+  shape = evas_vg_shape_add(d.vg);
   evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
@@ -517,13 +518,14 @@ _main_menu()
    // create the initial screen
    d.vg = evas_object_vg_add(d.evas);
    evas_object_show(d.vg);
-   shape = evas_vg_shape_add(NULL);
+
+   shape = evas_vg_shape_add(d.vg);
    evas_vg_shape_append_svg_path(shape, batman);
    evas_vg_node_color_set(shape, 10, 0, 0, 10);
    evas_vg_node_origin_set(shape, 0, 100);
 
    evas_object_vg_root_node_set(d.vg, shape);
-   
+
    _canvas_resize_cb(d.ee);
    puts(main_menu);
 }

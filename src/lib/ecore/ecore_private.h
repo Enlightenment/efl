@@ -5,6 +5,10 @@
 
 #include "ecore_internal.h"
 
+#include "ecore_exe.eo.h"
+#include "ecore_event_message.eo.h"
+#include "ecore_event_message_handler.eo.h"
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -87,6 +91,9 @@ typedef struct _Efl_Loop_Timer_Data Efl_Loop_Timer_Data;
 typedef struct _Efl_Loop_Future_Scheduler Efl_Loop_Future_Scheduler;
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 
+typedef struct _Efl_Task_Data Efl_Task_Data;
+typedef struct _Efl_Appthread_Data Efl_Appthread_Data;
+
 typedef struct _Message_Handler Message_Handler;
 typedef struct _Message Message;
 
@@ -142,9 +149,6 @@ struct _Efl_Loop_Data
    Eina_List           *win32_handlers_to_delete;
 # endif
 
-   Eina_List           *pending_futures;
-   Eina_List           *pending_promises;
-
    Eina_Inarray        *message_handlers;
    Eina_Inlist         *message_queue;
    unsigned int         message_walking;
@@ -172,8 +176,39 @@ struct _Efl_Loop_Data
       int               low;
    } pollers;
 
+   struct {
+      char      **environ_ptr;
+      char      **environ_copy;
+   } env;
+
    Eina_Bool            do_quit;
 };
+
+struct _Efl_Task_Data
+{
+   Eina_Stringshare  *command;
+   Eina_Array        *args;
+   Eina_Hash         *env;
+   Efl_Task_Priority  priority;
+   int                exit_code;
+   Efl_Task_Flags     flags;
+   Eina_Bool          command_dirty : 1;
+   Eina_Bool          exited : 1;
+};
+
+struct _Efl_Appthread_Data
+{
+   int read_listeners;
+   struct {
+      int in, out;
+      Eo *in_handler, *out_handler;
+      Eina_Bool can_read : 1;
+      Eina_Bool eos_read : 1;
+      Eina_Bool can_write : 1;
+   } fd, ctrl;
+   void *thdat;
+};
+
 
 #define EVAS_FRAME_QUEUING        1 /* for test */
 
@@ -306,7 +341,7 @@ _ecore_main_win32_handler_del(Eo *obj,
                               Efl_Loop_Data *pd,
                               Ecore_Win32_Handler *win32_handler);
 
-void       _ecore_main_content_clear(Efl_Loop_Data *pd);
+void       _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd);
 void       _ecore_main_shutdown(void);
 
 #if defined (_WIN32) || defined (__lv2ppu__) || defined (HAVE_EXOTIC)
@@ -321,11 +356,27 @@ static inline int _ecore_signal_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd
 static inline void _ecore_signal_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED) { }
 
 #else
+#define ECORE_SIGNALS 1
+typedef struct _Ecore_Signal_Pid_Info Ecore_Signal_Pid_Info;
+
+struct _Ecore_Signal_Pid_Info
+{
+   pid_t pid;
+   int exit_code;
+   int exit_signal;
+   siginfo_t info;
+};
+
 void _ecore_signal_shutdown(void);
 void _ecore_signal_init(void);
 void _ecore_signal_received_process(Eo *obj, Efl_Loop_Data *pd);
 int  _ecore_signal_count_get(Eo *obj, Efl_Loop_Data *pd);
 void _ecore_signal_call(Eo *obj, Efl_Loop_Data *pd);
+void _ecore_signal_pid_lock(void);
+void _ecore_signal_pid_unlock(void);
+void _ecore_signal_pid_register(pid_t pid, int fd);
+void _ecore_signal_pid_unregister(pid_t pid, int fd);
+
 #endif
 
 void       _ecore_exe_init(void);
@@ -481,18 +532,10 @@ extern Efl_Loop_Data *_mainloop_singleton_data;
 
 extern Efl_Version _app_efl_version;
 
-void ecore_loop_future_register(Efl_Loop *l, Efl_Future *f);
-void ecore_loop_future_unregister(Efl_Loop *l, Efl_Future *f);
-void ecore_loop_promise_register(Efl_Loop *l, Efl_Promise *p);
-void ecore_loop_promise_unregister(Efl_Loop *l, Efl_Promise *p);
-void ecore_loop_promise_fulfill(Efl_Promise *p);
-
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL
 
-#define EFL_LOOP_DATA efl_data_scope_get(efl_loop_main_get(EFL_LOOP_CLASS), EFL_LOOP_CLASS)
-
-EOAPI Eina_Bool efl_loop_message_process(Eo *obj);
+#define EFL_LOOP_DATA efl_data_scope_get(efl_main_loop_get(), EFL_LOOP_CLASS)
 
 #undef EAPI
 #define EAPI

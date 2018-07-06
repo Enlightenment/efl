@@ -5,6 +5,8 @@
 #include "ecore_wl2_private.h"
 #include "efl-hints-client-protocol.h"
 
+static void _ecore_wl2_window_hide_send(Ecore_Wl2_Window *window);
+
 void
 _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
 {
@@ -33,6 +35,15 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;
    window->surface_id = -1;
+
+   if (window->callback) wl_callback_destroy(window->callback);
+   window->callback = NULL;
+
+   window->outputs = eina_list_free(window->outputs);
+
+   ecore_wl2_window_surface_flush(window, EINA_TRUE);
+
+   window->commit_pending = EINA_FALSE;
 }
 
 static void
@@ -196,13 +207,15 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
      {
         window->saved.w = window->set_config.geometry.w;
         window->saved.h = window->set_config.geometry.h;
-        _configure_complete(window);
      }
    if (window->pending.configure && window->updating)
      ERR("Window shouldn't be rendering before initial configure");
 
    if (!window->updating)
      _ecore_wl2_window_configure_send(window);
+
+   if (window->pending.configure)
+     _configure_complete(window);
 }
 
 static const struct xdg_surface_listener _xdg_surface_listener =
@@ -216,7 +229,6 @@ _xdg_toplevel_cb_configure(void *data, struct xdg_toplevel *xdg_toplevel EINA_UN
    Ecore_Wl2_Window *win = data;
    uint32_t *s;
 
-   win->def_config.minimized = EINA_FALSE;
    win->def_config.maximized = EINA_FALSE;
    win->def_config.fullscreen = EINA_FALSE;
    win->def_config.focused = EINA_FALSE;
@@ -239,7 +251,6 @@ _xdg_toplevel_cb_configure(void *data, struct xdg_toplevel *xdg_toplevel EINA_UN
              break;
            case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
              win->def_config.focused = EINA_TRUE;
-             win->def_config.minimized = EINA_FALSE;
            default:
              break;
           }
@@ -280,6 +291,8 @@ _xdg_popup_cb_done(void *data, struct xdg_popup *xdg_popup EINA_UNUSED)
    if (!win) return;
 
    if (win->grab) _ecore_wl2_input_ungrab(win->grab);
+
+   _ecore_wl2_window_hide_send(win);
 }
 
 static const struct xdg_popup_listener _xdg_popup_listener =
@@ -356,6 +369,10 @@ _window_shell_surface_create(Ecore_Wl2_Window *window)
         xdg_toplevel_add_listener(window->xdg_toplevel,
                                       &_xdg_toplevel_listener, window);
 
+        if (window->deferred_minimize)
+          xdg_toplevel_set_minimized(window->xdg_toplevel);
+        window->deferred_minimize = EINA_FALSE;
+
         if (window->title)
           xdg_toplevel_set_title(window->xdg_toplevel, window->title);
         if (window->class)
@@ -417,6 +434,49 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
      }
 }
 
+static void
+_surface_enter(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output *op)
+{
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
+
+   win = data;
+
+   output = _ecore_wl2_output_find(win->display, op);
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   win->outputs = eina_list_append(win->outputs, output);
+}
+
+static void
+_surface_leave(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output *op)
+{
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *output;
+
+   win = data;
+   output = _ecore_wl2_output_find(win->display, op);
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   win->outputs = eina_list_remove(win->outputs, output);
+   if (!win->outputs)
+     {
+        Ecore_Wl2_Event_Window_Offscreen *ev;
+        ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Offscreen));
+        if (ev)
+          {
+             ev->win = win->id;
+             ecore_event_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN, ev, NULL, NULL);
+          }
+     }
+}
+
+static const struct wl_surface_listener _surface_listener =
+{
+   _surface_enter,
+   _surface_leave,
+};
+
 void
 _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 {
@@ -435,6 +495,8 @@ _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
+
+        wl_surface_add_listener(window->surface, &_surface_listener, window);
         if (window->display->wl.efl_aux_hints)
           {
              efl_aux_hints_get_supported_aux_hints(window->display->wl.efl_aux_hints, window->surface);
@@ -561,7 +623,6 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
      }
    else
      _configure_complete(window);
-   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -577,6 +638,19 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_unmap(subsurf);
 
+   if (window->commit_pending)
+     {
+        /* We've probably been hidden while an animator
+         * is ticking.  Cancel the callback.
+         */
+        window->commit_pending = EINA_FALSE;
+        if (window->callback)
+          {
+             wl_callback_destroy(window->callback);
+             window->callback = NULL;
+          }
+     }
+
    if (window->surface)
      {
         wl_surface_attach(window->surface, NULL, 0, 0);
@@ -584,6 +658,7 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
         window->commit_pending = EINA_FALSE;
      }
 
+   /* The commit added a callback, disconnect it */
    if (window->callback)
      {
         wl_callback_destroy(window->callback);
@@ -659,10 +734,10 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
    EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
 
    if (!input)
-     input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
-
-   window->moving = EINA_TRUE;
-
+     {
+        ERR("NULL input parameter is deprecated");
+        input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
+     }
    if (window->xdg_toplevel)
      xdg_toplevel_move(window->xdg_toplevel, input->wl.seat,
                            window->display->serial);
@@ -670,6 +745,8 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
      zxdg_toplevel_v6_move(window->zxdg_toplevel, input->wl.seat,
                            window->display->serial);
    ecore_wl2_display_flush(window->display);
+
+   _ecore_wl2_input_ungrab(input);
 }
 
 EAPI void
@@ -679,7 +756,10 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
 
    if (!input)
-     input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
+     {
+        ERR("NULL input parameter is deprecated");
+        input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
+     }
 
    if (window->xdg_toplevel)
      xdg_toplevel_resize(window->xdg_toplevel, input->wl.seat,
@@ -688,26 +768,8 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
      zxdg_toplevel_v6_resize(window->zxdg_toplevel, input->wl.seat,
                              window->display->serial, location);
    ecore_wl2_display_flush(window->display);
-}
 
-EAPI void
-ecore_wl2_window_raise(Ecore_Wl2_Window *window)
-{
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (window->zxdg_toplevel)
-     {
-        struct wl_array states;
-        uint32_t *s;
-
-        wl_array_init(&states);
-        s = wl_array_add(&states, sizeof(*s));
-        *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
-        _zxdg_toplevel_cb_configure(window, window->zxdg_toplevel,
-                                    window->set_config.geometry.w,
-                                    window->set_config.geometry.h, &states);
-        wl_array_release(&states);
-     }
+   _ecore_wl2_input_ungrab(input);
 }
 
 EAPI Eina_Bool
@@ -721,35 +783,16 @@ ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
 {
+   Ecore_Wl2_Surface *surf;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (window->alpha == alpha) return;
 
    window->alpha = alpha;
-
-   if (!window->alpha)
-     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
-                                        window->opaque.y, window->opaque.w,
-                                        window->opaque.h);
-   else
-     ecore_wl2_window_opaque_region_set(window, 0, 0, 0, 0);
-}
-
-EAPI void
-ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent)
-{
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (window->transparent == transparent) return;
-
-   window->transparent = transparent;
-
-   if (!window->transparent)
-     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
-                                        window->opaque.y, window->opaque.w,
-                                        window->opaque.h);
-   else
-     ecore_wl2_window_opaque_region_set(window, 0, 0, 0, 0);
+   surf = window->wl2_surface;
+   if (surf)
+     ecore_wl2_surface_reconfigure(surf, surf->w, surf->h, 0, alpha);
 }
 
 EAPI void
@@ -965,6 +1008,7 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
 
    eina_stringshare_replace(&window->title, title);
    if (!window->title) return;
+   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_title(window->xdg_toplevel, window->title);
@@ -980,6 +1024,7 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
 
    eina_stringshare_replace(&window->class, clas);
    if (!window->class) return;
+   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
@@ -1017,26 +1062,18 @@ ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int
    window->pending.geom = EINA_TRUE;
 }
 
-EAPI Eina_Bool
-ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
-
-   return window->set_config.minimized;
-}
-
 EAPI void
 ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 {
-   Eina_Bool prev;
-
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   prev = window->set_config.minimized;
    iconified = !!iconified;
-   if (prev == iconified) return;
 
-   window->set_config.minimized = iconified;
+   if (!window->xdg_toplevel && !window->zxdg_toplevel)
+     {
+        window->deferred_minimize = iconified;
+        return;
+     }
 
    if (iconified)
      {
@@ -1121,42 +1158,9 @@ ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window)
 EAPI Ecore_Wl2_Output *
 ecore_wl2_window_output_find(Ecore_Wl2_Window *window)
 {
-   Ecore_Wl2_Output *out;
-   Eina_Inlist *tmp;
-   int x = 0, y = 0;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
-   x = window->set_config.geometry.x;
-   y = window->set_config.geometry.y;
-
-   EINA_INLIST_FOREACH_SAFE(window->display->outputs, tmp, out)
-     {
-        int ox, oy, ow, oh;
-
-        ox = out->geometry.x;
-        oy = out->geometry.y;
-
-        switch (out->transform)
-          {
-           case WL_OUTPUT_TRANSFORM_90:
-           case WL_OUTPUT_TRANSFORM_270:
-           case WL_OUTPUT_TRANSFORM_FLIPPED_90:
-           case WL_OUTPUT_TRANSFORM_FLIPPED_270:
-             ow = out->geometry.h;
-             oh = out->geometry.w;
-             break;
-           default:
-             ow = out->geometry.w;
-             oh = out->geometry.h;
-             break;
-          }
-
-        if (((x >= ox) && (x < ow)) && ((y >= oy) && (y < oh)))
-          return out;
-     }
-
-   return NULL;
+   return eina_list_data_get(window->outputs);
 }
 
 EAPI void
@@ -1345,8 +1349,9 @@ EAPI void
 ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *win, int id, const char *hint, const char *val)
 {
    if (!win) return;
-   if ((win->surface) && (win->display->wl.efl_aux_hints))
-     efl_aux_hints_add_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, hint, val);
+   if ((!win->surface) || (!win->display->wl.efl_aux_hints)) return;
+
+   efl_aux_hints_add_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, hint, val);
    ecore_wl2_display_flush(win->display);
 }
 
@@ -1354,8 +1359,9 @@ EAPI void
 ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *win, int id, const char *val)
 {
    if (!win) return;
-   if ((win->surface) && (win->display->wl.efl_aux_hints))
-     efl_aux_hints_change_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, val);
+   if ((!win->surface) && (!win->display->wl.efl_aux_hints)) return;
+
+   efl_aux_hints_change_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, val);
    ecore_wl2_display_flush(win->display);
 }
 
@@ -1363,8 +1369,9 @@ EAPI void
 ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *win, int id)
 {
    if (!win) return;
-   if ((win->surface) && (win->display->wl.efl_aux_hints))
-     efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
+   if ((!win->surface) || (!win->display->wl.efl_aux_hints)) return;
+
+   efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
    ecore_wl2_display_flush(win->display);
 }
 
@@ -1511,54 +1518,67 @@ _fullscreen_set(Ecore_Wl2_Window *window)
      }
 }
 
-static void
-_input_set(Ecore_Wl2_Window *window)
+static struct wl_region *
+_region_create(struct wl_compositor *comp, int x, int y, int w, int h)
 {
-   struct wl_region *region;
+   struct wl_region *out;
 
-   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
+   out = wl_compositor_create_region(comp);
+   if (!out)
+     {
+        ERR("Failed to create region");
+        return NULL;
+     }
+
+   wl_region_add(out, x, y, w, h);
+
+   return out;
+}
+
+static void
+_regions_set(Ecore_Wl2_Window *window)
+{
+   struct wl_region *region = NULL;
+
+   if (window->pending.opaque)
+     {
+        if (window->opaque_set)
+          {
+             region = _region_create(window->display->wl.compositor,
+                                     window->opaque.x, window->opaque.y,
+                                     window->opaque.w, window->opaque.h);
+             if (!region) return;
+          }
+        wl_surface_set_opaque_region(window->surface, region);
+     }
+
+   if (!window->pending.input) goto out;
+   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) goto out;
 
    if (!window->input_set)
      {
         wl_surface_set_input_region(window->surface, NULL);
-        return;
+        goto out;
      }
 
-   region = wl_compositor_create_region(window->display->wl.compositor);
-   if (!region)
+   if (region && (window->opaque.x == window->input_rect.x) &&
+       (window->opaque.y == window->input_rect.y) &&
+       (window->opaque.w == window->input_rect.w) &&
+       (window->opaque.h == window->input_rect.h))
      {
-        ERR("Failed to create input region");
-        return;
+        wl_surface_set_input_region(window->surface, region);
+        goto out;
      }
+   if (region) wl_region_destroy(region);
 
-   wl_region_add(region, window->input_rect.x, window->input_rect.y,
-                 window->input_rect.w, window->input_rect.h);
+   region = _region_create(window->display->wl.compositor,
+                           window->input_rect.x, window->input_rect.y,
+                           window->input_rect.w, window->input_rect.h);
+   if (!region) return;
    wl_surface_set_input_region(window->surface, region);
-   wl_region_destroy(region);
-}
 
-static void
-_opaque_set(Ecore_Wl2_Window *window)
-{
-   struct wl_region *region;
-
-   if (!window->opaque_set)
-     {
-        wl_surface_set_opaque_region(window->surface, NULL);
-        return;
-     }
-
-   region = wl_compositor_create_region(window->display->wl.compositor);
-   if (!region)
-     {
-        ERR("Failed to create opaque region");
-        return;
-     }
-
-   wl_region_add(region, window->opaque.x, window->opaque.y,
-                 window->opaque.w, window->opaque.h);
-   wl_surface_set_opaque_region(window->surface, region);
-   wl_region_destroy(region);
+out:
+   if (region) wl_region_destroy(region);
 }
 
 EAPI void
@@ -1569,12 +1589,18 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 
    if (window->commit_pending)
      {
-        wl_callback_destroy(window->callback);
-        ERR("Commit before previous commit processed");
+        if (window->callback)
+          wl_callback_destroy(window->callback);
+        window->callback = NULL;
+        /* The elm mouse cursor bits do some harmless but weird stuff that
+         * can hit this, silence the warning for that case only. */
+        if (window->type != ECORE_WL2_WINDOW_TYPE_NONE)
+          ERR("Commit before previous commit processed");
      }
    if (!window->pending.configure)
      {
-        window->commit_pending = EINA_TRUE;
+        if (window->has_buffer)
+          window->commit_pending = EINA_TRUE;
         window->callback = wl_surface_frame(window->surface);
         wl_callback_add_listener(window->callback, &_frame_listener, window);
         /* Dispatch any state we've been saving along the way */
@@ -1593,11 +1619,8 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
                                                    window->set_config.geometry.w,
                                                    window->set_config.geometry.h);
           }
-        if (window->pending.opaque)
-          _opaque_set(window);
-
-        if (window->pending.input)
-          _input_set(window);
+        if (window->pending.opaque || window->pending.input)
+          _regions_set(window);
 
         if (window->pending.maximized)
           _maximized_set(window);
@@ -1641,15 +1664,14 @@ ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(window->surface);
    EINA_SAFETY_ON_TRUE_RETURN(window->pending.configure);
-
-   if (window->commit_pending)
-     ERR("Commit before previous commit processed");
+   EINA_SAFETY_ON_TRUE_RETURN(window->commit_pending);
 
    window->callback = wl_surface_frame(window->surface);
    wl_callback_add_listener(window->callback, &_frame_listener, window);
    wl_surface_commit(window->surface);
    ecore_wl2_display_flush(window->display);
-   window->commit_pending = EINA_TRUE;
+   if (window->has_buffer)
+     window->commit_pending = EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -1744,10 +1766,10 @@ ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigne
 }
 
 EAPI void
-ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window)
+ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (!window->wl2_surface) return;
-   ecore_wl2_surface_flush(window->wl2_surface);
+   ecore_wl2_surface_flush(window->wl2_surface, purge);
 }

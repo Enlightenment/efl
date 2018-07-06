@@ -9,23 +9,23 @@
 
 #include "eolian_cxx_suite.h"
 
-START_TEST(eolian_cxx_test_parse_complex_types)
+EFL_START_TEST(eolian_cxx_test_parse_complex_types)
 {
    efl::eolian::eolian_init init;
-   // fail_if(!::eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
-   // fail_if(!::eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/complex_type.eo"));
+   // fail_if(!::eolian_state_directory_add(PACKAGE_DATA_DIR"/data"));
+   // fail_if(!::eolian_state_file_parse(PACKAGE_DATA_DIR"/data/complex_type.eo"));
    // TODO finish
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_parse_qualifiers)
+EFL_START_TEST(eolian_cxx_test_parse_qualifiers)
 {
    efl::eolian::eolian_init init;
    // XXX: implement
    //eolian_cxx::type_qualify("");
    //fail_if();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_parse(TCase* tc)

@@ -1,9 +1,7 @@
-import edje_types;
-
-class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
-                                      Efl.Pack.Linear, Efl.Ui.Direction,
-                                      Efl.Pack.Table, Efl.Text,
-                                      Efl.Text.Markup, Efl.Text.Cursor)
+class Efl.Canvas.Layout_Part_Invalid (Efl.Canvas.Layout_Part, Efl.Content,
+                                      Efl.Pack_Linear, Efl.Ui.Direction,
+                                      Efl.Pack_Table, Efl.Text,
+                                      Efl.Text_Markup, Efl.Text_Cursor)
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 
@@ -17,9 +15,9 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
    data: null;
    implements {
       // Efl.Canvas.Layout.Part
-      Efl.Canvas.Layout.Part.state { get; }
-      Efl.Canvas.Layout.Part.part_type { get; }
-      Efl.Gfx.geometry { get; }
+      Efl.Canvas.Layout_Part.state { get; }
+      Efl.Canvas.Layout_Part.part_type { get; }
+      Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }
       Efl.Ui.Drag.drag_dir { get; }
@@ -27,27 +25,27 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       Efl.Ui.Drag.drag_step_move;
       Efl.Ui.Drag.drag_page { set; get; }
       Efl.Ui.Drag.drag_page_move;
-      // Efl.Canvas.Layout.Part_Swallow & External
+      // Efl.Canvas.Layout_Part_Swallow & External
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      // Efl.Canvas.Layout.Part_Text
+      // Efl.Canvas.Layout_Part_Text
       Efl.Text.text { set; get; }
-      Efl.Text.Markup.markup { get; set; }
-      Efl.Text.Cursor.cursor { get; }
-      Efl.Text.Cursor.cursor_paragraph_first;
-      Efl.Text.Cursor.cursor_paragraph_last;
-      Efl.Text.Cursor.cursor_position { set; get; }
-      Efl.Text.Cursor.cursor_coord_set;
-      Efl.Text.Cursor.cursor_line_char_first;
-      Efl.Text.Cursor.cursor_line_char_last;
-      Efl.Text.Cursor.cursor_char_next;
-      Efl.Text.Cursor.cursor_char_prev;
-      Efl.Text.Cursor.cursor_line_jump_by;
-      Efl.Text.Cursor.cursor_copy;
-      Efl.Text.Cursor.cursor_content { get; }
-      Efl.Text.Cursor.cursor_geometry { get; }
-      Efl.Text.Markup.cursor_markup_insert;
-      // Efl.Canvas.Layout.Part_Box
+      Efl.Text_Markup.markup { get; set; }
+      Efl.Text_Cursor.text_cursor { get; }
+      Efl.Text_Cursor.cursor_paragraph_first;
+      Efl.Text_Cursor.cursor_paragraph_last;
+      Efl.Text_Cursor.cursor_position { set; get; }
+      Efl.Text_Cursor.cursor_coord_set;
+      Efl.Text_Cursor.cursor_line_char_first;
+      Efl.Text_Cursor.cursor_line_char_last;
+      Efl.Text_Cursor.cursor_char_next;
+      Efl.Text_Cursor.cursor_char_prev;
+      Efl.Text_Cursor.cursor_line_jump_by;
+      Efl.Text_Cursor.cursor_copy;
+      Efl.Text_Cursor.cursor_content { get; }
+      Efl.Text_Cursor.cursor_geometry { get; }
+      Efl.Text_Markup.cursor_markup_insert;
+      // Efl.Canvas.Layout_Part_Box
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
@@ -55,22 +53,22 @@ class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.Linear.pack_begin;
-      Efl.Pack.Linear.pack_end;
-      Efl.Pack.Linear.pack_before;
-      Efl.Pack.Linear.pack_after;
-      Efl.Pack.Linear.pack_at;
-      Efl.Pack.Linear.pack_content_get;
-      Efl.Pack.Linear.pack_unpack_at;
-      Efl.Pack.Linear.pack_index_get;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
       Efl.Ui.Direction.direction { get; [[Returns $default if unknown.]] }
-      // Efl.Canvas.Layout.Part_Table
-      Efl.Pack.Table.pack_table;
-      Efl.Pack.Table.table_content_get;
-      Efl.Pack.Table.table_contents_get;
-      Efl.Pack.Table.table_position { get; }
-      Efl.Pack.Table.table_size { get; }
-      Efl.Pack.Table.table_columns { get; }
-      Efl.Pack.Table.table_rows { get; }
+      // Efl.Canvas.Layout_Part_Table
+      Efl.Pack_Table.pack_table;
+      Efl.Pack_Table.table_content_get;
+      Efl.Pack_Table.table_contents_get;
+      Efl.Pack_Table.table_position { get; }
+      Efl.Pack_Table.table_size { get; }
+      Efl.Pack_Table.table_columns { get; }
+      Efl.Pack_Table.table_rows { get; }
    }
 }

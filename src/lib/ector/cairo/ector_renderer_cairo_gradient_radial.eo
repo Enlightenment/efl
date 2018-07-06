@@ -1,13 +1,13 @@
-class Ector.Renderer.Cairo.Gradient.Radial (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
+class Ector.Renderer.Cairo.Gradient.Radial (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial, Efl.Gfx.Path)
 {
    [[Ector cairo renderer gradient radial]]
    eo_prefix: ector_renderer_cairo_gradient_radial;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
+      Efl.Gfx.Path.bounds_get;
       Ector.Renderer.crc { get; }
-      Ector.Renderer.Cairo.fill;
+      Ector.Renderer.Cairo.op_fill;
       Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Gfx.Gradient.stop { set; }

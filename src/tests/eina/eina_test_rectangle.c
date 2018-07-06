@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_rectangle_pool)
+EFL_START_TEST(eina_rectangle_pool)
 {
    Eina_Rectangle_Pool *pool;
    Eina_Rectangle *rects[8][8];
@@ -35,7 +35,6 @@ START_TEST(eina_rectangle_pool)
    int w;
    int h;
 
-   fail_if(!eina_init());
 
    pool = eina_rectangle_pool_new(256, 256);
    fail_if(pool == NULL);
@@ -69,11 +68,10 @@ START_TEST(eina_rectangle_pool)
 
    eina_rectangle_pool_free(pool);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rectangle_pool_skyline)
+EFL_START_TEST(eina_rectangle_pool_skyline)
 {
    Eina_Rectangle_Pool *pool;
    Eina_Rectangle *rects[8][8];
@@ -82,7 +80,6 @@ START_TEST(eina_rectangle_pool_skyline)
    int w;
    int h;
 
-   fail_if(!eina_init());
 
    pool = eina_rectangle_pool_new(256, 256);
    fail_if(pool == NULL);
@@ -116,15 +113,13 @@ START_TEST(eina_rectangle_pool_skyline)
 
    eina_rectangle_pool_free(pool);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rectangle_union_intersect)
+EFL_START_TEST(eina_rectangle_union_intersect)
 {
    Eina_Rectangle r1, r2, r3, r4, r5, r6, r7, r8, rd;
 
-   fail_if(!eina_init());
 
    EINA_RECTANGLE_SET(&r1, 10, 10, 50, 50);
    EINA_RECTANGLE_SET(&r2, 20, 20, 20, 20);
@@ -192,11 +187,10 @@ START_TEST(eina_rectangle_union_intersect)
            || rd.w != 20
            || rd.h != 20);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_rectangle_position_test)
+EFL_START_TEST(eina_rectangle_position_test)
 {
     Eina_Rectangle middle, top, down, right, left;
     EINA_RECTANGLE_SET(&middle, -1, -1, 2.0, 2.0);
@@ -211,7 +205,7 @@ START_TEST(eina_rectangle_position_test)
     ck_assert_int_eq(eina_rectangle_outside_position(&middle, &left), EINA_RECTANGLE_OUTSIDE_LEFT) ;
 
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_rectangle(TCase *tc)

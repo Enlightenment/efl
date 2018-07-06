@@ -52,7 +52,7 @@ struct _KeyEvent
    int state;
 };
 
-static Eina_Bool _sync_mode_use = EINA_FALSE;
+static Eina_Bool _sync_mode_use = EINA_TRUE;
 
 static Ecore_IMF_Context *_focus_im_context = NULL;
 static IBusBus           *_bus = NULL;

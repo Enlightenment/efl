@@ -2,7 +2,8 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -14,7 +15,6 @@
 
 #define MY_CLASS EFL_UI_FLIP_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Flip"
-#define MY_CLASS_NAME_LEGACY "elm_flip"
 
 static const char SIG_ANIMATE_BEGIN[] = "animate,begin";
 static const char SIG_ANIMATE_DONE[] = "animate,done";
@@ -1862,28 +1862,20 @@ _efl_ui_flip_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Flip_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
-elm_flip_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_flip_efl_object_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB_LIST);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB_LIST);
 
    return obj;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_front_visible_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
+_efl_ui_flip_front_visible_get(const Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
 {
    return sd->state;
 }
@@ -2038,7 +2030,7 @@ _efl_ui_flip_interaction_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Flip_Interact
 }
 
 EOLIAN static Efl_Ui_Flip_Interaction
-_efl_ui_flip_interaction_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
+_efl_ui_flip_interaction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
 {
    return sd->intmode;
 }
@@ -2133,7 +2125,7 @@ static void
 _update_front_back(Eo *obj, Efl_Ui_Flip_Data *pd)
 {
    int count, index;
-   Efl_Gfx *content;
+   Efl_Gfx_Entity *content;
 
    count = eina_list_count(pd->content_list);
    if (count <= 2) return;
@@ -2150,7 +2142,7 @@ _update_front_back(Eo *obj, Efl_Ui_Flip_Data *pd)
 }
 
 static void
-_content_added(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
+_content_added(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
    evas_object_smart_member_add(content, obj);
 
@@ -2167,9 +2159,9 @@ _content_added(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
 }
 
 static void
-_content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
+_content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
-   Efl_Gfx *back_face, *cur_face, *face;
+   Efl_Gfx_Entity *back_face, *cur_face, *face;
    int index, count;
    Eina_Bool state;
 
@@ -2225,7 +2217,7 @@ _efl_ui_flip_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
+_efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
    pd->content_list = eina_list_remove(pd->content_list, content);
    _content_removed(obj, pd, content);
@@ -2233,7 +2225,7 @@ _efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+_efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    _content_removed(obj, pd, subobj);
@@ -2241,7 +2233,7 @@ _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+_efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_append(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
@@ -2249,7 +2241,7 @@ _efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+_efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
@@ -2258,7 +2250,7 @@ _efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+_efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_append(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
@@ -2266,7 +2258,7 @@ _efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *su
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
+_efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
@@ -2274,7 +2266,7 @@ _efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
+_efl_ui_flip_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
@@ -2282,25 +2274,25 @@ _efl_ui_flip_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj, int index)
+_efl_ui_flip_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, int index)
 {
-   Efl_Gfx *existing = NULL;
+   Efl_Gfx_Entity *existing = NULL;
    existing = eina_list_nth(pd->content_list, index);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_flip_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd, int index)
 {
    return eina_list_nth(pd->content_list, index);
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_flip_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Flip_Data *pd, int index)
 {
-   Efl_Gfx *content = eina_list_nth(pd->content_list ,index);
+   Efl_Gfx_Entity *content = eina_list_nth(pd->content_list ,index);
 
    pd->content_list = eina_list_remove(pd->content_list, content);
    _content_removed(obj, pd, content);
@@ -2308,15 +2300,9 @@ _efl_ui_flip_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Flip_Data *pd, int i
 }
 
 EOLIAN static int
-_efl_ui_flip_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd, const Efl_Gfx *subobj)
+_efl_ui_flip_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd, const Efl_Gfx_Entity *subobj)
 {
    return eina_list_data_idx(pd->content_list, (void *)subobj);
-}
-
-static void
-_efl_ui_flip_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 EAPI void
@@ -2371,3 +2357,30 @@ ELM_PART_CONTENT_DEFAULT_GET(efl_ui_flip, "front")
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_flip)
 
 #include "efl_ui_flip.eo.c"
+
+#include "efl_ui_flip_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_flip"
+
+static void
+_efl_ui_flip_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_flip_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_FLIP_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_flip_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_FLIP_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_flip_legacy.eo.c"

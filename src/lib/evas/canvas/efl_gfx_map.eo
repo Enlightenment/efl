@@ -198,7 +198,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          ]]
          params {
             degrees: double; [[CCW rotation in degrees.]]
-            pivot: const(Efl.Gfx); [[A pivot object for the center point, can be $null.]]
+            pivot: const(Efl.Gfx.Entity); [[A pivot object for the center point, can be $null.]]
             cx: double; [[X relative coordinate of the center point.]]
             cy: double; [[y relative coordinate of the center point.]]
          }
@@ -221,7 +221,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
             dx: double; [[Rotation in degrees around X axis (0 to 360).]]
             dy: double; [[Rotation in degrees around Y axis (0 to 360).]]
             dz: double; [[Rotation in degrees around Z axis (0 to 360).]]
-            pivot: const(Efl.Gfx); [[A pivot object for the center point, can be $null.]]
+            pivot: const(Efl.Gfx.Entity); [[A pivot object for the center point, can be $null.]]
             cx: double; [[X relative coordinate of the center point.]]
             cy: double; [[y relative coordinate of the center point.]]
             cz: double; [[Z absolute coordinate of the center point.]]
@@ -244,7 +244,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
             qy: double; [[The y component of the imaginary part of the quaternion.]]
             qz: double; [[The z component of the imaginary part of the quaternion.]]
             qw: double; [[The w component of the real part of the quaternion.]]
-            pivot: const(Efl.Gfx); [[A pivot object for the center point, can be $null.]]
+            pivot: const(Efl.Gfx.Entity); [[A pivot object for the center point, can be $null.]]
             cx: double; [[X relative coordinate of the center point.]]
             cy: double; [[y relative coordinate of the center point.]]
             cz: double; [[Z absolute coordinate of the center point.]]
@@ -265,7 +265,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          params {
             zoomx: double; [[Zoom in X direction]]
             zoomy: double; [[Zoom in Y direction]]
-            pivot: const(Efl.Gfx); [[A pivot object for the center point, can be $null.]]
+            pivot: const(Efl.Gfx.Entity); [[A pivot object for the center point, can be $null.]]
             cx: double; [[X relative coordinate of the center point.]]
             cy: double; [[y relative coordinate of the center point.]]
          }
@@ -288,7 +288,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            is $null then this object will be its own pivot.
          ]]
          params {
-            pivot: const(Efl.Gfx); [[A pivot object for the light point, can be $null.]]
+            pivot: const(Efl.Gfx.Entity); [[A pivot object for the light point, can be $null.]]
             lx: double; [[X relative coordinate in space of light point.]]
             ly: double; [[Y relative coordinate in space of light point.]]
             lz: double; [[Z absolute coordinate in space of light point.]]
@@ -322,7 +322,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            is $null then this object will be its own pivot.
          ]]
          params {
-            pivot: const(Efl.Gfx); [[A pivot object for the infinite point, can be $null.]]
+            pivot: const(Efl.Gfx.Entity); [[A pivot object for the infinite point, can be $null.]]
             px: double; [[The perspective distance X relative coordinate.]]
             py: double; [[The perspective distance Y relative coordinate.]]
             z0: double; [[The "0" Z plane value.]]

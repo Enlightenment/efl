@@ -15,7 +15,7 @@ public class ExampleFunctionPointer01
         eina.Config.Init();
         efl.eo.Config.Init();
 
-        var obj = new example.NumberwrapperConcrete();
+        var obj = new example.Numberwrapper();
 
         // Set internal value
         obj.SetNumber(12);

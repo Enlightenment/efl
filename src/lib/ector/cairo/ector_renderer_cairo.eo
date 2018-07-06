@@ -2,8 +2,8 @@ abstract Ector.Renderer.Cairo (Ector.Renderer)
 {
    [[Ector cairo renderer abstract class]]
    methods {
-      fill @pure_virtual {
-      	 [[Fill operation]]
+      op_fill @pure_virtual {
+          [[Fill operation]]
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in mul_col: uint; [[Premultiplied color]]

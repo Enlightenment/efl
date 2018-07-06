@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_COMPONENT_BETA
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -12,45 +12,24 @@
 
 
 EOLIAN static void
-_efl_access_component_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int *x, int *y)
+_efl_access_component_screen_position_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *x, int *y)
 {
    Eina_Rect r;
 
-   r = efl_access_component_extents_get(obj, type);
+   r = efl_access_component_extents_get(obj, EINA_TRUE);
    if (x) *x = r.x;
    if (y) *y = r.y;
 }
 
 EOLIAN static Eina_Bool
-_efl_access_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int x, int y)
+_efl_access_component_screen_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int x, int y)
 {
    Eina_Rect r;
 
-   r = efl_access_component_extents_get(obj, type);
+   r = efl_access_component_extents_get(obj, EINA_TRUE);
    r.x = x;
    r.y = y;
-   return efl_access_component_extents_set(obj, type, r);
-}
-
-EOLIAN static Eina_Bool
-_efl_access_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int w, int h)
-{
-   Eina_Rect r;
-
-   r = efl_access_component_extents_get(obj, EINA_FALSE);
-   r.w = w;
-   r.h = h;
-   return efl_access_component_extents_set(obj, EINA_FALSE, r);
-}
-
-EOLIAN static void
-_efl_access_component_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *w, int *h)
-{
-   Eina_Rect r;
-
-   r = efl_access_component_extents_get(obj, EINA_FALSE);
-   if (w) *w = r.w;
-   if (h) *h = r.h;
+   return efl_access_component_extents_set(obj, EINA_TRUE, r);
 }
 
 EOLIAN static Eina_Bool
@@ -62,22 +41,13 @@ _efl_access_component_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_
    return eina_rectangle_coords_inside(&r.rect, x, y);
 }
 
-EOLIAN static double
-_efl_access_component_alpha_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   int alpha;
-
-   evas_object_color_get(obj, NULL, NULL, NULL, &alpha);
-   return (double)alpha / 255.0;
-}
-
 EOLIAN static Eo *
 _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, int x, int y)
 {
    Eina_List *l, *children;
    Eo *ret = NULL, *child;
 
-   children = efl_access_children_get(obj);
+   children = efl_access_object_access_children_get(obj);
 
    EINA_LIST_FOREACH(children, l, child)
      {
@@ -98,11 +68,11 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
 }
 
 EOLIAN static Eina_Rect
-_efl_access_component_extents_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
+_efl_access_component_extents_get(const Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
    Eina_Rect r;
 
-   r = efl_gfx_geometry_get(obj);
+   r = efl_gfx_entity_geometry_get(obj);
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
@@ -139,14 +109,9 @@ _efl_access_component_extents_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool scre
    return EINA_TRUE;
 }
 
-EOLIAN static int
-_efl_access_component_layer_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   return evas_object_layer_get(obj);
-}
 
 EOLIAN static int
-_efl_access_component_z_order_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_efl_access_component_z_order_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    // Currently not used.
    return 0;

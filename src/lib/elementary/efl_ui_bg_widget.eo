@@ -1,4 +1,4 @@
-class Efl.Ui.Bg_Widget (Efl.Ui.Layout, Efl.Ui.Bg, Efl.Image.Load)
+class Efl.Ui.Bg_Widget (Efl.Ui.Layout.Object, Efl.Ui.Bg, Efl.Gfx.Image_Load_Controller)
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 
@@ -8,12 +8,12 @@ class Efl.Ui.Bg_Widget (Efl.Ui.Layout, Efl.Ui.Bg, Efl.Image.Load)
    ]]
    legacy_prefix: elm_bg;
    implements {
-      class.constructor;
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Gfx.Color.color { get; set; }
-      Efl.Image.scale_type { get; set; }
-      Efl.Image.Load.load_size { get; set; }
+      Efl.Gfx.Image.scale_type { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_size { get; set; }
    }
 }

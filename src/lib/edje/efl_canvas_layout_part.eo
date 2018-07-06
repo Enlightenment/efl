@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
+class Efl.Canvas.Layout_Part (Efl.Object, Efl.Gfx.Entity, Efl.Ui.Drag)
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 
@@ -32,14 +32,14 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
             [[Returns the type of the part.]]
          }
          values {
-            type: Efl.Canvas.Layout.Part_Type(Efl.Canvas.Layout.Part_Type.none);
+            type: Efl.Canvas.Layout_Part_Type(Efl.Canvas.Layout_Part_Type.none);
                [[One of the types or $none if not an existing part.]]
          }
       }
    }
    implements {
       Efl.Object.finalize;
-      Efl.Gfx.geometry { get; }
+      Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }
       Efl.Ui.Drag.drag_dir { get; }

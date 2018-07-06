@@ -27,24 +27,8 @@ static Eldbus_Message *message = NULL;
 * @li eldbus_pending_data_del()
 *
 * @precondition
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   eldbus_shutdown();
-   ecore_shutdown();
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -118,7 +102,7 @@ _response_message_cb(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUS
  * @}
  */
 
-START_TEST(utc_eldbus_pending_data_p)
+EFL_START_TEST(utc_eldbus_pending_data_p)
 {
    const char *bus = "org.freedesktop.DBus";
    const char *path = "/org/freedesktop/DBus";
@@ -126,7 +110,7 @@ START_TEST(utc_eldbus_pending_data_p)
    const char *member = "GetId";
    const int send_timeout_ms = 500;
 
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    obj = eldbus_object_get(conn, bus, path);
@@ -140,7 +124,7 @@ START_TEST(utc_eldbus_pending_data_p)
 
    eldbus_pending_data_set(pending, pending_key_store, &pending_data_stored);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -151,11 +135,10 @@ START_TEST(utc_eldbus_pending_data_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eldbus_test_eldbus_pending_data(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_pending_data_p);
 }

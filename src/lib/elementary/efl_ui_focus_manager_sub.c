@@ -32,13 +32,15 @@ _set_a_without_b(Eina_List *a, Eina_List *b)
 static void
 _register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Object *logical)
 {
-   efl_ui_focus_manager_calc_register(par_m, node, logical, obj);
+   if (par_m)
+     efl_ui_focus_manager_calc_register(par_m, node, logical, obj);
 }
 
 static void
 _unregister(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node)
 {
-   efl_ui_focus_manager_calc_unregister(par_m, node);
+   if (par_m)
+     efl_ui_focus_manager_calc_unregister(par_m, node);
 }
 
 static void
@@ -159,6 +161,9 @@ _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    logical = efl_ui_focus_object_focus_parent_get(obj);
    manager = efl_ui_focus_object_focus_manager_get(obj);
 
+   if (pd->manager == manager)
+     return;
+
    //unregister from the old
    if (pd->manager) efl_event_callback_array_del(pd->manager, parent_manager(), obj);
    if (manager) efl_event_callback_array_add(manager, parent_manager(), obj);
@@ -167,7 +172,7 @@ _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
      {
         if (b == obj) continue;
 
-        _unregister(obj, manager, b);
+        _unregister(obj, pd->manager, b);
         _register(obj, manager, b, logical);
      }
    //unregister the old manager, use the new
@@ -193,7 +198,6 @@ _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_S
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_callback_array_add(obj, self_manager(), obj);
-   _flush_manager(obj, pd);
    return obj;
 }
 
@@ -206,6 +210,18 @@ _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Su
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_manager_sub_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Direction direction)
+{
+   Eo *target = efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
+
+   if (!target)
+     _border_flush(obj, pd);
+
+   return target;
+}
+
 
 
 #include "efl_ui_focus_manager_sub.eo.c"

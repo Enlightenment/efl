@@ -25,15 +25,13 @@
 
 #include "evil_suite.h"
 #include "../efl_check.h"
+#include <Evil.h>
 
 static const Efl_Test_Case etc[] = {
-   /* { "Dirent", evil_test_dirent }, */
    { "Dlfcn", evil_test_dlfcn },
    /* { "Fcntl", evil_test_fcntl }, */
    /* { "Fnmatch", evil_test_fnmatch }, */
-   /* { "Inet", evil_test_inet }, */
    /* { "Langinfo", evil_test_langinfo }, */
-   /* { "Link", evil_test_link }, */
    { "Libgen", evil_test_libgen },
    { "Main", evil_test_main },
    /* { "Mman", evil_test_mman }, */
@@ -42,10 +40,21 @@ static const Efl_Test_Case etc[] = {
    { "Stdlib", evil_test_stdlib },
    /* { "String", evil_test_string }, */
    /* { "Time", evil_test_time }, */
-   /* { "Unistd", evil_test_unistd }, */
+   { "Unistd", evil_test_unistd },
    /* { "Util", evil_test_util }, */
    { NULL, NULL }
 };
+
+
+SUITE_INIT(evil)
+{
+   ck_assert_int_eq(evil_init(), 1);
+}
+
+SUITE_SHUTDOWN(evil)
+{
+   ck_assert_int_eq(evil_shutdown(), 0);
+}
 
 int
 main(int argc, char **argv)
@@ -60,7 +69,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Evil", etc);
+                                           "Evil", etc, SUITE_INIT_FN(evil), SUITE_SHUTDOWN_FN(evil));
 
    return (failed_count == 0) ? 0 : 255;
 }

@@ -35,7 +35,8 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/database_expr_api.c \
                                   lib/eolian/database_var.c \
                                   lib/eolian/database_var_api.c \
-                                  lib/eolian/database_validate.c
+                                  lib/eolian/database_validate.c \
+                                  lib/eolian/database_check.c
 
 lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@ \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/eolian\"
@@ -113,6 +114,7 @@ tests/eolian/eolian_suite
 
 tests_eolian_eolian_suite_SOURCES = \
 tests/eolian/eolian_parsing.c \
+tests/eolian/eolian_static.c \
 tests/eolian/eolian_generation.c \
 tests/eolian/eolian_generated_future.c \
 tests/eolian/eolian_suite.c \
@@ -125,6 +127,7 @@ CLEANFILES += tests/eolian/generated_future.eo.h tests/eolian/generated_future.e
 tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/eolian \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian\" \
+-DEO_SRC_DIR=\"$(top_srcdir)/src/lib\" \
 -DEOLIAN_GEN="\"$(EOLIAN_GEN)\"" \
 @CHECK_CFLAGS@ \
 @EOLIAN_CFLAGS@ @EO_CFLAGS@
@@ -139,10 +142,11 @@ endif
 EXTRA_DIST2 += \
 tests/eolian/data/object_impl_ref.c \
 tests/eolian/data/object_impl_add_ref.c \
-tests/eolian/data/typedef_ref.c \
-tests/eolian/data/typedef_ref_stub.c \
-tests/eolian/data/struct_ref.c \
-tests/eolian/data/struct_ref_stub.c \
+tests/eolian/data/typedef_ref.h \
+tests/eolian/data/typedef_ref_stub.h \
+tests/eolian/data/struct_ref.h \
+tests/eolian/data/struct_ref_stub.h \
+tests/eolian/data/owning.eo.c \
 tests/eolian/data/class_simple_ref.c \
 tests/eolian/data/override_ref.c \
 tests/eolian/data/class_simple_ref_eo.h \

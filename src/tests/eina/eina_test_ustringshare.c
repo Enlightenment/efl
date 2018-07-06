@@ -32,12 +32,11 @@
 static const Eina_Unicode TEST0[] = {'t', 'e', 's', 't', '/', '0', 0};
 static const Eina_Unicode TEST1[] = {'t', 'e', 's', 't', '/', '1', 0};
 
-START_TEST(eina_ustringshare_simple)
+EFL_START_TEST(eina_ustringshare_simple)
 {
    const Eina_Unicode *t0;
    const Eina_Unicode *t1;
 
-   eina_init();
 
    t0 = eina_ustringshare_add(TEST0);
    t1 = eina_ustringshare_add(TEST1);
@@ -57,17 +56,15 @@ START_TEST(eina_ustringshare_simple)
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t1);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_ustringshare_test_share)
+EFL_START_TEST(eina_ustringshare_test_share)
 {
    const Eina_Unicode *t0;
    const Eina_Unicode *t1;
 
-   eina_init();
 
    t0 = eina_ustringshare_add(TEST0);
    t1 = eina_ustringshare_add(TEST0);
@@ -83,18 +80,16 @@ START_TEST(eina_ustringshare_test_share)
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t1);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_ustringshare_putstuff)
+EFL_START_TEST(eina_ustringshare_putstuff)
 {
    const Eina_Unicode *tmp;
    int i;
 
-   eina_init();
 
-   for (i = 10000; i > 0; --i)
+   for (i = 100; i > 0; --i)
      {
         Eina_Unicode string_[] = {'s', 't', 'r', 'i', 'n', 'g', '_', 0};
         Eina_Unicode build[64];
@@ -107,9 +102,8 @@ START_TEST(eina_ustringshare_putstuff)
         fail_if((int)eina_unicode_strlen(build) != eina_ustringshare_strlen(tmp));
      }
 
-        eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_ustringshare(TCase *tc)

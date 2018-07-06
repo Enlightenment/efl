@@ -56,15 +56,15 @@ main(int argc, const char *argv[])
 
    ecore_app_args_set(argc, argv);
 
-   out = efl_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-   in = efl_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
    if (!in)
      {
         printf("error when creating ecore audio source.\n");
         goto end;
      }
-   ecore_audio_obj_name_set(in, "wail");
+   efl_name_set(in, "wail");
    ecore_audio_obj_in_samplerate_set(in, 44100);
    ecore_audio_obj_in_channels_set(in, 1);
    ecore_audio_obj_volume_set(in, 0.7);

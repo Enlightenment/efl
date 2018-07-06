@@ -1,11 +1,51 @@
 #ifndef EFL_CHECK_H
 #define EFL_CHECK_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h> /* getenv */
 #include <stdio.h> /* fprintf, fputs */
 #include <string.h> /* strcmp */
 #include <unistd.h> /* execvp */
 #include <errno.h> /* errno */
+#include <sys/time.h>
+
+#ifdef HAVE_FORK
+#include <sys/types.h>
+#include <sys/wait.h>
+#endif
+
+#ifndef EINA_UNUSED
+
+#ifdef __GNUC__
+
+# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+#  define EINA_UNUSED __attribute__ ((__unused__))
+# else
+#  define EINA_UNUSED
+# endif
+#else
+#  define EINA_UNUSED
+#endif
+
+#endif
+
+#ifdef HAVE_GETTIMEOFDAY
+# if CHECK_MINOR_VERSION >= 11
+#  define ENABLE_TIMING_INFO
+# endif
+#endif
+
+#define DISABLE_ABORT_ON_CRITICAL_START \
+   do { \
+      int ___val = eina_log_abort_on_critical_get(); \
+      eina_log_abort_on_critical_set(0)
+
+#define DISABLE_ABORT_ON_CRITICAL_END \
+      eina_log_abort_on_critical_set(___val); \
+   } while (0)
 
 typedef struct _Efl_Test_Case Efl_Test_Case;
 struct _Efl_Test_Case
@@ -23,7 +63,7 @@ _efl_tests_list(const Efl_Test_Case *etc)
       fprintf(stderr, "\t%s\n", itr->test_case);
 }
 
-static int
+EINA_UNUSED static int
 _efl_test_option_disp(int argc, char **argv, const Efl_Test_Case *etc)
 {
    int i;
@@ -76,7 +116,7 @@ _efl_test_use(int argc, const char **argv, const char *test_case)
      return 1;
 
    for (; argc > 0; argc--, argv++)
-     if (strcmp(test_case, *argv) == 0)
+     if (strcasecmp(test_case, *argv) == 0)
        return 1;
    return 0;
 }
@@ -92,7 +132,7 @@ _efl_test_fork_has(SRunner *sr)
      {
         char *res;
 
-        res = getenv("CF_FORK");
+        res = getenv("CK_FORK");
         if (res && (strcmp(res, "no") == 0))
           return 0;
         else
@@ -103,37 +143,204 @@ _efl_test_fork_has(SRunner *sr)
    return 0;
 }
 
+#ifdef ENABLE_TIMING_INFO
+EINA_UNUSED static double _timing_start_time;
+
 static int
-_efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc)
+_timing_enabled(void)
+{
+   const char *lc = getenv("TIMING_ENABLED");
+   return !!lc;
+}
+
+static double
+_timing_time_get(void)
+{
+   struct timeval timev;
+
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+
+EINA_UNUSED static void
+_timing_start(void)
+{
+   if (_timing_enabled())
+     _timing_start_time = _timing_time_get();
+}
+
+EINA_UNUSED static void
+_timing_end(void)
+{
+   double diff;
+   static int thres_set = 0;
+   static double thres = 0;
+
+   if (!_timing_enabled()) return;
+   if (!thres_set)
+     {
+        const char *env = getenv("TIME_DIFF_THRESHOLD");
+
+        if (env)
+          {
+             thres = strtod(env, NULL);
+             if (thres > 0)
+               thres_set = 1;
+          }
+        if (!thres_set)
+          thres = 0.0001;
+        thres_set = 1;
+     }
+   diff = _timing_time_get() - _timing_start_time;
+
+   if (diff > thres)
+     printf("TIME %s: %.5g\n", tcase_name(), diff);
+}
+
+# define EFL_START_TEST(TEST_NAME) \
+  START_TEST(TEST_NAME) \
+  _timing_start();
+
+# define EFL_END_TEST \
+  _timing_end(); \
+  END_TEST
+
+#else
+# define EFL_START_TEST(TEST_NAME) START_TEST(TEST_NAME)
+# define EFL_END_TEST END_TEST
+
+#endif
+
+static int
+_efl_suite_run_end(SRunner *sr, const char *name)
+{
+   int failed_count;
+
+   if (name)
+     {
+        char *n = strdup(name);
+        char buf[4096], *p;
+
+        for (p = n; p[0]; p++)
+          {
+             switch (p[0])
+               {
+                case ' ':
+                case '/':
+                case '\\':
+                case ';':
+                  p[0] = '_';
+                  break;
+               }
+          }
+        snprintf(buf, sizeof(buf), TESTS_BUILD_DIR "/check-results-%s.xml", n);
+        srunner_set_xml(sr, buf);
+     }
+   else
+     srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
+   srunner_run_all(sr, CK_ENV);
+   failed_count = srunner_ntests_failed(sr);
+   srunner_free(sr);
+   return failed_count;
+}
+
+EINA_UNUSED static int
+_efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc, SFun init, SFun shutdown)
 {
    Suite *s;
    SRunner *sr;
    TCase *tc;
-   int i, failed_count;
+   int i, failed_count = 0;
+   int do_fork;
+   int num_forks = 0;
+   int can_fork = 0;
+#ifdef ENABLE_TIMING_INFO
+   double tstart, tcstart;
+   int timing = _timing_enabled();
 
+   if (timing)
+     tcstart = tstart = _timing_time_get();
+#endif
+   fflush(stdout);
    s = suite_create(suite_name);
    sr = srunner_create(s);
+   do_fork = _efl_test_fork_has(sr);
+   if (do_fork)
+     can_fork = !!etc[1].test_case /* can't parallelize 1 test */;
 
    for (i = 0; etc[i].test_case; ++i)
      {
+        int pid = 0;
+
         if (!_efl_test_use(argc, argv, etc[i].test_case))
            continue;
+#ifdef HAVE_FORK
+        if (do_fork && can_fork)
+          {
+             pid = fork();
+             if (pid > 0)
+               {
+                  num_forks++;
+#ifdef ENABLE_TIMING_INFO
+                  if (timing)
+                    tcstart = _timing_time_get();
+#endif
+                  continue;
+               }
+          }
+#endif
 
         tc = tcase_create(etc[i].test_case);
+        if (init || shutdown)
+          tcase_add_checked_fixture(tc, init, shutdown);
 
-        if (_efl_test_fork_has(sr))
+        if (do_fork)
           tcase_set_timeout(tc, 0);
 
         etc[i].build(tc);
         suite_add_tcase(s, tc);
+#ifdef HAVE_FORK
+        if (do_fork && (!pid) && can_fork)
+          {
+             failed_count = _efl_suite_run_end(sr, etc[i].test_case);
+             if (failed_count > 255)
+               failed_count = 255;
+#ifdef ENABLE_TIMING_INFO
+             if (timing)
+               printf("TC TIME %s: %.5g\n", etc[i].test_case, _timing_time_get() - tcstart);
+#endif
+             exit(failed_count);
+          }
+#endif
      }
 
-   srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
-   srunner_run_all(sr, CK_ENV);
-   failed_count = srunner_ntests_failed(sr);
-   srunner_free(sr);
+#ifdef HAVE_FORK
+   if (num_forks)
+     {
+        do
+          {
+             int status = 0;
+             waitpid(0, &status, 0);
+             failed_count += WEXITSTATUS(status);
+          } while (--num_forks);
+     }
+   else
+#endif
+     failed_count = _efl_suite_run_end(sr, NULL);
 
+#ifdef ENABLE_TIMING_INFO
+   if (timing)
+     {
+        printf("SUITE TIME(%u) %s: %.5g\n", getpid(), suite_name, _timing_time_get() - tstart);
+        fflush(stdout);
+     }
+#endif
    return failed_count;
 }
+
+#define SUITE_INIT(NAME) static void _##NAME##_suite_init(void)
+#define SUITE_INIT_FN(NAME) _##NAME##_suite_init
+#define SUITE_SHUTDOWN(NAME) static void _##NAME##_suite_shutdown(void)
+#define SUITE_SHUTDOWN_FN(NAME) _##NAME##_suite_shutdown
 
 #endif

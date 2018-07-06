@@ -43,7 +43,7 @@ read_watch_file(const char *file)
         const char *path;
         Eina_Bool do_append = EINA_TRUE;
 
-	if (ln->length < 4) continue ;
+        if (ln->length < 4) continue;
         if (anotate)
           {
              path = eina_stringshare_add_length(ln->start + 3, ln->length - 3);
@@ -56,7 +56,7 @@ read_watch_file(const char *file)
              path = eina_stringshare_add_length(ln->start, ln->length);
           }
         if (do_append)
-	  r = eina_list_append(r, eio_monitor_add(path));
+          r = eina_list_append(r, eio_monitor_add(path));
         eina_stringshare_del(path);
      }
    eina_iterator_free(it);
@@ -65,7 +65,7 @@ read_watch_file(const char *file)
      eio_monitor_del(mon);
    watching = r;
 
- err:
+err:
    eina_file_close(f);
 }
 
@@ -150,3 +150,4 @@ main(int argc, char **argv)
 
    return 1;
 }
+

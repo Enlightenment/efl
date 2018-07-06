@@ -16,21 +16,6 @@
  * @}
  */
 
-/**
- * @ingroup Ecore_Exe_Group
- *
- * @{
- */
-
-#include "ecore_exe.eo.h"
-
-/**
- * @}
- */
-
-
-#include "ecore_event_message.eo.h"
-#include "ecore_event_message_handler.eo.h"
 
 #include "efl_loop_message_future.eo.h"
 #include "efl_loop_message_future_handler.eo.h"
@@ -44,7 +29,14 @@
 #include "efl_loop_message.eo.h"
 #include "efl_loop_message_handler.eo.h"
 
+#include "efl_task.eo.h"
+#include "efl_thread.eo.h"
+#include "efl_threadio.eo.h"
+#include "efl_exe.eo.h"
+
 #include "efl_loop.eo.h"
+#include "efl_app.eo.h"
+#include "efl_appthread.eo.h"
 
 /**
  * @brief Quits the main loop once all the events currently on the queue have
@@ -86,8 +78,6 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 #include "efl_loop_fd.eo.h"
 #include "efl_loop_handler.eo.h"
 
-#include "efl_promise.eo.h"
-
 #include "efl_interpolator.eo.h"
 #include "efl_interpolator_linear.eo.h"
 #include "efl_interpolator_accelerate.eo.h"
@@ -100,37 +90,7 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *efl_main_loop_get(void);
-
-typedef struct _Efl_Future_Composite_Progress Efl_Future_All_Progress;
-
-struct _Efl_Future_Composite_Progress
-{
-   Efl_Future *inprogress;
-   void *progress;
-
-   unsigned int index;
-};
-
-EAPI Efl_Future *efl_future_all_internal(Efl_Future *f1, ...);
-EAPI Efl_Future *efl_future_iterator_all(Eina_Iterator *it);
-
-#define efl_future_all(...) efl_future_all_internal(__VA_ARGS__, NULL)
-
-typedef struct _Efl_Future_Race_Success Efl_Future_Race_Success;
-typedef struct _Efl_Future_Composite_Progress Efl_Future_Race_Progress;
-
-struct _Efl_Future_Race_Success
-{
-   Efl_Future *winner;
-   void *value;
-
-   unsigned int index;
-};
-
-EAPI Efl_Future *efl_future_race_internal(Efl_Future *f1, ...);
-EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
-
-#define efl_future_race(...) efl_future_race_internal(__VA_ARGS__, NULL)
+EAPI Eo *efl_app_get(void);
 
 /**
  * @}
@@ -167,6 +127,7 @@ EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
 #include "efl_model_item.eo.h"
 #include "efl_model_container.eo.h"
 #include "efl_model_container_item.eo.h"
+#include "efl_model_composite.eo.h"
 #include "efl_model_composite_boolean.eo.h"
 #include "efl_model_composite_boolean_children.eo.h"
 #include "efl_model_composite_selection.eo.h"

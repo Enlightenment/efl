@@ -1,12 +1,12 @@
 
 ================================================================================
-Class:        ${cls.full_name}$
+Class:        ${cls.name}$ (${cls.short_name}$)
 ================================================================================
 Class type:   ${cls.type}$
-Base Class:   ${cls.base_class.full_name if cls.base_class else None}$
-Inherits:     ${', '.join([i.full_name for i in cls.inherits])}$
-Hierarchy:    ${' => '.join([i.full_name for i in cls.hierarchy])}$
-InheritsFull: ${', '.join([i.full_name for i in cls.inherits_full])}$
+Base Class:   ${cls.base_class.name if cls.base_class else None}$
+Inherits:     ${', '.join([i.name for i in cls.inherits])}$
+Hierarchy:    ${' => '.join([i.name for i in cls.hierarchy])}$
+InheritsFull: ${', '.join([i.name for i in cls.inherits_full])}$
 Namespace:    ${cls.namespace}$
 Namespaces:   ${list(cls.namespaces)}$
 File:         ${cls.file}$
@@ -32,7 +32,7 @@ Methods:
 Properties:
 ===========
 <!--(for func in cls.properties)-->
- * ${func.name}$ (<!--(for v in func.getter_values)-->${v.type.c_type}$ ${v.name}$, <!--(end)-->)
+ * ${func.name}$ (<!--(for v in func.getter_values)-->${v.type.c_type_default}$ ${v.name}$, <!--(end)-->)
 <!--(else)-->
  no properties available
 <!--(end)-->
@@ -40,7 +40,7 @@ Properties:
 Implements:
 ===========
 <!--(for i in cls.implements)-->
- * ${i.full_name}$
+ * ${i.name}$
 <!--(else)-->
  no implements available
 <!--(end)-->

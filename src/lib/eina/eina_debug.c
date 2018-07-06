@@ -98,9 +98,6 @@
 // and if that day comes
 Eina_Spinlock _eina_debug_lock;
 
-// only init once
-static Eina_Bool _inited = EINA_FALSE;
-
 #ifdef __linux__
 extern char *__progname;
 #endif
@@ -110,6 +107,7 @@ extern Eina_Bool eina_mempool_init(void);
 extern Eina_Bool eina_list_init(void);
 
 extern Eina_Spinlock _eina_debug_thread_lock;
+static Eina_List *sessions;
 
 static Eina_Bool _debug_disabled = EINA_FALSE;
 
@@ -133,6 +131,8 @@ struct _Eina_Debug_Session
    void *data; /* User data */
    int cbs_length; /* cbs table size */
    int fd; /* File descriptor */
+   Eina_Lock lock; /* deletion lock */
+   Eina_Bool deleted : 1; /* set if session is dead */
 };
 
 #ifndef _WIN32
@@ -208,9 +208,8 @@ _packet_receive(Eina_Debug_Session *session, unsigned char **buffer)
    int rret = -1;
    unsigned int size = 0;
 
-   if (!session) goto end;
-
-   if ((rret = read(session->fd, &size, 4)) == 4)
+   rret = read(session->fd, &size, 4);
+   if (rret == 4)
      {
         size = SWAP_32(size);
         if (size > EINA_DEBUG_MAX_PACKET_SIZE)
@@ -273,6 +272,17 @@ eina_debug_session_terminate(Eina_Debug_Session *session)
    /* Close fd here so the thread terminates its own session by itself */
    if (!session) return;
    close(session->fd);
+   eina_lock_take(&session->lock);
+   if (session->deleted)
+     {
+        eina_lock_release(&session->lock);
+        free(session);
+     }
+   else
+     {
+        session->deleted = 1;
+        eina_lock_release(&session->lock);
+     }
 }
 
 EAPI void
@@ -453,6 +463,8 @@ _session_create(int fd)
    if (!session) return NULL;
    session->dispatch_cb = eina_debug_dispatch;
    session->fd = fd;
+   eina_lock_new(&session->lock);
+   sessions = eina_list_append(sessions, session);
    // start the monitor thread
    _thread_start(session);
    return session;
@@ -562,7 +574,7 @@ _monitor(void *_data)
    // sit forever processing commands or timeouts in the debug monitor
    // thread - this is separate to the rest of the app so it shouldn't
    // impact the application specifically
-   for (;session;)
+   while (1)
      {
         unsigned char *buffer = NULL;
         int size;
@@ -585,10 +597,9 @@ _monitor(void *_data)
           }
         else
           {
-             close(session->fd);
              _opcodes_unregister_all(session);
-             free(session);
-             session = NULL;
+             eina_debug_session_terminate(session);
+             break;
           }
      }
    return NULL;
@@ -702,18 +713,7 @@ eina_debug_init(void)
 {
    pthread_t self;
 
-   // if already inbitted simply release our lock that we may have locked on
-   // shutdown if we are re-initted again in the same process
-   if (_inited)
-     {
-        eina_spinlock_release(&_eina_debug_thread_lock);
-        return EINA_TRUE;
-     }
-   // mark as initted
-   _inited = EINA_TRUE;
-   eina_module_init();
-   eina_mempool_init();
-   eina_list_init();
+   eina_threads_init();
    // For Windows support GetModuleFileName can be used
    // set up thread things
    eina_spinlock_new(&_eina_debug_lock);
@@ -721,6 +721,9 @@ eina_debug_init(void)
    self = pthread_self();
    _eina_debug_thread_mainloop_set(&self);
    _eina_debug_thread_add(&self);
+   _eina_debug_cpu_init();
+   _eina_debug_bt_init();
+   _eina_debug_timer_init();
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    // if we are setuid - don't debug!
    if (getuid() != geteuid()) return EINA_TRUE;
@@ -732,21 +735,35 @@ eina_debug_init(void)
      {
         eina_debug_local_connect(EINA_FALSE);
      }
-   _eina_debug_cpu_init();
-   _eina_debug_bt_init();
-   _eina_debug_timer_init();
    return EINA_TRUE;
 }
 
 Eina_Bool
 eina_debug_shutdown(void)
 {
+   Eina_Debug_Session *session;
+   pthread_t self = pthread_self();
+
+   EINA_LIST_FREE(sessions, session)
+     eina_debug_session_terminate(session);
+
    _eina_debug_timer_shutdown();
    _eina_debug_bt_shutdown();
    _eina_debug_cpu_shutdown();
-   eina_spinlock_take(&_eina_debug_thread_lock);
-   // yes - we never free on shutdown - this is because the monitor thread
-   // never exits. this is not a leak - we intend to never free up any
-   // resources here because they are allocated once only ever.
+   _eina_debug_thread_del(&self);
+   eina_spinlock_free(&_eina_debug_lock);
+   eina_spinlock_free(&_eina_debug_thread_lock);
+   eina_threads_shutdown();
    return EINA_TRUE;
+}
+
+EAPI void
+eina_debug_fork_reset(void)
+{
+   extern Eina_Bool fork_resetting;
+
+   fork_resetting = EINA_TRUE;
+   eina_debug_shutdown();
+   eina_debug_init();
+   fork_resetting = EINA_FALSE;
 }

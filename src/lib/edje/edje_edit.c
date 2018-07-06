@@ -18,6 +18,8 @@
 
 #include <Eo.h>
 
+#include "../../static_libs/buildsystem/buildsystem.h"
+
 #ifdef MY_CLASS
 # undef MY_CLASS
 #endif
@@ -254,16 +256,11 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
     *    groups).
     *  P.S. don't forget about mmap version below
     */
-   Efl_Vpath_File *file_obj =
-     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-   efl_vpath_file_do(file_obj);
-   // XXX:FIXME: allow this to be async
-   efl_vpath_file_wait(file_obj);
-   file = efl_vpath_file_result_get(file_obj);
+   file = eina_vpath_resolve(file);
 
    Eina_Bool int_ret;
    int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, group);
-   efl_del(file_obj);
+
    if (!int_ret)
      return EINA_FALSE;
 
@@ -292,7 +289,7 @@ _edje_edit_efl_file_mmap_set(Eo *obj, Edje_Edit *eed, const Eina_File *mmap, con
 EAPI Evas_Object *
 edje_edit_object_add(Evas *evas)
 {
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -10419,7 +10416,7 @@ edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
       case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2: // LOSSY_ETC2
         return EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2;
 
-      case EDJE_IMAGE_SOURCE_TYPE_EXTERNAL: // USER
+      case EDJE_IMAGE_SOURCE_TYPE_USER: // USER
         return EDJE_EDIT_IMAGE_COMP_USER;
      }
 
@@ -10486,7 +10483,7 @@ edje_edit_image_compression_type_set(Evas_Object *obj, const char *image, Edje_E
 
       case EDJE_EDIT_IMAGE_COMP_USER: // USER
       {
-         de->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
+         de->source_type = EDJE_IMAGE_SOURCE_TYPE_USER;
          return EINA_TRUE;
       }
      }
@@ -11208,7 +11205,7 @@ edje_edit_program_run(Evas_Object *obj, const char *prog)
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   _edje_program_run(ed, epr, 0, "", "");
+   _edje_program_run(ed, epr, 0, "", "", NULL);
    return EINA_TRUE;
 }
 
@@ -12470,23 +12467,11 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 #else
 # define BIN_EXT
 #endif
-#ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-   {
-      if (getenv("EFL_RUN_IN_TREE"))
-        {
-           snprintf(embryo_cc_path, sizeof(embryo_cc_path),
-                    "%s/src/bin/embryo/embryo_cc" BIN_EXT,
-                    PACKAGE_BUILD_DIR);
-           snprintf(inc_path, sizeof(inc_path),
-                    "%s/data/edje/include", PACKAGE_BUILD_DIR);
-           if (!ecore_file_exists(embryo_cc_path))
-             embryo_cc_path[0] = '\0';
-        }
-   }
-#endif
+
+   bs_binary_get(embryo_cc_path, sizeof(embryo_cc_path), "embryo", "embryo_cc");
+
+   bs_data_path_get(inc_path, sizeof(inc_path), "edje", "include");
+
 
    if (embryo_cc_path[0] == '\0')
      {

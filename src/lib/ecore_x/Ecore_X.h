@@ -2494,8 +2494,16 @@ typedef struct _Ecore_X_Event_Damage Ecore_X_Event_Damage;
 struct _Ecore_X_Event_Xkb
 {
    int group;
+   int base_group; /** @since 1.21 */
+   int latched_group; /** @since 1.21 */
+   int locked_group; /** @since 1.21 */
+   unsigned int	mods; /** @since 1.21 */
+   unsigned int base_mods; /** @since 1.21 */
+   unsigned int	latched_mods; /** @since 1.21 */
+   unsigned int	locked_mods; /** @since 1.21 */
 };
 typedef struct _Ecore_X_Event_Xkb Ecore_X_Event_Xkb; /** @since 1.7 */
+typedef struct _Ecore_X_Event_Xkb Ecore_X_Xkb_State; /** @since 1.21 */
 
 EAPI Eina_Bool      ecore_x_damage_query(void);
 EAPI Ecore_X_Damage ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level);
@@ -2721,6 +2729,8 @@ EAPI Ecore_X_Illume_Window_State           ecore_x_e_illume_window_state_get(Eco
 EAPI void                                  ecore_x_e_illume_window_state_send(Ecore_X_Window win, Ecore_X_Illume_Window_State state); /**< @since 1.9 */
 
 EAPI void                                  ecore_x_xkb_select_group(int group); /* @since 1.7 */
+EAPI Eina_Bool                             ecore_x_xkb_track_state(void); /** @since 1.21 */
+EAPI Eina_Bool                             ecore_x_xkb_state_get(Ecore_X_Xkb_State *state); /** @since 1.21 */
 
 EAPI void                                  ecore_x_e_window_rotation_supported_set(Ecore_X_Window root, Eina_Bool enabled); /**< @since 1.9 */
 EAPI Eina_Bool                             ecore_x_e_window_rotation_supported_get(Ecore_X_Window root); /**< @since 1.9 */

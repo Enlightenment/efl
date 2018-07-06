@@ -89,7 +89,7 @@ _efl_net_server_ssl_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Ssl_Data 
 
    client_tcp = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
                         efl_io_closer_close_on_exec_set(efl_added, efl_net_server_fd_close_on_exec_get(o)),
-                        efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                        efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                         efl_loop_fd_set(efl_added, client_fd));
    if (!client_tcp)
      {
@@ -149,14 +149,16 @@ _efl_net_server_ssl_ctx_del(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN void
+_efl_net_server_ssl_efl_object_invalidate(Eo *o, Efl_Net_Server_Ssl_Data *pd)
+{
+   pd->server = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN void
 _efl_net_server_ssl_efl_object_destructor(Eo *o, Efl_Net_Server_Ssl_Data *pd)
 {
-   if (pd->server)
-     {
-        efl_del(pd->server);
-        pd->server = NULL;
-     }
-
    if (pd->ssl_ctx)
      {
         efl_event_callback_del(pd->ssl_ctx, EFL_EVENT_DEL, _efl_net_server_ssl_ctx_del, o);
@@ -180,7 +182,7 @@ _efl_net_server_ssl_ssl_context_set(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *
 }
 
 EOLIAN static Eo *
-_efl_net_server_ssl_ssl_context_get(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd)
+_efl_net_server_ssl_ssl_context_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd)
 {
    return pd->ssl_ctx;
 }

@@ -53,7 +53,7 @@ check_iterator(Eina_Iterator *it, struct test_rect *cur_test)
    fail_if(i == 0);
 }
 
-START_TEST(eina_test_tile_grid_slicer_iterator)
+EFL_START_TEST(eina_test_tile_grid_slicer_iterator)
 {
    Eina_Iterator *it;
    struct test_rect *cur_test;
@@ -87,7 +87,6 @@ START_TEST(eina_test_tile_grid_slicer_iterator)
     {1, 2,   0,   0, 128,   1,  0},
     {2, 2,   0,   0,   1,   1,  0}};
 
-   eina_init();
 
    cur_test = test1;
    it = eina_tile_grid_slicer_iterator_new(200, 210, 10, 15, 128, 128);
@@ -124,11 +123,10 @@ START_TEST(eina_test_tile_grid_slicer_iterator)
    check_iterator(it, cur_test);
    eina_iterator_free(it);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_all)
+EFL_START_TEST(eina_test_tiler_all)
 {
    Eina_Tiler *tl;
    Eina_Iterator *it;
@@ -137,7 +135,6 @@ START_TEST(eina_test_tiler_all)
    int i = 0;
    int width, height;
 
-   eina_init();
 
    tl = eina_tiler_new(1, 1);
 
@@ -183,11 +180,10 @@ START_TEST(eina_test_tiler_all)
 
    eina_tiler_free(tl);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_stable)
+EFL_START_TEST(eina_test_tiler_stable)
 {
    Eina_Tiler *tl;
    Eina_Rectangle *rp;
@@ -195,7 +191,6 @@ START_TEST(eina_test_tiler_stable)
    Eina_Rectangle r;
    int i = 0;
 
-   eina_init();
 
    tl = eina_tiler_new(640, 480);
    fail_if(!tl);
@@ -233,18 +228,16 @@ START_TEST(eina_test_tiler_stable)
 
    eina_tiler_free(tl);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_calculation)
+EFL_START_TEST(eina_test_tiler_calculation)
 {
    Eina_Tiler *t1, *t2, *t;
    Eina_Iterator *itr;
    Eina_Rectangle r1, r2, r3, *rp;
    int i = 0;
 
-   eina_init();
 
    t1 = eina_tiler_new(500, 500);
    fail_if(!t1);
@@ -349,18 +342,16 @@ START_TEST(eina_test_tiler_calculation)
    eina_tiler_free(t1);
    eina_tiler_free(t2);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_tiler_size)
+EFL_START_TEST(eina_test_tiler_size)
 {
    Eina_Rectangle *r;
    Eina_Iterator *it;
    Eina_Tiler *t;
    Eina_Bool rects = EINA_FALSE;
 
-   eina_init();
    t = eina_tiler_new(131070, 131070);
    fail_if(!t);
 
@@ -379,9 +370,8 @@ START_TEST(eina_test_tiler_size)
    fail_if(!rects);
    eina_iterator_free(it);
    eina_tiler_free(t);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_tiler(TCase *tc)

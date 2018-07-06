@@ -25,101 +25,60 @@
 #include <Efl.h>
 #include <Ecore.h>
 
-typedef struct _Test_Container_Data {
-   int item_count;
-   Eina_Bool pass_flag;
-   Eina_Bool fail_flag;
-} Test_Container_Data;
-
 typedef struct _Test_Container_Item_Data {
-   Test_Container_Data* test_data;
    unsigned int index;
 } Test_Container_Item_Data;
 
 const int base_int[7]  = {10, 11, 12, 13, 14, 0, 16};
 const char * const base_str[7] = {"A", "B", "C", "D", "E", "", "GH"};
 
-static void
-_future_error_then(void *data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
+static Eina_Value
+_children_slice_future_then(void *data EINA_UNUSED,
+                            const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
-   ck_abort_msg("Promise failed");
+   unsigned int i, len;
+   Efl_Model *child = NULL;
+
+   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        Eina_Value *value_int = NULL;
+        Eina_Value *value_str = NULL;
+        const char *cmp_str = NULL;
+        int cmp_int = 0;
+
+        value_int = efl_model_property_get(child, "test_p_int");
+        value_str = efl_model_property_get(child, "test_p_str");
+
+        fail_if(eina_value_type_get(value_int) != EINA_VALUE_TYPE_INT);
+        fail_if(eina_value_type_get(value_str) != EINA_VALUE_TYPE_STRING);
+
+        eina_value_get(value_int, &cmp_int);
+        eina_value_get(value_str, &cmp_str);
+
+         if (cmp_int != base_int[i] ||
+             strcmp(cmp_str, base_str[i]) != 0)
+           {
+              abort();
+           }
+     }
+   fprintf(stderr, "len: %i\n", len);
+
+   fail_if(len != 7);
+
+   ecore_main_loop_quit();
+
+   return v;
 }
 
-static void
-_container_property_get_then(void *data, Efl_Event const *event)
-{
-   Eina_Accessor *value_itt = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
-   Test_Container_Item_Data *test_item_data = data;
-   Eina_Value *value_int = NULL;
-   Eina_Value *value_str = NULL;
-   int cmp_int = 0;
-   const char *cmp_str = NULL;
-
-   test_item_data->test_data->item_count++;
-
-   if (!value_itt || !eina_accessor_data_get(value_itt, 0, (void**)&value_int) ||
-       !eina_accessor_data_get(value_itt, 1, (void**)&value_str))
-     {
-        test_item_data->test_data->fail_flag = EINA_TRUE;
-        ecore_main_loop_quit();
-        return;
-     }
-
-   eina_value_get(value_int, &cmp_int);
-   eina_value_get(value_str, &cmp_str);
-
-   if (cmp_int != base_int[test_item_data->index] ||
-       strcmp(cmp_str, base_str[test_item_data->index]) != 0)
-     {
-        test_item_data->test_data->fail_flag = EINA_TRUE;
-     }
-
-   if (test_item_data->test_data->item_count == 7)
-     {
-        test_item_data->test_data->pass_flag = EINA_TRUE;
-     }
-  ecore_main_loop_quit();
-}
-
-static void
-_children_slice_future_then(void *data, Efl_Event const *event)
-{
-   Eina_Accessor *children_accessor = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
-   unsigned int i = 0;
-   Efl_Model *child;
-
-   if (children_accessor)
-     {
-        EINA_ACCESSOR_FOREACH(children_accessor, i, child)
-          {
-             Efl_Future *futures[3] = {NULL,};
-             Efl_Future *future_all = NULL;
-             Test_Container_Item_Data *test_item_data = calloc(1, sizeof(Test_Container_Item_Data));
-
-             test_item_data->test_data = data;
-             test_item_data->index = i;
-
-             futures[0] = efl_model_property_get(child, "test_p_int");
-             futures[1] = efl_model_property_get(child, "test_p_str");
-
-             future_all = efl_future_all(futures[0], futures[1]);
-             efl_future_then(future_all, _container_property_get_then, _future_error_then, NULL, test_item_data);
-          }
-     }
-}
-
-
-START_TEST(efl_test_model_container_values)
+EFL_START_TEST(efl_test_model_container_values)
 {
    Efl_Model_Container* model;
-   Efl_Future *future;
-   Test_Container_Data test_data;
+   Eina_Future *future;
    int **cmp_int;
    const char **cmp_str;
    int i;
-
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
 
    cmp_int = calloc(8, sizeof(int*));
    cmp_str = calloc(8, sizeof(const char*));
@@ -130,7 +89,7 @@ START_TEST(efl_test_model_container_values)
         cmp_str[i] = strdup(base_str[i]);
      }
 
-   model = efl_add(EFL_MODEL_CONTAINER_CLASS, NULL);
+   model = efl_add_ref(EFL_MODEL_CONTAINER_CLASS, NULL);
 
    efl_model_container_child_property_add(model, "test_p_int", EINA_VALUE_TYPE_INT,
                                           eina_carray_iterator_new((void**)cmp_int));
@@ -146,22 +105,13 @@ START_TEST(efl_test_model_container_values)
    free(cmp_int);
    free(cmp_str);
 
-   future = efl_model_children_slice_get(model, 0, 0);
+   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
 
-   test_data.item_count = 0;
-   test_data.pass_flag = EINA_FALSE;
-   test_data.fail_flag = EINA_FALSE;
+   eina_future_then(future, _children_slice_future_then, NULL);
 
-   efl_future_then(future, _children_slice_future_then, _future_error_then, NULL, &test_data);
-
-   while ((!test_data.pass_flag) && (!test_data.fail_flag)) ecore_main_loop_iterate();
-
-   ck_assert(!!test_data.pass_flag);
-   ck_assert(!test_data.fail_flag);
-
-   ecore_shutdown();
+   ecore_main_loop_begin();
 }
-END_TEST
+EFL_END_TEST
 
 
 void

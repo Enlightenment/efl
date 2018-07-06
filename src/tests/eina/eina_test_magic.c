@@ -104,12 +104,11 @@ _eina_test_magic_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const 
   ctx.expected_level = EINA_LOG_LEVEL_ERR
 #endif
 
-START_TEST(eina_magic_simple)
+EFL_START_TEST(eina_magic_simple)
 {
    Eina_Magic_Struct *ems = NULL;
    struct log_ctx ctx;
 
-   eina_init();
 
    eina_log_print_cb_set(_eina_test_safety_print_cb, &ctx);
 
@@ -189,9 +188,8 @@ START_TEST(eina_magic_simple)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eina_test_magic(TCase *tc)
 {

@@ -7,24 +7,24 @@
     this means that missing one or changing the order most certainly cause
     formatting errors.
 
-    \@block
+   \@block
         block name
-    \@context
+   \@context
         code sample of the block
-    \@description
+   \@description
         the block's description
-    \@since X.X
-    \@endblock
+   \@since X.X
+   \@endblock
 
-    \@property
+   \@property
         property name
-    \@parameters
+   \@parameters
         property's parameter list
-    \@effect
+   \@effect
         the property description (lol)
-    \@since X.X
-    \@endproperty
-*/
+   \@since X.X
+   \@endproperty
+ */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -174,856 +174,889 @@ Eina_List *po_files;
 
 static Eina_Hash *desc_hash = NULL;
 
-struct _Edje_Cc_Handlers_Hierarchy_Info
-{  /* Struct that keeps globals value to impl hierarchy */
+struct _Edje_Cc_Handlers_Hierarchy_Info /* Struct that keeps globals value to impl hierarchy */
+{
    Edje_Part_Collection_Directory_Entry *current_de;
-   Edje_Part *current_part;
-   Edje_Pack_Element *current_item;
-   Edje_Part_Description_Common *current_desc;
-   Edje_Part_Description_Common *parent_desc;
-   Edje_Program *current_program;
-   Edje_Part *ep;
+   Edje_Part                            *current_part;
+   Edje_Pack_Element                    *current_item;
+   Edje_Part_Description_Common         *current_desc;
+   Edje_Part_Description_Common         *parent_desc;
+   Edje_Program                         *current_program;
+   Edje_Part                            *ep;
 };
 typedef struct _Edje_Cc_Handlers_Hierarchy_Info Edje_Cc_Handlers_Hierarchy_Info;
 
 static Eina_Array *part_hierarchy = NULL; /* stack parts,support nested parts */
-static void edje_cc_handlers_hierarchy_set(Edje_Part *src);
+static void       edje_cc_handlers_hierarchy_set(Edje_Part *src);
 static Edje_Part *edje_cc_handlers_hierarchy_parent_get(void);
-static void edje_cc_handlers_hierarchy_push(Edje_Part *ep, Edje_Part *cp);
-static void edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new);
-static void edje_cc_handlers_hierarchy_pop(void);
+static void       edje_cc_handlers_hierarchy_push(Edje_Part *ep, Edje_Part *cp);
+static void       edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new);
+static void       edje_cc_handlers_hierarchy_pop(void);
 
-static void _program_target_add(char *name);
-static void _program_after(const char *name);
-static void _program_free(Edje_Program *pr);
-static Eina_Bool _program_remove(const char *name, Edje_Program **pgrms, unsigned int count);
+static void       _program_target_add(char *name);
+static void       _program_after(const char *name);
+static void       _program_free(Edje_Program *pr);
+static Eina_Bool  _program_remove(const char *name, Edje_Program **pgrms, unsigned int count);
 
-static void * _part_free(Edje_Part_Collection *pc, Edje_Part *ep);
+static void      *_part_free(Edje_Part_Collection *pc, Edje_Part *ep);
 
-static void check_has_anchors(void);
+static void       check_has_anchors(void);
 
-static void st_efl_version(void);
-static void st_externals_external(void);
+static void       st_id(void);
+static void       st_requires(void);
+static void       st_efl_version(void);
+static void       st_externals_external(void);
 
-static void st_images_image(void);
-static void ob_images_set(void);
-static void st_images_set_name(void);
-static void ob_images_set_image(void);
-static void st_images_set_image_image(void);
-static void st_images_set_image_size(void);
-static void st_images_set_image_border(void);
-static void st_images_set_image_border_scale_by(void);
+static void       st_images_image(void);
+static void       ob_images_set(void);
+static void       st_images_set_name(void);
+static void       ob_images_set_image(void);
+static void       st_images_set_image_image(void);
+static void       st_images_set_image_size(void);
+static void       st_images_set_image_border(void);
+static void       st_images_set_image_border_scale_by(void);
 
-static void st_models_model(void);
+static void       st_models_model(void);
 
-static void st_fonts_font(void);
+static void       st_fonts_font(void);
 
-static void st_data_item(void);
-static void st_data_file(void);
+static void       st_data_item(void);
+static void       st_data_file(void);
 
-static void ob_styles_style(void);
-static void st_styles_style_name(void);
-static void st_styles_style_base(void);
-static void st_styles_style_tag(void);
+static void       ob_styles_style(void);
+static void       st_styles_style_name(void);
+static void       st_styles_style_base(void);
+static void       st_styles_style_tag(void);
 
-static void ob_color_tree(void);
+static void       ob_color_tree(void);
 
-static void ob_color_class(void);
-static void st_color_class_name(void);
-static void st_color_class_color(void);
-static void st_color_class_color2(void);
-static void st_color_class_color3(void);
-static void st_color_class_desc(void);
+static void       ob_color_class(void);
+static void       st_color_class_name(void);
+static void       st_color_class_color(void);
+static void       st_color_class_color2(void);
+static void       st_color_class_color3(void);
+static void       st_color_class_desc(void);
 
-static void ob_text_class(void);
-static void st_text_class_name(void);
-static void st_text_class_font(void);
-static void st_text_class_size(void);
+static void       ob_text_class(void);
+static void       st_text_class_name(void);
+static void       st_text_class_font(void);
+static void       st_text_class_size(void);
 
-static void ob_size_class(void);
-static void st_size_class_name(void);
-static void st_size_class_min(void);
-static void st_size_class_max(void);
+static void       ob_size_class(void);
+static void       st_size_class_name(void);
+static void       st_size_class_min(void);
+static void       st_size_class_max(void);
 
-static void ob_filters_filter(void);
-static void ob_filters_filter_script(void);
-static void st_filters_filter_file(void);
-static void st_filters_filter_name(void);
+static void       ob_filters_filter(void);
+static void       ob_filters_filter_script(void);
+static void       st_filters_filter_file(void);
+static void       st_filters_filter_name(void);
 
-static void ob_collections(void);
-static void st_collections_base_scale(void);
+static void       ob_collections(void);
+static void       st_collections_base_scale(void);
 
-static void ob_collections_group(void);
-static void st_collections_group_name(void);
-static void st_collections_group_inherit_only(void);
-static void st_collections_group_inherit(void);
-static void st_collections_group_program_source(void);
-static void st_collections_group_part_remove(void);
-static void st_collections_group_program_remove(void);
-static void st_collections_group_lua_script_only(void);
-static void st_collections_group_script_recursion(void);
-static void st_collections_group_alias(void);
-static void st_collections_group_min(void);
-static void st_collections_group_max(void);
-static void st_collections_group_scene_size(void);
-static void st_collections_group_broadcast_signal(void);
-static void st_collections_group_data_item(void);
-static void st_collections_group_orientation(void);
-static void st_collections_group_mouse_events(void);
-static void st_collections_group_use_custom_seat_names(void);
-static void st_collections_group_inherit_script(void);
+static void       ob_collections_group(void);
+static void       st_collections_group_name(void);
+static void       st_collections_group_skip_namespace_validation(void);
+static void       st_collections_group_inherit_only(void);
+static void       st_collections_group_inherit(void);
+static void       st_collections_group_program_source(void);
+static void       st_collections_group_part_remove(void);
+static void       st_collections_group_program_remove(void);
+static void       st_collections_group_lua_script_only(void);
+static void       st_collections_group_script_recursion(void);
+static void       st_collections_group_alias(void);
+static void       st_collections_group_min(void);
+static void       st_collections_group_max(void);
+static void       st_collections_group_scene_size(void);
+static void       st_collections_group_broadcast_signal(void);
+static void       st_collections_group_data_item(void);
+static void       st_collections_group_orientation(void);
+static void       st_collections_group_mouse_events(void);
+static void       st_collections_group_use_custom_seat_names(void);
+static void       st_collections_group_inherit_script(void);
 
-static void st_collections_group_limits_vertical(void);
-static void st_collections_group_limits_horizontal(void);
+static void       st_collections_group_limits_vertical(void);
+static void       st_collections_group_limits_horizontal(void);
 
-static void ob_collections_group_script(void);
-static void ob_collections_group_lua_script(void);
+static void       ob_collections_group_script(void);
+static void       ob_collections_group_lua_script(void);
 
-static void st_collections_group_parts_alias(void);
+static void       st_collections_group_parts_alias(void);
 
 static Edje_Part *edje_cc_handlers_part_make(int);
-static void ob_collections_group_parts_part(void);
-static void st_collections_group_parts_part_name(void);
-static void st_collections_group_parts_part_inherit(void);
-static void st_collections_group_parts_part_type(void);
+static void       ob_collections_group_parts_part(void);
+static void       st_collections_group_parts_part_name(void);
+static void       st_collections_group_parts_part_inherit(void);
+static void       st_collections_group_parts_part_type(void);
 #ifdef HAVE_EPHYSICS
-static void st_collections_group_parts_part_physics_body(void);
+static void       st_collections_group_parts_part_physics_body(void);
 #endif
-static void st_collections_group_parts_part_insert_before(void);
-static void st_collections_group_parts_part_insert_after(void);
-static void st_collections_group_parts_part_effect(void);
-static void st_collections_group_parts_part_mouse_events(void);
-static void st_collections_group_parts_part_anti_alias(void);
-static void st_collections_group_parts_part_repeat_events(void);
-static void st_collections_group_parts_part_ignore_flags(void);
-static void st_collections_group_parts_part_mask_flags(void);
-static void st_collections_group_parts_part_scale(void);
-static void st_collections_group_parts_part_pointer_mode(void);
-static void st_collections_group_parts_part_precise_is_inside(void);
-static void st_collections_group_parts_part_use_alternate_font_metrics(void);
-static void st_collections_group_parts_part_clip_to_id(void);
-static void st_collections_group_parts_part_render(void);
-static void st_collections_group_parts_part_no_render(void);
-static void st_collections_group_parts_part_required(void);
-static void st_collections_group_parts_part_norequired(void);
-static void st_collections_group_parts_part_source(void);
-static void st_collections_group_parts_part_source2(void);
-static void st_collections_group_parts_part_source3(void);
-static void st_collections_group_parts_part_source4(void);
-static void st_collections_group_parts_part_source5(void);
-static void st_collections_group_parts_part_source6(void);
-static void st_collections_group_parts_part_entry_mode(void);
-static void st_collections_group_parts_part_select_mode(void);
-static void st_collections_group_parts_part_cursor_mode(void);
-static void st_collections_group_parts_part_multiline(void);
-static void st_collections_group_parts_part_access(void);
-static void st_collections_group_parts_part_dragable_x(void);
-static void st_collections_group_parts_part_dragable_y(void);
-static void st_collections_group_parts_part_dragable_confine(void);
-static void st_collections_group_parts_part_dragable_threshold(void);
-static void st_collections_group_parts_part_dragable_events(void);
-static void st_collections_group_parts_part_allowed_seats(void);
+static void       st_collections_group_parts_part_insert_before(void);
+static void       st_collections_group_parts_part_insert_after(void);
+static void       st_collections_group_parts_part_effect(void);
+static void       st_collections_group_parts_part_mouse_events(void);
+static void       st_collections_group_parts_part_anti_alias(void);
+static void       st_collections_group_parts_part_repeat_events(void);
+static void       st_collections_group_parts_part_ignore_flags(void);
+static void       st_collections_group_parts_part_mask_flags(void);
+static void       st_collections_group_parts_part_scale(void);
+static void       st_collections_group_parts_part_pointer_mode(void);
+static void       st_collections_group_parts_part_precise_is_inside(void);
+static void       st_collections_group_parts_part_use_alternate_font_metrics(void);
+static void       st_collections_group_parts_part_clip_to_id(void);
+static void       st_collections_group_parts_part_render(void);
+static void       st_collections_group_parts_part_no_render(void);
+static void       st_collections_group_parts_part_required(void);
+static void       st_collections_group_parts_part_norequired(void);
+static void       st_collections_group_parts_part_source(void);
+static void       st_collections_group_parts_part_source2(void);
+static void       st_collections_group_parts_part_source3(void);
+static void       st_collections_group_parts_part_source4(void);
+static void       st_collections_group_parts_part_source5(void);
+static void       st_collections_group_parts_part_source6(void);
+static void       st_collections_group_parts_part_entry_mode(void);
+static void       st_collections_group_parts_part_select_mode(void);
+static void       st_collections_group_parts_part_cursor_mode(void);
+static void       st_collections_group_parts_part_multiline(void);
+static void       st_collections_group_parts_part_access(void);
+static void       st_collections_group_parts_part_dragable_x(void);
+static void       st_collections_group_parts_part_dragable_y(void);
+static void       st_collections_group_parts_part_dragable_confine(void);
+static void       st_collections_group_parts_part_dragable_threshold(void);
+static void       st_collections_group_parts_part_dragable_events(void);
+static void       st_collections_group_parts_part_allowed_seats(void);
 
 /* box and table items share these */
-static void ob_collections_group_parts_part_box_items_item(void);
-static void st_collections_group_parts_part_box_items_item_type(void);
-static void st_collections_group_parts_part_box_items_item_name(void);
-static void st_collections_group_parts_part_box_items_item_source(void);
-static void st_collections_group_parts_part_box_items_item_min(void);
-static void st_collections_group_parts_part_box_items_item_spread(void);
-static void st_collections_group_parts_part_box_items_item_prefer(void);
-static void st_collections_group_parts_part_box_items_item_max(void);
-static void st_collections_group_parts_part_box_items_item_padding(void);
-static void st_collections_group_parts_part_box_items_item_align(void);
-static void st_collections_group_parts_part_box_items_item_weight(void);
-static void st_collections_group_parts_part_box_items_item_aspect(void);
-static void st_collections_group_parts_part_box_items_item_aspect_mode(void);
-static void st_collections_group_parts_part_box_items_item_options(void);
+static void       ob_collections_group_parts_part_box_items_item(void);
+static void       st_collections_group_parts_part_box_items_item_type(void);
+static void       st_collections_group_parts_part_box_items_item_name(void);
+static void       st_collections_group_parts_part_box_items_item_source(void);
+static void       st_collections_group_parts_part_box_items_item_min(void);
+static void       st_collections_group_parts_part_box_items_item_spread(void);
+static void       st_collections_group_parts_part_box_items_item_prefer(void);
+static void       st_collections_group_parts_part_box_items_item_max(void);
+static void       st_collections_group_parts_part_box_items_item_padding(void);
+static void       st_collections_group_parts_part_box_items_item_align(void);
+static void       st_collections_group_parts_part_box_items_item_weight(void);
+static void       st_collections_group_parts_part_box_items_item_aspect(void);
+static void       st_collections_group_parts_part_box_items_item_aspect_mode(void);
+static void       st_collections_group_parts_part_box_items_item_options(void);
 /* but these are only for table */
-static void st_collections_group_parts_part_table_items_item_position(void);
-static void st_collections_group_parts_part_table_items_item_span(void);
+static void       st_collections_group_parts_part_table_items_item_position(void);
+static void       st_collections_group_parts_part_table_items_item_span(void);
 
-static void ob_collections_group_parts_part_description(void);
-static void ob_collections_group_parts_part_desc(void);
-static void st_collections_group_parts_part_description_inherit(void);
-static void ob_collections_group_parts_part_description_link(void);
-static void st_collections_group_parts_part_description_link_base(void);
-static void st_collections_group_parts_part_description_source(void);
-static void st_collections_group_parts_part_description_state(void);
-static void st_collections_group_parts_part_description_visible(void);
-static void st_collections_group_parts_part_description_no_render(void);
-static void st_collections_group_parts_part_description_limit(void);
-static void st_collections_group_parts_part_description_align(void);
-static void st_collections_group_parts_part_description_fixed(void);
-static void st_collections_group_parts_part_description_min(void);
-static void st_collections_group_parts_part_description_minmul(void);
-static void st_collections_group_parts_part_description_max(void);
-static void st_collections_group_parts_part_description_step(void);
-static void st_collections_group_parts_part_description_aspect(void);
-static void st_collections_group_parts_part_description_aspect_preference(void);
-static void st_collections_group_parts_part_description_rel_to(void);
-static void st_collections_group_parts_part_description_rel_to_x(void);
-static void st_collections_group_parts_part_description_rel_to_y(void);
-static void st_collections_group_parts_part_description_rel1_relative(void);
-static void st_collections_group_parts_part_description_rel1_offset(void);
-static void st_collections_group_parts_part_description_rel1_to_set(const char *name);
-static void st_collections_group_parts_part_description_rel1_to(void);
-static void st_collections_group_parts_part_description_rel1_to_x(void);
-static void st_collections_group_parts_part_description_rel1_to_y(void);
-static void st_collections_group_parts_part_description_rel2_relative(void);
-static void st_collections_group_parts_part_description_rel2_offset(void);
-static void st_collections_group_parts_part_description_rel2_to_set(const char *name);
-static void st_collections_group_parts_part_description_rel2_to(void);
-static void st_collections_group_parts_part_description_rel2_to_x(void);
-static void st_collections_group_parts_part_description_rel2_to_y(void);
-static void st_collections_group_parts_part_description_anchors_top(void);
-static void st_collections_group_parts_part_description_anchors_bottom(void);
-static void st_collections_group_parts_part_description_anchors_left(void);
-static void st_collections_group_parts_part_description_anchors_right(void);
-static void st_collections_group_parts_part_description_anchors_vertical_center(void);
-static void st_collections_group_parts_part_description_anchors_horizontal_center(void);
-static void st_collections_group_parts_part_description_anchors_fill(void);
-static void st_collections_group_parts_part_description_anchors_margin(void);
-static void st_collections_group_parts_part_description_clip_to_id(void);
-static void st_collections_group_parts_part_description_size_class(void);
-static void st_collections_group_parts_part_description_image_normal(void);
-static void st_collections_group_parts_part_description_image_tween(void);
-static void st_collections_group_parts_part_description_image_border(void);
-static void st_collections_group_parts_part_description_image_middle(void);
-static void st_collections_group_parts_part_description_image_border_scale(void);
-static void st_collections_group_parts_part_description_image_border_scale_by(void);
-static void st_collections_group_parts_part_description_image_scale_hint(void);
-static void st_collections_group_parts_part_description_fill_smooth(void);
-static void st_collections_group_parts_part_description_fill_origin_relative(void);
-static void st_collections_group_parts_part_description_fill_origin_offset(void);
-static void st_collections_group_parts_part_description_fill_size_relative(void);
-static void st_collections_group_parts_part_description_fill_size_offset(void);
-static void st_collections_group_parts_part_description_fill_type(void);
-static void st_collections_group_parts_part_description_color_class(void);
-static void st_collections_group_parts_part_description_color(void);
-static void st_collections_group_parts_part_description_color2(void);
-static void st_collections_group_parts_part_description_color3(void);
-static void st_collections_group_parts_part_description_text_text(void);
-static void st_collections_group_parts_part_description_text_domain(void);
-static void st_collections_group_parts_part_description_text_text_class(void);
-static void st_collections_group_parts_part_description_text_font(void);
-static void st_collections_group_parts_part_description_text_style(void);
-static void st_collections_group_parts_part_description_text_repch(void);
-static void st_collections_group_parts_part_description_text_size(void);
-static void st_collections_group_parts_part_description_text_size_range(void);
-static void st_collections_group_parts_part_description_text_fit(void);
-static void st_collections_group_parts_part_description_text_min(void);
-static void st_collections_group_parts_part_description_text_max(void);
-static void st_collections_group_parts_part_description_text_align(void);
-static void st_collections_group_parts_part_description_text_source(void);
-static void st_collections_group_parts_part_description_text_text_source(void);
-static void st_collections_group_parts_part_description_text_ellipsis(void);
-static void st_collections_group_parts_part_description_box_layout(void);
-static void st_collections_group_parts_part_description_box_align(void);
-static void st_collections_group_parts_part_description_box_padding(void);
-static void st_collections_group_parts_part_description_box_min(void);
-static void st_collections_group_parts_part_description_table_homogeneous(void);
-static void st_collections_group_parts_part_description_table_align(void);
-static void st_collections_group_parts_part_description_table_padding(void);
-static void st_collections_group_parts_part_description_table_min(void);
-static void st_collections_group_parts_part_description_proxy_source_visible(void);
-static void st_collections_group_parts_part_description_proxy_source_clip(void);
-static void st_collections_group_parts_part_description_position_point(void);
-static void st_collections_group_parts_part_description_position_space(void);
-static void st_collections_group_parts_part_description_camera_properties(void);
-static void st_collections_group_parts_part_description_properties_ambient(void);
-static void st_collections_group_parts_part_description_properties_diffuse(void);
-static void st_collections_group_parts_part_description_properties_specular(void);
-static void st_collections_group_parts_part_description_properties_material(void);
-static void st_collections_group_parts_part_description_properties_normal(void);
-static void st_collections_group_parts_part_description_properties_shininess(void);
-static void st_collections_group_parts_part_description_properties_shade(void);
-static void st_collections_group_parts_part_description_orientation_angle_axis(void);
-static void st_collections_group_parts_part_description_orientation_look1(void);
-static void st_collections_group_parts_part_description_orientation_look2(void);
-static void st_collections_group_parts_part_description_orientation_look_to(void);
-static void st_collections_group_parts_part_description_orientation_angle_axis(void);
-static void st_collections_group_parts_part_description_orientation_quaternion(void);
-static void st_collections_group_parts_part_description_scale(void);
-static void st_collections_group_parts_part_description_offset_scale(void);
-static void st_collections_group_parts_part_description_mesh_primitive(void);
-static void ob_collections_group_parts_part_description_texture(void);
-static void st_collections_group_parts_part_description_texture_image(void);
-static void st_collections_group_parts_part_description_texture_wrap1(void);
-static void st_collections_group_parts_part_description_texture_wrap2(void);
-static void st_collections_group_parts_part_description_texture_filter1(void);
-static void st_collections_group_parts_part_description_texture_filter2(void);
-static void st_collections_group_parts_part_description_mesh_assembly(void);
-static void st_collections_group_parts_part_description_mesh_geometry(void);
-static void st_collections_group_parts_part_description_mesh_frame(void);
-static void st_collections_group_parts_part_description_filter_code(void);
-static void st_collections_group_parts_part_description_filter_source(void);
-static void st_collections_group_parts_part_description_filter_data(void);
+static void       ob_collections_group_parts_part_description(void);
+static void       ob_collections_group_parts_part_desc(void);
+static void       st_collections_group_parts_part_description_inherit(void);
+static void       ob_collections_group_parts_part_description_link(void);
+static void       st_collections_group_parts_part_description_link_base(void);
+static void       st_collections_group_parts_part_description_source(void);
+static void       st_collections_group_parts_part_description_state(void);
+static void       st_collections_group_parts_part_description_visible(void);
+static void       st_collections_group_parts_part_description_no_render(void);
+static void       st_collections_group_parts_part_description_limit(void);
+static void       st_collections_group_parts_part_description_align(void);
+static void       st_collections_group_parts_part_description_fixed(void);
+static void       st_collections_group_parts_part_description_min(void);
+static void       st_collections_group_parts_part_description_minmul(void);
+static void       st_collections_group_parts_part_description_max(void);
+static void       st_collections_group_parts_part_description_step(void);
+static void       st_collections_group_parts_part_description_aspect(void);
+static void       st_collections_group_parts_part_description_aspect_preference(void);
+static void       st_collections_group_parts_part_description_rel_to(void);
+static void       st_collections_group_parts_part_description_rel_to_x(void);
+static void       st_collections_group_parts_part_description_rel_to_y(void);
+static void       st_collections_group_parts_part_description_rel1_relative(void);
+static void       st_collections_group_parts_part_description_rel1_offset(void);
+static void       st_collections_group_parts_part_description_rel1_to_set(const char *name);
+static void       st_collections_group_parts_part_description_rel1_to(void);
+static void       st_collections_group_parts_part_description_rel1_to_x(void);
+static void       st_collections_group_parts_part_description_rel1_to_y(void);
+static void       st_collections_group_parts_part_description_rel2_relative(void);
+static void       st_collections_group_parts_part_description_rel2_offset(void);
+static void       st_collections_group_parts_part_description_rel2_to_set(const char *name);
+static void       st_collections_group_parts_part_description_rel2_to(void);
+static void       st_collections_group_parts_part_description_rel2_to_x(void);
+static void       st_collections_group_parts_part_description_rel2_to_y(void);
+static void       st_collections_group_parts_part_description_anchors_top(void);
+static void       st_collections_group_parts_part_description_anchors_bottom(void);
+static void       st_collections_group_parts_part_description_anchors_left(void);
+static void       st_collections_group_parts_part_description_anchors_right(void);
+static void       st_collections_group_parts_part_description_anchors_vertical_center(void);
+static void       st_collections_group_parts_part_description_anchors_horizontal_center(void);
+static void       st_collections_group_parts_part_description_anchors_fill(void);
+static void       st_collections_group_parts_part_description_anchors_margin(void);
+static void       st_collections_group_parts_part_description_clip_to_id(void);
+static void       st_collections_group_parts_part_description_size_class(void);
+static void       st_collections_group_parts_part_description_image_normal(void);
+static void       st_collections_group_parts_part_description_image_tween(void);
+static void       st_collections_group_parts_part_description_image_border(void);
+static void       st_collections_group_parts_part_description_image_middle(void);
+static void       st_collections_group_parts_part_description_image_border_scale(void);
+static void       st_collections_group_parts_part_description_image_border_scale_by(void);
+static void       st_collections_group_parts_part_description_image_scale_hint(void);
+static void       st_collections_group_parts_part_description_fill_smooth(void);
+static void       st_collections_group_parts_part_description_fill_origin_relative(void);
+static void       st_collections_group_parts_part_description_fill_origin_offset(void);
+static void       st_collections_group_parts_part_description_fill_size_relative(void);
+static void       st_collections_group_parts_part_description_fill_size_offset(void);
+static void       st_collections_group_parts_part_description_fill_type(void);
+static void       st_collections_group_parts_part_description_color_class(void);
+static void       st_collections_group_parts_part_description_color(void);
+static void       st_collections_group_parts_part_description_color2(void);
+static void       st_collections_group_parts_part_description_color3(void);
+static void       st_collections_group_parts_part_description_text_text(void);
+static void       st_collections_group_parts_part_description_text_domain(void);
+static void       st_collections_group_parts_part_description_text_text_class(void);
+static void       st_collections_group_parts_part_description_text_font(void);
+static void       st_collections_group_parts_part_description_text_style(void);
+static void       st_collections_group_parts_part_description_text_repch(void);
+static void       st_collections_group_parts_part_description_text_size(void);
+static void       st_collections_group_parts_part_description_text_size_range(void);
+static void       st_collections_group_parts_part_description_text_fit(void);
+static void       st_collections_group_parts_part_description_text_min(void);
+static void       st_collections_group_parts_part_description_text_max(void);
+static void       st_collections_group_parts_part_description_text_align(void);
+static void       st_collections_group_parts_part_description_text_source(void);
+static void       st_collections_group_parts_part_description_text_text_source(void);
+static void       st_collections_group_parts_part_description_text_ellipsis(void);
+static void       st_collections_group_parts_part_description_box_layout(void);
+static void       st_collections_group_parts_part_description_box_align(void);
+static void       st_collections_group_parts_part_description_box_padding(void);
+static void       st_collections_group_parts_part_description_box_min(void);
+static void       st_collections_group_parts_part_description_table_homogeneous(void);
+static void       st_collections_group_parts_part_description_table_align(void);
+static void       st_collections_group_parts_part_description_table_padding(void);
+static void       st_collections_group_parts_part_description_table_min(void);
+static void       st_collections_group_parts_part_description_proxy_source_visible(void);
+static void       st_collections_group_parts_part_description_proxy_source_clip(void);
+static void       st_collections_group_parts_part_description_position_point(void);
+static void       st_collections_group_parts_part_description_position_space(void);
+static void       st_collections_group_parts_part_description_camera_properties(void);
+static void       st_collections_group_parts_part_description_properties_ambient(void);
+static void       st_collections_group_parts_part_description_properties_diffuse(void);
+static void       st_collections_group_parts_part_description_properties_specular(void);
+static void       st_collections_group_parts_part_description_properties_material(void);
+static void       st_collections_group_parts_part_description_properties_normal(void);
+static void       st_collections_group_parts_part_description_properties_shininess(void);
+static void       st_collections_group_parts_part_description_properties_shade(void);
+static void       st_collections_group_parts_part_description_orientation_angle_axis(void);
+static void       st_collections_group_parts_part_description_orientation_look1(void);
+static void       st_collections_group_parts_part_description_orientation_look2(void);
+static void       st_collections_group_parts_part_description_orientation_look_to(void);
+static void       st_collections_group_parts_part_description_orientation_angle_axis(void);
+static void       st_collections_group_parts_part_description_orientation_quaternion(void);
+static void       st_collections_group_parts_part_description_scale(void);
+static void       st_collections_group_parts_part_description_offset_scale(void);
+static void       st_collections_group_parts_part_description_mesh_primitive(void);
+static void       ob_collections_group_parts_part_description_texture(void);
+static void       st_collections_group_parts_part_description_texture_image(void);
+static void       st_collections_group_parts_part_description_texture_wrap1(void);
+static void       st_collections_group_parts_part_description_texture_wrap2(void);
+static void       st_collections_group_parts_part_description_texture_filter1(void);
+static void       st_collections_group_parts_part_description_texture_filter2(void);
+static void       st_collections_group_parts_part_description_mesh_assembly(void);
+static void       st_collections_group_parts_part_description_mesh_geometry(void);
+static void       st_collections_group_parts_part_description_mesh_frame(void);
+static void       st_collections_group_parts_part_description_filter_code(void);
+static void       st_collections_group_parts_part_description_filter_source(void);
+static void       st_collections_group_parts_part_description_filter_data(void);
 
 #ifdef HAVE_EPHYSICS
-static void st_collections_group_parts_part_description_physics_mass(void);
-static void st_collections_group_parts_part_description_physics_restitution(void);
-static void st_collections_group_parts_part_description_physics_friction(void);
-static void st_collections_group_parts_part_description_physics_damping(void);
-static void st_collections_group_parts_part_description_physics_sleep(void);
-static void st_collections_group_parts_part_description_physics_material(void);
-static void st_collections_group_parts_part_description_physics_density(void);
-static void st_collections_group_parts_part_description_physics_hardness(void);
-static void st_collections_group_parts_part_description_physics_ignore_part_pos(void);
-static void st_collections_group_parts_part_description_physics_light_on(void);
-static void st_collections_group_parts_part_description_physics_z(void);
-static void st_collections_group_parts_part_description_physics_depth(void);
-static void st_collections_group_parts_part_description_physics_movement_freedom_linear(void);
-static void st_collections_group_parts_part_description_physics_movement_freedom_angular(void);
-static void st_collections_group_parts_part_description_physics_backface_cull(void);
-static void st_collections_group_parts_part_description_physics_face(void);
-static void st_collections_group_parts_part_description_physics_face_type(void);
-static void st_collections_group_parts_part_description_physics_face_source(void);
+static void       st_collections_group_parts_part_description_physics_mass(void);
+static void       st_collections_group_parts_part_description_physics_restitution(void);
+static void       st_collections_group_parts_part_description_physics_friction(void);
+static void       st_collections_group_parts_part_description_physics_damping(void);
+static void       st_collections_group_parts_part_description_physics_sleep(void);
+static void       st_collections_group_parts_part_description_physics_material(void);
+static void       st_collections_group_parts_part_description_physics_density(void);
+static void       st_collections_group_parts_part_description_physics_hardness(void);
+static void       st_collections_group_parts_part_description_physics_ignore_part_pos(void);
+static void       st_collections_group_parts_part_description_physics_light_on(void);
+static void       st_collections_group_parts_part_description_physics_z(void);
+static void       st_collections_group_parts_part_description_physics_depth(void);
+static void       st_collections_group_parts_part_description_physics_movement_freedom_linear(void);
+static void       st_collections_group_parts_part_description_physics_movement_freedom_angular(void);
+static void       st_collections_group_parts_part_description_physics_backface_cull(void);
+static void       st_collections_group_parts_part_description_physics_face(void);
+static void       st_collections_group_parts_part_description_physics_face_type(void);
+static void       st_collections_group_parts_part_description_physics_face_source(void);
 #endif
-static void st_collections_group_parts_part_description_map_perspective(void);
-static void st_collections_group_parts_part_description_map_light(void);
-static void st_collections_group_parts_part_description_map_rotation_center(void);
-static void st_collections_group_parts_part_description_map_rotation_x(void);
-static void st_collections_group_parts_part_description_map_rotation_y(void);
-static void st_collections_group_parts_part_description_map_rotation_z(void);
-static void st_collections_group_parts_part_description_map_on(void);
-static void st_collections_group_parts_part_description_map_smooth(void);
-static void st_collections_group_parts_part_description_map_alpha(void);
-static void st_collections_group_parts_part_description_map_backface_cull(void);
-static void st_collections_group_parts_part_description_map_perspective_on(void);
-static void st_collections_group_parts_part_description_map_color(void);
-static void st_collections_group_parts_part_description_map_zoom_x(void);
-static void st_collections_group_parts_part_description_map_zoom_y(void);
-static void st_collections_group_parts_part_description_perspective_zplane(void);
-static void st_collections_group_parts_part_description_perspective_focal(void);
-static void st_collections_group_parts_part_api(void);
+static void       st_collections_group_parts_part_description_map_perspective(void);
+static void       st_collections_group_parts_part_description_map_light(void);
+static void       st_collections_group_parts_part_description_map_rotation_center(void);
+static void       st_collections_group_parts_part_description_map_rotation_x(void);
+static void       st_collections_group_parts_part_description_map_rotation_y(void);
+static void       st_collections_group_parts_part_description_map_rotation_z(void);
+static void       st_collections_group_parts_part_description_map_on(void);
+static void       st_collections_group_parts_part_description_map_smooth(void);
+static void       st_collections_group_parts_part_description_map_alpha(void);
+static void       st_collections_group_parts_part_description_map_backface_cull(void);
+static void       st_collections_group_parts_part_description_map_perspective_on(void);
+static void       st_collections_group_parts_part_description_map_color(void);
+static void       st_collections_group_parts_part_description_map_zoom_x(void);
+static void       st_collections_group_parts_part_description_map_zoom_y(void);
+static void       st_collections_group_parts_part_description_perspective_zplane(void);
+static void       st_collections_group_parts_part_description_perspective_focal(void);
+static void       st_collections_group_parts_part_api(void);
 
 /* external part parameters */
-static void st_collections_group_parts_part_description_params_int(void);
-static void st_collections_group_parts_part_description_params_double(void);
-static void st_collections_group_parts_part_description_params_string(void);
-static void st_collections_group_parts_part_description_params_bool(void);
-static void st_collections_group_parts_part_description_params_choice(void);
-static void st_collections_group_parts_part_description_params_smart(void);
+static void       st_collections_group_parts_part_description_params_int(void);
+static void       st_collections_group_parts_part_description_params_double(void);
+static void       st_collections_group_parts_part_description_params_string(void);
+static void       st_collections_group_parts_part_description_params_bool(void);
+static void       st_collections_group_parts_part_description_params_choice(void);
+static void       st_collections_group_parts_part_description_params_smart(void);
 
-static void ob_collections_group_programs_program(void);
-static void st_collections_group_programs_program_name(void);
-static void st_collections_group_programs_program_signal(void);
-static void st_collections_group_programs_program_source(void);
-static void st_collections_group_programs_program_filter(void);
-static void st_collections_group_programs_program_in(void);
-static void st_collections_group_programs_program_action(void);
-static void st_collections_group_programs_program_transition(void);
-static void st_collections_group_programs_program_target(void);
-static void st_collections_group_programs_program_targets(void);
-static void st_collections_group_programs_program_target_groups(void);
-static void st_collections_group_programs_program_after(void);
-static void st_collections_group_programs_program_api(void);
-static void st_collections_group_target_group(void);
+static void       ob_collections_group_programs_program(void);
+static void       st_collections_group_programs_program_name(void);
+static void       st_collections_group_programs_program_signal(void);
+static void       st_collections_group_programs_program_source(void);
+static void       st_collections_group_programs_program_filter(void);
+static void       st_collections_group_programs_program_in(void);
+static void       st_collections_group_programs_program_action(void);
+static void       st_collections_group_programs_program_transition(void);
+static void       st_collections_group_programs_program_target(void);
+static void       st_collections_group_programs_program_targets(void);
+static void       st_collections_group_programs_program_target_groups(void);
+static void       st_collections_group_programs_program_after(void);
+static void       st_collections_group_programs_program_api(void);
+static void       st_collections_group_target_group(void);
 
-static void ob_collections_group_programs_program_sequence(void);
+static void       ob_collections_group_programs_program_sequence(void);
 
-static void ob_collections_group_programs_program_script(void);
-static void st_collections_group_sound_sample_name(void);
-static void st_collections_group_sound_sample_source(void);
-static void st_collections_group_sound_tone(void);
-static void st_collections_group_vibration_sample_name(void);
-static void st_collections_group_vibration_sample_source(void);
+static void       ob_collections_group_programs_program_script(void);
+static void       st_collections_group_sound_sample_name(void);
+static void       st_collections_group_sound_sample_source(void);
+static void       st_collections_group_sound_tone(void);
+static void       st_collections_group_vibration_sample_name(void);
+static void       st_collections_group_vibration_sample_source(void);
 
-static void st_collections_group_translation_file_locale(void);
-static void st_collections_group_translation_file_source(void);
+static void       st_collections_group_translation_file_locale(void);
+static void       st_collections_group_translation_file_source(void);
 #ifdef HAVE_EPHYSICS
-static void st_collections_group_physics_world_gravity(void);
-static void st_collections_group_physics_world_rate(void);
-static void st_collections_group_physics_world_z(void);
-static void st_collections_group_physics_world_depth(void);
+static void       st_collections_group_physics_world_gravity(void);
+static void       st_collections_group_physics_world_rate(void);
+static void       st_collections_group_physics_world_z(void);
+static void       st_collections_group_physics_world_depth(void);
 #endif
 
 /* short */
-static void st_collections_group_parts_part_noscale(void);
-static void st_collections_group_parts_part_precise(void);
-static void st_collections_group_parts_part_noprecise(void);
-static void st_collections_group_parts_part_mouse(void);
-static void st_collections_group_parts_part_nomouse(void);
-static void st_collections_group_parts_part_repeat(void);
-static void st_collections_group_parts_part_norepeat(void);
-static void st_collections_group_parts_part_description_vis(void);
-static void st_collections_group_parts_part_description_hid(void);
-static void ob_collections_group_parts_part_short(void);
+static void       st_collections_group_parts_part_noscale(void);
+static void       st_collections_group_parts_part_precise(void);
+static void       st_collections_group_parts_part_noprecise(void);
+static void       st_collections_group_parts_part_mouse(void);
+static void       st_collections_group_parts_part_nomouse(void);
+static void       st_collections_group_parts_part_repeat(void);
+static void       st_collections_group_parts_part_norepeat(void);
+static void       st_collections_group_parts_part_description_vis(void);
+static void       st_collections_group_parts_part_description_hid(void);
+static void       ob_collections_group_parts_part_short(void);
 
-static void st_collections_group_mouse(void);
-static void st_collections_group_nomouse(void);
-static void st_collections_group_broadcast(void);
-static void st_collections_group_nobroadcast(void);
-static void st_collections_group_noinherit_script(void);
+static void       st_collections_group_mouse(void);
+static void       st_collections_group_nomouse(void);
+static void       st_collections_group_broadcast(void);
+static void       st_collections_group_nobroadcast(void);
+static void       st_collections_group_noinherit_script(void);
 
-static void st_images_vector(void);
-static void _handle_vector_image(void);
+static void       st_images_vector(void);
+static void       _handle_vector_image(void);
 
 /*****/
 
 #define STRDUP(x) eina_strdup(x)
 
-#define IMAGE_STATEMENTS(PREFIX) \
-     {PREFIX"images.image", st_images_image}, \
-     {PREFIX"images.vector", st_images_vector}, \
-     {PREFIX"images.set.name", st_images_set_name}, \
-     {PREFIX"images.set.image.image", st_images_set_image_image}, \
-     {PREFIX"images.set.image.size", st_images_set_image_size}, \
-     {PREFIX"images.set.image.border", st_images_set_image_border}, \
-     {PREFIX"images.set.image.scale_by", st_images_set_image_border_scale_by},
+#define IMAGE_STATEMENTS(PREFIX)                                  \
+  {PREFIX "images.image", st_images_image},                       \
+  {PREFIX "images.vector", st_images_vector},                     \
+  {PREFIX "images.set.name", st_images_set_name},                 \
+  {PREFIX "images.set.image.image", st_images_set_image_image},   \
+  {PREFIX "images.set.image.size", st_images_set_image_size},     \
+  {PREFIX "images.set.image.border", st_images_set_image_border}, \
+  {PREFIX "images.set.image.scale_by", st_images_set_image_border_scale_by},
 
-#define IMAGE_SET_STATEMENTS(PREFIX) \
-     {PREFIX".image", st_images_image}, /* dup */ \
-     {PREFIX".set.name", st_images_set_name}, /* dup */ \
-     {PREFIX".set.image.image", st_images_set_image_image}, /* dup */ \
-     {PREFIX".set.image.size", st_images_set_image_size}, /* dup */ \
-     {PREFIX".set.image.border", st_images_set_image_border}, /* dup */ \
-     {PREFIX".set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
+#define IMAGE_SET_STATEMENTS(PREFIX)                                    \
+  {PREFIX ".image", st_images_image},   /* dup */                       \
+  {PREFIX ".set.name", st_images_set_name},   /* dup */                 \
+  {PREFIX ".set.image.image", st_images_set_image_image},   /* dup */   \
+  {PREFIX ".set.image.size", st_images_set_image_size},   /* dup */     \
+  {PREFIX ".set.image.border", st_images_set_image_border},   /* dup */ \
+  {PREFIX ".set.image.scale_by", st_images_set_image_border_scale_by},   /* dup */
 
-#define FONT_STYLE_CC_STATEMENTS(PREFIX) \
-     {PREFIX"fonts.font", st_fonts_font}, /* dup */ \
-     {PREFIX"styles.style.name", st_styles_style_name}, /* dup */ \
-     {PREFIX"styles.style.base", st_styles_style_base}, /* dup */ \
-     {PREFIX"styles.style.tag", st_styles_style_tag}, /* dup */ \
-     {PREFIX"color_classes.color_class.name", st_color_class_name}, /* dup */ \
-     {PREFIX"color_classes.color_class.color", st_color_class_color}, /* dup */ \
-     {PREFIX"color_classes.color_class.color2", st_color_class_color2}, /* dup */ \
-     {PREFIX"color_classes.color_class.color3", st_color_class_color3}, /* dup */ \
-     {PREFIX"color_classes.color_class.description", st_color_class_desc}, /* dup */ \
-     {PREFIX"color_classes.color_class.desc", st_color_class_desc}, /* dup */
+#define FONT_STYLE_CC_STATEMENTS(PREFIX)                                             \
+  {PREFIX "fonts.font", st_fonts_font},   /* dup */                                  \
+  {PREFIX "styles.style.name", st_styles_style_name},   /* dup */                    \
+  {PREFIX "styles.style.base", st_styles_style_base},   /* dup */                    \
+  {PREFIX "styles.style.tag", st_styles_style_tag},   /* dup */                      \
+  {PREFIX "color_classes.color_class.name", st_color_class_name},   /* dup */        \
+  {PREFIX "color_classes.color_class.color", st_color_class_color},   /* dup */      \
+  {PREFIX "color_classes.color_class.color2", st_color_class_color2},   /* dup */    \
+  {PREFIX "color_classes.color_class.color3", st_color_class_color3},   /* dup */    \
+  {PREFIX "color_classes.color_class.description", st_color_class_desc},   /* dup */ \
+  {PREFIX "color_classes.color_class.desc", st_color_class_desc},   /* dup */
 
-#define TEXT_CLASS_STATEMENTS(PREFIX) \
-     {PREFIX"text_classes.text_class.name", st_text_class_name}, /* dup */ \
-     {PREFIX"text_classes.text_class.font", st_text_class_font}, /* dup */ \
-     {PREFIX"text_classes.text_class.size", st_text_class_size}, /* dup */
+#define TEXT_CLASS_STATEMENTS(PREFIX)                                      \
+  {PREFIX "text_classes.text_class.name", st_text_class_name},   /* dup */ \
+  {PREFIX "text_classes.text_class.font", st_text_class_font},   /* dup */ \
+  {PREFIX "text_classes.text_class.size", st_text_class_size},   /* dup */
 
-#define SIZE_CLASS_STATEMENTS(PREFIX) \
-     {PREFIX"size_classes.size_class.name", st_size_class_name}, /* dup */ \
-     {PREFIX"size_classes.size_class.min", st_size_class_min}, /* dup */ \
-     {PREFIX"size_classes.size_class.max", st_size_class_max}, /* dup */
+#define SIZE_CLASS_STATEMENTS(PREFIX)                                      \
+  {PREFIX "size_classes.size_class.name", st_size_class_name},   /* dup */ \
+  {PREFIX "size_classes.size_class.min", st_size_class_min},   /* dup */   \
+  {PREFIX "size_classes.size_class.max", st_size_class_max},   /* dup */
 
-#define PROGRAM_SEQUENCE(PREFIX, NAME, FN) \
-     {PREFIX".program."NAME, FN}, /* dup */ \
-     {PREFIX".program.sequence."NAME, FN}, /* dup */
+#define PROGRAM_SEQUENCE(PREFIX, NAME, FN)  \
+  {PREFIX ".program."NAME, FN},   /* dup */ \
+  {PREFIX ".program.sequence."NAME, FN},   /* dup */
 
+#define PROGRAM_BASE(PREFIX)                                                                     \
+  PROGRAM_SEQUENCE(PREFIX, "name", st_collections_group_programs_program_name)                   \
+  PROGRAM_SEQUENCE(PREFIX, "signal", st_collections_group_programs_program_signal)               \
+  PROGRAM_SEQUENCE(PREFIX, "source", st_collections_group_programs_program_source)               \
+  PROGRAM_SEQUENCE(PREFIX, "in", st_collections_group_programs_program_in)                       \
+  PROGRAM_SEQUENCE(PREFIX, "action", st_collections_group_programs_program_action)               \
+  PROGRAM_SEQUENCE(PREFIX, "transition", st_collections_group_programs_program_transition)       \
+  PROGRAM_SEQUENCE(PREFIX, "target", st_collections_group_programs_program_target)               \
+  PROGRAM_SEQUENCE(PREFIX, "target_groups", st_collections_group_programs_program_target_groups) \
+  PROGRAM_SEQUENCE(PREFIX, "groups", st_collections_group_programs_program_target_groups)        \
+  PROGRAM_SEQUENCE(PREFIX, "targets", st_collections_group_programs_program_targets)             \
+  PROGRAM_SEQUENCE(PREFIX, "after", st_collections_group_programs_program_after)                 \
+  PROGRAM_SEQUENCE(PREFIX, "api", st_collections_group_programs_program_api)                     \
+  PROGRAM_SEQUENCE(PREFIX, "filter", st_collections_group_programs_program_filter)
 
-#define PROGRAM_BASE(PREFIX) \
-     PROGRAM_SEQUENCE(PREFIX, "name", st_collections_group_programs_program_name) \
-     PROGRAM_SEQUENCE(PREFIX, "signal", st_collections_group_programs_program_signal) \
-     PROGRAM_SEQUENCE(PREFIX, "source", st_collections_group_programs_program_source) \
-     PROGRAM_SEQUENCE(PREFIX, "in", st_collections_group_programs_program_in) \
-     PROGRAM_SEQUENCE(PREFIX, "action", st_collections_group_programs_program_action) \
-     PROGRAM_SEQUENCE(PREFIX, "transition", st_collections_group_programs_program_transition) \
-     PROGRAM_SEQUENCE(PREFIX, "target", st_collections_group_programs_program_target) \
-     PROGRAM_SEQUENCE(PREFIX, "target_groups", st_collections_group_programs_program_target_groups) \
-     PROGRAM_SEQUENCE(PREFIX, "groups", st_collections_group_programs_program_target_groups) \
-     PROGRAM_SEQUENCE(PREFIX, "targets", st_collections_group_programs_program_targets) \
-     PROGRAM_SEQUENCE(PREFIX, "after", st_collections_group_programs_program_after) \
-     PROGRAM_SEQUENCE(PREFIX, "api", st_collections_group_programs_program_api) \
-     PROGRAM_SEQUENCE(PREFIX, "filter", st_collections_group_programs_program_filter)
+#define PROGRAM_STATEMENTS(PREFIX)                            \
+  IMAGE_SET_STATEMENTS(PREFIX ".programs")                    \
+  IMAGE_STATEMENTS(PREFIX ".programs.")                       \
+  IMAGE_SET_STATEMENTS(PREFIX ".programs")                    \
+  {PREFIX ".programs.font", st_fonts_font},   /* dup */       \
+  {PREFIX ".programs.fonts.font", st_fonts_font},   /* dup */ \
+  PROGRAM_BASE(PREFIX)                                        \
+  PROGRAM_BASE(PREFIX ".programs")
 
-#define PROGRAM_STATEMENTS(PREFIX) \
-     IMAGE_SET_STATEMENTS(PREFIX".programs") \
-     IMAGE_STATEMENTS(PREFIX".programs.") \
-     IMAGE_SET_STATEMENTS(PREFIX".programs") \
-     {PREFIX".programs.font", st_fonts_font}, /* dup */ \
-     {PREFIX".programs.fonts.font", st_fonts_font}, /* dup */ \
-     PROGRAM_BASE(PREFIX) \
-     PROGRAM_BASE(PREFIX".programs")
+#define SET_LOOK1(Type, type_node)                                                   \
+  Edje_Part_Description_##Type * ed;                                                 \
+  ed = (Edje_Part_Description_##Type *)current_desc;                                 \
+                                                                                     \
+  if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
+    {                                                                                \
+       ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));              \
+       ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));              \
+       ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));              \
+       ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
+    }
 
-#define SET_LOOK1(Type, type_node)                                              \
-    Edje_Part_Description_##Type *ed;                                           \
-   ed = (Edje_Part_Description_##Type*) current_desc;                           \
-                                                                                \
-   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
-     {                                                                          \
-        ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));        \
-        ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));        \
-        ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));        \
-        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
-     }
-
-#define SET_LOOK2(Type, type_node)                                              \
-    Edje_Part_Description_##Type *ed;                                           \
-   ed = (Edje_Part_Description_##Type*) current_desc;                           \
-                                                                                \
-   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
-     {                                                                          \
-        ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(0));        \
-        ed->type_node.orientation.data[4] = FROM_DOUBLE(parse_float(1));        \
-        ed->type_node.orientation.data[5] = FROM_DOUBLE(parse_float(2));        \
-        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
-     }
+#define SET_LOOK2(Type, type_node)                                                   \
+  Edje_Part_Description_##Type * ed;                                                 \
+  ed = (Edje_Part_Description_##Type *)current_desc;                                 \
+                                                                                     \
+  if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
+    {                                                                                \
+       ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(0));              \
+       ed->type_node.orientation.data[4] = FROM_DOUBLE(parse_float(1));              \
+       ed->type_node.orientation.data[5] = FROM_DOUBLE(parse_float(2));              \
+       ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
+    }
 
 #define SET_LOOK_TO(list, Type, type_node)                                           \
-   Edje_Part_Description_##Type *ed;                                                 \
-   char *name;                                                                       \
+  Edje_Part_Description_##Type * ed;                                                 \
+  char *name;                                                                        \
                                                                                      \
-   ed = (Edje_Part_Description_##Type*) current_desc;                                \
+  ed = (Edje_Part_Description_##Type *)current_desc;                                 \
                                                                                      \
-   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO)      \
-     {                                                                               \
-        name = parse_str(0);                                                         \
-        data_queue_part_lookup(list, name, &(ed->type_node.orientation.look_to));    \
-        free(name);                                                                  \
-        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO;      \
-     }
+  if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO) \
+    {                                                                                \
+       name = parse_str(0);                                                          \
+       data_queue_part_lookup(list, name, &(ed->type_node.orientation.look_to));     \
+       free(name);                                                                   \
+       ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO; \
+    }
 
-#define SET_ANGLE_AXIS(Type, type_node)                                            \
-    Edje_Part_Description_##Type *ed;                                              \
-   ed = (Edje_Part_Description_##Type*) current_desc;                              \
-                                                                                   \
-   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS) \
-     {                                                                             \
-        ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));           \
-        ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));           \
-        ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));           \
-        ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(3));           \
-        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS; \
-     }
+#define SET_ANGLE_AXIS(Type, type_node)                                                 \
+  Edje_Part_Description_##Type * ed;                                                    \
+  ed = (Edje_Part_Description_##Type *)current_desc;                                    \
+                                                                                        \
+  if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS) \
+    {                                                                                   \
+       ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));                 \
+       ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));                 \
+       ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));                 \
+       ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(3));                 \
+       ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS; \
+    }
 
-#define SET_QUATERNION(Type, type_node)                                            \
-    Edje_Part_Description_##Type *ed;                                              \
-   ed = (Edje_Part_Description_##Type*) current_desc;                              \
-                                                                                   \
-   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION) \
-     {                                                                             \
-        ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(0));           \
-        ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(1));           \
-        ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(2));           \
-        ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(3));           \
-        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION; \
-     }
+#define SET_QUATERNION(Type, type_node)                                                 \
+  Edje_Part_Description_##Type * ed;                                                    \
+  ed = (Edje_Part_Description_##Type *)current_desc;                                    \
+                                                                                        \
+  if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION) \
+    {                                                                                   \
+       ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(0));                 \
+       ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(1));                 \
+       ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(2));                 \
+       ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(3));                 \
+       ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION; \
+    }
 
-#define FILTERS_STATEMENTS(PREFIX) \
-     {PREFIX"filters.filter.file", st_filters_filter_file}, \
-     {PREFIX"filters.filter.name", st_filters_filter_name},
+#define FILTERS_STATEMENTS(PREFIX)                        \
+  {PREFIX "filters.filter.file", st_filters_filter_file}, \
+  {PREFIX "filters.filter.name", st_filters_filter_name},
 
 New_Statement_Handler statement_handlers[] =
 {
-     {"efl_version", st_efl_version},
-     {"externals.external", st_externals_external},
-     IMAGE_STATEMENTS("")
-     FONT_STYLE_CC_STATEMENTS("")
-     TEXT_CLASS_STATEMENTS("")
-     SIZE_CLASS_STATEMENTS("")
-     {"data.item", st_data_item},
-     {"data.file", st_data_file},
-     FILTERS_STATEMENTS("")
-     {"collections.externals.external", st_externals_external}, /* dup */
-     IMAGE_STATEMENTS("collections.")
-     IMAGE_SET_STATEMENTS("collections")
-     {"collections.font", st_fonts_font}, /* dup */
-     FONT_STYLE_CC_STATEMENTS("collections.")
-     TEXT_CLASS_STATEMENTS("collections.")
-     SIZE_CLASS_STATEMENTS("collections.")
-     {"collections.base_scale", st_collections_base_scale},
-     {"collections.translation.file.locale", st_collections_group_translation_file_locale},
-     {"collections.translation.file.source", st_collections_group_translation_file_source},
-     {"collections.group.translation.file.locale", st_collections_group_translation_file_locale},
-     {"collections.group.translation.file.source", st_collections_group_translation_file_source},
+   {"id", st_id},
+   {"requires", st_requires},
+   {"efl_version", st_efl_version},
+   {"externals.external", st_externals_external},
+   IMAGE_STATEMENTS("")
+   FONT_STYLE_CC_STATEMENTS("")
+   TEXT_CLASS_STATEMENTS("")
+   SIZE_CLASS_STATEMENTS("")
+   {
+      "data.item", st_data_item
+   },
+   {"data.file", st_data_file},
+   FILTERS_STATEMENTS("")
+   {
+      "collections.externals.external", st_externals_external
+   },                                                           /* dup */
+   IMAGE_STATEMENTS("collections.")
+   IMAGE_SET_STATEMENTS("collections")
+   {
+      "collections.font", st_fonts_font
+   },                                     /* dup */
+   FONT_STYLE_CC_STATEMENTS("collections.")
+   TEXT_CLASS_STATEMENTS("collections.")
+   SIZE_CLASS_STATEMENTS("collections.")
+   {
+      "collections.base_scale", st_collections_base_scale
+   },
+   {"collections.translation.file.locale", st_collections_group_translation_file_locale},
+   {"collections.translation.file.source", st_collections_group_translation_file_source},
+   {"collections.group.translation.file.locale", st_collections_group_translation_file_locale},
+   {"collections.group.translation.file.source", st_collections_group_translation_file_source},
 
-     {"collections.sounds.sample.name", st_collections_group_sound_sample_name},
-     {"collections.sounds.sample.source", st_collections_group_sound_sample_source},
-     {"collections.group.sounds.sample.name", st_collections_group_sound_sample_name}, /* dup */
-     {"collections.group.sounds.sample.source", st_collections_group_sound_sample_source}, /* dup */
-     {"collections.sounds.tone", st_collections_group_sound_tone},
-     {"collections.group.sounds.tone", st_collections_group_sound_tone}, /* dup */
-     {"collections.vibrations.sample.name", st_collections_group_vibration_sample_name},
-     {"collections.vibrations.sample.source", st_collections_group_vibration_sample_source},
-     FILTERS_STATEMENTS("collections.") /* dup */
-     {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
-     {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
-     {"collections.group.name", st_collections_group_name},
-     {"collections.group.program_source", st_collections_group_program_source},
-     {"collections.group.inherit", st_collections_group_inherit},
-     {"collections.group.inherit_only", st_collections_group_inherit_only},
-     {"collections.group.use_custom_seat_names", st_collections_group_use_custom_seat_names},
-     {"collections.group.target_group", st_collections_group_target_group}, /* dup */
-     {"collections.group.part_remove", st_collections_group_part_remove},
-     {"collections.group.program_remove", st_collections_group_program_remove},
-     {"collections.group.lua_script_only", st_collections_group_lua_script_only},
-     {"collections.group.script_recursion", st_collections_group_script_recursion},
-     {"collections.group.alias", st_collections_group_alias},
-     {"collections.group.min", st_collections_group_min},
-     {"collections.group.max", st_collections_group_max},
-     {"collections.group.scene_size", st_collections_group_scene_size},
-     {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
-     {"collections.group.orientation", st_collections_group_orientation},
-     {"collections.group.mouse_events", st_collections_group_mouse_events},
-     {"collections.group.inherit_script", st_collections_group_inherit_script},
-     {"collections.group.data.item", st_collections_group_data_item},
-     {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
-     {"collections.group.limits.vertical", st_collections_group_limits_vertical},
-     {"collections.group.externals.external", st_externals_external}, /* dup */
-     {"collections.group.programs.target_group", st_collections_group_target_group}, /* dup */
-     IMAGE_SET_STATEMENTS("collections.group")
-     IMAGE_STATEMENTS("collections.group.")
-     {"collections.group.models.model", st_models_model},
-     {"collections.group.font", st_fonts_font}, /* dup */
-     FONT_STYLE_CC_STATEMENTS("collections.group.")
-     TEXT_CLASS_STATEMENTS("collections.group.")
-     SIZE_CLASS_STATEMENTS("collections.group.")
-     {"collections.group.parts.alias", st_collections_group_parts_alias },
-     IMAGE_SET_STATEMENTS("collections.group.parts")
-     IMAGE_STATEMENTS("collections.group.parts.")
-     {"collections.group.parts.font", st_fonts_font}, /* dup */
-     FONT_STYLE_CC_STATEMENTS("collections.group.parts.")
-     TEXT_CLASS_STATEMENTS("collections.group.parts.")
-     SIZE_CLASS_STATEMENTS("collections.group.parts.")
-     {"collections.group.parts.target_group", st_collections_group_target_group}, /* dup */
-     {"collections.group.parts.part.name", st_collections_group_parts_part_name},
-     {"collections.group.parts.part.target_group", st_collections_group_target_group}, /* dup */
-     {"collections.group.parts.part.inherit", st_collections_group_parts_part_inherit},
-     {"collections.group.parts.part.api", st_collections_group_parts_part_api},
-     {"collections.group.parts.part.type", st_collections_group_parts_part_type},
+   {"collections.sounds.sample.name", st_collections_group_sound_sample_name},
+   {"collections.sounds.sample.source", st_collections_group_sound_sample_source},
+   {"collections.group.sounds.sample.name", st_collections_group_sound_sample_name},   /* dup */
+   {"collections.group.sounds.sample.source", st_collections_group_sound_sample_source},   /* dup */
+   {"collections.sounds.tone", st_collections_group_sound_tone},
+   {"collections.group.sounds.tone", st_collections_group_sound_tone},   /* dup */
+   {"collections.vibrations.sample.name", st_collections_group_vibration_sample_name},
+   {"collections.vibrations.sample.source", st_collections_group_vibration_sample_source},
+   FILTERS_STATEMENTS("collections.")   /* dup */
+   {
+      "collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name
+   },                                                                                          /* dup */
+   {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source},   /* dup */
+   {"collections.group.name", st_collections_group_name},
+   {"collections.group.skip_namespace_validation", st_collections_group_skip_namespace_validation},
+   {"collections.group.program_source", st_collections_group_program_source},
+   {"collections.group.inherit", st_collections_group_inherit},
+   {"collections.group.inherit_only", st_collections_group_inherit_only},
+   {"collections.group.use_custom_seat_names", st_collections_group_use_custom_seat_names},
+   {"collections.group.target_group", st_collections_group_target_group},   /* dup */
+   {"collections.group.part_remove", st_collections_group_part_remove},
+   {"collections.group.program_remove", st_collections_group_program_remove},
+   {"collections.group.lua_script_only", st_collections_group_lua_script_only},
+   {"collections.group.script_recursion", st_collections_group_script_recursion},
+   {"collections.group.alias", st_collections_group_alias},
+   {"collections.group.min", st_collections_group_min},
+   {"collections.group.max", st_collections_group_max},
+   {"collections.group.scene_size", st_collections_group_scene_size},
+   {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
+   {"collections.group.orientation", st_collections_group_orientation},
+   {"collections.group.mouse_events", st_collections_group_mouse_events},
+   {"collections.group.inherit_script", st_collections_group_inherit_script},
+   {"collections.group.data.item", st_collections_group_data_item},
+   {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
+   {"collections.group.limits.vertical", st_collections_group_limits_vertical},
+   {"collections.group.externals.external", st_externals_external},   /* dup */
+   {"collections.group.programs.target_group", st_collections_group_target_group},   /* dup */
+   IMAGE_SET_STATEMENTS("collections.group")
+   IMAGE_STATEMENTS("collections.group.")
+   {
+      "collections.group.models.model", st_models_model
+   },
+   {"collections.group.font", st_fonts_font},   /* dup */
+   FONT_STYLE_CC_STATEMENTS("collections.group.")
+   TEXT_CLASS_STATEMENTS("collections.group.")
+   SIZE_CLASS_STATEMENTS("collections.group.")
+   {
+      "collections.group.parts.alias", st_collections_group_parts_alias
+   },
+   IMAGE_SET_STATEMENTS("collections.group.parts")
+   IMAGE_STATEMENTS("collections.group.parts.")
+   {
+      "collections.group.parts.font", st_fonts_font
+   },                                                 /* dup */
+   FONT_STYLE_CC_STATEMENTS("collections.group.parts.")
+   TEXT_CLASS_STATEMENTS("collections.group.parts.")
+   SIZE_CLASS_STATEMENTS("collections.group.parts.")
+   {
+      "collections.group.parts.target_group", st_collections_group_target_group
+   },                                                                             /* dup */
+   {"collections.group.parts.part.name", st_collections_group_parts_part_name},
+   {"collections.group.parts.part.target_group", st_collections_group_target_group},   /* dup */
+   {"collections.group.parts.part.inherit", st_collections_group_parts_part_inherit},
+   {"collections.group.parts.part.api", st_collections_group_parts_part_api},
+   {"collections.group.parts.part.type", st_collections_group_parts_part_type},
 #ifdef HAVE_EPHYSICS
-     {"collections.group.parts.part.physics_body", st_collections_group_parts_part_physics_body},
+   {"collections.group.parts.part.physics_body", st_collections_group_parts_part_physics_body},
 #endif
-     {"collections.group.parts.part.insert_before", st_collections_group_parts_part_insert_before},
-     {"collections.group.parts.part.insert_after", st_collections_group_parts_part_insert_after},
-     {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
-     {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
-     {"collections.group.parts.part.anti_alias", st_collections_group_parts_part_anti_alias},
-     {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
-     {"collections.group.parts.part.ignore_flags", st_collections_group_parts_part_ignore_flags},
-     {"collections.group.parts.part.mask_flags", st_collections_group_parts_part_mask_flags},
-     {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
-     {"collections.group.parts.part.pointer_mode", st_collections_group_parts_part_pointer_mode},
-     {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
-     {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
-     {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
-     {"collections.group.parts.part.no_render", st_collections_group_parts_part_no_render},
-     {"collections.group.parts.part.required", st_collections_group_parts_part_required},
-     {"collections.group.parts.part.source", st_collections_group_parts_part_source},
-     {"collections.group.parts.part.source2", st_collections_group_parts_part_source2},
-     {"collections.group.parts.part.source3", st_collections_group_parts_part_source3},
-     {"collections.group.parts.part.source4", st_collections_group_parts_part_source4},
-     {"collections.group.parts.part.source5", st_collections_group_parts_part_source5},
-     {"collections.group.parts.part.source6", st_collections_group_parts_part_source6},
-     {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
-     {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
-     {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
-     {"collections.group.parts.part.dragable.threshold", st_collections_group_parts_part_dragable_threshold},
-     {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
-     {"collections.group.parts.part.entry_mode", st_collections_group_parts_part_entry_mode},
-     {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
-     {"collections.group.parts.part.cursor_mode", st_collections_group_parts_part_cursor_mode},
-     {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
-     {"collections.group.parts.part.access", st_collections_group_parts_part_access},
-     {"collections.group.parts.part.allowed_seats", st_collections_group_parts_part_allowed_seats},
-     IMAGE_SET_STATEMENTS("collections.group.parts.part")
-     IMAGE_STATEMENTS("collections.group.parts.part.")
-     {"collections.group.parts.part.font", st_fonts_font}, /* dup */
-     FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.")
-     TEXT_CLASS_STATEMENTS("collections.group.parts.part.")
-     SIZE_CLASS_STATEMENTS("collections.group.parts.part.")
-     {"collections.group.parts.part.box.items.item.type", st_collections_group_parts_part_box_items_item_type},
-     {"collections.group.parts.part.box.items.item.name", st_collections_group_parts_part_box_items_item_name},
-     {"collections.group.parts.part.box.items.item.source", st_collections_group_parts_part_box_items_item_source},
-     {"collections.group.parts.part.box.items.item.min", st_collections_group_parts_part_box_items_item_min},
-     {"collections.group.parts.part.box.items.item.spread", st_collections_group_parts_part_box_items_item_spread},
-     {"collections.group.parts.part.box.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer},
-     {"collections.group.parts.part.box.items.item.max", st_collections_group_parts_part_box_items_item_max},
-     {"collections.group.parts.part.box.items.item.padding", st_collections_group_parts_part_box_items_item_padding},
-     {"collections.group.parts.part.box.items.item.align", st_collections_group_parts_part_box_items_item_align},
-     {"collections.group.parts.part.box.items.item.weight", st_collections_group_parts_part_box_items_item_weight},
-     {"collections.group.parts.part.box.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect},
-     {"collections.group.parts.part.box.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode},
-     {"collections.group.parts.part.box.items.item.options", st_collections_group_parts_part_box_items_item_options},
-     {"collections.group.parts.part.table.items.item.type", st_collections_group_parts_part_box_items_item_type}, /* dup */
-     {"collections.group.parts.part.table.items.item.name", st_collections_group_parts_part_box_items_item_name}, /* dup */
-     {"collections.group.parts.part.table.items.item.source", st_collections_group_parts_part_box_items_item_source}, /* dup */
-     {"collections.group.parts.part.table.items.item.min", st_collections_group_parts_part_box_items_item_min}, /* dup */
-     {"collections.group.parts.part.table.items.item.spread", st_collections_group_parts_part_box_items_item_spread}, /* dup */
-     {"collections.group.parts.part.table.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer}, /* dup */
-     {"collections.group.parts.part.table.items.item.max", st_collections_group_parts_part_box_items_item_max}, /* dup */
-     {"collections.group.parts.part.table.items.item.padding", st_collections_group_parts_part_box_items_item_padding}, /* dup */
-     {"collections.group.parts.part.table.items.item.align", st_collections_group_parts_part_box_items_item_align}, /* dup */
-     {"collections.group.parts.part.table.items.item.weight", st_collections_group_parts_part_box_items_item_weight}, /* dup */
-     {"collections.group.parts.part.table.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect}, /* dup */
-     {"collections.group.parts.part.table.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode}, /* dup */
-     {"collections.group.parts.part.table.items.item.options", st_collections_group_parts_part_box_items_item_options}, /* dup */
-     {"collections.group.parts.part.table.items.item.position", st_collections_group_parts_part_table_items_item_position},
-     {"collections.group.parts.part.table.items.item.span", st_collections_group_parts_part_table_items_item_span},
-     {"collections.group.parts.part.description.target_group", st_collections_group_target_group}, /* dup */
-     {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
-     {"collections.group.parts.part.description.link.base", st_collections_group_parts_part_description_link_base},
-     {"collections.group.parts.part.description.link.transition", st_collections_group_programs_program_transition},
-     {"collections.group.parts.part.description.link.after", st_collections_group_programs_program_after},
-     {"collections.group.parts.part.description.link.in", st_collections_group_programs_program_in},
-     {"collections.group.parts.part.description.source", st_collections_group_parts_part_description_source},
-     {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
-     {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
-     {"collections.group.parts.part.description.limit", st_collections_group_parts_part_description_limit},
-     {"collections.group.parts.part.description.no_render", st_collections_group_parts_part_description_no_render},
-     {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
-     {"collections.group.parts.part.description.fixed", st_collections_group_parts_part_description_fixed},
-     {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
-     {"collections.group.parts.part.description.minmul", st_collections_group_parts_part_description_minmul},
-     {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
-     {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
-     {"collections.group.parts.part.description.aspect", st_collections_group_parts_part_description_aspect},
-     {"collections.group.parts.part.description.aspect_preference", st_collections_group_parts_part_description_aspect_preference},
-     {"collections.group.parts.part.description.rel.to", st_collections_group_parts_part_description_rel_to},
-     {"collections.group.parts.part.description.rel.to_x", st_collections_group_parts_part_description_rel_to_x},
-     {"collections.group.parts.part.description.rel.to_y", st_collections_group_parts_part_description_rel_to_y},
-     {"collections.group.parts.part.description.rel1.relative", st_collections_group_parts_part_description_rel1_relative},
-     {"collections.group.parts.part.description.rel1.offset", st_collections_group_parts_part_description_rel1_offset},
-     {"collections.group.parts.part.description.rel1.to", st_collections_group_parts_part_description_rel1_to},
-     {"collections.group.parts.part.description.rel1.to_x", st_collections_group_parts_part_description_rel1_to_x},
-     {"collections.group.parts.part.description.rel1.to_y", st_collections_group_parts_part_description_rel1_to_y},
-     {"collections.group.parts.part.description.rel2.relative", st_collections_group_parts_part_description_rel2_relative},
-     {"collections.group.parts.part.description.rel2.offset", st_collections_group_parts_part_description_rel2_offset},
-     {"collections.group.parts.part.description.rel2.to", st_collections_group_parts_part_description_rel2_to},
-     {"collections.group.parts.part.description.rel2.to_x", st_collections_group_parts_part_description_rel2_to_x},
-     {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
-     {"collections.group.parts.part.description.offset_scale", st_collections_group_parts_part_description_offset_scale},
-     {"collections.group.parts.part.description.anchors.top", st_collections_group_parts_part_description_anchors_top},
-     {"collections.group.parts.part.description.anchors.bottom", st_collections_group_parts_part_description_anchors_bottom},
-     {"collections.group.parts.part.description.anchors.left", st_collections_group_parts_part_description_anchors_left},
-     {"collections.group.parts.part.description.anchors.right", st_collections_group_parts_part_description_anchors_right},
-     {"collections.group.parts.part.description.anchors.vertical_center", st_collections_group_parts_part_description_anchors_vertical_center},
-     {"collections.group.parts.part.description.anchors.horizontal_center", st_collections_group_parts_part_description_anchors_horizontal_center},
-     {"collections.group.parts.part.description.anchors.fill", st_collections_group_parts_part_description_anchors_fill},
-     {"collections.group.parts.part.description.anchors.margin", st_collections_group_parts_part_description_anchors_margin},
-     {"collections.group.parts.part.description.clip_to", st_collections_group_parts_part_description_clip_to_id},
-     {"collections.group.parts.part.description.size_class", st_collections_group_parts_part_description_size_class},
-     {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
-     {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
-     IMAGE_SET_STATEMENTS("collections.group.parts.part.description.image")
-     IMAGE_STATEMENTS("collections.group.parts.part.description.image.")
-     {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
-     {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
-     {"collections.group.parts.part.description.image.border_scale", st_collections_group_parts_part_description_image_border_scale},
-     {"collections.group.parts.part.description.image.border_scale_by", st_collections_group_parts_part_description_image_border_scale_by},
-     {"collections.group.parts.part.description.image.scale_hint", st_collections_group_parts_part_description_image_scale_hint},
-     {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
-     {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
-     {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
-     {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
-     {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
-     {"collections.group.parts.part.description.fill.type", st_collections_group_parts_part_description_fill_type},
-     {"collections.group.parts.part.description.color_class", st_collections_group_parts_part_description_color_class},
-     {"collections.group.parts.part.description.color", st_collections_group_parts_part_description_color},
-     {"collections.group.parts.part.description.color2", st_collections_group_parts_part_description_color2},
-     {"collections.group.parts.part.description.color3", st_collections_group_parts_part_description_color3},
-     {"collections.group.parts.part.description.text.text", st_collections_group_parts_part_description_text_text},
-     {"collections.group.parts.part.description.text.domain", st_collections_group_parts_part_description_text_domain},
-     {"collections.group.parts.part.description.text.text_class", st_collections_group_parts_part_description_text_text_class},
-     {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
-     {"collections.group.parts.part.description.text.style", st_collections_group_parts_part_description_text_style},
-     {"collections.group.parts.part.description.text.repch", st_collections_group_parts_part_description_text_repch},
-     {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
-     {"collections.group.parts.part.description.text.size_range", st_collections_group_parts_part_description_text_size_range},
-     {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
-     {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
-     {"collections.group.parts.part.description.text.max", st_collections_group_parts_part_description_text_max},
-     {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
-     {"collections.group.parts.part.description.text.source", st_collections_group_parts_part_description_text_source},
-     {"collections.group.parts.part.description.text.text_source", st_collections_group_parts_part_description_text_text_source},
-     {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_ellipsis},
-     {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_ellipsis},
-     {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_filter_code}, /* dup */
-     {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
-     {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
-     {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
-     {"collections.group.parts.part.description.box.min", st_collections_group_parts_part_description_box_min},
-     {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
-     {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
-     {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
-     {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
-     {"collections.group.parts.part.description.proxy.source_visible", st_collections_group_parts_part_description_proxy_source_visible},
-     {"collections.group.parts.part.description.proxy.source_clip", st_collections_group_parts_part_description_proxy_source_clip},
-     {"collections.group.parts.part.description.position.point", st_collections_group_parts_part_description_position_point},
-     {"collections.group.parts.part.description.position.space", st_collections_group_parts_part_description_position_space},
-     {"collections.group.parts.part.description.properties.perspective", st_collections_group_parts_part_description_camera_properties},
-     {"collections.group.parts.part.description.properties.ambient", st_collections_group_parts_part_description_properties_ambient},
-     {"collections.group.parts.part.description.properties.diffuse", st_collections_group_parts_part_description_properties_diffuse},
-     {"collections.group.parts.part.description.properties.specular", st_collections_group_parts_part_description_properties_specular},
-     {"collections.group.parts.part.description.properties.material", st_collections_group_parts_part_description_properties_material},
-     {"collections.group.parts.part.description.properties.normal", st_collections_group_parts_part_description_properties_normal},
-     {"collections.group.parts.part.description.properties.shininess", st_collections_group_parts_part_description_properties_shininess},
-     {"collections.group.parts.part.description.properties.shade", st_collections_group_parts_part_description_properties_shade},
-     {"collections.group.parts.part.description.mesh.primitive", st_collections_group_parts_part_description_mesh_primitive},
-     {"collections.group.parts.part.description.orientation.look1", st_collections_group_parts_part_description_orientation_look1},
-     {"collections.group.parts.part.description.orientation.look2", st_collections_group_parts_part_description_orientation_look2},
-     {"collections.group.parts.part.description.orientation.look_to", st_collections_group_parts_part_description_orientation_look_to},
-     {"collections.group.parts.part.description.orientation.angle_axis", st_collections_group_parts_part_description_orientation_angle_axis},
-     {"collections.group.parts.part.description.orientation.quaternion", st_collections_group_parts_part_description_orientation_quaternion},
-     {"collections.group.parts.part.description.scale", st_collections_group_parts_part_description_scale},
-     {"collections.group.parts.part.description.texture.image", st_collections_group_parts_part_description_texture_image},
-     {"collections.group.parts.part.description.texture.wrap1", st_collections_group_parts_part_description_texture_wrap1},
-     {"collections.group.parts.part.description.texture.wrap2", st_collections_group_parts_part_description_texture_wrap2},
-     {"collections.group.parts.part.description.texture.filter1", st_collections_group_parts_part_description_texture_filter1},
-     {"collections.group.parts.part.description.texture.filter2", st_collections_group_parts_part_description_texture_filter2},
-     {"collections.group.parts.part.description.mesh.assembly", st_collections_group_parts_part_description_mesh_assembly},
-     {"collections.group.parts.part.description.mesh.geometry", st_collections_group_parts_part_description_mesh_geometry},
-     {"collections.group.parts.part.description.mesh.frame", st_collections_group_parts_part_description_mesh_frame},
-     {"collections.group.parts.part.description.filter.code", st_collections_group_parts_part_description_filter_code},
-     {"collections.group.parts.part.description.filter.source", st_collections_group_parts_part_description_filter_source},
-     {"collections.group.parts.part.description.filter.data", st_collections_group_parts_part_description_filter_data},
+   {"collections.group.parts.part.insert_before", st_collections_group_parts_part_insert_before},
+   {"collections.group.parts.part.insert_after", st_collections_group_parts_part_insert_after},
+   {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
+   {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
+   {"collections.group.parts.part.anti_alias", st_collections_group_parts_part_anti_alias},
+   {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
+   {"collections.group.parts.part.ignore_flags", st_collections_group_parts_part_ignore_flags},
+   {"collections.group.parts.part.mask_flags", st_collections_group_parts_part_mask_flags},
+   {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
+   {"collections.group.parts.part.pointer_mode", st_collections_group_parts_part_pointer_mode},
+   {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
+   {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
+   {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
+   {"collections.group.parts.part.no_render", st_collections_group_parts_part_no_render},
+   {"collections.group.parts.part.required", st_collections_group_parts_part_required},
+   {"collections.group.parts.part.source", st_collections_group_parts_part_source},
+   {"collections.group.parts.part.source2", st_collections_group_parts_part_source2},
+   {"collections.group.parts.part.source3", st_collections_group_parts_part_source3},
+   {"collections.group.parts.part.source4", st_collections_group_parts_part_source4},
+   {"collections.group.parts.part.source5", st_collections_group_parts_part_source5},
+   {"collections.group.parts.part.source6", st_collections_group_parts_part_source6},
+   {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
+   {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
+   {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
+   {"collections.group.parts.part.dragable.threshold", st_collections_group_parts_part_dragable_threshold},
+   {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
+   {"collections.group.parts.part.entry_mode", st_collections_group_parts_part_entry_mode},
+   {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
+   {"collections.group.parts.part.cursor_mode", st_collections_group_parts_part_cursor_mode},
+   {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
+   {"collections.group.parts.part.access", st_collections_group_parts_part_access},
+   {"collections.group.parts.part.allowed_seats", st_collections_group_parts_part_allowed_seats},
+   IMAGE_SET_STATEMENTS("collections.group.parts.part")
+   IMAGE_STATEMENTS("collections.group.parts.part.")
+   {
+      "collections.group.parts.part.font", st_fonts_font
+   },                                                      /* dup */
+   FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.")
+   TEXT_CLASS_STATEMENTS("collections.group.parts.part.")
+   SIZE_CLASS_STATEMENTS("collections.group.parts.part.")
+   {
+      "collections.group.parts.part.box.items.item.type", st_collections_group_parts_part_box_items_item_type
+   },
+   {"collections.group.parts.part.box.items.item.name", st_collections_group_parts_part_box_items_item_name},
+   {"collections.group.parts.part.box.items.item.source", st_collections_group_parts_part_box_items_item_source},
+   {"collections.group.parts.part.box.items.item.min", st_collections_group_parts_part_box_items_item_min},
+   {"collections.group.parts.part.box.items.item.spread", st_collections_group_parts_part_box_items_item_spread},
+   {"collections.group.parts.part.box.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer},
+   {"collections.group.parts.part.box.items.item.max", st_collections_group_parts_part_box_items_item_max},
+   {"collections.group.parts.part.box.items.item.padding", st_collections_group_parts_part_box_items_item_padding},
+   {"collections.group.parts.part.box.items.item.align", st_collections_group_parts_part_box_items_item_align},
+   {"collections.group.parts.part.box.items.item.weight", st_collections_group_parts_part_box_items_item_weight},
+   {"collections.group.parts.part.box.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect},
+   {"collections.group.parts.part.box.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode},
+   {"collections.group.parts.part.box.items.item.options", st_collections_group_parts_part_box_items_item_options},
+   {"collections.group.parts.part.table.items.item.type", st_collections_group_parts_part_box_items_item_type},   /* dup */
+   {"collections.group.parts.part.table.items.item.name", st_collections_group_parts_part_box_items_item_name},   /* dup */
+   {"collections.group.parts.part.table.items.item.source", st_collections_group_parts_part_box_items_item_source},   /* dup */
+   {"collections.group.parts.part.table.items.item.min", st_collections_group_parts_part_box_items_item_min},   /* dup */
+   {"collections.group.parts.part.table.items.item.spread", st_collections_group_parts_part_box_items_item_spread},   /* dup */
+   {"collections.group.parts.part.table.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer},   /* dup */
+   {"collections.group.parts.part.table.items.item.max", st_collections_group_parts_part_box_items_item_max},   /* dup */
+   {"collections.group.parts.part.table.items.item.padding", st_collections_group_parts_part_box_items_item_padding},   /* dup */
+   {"collections.group.parts.part.table.items.item.align", st_collections_group_parts_part_box_items_item_align},   /* dup */
+   {"collections.group.parts.part.table.items.item.weight", st_collections_group_parts_part_box_items_item_weight},   /* dup */
+   {"collections.group.parts.part.table.items.item.aspect", st_collections_group_parts_part_box_items_item_aspect},   /* dup */
+   {"collections.group.parts.part.table.items.item.aspect_mode", st_collections_group_parts_part_box_items_item_aspect_mode},   /* dup */
+   {"collections.group.parts.part.table.items.item.options", st_collections_group_parts_part_box_items_item_options},   /* dup */
+   {"collections.group.parts.part.table.items.item.position", st_collections_group_parts_part_table_items_item_position},
+   {"collections.group.parts.part.table.items.item.span", st_collections_group_parts_part_table_items_item_span},
+   {"collections.group.parts.part.description.target_group", st_collections_group_target_group},   /* dup */
+   {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
+   {"collections.group.parts.part.description.link.base", st_collections_group_parts_part_description_link_base},
+   {"collections.group.parts.part.description.link.transition", st_collections_group_programs_program_transition},
+   {"collections.group.parts.part.description.link.after", st_collections_group_programs_program_after},
+   {"collections.group.parts.part.description.link.in", st_collections_group_programs_program_in},
+   {"collections.group.parts.part.description.source", st_collections_group_parts_part_description_source},
+   {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
+   {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
+   {"collections.group.parts.part.description.limit", st_collections_group_parts_part_description_limit},
+   {"collections.group.parts.part.description.no_render", st_collections_group_parts_part_description_no_render},
+   {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
+   {"collections.group.parts.part.description.fixed", st_collections_group_parts_part_description_fixed},
+   {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
+   {"collections.group.parts.part.description.minmul", st_collections_group_parts_part_description_minmul},
+   {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
+   {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
+   {"collections.group.parts.part.description.aspect", st_collections_group_parts_part_description_aspect},
+   {"collections.group.parts.part.description.aspect_preference", st_collections_group_parts_part_description_aspect_preference},
+   {"collections.group.parts.part.description.rel.to", st_collections_group_parts_part_description_rel_to},
+   {"collections.group.parts.part.description.rel.to_x", st_collections_group_parts_part_description_rel_to_x},
+   {"collections.group.parts.part.description.rel.to_y", st_collections_group_parts_part_description_rel_to_y},
+   {"collections.group.parts.part.description.rel1.relative", st_collections_group_parts_part_description_rel1_relative},
+   {"collections.group.parts.part.description.rel1.offset", st_collections_group_parts_part_description_rel1_offset},
+   {"collections.group.parts.part.description.rel1.to", st_collections_group_parts_part_description_rel1_to},
+   {"collections.group.parts.part.description.rel1.to_x", st_collections_group_parts_part_description_rel1_to_x},
+   {"collections.group.parts.part.description.rel1.to_y", st_collections_group_parts_part_description_rel1_to_y},
+   {"collections.group.parts.part.description.rel2.relative", st_collections_group_parts_part_description_rel2_relative},
+   {"collections.group.parts.part.description.rel2.offset", st_collections_group_parts_part_description_rel2_offset},
+   {"collections.group.parts.part.description.rel2.to", st_collections_group_parts_part_description_rel2_to},
+   {"collections.group.parts.part.description.rel2.to_x", st_collections_group_parts_part_description_rel2_to_x},
+   {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
+   {"collections.group.parts.part.description.offset_scale", st_collections_group_parts_part_description_offset_scale},
+   {"collections.group.parts.part.description.anchors.top", st_collections_group_parts_part_description_anchors_top},
+   {"collections.group.parts.part.description.anchors.bottom", st_collections_group_parts_part_description_anchors_bottom},
+   {"collections.group.parts.part.description.anchors.left", st_collections_group_parts_part_description_anchors_left},
+   {"collections.group.parts.part.description.anchors.right", st_collections_group_parts_part_description_anchors_right},
+   {"collections.group.parts.part.description.anchors.vertical_center", st_collections_group_parts_part_description_anchors_vertical_center},
+   {"collections.group.parts.part.description.anchors.horizontal_center", st_collections_group_parts_part_description_anchors_horizontal_center},
+   {"collections.group.parts.part.description.anchors.fill", st_collections_group_parts_part_description_anchors_fill},
+   {"collections.group.parts.part.description.anchors.margin", st_collections_group_parts_part_description_anchors_margin},
+   {"collections.group.parts.part.description.clip_to", st_collections_group_parts_part_description_clip_to_id},
+   {"collections.group.parts.part.description.size_class", st_collections_group_parts_part_description_size_class},
+   {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
+   {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
+   IMAGE_SET_STATEMENTS("collections.group.parts.part.description.image")
+   IMAGE_STATEMENTS("collections.group.parts.part.description.image.")
+   {
+      "collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border
+   },
+   {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
+   {"collections.group.parts.part.description.image.border_scale", st_collections_group_parts_part_description_image_border_scale},
+   {"collections.group.parts.part.description.image.border_scale_by", st_collections_group_parts_part_description_image_border_scale_by},
+   {"collections.group.parts.part.description.image.scale_hint", st_collections_group_parts_part_description_image_scale_hint},
+   {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
+   {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
+   {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
+   {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
+   {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
+   {"collections.group.parts.part.description.fill.type", st_collections_group_parts_part_description_fill_type},
+   {"collections.group.parts.part.description.color_class", st_collections_group_parts_part_description_color_class},
+   {"collections.group.parts.part.description.color", st_collections_group_parts_part_description_color},
+   {"collections.group.parts.part.description.color2", st_collections_group_parts_part_description_color2},
+   {"collections.group.parts.part.description.color3", st_collections_group_parts_part_description_color3},
+   {"collections.group.parts.part.description.text.text", st_collections_group_parts_part_description_text_text},
+   {"collections.group.parts.part.description.text.domain", st_collections_group_parts_part_description_text_domain},
+   {"collections.group.parts.part.description.text.text_class", st_collections_group_parts_part_description_text_text_class},
+   {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
+   {"collections.group.parts.part.description.text.style", st_collections_group_parts_part_description_text_style},
+   {"collections.group.parts.part.description.text.repch", st_collections_group_parts_part_description_text_repch},
+   {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
+   {"collections.group.parts.part.description.text.size_range", st_collections_group_parts_part_description_text_size_range},
+   {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
+   {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
+   {"collections.group.parts.part.description.text.max", st_collections_group_parts_part_description_text_max},
+   {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
+   {"collections.group.parts.part.description.text.source", st_collections_group_parts_part_description_text_source},
+   {"collections.group.parts.part.description.text.text_source", st_collections_group_parts_part_description_text_text_source},
+   {"collections.group.parts.part.description.text.font", st_fonts_font},   /* dup */
+   {"collections.group.parts.part.description.text.fonts.font", st_fonts_font},   /* dup */
+   {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_ellipsis},
+   {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_ellipsis},
+   {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_filter_code},   /* dup */
+   {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
+   {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
+   {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
+   {"collections.group.parts.part.description.box.min", st_collections_group_parts_part_description_box_min},
+   {"collections.group.parts.part.description.table.homogeneous", st_collections_group_parts_part_description_table_homogeneous},
+   {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
+   {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
+   {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
+   {"collections.group.parts.part.description.proxy.source_visible", st_collections_group_parts_part_description_proxy_source_visible},
+   {"collections.group.parts.part.description.proxy.source_clip", st_collections_group_parts_part_description_proxy_source_clip},
+   {"collections.group.parts.part.description.position.point", st_collections_group_parts_part_description_position_point},
+   {"collections.group.parts.part.description.position.space", st_collections_group_parts_part_description_position_space},
+   {"collections.group.parts.part.description.properties.perspective", st_collections_group_parts_part_description_camera_properties},
+   {"collections.group.parts.part.description.properties.ambient", st_collections_group_parts_part_description_properties_ambient},
+   {"collections.group.parts.part.description.properties.diffuse", st_collections_group_parts_part_description_properties_diffuse},
+   {"collections.group.parts.part.description.properties.specular", st_collections_group_parts_part_description_properties_specular},
+   {"collections.group.parts.part.description.properties.material", st_collections_group_parts_part_description_properties_material},
+   {"collections.group.parts.part.description.properties.normal", st_collections_group_parts_part_description_properties_normal},
+   {"collections.group.parts.part.description.properties.shininess", st_collections_group_parts_part_description_properties_shininess},
+   {"collections.group.parts.part.description.properties.shade", st_collections_group_parts_part_description_properties_shade},
+   {"collections.group.parts.part.description.mesh.primitive", st_collections_group_parts_part_description_mesh_primitive},
+   {"collections.group.parts.part.description.orientation.look1", st_collections_group_parts_part_description_orientation_look1},
+   {"collections.group.parts.part.description.orientation.look2", st_collections_group_parts_part_description_orientation_look2},
+   {"collections.group.parts.part.description.orientation.look_to", st_collections_group_parts_part_description_orientation_look_to},
+   {"collections.group.parts.part.description.orientation.angle_axis", st_collections_group_parts_part_description_orientation_angle_axis},
+   {"collections.group.parts.part.description.orientation.quaternion", st_collections_group_parts_part_description_orientation_quaternion},
+   {"collections.group.parts.part.description.scale", st_collections_group_parts_part_description_scale},
+   {"collections.group.parts.part.description.texture.image", st_collections_group_parts_part_description_texture_image},
+   {"collections.group.parts.part.description.texture.wrap1", st_collections_group_parts_part_description_texture_wrap1},
+   {"collections.group.parts.part.description.texture.wrap2", st_collections_group_parts_part_description_texture_wrap2},
+   {"collections.group.parts.part.description.texture.filter1", st_collections_group_parts_part_description_texture_filter1},
+   {"collections.group.parts.part.description.texture.filter2", st_collections_group_parts_part_description_texture_filter2},
+   {"collections.group.parts.part.description.mesh.assembly", st_collections_group_parts_part_description_mesh_assembly},
+   {"collections.group.parts.part.description.mesh.geometry", st_collections_group_parts_part_description_mesh_geometry},
+   {"collections.group.parts.part.description.mesh.frame", st_collections_group_parts_part_description_mesh_frame},
+   {"collections.group.parts.part.description.filter.code", st_collections_group_parts_part_description_filter_code},
+   {"collections.group.parts.part.description.filter.source", st_collections_group_parts_part_description_filter_source},
+   {"collections.group.parts.part.description.filter.data", st_collections_group_parts_part_description_filter_data},
 
 #ifdef HAVE_EPHYSICS
-     {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
-     {"collections.group.parts.part.description.physics.restitution", st_collections_group_parts_part_description_physics_restitution},
-     {"collections.group.parts.part.description.physics.friction", st_collections_group_parts_part_description_physics_friction},
-     {"collections.group.parts.part.description.physics.damping", st_collections_group_parts_part_description_physics_damping},
-     {"collections.group.parts.part.description.physics.sleep", st_collections_group_parts_part_description_physics_sleep},
-     {"collections.group.parts.part.description.physics.material", st_collections_group_parts_part_description_physics_material},
-     {"collections.group.parts.part.description.physics.density", st_collections_group_parts_part_description_physics_density},
-     {"collections.group.parts.part.description.physics.hardness", st_collections_group_parts_part_description_physics_hardness},
-     {"collections.group.parts.part.description.physics.movement_freedom.linear", st_collections_group_parts_part_description_physics_movement_freedom_linear},
-     {"collections.group.parts.part.description.physics.movement_freedom.angular", st_collections_group_parts_part_description_physics_movement_freedom_angular},
-     {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
-     {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
-     {"collections.group.parts.part.description.physics.z", st_collections_group_parts_part_description_physics_z},
-     {"collections.group.parts.part.description.physics.depth", st_collections_group_parts_part_description_physics_depth},
-     {"collections.group.parts.part.description.physics.backface_cull", st_collections_group_parts_part_description_physics_backface_cull},
-     {"collections.group.parts.part.description.physics.faces.face.type", st_collections_group_parts_part_description_physics_face_type},
-     {"collections.group.parts.part.description.physics.faces.face.source", st_collections_group_parts_part_description_physics_face_source},
+   {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
+   {"collections.group.parts.part.description.physics.restitution", st_collections_group_parts_part_description_physics_restitution},
+   {"collections.group.parts.part.description.physics.friction", st_collections_group_parts_part_description_physics_friction},
+   {"collections.group.parts.part.description.physics.damping", st_collections_group_parts_part_description_physics_damping},
+   {"collections.group.parts.part.description.physics.sleep", st_collections_group_parts_part_description_physics_sleep},
+   {"collections.group.parts.part.description.physics.material", st_collections_group_parts_part_description_physics_material},
+   {"collections.group.parts.part.description.physics.density", st_collections_group_parts_part_description_physics_density},
+   {"collections.group.parts.part.description.physics.hardness", st_collections_group_parts_part_description_physics_hardness},
+   {"collections.group.parts.part.description.physics.movement_freedom.linear", st_collections_group_parts_part_description_physics_movement_freedom_linear},
+   {"collections.group.parts.part.description.physics.movement_freedom.angular", st_collections_group_parts_part_description_physics_movement_freedom_angular},
+   {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
+   {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
+   {"collections.group.parts.part.description.physics.z", st_collections_group_parts_part_description_physics_z},
+   {"collections.group.parts.part.description.physics.depth", st_collections_group_parts_part_description_physics_depth},
+   {"collections.group.parts.part.description.physics.backface_cull", st_collections_group_parts_part_description_physics_backface_cull},
+   {"collections.group.parts.part.description.physics.faces.face.type", st_collections_group_parts_part_description_physics_face_type},
+   {"collections.group.parts.part.description.physics.faces.face.source", st_collections_group_parts_part_description_physics_face_source},
 #endif
-     {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
-     {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
-     {"collections.group.parts.part.description.map.rotation.center", st_collections_group_parts_part_description_map_rotation_center},
-     {"collections.group.parts.part.description.map.rotation.x", st_collections_group_parts_part_description_map_rotation_x},
-     {"collections.group.parts.part.description.map.rotation.y", st_collections_group_parts_part_description_map_rotation_y},
-     {"collections.group.parts.part.description.map.rotation.z", st_collections_group_parts_part_description_map_rotation_z},
-     {"collections.group.parts.part.description.map.on", st_collections_group_parts_part_description_map_on},
-     {"collections.group.parts.part.description.map.smooth", st_collections_group_parts_part_description_map_smooth},
-     {"collections.group.parts.part.description.map.alpha", st_collections_group_parts_part_description_map_alpha},
-     {"collections.group.parts.part.description.map.backface_cull", st_collections_group_parts_part_description_map_backface_cull},
-     {"collections.group.parts.part.description.map.perspective_on", st_collections_group_parts_part_description_map_perspective_on},
-     {"collections.group.parts.part.description.map.color", st_collections_group_parts_part_description_map_color},
-     {"collections.group.parts.part.description.map.zoom.x", st_collections_group_parts_part_description_map_zoom_x},
-     {"collections.group.parts.part.description.map.zoom.y", st_collections_group_parts_part_description_map_zoom_y},
-     {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
-     {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
-     {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
-     {"collections.group.parts.part.description.params.double", st_collections_group_parts_part_description_params_double},
-     {"collections.group.parts.part.description.params.string", st_collections_group_parts_part_description_params_string},
-     {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
-     {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
-     {"collections.group.parts.part.description.params.*", st_collections_group_parts_part_description_params_smart},
-     IMAGE_STATEMENTS("collections.group.parts.part.description.")
-     {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
-     FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.description.")
-     TEXT_CLASS_STATEMENTS("collections.group.parts.part.description.")
-     SIZE_CLASS_STATEMENTS("collections.group.parts.part.description.")
+   {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
+   {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
+   {"collections.group.parts.part.description.map.rotation.center", st_collections_group_parts_part_description_map_rotation_center},
+   {"collections.group.parts.part.description.map.rotation.x", st_collections_group_parts_part_description_map_rotation_x},
+   {"collections.group.parts.part.description.map.rotation.y", st_collections_group_parts_part_description_map_rotation_y},
+   {"collections.group.parts.part.description.map.rotation.z", st_collections_group_parts_part_description_map_rotation_z},
+   {"collections.group.parts.part.description.map.on", st_collections_group_parts_part_description_map_on},
+   {"collections.group.parts.part.description.map.smooth", st_collections_group_parts_part_description_map_smooth},
+   {"collections.group.parts.part.description.map.alpha", st_collections_group_parts_part_description_map_alpha},
+   {"collections.group.parts.part.description.map.backface_cull", st_collections_group_parts_part_description_map_backface_cull},
+   {"collections.group.parts.part.description.map.perspective_on", st_collections_group_parts_part_description_map_perspective_on},
+   {"collections.group.parts.part.description.map.color", st_collections_group_parts_part_description_map_color},
+   {"collections.group.parts.part.description.map.zoom.x", st_collections_group_parts_part_description_map_zoom_x},
+   {"collections.group.parts.part.description.map.zoom.y", st_collections_group_parts_part_description_map_zoom_y},
+   {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
+   {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
+   {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
+   {"collections.group.parts.part.description.params.double", st_collections_group_parts_part_description_params_double},
+   {"collections.group.parts.part.description.params.string", st_collections_group_parts_part_description_params_string},
+   {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
+   {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
+   {"collections.group.parts.part.description.params.*", st_collections_group_parts_part_description_params_smart},
+   IMAGE_STATEMENTS("collections.group.parts.part.description.")
+   {
+      "collections.group.parts.part.description.font", st_fonts_font
+   },                                                                  /* dup */
+   FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.description.")
+   TEXT_CLASS_STATEMENTS("collections.group.parts.part.description.")
+   SIZE_CLASS_STATEMENTS("collections.group.parts.part.description.")
 #ifdef HAVE_EPHYSICS
-     {"collections.group.physics.world.gravity", st_collections_group_physics_world_gravity},
-     {"collections.group.physics.world.rate", st_collections_group_physics_world_rate},
-     {"collections.group.physics.world.z", st_collections_group_physics_world_z},
-     {"collections.group.physics.world.depth", st_collections_group_physics_world_depth},
+   {
+      "collections.group.physics.world.gravity", st_collections_group_physics_world_gravity
+   },
+   {"collections.group.physics.world.rate", st_collections_group_physics_world_rate},
+   {"collections.group.physics.world.z", st_collections_group_physics_world_z},
+   {"collections.group.physics.world.depth", st_collections_group_physics_world_depth},
 #endif
-     FILTERS_STATEMENTS("collections.group.") /* dup */
-     PROGRAM_STATEMENTS("collections.group.parts.part.description")
-     PROGRAM_STATEMENTS("collections.group.parts.part")
-     PROGRAM_STATEMENTS("collections.group.parts")
-     PROGRAM_STATEMENTS("collections.group")
+   FILTERS_STATEMENTS("collections.group.")   /* dup */
+   PROGRAM_STATEMENTS("collections.group.parts.part.description")
+   PROGRAM_STATEMENTS("collections.group.parts.part")
+   PROGRAM_STATEMENTS("collections.group.parts")
+   PROGRAM_STATEMENTS("collections.group")
 };
 
 /** @edcsection{lazedc,
@@ -1088,7 +1121,7 @@ New_Statement_Handler statement_handlers[] =
         if a block name is the same as an existing EDC keyword.
     @since 1.10
     @endblock
-*/
+ */
 
 /** @edcsubsection{lazedc_synonyms,
  *                 LazEDC Synonyms} */
@@ -1123,19 +1156,18 @@ New_Statement_Handler statement_handlers[] =
         These statements on the left are identical to their original keywords on the right.
     @since 1.10
     @endblock
-*/
-
+ */
 
 New_Statement_Handler statement_handlers_short[] =
 {
-     {"collections.group.parts.part.before", st_collections_group_parts_part_insert_before},
-     {"collections.group.parts.part.after", st_collections_group_parts_part_insert_after},
-     {"collections.group.parts.part.ignore", st_collections_group_parts_part_ignore_flags},
-     {"collections.group.parts.part.mask", st_collections_group_parts_part_mask_flags},
-     {"collections.group.parts.part.pointer", st_collections_group_parts_part_pointer_mode},
-     {"collections.group.parts.part.alt_font", st_collections_group_parts_part_use_alternate_font_metrics},
-     {"collections.group.parts.part.clip", st_collections_group_parts_part_clip_to_id},
-     {"collections.group.parts.part.description.clip", st_collections_group_parts_part_description_clip_to_id},
+   {"collections.group.parts.part.before", st_collections_group_parts_part_insert_before},
+   {"collections.group.parts.part.after", st_collections_group_parts_part_insert_after},
+   {"collections.group.parts.part.ignore", st_collections_group_parts_part_ignore_flags},
+   {"collections.group.parts.part.mask", st_collections_group_parts_part_mask_flags},
+   {"collections.group.parts.part.pointer", st_collections_group_parts_part_pointer_mode},
+   {"collections.group.parts.part.alt_font", st_collections_group_parts_part_use_alternate_font_metrics},
+   {"collections.group.parts.part.clip", st_collections_group_parts_part_clip_to_id},
+   {"collections.group.parts.part.description.clip", st_collections_group_parts_part_description_clip_to_id},
 };
 
 /** @edcsubsection{lazedc_shorthand,
@@ -1181,31 +1213,31 @@ New_Statement_Handler statement_handlers_short[] =
         but they are shorter.
     @since 1.10
     @endblock
-*/
+ */
 New_Statement_Handler statement_handlers_short_single[] =
 {
-     {"collections.group.parts.part.mouse", st_collections_group_parts_part_mouse},
-     {"collections.group.parts.part.nomouse", st_collections_group_parts_part_nomouse},
-     {"collections.group.parts.part.repeat", st_collections_group_parts_part_repeat},
-     {"collections.group.parts.part.norepeat", st_collections_group_parts_part_norepeat},
-     {"collections.group.parts.part.precise", st_collections_group_parts_part_precise},
-     {"collections.group.parts.part.noprecise", st_collections_group_parts_part_noprecise},
-     {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
-     {"collections.group.parts.part.noscale", st_collections_group_parts_part_noscale},
-     {"collections.group.parts.part.render", st_collections_group_parts_part_render},
-     {"collections.group.parts.part.norender", st_collections_group_parts_part_no_render},
-     {"collections.group.parts.part.required", st_collections_group_parts_part_required},
-     {"collections.group.parts.part.norequired", st_collections_group_parts_part_norequired},
-     {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
-     {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
-     {"collections.group.parts.part.description.offscale", st_collections_group_parts_part_description_offset_scale},
-     {"collections.group.mouse", st_collections_group_mouse},
-     {"collections.group.nomouse", st_collections_group_nomouse},
-     {"collections.group.broadcast", st_collections_group_broadcast},
-     {"collections.group.nobroadcast", st_collections_group_nobroadcast},
-     {"collections.group.inherit_script", st_collections_group_inherit_script},
-     {"collections.group.noinherit_script", st_collections_group_noinherit_script},
-     {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
+   {"collections.group.parts.part.mouse", st_collections_group_parts_part_mouse},
+   {"collections.group.parts.part.nomouse", st_collections_group_parts_part_nomouse},
+   {"collections.group.parts.part.repeat", st_collections_group_parts_part_repeat},
+   {"collections.group.parts.part.norepeat", st_collections_group_parts_part_norepeat},
+   {"collections.group.parts.part.precise", st_collections_group_parts_part_precise},
+   {"collections.group.parts.part.noprecise", st_collections_group_parts_part_noprecise},
+   {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
+   {"collections.group.parts.part.noscale", st_collections_group_parts_part_noscale},
+   {"collections.group.parts.part.render", st_collections_group_parts_part_render},
+   {"collections.group.parts.part.norender", st_collections_group_parts_part_no_render},
+   {"collections.group.parts.part.required", st_collections_group_parts_part_required},
+   {"collections.group.parts.part.norequired", st_collections_group_parts_part_norequired},
+   {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
+   {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
+   {"collections.group.parts.part.description.offscale", st_collections_group_parts_part_description_offset_scale},
+   {"collections.group.mouse", st_collections_group_mouse},
+   {"collections.group.nomouse", st_collections_group_nomouse},
+   {"collections.group.broadcast", st_collections_group_broadcast},
+   {"collections.group.nobroadcast", st_collections_group_nobroadcast},
+   {"collections.group.inherit_script", st_collections_group_inherit_script},
+   {"collections.group.noinherit_script", st_collections_group_noinherit_script},
+   {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
 };
 
 /** @edcsubsection{lazedc_external_params,
@@ -1241,7 +1273,7 @@ New_Statement_Handler statement_handlers_short_single[] =
        String without quotes except for 'true' or 'false' is considered as a choice.
     @since 1.18
     @endblock
-*/
+ */
 static Edje_External_Param_Type
 _parse_external_param_type(char *token)
 {
@@ -1306,7 +1338,7 @@ st_collections_group_parts_part_description_params_smart(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_External*) current_desc;
+   ed = (Edje_Part_Description_External *)current_desc;
 
    last = eina_list_last_data_get(stack);
    if (!strncmp(last, "params.", strlen("params.")))
@@ -1341,25 +1373,29 @@ st_collections_group_parts_part_description_params_smart(void)
    switch (param->type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-         if (!strcmp(token, "true"))
-           param->i = 1;
-         else if (!strcmp(token, "false"))
-           param->i = 0;
-         break;
+        if (!strcmp(token, "true"))
+          param->i = 1;
+        else if (!strcmp(token, "false"))
+          param->i = 0;
+        break;
+
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
-         param->i = parse_int(0);
-         break;
+        param->i = parse_int(0);
+        break;
+
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-         param->d = parse_float(0);
-         break;
+        param->d = parse_float(0);
+        break;
+
       case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-         param->s = parse_str(0);
-         break;
+        param->s = parse_str(0);
+        break;
+
       default:
-         ERR("parse error %s:%i. Invalid param type.",
-             file_in, line - 1);
-         break;
+        ERR("parse error %s:%i. Invalid param type.",
+            file_in, line - 1);
+        break;
      }
 
    if (!found)
@@ -1368,196 +1404,196 @@ st_collections_group_parts_part_description_params_smart(void)
    free(token);
 }
 
-#define PROGRAM_OBJECTS(PREFIX) \
-     {PREFIX".program", ob_collections_group_programs_program}, /* dup */ \
-     {PREFIX".program.script", ob_collections_group_programs_program_script}, /* dup */ \
-     {PREFIX".program.sequence.script", ob_collections_group_programs_program_script}, /* dup */ \
-     {PREFIX".program.sequence", ob_collections_group_programs_program_sequence}, /* dup */ \
-     {PREFIX".programs", NULL}, /* dup */ \
-     {PREFIX".programs.set", ob_images_set}, /* dup */ \
-     {PREFIX".programs.set.image", ob_images_set_image}, /* dup */ \
-     {PREFIX".programs.images", NULL}, /* dup */ \
-     {PREFIX".programs.images.set", ob_images_set}, /* dup */ \
-     {PREFIX".programs.images.set.image", ob_images_set_image}, /* dup */ \
-     {PREFIX".programs.fonts", NULL}, /* dup */ \
-     {PREFIX".programs.program", ob_collections_group_programs_program}, /* dup */ \
-     {PREFIX".programs.program.script", ob_collections_group_programs_program_script}, /* dup */ \
-     {PREFIX".programs.program.sequence", ob_collections_group_programs_program_sequence}, /* dup */ \
-     {PREFIX".programs.program.sequence.script", ob_collections_group_programs_program_script}, /* dup */ \
-     {PREFIX".programs.script", ob_collections_group_script}, /* dup */ \
-     {PREFIX".script", ob_collections_group_script}, /* dup */
+#define PROGRAM_OBJECTS(PREFIX)                                                                           \
+  {PREFIX ".program", ob_collections_group_programs_program},   /* dup */                                 \
+  {PREFIX ".program.script", ob_collections_group_programs_program_script},   /* dup */                   \
+  {PREFIX ".program.sequence.script", ob_collections_group_programs_program_script},   /* dup */          \
+  {PREFIX ".program.sequence", ob_collections_group_programs_program_sequence},   /* dup */               \
+  {PREFIX ".programs", NULL},   /* dup */                                                                 \
+  {PREFIX ".programs.set", ob_images_set},   /* dup */                                                    \
+  {PREFIX ".programs.set.image", ob_images_set_image},   /* dup */                                        \
+  {PREFIX ".programs.images", NULL},   /* dup */                                                          \
+  {PREFIX ".programs.images.set", ob_images_set},   /* dup */                                             \
+  {PREFIX ".programs.images.set.image", ob_images_set_image},   /* dup */                                 \
+  {PREFIX ".programs.fonts", NULL},   /* dup */                                                           \
+  {PREFIX ".programs.program", ob_collections_group_programs_program},   /* dup */                        \
+  {PREFIX ".programs.program.script", ob_collections_group_programs_program_script},   /* dup */          \
+  {PREFIX ".programs.program.sequence", ob_collections_group_programs_program_sequence},   /* dup */      \
+  {PREFIX ".programs.program.sequence.script", ob_collections_group_programs_program_script},   /* dup */ \
+  {PREFIX ".programs.script", ob_collections_group_script},   /* dup */                                   \
+  {PREFIX ".script", ob_collections_group_script},   /* dup */
 
 New_Object_Handler object_handlers[] =
 {
-     {"externals", NULL},
-     {"images", NULL},
-     {"images.set", ob_images_set},
-     {"images.set.image", ob_images_set_image},
-     {"fonts", NULL},
-     {"data", NULL},
-     {"styles", NULL},
-     {"styles.style", ob_styles_style},
-     {"color_tree", ob_color_tree},
-     {"color_classes", NULL},
-     {"color_classes.color_class", ob_color_class},
-     {"text_classes", NULL},
-     {"text_classes.text_class", ob_text_class},
-     {"size_classes", NULL},
-     {"size_classes.size_class", ob_size_class},
-     {"spectra", NULL},
-     {"filters", NULL},
-     {"filters.filter", ob_filters_filter},
-     {"filters.filter.script", ob_filters_filter_script},
-     {"collections", ob_collections},
-     {"collections.externals", NULL}, /* dup */
-     {"collections.set", ob_images_set}, /* dup */
-     {"collections.set.image", ob_images_set_image}, /* dup */
-     {"collections.images", NULL}, /* dup */
-     {"collections.images.set", ob_images_set}, /* dup */
-     {"collections.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.fonts", NULL}, /* dup */
-     {"collections.styles", NULL}, /* dup */
-     {"collections.styles.style", ob_styles_style}, /* dup */
-     {"collections.color_tree", ob_color_tree}, /* dup */
-     {"collections.color_classes", NULL}, /* dup */
-     {"collections.color_classes.color_class", ob_color_class}, /* dup */
-     {"collections.text_classes", NULL},
-     {"collections.text_classes.text_class", ob_text_class}, /* dup */
-     {"collections.size_classes", NULL}, /* dup */
-     {"collections.size_classes.size_class", ob_size_class}, /* dup */
-     {"collections.sounds", NULL},
-     {"collections.group.sounds", NULL}, /* dup */
-     {"collections.sounds.sample", NULL},
-     {"collections.translation", NULL},
-     {"collections.translation.file", NULL},
-     {"collections.group.translation", NULL},/*dup*/
-     {"collections.group.translation.file", NULL},/*dup*/
-     {"collections.group.sounds.sample", NULL}, /* dup */
-     {"collections.vibrations", NULL},
-     {"collections.group.vibrations", NULL}, /* dup */
-     {"collections.vibrations.sample", NULL},
-     {"collections.filters", NULL},
-     {"collections.filters.filter", ob_filters_filter}, /* dup */
-     {"collections.filters.filter.script", ob_filters_filter_script}, /* dup */
-     {"collections.group.vibrations.sample", NULL}, /* dup */
-     {"collections.group", ob_collections_group},
-     {"collections.group.data", NULL},
-     {"collections.group.limits", NULL},
-     {"collections.group.script", ob_collections_group_script},
-     {"collections.group.lua_script", ob_collections_group_lua_script},
-     {"collections.group.externals", NULL}, /* dup */
-     {"collections.group.set", ob_images_set}, /* dup */
-     {"collections.group.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.images", NULL}, /* dup */
-     {"collections.group.models", NULL}, /* dup */
-     {"collections.group.images.set", ob_images_set}, /* dup */
-     {"collections.group.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.fonts", NULL}, /* dup */
-     {"collections.group.styles", NULL}, /* dup */
-     {"collections.group.styles.style", ob_styles_style}, /* dup */
-     {"collections.group.color_tree", ob_color_tree}, /* dup */
-     {"collections.group.color_classes", NULL}, /* dup */
-     {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
-     {"collections.group.text_classes", NULL},
-     {"collections.group.text_classes.text_class", ob_text_class}, /* dup */
-     {"collections.group.size_classes", NULL}, /* dup */
-     {"collections.group.size_classes.size_class", ob_size_class}, /* dup */
-     {"collections.group.filters", NULL},
-     {"collections.group.filters.filter", ob_filters_filter}, /* dup */
-     {"collections.group.filters.filter.script", ob_filters_filter_script}, /* dup */
-     {"collections.group.parts", NULL},
-     {"collections.group.parts.set", ob_images_set}, /* dup */
-     {"collections.group.parts.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.images", NULL}, /* dup */
-     {"collections.group.parts.images.set", ob_images_set}, /* dup */
-     {"collections.group.parts.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.fonts", NULL}, /* dup */
-     {"collections.group.parts.styles", NULL}, /* dup */
-     {"collections.group.parts.styles.style", ob_styles_style}, /* dup */
-     {"collections.group.parts.color_classes", NULL}, /* dup */
-     {"collections.group.parts.color_classes.color_class", ob_color_class}, /* dup */
-     {"collections.group.parts.text_classes", NULL},
-     {"collections.group.parts.text_classes.text_class", ob_text_class}, /* dup */
-     {"collections.group.parts.size_classes", NULL}, /* dup */
-     {"collections.group.parts.size_classes.size_class", ob_size_class}, /* dup */
-     {"collections.group.parts.part", ob_collections_group_parts_part},
-     {"collections.group.parts.part.dragable", NULL},
-     {"collections.group.parts.part.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.images", NULL}, /* dup */
-     {"collections.group.parts.part.images.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.fonts", NULL}, /* dup */
-     {"collections.group.parts.part.styles", NULL}, /* dup */
-     {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
-     {"collections.group.parts.part.color_classes", NULL}, /* dup */
-     {"collections.group.parts.part.color_classes.color_class", ob_color_class}, /* dup */
-     {"collections.group.parts.part.text_classes", NULL},
-     {"collections.group.parts.part.text_classes.text_class", ob_text_class}, /* dup */
-     {"collections.group.parts.part.size_classes", NULL}, /* dup */
-     {"collections.group.parts.part.size_classes.size_class", ob_size_class}, /* dup */
-     {"collections.group.parts.part.box", NULL},
-     {"collections.group.parts.part.box.items", NULL},
-     {"collections.group.parts.part.box.items.item", ob_collections_group_parts_part_box_items_item},
-     {"collections.group.parts.part.table", NULL},
-     {"collections.group.parts.part.table.items", NULL},
-     {"collections.group.parts.part.table.items.item", ob_collections_group_parts_part_box_items_item}, /* dup */
-     {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
-     {"collections.group.parts.part.description.link", ob_collections_group_parts_part_description_link},
-     {"collections.group.parts.part.description.rel1", NULL},
-     {"collections.group.parts.part.description.rel2", NULL},
-     {"collections.group.parts.part.description.anchors", NULL},
-     {"collections.group.parts.part.description.image", NULL}, /* dup */
-     {"collections.group.parts.part.description.image.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.description.image.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.description.image.images", NULL}, /* dup */
-     {"collections.group.parts.part.description.image.images.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.description.image.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.description.fill", NULL},
-     {"collections.group.parts.part.description.fill.origin", NULL},
-     {"collections.group.parts.part.description.fill.size", NULL},
-     {"collections.group.parts.part.description.text", NULL},
-     {"collections.group.parts.part.description.text.fonts", NULL}, /* dup */
-     {"collections.group.parts.part.description.images", NULL}, /* dup */
-     {"collections.group.parts.part.description.images.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.description.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.description.fonts", NULL}, /* dup */
-     {"collections.group.parts.part.description.styles", NULL}, /* dup */
-     {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
-     {"collections.group.parts.part.description.box", NULL},
-     {"collections.group.parts.part.description.table", NULL},
-     {"collections.group.parts.part.description.position", NULL},
-     {"collections.group.parts.part.description.properties", NULL},
-     {"collections.group.parts.part.description.orientation", NULL},
-     {"collections.group.parts.part.description.texture", ob_collections_group_parts_part_description_texture},
-     {"collections.group.parts.part.description.mesh", NULL},
-     {"collections.group.parts.part.description.filter", NULL},
-     {"collections.group.parts.part.description.proxy", NULL},
+   {"externals", NULL},
+   {"images", NULL},
+   {"images.set", ob_images_set},
+   {"images.set.image", ob_images_set_image},
+   {"fonts", NULL},
+   {"data", NULL},
+   {"styles", NULL},
+   {"styles.style", ob_styles_style},
+   {"color_tree", ob_color_tree},
+   {"color_classes", NULL},
+   {"color_classes.color_class", ob_color_class},
+   {"text_classes", NULL},
+   {"text_classes.text_class", ob_text_class},
+   {"size_classes", NULL},
+   {"size_classes.size_class", ob_size_class},
+   {"spectra", NULL},
+   {"filters", NULL},
+   {"filters.filter", ob_filters_filter},
+   {"filters.filter.script", ob_filters_filter_script},
+   {"collections", ob_collections},
+   {"collections.externals", NULL},   /* dup */
+   {"collections.set", ob_images_set},   /* dup */
+   {"collections.set.image", ob_images_set_image},   /* dup */
+   {"collections.images", NULL},   /* dup */
+   {"collections.images.set", ob_images_set},   /* dup */
+   {"collections.images.set.image", ob_images_set_image},   /* dup */
+   {"collections.fonts", NULL},   /* dup */
+   {"collections.styles", NULL},   /* dup */
+   {"collections.styles.style", ob_styles_style},   /* dup */
+   {"collections.color_tree", ob_color_tree},   /* dup */
+   {"collections.color_classes", NULL},   /* dup */
+   {"collections.color_classes.color_class", ob_color_class},   /* dup */
+   {"collections.text_classes", NULL},
+   {"collections.text_classes.text_class", ob_text_class},   /* dup */
+   {"collections.size_classes", NULL},   /* dup */
+   {"collections.size_classes.size_class", ob_size_class},   /* dup */
+   {"collections.sounds", NULL},
+   {"collections.group.sounds", NULL},   /* dup */
+   {"collections.sounds.sample", NULL},
+   {"collections.translation", NULL},
+   {"collections.translation.file", NULL},
+   {"collections.group.translation", NULL},  /*dup*/
+   {"collections.group.translation.file", NULL},  /*dup*/
+   {"collections.group.sounds.sample", NULL},   /* dup */
+   {"collections.vibrations", NULL},
+   {"collections.group.vibrations", NULL},   /* dup */
+   {"collections.vibrations.sample", NULL},
+   {"collections.filters", NULL},
+   {"collections.filters.filter", ob_filters_filter},   /* dup */
+   {"collections.filters.filter.script", ob_filters_filter_script},   /* dup */
+   {"collections.group.vibrations.sample", NULL},   /* dup */
+   {"collections.group", ob_collections_group},
+   {"collections.group.data", NULL},
+   {"collections.group.limits", NULL},
+   {"collections.group.script", ob_collections_group_script},
+   {"collections.group.lua_script", ob_collections_group_lua_script},
+   {"collections.group.externals", NULL},   /* dup */
+   {"collections.group.set", ob_images_set},   /* dup */
+   {"collections.group.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.images", NULL},   /* dup */
+   {"collections.group.models", NULL},   /* dup */
+   {"collections.group.images.set", ob_images_set},   /* dup */
+   {"collections.group.images.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.fonts", NULL},   /* dup */
+   {"collections.group.styles", NULL},   /* dup */
+   {"collections.group.styles.style", ob_styles_style},   /* dup */
+   {"collections.group.color_tree", ob_color_tree},   /* dup */
+   {"collections.group.color_classes", NULL},   /* dup */
+   {"collections.group.color_classes.color_class", ob_color_class},   /* dup */
+   {"collections.group.text_classes", NULL},
+   {"collections.group.text_classes.text_class", ob_text_class},   /* dup */
+   {"collections.group.size_classes", NULL},   /* dup */
+   {"collections.group.size_classes.size_class", ob_size_class},   /* dup */
+   {"collections.group.filters", NULL},
+   {"collections.group.filters.filter", ob_filters_filter},   /* dup */
+   {"collections.group.filters.filter.script", ob_filters_filter_script},   /* dup */
+   {"collections.group.parts", NULL},
+   {"collections.group.parts.set", ob_images_set},   /* dup */
+   {"collections.group.parts.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.images", NULL},   /* dup */
+   {"collections.group.parts.images.set", ob_images_set},   /* dup */
+   {"collections.group.parts.images.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.fonts", NULL},   /* dup */
+   {"collections.group.parts.styles", NULL},   /* dup */
+   {"collections.group.parts.styles.style", ob_styles_style},   /* dup */
+   {"collections.group.parts.color_classes", NULL},   /* dup */
+   {"collections.group.parts.color_classes.color_class", ob_color_class},   /* dup */
+   {"collections.group.parts.text_classes", NULL},
+   {"collections.group.parts.text_classes.text_class", ob_text_class},   /* dup */
+   {"collections.group.parts.size_classes", NULL},   /* dup */
+   {"collections.group.parts.size_classes.size_class", ob_size_class},   /* dup */
+   {"collections.group.parts.part", ob_collections_group_parts_part},
+   {"collections.group.parts.part.dragable", NULL},
+   {"collections.group.parts.part.set", ob_images_set},   /* dup */
+   {"collections.group.parts.part.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.part.images", NULL},   /* dup */
+   {"collections.group.parts.part.images.set", ob_images_set},   /* dup */
+   {"collections.group.parts.part.images.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.part.fonts", NULL},   /* dup */
+   {"collections.group.parts.part.styles", NULL},   /* dup */
+   {"collections.group.parts.part.styles.style", ob_styles_style},   /* dup */
+   {"collections.group.parts.part.color_classes", NULL},   /* dup */
+   {"collections.group.parts.part.color_classes.color_class", ob_color_class},   /* dup */
+   {"collections.group.parts.part.text_classes", NULL},
+   {"collections.group.parts.part.text_classes.text_class", ob_text_class},   /* dup */
+   {"collections.group.parts.part.size_classes", NULL},   /* dup */
+   {"collections.group.parts.part.size_classes.size_class", ob_size_class},   /* dup */
+   {"collections.group.parts.part.box", NULL},
+   {"collections.group.parts.part.box.items", NULL},
+   {"collections.group.parts.part.box.items.item", ob_collections_group_parts_part_box_items_item},
+   {"collections.group.parts.part.table", NULL},
+   {"collections.group.parts.part.table.items", NULL},
+   {"collections.group.parts.part.table.items.item", ob_collections_group_parts_part_box_items_item},   /* dup */
+   {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
+   {"collections.group.parts.part.description.link", ob_collections_group_parts_part_description_link},
+   {"collections.group.parts.part.description.rel1", NULL},
+   {"collections.group.parts.part.description.rel2", NULL},
+   {"collections.group.parts.part.description.anchors", NULL},
+   {"collections.group.parts.part.description.image", NULL},   /* dup */
+   {"collections.group.parts.part.description.image.set", ob_images_set},   /* dup */
+   {"collections.group.parts.part.description.image.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.part.description.image.images", NULL},   /* dup */
+   {"collections.group.parts.part.description.image.images.set", ob_images_set},   /* dup */
+   {"collections.group.parts.part.description.image.images.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.part.description.fill", NULL},
+   {"collections.group.parts.part.description.fill.origin", NULL},
+   {"collections.group.parts.part.description.fill.size", NULL},
+   {"collections.group.parts.part.description.text", NULL},
+   {"collections.group.parts.part.description.text.fonts", NULL},   /* dup */
+   {"collections.group.parts.part.description.images", NULL},   /* dup */
+   {"collections.group.parts.part.description.images.set", ob_images_set},   /* dup */
+   {"collections.group.parts.part.description.images.set.image", ob_images_set_image},   /* dup */
+   {"collections.group.parts.part.description.fonts", NULL},   /* dup */
+   {"collections.group.parts.part.description.styles", NULL},   /* dup */
+   {"collections.group.parts.part.description.styles.style", ob_styles_style},   /* dup */
+   {"collections.group.parts.part.description.box", NULL},
+   {"collections.group.parts.part.description.table", NULL},
+   {"collections.group.parts.part.description.position", NULL},
+   {"collections.group.parts.part.description.properties", NULL},
+   {"collections.group.parts.part.description.orientation", NULL},
+   {"collections.group.parts.part.description.texture", ob_collections_group_parts_part_description_texture},
+   {"collections.group.parts.part.description.mesh", NULL},
+   {"collections.group.parts.part.description.filter", NULL},
+   {"collections.group.parts.part.description.proxy", NULL},
 #ifdef HAVE_EPHYSICS
-     {"collections.group.parts.part.description.physics", NULL},
-     {"collections.group.parts.part.description.physics.movement_freedom", NULL},
-     {"collections.group.parts.part.description.physics.faces", NULL},
-     {"collections.group.parts.part.description.physics.faces.face", st_collections_group_parts_part_description_physics_face},
+   {"collections.group.parts.part.description.physics", NULL},
+   {"collections.group.parts.part.description.physics.movement_freedom", NULL},
+   {"collections.group.parts.part.description.physics.faces", NULL},
+   {"collections.group.parts.part.description.physics.faces.face", st_collections_group_parts_part_description_physics_face},
 #endif
-     {"collections.group.parts.part.description.map", NULL},
-     {"collections.group.parts.part.description.map.rotation", NULL},
-     {"collections.group.parts.part.description.map.zoom", NULL},
-     {"collections.group.parts.part.description.perspective", NULL},
-     {"collections.group.parts.part.description.params", NULL},
-     {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
-     {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
-     {"collections.group.parts.part.description.text_classes", NULL}, /* dup */
-     {"collections.group.parts.part.description.text_classes.text_class", ob_text_class}, /* dup */
-     {"collections.group.parts.part.description.size_classes", NULL}, /* dup */
-     {"collections.group.parts.part.description.size_classes.size_class", ob_size_class}, /* dup */
+   {"collections.group.parts.part.description.map", NULL},
+   {"collections.group.parts.part.description.map.rotation", NULL},
+   {"collections.group.parts.part.description.map.zoom", NULL},
+   {"collections.group.parts.part.description.perspective", NULL},
+   {"collections.group.parts.part.description.params", NULL},
+   {"collections.group.parts.part.description.color_classes", NULL},   /* dup */
+   {"collections.group.parts.part.description.color_classes.color_class", ob_color_class},   /* dup */
+   {"collections.group.parts.part.description.text_classes", NULL},   /* dup */
+   {"collections.group.parts.part.description.text_classes.text_class", ob_text_class},   /* dup */
+   {"collections.group.parts.part.description.size_classes", NULL},   /* dup */
+   {"collections.group.parts.part.description.size_classes.size_class", ob_size_class},   /* dup */
 #ifdef HAVE_EPHYSICS
-     {"collections.group.physics", NULL},
-     {"collections.group.physics.world", NULL},
+   {"collections.group.physics", NULL},
+   {"collections.group.physics.world", NULL},
 #endif
-     PROGRAM_OBJECTS("collections.group.parts.part.description")
-     PROGRAM_OBJECTS("collections.group.parts.part")
-     PROGRAM_OBJECTS("collections.group.parts")
-     PROGRAM_OBJECTS("collections.group")
+   PROGRAM_OBJECTS("collections.group.parts.part.description")
+   PROGRAM_OBJECTS("collections.group.parts.part")
+   PROGRAM_OBJECTS("collections.group.parts")
+   PROGRAM_OBJECTS("collections.group")
 };
 
 /** @edcsubsection{lazedc_blocks,
@@ -1591,45 +1627,45 @@ New_Object_Handler object_handlers[] =
     @description
         Lowercase part types can be specified as blocks with the same effect as part { type: TYPE; }
         The "description" block can also be shortened to "desc".
-        
+
     @since 1.10
     @endblock
-*/
+ */
 New_Object_Handler object_handlers_short[] =
 {
-     {"collections.group.parts.rect", ob_collections_group_parts_part_short},
-     {"collections.group.parts.text", ob_collections_group_parts_part_short},
-     {"collections.group.parts.image", ob_collections_group_parts_part_short},
-     {"collections.group.parts.swallow", ob_collections_group_parts_part_short},
-     {"collections.group.parts.textblock", ob_collections_group_parts_part_short},
-     {"collections.group.parts.group", ob_collections_group_parts_part_short},
-     {"collections.group.parts.box", ob_collections_group_parts_part_short},
-     {"collections.group.parts.table", ob_collections_group_parts_part_short},
-     {"collections.group.parts.external", ob_collections_group_parts_part_short},
-     {"collections.group.parts.proxy", ob_collections_group_parts_part_short},
-     {"collections.group.parts.spacer", ob_collections_group_parts_part_short},
-     {"collections.group.parts.snapshot", ob_collections_group_parts_part_short},
-     {"collections.group.parts.part.desc", ob_collections_group_parts_part_desc},
-     {"collections.group.parts.vector", ob_collections_group_parts_part_short},
+   {"collections.group.parts.rect", ob_collections_group_parts_part_short},
+   {"collections.group.parts.text", ob_collections_group_parts_part_short},
+   {"collections.group.parts.image", ob_collections_group_parts_part_short},
+   {"collections.group.parts.swallow", ob_collections_group_parts_part_short},
+   {"collections.group.parts.textblock", ob_collections_group_parts_part_short},
+   {"collections.group.parts.group", ob_collections_group_parts_part_short},
+   {"collections.group.parts.box", ob_collections_group_parts_part_short},
+   {"collections.group.parts.table", ob_collections_group_parts_part_short},
+   {"collections.group.parts.external", ob_collections_group_parts_part_short},
+   {"collections.group.parts.proxy", ob_collections_group_parts_part_short},
+   {"collections.group.parts.spacer", ob_collections_group_parts_part_short},
+   {"collections.group.parts.snapshot", ob_collections_group_parts_part_short},
+   {"collections.group.parts.part.desc", ob_collections_group_parts_part_desc},
+   {"collections.group.parts.vector", ob_collections_group_parts_part_short},
 };
 
 New_Nested_Handler nested_handlers[] = {
-     {"collections.group.parts", "part", NULL, edje_cc_handlers_hierarchy_pop }
+   {"collections.group.parts", "part", NULL, edje_cc_handlers_hierarchy_pop }
 };
 
 New_Nested_Handler nested_handlers_short[] = {
-     {"collections.group.parts", "rect", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "text", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "image", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "swallow", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "textblock", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "group", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "box", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "table", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "external", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "proxy", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "spacer", NULL, edje_cc_handlers_hierarchy_pop },
-     {"collections.group.parts", "vector", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "rect", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "text", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "image", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "swallow", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "textblock", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "group", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "box", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "table", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "external", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "proxy", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "spacer", NULL, edje_cc_handlers_hierarchy_pop },
+   {"collections.group.parts", "vector", NULL, edje_cc_handlers_hierarchy_pop },
 };
 
 /*****/
@@ -1714,12 +1750,12 @@ part_description_image_cleanup(Edje_Part *ep)
    if (ep->type != EDJE_PART_TYPE_IMAGE)
      return;
 
-   ed = (Edje_Part_Description_Image*) ep->default_desc;
+   ed = (Edje_Part_Description_Image *)ep->default_desc;
    _edje_part_description_image_remove(ed);
 
    for (j = 0; j < ep->other.desc_count; j++)
      {
-        ed = (Edje_Part_Description_Image*) ep->other.desc[j];
+        ed = (Edje_Part_Description_Image *)ep->other.desc[j];
         _edje_part_description_image_remove(ed);
      }
 }
@@ -1735,265 +1771,276 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-	 result = mem_alloc(SZ(Edje_Part_Description_Common));
-	 break;
+        result = mem_alloc(SZ(Edje_Part_Description_Common));
+        break;
+
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
-	{
-	   Edje_Part_Description_Text *ed;
+      {
+         Edje_Part_Description_Text *ed;
 
-	   ed = mem_alloc(SZ(Edje_Part_Description_Text));
+         ed = mem_alloc(SZ(Edje_Part_Description_Text));
 
-	   ed->text.color3.r = 0;
-	   ed->text.color3.g = 0;
-	   ed->text.color3.b = 0;
-	   ed->text.color3.a = 128;
-	   ed->text.align.x = FROM_DOUBLE(0.5);
-	   ed->text.align.y = FROM_DOUBLE(0.5);
-	   ed->text.id_source = -1;
-	   ed->text.id_text_source = -1;
+         ed->text.color3.r = 0;
+         ed->text.color3.g = 0;
+         ed->text.color3.b = 0;
+         ed->text.color3.a = 128;
+         ed->text.align.x = FROM_DOUBLE(0.5);
+         ed->text.align.y = FROM_DOUBLE(0.5);
+         ed->text.id_source = -1;
+         ed->text.id_text_source = -1;
 
-	   result = &ed->common;
-	   break;
-	}
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_IMAGE:
-	{
-	   Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-	   ed = mem_alloc(SZ(Edje_Part_Description_Image));
+         ed = mem_alloc(SZ(Edje_Part_Description_Image));
 
-	   ed->image.id = -1;
+         ed->image.id = -1;
 
-           _edje_part_description_fill(&ed->image.fill);
+         _edje_part_description_fill(&ed->image.fill);
 
-	   result = &ed->common;
-	   break;
-        }
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_SNAPSHOT:
-        {
-           Edje_Part_Description_Snapshot *ed;
+      {
+         Edje_Part_Description_Snapshot *ed;
 
-           ed = mem_alloc(SZ(Edje_Part_Description_Snapshot));
+         ed = mem_alloc(SZ(Edje_Part_Description_Snapshot));
 
-           result = &ed->common;
-           break;
-        }
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = mem_alloc(SZ(Edje_Part_Description_Proxy));
+         ed = mem_alloc(SZ(Edje_Part_Description_Proxy));
 
-           ed->proxy.id = -1;
-           ed->proxy.source_visible = EINA_TRUE;
-           ed->proxy.source_clip = EINA_TRUE;
-           _edje_part_description_fill(&ed->proxy.fill);
+         ed->proxy.id = -1;
+         ed->proxy.source_visible = EINA_TRUE;
+         ed->proxy.source_clip = EINA_TRUE;
+         _edje_part_description_fill(&ed->proxy.fill);
 
-           result = &ed->common;
-           break;
-        }
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_BOX:
-	{
-	   Edje_Part_Description_Box *ed;
+      {
+         Edje_Part_Description_Box *ed;
 
-	   ed = mem_alloc(SZ(Edje_Part_Description_Box));
+         ed = mem_alloc(SZ(Edje_Part_Description_Box));
 
-	   ed->box.layout = NULL;
-	   ed->box.alt_layout = NULL;
-	   ed->box.align.x = FROM_DOUBLE(0.5);
-	   ed->box.align.y = FROM_DOUBLE(0.5);
-	   ed->box.padding.x = 0;
-	   ed->box.padding.y = 0;
+         ed->box.layout = NULL;
+         ed->box.alt_layout = NULL;
+         ed->box.align.x = FROM_DOUBLE(0.5);
+         ed->box.align.y = FROM_DOUBLE(0.5);
+         ed->box.padding.x = 0;
+         ed->box.padding.y = 0;
 
-	   result = &ed->common;
-	   break;
-	}
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_TABLE:
-	{
-	   Edje_Part_Description_Table *ed;
+      {
+         Edje_Part_Description_Table *ed;
 
-	   ed = mem_alloc(SZ(Edje_Part_Description_Table));
+         ed = mem_alloc(SZ(Edje_Part_Description_Table));
 
-	   ed->table.homogeneous = EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE;
-	   ed->table.align.x = FROM_DOUBLE(0.5);
-	   ed->table.align.y = FROM_DOUBLE(0.5);
-	   ed->table.padding.x = 0;
-	   ed->table.padding.y = 0;
+         ed->table.homogeneous = EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE;
+         ed->table.align.x = FROM_DOUBLE(0.5);
+         ed->table.align.y = FROM_DOUBLE(0.5);
+         ed->table.padding.x = 0;
+         ed->table.padding.y = 0;
 
-	   result = &ed->common;
-	   break;
-	}
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_EXTERNAL:
-	{
-	   Edje_Part_Description_External *ed;
+      {
+         Edje_Part_Description_External *ed;
 
-	   ed = mem_alloc(SZ(Edje_Part_Description_External));
+         ed = mem_alloc(SZ(Edje_Part_Description_External));
 
-	   ed->external_params = NULL;
+         ed->external_params = NULL;
 
-	   result = &ed->common;
-	   break;
-	}
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           Edje_Part_Description_Mesh_Node *ed;
+      {
+         Edje_Part_Description_Mesh_Node *ed;
 
-           ed = mem_alloc(SZ(Edje_Part_Description_Mesh_Node));
+         ed = mem_alloc(SZ(Edje_Part_Description_Mesh_Node));
 
-           ed->mesh_node.mesh.id = -1;
-           ed->mesh_node.mesh.primitive = 0;
-           ed->mesh_node.mesh.assembly = 1;
-           ed->mesh_node.mesh.frame = 0;
+         ed->mesh_node.mesh.id = -1;
+         ed->mesh_node.mesh.primitive = 0;
+         ed->mesh_node.mesh.assembly = 1;
+         ed->mesh_node.mesh.frame = 0;
 
-           ed->mesh_node.texture.id = -1;
-           ed->mesh_node.texture.wrap1 = 0;
-           ed->mesh_node.texture.wrap2 = 0;
-           ed->mesh_node.texture.filter1 = 0;
-           ed->mesh_node.texture.filter2 = 0;
+         ed->mesh_node.texture.id = -1;
+         ed->mesh_node.texture.wrap1 = 0;
+         ed->mesh_node.texture.wrap2 = 0;
+         ed->mesh_node.texture.filter1 = 0;
+         ed->mesh_node.texture.filter2 = 0;
 
-           ed->mesh_node.properties.shade = EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR;
-           ed->mesh_node.properties.ambient.r = 50;
-           ed->mesh_node.properties.ambient.g = 50;
-           ed->mesh_node.properties.ambient.b = 50;
-           ed->mesh_node.properties.ambient.a = 255;
-           ed->mesh_node.properties.diffuse.r = 255;
-           ed->mesh_node.properties.diffuse.g = 255;
-           ed->mesh_node.properties.diffuse.b = 255;
-           ed->mesh_node.properties.diffuse.a = 255;
-           ed->mesh_node.properties.specular.r = 255;
-           ed->mesh_node.properties.specular.g = 255;
-           ed->mesh_node.properties.specular.b = 255;
-           ed->mesh_node.properties.specular.a = 255;
+         ed->mesh_node.properties.shade = EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR;
+         ed->mesh_node.properties.ambient.r = 50;
+         ed->mesh_node.properties.ambient.g = 50;
+         ed->mesh_node.properties.ambient.b = 50;
+         ed->mesh_node.properties.ambient.a = 255;
+         ed->mesh_node.properties.diffuse.r = 255;
+         ed->mesh_node.properties.diffuse.g = 255;
+         ed->mesh_node.properties.diffuse.b = 255;
+         ed->mesh_node.properties.diffuse.a = 255;
+         ed->mesh_node.properties.specular.r = 255;
+         ed->mesh_node.properties.specular.g = 255;
+         ed->mesh_node.properties.specular.b = 255;
+         ed->mesh_node.properties.specular.a = 255;
 
-           ed->mesh_node.properties.material_attrib = 1;
-           ed->mesh_node.properties.normal = 1;
-           ed->mesh_node.properties.shininess = 50;
+         ed->mesh_node.properties.material_attrib = 1;
+         ed->mesh_node.properties.normal = 1;
+         ed->mesh_node.properties.shininess = 50;
 
-           ed->mesh_node.aabb1.relative.x = -1.0;
-           ed->mesh_node.aabb1.relative.y = -1.0;
-           ed->mesh_node.aabb1.relative.z = -1.0;
-           ed->mesh_node.aabb1.offset.x = 0;
-           ed->mesh_node.aabb1.offset.y = 0;
-           ed->mesh_node.aabb1.offset.z = 0;
-           ed->mesh_node.aabb1.rel_to = -1;
-           ed->mesh_node.aabb2.relative.x = 1.0;
-           ed->mesh_node.aabb2.relative.y = 1.0;
-           ed->mesh_node.aabb2.relative.z = 1.0;
-           ed->mesh_node.aabb2.offset.x = 0;
-           ed->mesh_node.aabb2.offset.y = 0;
-           ed->mesh_node.aabb2.offset.z = 0;
-           ed->mesh_node.aabb2.rel_to = -1;
+         ed->mesh_node.aabb1.relative.x = -1.0;
+         ed->mesh_node.aabb1.relative.y = -1.0;
+         ed->mesh_node.aabb1.relative.z = -1.0;
+         ed->mesh_node.aabb1.offset.x = 0;
+         ed->mesh_node.aabb1.offset.y = 0;
+         ed->mesh_node.aabb1.offset.z = 0;
+         ed->mesh_node.aabb1.rel_to = -1;
+         ed->mesh_node.aabb2.relative.x = 1.0;
+         ed->mesh_node.aabb2.relative.y = 1.0;
+         ed->mesh_node.aabb2.relative.z = 1.0;
+         ed->mesh_node.aabb2.offset.x = 0;
+         ed->mesh_node.aabb2.offset.y = 0;
+         ed->mesh_node.aabb2.offset.z = 0;
+         ed->mesh_node.aabb2.rel_to = -1;
 
-           ed->mesh_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
-           /* x1 is angle for angle_axis and cosine of half angle for quternion,
-              x2, x3, x4 define axis for angle_axis and quaternion,
-              x1, x2, x3 are coordinates of point to look at for look_at,
-              x4, x5, x6 define a vector that indicates the angle at which
-              the subject is looking at the target for look_at and look_to */
-           ed->mesh_node.orientation.data[0] = 1.0;
-           ed->mesh_node.orientation.data[1] = 0.0;
-           ed->mesh_node.orientation.data[2] = 0.0;
-           ed->mesh_node.orientation.data[3] = 0.0;
-           ed->mesh_node.orientation.data[4] = 1.0;
-           ed->mesh_node.orientation.data[5] = 0.0;
-           ed->mesh_node.orientation.look_to = -1;
+         ed->mesh_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
+         /* x1 is angle for angle_axis and cosine of half angle for quternion,
+            x2, x3, x4 define axis for angle_axis and quaternion,
+            x1, x2, x3 are coordinates of point to look at for look_at,
+            x4, x5, x6 define a vector that indicates the angle at which
+            the subject is looking at the target for look_at and look_to */
+         ed->mesh_node.orientation.data[0] = 1.0;
+         ed->mesh_node.orientation.data[1] = 0.0;
+         ed->mesh_node.orientation.data[2] = 0.0;
+         ed->mesh_node.orientation.data[3] = 0.0;
+         ed->mesh_node.orientation.data[4] = 1.0;
+         ed->mesh_node.orientation.data[5] = 0.0;
+         ed->mesh_node.orientation.look_to = -1;
 
-           ed->mesh_node.scale_3d.x = 1.0;
-           ed->mesh_node.scale_3d.y = 1.0;
-           ed->mesh_node.scale_3d.z = 1.0;
+         ed->mesh_node.scale_3d.x = 1.0;
+         ed->mesh_node.scale_3d.y = 1.0;
+         ed->mesh_node.scale_3d.z = 1.0;
 
-           ed->mesh_node.position.point.x = 0.0;
-           ed->mesh_node.position.point.y = 0.0;
-           ed->mesh_node.position.point.z = 0.0;
-           ed->mesh_node.position.space = EVAS_CANVAS3D_SPACE_PARENT;
+         ed->mesh_node.position.point.x = 0.0;
+         ed->mesh_node.position.point.y = 0.0;
+         ed->mesh_node.position.point.z = 0.0;
+         ed->mesh_node.position.space = EVAS_CANVAS3D_SPACE_PARENT;
 
-           result = &ed->common;
-           break;
-        }
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-        {
-           Edje_Part_Description_Light *ed;
+      {
+         Edje_Part_Description_Light *ed;
 
-           ed = mem_alloc(SZ(Edje_Part_Description_Light));
+         ed = mem_alloc(SZ(Edje_Part_Description_Light));
 
-           ed->light.properties.ambient.r = 50;
-           ed->light.properties.ambient.g = 50;
-           ed->light.properties.ambient.b = 50;
-           ed->light.properties.ambient.a = 255;
-           ed->light.properties.diffuse.r = 255;
-           ed->light.properties.diffuse.g = 255;
-           ed->light.properties.diffuse.b = 255;
-           ed->light.properties.diffuse.a = 255;
-           ed->light.properties.specular.r = 255;
-           ed->light.properties.specular.g = 255;
-           ed->light.properties.specular.b = 255;
-           ed->light.properties.specular.a = 255;
+         ed->light.properties.ambient.r = 50;
+         ed->light.properties.ambient.g = 50;
+         ed->light.properties.ambient.b = 50;
+         ed->light.properties.ambient.a = 255;
+         ed->light.properties.diffuse.r = 255;
+         ed->light.properties.diffuse.g = 255;
+         ed->light.properties.diffuse.b = 255;
+         ed->light.properties.diffuse.a = 255;
+         ed->light.properties.specular.r = 255;
+         ed->light.properties.specular.g = 255;
+         ed->light.properties.specular.b = 255;
+         ed->light.properties.specular.a = 255;
 
-           ed->light.position.point.x = 0.0;
-           ed->light.position.point.y = 0.0;
-           ed->light.position.point.z = 1.0;
-           ed->light.position.space = EVAS_CANVAS3D_SPACE_PARENT;
+         ed->light.position.point.x = 0.0;
+         ed->light.position.point.y = 0.0;
+         ed->light.position.point.z = 1.0;
+         ed->light.position.space = EVAS_CANVAS3D_SPACE_PARENT;
 
-           ed->light.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
-           /* x1 is angle for angle_axis and cosine of half angle for quternion,
-              x2, x3, x4 define axis for angle_axis and quaternion,
-              x1, x2, x3 are coordinates of point to look at for look_at,
-              x4, x5, x6 define a vector that indicates the angle at which
-              the subject is looking at the target for look_at and look_to */
-           ed->light.orientation.data[0] = 1.0;
-           ed->light.orientation.data[1] = 0.0;
-           ed->light.orientation.data[2] = 0.0;
-           ed->light.orientation.data[3] = 0.0;
-           ed->light.orientation.data[4] = 1.0;
-           ed->light.orientation.data[5] = 0.0;
-           ed->light.orientation.look_to = -1;
+         ed->light.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
+         /* x1 is angle for angle_axis and cosine of half angle for quternion,
+            x2, x3, x4 define axis for angle_axis and quaternion,
+            x1, x2, x3 are coordinates of point to look at for look_at,
+            x4, x5, x6 define a vector that indicates the angle at which
+            the subject is looking at the target for look_at and look_to */
+         ed->light.orientation.data[0] = 1.0;
+         ed->light.orientation.data[1] = 0.0;
+         ed->light.orientation.data[2] = 0.0;
+         ed->light.orientation.data[3] = 0.0;
+         ed->light.orientation.data[4] = 1.0;
+         ed->light.orientation.data[5] = 0.0;
+         ed->light.orientation.look_to = -1;
 
-           result = &ed->common;
-           break;
-        }
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_CAMERA:
-        {
-           Edje_Part_Description_Camera *ed;
+      {
+         Edje_Part_Description_Camera *ed;
 
-           ed = mem_alloc(SZ(Edje_Part_Description_Camera));
+         ed = mem_alloc(SZ(Edje_Part_Description_Camera));
 
-           ed->camera.camera.fovy = 60.0;
-           ed->camera.camera.aspect = 1.0;
-           ed->camera.camera.frustum_near = 2.0;
-           ed->camera.camera.frustum_far = 50.0;
+         ed->camera.camera.fovy = 60.0;
+         ed->camera.camera.aspect = 1.0;
+         ed->camera.camera.frustum_near = 2.0;
+         ed->camera.camera.frustum_far = 50.0;
 
-           ed->camera.position.point.x = 0.0;
-           ed->camera.position.point.y = 0.0;
-           ed->camera.position.point.z = 5.0;
+         ed->camera.position.point.x = 0.0;
+         ed->camera.position.point.y = 0.0;
+         ed->camera.position.point.z = 5.0;
 
-           ed->camera.position.space = EVAS_CANVAS3D_SPACE_PARENT;
+         ed->camera.position.space = EVAS_CANVAS3D_SPACE_PARENT;
 
-           ed->camera.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
-           /* x1 is angle for angle_axis and cosine of half angle for quternion,
-              x2, x3, x4 define axis for angle_axis and quaternion,
-              x1, x2, x3 are coordinates of point to look at for look_at,
-              x4, x5, x6 define a vector that indicates the angle at which
-              the subject is looking at the target for look_at and look_to */
-           ed->camera.orientation.data[0] = 1.0;
-           ed->camera.orientation.data[1] = 0.0;
-           ed->camera.orientation.data[2] = 0.0;
-           ed->camera.orientation.data[3] = 0.0;
-           ed->camera.orientation.data[4] = 1.0;
-           ed->camera.orientation.data[5] = 0.0;
-           ed->camera.orientation.look_to = -1;
+         ed->camera.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
+         /* x1 is angle for angle_axis and cosine of half angle for quternion,
+            x2, x3, x4 define axis for angle_axis and quaternion,
+            x1, x2, x3 are coordinates of point to look at for look_at,
+            x4, x5, x6 define a vector that indicates the angle at which
+            the subject is looking at the target for look_at and look_to */
+         ed->camera.orientation.data[0] = 1.0;
+         ed->camera.orientation.data[1] = 0.0;
+         ed->camera.orientation.data[2] = 0.0;
+         ed->camera.orientation.data[3] = 0.0;
+         ed->camera.orientation.data[4] = 1.0;
+         ed->camera.orientation.data[5] = 0.0;
+         ed->camera.orientation.look_to = -1;
 
-           result = &ed->common;
-           break;
-        }
+         result = &ed->common;
+         break;
+      }
+
       case EDJE_PART_TYPE_VECTOR:
-        {
-           Edje_Part_Description_Vector *ed;
+      {
+         Edje_Part_Description_Vector *ed;
 
-           ed = mem_alloc(SZ(Edje_Part_Description_Vector));
+         ed = mem_alloc(SZ(Edje_Part_Description_Vector));
 
-           result = &ed->common;
-           break;
-        }
+         result = &ed->common;
+         break;
+      }
      }
 
    if (!result)
@@ -2033,7 +2080,7 @@ _edje_program_check(const char *name, Edje_Program *me, Edje_Program **pgrms, un
    for (i = 0; i < count; ++i)
      if (pgrms[i]->name)
        if (pgrms[i] != me && (!strcmp(name, pgrms[i]->name)))
-	 {
+         {
             epp = (Edje_Program_Parser *)pgrms[i];
             if (!epp->can_override)
               {
@@ -2050,7 +2097,7 @@ _edje_program_check(const char *name, Edje_Program *me, Edje_Program **pgrms, un
                  epp->can_override = EINA_FALSE;
                  return;
               }
-	 }
+         }
 }
 
 static void
@@ -2098,10 +2145,10 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
    EINA_LIST_FOREACH(ep2->targets, l, et2)
      {
-        name = (char*) (et2 + 1);
+        name = (char *)(et2 + 1);
         et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
         ep->targets = eina_list_append(ep->targets, et);
-        copy = (char*) (et + 1);
+        copy = (char *)(et + 1);
 
         memcpy(copy, name, strlen(name) + 1);
 
@@ -2119,6 +2166,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
              else
                data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
              break;
+
            case EDJE_ACTION_TYPE_ACTION_STOP:
            case EDJE_ACTION_TYPE_SCRIPT:
              if (current_group_inherit)
@@ -2126,6 +2174,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
              else
                data_queue_copied_program_lookup(pc, &(et2->id), &(et->id));
              break;
+
            default:
              ERR("parse error %s:%i. target may only be used after action",
                  file_in, line - 1);
@@ -2135,10 +2184,10 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
    EINA_LIST_FOREACH(ep2->after, l, pa2)
      {
-        name = (char*) (pa2 + 1);
+        name = (char *)(pa2 + 1);
         pa = mem_alloc(SZ(Edje_Program_After) + strlen(name) + 1);
         ep->after = eina_list_append(ep->after, pa);
-        copy = (char*) (pa + 1);
+        copy = (char *)(pa + 1);
         memcpy(copy, name, strlen(name) + 1);
         if (!data_queue_copied_program_lookup(pc, &(pa2->id), &(pa->id)))
           data_queue_program_lookup(pc, copy, &(pa->id));
@@ -2180,6 +2229,67 @@ st_efl_version(void)
    edje_file->efl_version.minor = parse_int(1);
 }
 
+/** @edcsubsection{toplevel_id,
+ *                 id} */
+
+/**
+    @page edcref
+
+    @property
+        id
+    @parameters
+        [name]
+    @effect
+        A string which is used to identify the edje file.
+    @since 1.21
+    @endproperty
+ */
+static void
+st_id(void)
+{
+   Eina_Array_Iterator it;
+   unsigned int i;
+   char *str, *id;
+
+   check_arg_count(1);
+   id = parse_str(0);
+
+   EINA_ARRAY_ITER_NEXT(requires, i, str, it)
+     if (eina_streq(str, id))
+       error_and_abort(NULL, "Cannot use same id for file as one of its required files!");
+   free((void*)edje_file->id);
+   edje_file->id = id;
+}
+
+/** @edcsubsection{toplevel_requires,
+ *                 requires} */
+
+/**
+    @page edcref
+
+    @property
+        requires
+    @parameters
+        [name]
+    @effect
+        Specifying this property informs edje not to close the
+        file with the corresponding id property for as long as this
+        file is open. Multiple requires properties can be individually specified.
+    @since 1.21
+    @endproperty
+ */
+static void
+st_requires(void)
+{
+   char *str;
+   check_arg_count(1);
+
+   str = parse_str(0);
+   if (eina_streq(str, edje_file->id))
+     error_and_abort(NULL, "Cannot require the current file!");
+   eina_array_push(requires, str);
+}
+
 /** @edcsubsection{toplevel_externals,
  *                 Externals} */
 
@@ -2217,39 +2327,39 @@ st_externals_external(void)
 
    ex = mem_alloc(SZ(External));
    ex->name = parse_str(0);
-     {
-	Eina_List *l;
-	External *lex;
+   {
+      Eina_List *l;
+      External *lex;
 
-	EINA_LIST_FOREACH(externals, l, lex)
-	  {
-	     if (!strcmp(lex->name, ex->name))
-	       {
-		  free(ex->name);
-		  free(ex);
-		  return;
-	       }
-	  }
-     }
+      EINA_LIST_FOREACH(externals, l, lex)
+        {
+           if (!strcmp(lex->name, ex->name))
+             {
+                free(ex->name);
+                free(ex);
+                return;
+             }
+        }
+   }
    externals = eina_list_append(externals, ex);
 
    if (edje_file->external_dir)
      {
         Edje_External_Directory_Entry *entries;
-        
-	edje_file->external_dir->entries_count++;
+
+        edje_file->external_dir->entries_count++;
         entries = realloc(edje_file->external_dir->entries,
                           sizeof (Edje_External_Directory_Entry) * edje_file->external_dir->entries_count);
         if (!entries)
           {
-	     ERR("not enough memory");
+             ERR("not enough memory");
              exit(-1);
           }
-	edje_file->external_dir->entries = entries;
-	memset(edje_file->external_dir->entries + edje_file->external_dir->entries_count - 1,
-	       0, sizeof (Edje_External_Directory_Entry));
+        edje_file->external_dir->entries = entries;
+        memset(edje_file->external_dir->entries + edje_file->external_dir->entries_count - 1,
+               0, sizeof (Edje_External_Directory_Entry));
 
-	edje_file->external_dir->entries[edje_file->external_dir->entries_count - 1].entry = mem_strdup(ex->name);
+        edje_file->external_dir->entries[edje_file->external_dir->entries_count - 1].entry = mem_strdup(ex->name);
      }
 }
 
@@ -2284,7 +2394,7 @@ st_externals_external(void)
     @property
         image
     @parameters
-        [image file] [compression method] (compression level)
+        [image file] [compression method] (compression level)(edje file id)
     @effect
         Used to include each image file. The full path to the directory holding
         the images can be defined later with edje_cc's "-id" option.
@@ -2295,6 +2405,7 @@ st_externals_external(void)
         @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
         @li LOSSY_ETC2 [0-100]: ETC2 lossy texture compression with quality from 0 to 100 (supports alpha).
         @li USER: Do not embed the file, refer to the external file instead.
+        @li EXTERNAL: The file exists in the edje file with the specified id.
 
         Defaults: compression level for lossy methods is 90.
     @endproperty
@@ -2321,8 +2432,8 @@ st_images_image(void)
    for (i = 0; i < edje_file->image_dir->entries_count; ++i)
      if (!strcmp(edje_file->image_dir->entries[i].entry, tmp))
        {
-	  free((char*) tmp);
-	  return;
+          free((char *)tmp);
+          return;
        }
 
    edje_file->image_dir->entries_count++;
@@ -2335,7 +2446,7 @@ st_images_image(void)
      }
    edje_file->image_dir->entries = img;
    memset(edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1,
-	  0, sizeof (Edje_Image_Directory_Entry));
+          0, sizeof (Edje_Image_Directory_Entry));
 
    img = edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1;
 
@@ -2348,16 +2459,17 @@ st_images_image(void)
                   "LOSSY_ETC1", 3,
                   "LOSSY_ETC2", 4,
                   "USER", 5,
-		  NULL);
+                  "EXTERNAL", 6,
+                  NULL);
    if (v == 0)
      {
-	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
-	img->source_param = 0;
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
+        img->source_param = 0;
      }
    else if (v == 1)
      {
-	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
-	img->source_param = 1;
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
+        img->source_param = 1;
      }
    else if (v == 2)
      {
@@ -2376,21 +2488,33 @@ st_images_image(void)
      }
    else if (v == 5)
      {
-	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
-	img->source_param = 0;
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_USER;
+        img->source_param = 0;
+     }
+   else if (v == 6)
+     {
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
+        img->source_param = 0;
+        img->external_id = parse_str(2);
      }
    if ((img->source_type < EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) ||
-       (img->source_type > EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2))
-	check_arg_count(2);
-   else
+       (img->source_type == EDJE_IMAGE_SOURCE_TYPE_USER))
+     check_arg_count(2);
+   else if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
      {
         if (check_range_arg_count(2, 3) > 2)
           img->source_param = parse_int_range(2, 0, 100);
         else
           img->source_param = 90;
      }
+   if (!edje_file->image_id_hash)
+     edje_file->image_id_hash = eina_hash_string_superfast_new(free);
+   {
+      Edje_Image_Hash *eih = mem_alloc(SZ(Edje_Image_Hash));
+      eih->id = img->id;
+      eina_hash_add(edje_file->image_id_hash, tmp, eih);
+   }
 }
-
 
 static void
 _handle_vector_image(void)
@@ -2399,7 +2523,7 @@ _handle_vector_image(void)
    unsigned int i = 0;
    char *name;
 
-   ed = (Edje_Part_Description_Vector*) current_desc;
+   ed = (Edje_Part_Description_Vector *)current_desc;
 
    name = parse_str(0);
 
@@ -2464,13 +2588,13 @@ st_images_vector(void)
    for (i = 0; i < edje_file->image_dir->vectors_count; ++i)
      if (!strcmp(edje_file->image_dir->vectors[i].entry, tmp))
        {
-          free((char*) tmp);
+          free((char *)tmp);
           return;
        }
 
    edje_file->image_dir->vectors_count++;
    vector = realloc(edje_file->image_dir->vectors,
-                 sizeof (Edje_Vector_Directory_Entry) * edje_file->image_dir->vectors_count);
+                    sizeof (Edje_Vector_Directory_Entry) * edje_file->image_dir->vectors_count);
    if (!vector)
      {
         ERR("No enough memory.");
@@ -2478,14 +2602,13 @@ st_images_vector(void)
      }
    edje_file->image_dir->vectors = vector;
    memset(edje_file->image_dir->vectors + edje_file->image_dir->vectors_count - 1,
-    0, sizeof (Edje_Vector_Directory_Entry));
+          0, sizeof (Edje_Vector_Directory_Entry));
 
    vector = edje_file->image_dir->vectors + edje_file->image_dir->vectors_count - 1;
 
    vector->entry = tmp;
    vector->id = edje_file->image_dir->vectors_count - 1;
 }
-
 
 /**
    @edcsubsection{toplevel_models,model}
@@ -2533,7 +2656,7 @@ st_models_model(void)
    for (i = 0; i < edje_file->model_dir->entries_count; ++i)
      if (!strcmp(edje_file->model_dir->entries[i].entry, tmp))
        {
-          free((char*) tmp);
+          free((char *)tmp);
           return;
        }
 
@@ -2585,7 +2708,7 @@ static void
 ob_images_set(void)
 {
    Edje_Image_Directory_Set *sets;
-   
+
    if (!edje_file->image_dir)
      edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
 
@@ -2599,8 +2722,8 @@ ob_images_set(void)
      }
    edje_file->image_dir->sets = sets;
    memset(edje_file->image_dir->sets + edje_file->image_dir->sets_count - 1,
-	  0, sizeof (Edje_Image_Directory_Set));
-   
+          0, sizeof (Edje_Image_Directory_Set));
+
    edje_file->image_dir->sets[edje_file->image_dir->sets_count - 1].id = edje_file->image_dir->sets_count - 1;
 }
 
@@ -2614,7 +2737,7 @@ ob_images_set(void)
     @effect
         Define the name that refer to this image description.
     @endproperty
-*/
+ */
 static void
 st_images_set_name(void)
 {
@@ -2649,7 +2772,7 @@ st_images_set_name(void)
         The "image" block inside a "set" block define the characteristic of an image.
         Every block will describe one image and the size rule to use it.
     @endblock
-**/
+ **/
 static void
 ob_images_set_image(void)
 {
@@ -2669,7 +2792,7 @@ ob_images_set_image(void)
     @property
         image
     @parameters
-        [image file] [compression method] (compression level)
+        [image file] [compression method] (compression level)(edje file id)
     @effect
         Used to include each image file. The full path to the directory holding
         the images can be defined later with edje_cc's "-id" option.
@@ -2680,10 +2803,11 @@ ob_images_set_image(void)
         @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
         @li LOSSY_ETC2 [0-100]: ETC2 lossy texture compression with quality from 0 to 100 (supports alpha).
         @li USER: Do not embed the file, refer to the external file instead.
+        @li EXTERNAL: The file exists in the edje file with the specified id.
 
         Defaults: compression level for lossy methods is 90.
     @endproperty
-**/
+ **/
 static void
 st_images_set_image_image(void)
 {
@@ -2702,8 +2826,8 @@ st_images_set_image_image(void)
    for (i = 0; i < edje_file->image_dir->entries_count; ++i)
      if (!strcmp(edje_file->image_dir->entries[i].entry, entry->name))
        {
-	 entry->id = i;
-	 return;
+          entry->id = i;
+          return;
        }
 }
 
@@ -2719,7 +2843,7 @@ st_images_set_image_image(void)
 
         Defaults: 0 0 0 0
     @endproperty
-*/
+ */
 static void
 st_images_set_image_size(void)
 {
@@ -2737,11 +2861,11 @@ st_images_set_image_size(void)
    if (entry->size.min.w > entry->size.max.w
        || entry->size.min.h > entry->size.max.h)
      {
-       ERR("parse error %s:%i. Image min and max size are not in the right order ([%i, %i] < [%i, %i])",
-	   file_in, line - 1,
-	   entry->size.min.w, entry->size.min.h,
-	   entry->size.max.w, entry->size.max.h);
-       exit(-1);
+        ERR("parse error %s:%i. Image min and max size are not in the right order ([%i, %i] < [%i, %i])",
+            file_in, line - 1,
+            entry->size.min.w, entry->size.min.h,
+            entry->size.max.w, entry->size.max.h);
+        exit(-1);
      }
 }
 
@@ -2759,7 +2883,7 @@ st_images_set_image_size(void)
         Defaults: 0 0 0 0
     @since 1.8
     @endproperty
-*/
+ */
 static void
 st_images_set_image_border(void)
 {
@@ -2796,7 +2920,7 @@ st_images_set_image_border(void)
         Defaults: 0.0
     @since 1.8
     @endproperty
-*/
+ */
 static void
 st_images_set_image_border_scale_by(void)
 {
@@ -2811,7 +2935,7 @@ st_images_set_image_border_scale_by(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
    ed->image.border.scale_by = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
@@ -2861,10 +2985,10 @@ st_fonts_font(void)
 
    if (eina_hash_find(edje_file->fonts, fn->name))
      {
-	free(fn->file);
-	free(fn->name);
-	free(fn);
-	return;
+        free(fn->file);
+        free(fn->name);
+        free(fn);
+        return;
      }
 
    eina_hash_direct_add(edje_file->fonts, fn->name, fn);
@@ -2968,7 +3092,7 @@ st_data_file(void)
              snprintf(path, sizeof(path), "%s/%s", dir, filename);
              fd = open(path, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
              if (fd >= 0)
-                break;
+               break;
           }
 
         if (fd < 0)
@@ -2982,7 +3106,7 @@ st_data_file(void)
    if (fstat(fd, &buf))
      {
         ERR("%s:%i when stating file \"%s\": \"%s\"",
-	    file_in, line, filename, strerror(errno));
+            file_in, line, filename, strerror(errno));
         exit(-1);
      }
 
@@ -2990,7 +3114,7 @@ st_data_file(void)
    if (data == MAP_FAILED)
      {
         ERR("%s:%i when mapping file \"%s\": \"%s\"",
-	    file_in, line, filename, strerror(errno));
+            file_in, line, filename, strerror(errno));
         exit(-1);
      }
 
@@ -3005,7 +3129,7 @@ st_data_file(void)
    value = malloc(sizeof (char) * buf.st_size + 1);
    snprintf(value, buf.st_size + 1, "%s", data);
 
-   munmap((void*)data, buf.st_size);
+   munmap((void *)data, buf.st_size);
    close(fd);
 
    es->str = value;
@@ -3043,7 +3167,7 @@ st_data_file(void)
         Each node block begins with the name of color class and enclosed with braces.
         Node block can be placed within another node block.
     @endblock
-*/
+ */
 static void
 ob_color_tree(void)
 {
@@ -3084,7 +3208,7 @@ ob_color_tree(void)
         group of colors to be used in the theme, the application can use that
         name to alter the color values at runtime.
     @endblock
-*/
+ */
 static void
 ob_color_class(void)
 {
@@ -3093,18 +3217,18 @@ ob_color_class(void)
    cc = mem_alloc(SZ(Edje_Color_Class));
    edje_file->color_classes = eina_list_append(edje_file->color_classes, cc);
 
-   cc->r = 255;
-   cc->g = 255;
-   cc->b = 255;
-   cc->a = 255;
-   cc->r2 = 255;
-   cc->g2 = 255;
-   cc->b2 = 255;
-   cc->a2 = 255;
-   cc->r3 = 255;
-   cc->g3 = 255;
-   cc->b3 = 255;
-   cc->a3 = 255;
+   cc->r = 0;
+   cc->g = 0;
+   cc->b = 0;
+   cc->a = 0;
+   cc->r2 = 0;
+   cc->g2 = 0;
+   cc->b2 = 0;
+   cc->a2 = 0;
+   cc->r3 = 0;
+   cc->g3 = 0;
+   cc->b3 = 0;
+   cc->a3 = 0;
 }
 
 static void
@@ -3137,7 +3261,7 @@ _color_class_name(char *name)
         Sets the name for the color class, used as reference by both the theme
         and the application.
     @endproperty
-*/
+ */
 static void
 st_color_class_name(void)
 {
@@ -3148,12 +3272,12 @@ st_color_class_name(void)
    cc->name = parse_str(0);
    EINA_LIST_FOREACH(edje_file->color_classes, l, tcc)
      {
-	if ((cc != tcc) && (!strcmp(cc->name, tcc->name)))
-	  {
-	     ERR("parse error %s:%i. There is already a color class named \"%s\"",
-		 file_in, line - 1, cc->name);
-	     exit(-1);
-	  }
+        if ((cc != tcc) && (!strcmp(cc->name, tcc->name)))
+          {
+             ERR("parse error %s:%i. There is already a color class named \"%s\"",
+                 file_in, line - 1, cc->name);
+             exit(-1);
+          }
      }
 }
 
@@ -3167,23 +3291,25 @@ parse_color(unsigned int first_arg, void *base)
    switch (get_arg_count() - first_arg)
      {
       case 1:
-         str = parse_str(first_arg);
-         convert_color_code(str, &r, &g, &b, &a);
-         color->r = r;
-         color->g = g;
-         color->b = b;
-         color->a = a;
-         break;
+        str = parse_str(first_arg);
+        convert_color_code(str, &r, &g, &b, &a);
+        color->r = r;
+        color->g = g;
+        color->b = b;
+        color->a = a;
+        break;
+
       case 4:
-         color->r = parse_int_range(first_arg + 0, 0, 255);
-         color->g = parse_int_range(first_arg + 1, 0, 255);
-         color->b = parse_int_range(first_arg + 2, 0, 255);
-         color->a = parse_int_range(first_arg + 3, 0, 255);
-         break;
+        color->r = parse_int_range(first_arg + 0, 0, 255);
+        color->g = parse_int_range(first_arg + 1, 0, 255);
+        color->b = parse_int_range(first_arg + 2, 0, 255);
+        color->a = parse_int_range(first_arg + 3, 0, 255);
+        break;
+
       default:
-         ERR("%s:%i. color code should be a string or a set of 4 integers.",
-             file_in, line - 1);
-         exit(-1);
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
      }
 }
 
@@ -3205,9 +3331,9 @@ parse_color(unsigned int first_arg, void *base)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
-        Defaults: 255 255 255 255
+        Defaults: 0 0 0 0
     @endproperty
-*/
+ */
 static void
 st_color_class_color(void)
 {
@@ -3236,9 +3362,9 @@ st_color_class_color(void)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
-        Defaults: 255 255 255 255
+        Defaults: 0 0 0 0
     @endproperty
-*/
+ */
 static void
 st_color_class_color2(void)
 {
@@ -3267,9 +3393,9 @@ st_color_class_color2(void)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
-        Defaults: 255 255 255 255
+        Defaults: 0 0 0 0
     @endproperty
-*/
+ */
 static void
 st_color_class_color3(void)
 {
@@ -3290,7 +3416,7 @@ st_color_class_color3(void)
         Provides a descriptive name for the effect of the color class
         @since 1.14
     @endproperty
-*/
+ */
 static void
 st_color_class_desc(void)
 {
@@ -3325,7 +3451,7 @@ st_color_class_desc(void)
         "style" block is used to create style \<tags\> for advanced TEXTBLOCK
         formatting.
     @endblock
-*/
+ */
 static void
 ob_styles_style(void)
 {
@@ -3349,7 +3475,7 @@ _style_name(char *name)
         if (stl->name && tstl->name && (stl != tstl) && (!strcmp(stl->name, tstl->name)))
           {
              ERR("parse error %s:%i. There is already a style named \"%s\"",
-          file_in, line - 1, stl->name);
+                 file_in, line - 1, stl->name);
              exit(-1);
           }
      }
@@ -3364,7 +3490,7 @@ _style_name(char *name)
     @effect
         The name of  the style to be used as reference later in the theme.
     @endproperty
-*/
+ */
 static void
 st_styles_style_name(void)
 {
@@ -3381,7 +3507,7 @@ st_styles_style_name(void)
         The default style properties that will be applied to the complete
         text.
     @endproperty
-*/
+ */
 static void
 st_styles_style_base(void)
 {
@@ -3413,7 +3539,7 @@ st_styles_style_base(void)
         If the second part (\</bold\>) is also defined, a '-' should be prepended to it's style properties.
         This only applies to paired tags; Single tags, like \<tab\>, must not include a starting '+'.
     @endproperty
-*/
+ */
 static void
 st_styles_style_tag(void)
 {
@@ -3449,7 +3575,7 @@ st_styles_style_tag(void)
         group of font and size to be used in the theme, the application can
         use that name to alter the font and its size at runtime.
     @endblock
-*/
+ */
 static void
 ob_text_class(void)
 {
@@ -3492,7 +3618,7 @@ _text_class_name(char *name)
         Sets the name for the text class, used as reference by both the theme
         and the application.
     @endproperty
-*/
+ */
 static void
 st_text_class_name(void)
 {
@@ -3522,7 +3648,7 @@ st_text_class_name(void)
     @effect
         Sets the font family for the text class.
     @endproperty
-*/
+ */
 static void
 st_text_class_font(void)
 {
@@ -3546,7 +3672,7 @@ st_text_class_font(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_text_class_size(void)
 {
@@ -3580,7 +3706,7 @@ st_text_class_size(void)
         group of size to be used in the theme, the application can use that
         name to alter the min and max size values at runtime.
     @endblock
-*/
+ */
 static void
 ob_size_class(void)
 {
@@ -3625,7 +3751,7 @@ _size_class_name(char *name)
         Sets the name for the size class, used as reference by both the theme
         and the application.
     @endproperty
-*/
+ */
 static void
 st_size_class_name(void)
 {
@@ -3656,7 +3782,7 @@ st_size_class_name(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_size_class_min(void)
 {
@@ -3680,7 +3806,7 @@ st_size_class_min(void)
 
         Defaults: -1 -1
     @endproperty
-*/
+ */
 static void
 st_size_class_max(void)
 {
@@ -3717,7 +3843,7 @@ st_size_class_max(void)
         names. The "sounds" block comprises of all sound definitions. The "vibrations"
         block compriese all vibration definitions.
     @endblock
-*/
+ */
 static void
 ob_collections(void)
 {
@@ -3745,7 +3871,7 @@ ob_collections(void)
         Defaults: 1.0
     @since 1.11
     @endproperty
-*/
+ */
 static void
 st_collections_base_scale(void)
 {
@@ -3777,7 +3903,7 @@ st_collections_base_scale(void)
     @description
         The "sounds" block contains a list of one or more sound sample and tones items.
     @endblock
-*/
+ */
 
 /**
     @page edcref
@@ -3799,14 +3925,14 @@ st_collections_group_sound_tone(void)
    int value;
 
    check_arg_count(2);
-   
+
    if (!edje_file->sound_dir)
      edje_file->sound_dir = mem_alloc(SZ(Edje_Sound_Directory));
-   
+
    tmp = parse_str(0);
    /* Audible range 20 to 20KHz */
    value = parse_int_range(1, 20, 20000);
-   
+
    /* Check for Tone duplication */
    for (i = 0; i < edje_file->sound_dir->tones_count; i++)
      {
@@ -3825,7 +3951,7 @@ st_collections_group_sound_tone(void)
      }
    edje_file->sound_dir->tones_count++;
    tone = realloc(edje_file->sound_dir->tones,
-                  sizeof (Edje_Sound_Tone) * 
+                  sizeof (Edje_Sound_Tone) *
                   edje_file->sound_dir->tones_count);
    if (!tone)
      {
@@ -3833,10 +3959,10 @@ st_collections_group_sound_tone(void)
         exit(-1);
      }
    edje_file->sound_dir->tones = tone;
-   
+
    tone = edje_file->sound_dir->tones + edje_file->sound_dir->tones_count - 1;
    memset(tone, 0, sizeof (Edje_Sound_Tone));
-   
+
    tone->name = tmp;
    tone->value = value;
    tone->id = edje_file->sound_dir->tones_count - 1;
@@ -3886,12 +4012,12 @@ st_collections_group_sound_sample_name(void)
    Edje_Sound_Sample *sample;
    const char *tmp;
    unsigned int i;
-   
+
    if (!edje_file->sound_dir)
      edje_file->sound_dir = mem_alloc(SZ(Edje_Sound_Directory));
-   
+
    tmp = parse_str(0);
-   
+
    for (i = 0; i < edje_file->sound_dir->samples_count; i++)
      {
         if (!strcmp(edje_file->sound_dir->samples[i].name, tmp))
@@ -3900,10 +4026,10 @@ st_collections_group_sound_sample_name(void)
              return;
           }
      }
-   
+
    edje_file->sound_dir->samples_count++;
    sample = realloc(edje_file->sound_dir->samples,
-                    sizeof(Edje_Sound_Sample) * 
+                    sizeof(Edje_Sound_Sample) *
                     edje_file->sound_dir->samples_count);
    if (!sample)
      {
@@ -3916,7 +4042,7 @@ st_collections_group_sound_sample_name(void)
      edje_file->sound_dir->samples +
      edje_file->sound_dir->samples_count - 1;
    memset(sample, 0, sizeof (Edje_Sound_Sample));
-   
+
    sample->name = tmp;
    sample->id = edje_file->sound_dir->samples_count - 1;
    sample->compression = parse_enum(1,
@@ -3925,7 +4051,7 @@ st_collections_group_sound_sample_name(void)
                                     "LOSSY", EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY,
                                     "AS_IS", EDJE_SOUND_SOURCE_TYPE_INLINE_AS_IS,
                                     NULL);
-   
+
    if (sample->compression == EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY)
      {
         sample->quality = parse_float_range(2, 45.0, 1000.0);
@@ -3933,7 +4059,6 @@ st_collections_group_sound_sample_name(void)
      }
    else
      check_arg_count(2);
-
 }
 
 /**
@@ -3958,14 +4083,13 @@ st_collections_group_sound_sample_source(void)
         ERR("Invalid sound sample source definition.");
         exit(-1);
      }
-   
-   sample = 
+
+   sample =
      edje_file->sound_dir->samples +
      edje_file->sound_dir->samples_count - 1;
    sample->snd_src = parse_str(0);
    check_arg_count(1);
 }
-
 
 /** @edcsubsection{collections_vibrations,
  *                 Vibrations} */
@@ -3985,7 +4109,7 @@ st_collections_group_sound_sample_source(void)
         The "vibrations" block contains a list of one or more vibration sample.
     @since 1.10
     @endblock
-*/
+ */
 
 /** @edcsubsection{collections_vibrations_sample,
  *                 Vibrations.Sample} */
@@ -4112,7 +4236,7 @@ st_collections_group_vibration_sample_source(void)
     @property
         name
     @parameters
-        [locale name] 
+        [locale name]
     @effect
         Used to include each po or mo file. The full path to the directory holding
         the po or mo file can be defined later with edje_cc's "-md" option.
@@ -4130,7 +4254,7 @@ st_collections_group_translation_file_locale(void)
    check_arg_count(1);
 
    if (!edje_file->mo_dir)
-      edje_file->mo_dir = mem_alloc(SZ(Edje_Mo_Directory));
+     edje_file->mo_dir = mem_alloc(SZ(Edje_Mo_Directory));
 
    tmp = parse_str(0);
 
@@ -4223,13 +4347,13 @@ _link_combine(void)
                   if (fabs(ell->ed->state.value - el->ed->state.value) > DBL_EPSILON) continue;
                   if ((!!ell->ed->state.name) != (!!el->ed->state.name))
                     {
-                      if (((!!ell->ed->state.name) && strcmp(ell->ed->state.name, "default")) ||
-                         ((!!el->ed->state.name) && strcmp(el->ed->state.name, "default")))
-                           continue;
+                       if (((!!ell->ed->state.name) && strcmp(ell->ed->state.name, "default")) ||
+                           ((!!el->ed->state.name) && strcmp(el->ed->state.name, "default")))
+                         continue;
                     }
                   else if (ell->ed->state.name && strcmp(ell->ed->state.name, el->ed->state.name))
                     continue;
-                  eina_list_move_list(&combine, (Eina_List**)&tup->data, l);
+                  eina_list_move_list(&combine, (Eina_List **)&tup->data, l);
                }
              current_program = el->pr;
              if (!el->epp->common.name)
@@ -4285,7 +4409,7 @@ _link_combine(void)
         A "group" block contains the list of parts and programs that compose a
         given Edje Object.
     @endblock
-*/
+ */
 static void
 ob_collections_group(void)
 {
@@ -4391,12 +4515,36 @@ double_named_group:
         Only a single name statement is valid for group, use alias instead if
         you want to give additional names.
     @endproperty
-*/
+ */
 static void
 st_collections_group_name(void)
 {
    check_arg_count(1);
    _group_name(parse_str(0));
+}
+
+/**
+    @page edcref
+    @property
+        skip_namespace_validation
+    @parameters
+        [1 or 0]
+    @effect
+        This disables namespace validation for the current group if validation has
+        been enabled with edje_cc's -N option.
+        This property can be inherited.
+        Defaults: 0
+
+    @warning Your edc file should always wrap this keyword with #ifdef HAVE_SKIP_NAMESPACE_VALIDATION
+    @since 1.21
+    @endproperty
+ */
+static void
+st_collections_group_skip_namespace_validation(void)
+{
+   Edje_Part_Collection_Parser *pcp = eina_list_last_data_get(edje_collections);
+   check_arg_count(1);
+   pcp->skip_namespace_validation = parse_bool(0);
 }
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
@@ -4452,53 +4600,68 @@ _parts_count_update(unsigned int type, int inc)
    switch (type)
      {
       case EDJE_PART_TYPE_RECTANGLE:
-         current_de->count.RECTANGLE += inc;
-         break;
+        current_de->count.RECTANGLE += inc;
+        break;
+
       case EDJE_PART_TYPE_TEXT:
-         current_de->count.TEXT += inc;
-         break;
+        current_de->count.TEXT += inc;
+        break;
+
       case EDJE_PART_TYPE_IMAGE:
-         current_de->count.IMAGE += inc;
-         break;
+        current_de->count.IMAGE += inc;
+        break;
+
       case EDJE_PART_TYPE_SWALLOW:
-         current_de->count.SWALLOW += inc;
-         break;
+        current_de->count.SWALLOW += inc;
+        break;
+
       case EDJE_PART_TYPE_TEXTBLOCK:
-         current_de->count.TEXTBLOCK += inc;
-         break;
+        current_de->count.TEXTBLOCK += inc;
+        break;
+
       case EDJE_PART_TYPE_GROUP:
-         current_de->count.GROUP += inc;
-         break;
+        current_de->count.GROUP += inc;
+        break;
+
       case EDJE_PART_TYPE_BOX:
-         current_de->count.BOX += inc;
-         break;
+        current_de->count.BOX += inc;
+        break;
+
       case EDJE_PART_TYPE_TABLE:
-         current_de->count.TABLE += inc;
-         break;
+        current_de->count.TABLE += inc;
+        break;
+
       case EDJE_PART_TYPE_EXTERNAL:
-         current_de->count.EXTERNAL += inc;
-         break;
+        current_de->count.EXTERNAL += inc;
+        break;
+
       case EDJE_PART_TYPE_PROXY:
-         current_de->count.PROXY += inc;
-         break;
+        current_de->count.PROXY += inc;
+        break;
+
       case EDJE_PART_TYPE_MESH_NODE:
-         current_de->count.MESH_NODE += inc;
-         break;
+        current_de->count.MESH_NODE += inc;
+        break;
+
       case EDJE_PART_TYPE_LIGHT:
-         current_de->count.LIGHT += inc;
-         break;
+        current_de->count.LIGHT += inc;
+        break;
+
       case EDJE_PART_TYPE_CAMERA:
-         current_de->count.CAMERA += inc;
-         break;
+        current_de->count.CAMERA += inc;
+        break;
+
       case EDJE_PART_TYPE_SPACER:
-         current_de->count.SPACER += inc;
-         break;
+        current_de->count.SPACER += inc;
+        break;
+
       case EDJE_PART_TYPE_SNAPSHOT:
-         current_de->count.SNAPSHOT += inc;
-         break;
+        current_de->count.SNAPSHOT += inc;
+        break;
+
       case EDJE_PART_TYPE_VECTOR:
-         current_de->count.VECTOR += inc;
-         break;
+        current_de->count.VECTOR += inc;
+        break;
      }
    current_de->count.part += inc;
 }
@@ -4591,7 +4754,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    epp->reorder.insert_after = STRDUP(epp2->reorder.insert_after);
    epp->can_override = EINA_TRUE;
 
-   for (j = 0 ; j < ep2->items_count ; j++)
+   for (j = 0; j < ep2->items_count; j++)
      {
         ob_collections_group_parts_part_box_items_item();
         item = ep->items[j];
@@ -4637,14 +4800,14 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    ob_collections_group_parts_part_description();
    ed = ep->default_desc;
    parent_desc = ed2 = ep2->default_desc;
-   free((void*)ed->state.name);
+   free((void *)ed->state.name);
    ed->state.name = STRDUP(ed2->state.name);
    ed->state.value = ed2->state.value;
    st_collections_group_parts_part_description_inherit();
    parent_desc = NULL;
 
    // copy other description
-   for (j = 0 ; j < ep2->other.desc_count ; j++)
+   for (j = 0; j < ep2->other.desc_count; j++)
      {
         ob_collections_group_parts_part_description();
         ed = ep->other.desc[j];
@@ -4671,7 +4834,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
         Defaults: 0
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_inherit_only(void)
 {
@@ -4710,7 +4873,7 @@ st_collections_group_inherit_only(void)
         Defaults: 0
     @since 1.19
     @endproperty
-*/
+ */
 static void
 st_collections_group_use_custom_seat_names(void)
 {
@@ -4733,7 +4896,7 @@ st_collections_group_use_custom_seat_names(void)
         parts is not allowed.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_part_remove(void)
 {
@@ -4805,7 +4968,7 @@ st_collections_group_part_remove(void)
         This will break program sequences if a program in the middle of the sequence is removed.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_program_remove(void)
 {
@@ -4850,7 +5013,6 @@ st_collections_group_program_remove(void)
      }
 }
 
-
 /**
     @page edcref
     @property
@@ -4864,7 +5026,7 @@ st_collections_group_program_remove(void)
         group added as targets.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_target_group(void)
 {
@@ -4882,14 +5044,14 @@ st_collections_group_target_group(void)
      if (!strcmp(tg->name, name))
        {
           ERR("parse error %s:%i. There is already a target_group with the name '%s'",
-                     file_in, line - 1, name);
+              file_in, line - 1, name);
           exit(-1);
        }
    tg = malloc(sizeof(Edje_Target_Group));
    pc->target_groups = eina_list_append(pc->target_groups, tg);
    tg->name = name;
    argc = get_arg_count();
-   tg->targets = calloc(argc, sizeof(char*));
+   tg->targets = calloc(argc, sizeof(char *));
 
    for (n = 1; n < argc; n++)
      tg->targets[n - 1] = parse_str(n);
@@ -4912,7 +5074,7 @@ st_collections_group_target_group(void)
         allowed.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_inherit(void)
 {
@@ -4975,7 +5137,7 @@ st_collections_group_inherit(void)
 
         memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
         eina_hash_foreach(pc2->data,
-                     _edje_data_item_list_foreach, &fdata);
+                          _edje_data_item_list_foreach, &fdata);
 
         if (!pc->data) pc->data = eina_hash_string_small_new(free);
         EINA_LIST_FREE(fdata.list, key)
@@ -4991,7 +5153,7 @@ st_collections_group_inherit(void)
 
         memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
         eina_hash_foreach(pc2->alias,
-                     _edje_data_item_list_foreach, &fdata);
+                          _edje_data_item_list_foreach, &fdata);
         if (!pc->alias) pc->alias = eina_hash_string_small_new(free);
         EINA_LIST_FREE(fdata.list, key)
           {
@@ -5034,6 +5196,7 @@ st_collections_group_inherit(void)
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp2 = (Edje_Part_Collection_Parser *)pc2;
    pcp->default_mouse_events = pcp2->default_mouse_events;
+   pcp->skip_namespace_validation = pcp2->skip_namespace_validation;
    if (pcp2->inherit_script)
      pcp->inherit_script = pcp2->inherit_script;
 
@@ -5117,7 +5280,7 @@ st_collections_group_inherit(void)
      }
 
    offset = pc->parts_count;
-   for (i = 0 ; i < pc2->parts_count ; i++)
+   for (i = 0; i < pc2->parts_count; i++)
      {
         // copy the part
         edje_cc_handlers_part_make(-1);
@@ -5127,27 +5290,27 @@ st_collections_group_inherit(void)
      }
 
    //copy programs
-   for (j = 0 ; j < pc2->programs.fnmatch_count ; j++)
+   for (j = 0; j < pc2->programs.fnmatch_count; j++)
      {
         ob_collections_group_programs_program();
         _edje_program_copy(current_program, pc2->programs.fnmatch[j]);
      }
-   for (j = 0 ; j < pc2->programs.strcmp_count ; j++)
+   for (j = 0; j < pc2->programs.strcmp_count; j++)
      {
         ob_collections_group_programs_program();
         _edje_program_copy(current_program, pc2->programs.strcmp[j]);
      }
-   for (j = 0 ; j < pc2->programs.strncmp_count ; j++)
+   for (j = 0; j < pc2->programs.strncmp_count; j++)
      {
         ob_collections_group_programs_program();
         _edje_program_copy(current_program, pc2->programs.strncmp[j]);
      }
-   for (j = 0 ; j < pc2->programs.strrncmp_count ; j++)
+   for (j = 0; j < pc2->programs.strrncmp_count; j++)
      {
         ob_collections_group_programs_program();
         _edje_program_copy(current_program, pc2->programs.strrncmp[j]);
      }
-   for (j = 0 ; j < pc2->programs.nocmp_count ; j++)
+   for (j = 0; j < pc2->programs.nocmp_count; j++)
      {
         ob_collections_group_programs_program();
         _edje_program_copy(current_program, pc2->programs.nocmp[j]);
@@ -5209,7 +5372,7 @@ st_collections_group_inherit(void)
 
         Defaults: off
     @endproperty
-*/
+ */
 static void
 st_collections_group_lua_script_only(void)
 {
@@ -5237,7 +5400,7 @@ st_collections_group_lua_script_only(void)
         Defaults: 0
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_script_recursion(void)
 {
@@ -5259,7 +5422,7 @@ st_collections_group_script_recursion(void)
         Additional name to serve as identifier. Defining multiple aliases is
         supported.
     @endproperty
-*/
+ */
 static void
 st_collections_group_alias(void)
 {
@@ -5303,7 +5466,7 @@ st_collections_group_alias(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_min(void)
 {
@@ -5328,7 +5491,7 @@ st_collections_group_min(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_max(void)
 {
@@ -5352,7 +5515,7 @@ st_collections_group_max(void)
 
         Defaults: 0.0 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_scene_size(void)
 {
@@ -5377,7 +5540,7 @@ st_collections_group_scene_size(void)
        Defaults: true
    @since 1.1
    @endproperty
-*/
+ */
 static void
 st_collections_group_broadcast_signal(void)
 {
@@ -5426,7 +5589,7 @@ st_collections_group_nobroadcast(void)
 
         Defaults: AUTO
     @endproperty
-*/
+ */
 static void
 st_collections_group_orientation(void)
 {
@@ -5436,10 +5599,10 @@ st_collections_group_orientation(void)
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->prop.orientation = parse_enum(0,
-         "AUTO", EDJE_ORIENTATION_AUTO,
-         "LTR", EDJE_ORIENTATION_LTR,
-         "RTL", EDJE_ORIENTATION_RTL,
-         NULL);
+                                     "AUTO", EDJE_ORIENTATION_AUTO,
+                                     "LTR", EDJE_ORIENTATION_LTR,
+                                     "RTL", EDJE_ORIENTATION_RTL,
+                                     NULL);
 }
 
 /**
@@ -5556,7 +5719,6 @@ _script_flush(void)
    eina_list_free(pcp->base_codes);
 }
 
-
 /**
     @page edcref
     @property
@@ -5613,7 +5775,7 @@ st_collections_group_program_source(void)
         "description" block, it will be executed once at load time, in the
         load order.
     @endblock
-*/
+ */
 static void
 ob_collections_group_script(void)
 {
@@ -5624,15 +5786,15 @@ ob_collections_group_script(void)
    if (!is_verbatim()) track_verbatim(1);
    else
      {
-	char *s;
+        char *s;
 
-	s = get_verbatim();
-	if (s)
-	  {
-	     cd->l1 = get_verbatim_line1();
-	     cd->l2 = get_verbatim_line2();
-	     if (cd->shared)
-	       {
+        s = get_verbatim();
+        if (s)
+          {
+             cd->l1 = get_verbatim_line1();
+             cd->l2 = get_verbatim_line2();
+             if (cd->shared)
+               {
                   if (script_is_replaceable)
                     {
                        free(cd->shared);
@@ -5645,12 +5807,12 @@ ob_collections_group_script(void)
                            file_in, line - 1);
                        exit(-1);
                     }
-	       }
-	     cd->shared = s;
+               }
+             cd->shared = s;
              cd->original = strdup(s);
-	     cd->is_lua = 0;
-	     set_verbatim(NULL, 0, 0);
-	  }
+             cd->is_lua = 0;
+             set_verbatim(NULL, 0, 0);
+          }
      }
 }
 
@@ -5664,23 +5826,23 @@ ob_collections_group_lua_script(void)
    if (!is_verbatim()) track_verbatim(1);
    else
      {
-	char *s;
+        char *s;
 
-	s = get_verbatim();
-	if (s)
-	  {
-	     cd->l1 = get_verbatim_line1();
-	     cd->l2 = get_verbatim_line2();
-	     if (cd->shared)
-	       {
-		  ERR("parse error %s:%i. There is already an existing script section for the group",
-		      file_in, line - 1);
-		  exit(-1);
-	       }
-	     cd->shared = s;
-	     cd->is_lua = 1;
-	     set_verbatim(NULL, 0, 0);
-	  }
+        s = get_verbatim();
+        if (s)
+          {
+             cd->l1 = get_verbatim_line1();
+             cd->l2 = get_verbatim_line2();
+             if (cd->shared)
+               {
+                  ERR("parse error %s:%i. There is already an existing script section for the group",
+                      file_in, line - 1);
+                  exit(-1);
+               }
+             cd->shared = s;
+             cd->is_lua = 1;
+             set_verbatim(NULL, 0, 0);
+          }
      }
 }
 
@@ -5711,7 +5873,7 @@ ob_collections_group_lua_script(void)
         Defines a new parameter, the value will be the string specified next to
         it.
     @endproperty
-*/
+ */
 
 static void
 st_collections_group_data_item(void)
@@ -5804,7 +5966,7 @@ st_collections_group_data_item(void)
         Includes an external file to define a new Lua script used for filtering.
         The file must be in the data path passed to edje_cc (-dd argument).
     @endproperty
-*/
+ */
 
 static Edje_Gfx_Filter *current_filter = NULL;
 
@@ -5982,7 +6144,7 @@ st_filters_filter_file(void)
         exit(-1);
      }
 
-   current_filter->script = (char*)eina_memdup((unsigned char*)script, sz, 1);
+   current_filter->script = (char *)eina_memdup((unsigned char *)script, sz, 1);
    eina_file_map_free(f, script);
    eina_file_close(f);
 
@@ -6044,7 +6206,7 @@ st_filters_filter_name(void)
         it pass below that limit.
         This limit will be applied on the y absis and is expressed in pixels.
     @endproperty
-*/
+ */
 static void
 st_collections_group_limits_vertical(void)
 {
@@ -6056,14 +6218,14 @@ st_collections_group_limits_vertical(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->limits.vertical_count++;
    elp = realloc(pc->limits.vertical,
-                pc->limits.vertical_count * sizeof (Edje_Limit *));
+                 pc->limits.vertical_count * sizeof (Edje_Limit *));
    if (!elp)
      {
         ERR("Not enough memory.");
         exit(-1);
      }
    pc->limits.vertical = elp;
-   
+
    el = mem_alloc(SZ(Edje_Limit));
    if (!el)
      {
@@ -6089,7 +6251,7 @@ st_collections_group_limits_vertical(void)
         it pass below that limit.
         This limit will be applied on the x axis and is expressed in pixels.
     @endproperty
-*/
+ */
 static void
 st_collections_group_limits_horizontal(void)
 {
@@ -6146,7 +6308,7 @@ st_collections_group_limits_horizontal(void)
         "real_part_path" in the "somegroup" group.
     @endproperty
     @endblock
-*/
+ */
 static void
 st_collections_group_parts_alias(void)
 {
@@ -6204,68 +6366,68 @@ st_collections_group_parts_alias(void)
         theme, for example, a part can represent a line in a border or a label
         on a button.
     @endblock
-*/
+ */
 static Edje_Part *
 edje_cc_handlers_part_make(int id)
 {  /* Doing ob_collections_group_parts_part() job, without hierarchy */
-   Edje_Part_Collection *pc;
-   Edje_Part_Collection_Parser *pcp;
-   Edje_Part *ep;
-   Edje_Part_Parser *epp;
+  Edje_Part_Collection *pc;
+  Edje_Part_Collection_Parser *pcp;
+  Edje_Part *ep;
+  Edje_Part_Parser *epp;
 
-   ep = mem_alloc(SZ(Edje_Part_Parser));
+  ep = mem_alloc(SZ(Edje_Part_Parser));
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   if (id < 0)
-     {
-        pc->parts_count++;
-        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
-        if (!pc->parts)
-          {
-             ERR("Not enough memory.");
-             exit(-1);
-          }
-        id = pc->parts_count - 1;
-     }
+  pc = eina_list_data_get(eina_list_last(edje_collections));
+  if (id < 0)
+    {
+       pc->parts_count++;
+       pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
+       if (!pc->parts)
+         {
+            ERR("Not enough memory.");
+            exit(-1);
+         }
+       id = pc->parts_count - 1;
+    }
 
-   current_part = pc->parts[id] = ep;
-   pcp = (Edje_Part_Collection_Parser *)pc;
+  current_part = pc->parts[id] = ep;
+  pcp = (Edje_Part_Collection_Parser *)pc;
 
-   ep->id = id;
-   ep->type = EDJE_PART_TYPE_IMAGE;
-   ep->mouse_events = pcp->default_mouse_events;
-   ep->anti_alias = 1;
-   ep->repeat_events = 0;
-   ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
-   ep->mask_flags = EVAS_EVENT_FLAG_NONE;
-   ep->scale = 0;
-   ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
-   ep->precise_is_inside = 0;
-   ep->use_alternate_font_metrics = 0;
-   ep->access = 0;
-   ep->clip_to_id = -1;
-   ep->no_render = 0;
-   ep->required = 0;
-   ep->dragable.confine_id = -1;
-   ep->dragable.threshold_id = -1;
-   ep->dragable.event_id = -1;
-   ep->items = NULL;
-   ep->nested_children_count = 0;
+  ep->id = id;
+  ep->type = EDJE_PART_TYPE_IMAGE;
+  ep->mouse_events = pcp->default_mouse_events;
+  ep->anti_alias = 1;
+  ep->repeat_events = 0;
+  ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
+  ep->mask_flags = EVAS_EVENT_FLAG_NONE;
+  ep->scale = 0;
+  ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
+  ep->precise_is_inside = 0;
+  ep->use_alternate_font_metrics = 0;
+  ep->access = 0;
+  ep->clip_to_id = -1;
+  ep->no_render = 0;
+  ep->required = 0;
+  ep->dragable.confine_id = -1;
+  ep->dragable.threshold_id = -1;
+  ep->dragable.event_id = -1;
+  ep->items = NULL;
+  ep->nested_children_count = 0;
 
-   ep->allowed_seats = NULL;
-   ep->allowed_seats_count = 0;
+  ep->allowed_seats = NULL;
+  ep->allowed_seats_count = 0;
 
-   epp = (Edje_Part_Parser *)ep;
-   epp->reorder.insert_before = NULL;
-   epp->reorder.insert_after = NULL;
-   epp->reorder.before = NULL;
-   epp->reorder.after = NULL;
-   epp->reorder.linked_prev = 0;
-   epp->reorder.linked_next = 0;
-   epp->reorder.done = EINA_FALSE;
-   epp->can_override = EINA_FALSE;
+  epp = (Edje_Part_Parser *)ep;
+  epp->reorder.insert_before = NULL;
+  epp->reorder.insert_after = NULL;
+  epp->reorder.before = NULL;
+  epp->reorder.after = NULL;
+  epp->reorder.linked_prev = 0;
+  epp->reorder.linked_next = 0;
+  epp->reorder.done = EINA_FALSE;
+  epp->can_override = EINA_FALSE;
 
-   return ep;
+  return ep;
 }
 
 static void *
@@ -6292,34 +6454,37 @@ _part_desc_free(Edje_Part_Collection *pc,
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-         /* Nothing todo, this part only have a common description. */
-         break;
+        /* Nothing todo, this part only have a common description. */
+        break;
+
       case EDJE_PART_TYPE_BOX:
       case EDJE_PART_TYPE_TABLE:
       case EDJE_PART_TYPE_IMAGE:
       case EDJE_PART_TYPE_SNAPSHOT:
       case EDJE_PART_TYPE_VECTOR:
-         /* Nothing todo here */
-         break;
+        /* Nothing todo here */
+        break;
+
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
-        {
-           Edje_Part_Description_Text *ted = (Edje_Part_Description_Text*) ed;
+      {
+         Edje_Part_Description_Text *ted = (Edje_Part_Description_Text *)ed;
 
-           part_lookup_del(pc, &(ted->text.id_source));
-           part_lookup_del(pc, &(ted->text.id_text_source));
-           break;
-        }
+         part_lookup_del(pc, &(ted->text.id_source));
+         part_lookup_del(pc, &(ted->text.id_text_source));
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy*) ed;
+      {
+         Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy *)ed;
 
-           part_lookup_del(pc, &(ped->proxy.id));
-           break;
-        }
+         part_lookup_del(pc, &(ped->proxy.id));
+         break;
+      }
      }
 
-   free((void*)ed->state.name);
+   free((void *)ed->state.name);
    free(ed);
    return NULL;
 }
@@ -6396,7 +6561,7 @@ _part_create(void)
    edje_cc_handlers_hierarchy_push(ep, cp);
 
    prnt = edje_cc_handlers_hierarchy_parent_get();
-   if (prnt)  /* This is the child of parent in stack */
+   if (prnt) /* This is the child of parent in stack */
      prnt->nested_children_count++;
 }
 
@@ -6406,21 +6571,21 @@ ob_collections_group_parts_part_short(void)
    unsigned int type;
 
    type = parse_enum(-1,
-                  "none", EDJE_PART_TYPE_NONE,
-                  "rect", EDJE_PART_TYPE_RECTANGLE,
-                  "text", EDJE_PART_TYPE_TEXT,
-                  "image", EDJE_PART_TYPE_IMAGE,
-                  "swallow", EDJE_PART_TYPE_SWALLOW,
-                  "textblock", EDJE_PART_TYPE_TEXTBLOCK,
-                  "group", EDJE_PART_TYPE_GROUP,
-                  "box", EDJE_PART_TYPE_BOX,
-                  "table", EDJE_PART_TYPE_TABLE,
-                  "external", EDJE_PART_TYPE_EXTERNAL,
-                  "proxy", EDJE_PART_TYPE_PROXY,
-                  "spacer", EDJE_PART_TYPE_SPACER,
-                  "snapshot", EDJE_PART_TYPE_SNAPSHOT,
-                  "vector", EDJE_PART_TYPE_VECTOR,
-                  NULL);
+                     "none", EDJE_PART_TYPE_NONE,
+                     "rect", EDJE_PART_TYPE_RECTANGLE,
+                     "text", EDJE_PART_TYPE_TEXT,
+                     "image", EDJE_PART_TYPE_IMAGE,
+                     "swallow", EDJE_PART_TYPE_SWALLOW,
+                     "textblock", EDJE_PART_TYPE_TEXTBLOCK,
+                     "group", EDJE_PART_TYPE_GROUP,
+                     "box", EDJE_PART_TYPE_BOX,
+                     "table", EDJE_PART_TYPE_TABLE,
+                     "external", EDJE_PART_TYPE_EXTERNAL,
+                     "proxy", EDJE_PART_TYPE_PROXY,
+                     "spacer", EDJE_PART_TYPE_SPACER,
+                     "snapshot", EDJE_PART_TYPE_SNAPSHOT,
+                     "vector", EDJE_PART_TYPE_VECTOR,
+                     NULL);
 
    stack_replace_quick("part");
    _part_create();
@@ -6436,7 +6601,7 @@ ob_collections_group_parts_part(void)
 static void *
 _part_free(Edje_Part_Collection *pc, Edje_Part *ep)
 {
-   Edje_Part_Parser *epp = (Edje_Part_Parser*)ep;
+   Edje_Part_Parser *epp = (Edje_Part_Parser *)ep;
    unsigned int j;
 
    part_lookup_del(pc, &(ep->clip_to_id));
@@ -6445,33 +6610,33 @@ _part_free(Edje_Part_Collection *pc, Edje_Part *ep)
    part_lookup_del(pc, &(ep->dragable.event_id));
 
    _part_desc_free(pc, ep, ep->default_desc);
-   for (j = 0 ; j < ep->other.desc_count ; j++)
+   for (j = 0; j < ep->other.desc_count; j++)
      _part_desc_free(pc, ep, ep->other.desc[j]);
 
-   for (j = 0 ; j < ep->items_count ; j++)
+   for (j = 0; j < ep->items_count; j++)
      free(ep->items[j]);
    free(ep->items);
 
-   for (j = 0 ; j < ep->allowed_seats_count; j++)
+   for (j = 0; j < ep->allowed_seats_count; j++)
      {
-        free((void*)(ep->allowed_seats[j]->name));
+        free((void *)(ep->allowed_seats[j]->name));
         free(ep->allowed_seats[j]);
      }
    free(ep->allowed_seats);
 
-   free((void*)ep->name);
-   free((void*)ep->source);
-   free((void*)ep->source2);
-   free((void*)ep->source3);
-   free((void*)ep->source4);
-   free((void*)ep->source5);
-   free((void*)ep->source6);
+   free((void *)ep->name);
+   free((void *)ep->source);
+   free((void *)ep->source2);
+   free((void *)ep->source3);
+   free((void *)ep->source4);
+   free((void *)ep->source5);
+   free((void *)ep->source6);
 
-   free((void*)epp->reorder.insert_before);
-   free((void*)epp->reorder.insert_after);
+   free((void *)epp->reorder.insert_before);
+   free((void *)epp->reorder.insert_after);
 
-   free((void*)ep->api.name);
-   free((void*)ep->api.description);
+   free((void *)ep->api.name);
+   free((void *)ep->api.description);
 
    free(ep->other.desc);
    free(ep);
@@ -6491,7 +6656,7 @@ _part_free(Edje_Part_Collection *pc, Edje_Part *ep)
         allowed.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_inherit(void)
 {
@@ -6520,7 +6685,7 @@ st_collections_group_parts_part_inherit(void)
         current_part = _part_free(pc, current_part);
         edje_cc_handlers_part_make(id);
         _part_copy(current_part, pc->parts[i]);
-        free((void*)current_part->name);
+        free((void *)current_part->name);
         current_part->name = pname;
         free(name);
         return;
@@ -6540,23 +6705,23 @@ _program_free(Edje_Program *pr)
 
    pc = eina_list_last_data_get(edje_collections);
 
-   free((void*)pr->name);
-   free((void*)pr->signal);
-   free((void*)pr->source);
-   free((void*)pr->filter.part);
-   free((void*)pr->filter.state);
-   free((void*)pr->seat);
-   free((void*)pr->state);
-   free((void*)pr->state2);
-   free((void*)pr->sample_name);
-   free((void*)pr->tone_name);
+   free((void *)pr->name);
+   free((void *)pr->signal);
+   free((void *)pr->source);
+   free((void *)pr->filter.part);
+   free((void *)pr->filter.state);
+   free((void *)pr->seat);
+   free((void *)pr->state);
+   free((void *)pr->state2);
+   free((void *)pr->sample_name);
+   free((void *)pr->tone_name);
    EINA_LIST_FREE(pr->targets, prt)
      {
         part_lookup_del(pc, &prt->id);
         free(prt);
      }
    EINA_LIST_FREE(pr->after, pa)
-      free(pa);
+     free(pa);
    free(pr);
 }
 
@@ -6597,7 +6762,6 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
    return EINA_FALSE;
 }
 
-
 static Eina_Bool
 _part_name_check(void)
 {
@@ -6611,30 +6775,30 @@ _part_name_check(void)
 
    for (i = 0; i < (pc->parts_count - 1); i++)
      {  /* Compare name only if did NOT updated ep from hircy pop */
-        if ((ep != pc->parts[i]) &&
-              (pc->parts[i]->name &&
-               (!strcmp(pc->parts[i]->name, ep->name))))
-          {
-             Edje_Part_Parser *epp;
+       if ((ep != pc->parts[i]) &&
+           (pc->parts[i]->name &&
+            (!strcmp(pc->parts[i]->name, ep->name))))
+         {
+            Edje_Part_Parser *epp;
 
-             epp = (Edje_Part_Parser *)pc->parts[i];
-             if (!epp->can_override)
-               {
-                  ERR("parse error %s:%i. There is already a part of the name %s",
-                      file_in, line - 1, ep->name);
-                  exit(-1);
-               }
-             else
-               {
-                  pc->parts_count--;
-                  pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
-                  current_part = pc->parts[i];
-                  edje_cc_handlers_hierarchy_rename(ep, current_part);
-                  free(ep);
-                  epp->can_override = EINA_FALSE;
-                  break;
-               }
-          }
+            epp = (Edje_Part_Parser *)pc->parts[i];
+            if (!epp->can_override)
+              {
+                 ERR("parse error %s:%i. There is already a part of the name %s",
+                     file_in, line - 1, ep->name);
+                 exit(-1);
+              }
+            else
+              {
+                 pc->parts_count--;
+                 pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
+                 current_part = pc->parts[i];
+                 edje_cc_handlers_hierarchy_rename(ep, current_part);
+                 free(ep);
+                 epp->can_override = EINA_FALSE;
+                 break;
+              }
+         }
      }
    return EINA_TRUE;
 }
@@ -6650,7 +6814,7 @@ _part_name_check(void)
         positioning system, by programs and in some cases by the application.
         It must be unique within the group.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_name(void)
 {
@@ -6690,7 +6854,7 @@ st_collections_group_parts_part_name(void)
 
          Defaults: IMAGE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_type(void)
 {
@@ -6768,7 +6932,7 @@ st_collections_group_parts_part_type(void)
         Defaults: NONE
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_physics_body(void)
@@ -6803,6 +6967,7 @@ st_collections_group_parts_part_physics_body(void)
         pc->physics_enabled = 1;
      }
 }
+
 #endif
 
 /**
@@ -6835,7 +7000,7 @@ st_collections_group_parts_part_physics_body(void)
         You must define parent part name before adding nested parts.
     @since 1.7
     @endproperty
-*/
+ */
 
 /**
     @page edcref
@@ -6849,7 +7014,7 @@ st_collections_group_parts_part_physics_body(void)
         more than one by insert_before.
     @since 1.1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_insert_before(void)
 {
@@ -6873,7 +7038,7 @@ st_collections_group_parts_part_insert_before(void)
         more than one by insert_after.
     @since 1.1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_insert_after(void)
 {
@@ -6898,7 +7063,7 @@ st_collections_group_parts_part_insert_after(void)
 
         Defaults: group.mouse_events
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_mouse_events(void)
 {
@@ -6932,7 +7097,7 @@ st_collections_group_parts_part_nomouse(void)
 
         Defaults: 1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_anti_alias(void)
 {
@@ -6952,7 +7117,7 @@ st_collections_group_parts_part_anti_alias(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_repeat_events(void)
 {
@@ -6994,16 +7159,16 @@ st_collections_group_parts_part_norepeat(void)
 
         Defaults: NONE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_ignore_flags(void)
 {
    check_min_arg_count(1);
 
    current_part->ignore_flags = parse_flags(0,
-				  "NONE", EVAS_EVENT_FLAG_NONE,
-				  "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
-				  NULL);
+                                            "NONE", EVAS_EVENT_FLAG_NONE,
+                                            "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
+                                            NULL);
 }
 
 /**
@@ -7021,16 +7186,16 @@ st_collections_group_parts_part_ignore_flags(void)
 
         Defaults: NONE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_mask_flags(void)
 {
    check_min_arg_count(1);
 
    current_part->mask_flags = parse_flags(0,
-				  "NONE", EVAS_EVENT_FLAG_NONE,
-				  "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
-				  NULL);
+                                          "NONE", EVAS_EVENT_FLAG_NONE,
+                                          "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
+                                          NULL);
 }
 
 /**
@@ -7051,7 +7216,7 @@ st_collections_group_parts_part_mask_flags(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_scale(void)
 {
@@ -7084,16 +7249,16 @@ st_collections_group_parts_part_noscale(void)
 
         Defaults: AUTOGRAB
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_pointer_mode(void)
 {
    check_arg_count(1);
 
    current_part->pointer_mode = parse_enum(0,
-				 "AUTOGRAB", EVAS_OBJECT_POINTER_MODE_AUTOGRAB,
-				 "NOGRAB", EVAS_OBJECT_POINTER_MODE_NOGRAB,
-				 NULL);
+                                           "AUTOGRAB", EVAS_OBJECT_POINTER_MODE_AUTOGRAB,
+                                           "NOGRAB", EVAS_OBJECT_POINTER_MODE_NOGRAB,
+                                           NULL);
 }
 
 /**
@@ -7108,7 +7273,7 @@ st_collections_group_parts_part_pointer_mode(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_precise_is_inside(void)
 {
@@ -7146,7 +7311,7 @@ st_collections_group_parts_part_noprecise(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_use_alternate_font_metrics(void)
 {
@@ -7166,7 +7331,7 @@ st_collections_group_parts_part_use_alternate_font_metrics(void)
         container. Overflowing content will not be displayed. Note that
         the part being clipped to can only be a rectangle part.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_clip_to_id(void)
 {
@@ -7175,13 +7340,13 @@ st_collections_group_parts_part_clip_to_id(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-     {
-        char *name;
+   {
+      char *name;
 
-        name = parse_str(0);
-        data_queue_part_lookup(pc, name, &(current_part->clip_to_id));
-        free(name);
-     }
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_part->clip_to_id));
+      free(name);
+   }
 }
 
 /**
@@ -7200,7 +7365,7 @@ st_collections_group_parts_part_clip_to_id(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_no_render(void)
 {
@@ -7229,7 +7394,7 @@ st_collections_group_parts_part_render(void)
         Defaults: 0
     @since 1.18
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_required(void)
 {
@@ -7252,13 +7417,13 @@ st_collections_group_parts_part_norequired(void)
     @parameters
         [another group's name]
     @effect
-        Only available to GROUP or TEXTBLOCK parts. Swallows the specified 
+        Only available to GROUP or TEXTBLOCK parts. Swallows the specified
         group into the part's container if a GROUP. If TEXTBLOCK it is used
         for the group to be loaded and used for selection display UNDER the
         selected text. source2 is used for on top of the selected text, if
         source2 is specified.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_source(void)
 {
@@ -7276,11 +7441,11 @@ st_collections_group_parts_part_source(void)
     @parameters
         [another group's name]
     @effect
-        Only available to TEXTBLOCK parts. It is used for the group to be 
+        Only available to TEXTBLOCK parts. It is used for the group to be
         loaded and used for selection display OVER the selected text. source
         is used for under of the selected text, if source is specified.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_source2(void)
 {
@@ -7298,11 +7463,11 @@ st_collections_group_parts_part_source2(void)
     @parameters
         [another group's name]
     @effect
-        Only available to TEXTBLOCK parts. It is used for the group to be 
+        Only available to TEXTBLOCK parts. It is used for the group to be
         loaded and used for cursor display UNDER the cursor position. source4
         is used for over the cursor text, if source4 is specified.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_source3(void)
 {
@@ -7320,11 +7485,11 @@ st_collections_group_parts_part_source3(void)
     @parameters
         [another group's name]
     @effect
-        Only available to TEXTBLOCK parts. It is used for the group to be 
+        Only available to TEXTBLOCK parts. It is used for the group to be
         loaded and used for cursor display OVER the cursor position. source3
         is used for under the cursor text, if source4 is specified.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_source4(void)
 {
@@ -7342,11 +7507,11 @@ st_collections_group_parts_part_source4(void)
     @parameters
         [another group's name]
     @effect
-        Only available to TEXTBLOCK parts. It is used for the group to be 
+        Only available to TEXTBLOCK parts. It is used for the group to be
         loaded and used for anchors display UNDER the anchor position. source6
         is used for over the anchors text, if source6 is specified.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_source5(void)
 {
@@ -7364,11 +7529,11 @@ st_collections_group_parts_part_source5(void)
     @parameters
         [another group's name]
     @effect
-        Only available to TEXTBLOCK parts. It is used for the group to be 
+        Only available to TEXTBLOCK parts. It is used for the group to be
         loaded and used for anchor display OVER the anchor position. source5
         is used for under the anchor text, if source6 is specified.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_source6(void)
 {
@@ -7412,39 +7577,39 @@ st_collections_group_parts_part_source6(void)
 
         Defaults: PLAIN
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_effect(void)
 {
    check_min_arg_count(1);
 
    current_part->effect = parse_enum(0,
-               "NONE", EDJE_TEXT_EFFECT_NONE,
-               "PLAIN", EDJE_TEXT_EFFECT_PLAIN,
-               "OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
-               "SOFT_OUTLINE", EDJE_TEXT_EFFECT_SOFT_OUTLINE,
-               "SHADOW", EDJE_TEXT_EFFECT_SHADOW,
-               "SOFT_SHADOW", EDJE_TEXT_EFFECT_SOFT_SHADOW,
-               "OUTLINE_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
-               "OUTLINE_SOFT_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW,
-               "FAR_SHADOW", EDJE_TEXT_EFFECT_FAR_SHADOW,
-               "FAR_SOFT_SHADOW", EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW,
-               "GLOW", EDJE_TEXT_EFFECT_GLOW,
-               NULL);
+                                     "NONE", EDJE_TEXT_EFFECT_NONE,
+                                     "PLAIN", EDJE_TEXT_EFFECT_PLAIN,
+                                     "OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
+                                     "SOFT_OUTLINE", EDJE_TEXT_EFFECT_SOFT_OUTLINE,
+                                     "SHADOW", EDJE_TEXT_EFFECT_SHADOW,
+                                     "SOFT_SHADOW", EDJE_TEXT_EFFECT_SOFT_SHADOW,
+                                     "OUTLINE_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
+                                     "OUTLINE_SOFT_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW,
+                                     "FAR_SHADOW", EDJE_TEXT_EFFECT_FAR_SHADOW,
+                                     "FAR_SOFT_SHADOW", EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW,
+                                     "GLOW", EDJE_TEXT_EFFECT_GLOW,
+                                     NULL);
    if (get_arg_count() >= 2)
      {
         unsigned char shadow;
-        
+
         shadow = parse_enum(1,
-               "BOTTOM_RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT,
-               "BOTTOM", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM,
-               "BOTTOM_LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT,
-               "LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT,
-               "TOP_LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT,
-               "TOP", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP,
-               "TOP_RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT,
-               "RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT,
-               NULL);
+                            "BOTTOM_RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT,
+                            "BOTTOM", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM,
+                            "BOTTOM_LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT,
+                            "LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT,
+                            "TOP_LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT,
+                            "TOP", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP,
+                            "TOP_RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT,
+                            "RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT,
+                            NULL);
         EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(current_part->effect, shadow);
      }
 }
@@ -7470,18 +7635,18 @@ st_collections_group_parts_part_effect(void)
 
         Defaults: NONE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_entry_mode(void)
 {
    check_arg_count(1);
 
    current_part->entry_mode = parse_enum(0,
-			       "NONE", EDJE_ENTRY_EDIT_MODE_NONE,
-			       "PLAIN", EDJE_ENTRY_EDIT_MODE_SELECTABLE,
-			       "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
-			       "PASSWORD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
-			       NULL);
+                                         "NONE", EDJE_ENTRY_EDIT_MODE_NONE,
+                                         "PLAIN", EDJE_ENTRY_EDIT_MODE_SELECTABLE,
+                                         "EDITABLE", EDJE_ENTRY_EDIT_MODE_EDITABLE,
+                                         "PASSWORD", EDJE_ENTRY_EDIT_MODE_PASSWORD,
+                                         NULL);
 }
 
 /**
@@ -7498,16 +7663,16 @@ st_collections_group_parts_part_entry_mode(void)
         controlling the edje object has to explicitly begin and end selection
         modes, and the selection itself is draggable at both ends.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_select_mode(void)
 {
    check_arg_count(1);
 
    current_part->select_mode = parse_enum(0,
-                                "DEFAULT", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
-                                "EXPLICIT", EDJE_ENTRY_SELECTION_MODE_EXPLICIT,
-                                NULL);
+                                          "DEFAULT", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
+                                          "EXPLICIT", EDJE_ENTRY_SELECTION_MODE_EXPLICIT,
+                                          NULL);
 }
 
 /**
@@ -7524,16 +7689,16 @@ st_collections_group_parts_part_select_mode(void)
 
         Defaults: UNDER
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_cursor_mode(void)
 {
    check_arg_count(1);
 
    current_part->cursor_mode = parse_enum(0,
-                                "UNDER", EDJE_ENTRY_CURSOR_MODE_UNDER,
-                                "BEFORE", EDJE_ENTRY_CURSOR_MODE_BEFORE,
-                                NULL);
+                                          "UNDER", EDJE_ENTRY_CURSOR_MODE_UNDER,
+                                          "BEFORE", EDJE_ENTRY_CURSOR_MODE_BEFORE,
+                                          NULL);
 }
 
 /**
@@ -7548,7 +7713,7 @@ st_collections_group_parts_part_cursor_mode(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_multiline(void)
 {
@@ -7560,7 +7725,7 @@ st_collections_group_parts_part_multiline(void)
 /**
     @page edcref
     @property
-        access 
+        access
     @parameters
         [1 or 0]
     @effect
@@ -7568,7 +7733,7 @@ st_collections_group_parts_part_multiline(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_access(void)
 {
@@ -7620,7 +7785,7 @@ st_collections_group_parts_part_access(void)
 
         Defaults: 0 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_dragable_x(void)
 {
@@ -7648,7 +7813,7 @@ st_collections_group_parts_part_dragable_x(void)
 
         Defaults: 0 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_dragable_y(void)
 {
@@ -7670,7 +7835,7 @@ st_collections_group_parts_part_dragable_y(void)
         container. When you use confine don't forget to set a min size for the
         part, or the draggie will not show up.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_dragable_confine(void)
 {
@@ -7679,13 +7844,13 @@ st_collections_group_parts_part_dragable_confine(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-     {
-	char *name;
+   {
+      char *name;
 
-	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(current_part->dragable.confine_id));
-	free(name);
-     }
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_part->dragable.confine_id));
+      free(name);
+   }
 }
 
 /**
@@ -7698,7 +7863,7 @@ st_collections_group_parts_part_dragable_confine(void)
         When set, the movement of the dragged part can only start when it get
         moved enough to be outside of the threshold part.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_dragable_threshold(void)
 {
@@ -7707,13 +7872,13 @@ st_collections_group_parts_part_dragable_threshold(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-     {
-	char *name;
+   {
+      char *name;
 
-	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(current_part->dragable.threshold_id));
-	free(name);
-     }
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_part->dragable.threshold_id));
+      free(name);
+   }
 }
 
 /**
@@ -7726,7 +7891,7 @@ st_collections_group_parts_part_dragable_threshold(void)
         It causes the part to forward the drag events to another part, thus
         ignoring them for itself.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_dragable_events(void)
 {
@@ -7735,13 +7900,13 @@ st_collections_group_parts_part_dragable_events(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-     {
-	char *name;
+   {
+      char *name;
 
-	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(current_part->dragable.event_id));
-	free(name);
-     }
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_part->dragable.event_id));
+      free(name);
+   }
 }
 
 /**
@@ -7761,7 +7926,7 @@ st_collections_group_parts_part_dragable_events(void)
         Also it won't be able to focus this part.
     @since 1.19
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_allowed_seats(void)
 {
@@ -7826,8 +7991,9 @@ st_collections_group_parts_part_allowed_seats(void)
         as elements of the box. These can be mixed with external objects set
         by the application through the edje_object_part_box_* API.
     @endblock
-*/
-static void ob_collections_group_parts_part_box_items_item(void)
+ */
+static void
+ob_collections_group_parts_part_box_items_item(void)
 {
    Edje_Part *ep;
    Edje_Pack_Element *item;
@@ -7843,7 +8009,7 @@ static void ob_collections_group_parts_part_box_items_item(void)
      }
 
    ep->items_count++;
-   ep->items = realloc(ep->items, sizeof (Edje_Pack_Element*) * ep->items_count);
+   ep->items = realloc(ep->items, sizeof (Edje_Pack_Element *) * ep->items_count);
    if (!ep->items)
      {
         ERR("Not enough memory.");
@@ -7883,12 +8049,12 @@ static void ob_collections_group_parts_part_box_items_item(void)
    pitem->can_override = EINA_FALSE;
 }
 
-#define CURRENT_ITEM_CHECK						\
-  if (!current_item)							\
-    {									\
-       ERR("parse error %s:%i. Item not defined at this stage.",        \
-           file_in, line - 1);                                          \
-      exit(-1);								\
+#define CURRENT_ITEM_CHECK                                       \
+  if (!current_item)                                             \
+    {                                                            \
+       ERR("parse error %s:%i. Item not defined at this stage.", \
+           file_in, line - 1);                                   \
+       exit(-1);                                                 \
     }
 
 /**
@@ -7902,28 +8068,29 @@ static void ob_collections_group_parts_part_box_items_item(void)
         Supported types are:
         @li GROUP
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_type(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_type(void)
 {
    CURRENT_ITEM_CHECK;
 
    check_arg_count(1);
 
-     {
-	char *s;
+   {
+      char *s;
 
-	s = parse_str(0);
-	if (strcmp(s, "GROUP"))
-	  {
-             ERR("parse error %s:%i. token %s not one of: GROUP.",
-                 file_in, line - 1, s);
-	     free(s);
-	     exit(-1);
-	  }
-	free(s);
-	/* FIXME: handle the enum, once everything else is supported */
-	current_item->type = EDJE_PART_TYPE_GROUP;
-     }
+      s = parse_str(0);
+      if (strcmp(s, "GROUP"))
+        {
+           ERR("parse error %s:%i. token %s not one of: GROUP.",
+               file_in, line - 1, s);
+           free(s);
+           exit(-1);
+        }
+      free(s);
+      /* FIXME: handle the enum, once everything else is supported */
+      current_item->type = EDJE_PART_TYPE_GROUP;
+   }
 }
 
 /**
@@ -7935,8 +8102,9 @@ static void st_collections_group_parts_part_box_items_item_type(void)
     @effect
         Sets the name of the object via evas_object_name_set().
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_name(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_name(void)
 {
    Edje_Part *ep;
    Edje_Pack_Element *item;
@@ -7951,32 +8119,32 @@ static void st_collections_group_parts_part_box_items_item_name(void)
 
    item->name = parse_str(0);
 
-     {
-        unsigned int i;
+   {
+      unsigned int i;
 
-        for (i = 0; i < ep->items_count - 1; ++i)
-          {
-             if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item->name)))
-               {
-                  pitem = (Edje_Pack_Element_Parser *)ep->items[i];
-                  if (!pitem->can_override)
-                    {
-                       ERR("parse error %s:%i. There is already a item of the name %s",
-                           file_in, line - 1, item->name);
-                       exit(-1);
-                    }
-                  else
-                    {
-                       free(item);
-                       ep->items_count--;
-                       ep->items = realloc(ep->items, ep->items_count * sizeof (Edje_Pack_Element *));
-                       current_item = ep->items[i];
-                       pitem->can_override = EINA_FALSE;
-                       break;
-                    }
-               }
-          }
-     }
+      for (i = 0; i < ep->items_count - 1; ++i)
+        {
+           if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item->name)))
+             {
+                pitem = (Edje_Pack_Element_Parser *)ep->items[i];
+                if (!pitem->can_override)
+                  {
+                     ERR("parse error %s:%i. There is already a item of the name %s",
+                         file_in, line - 1, item->name);
+                     exit(-1);
+                  }
+                else
+                  {
+                     free(item);
+                     ep->items_count--;
+                     ep->items = realloc(ep->items, ep->items_count * sizeof (Edje_Pack_Element *));
+                     current_item = ep->items[i];
+                     pitem->can_override = EINA_FALSE;
+                     break;
+                  }
+             }
+        }
+   }
 }
 
 /**
@@ -7988,8 +8156,9 @@ static void st_collections_group_parts_part_box_items_item_name(void)
     @effect
         Sets the group this object will be made from.
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_source(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_source(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8010,8 +8179,9 @@ static void st_collections_group_parts_part_box_items_item_source(void)
 
         Defaults: 0 0
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_min(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_min(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8033,8 +8203,9 @@ static void st_collections_group_parts_part_box_items_item_min(void)
 
        Defaults: 1 1
    @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_spread(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_spread(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8055,8 +8226,9 @@ static void st_collections_group_parts_part_box_items_item_spread(void)
 
         Defaults: 0 0
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_prefer(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_prefer(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8065,6 +8237,7 @@ static void st_collections_group_parts_part_box_items_item_prefer(void)
    current_item->prefer.w = parse_int_range(0, 0, 0x7ffffff);
    current_item->prefer.h = parse_int_range(1, 0, 0x7ffffff);
 }
+
 /**
     @page edcref
     @property
@@ -8076,8 +8249,9 @@ static void st_collections_group_parts_part_box_items_item_prefer(void)
 
         Defaults: -1 -1
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_max(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_max(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8098,8 +8272,9 @@ static void st_collections_group_parts_part_box_items_item_max(void)
 
         Defaults: 0 0 0 0
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_padding(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_padding(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8122,8 +8297,9 @@ static void st_collections_group_parts_part_box_items_item_padding(void)
 
         Defaults: 0.5
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_align(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_align(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8144,8 +8320,9 @@ static void st_collections_group_parts_part_box_items_item_align(void)
 
         Defaults: 0.0 0.0
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_weight(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_weight(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8166,8 +8343,9 @@ static void st_collections_group_parts_part_box_items_item_weight(void)
 
         Defaults: 0 0
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_aspect(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_aspect(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8193,20 +8371,21 @@ static void st_collections_group_parts_part_box_items_item_aspect(void)
 
         Defaults: NONE
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_aspect_mode(void)
 {
    CURRENT_ITEM_CHECK;
 
    check_arg_count(1);
 
    current_item->aspect.mode = parse_enum(0,
-				  "NONE", EDJE_ASPECT_CONTROL_NONE,
-				  "NEITHER", EDJE_ASPECT_CONTROL_NEITHER,
-				  "HORIZONTAL", EDJE_ASPECT_CONTROL_HORIZONTAL,
-				  "VERTICAL", EDJE_ASPECT_CONTROL_VERTICAL,
-				  "BOTH", EDJE_ASPECT_CONTROL_BOTH,
-				  NULL);
+                                          "NONE", EDJE_ASPECT_CONTROL_NONE,
+                                          "NEITHER", EDJE_ASPECT_CONTROL_NEITHER,
+                                          "HORIZONTAL", EDJE_ASPECT_CONTROL_HORIZONTAL,
+                                          "VERTICAL", EDJE_ASPECT_CONTROL_VERTICAL,
+                                          "BOTH", EDJE_ASPECT_CONTROL_BOTH,
+                                          NULL);
 }
 
 /**
@@ -8218,8 +8397,9 @@ static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
     @effect
         Sets extra options for the object. Unused for now.
     @endproperty
-*/
-static void st_collections_group_parts_part_box_items_item_options(void)
+ */
+static void
+st_collections_group_parts_part_box_items_item_options(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8238,8 +8418,9 @@ static void st_collections_group_parts_part_box_items_item_options(void)
         Sets the position this item will have in the table.
         This is required for parts of type TABLE.
     @endproperty
-*/
-static void st_collections_group_parts_part_table_items_item_position(void)
+ */
+static void
+st_collections_group_parts_part_table_items_item_position(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8267,8 +8448,9 @@ static void st_collections_group_parts_part_table_items_item_position(void)
 
         Defaults: 1 1
     @endproperty
-*/
-static void st_collections_group_parts_part_table_items_item_span(void)
+ */
+static void
+st_collections_group_parts_part_table_items_item_span(void)
 {
    CURRENT_ITEM_CHECK;
 
@@ -8347,96 +8529,96 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
         used to define style and layout properties of a part in a given
         "state".
     @endblock
-*/
+ */
 static void
 ob_collections_group_parts_part_description(void)
 {  /* Allocate and set desc, set relative part hierarchy if needed */
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description_Common *ed;
+  Edje_Part_Collection *pc;
+  Edje_Part *ep;
+  Edje_Part_Description_Common *ed;
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = current_part;
+  pc = eina_list_data_get(eina_list_last(edje_collections));
+  ep = current_part;
 
-   ed = _edje_part_description_alloc(ep->type, pc->part, ep->name);
-   eina_hash_add(desc_hash, &ed, ep);
+  ed = _edje_part_description_alloc(ep->type, pc->part, ep->name);
+  eina_hash_add(desc_hash, &ed, ep);
 
-   ed->rel1.id_x = -1;
-   ed->rel1.id_y = -1;
-   ed->rel2.id_x = -1;
-   ed->rel2.id_y = -1;
-   ed->clip_to_id = -1;
+  ed->rel1.id_x = -1;
+  ed->rel1.id_y = -1;
+  ed->rel2.id_x = -1;
+  ed->rel2.id_y = -1;
+  ed->clip_to_id = -1;
 
-   if (!ep->default_desc)
-     {
-        current_desc = ep->default_desc = ed;
-        ed->state.name = strdup("default");
+  if (!ep->default_desc)
+    {
+       current_desc = ep->default_desc = ed;
+       ed->state.name = strdup("default");
 
-          {  /* Get the ptr of the part above current part in hierarchy */
-             Edje_Part *node = edje_cc_handlers_hierarchy_parent_get();
-             if (node)  /* Make relative according to part hierarchy */
-               edje_cc_handlers_hierarchy_set(node);
-          }
-     }
-   else
-     {
-        ep->other.desc_count++;
-        ep->other.desc = realloc(ep->other.desc,
-                                 sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
-        current_desc = ep->other.desc[ep->other.desc_count - 1] = ed;
-     }
+       {     /* Get the ptr of the part above current part in hierarchy */
+         Edje_Part *node = edje_cc_handlers_hierarchy_parent_get();
+         if (node) /* Make relative according to part hierarchy */
+           edje_cc_handlers_hierarchy_set(node);
+       }
+    }
+  else
+    {
+       ep->other.desc_count++;
+       ep->other.desc = realloc(ep->other.desc,
+                                sizeof (Edje_Part_Description_Common *) * ep->other.desc_count);
+       current_desc = ep->other.desc[ep->other.desc_count - 1] = ed;
+    }
 
-   ed->visible = 1;
-   ed->limit = 0;
-   ed->no_render = 0;
-   ed->align.x = FROM_DOUBLE(0.5);
-   ed->align.y = FROM_DOUBLE(0.5);
-   ed->min.w = 0;
-   ed->min.h = 0;
-   ed->fixed.w = 0;
-   ed->fixed.h = 0;
-   ed->max.w = -1;
-   ed->max.h = -1;
-   ed->size_class = NULL;
-   ed->rel1.relative_x = FROM_DOUBLE(0.0);
-   ed->rel1.relative_y = FROM_DOUBLE(0.0);
-   ed->rel1.offset_x = 0;
-   ed->rel1.offset_y = 0;
-   ed->rel2.relative_x = FROM_DOUBLE(1.0);
-   ed->rel2.relative_y = FROM_DOUBLE(1.0);
-   ed->rel2.offset_x = -1;
-   ed->rel2.offset_y = -1;
-   ed->color_class = NULL;
-   ed->color.r = 255;
-   ed->color.g = 255;
-   ed->color.b = 255;
-   ed->color.a = 255;
-   ed->color2.r = 0;
-   ed->color2.g = 0;
-   ed->color2.b = 0;
-   ed->color2.a = 255;
-   ed->map.id_persp = -1;
-   ed->map.id_light = -1;
-   ed->map.rot.id_center = -1;
-   ed->map.rot.x = FROM_DOUBLE(0.0);
-   ed->map.rot.y = FROM_DOUBLE(0.0);
-   ed->map.rot.z = FROM_DOUBLE(0.0);
-   ed->map.on = 0;
-   ed->map.smooth = 1;
-   ed->map.alpha = 1;
-   ed->map.backcull = 0;
-   ed->map.persp_on = 0;
-   ed->map.colors = NULL;
-   ed->map.zoom.x = FROM_DOUBLE(1.0);
-   ed->map.zoom.y = FROM_DOUBLE(1.0);
-   ed->persp.zplane = 0;
-   ed->persp.focal = 1000;
-   ed->minmul.have = 1;
-   ed->minmul.w = FROM_DOUBLE(1.0);
-   ed->minmul.h = FROM_DOUBLE(1.0);
-   ed->align_3d.x = FROM_DOUBLE(0.5);
-   ed->align_3d.y = FROM_DOUBLE(0.5);
-   ed->align_3d.z = FROM_DOUBLE(0.5);
+  ed->visible = 1;
+  ed->limit = 0;
+  ed->no_render = 0;
+  ed->align.x = FROM_DOUBLE(0.5);
+  ed->align.y = FROM_DOUBLE(0.5);
+  ed->min.w = 0;
+  ed->min.h = 0;
+  ed->fixed.w = 0;
+  ed->fixed.h = 0;
+  ed->max.w = -1;
+  ed->max.h = -1;
+  ed->size_class = NULL;
+  ed->rel1.relative_x = FROM_DOUBLE(0.0);
+  ed->rel1.relative_y = FROM_DOUBLE(0.0);
+  ed->rel1.offset_x = 0;
+  ed->rel1.offset_y = 0;
+  ed->rel2.relative_x = FROM_DOUBLE(1.0);
+  ed->rel2.relative_y = FROM_DOUBLE(1.0);
+  ed->rel2.offset_x = -1;
+  ed->rel2.offset_y = -1;
+  ed->color_class = NULL;
+  ed->color.r = 255;
+  ed->color.g = 255;
+  ed->color.b = 255;
+  ed->color.a = 255;
+  ed->color2.r = 0;
+  ed->color2.g = 0;
+  ed->color2.b = 0;
+  ed->color2.a = 255;
+  ed->map.id_persp = -1;
+  ed->map.id_light = -1;
+  ed->map.rot.id_center = -1;
+  ed->map.rot.x = FROM_DOUBLE(0.0);
+  ed->map.rot.y = FROM_DOUBLE(0.0);
+  ed->map.rot.z = FROM_DOUBLE(0.0);
+  ed->map.on = 0;
+  ed->map.smooth = 1;
+  ed->map.alpha = 1;
+  ed->map.backcull = 0;
+  ed->map.persp_on = 0;
+  ed->map.colors = NULL;
+  ed->map.zoom.x = FROM_DOUBLE(1.0);
+  ed->map.zoom.y = FROM_DOUBLE(1.0);
+  ed->persp.zplane = 0;
+  ed->persp.focal = 1000;
+  ed->minmul.have = 1;
+  ed->minmul.w = FROM_DOUBLE(1.0);
+  ed->minmul.h = FROM_DOUBLE(1.0);
+  ed->align_3d.x = FROM_DOUBLE(0.5);
+  ed->align_3d.y = FROM_DOUBLE(0.5);
+  ed->align_3d.z = FROM_DOUBLE(0.5);
 }
 
 static void
@@ -8459,7 +8641,7 @@ ob_collections_group_parts_part_desc(void)
         simple state changes. Note: inheritance in Edje is single level only.
         @since 1.14 omitting both the description name and index will inherit the default 0.0 description.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_inherit(void)
 {
@@ -8495,19 +8677,22 @@ st_collections_group_parts_part_description_inherit(void)
            case 0:
              parent_name = strdup("default");
              break;
+
            case 2:
              parent_val = parse_float_range(1, 0.0, 1.0);
              EINA_FALLTHROUGH;
+
            case 1:
              parent_name = parse_str(0);
              break;
+
            default:
              ERR("parse error %s:%i. too many parameters",
                  file_in, line - 1);
              exit(-1);
           }
 
-        if (!strcmp (parent_name, "default") && parent_val == 0.0)
+        if (!strcmp(parent_name, "default") && parent_val == 0.0)
           parent = ep->default_desc;
         else
           {
@@ -8525,9 +8710,8 @@ st_collections_group_parts_part_description_inherit(void)
                {
                   d = ep->other.desc[i];
 
-                  if (!strcmp (d->state.name, parent_name))
+                  if (!strcmp(d->state.name, parent_name))
                     {
-
                        double dst;
 
                        dst = ABS(d->state.value - parent_val);
@@ -8539,8 +8723,8 @@ st_collections_group_parts_part_description_inherit(void)
                     }
                }
 
-	     if (min_dst)
-	       {
+             if (min_dst)
+               {
                   WRN("%s:%i: couldn't find an exact match in part '%s' when looking for '%s' %lf. Falling back to nearest one '%s' %lf.",
                       file_in, line - 1, ep->name, parent_name, parent_val, parent ? parent->state.name : NULL, parent ? parent->state.value : 0);
                }
@@ -8598,162 +8782,173 @@ st_collections_group_parts_part_description_inherit(void)
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-         /* Nothing todo, this part only have a common description. */
-         break;
+        /* Nothing todo, this part only have a common description. */
+        break;
+
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
-           {
-              Edje_Part_Description_Text *ted = (Edje_Part_Description_Text*) ed;
-              Edje_Part_Description_Text *tparent = (Edje_Part_Description_Text*) parent;
+      {
+         Edje_Part_Description_Text *ted = (Edje_Part_Description_Text *)ed;
+         Edje_Part_Description_Text *tparent = (Edje_Part_Description_Text *)parent;
 
-              ted->text = tparent->text;
+         ted->text = tparent->text;
 
-              ted->text.text.str = STRDUP(ted->text.text.str);
-              ted->text.domain = STRDUP(ted->text.domain);
-              ted->text.text_class = STRDUP(ted->text.text_class);
-              ted->text.font.str = STRDUP(ted->text.font.str);
+         ted->text.text.str = STRDUP(ted->text.text.str);
+         ted->text.domain = STRDUP(ted->text.domain);
+         ted->text.text_class = STRDUP(ted->text.text_class);
+         ted->text.font.str = STRDUP(ted->text.font.str);
 
-              _filter_copy(&ted->filter, &tparent->filter);
-              data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
-              data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
+         _filter_copy(&ted->filter, &tparent->filter);
+         data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
+         data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_IMAGE:
+      {
+         Edje_Part_Description_Image *ied = (Edje_Part_Description_Image *)ed;
+         Edje_Part_Description_Image *iparent = (Edje_Part_Description_Image *)parent;
+         unsigned int i;
+
+         ied->image = iparent->image;
+
+         data_queue_image_remove(&ied->image.id, &ied->image.set);
+         data_queue_copied_image_lookup(&iparent->image.id, &ied->image.id, &ied->image.set);
+
+         ied->image.tweens = calloc(iparent->image.tweens_count,
+                                    sizeof (Edje_Part_Image_Id *));
+         for (i = 0; i < iparent->image.tweens_count; i++)
            {
-              Edje_Part_Description_Image *ied = (Edje_Part_Description_Image *) ed;
-              Edje_Part_Description_Image *iparent = (Edje_Part_Description_Image *) parent;
-              unsigned int i;
+              Edje_Part_Image_Id *iid_new;
 
-              ied->image = iparent->image;
+              iid = iparent->image.tweens[i];
 
+              iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
               data_queue_image_remove(&ied->image.id, &ied->image.set);
-              data_queue_copied_image_lookup(&iparent->image.id, &ied->image.id, &ied->image.set);
-
-              ied->image.tweens = calloc(iparent->image.tweens_count,
-                                         sizeof (Edje_Part_Image_Id*));
-              for (i = 0; i < iparent->image.tweens_count; i++)
-                {
-                   Edje_Part_Image_Id *iid_new;
-
-                   iid = iparent->image.tweens[i];
-
-                   iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
-                   data_queue_image_remove(&ied->image.id, &ied->image.set);
-                   data_queue_copied_image_lookup(&(iid->id), &(iid_new->id), &(iid_new->set));
-                   ied->image.tweens[i] = iid_new;
-                }
-
-              _filter_copy(&ied->filter, &iparent->filter);
-
-              break;
+              data_queue_copied_image_lookup(&(iid->id), &(iid_new->id), &(iid_new->set));
+              ied->image.tweens[i] = iid_new;
            }
+
+         _filter_copy(&ied->filter, &iparent->filter);
+
+         break;
+      }
+
       case EDJE_PART_TYPE_SNAPSHOT:
-           {
-              Edje_Part_Description_Snapshot *sed = (Edje_Part_Description_Snapshot*) ed;
-              Edje_Part_Description_Snapshot *sparent = (Edje_Part_Description_Snapshot*) parent;
+      {
+         Edje_Part_Description_Snapshot *sed = (Edje_Part_Description_Snapshot *)ed;
+         Edje_Part_Description_Snapshot *sparent = (Edje_Part_Description_Snapshot *)parent;
 
-              _filter_copy(&sed->filter, &sparent->filter);
+         _filter_copy(&sed->filter, &sparent->filter);
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-           {
-              Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy*) ed;
-              Edje_Part_Description_Proxy *pparent = (Edje_Part_Description_Proxy*) parent;
+      {
+         Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy *)ed;
+         Edje_Part_Description_Proxy *pparent = (Edje_Part_Description_Proxy *)parent;
 
-              data_queue_copied_part_lookup(pc, &(pparent->proxy.id), &(ped->proxy.id));
-              ped->proxy.source_clip = pparent->proxy.source_clip;
-              ped->proxy.source_visible = pparent->proxy.source_visible;
-              _filter_copy(&ped->filter, &pparent->filter);
+         data_queue_copied_part_lookup(pc, &(pparent->proxy.id), &(ped->proxy.id));
+         ped->proxy.source_clip = pparent->proxy.source_clip;
+         ped->proxy.source_visible = pparent->proxy.source_visible;
+         _filter_copy(&ped->filter, &pparent->filter);
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_BOX:
-           {
-              Edje_Part_Description_Box *bed = (Edje_Part_Description_Box *) ed;
-              Edje_Part_Description_Box *bparent = (Edje_Part_Description_Box *) parent;
+      {
+         Edje_Part_Description_Box *bed = (Edje_Part_Description_Box *)ed;
+         Edje_Part_Description_Box *bparent = (Edje_Part_Description_Box *)parent;
 
-              bed->box = bparent->box;
+         bed->box = bparent->box;
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_TABLE:
-           {
-              Edje_Part_Description_Table *ted = (Edje_Part_Description_Table *) ed;
-              Edje_Part_Description_Table *tparent = (Edje_Part_Description_Table *) parent;
+      {
+         Edje_Part_Description_Table *ted = (Edje_Part_Description_Table *)ed;
+         Edje_Part_Description_Table *tparent = (Edje_Part_Description_Table *)parent;
 
-              ted->table = tparent->table;
+         ted->table = tparent->table;
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_EXTERNAL:
-           {
-              Edje_Part_Description_External *eed = (Edje_Part_Description_External *) ed;
-              Edje_Part_Description_External *eparent = (Edje_Part_Description_External *) parent;
+      {
+         Edje_Part_Description_External *eed = (Edje_Part_Description_External *)ed;
+         Edje_Part_Description_External *eparent = (Edje_Part_Description_External *)parent;
 
-              if (eparent->external_params)
+         if (eparent->external_params)
+           {
+              Eina_List *l;
+              Edje_External_Param *param, *new_param;
+
+              eed->external_params = NULL;
+              EINA_LIST_FOREACH(eparent->external_params, l, param)
                 {
-                   Eina_List *l;
-                   Edje_External_Param *param, *new_param;
-
-                   eed->external_params = NULL;
-                   EINA_LIST_FOREACH(eparent->external_params, l, param)
-                     {
-                        new_param = mem_alloc(SZ(Edje_External_Param));
-                        *new_param = *param;
-                        eed->external_params = eina_list_append(eed->external_params, new_param);
-                     }
+                   new_param = mem_alloc(SZ(Edje_External_Param));
+                   *new_param = *param;
+                   eed->external_params = eina_list_append(eed->external_params, new_param);
                 }
-              break;
            }
+         break;
+      }
+
       case EDJE_PART_TYPE_CAMERA:
-           {
-              Edje_Part_Description_Camera *ced = (Edje_Part_Description_Camera *) ed;
-              Edje_Part_Description_Camera *cparent = (Edje_Part_Description_Camera *) parent;
+      {
+         Edje_Part_Description_Camera *ced = (Edje_Part_Description_Camera *)ed;
+         Edje_Part_Description_Camera *cparent = (Edje_Part_Description_Camera *)parent;
 
-              ced->camera = cparent->camera;
+         ced->camera = cparent->camera;
 
-              data_queue_copied_part_lookup(pc, &(cparent->camera.orientation.look_to), &(ced->camera.orientation.look_to));
+         data_queue_copied_part_lookup(pc, &(cparent->camera.orientation.look_to), &(ced->camera.orientation.look_to));
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-           {
-              Edje_Part_Description_Light *led = (Edje_Part_Description_Light *) ed;
-              Edje_Part_Description_Light *lparent = (Edje_Part_Description_Light *) parent;
+      {
+         Edje_Part_Description_Light *led = (Edje_Part_Description_Light *)ed;
+         Edje_Part_Description_Light *lparent = (Edje_Part_Description_Light *)parent;
 
-              led->light = lparent->light;
+         led->light = lparent->light;
 
-              data_queue_copied_part_lookup(pc, &(lparent->light.orientation.look_to), &(led->light.orientation.look_to));
+         data_queue_copied_part_lookup(pc, &(lparent->light.orientation.look_to), &(led->light.orientation.look_to));
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-           {
-              Edje_Part_Description_Mesh_Node *med = (Edje_Part_Description_Mesh_Node *) ed;
-              Edje_Part_Description_Mesh_Node *mparent = (Edje_Part_Description_Mesh_Node *) parent;
+      {
+         Edje_Part_Description_Mesh_Node *med = (Edje_Part_Description_Mesh_Node *)ed;
+         Edje_Part_Description_Mesh_Node *mparent = (Edje_Part_Description_Mesh_Node *)parent;
 
-              med->mesh_node = mparent->mesh_node;
+         med->mesh_node = mparent->mesh_node;
 
-              data_queue_model_remove(&med->mesh_node.mesh.id, &med->mesh_node.mesh.set);
-              data_queue_copied_model_lookup(&mparent->mesh_node.mesh.id, &med->mesh_node.mesh.id, &med->mesh_node.mesh.set);
+         data_queue_model_remove(&med->mesh_node.mesh.id, &med->mesh_node.mesh.set);
+         data_queue_copied_model_lookup(&mparent->mesh_node.mesh.id, &med->mesh_node.mesh.id, &med->mesh_node.mesh.set);
 
-              data_queue_image_remove(&med->mesh_node.texture.id, &med->mesh_node.texture.set);
-              data_queue_copied_model_lookup(&mparent->mesh_node.texture.id, &med->mesh_node.texture.id, &med->mesh_node.texture.set);
+         data_queue_image_remove(&med->mesh_node.texture.id, &med->mesh_node.texture.set);
+         data_queue_copied_model_lookup(&mparent->mesh_node.texture.id, &med->mesh_node.texture.id, &med->mesh_node.texture.set);
 
-              data_queue_copied_part_lookup(pc, &(mparent->mesh_node.orientation.look_to), &(med->mesh_node.orientation.look_to));
+         data_queue_copied_part_lookup(pc, &(mparent->mesh_node.orientation.look_to), &(med->mesh_node.orientation.look_to));
 
-              break;
-           }
+         break;
+      }
+
       case EDJE_PART_TYPE_VECTOR:
-           {
-              Edje_Part_Description_Vector *ied = (Edje_Part_Description_Vector *) ed;
-              Edje_Part_Description_Vector *iparent = (Edje_Part_Description_Vector *) parent;
-              ied->vg.set = iparent->vg.set;
-              ied->vg.id = iparent->vg.id;
-              break;
-           }
+      {
+         Edje_Part_Description_Vector *ied = (Edje_Part_Description_Vector *)ed;
+         Edje_Part_Description_Vector *iparent = (Edje_Part_Description_Vector *)parent;
+         ied->vg.set = iparent->vg.set;
+         ied->vg.id = iparent->vg.id;
+         break;
+      }
      }
 }
 
@@ -8768,7 +8963,7 @@ st_collections_group_parts_part_description_inherit(void)
         Causes the part to use another part content as the content of this part.
         Only work with PROXY part.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_source(void)
 {
@@ -8787,7 +8982,7 @@ st_collections_group_parts_part_description_source(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Proxy*) current_desc;
+   ed = (Edje_Part_Description_Proxy *)current_desc;
 
    name = parse_str(0);
 
@@ -8805,12 +9000,12 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
        (!ep->default_desc->state.name && !strcmp(ed->state.name, "default") && ed->state.value == ep->default_desc->state.value))
      {
         if (ep->type == EDJE_PART_TYPE_IMAGE)
-          _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
+          _edje_part_description_image_remove((Edje_Part_Description_Image *)ed);
 
         free(ed);
         ep->other.desc_count--;
         ep->other.desc = realloc(ep->other.desc,
-                                 sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
+                                 sizeof (Edje_Part_Description_Common *) * ep->other.desc_count);
         current_desc = ep->default_desc;
      }
    else if (ep->other.desc_count)
@@ -8821,12 +9016,12 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
              if (!strcmp(ed->state.name, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
                {
                   if (ep->type == EDJE_PART_TYPE_IMAGE)
-                    _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
+                    _edje_part_description_image_remove((Edje_Part_Description_Image *)ed);
 
                   free(ed);
                   ep->other.desc_count--;
                   ep->other.desc = realloc(ep->other.desc,
-                                           sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
+                                           sizeof (Edje_Part_Description_Common *) * ep->other.desc_count);
                   current_desc = ep->other.desc[i];
                   break;
                }
@@ -8851,7 +9046,7 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
 
         Defaults: "default" 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_state(void)
 {
@@ -8865,7 +9060,7 @@ st_collections_group_parts_part_description_state(void)
    ep = current_part;
 
    s = parse_str(0);
-   if (!strcmp (s, "custom"))
+   if (!strcmp(s, "custom"))
      {
         ERR("parse error %s:%i. invalid state name: '%s'.",
             file_in, line - 1, s);
@@ -8905,7 +9100,7 @@ st_collections_group_parts_part_description_state(void)
 
         Defaults: 1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_visible(void)
 {
@@ -8913,9 +9108,9 @@ st_collections_group_parts_part_description_visible(void)
 
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't have a visibility defined",
-	   file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't have a visibility defined",
+            file_in, line - 1);
+        exit(-1);
      }
 
    current_desc->visible = parse_bool(0);
@@ -8928,9 +9123,9 @@ st_collections_group_parts_part_description_vis(void)
 
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't have a visibility defined",
-           file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't have a visibility defined",
+            file_in, line - 1);
+        exit(-1);
      }
 
    current_desc->visible = 1;
@@ -8943,9 +9138,9 @@ st_collections_group_parts_part_description_hid(void)
 
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't have a visibility defined",
-           file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't have a visibility defined",
+            file_in, line - 1);
+        exit(-1);
      }
 
    current_desc->visible = 0;
@@ -8963,15 +9158,15 @@ st_collections_group_parts_part_description_hid(void)
         Defaults: 0
     @since 1.19
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_no_render(void)
 {
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't be marked as no_render",
-           file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't be marked as no_render",
+            file_in, line - 1);
+        exit(-1);
      }
 
    if (check_range_arg_count(0, 1) == 1)
@@ -8998,17 +9193,17 @@ st_collections_group_parts_part_description_no_render(void)
         Defaults: NONE
     @since 1.7
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_limit(void)
 {
    check_arg_count(1);
 
    current_desc->limit = parse_enum(0,
-				    "NONE", 0,
-				    "WIDTH", 1,
-				    "HEIGHT", 2,
-				    "BOTH", 3);
+                                    "NONE", 0,
+                                    "WIDTH", 1,
+                                    "HEIGHT", 2,
+                                    "BOTH", 3);
 
    if (current_desc->limit)
      {
@@ -9017,11 +9212,11 @@ st_collections_group_parts_part_description_limit(void)
 
         pc = eina_list_data_get(eina_list_last(edje_collections));
         count = pc->limits.parts_count++;
-	pc->limits.parts = realloc(pc->limits.parts,
-				   pc->limits.parts_count * sizeof (Edje_Part_Limit));
-	data_queue_part_reallocated_lookup(pc, current_part->name,
-					   (unsigned char**) &(pc->limits.parts),
-					   (unsigned char*) &pc->limits.parts[count].part - (unsigned char*) pc->limits.parts); //fixme
+        pc->limits.parts = realloc(pc->limits.parts,
+                                   pc->limits.parts_count * sizeof (Edje_Part_Limit));
+        data_queue_part_reallocated_lookup(pc, current_part->name,
+                                           (unsigned char **)&(pc->limits.parts),
+                                           (unsigned char *)&pc->limits.parts[count].part - (unsigned char *)pc->limits.parts); //fixme
      }
 }
 
@@ -9042,7 +9237,7 @@ st_collections_group_parts_part_description_limit(void)
 
         Defaults: 0.5 0.5 (0.5)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_align(void)
 {
@@ -9076,7 +9271,7 @@ st_collections_group_parts_part_description_align(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fixed(void)
 {
@@ -9102,32 +9297,35 @@ st_collections_group_parts_part_description_fixed(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_min(void)
 {
    check_min_arg_count(1);
 
-   if (is_param(1)) {
-      current_desc->min.w = parse_int_range(0, 0, 0x7fffffff);
-      current_desc->min.h = parse_int_range(1, 0, 0x7fffffff);
-   } else {
-      char *tmp;
+   if (is_param(1))
+     {
+        current_desc->min.w = parse_int_range(0, 0, 0x7fffffff);
+        current_desc->min.h = parse_int_range(1, 0, 0x7fffffff);
+     }
+   else
+     {
+        char *tmp;
 
-      tmp = parse_str(0);
-      if ((current_part->type != EDJE_PART_TYPE_IMAGE && current_part->type != EDJE_PART_TYPE_GROUP) ||
-          !tmp || strcmp(tmp, "SOURCE") != 0)
-        {
-           free(tmp);
-           ERR("parse error %s:%i. "
-               "Only IMAGE and GROUP part can have a min: SOURCE; defined",
-               file_in, line - 1);
-           exit(-1);
-        }
-      free(tmp);
+        tmp = parse_str(0);
+        if ((current_part->type != EDJE_PART_TYPE_IMAGE && current_part->type != EDJE_PART_TYPE_GROUP) ||
+            !tmp || strcmp(tmp, "SOURCE") != 0)
+          {
+             free(tmp);
+             ERR("parse error %s:%i. "
+                 "Only IMAGE and GROUP part can have a min: SOURCE; defined",
+                 file_in, line - 1);
+             exit(-1);
+          }
+        free(tmp);
 
-      current_desc->min.limit = EINA_TRUE;
-   }
+        current_desc->min.limit = EINA_TRUE;
+     }
 }
 
 /**
@@ -9143,7 +9341,7 @@ st_collections_group_parts_part_description_min(void)
         Defaults: 1.0 1.0
     @since 1.2
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_minmul(void)
 {
@@ -9168,32 +9366,35 @@ st_collections_group_parts_part_description_minmul(void)
 
         Defaults: -1 -1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_max(void)
 {
    check_min_arg_count(1);
 
-   if (is_param(1)) {
-      current_desc->max.w = parse_int_range(0, -1, 0x7fffffff);
-      current_desc->max.h = parse_int_range(1, -1, 0x7fffffff);
-   } else {
-      char *tmp;
+   if (is_param(1))
+     {
+        current_desc->max.w = parse_int_range(0, -1, 0x7fffffff);
+        current_desc->max.h = parse_int_range(1, -1, 0x7fffffff);
+     }
+   else
+     {
+        char *tmp;
 
-      tmp = parse_str(0);
-      if (current_part->type != EDJE_PART_TYPE_IMAGE ||
-          !tmp || strcmp(tmp, "SOURCE") != 0)
-        {
-           free(tmp);
-           ERR("parse error %s:%i. "
-               "Only IMAGE part can have a max: SOURCE; defined",
-               file_in, line - 1);
-           exit(-1);
-        }
-      free(tmp);
+        tmp = parse_str(0);
+        if (current_part->type != EDJE_PART_TYPE_IMAGE ||
+            !tmp || strcmp(tmp, "SOURCE") != 0)
+          {
+             free(tmp);
+             ERR("parse error %s:%i. "
+                 "Only IMAGE part can have a max: SOURCE; defined",
+                 file_in, line - 1);
+             exit(-1);
+          }
+        free(tmp);
 
-      current_desc->max.limit = EINA_TRUE;
-   }
+        current_desc->max.limit = EINA_TRUE;
+     }
 }
 
 /**
@@ -9207,7 +9408,7 @@ st_collections_group_parts_part_description_max(void)
       "min" and "max" property in description can be overridden by the size class
       at runtime.
    @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_size_class(void)
 {
@@ -9229,7 +9430,7 @@ st_collections_group_parts_part_description_size_class(void)
 
         Defaults: 0.0 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_step(void)
 {
@@ -9254,7 +9455,7 @@ st_collections_group_parts_part_description_step(void)
 
         Defaults: 0.0 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_aspect(void)
 {
@@ -9276,19 +9477,19 @@ st_collections_group_parts_part_description_aspect(void)
 
         Defaults: NONE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_aspect_preference(void)
 {
    check_arg_count(1);
 
-   current_desc->aspect.prefer =  parse_enum(0,
-				   "NONE", EDJE_ASPECT_PREFER_NONE,
-				   "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
-				   "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
-				   "BOTH", EDJE_ASPECT_PREFER_BOTH,
-				   "SOURCE", EDJE_ASPECT_PREFER_SOURCE,
-				   NULL);
+   current_desc->aspect.prefer = parse_enum(0,
+                                            "NONE", EDJE_ASPECT_PREFER_NONE,
+                                            "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
+                                            "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
+                                            "BOTH", EDJE_ASPECT_PREFER_BOTH,
+                                            "SOURCE", EDJE_ASPECT_PREFER_SOURCE,
+                                            NULL);
 }
 
 /**
@@ -9302,7 +9503,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
         values can be modified by the "color", "color2" and "color3"
         properties set below.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_color_class(void)
 {
@@ -9310,9 +9511,9 @@ st_collections_group_parts_part_description_color_class(void)
 
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't have a color defined",
-	   file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't have a color defined",
+            file_in, line - 1);
+        exit(-1);
      }
 
    current_desc->color_class = parse_str(0);
@@ -9340,15 +9541,15 @@ st_collections_group_parts_part_description_color_class(void)
 
         Defaults: 255 255 255 255
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_color(void)
 {
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't have a color defined",
-           file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't have a color defined",
+            file_in, line - 1);
+        exit(-1);
      }
 
    parse_color(0, &(current_desc->color.r));
@@ -9376,15 +9577,15 @@ st_collections_group_parts_part_description_color(void)
 
         Defaults: 0 0 0 255
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_color2(void)
 {
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
-       ERR("parse error %s:%i. SPACER part can't have a color defined",
-           file_in, line - 1);
-       exit(-1);
+        ERR("parse error %s:%i. SPACER part can't have a color defined",
+            file_in, line - 1);
+        exit(-1);
      }
 
    parse_color(0, &(current_desc->color2.r));
@@ -9412,7 +9613,7 @@ st_collections_group_parts_part_description_color2(void)
 
         Defaults: 0 0 0 128
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_color3(void)
 {
@@ -9429,7 +9630,7 @@ st_collections_group_parts_part_description_color3(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*)current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    parse_color(0, &(ed->text.color3.r));
 }
@@ -9447,7 +9648,7 @@ st_collections_group_parts_part_description_color3(void)
         happen at the end of the animation, when the new state is finally set
         (this is similar to the 'visible' flag).
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_clip_to_id(void)
 {
@@ -9456,13 +9657,13 @@ st_collections_group_parts_part_description_clip_to_id(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-     {
-        char *name;
+   {
+      char *name;
 
-        name = parse_str(0);
-        data_queue_part_lookup(pc, name, &(current_desc->clip_to_id));
-        free(name);
-     }
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_desc->clip_to_id));
+      free(name);
+   }
 }
 
 /**
@@ -9481,7 +9682,7 @@ st_collections_group_parts_part_description_clip_to_id(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_offset_scale(void)
 {
@@ -9536,7 +9737,7 @@ st_collections_group_parts_part_description_offset_scale(void)
         @li rel1.relative: 0.0 0.0
         @li rel2.relative: 1.0 1.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_rel1_relative(void)
 {
@@ -9560,7 +9761,7 @@ st_collections_group_parts_part_description_rel1_relative(void)
         @li rel1.offset: 0 0
         @li rel2.offset: -1 -1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_rel1_offset(void)
 {
@@ -9582,7 +9783,7 @@ st_collections_group_parts_part_description_rel1_offset(void)
         container. Setting to "" will unset this value for inherited
         parts.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_rel1_to_set(const char *name)
 {
@@ -9632,7 +9833,7 @@ st_collections_group_parts_part_description_rel1_to(void)
         part's container. Simply put affects the first parameter of "relative".
         Setting to "" will unset this value for inherited parts.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_rel_to_x(void)
 {
@@ -9683,7 +9884,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
         part's container. Simply put, affects the second parameter of
         "relative". Setting to "" will unset this value for inherited parts.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_rel_to_y(void)
 {
@@ -9873,7 +10074,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
         Moves an edge of the part to the position of the edge of given part or
         whole edje group. (GROUP means edje group that the part belong to)
     @endproperty
-*/
+ */
 
 static void
 check_has_anchors(void)
@@ -10084,7 +10285,7 @@ anchor_adjust_relative_horizontal(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_
         The second parameter of position enumeration can be omitted. (Default
         value is BOTTOM, but TOP when the part is anchored to edje group)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_top(void)
 {
@@ -10119,7 +10320,7 @@ st_collections_group_parts_part_description_anchors_top(void)
         The second parameter of position enumeration can be omitted. (Default
         value is TOP, but BOTTOM when the part is anchored to edje group)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_bottom(void)
 {
@@ -10154,7 +10355,7 @@ st_collections_group_parts_part_description_anchors_bottom(void)
         The second parameter of position enumeration can be omitted. (Default
         value is RIGHT, but LEFT when the part is anchored to edje group)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_left(void)
 {
@@ -10189,7 +10390,7 @@ st_collections_group_parts_part_description_anchors_left(void)
         The second parameter of position enumeration can be omitted. (Default
         value is LEFT, but RIGHT when the part is anchored to edje group)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_right(void)
 {
@@ -10226,7 +10427,7 @@ st_collections_group_parts_part_description_anchors_right(void)
         The second parameter of position enumeration can be omitted. (Default
         value is VERTICAL_CENTER)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_vertical_center(void)
 {
@@ -10258,7 +10459,7 @@ st_collections_group_parts_part_description_anchors_vertical_center(void)
         The second parameter of position enumeration can be omitted. (Default
         value is HORIZONTAL_CENTER)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_horizontal_center(void)
 {
@@ -10290,7 +10491,7 @@ st_collections_group_parts_part_description_anchors_horizontal_center(void)
         The second parameter of direction enumeration can be omitted. (Default
         value is BOTH)
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_fill(void)
 {
@@ -10311,36 +10512,38 @@ st_collections_group_parts_part_description_anchors_fill(void)
    switch (current_anchors->fill.base.fill)
      {
       case EDJE_PART_ANCHOR_FILL_BOTH:
-         if (strcmp("GROUP", name) || param_had_quote(0))
-           {
-              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
-              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
-              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
-              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
-           }
-         current_desc->align.x = 0.5;
-         current_desc->align.y = 0.5;
-         current_desc->fixed.w = 0;
-         current_desc->fixed.h = 0;
-         break;
+        if (strcmp("GROUP", name) || param_had_quote(0))
+          {
+             data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
+             data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
+             data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+             data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+          }
+        current_desc->align.x = 0.5;
+        current_desc->align.y = 0.5;
+        current_desc->fixed.w = 0;
+        current_desc->fixed.h = 0;
+        break;
+
       case EDJE_PART_ANCHOR_FILL_HORIZONTAL:
-         if (strcmp("GROUP", name) || param_had_quote(0))
-           {
-              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
-              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
-           }
-         current_desc->align.x = 0.5;
-         current_desc->fixed.w = 0;
-         break;
+        if (strcmp("GROUP", name) || param_had_quote(0))
+          {
+             data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
+             data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
+          }
+        current_desc->align.x = 0.5;
+        current_desc->fixed.w = 0;
+        break;
+
       case EDJE_PART_ANCHOR_FILL_VERTICAL:
-         if (strcmp("GROUP", name) || param_had_quote(0))
-           {
-              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
-              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
-           }
-         current_desc->align.y = 0.5;
-         current_desc->fixed.h = 0;
-         break;
+        if (strcmp("GROUP", name) || param_had_quote(0))
+          {
+             data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+             data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+          }
+        current_desc->align.y = 0.5;
+        current_desc->fixed.h = 0;
+        break;
      }
 
    free(name);
@@ -10356,7 +10559,7 @@ st_collections_group_parts_part_description_anchors_fill(void)
         Affects the edge position a fixed number of pixels along each direction.
         Margins will scale its size with an edje scaling factor.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_anchors_margin(void)
 {
@@ -10414,7 +10617,7 @@ free_anchors(void)
         In an animation, this is the first and last image displayed. It's
         required in any image part
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_normal(void)
 {
@@ -10435,7 +10638,7 @@ st_collections_group_parts_part_description_image_normal(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
    {
       char *name;
@@ -10462,7 +10665,7 @@ st_collections_group_parts_part_description_image_normal(void)
         the order they are listed, during the transition to the state they are
         declared in; the "normal" image is the final state.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_tween(void)
 {
@@ -10477,7 +10680,7 @@ st_collections_group_parts_part_description_image_tween(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
    {
       char *name;
@@ -10486,7 +10689,7 @@ st_collections_group_parts_part_description_image_tween(void)
       iid = mem_alloc(SZ(Edje_Part_Image_Id));
       ed->image.tweens_count++;
       ed->image.tweens = realloc(ed->image.tweens,
-				 sizeof (Edje_Part_Image_Id*) * ed->image.tweens_count);
+                                 sizeof (Edje_Part_Image_Id *) * ed->image.tweens_count);
       ed->image.tweens[ed->image.tweens_count - 1] = iid;
       name = parse_str(0);
       data_queue_image_remove(&(iid->id), &(iid->set));
@@ -10508,7 +10711,7 @@ st_collections_group_parts_part_description_image_tween(void)
 
         Defaults: 0 0 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_border(void)
 {
@@ -10523,7 +10726,7 @@ st_collections_group_parts_part_description_image_border(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
    ed->image.border.l = parse_int_range(0, 0, 0x7fffffff);
    ed->image.border.r = parse_int_range(1, 0, 0x7fffffff);
@@ -10546,7 +10749,7 @@ st_collections_group_parts_part_description_image_border(void)
         @li 1 or DEFAULT
         @li SOLID
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_middle(void)
 {
@@ -10561,15 +10764,15 @@ st_collections_group_parts_part_description_image_middle(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
-   ed->image.border.no_fill =  parse_enum(0,
-					  "1", 0,
-					  "DEFAULT", 0,
-					  "0", 1,
-					  "NONE", 1,
-					  "SOLID", 2,
-					  NULL);
+   ed->image.border.no_fill = parse_enum(0,
+                                         "1", 0,
+                                         "DEFAULT", 0,
+                                         "0", 1,
+                                         "NONE", 1,
+                                         "SOLID", 2,
+                                         NULL);
 }
 
 /**
@@ -10592,7 +10795,7 @@ st_collections_group_parts_part_description_image_middle(void)
 
         Defaults: 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_border_scale_by(void)
 {
@@ -10607,7 +10810,7 @@ st_collections_group_parts_part_description_image_border_scale_by(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
    ed->image.border.scale_by = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
@@ -10624,7 +10827,7 @@ st_collections_group_parts_part_description_image_border_scale_by(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_border_scale(void)
 {
@@ -10639,9 +10842,9 @@ st_collections_group_parts_part_description_image_border_scale(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
-   ed->image.border.scale =  parse_bool(0);
+   ed->image.border.scale = parse_bool(0);
 }
 
 /**
@@ -10660,7 +10863,7 @@ st_collections_group_parts_part_description_image_border_scale(void)
 
         Defaults: NONE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_image_scale_hint(void)
 {
@@ -10675,14 +10878,14 @@ st_collections_group_parts_part_description_image_scale_hint(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Image*) current_desc;
+   ed = (Edje_Part_Description_Image *)current_desc;
 
-   ed->image.scale_hint =  parse_enum(0,
-				      "NONE", EVAS_IMAGE_SCALE_HINT_NONE,
-				      "DYNAMIC", EVAS_IMAGE_SCALE_HINT_DYNAMIC,
-				      "STATIC", EVAS_IMAGE_SCALE_HINT_STATIC,
-				      "0", EVAS_IMAGE_SCALE_HINT_NONE,
-				      NULL);
+   ed->image.scale_hint = parse_enum(0,
+                                     "NONE", EVAS_IMAGE_SCALE_HINT_NONE,
+                                     "DYNAMIC", EVAS_IMAGE_SCALE_HINT_DYNAMIC,
+                                     "STATIC", EVAS_IMAGE_SCALE_HINT_STATIC,
+                                     "0", EVAS_IMAGE_SCALE_HINT_NONE,
+                                     NULL);
 }
 
 /** @edcsubsection{collections_group_parts_description_fill,
@@ -10724,7 +10927,7 @@ st_collections_group_parts_part_description_image_scale_hint(void)
 
         Defaults: 1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fill_smooth(void)
 {
@@ -10735,30 +10938,32 @@ st_collections_group_parts_part_description_fill_smooth(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-        {
-           Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-           ed = (Edje_Part_Description_Image*) current_desc;
+         ed = (Edje_Part_Description_Image *)current_desc;
 
-           fill = &ed->image.fill;
-	   break;
-        }
+         fill = &ed->image.fill;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = (Edje_Part_Description_Proxy*) current_desc;
+         ed = (Edje_Part_Description_Proxy *)current_desc;
 
-           fill = &ed->proxy.fill;
-	   break;
-        }
+         fill = &ed->proxy.fill;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY `%s` part (%i).",
-               file_in, line - 1, current_part->name, current_part->type);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. "
+             "image and proxy attributes in non-IMAGE, non-PROXY `%s` part (%i).",
+             file_in, line - 1, current_part->name, current_part->type);
+         exit(-1);
+      }
      }
 
    fill->smooth = parse_bool(0);
@@ -10784,7 +10989,7 @@ st_collections_group_parts_part_description_fill_smooth(void)
 
         Defaults: SCALE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fill_type(void)
 {
@@ -10795,30 +11000,32 @@ st_collections_group_parts_part_description_fill_type(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-        {
-           Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-           ed = (Edje_Part_Description_Image*) current_desc;
+         ed = (Edje_Part_Description_Image *)current_desc;
 
-           fill = &ed->image.fill;
-	   break;
-        }
+         fill = &ed->image.fill;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = (Edje_Part_Description_Proxy*) current_desc;
+         ed = (Edje_Part_Description_Proxy *)current_desc;
 
-           fill = &ed->proxy.fill;
-	   break;
-        }
+         fill = &ed->proxy.fill;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. "
+             "image and proxy attributes in non-IMAGE, non-PROXY part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 
    fill->type = parse_enum(0,
@@ -10862,7 +11069,7 @@ st_collections_group_parts_part_description_fill_type(void)
 
         Defaults: 0.0 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fill_origin_relative(void)
 {
@@ -10873,30 +11080,32 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-        {
-           Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-           ed = (Edje_Part_Description_Image*) current_desc;
+         ed = (Edje_Part_Description_Image *)current_desc;
 
-           fill = &ed->image.fill;
-	   break;
-        }
+         fill = &ed->image.fill;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = (Edje_Part_Description_Proxy*) current_desc;
+         ed = (Edje_Part_Description_Proxy *)current_desc;
 
-           fill = &ed->proxy.fill;
-	   break;
-        }
+         fill = &ed->proxy.fill;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. "
+             "image and proxy attributes in non-IMAGE, non-PROXY part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 
    fill->pos_rel_x = FROM_DOUBLE(parse_float_range(0, -999999999.0, 999999999.0));
@@ -10914,7 +11123,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fill_origin_offset(void)
 {
@@ -10925,30 +11134,32 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-        {
-           Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-           ed = (Edje_Part_Description_Image*) current_desc;
+         ed = (Edje_Part_Description_Image *)current_desc;
 
-           fill = &ed->image.fill;
-	   break;
-        }
+         fill = &ed->image.fill;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = (Edje_Part_Description_Proxy*) current_desc;
+         ed = (Edje_Part_Description_Proxy *)current_desc;
 
-           fill = &ed->proxy.fill;
-	   break;
-        }
+         fill = &ed->proxy.fill;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. "
+             "image and proxy attributes in non-IMAGE, non-PROXY part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 
    fill->pos_abs_x = parse_int(0);
@@ -10991,7 +11202,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
 
         Defaults: 1.0 1.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fill_size_relative(void)
 {
@@ -11002,30 +11213,32 @@ st_collections_group_parts_part_description_fill_size_relative(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-        {
-           Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-           ed = (Edje_Part_Description_Image*) current_desc;
+         ed = (Edje_Part_Description_Image *)current_desc;
 
-           fill = &ed->image.fill;
-	   break;
-        }
+         fill = &ed->image.fill;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = (Edje_Part_Description_Proxy*) current_desc;
+         ed = (Edje_Part_Description_Proxy *)current_desc;
 
-           fill = &ed->proxy.fill;
-	   break;
-        }
+         fill = &ed->proxy.fill;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. "
+             "image and proxy attributes in non-IMAGE, non-PROXY part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 
    fill->rel_x = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
@@ -11043,7 +11256,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_fill_size_offset(void)
 {
@@ -11054,36 +11267,37 @@ st_collections_group_parts_part_description_fill_size_offset(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_IMAGE:
-        {
-           Edje_Part_Description_Image *ed;
+      {
+         Edje_Part_Description_Image *ed;
 
-           ed = (Edje_Part_Description_Image*) current_desc;
+         ed = (Edje_Part_Description_Image *)current_desc;
 
-           fill = &ed->image.fill;
-	   break;
-        }
+         fill = &ed->image.fill;
+         break;
+      }
+
       case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed;
+      {
+         Edje_Part_Description_Proxy *ed;
 
-           ed = (Edje_Part_Description_Proxy*) current_desc;
+         ed = (Edje_Part_Description_Proxy *)current_desc;
 
-           fill = &ed->proxy.fill;
-	   break;
-        }
+         fill = &ed->proxy.fill;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. "
+             "image and proxy attributes in non-IMAGE, non-PROXY part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 
    fill->abs_x = parse_int(0);
    fill->abs_y = parse_int(1);
 }
-
 
 /** @edcsubsection{collections_group_parts_description_text,
  *                 Group.Parts.Part.Description.Text} */
@@ -11126,7 +11340,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
         Sets the default content of a text part, normally the application is
         the one changing its value.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_text(void)
 {
@@ -11142,21 +11356,21 @@ st_collections_group_parts_part_description_text_text(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
-   for (i = 0; ;i++)
+   for (i = 0;; i++)
      {
-	char *s;
+        char *s;
 
-	if (!is_param(i)) break;
-	s = parse_str(i);
-	if (!str) str = s;
-	else
-	  {
-	     str = realloc(str, strlen(str) + strlen(s) + 1);
-	     strcat(str, s);
-	     free(s);
-	  }
+        if (!is_param(i)) break;
+        s = parse_str(i);
+        if (!str) str = s;
+        else
+          {
+             str = realloc(str, strlen(str) + strlen(s) + 1);
+             strcat(str, s);
+             free(s);
+          }
      }
    ed->text.text.str = str;
 }
@@ -11172,7 +11386,7 @@ st_collections_group_parts_part_description_text_text(void)
         This is the domain name of the .mo file which has to be checked
         for translation.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_domain(void)
 {
@@ -11182,11 +11396,11 @@ st_collections_group_parts_part_description_text_domain(void)
        (current_part->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
         ERR("parse error %s:%i. text attributes in non-TEXT part.",
-        file_in, line - 1);
+            file_in, line - 1);
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.domain = parse_str(0);
 }
@@ -11202,7 +11416,7 @@ st_collections_group_parts_part_description_text_domain(void)
         Similar to color_class, this is the name used by the application
         to alter the font family and size at runtime.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_text_class(void)
 {
@@ -11218,7 +11432,7 @@ st_collections_group_parts_part_description_text_text_class(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.text_class = parse_str(0);
 }
@@ -11234,7 +11448,7 @@ st_collections_group_parts_part_description_text_text_class(void)
         This sets the font family to one of the aliases set up in the "fonts"
         block. Can be overridden by the application.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_font(void)
 {
@@ -11250,7 +11464,7 @@ st_collections_group_parts_part_description_text_font(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.font.str = parse_str(0);
 }
@@ -11266,7 +11480,7 @@ st_collections_group_parts_part_description_text_font(void)
         Causes the part to use the default style and tags defined in the
         "style" block with the specified name.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_style(void)
 {
@@ -11282,7 +11496,7 @@ st_collections_group_parts_part_description_text_style(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.style.str = parse_str(0);
 }
@@ -11299,7 +11513,7 @@ st_collections_group_parts_part_description_text_style(void)
         to replace every character to hide the details of the entry. Normally
         you would use a "*", but you can use anything you like.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_repch(void)
 {
@@ -11315,7 +11529,7 @@ st_collections_group_parts_part_description_text_repch(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.repch.str = parse_str(0);
 }
@@ -11333,7 +11547,7 @@ st_collections_group_parts_part_description_text_repch(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_size(void)
 {
@@ -11349,7 +11563,7 @@ st_collections_group_parts_part_description_text_size(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*)current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.size = parse_int_range(0, 0, 255);
 }
@@ -11368,7 +11582,7 @@ st_collections_group_parts_part_description_text_size(void)
         Defaults: 0 0
     @since 1.1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_size_range(void)
 {
@@ -11384,7 +11598,7 @@ st_collections_group_parts_part_description_text_size_range(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.size_range_min = parse_int_range(0, 0, 255);
    ed->text.size_range_max = parse_int_range(1, 0, 255);
@@ -11409,7 +11623,7 @@ st_collections_group_parts_part_description_text_size_range(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_fit(void)
 {
@@ -11425,7 +11639,7 @@ st_collections_group_parts_part_description_text_fit(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.fit_x = parse_bool(0);
    ed->text.fit_y = parse_bool(1);
@@ -11444,7 +11658,7 @@ st_collections_group_parts_part_description_text_fit(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_min(void)
 {
@@ -11460,7 +11674,7 @@ st_collections_group_parts_part_description_text_min(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*)current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.min_x = parse_bool(0);
    ed->text.min_y = parse_bool(1);
@@ -11482,7 +11696,7 @@ st_collections_group_parts_part_description_text_min(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_max(void)
 {
@@ -11498,7 +11712,7 @@ st_collections_group_parts_part_description_text_max(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.max_x = parse_bool(0);
    ed->text.max_y = parse_bool(1);
@@ -11521,7 +11735,7 @@ st_collections_group_parts_part_description_text_max(void)
 
         Defaults: 0.5 0.5
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_align(void)
 {
@@ -11537,7 +11751,7 @@ st_collections_group_parts_part_description_text_align(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
    ed->text.align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
@@ -11554,7 +11768,7 @@ st_collections_group_parts_part_description_text_align(void)
         Causes the part to use the text properties (like font and size) of
         another part and update them as they change.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_source(void)
 {
@@ -11573,7 +11787,7 @@ st_collections_group_parts_part_description_text_source(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    {
       char *name;
@@ -11595,7 +11809,7 @@ st_collections_group_parts_part_description_text_source(void)
         Causes the part to display the text content of another part and update
         them as they change.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_text_source(void)
 {
@@ -11614,7 +11828,7 @@ st_collections_group_parts_part_description_text_text_source(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    {
       char *name;
@@ -11640,7 +11854,7 @@ st_collections_group_parts_part_description_text_text_source(void)
 
         Defaults: 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_text_ellipsis(void)
 {
@@ -11656,7 +11870,7 @@ st_collections_group_parts_part_description_text_ellipsis(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Text*) current_desc;
+   ed = (Edje_Part_Description_Text *)current_desc;
 
    ed->text.ellipsis = parse_float_range(0, -1.0, 1.0);
 }
@@ -11710,8 +11924,9 @@ st_collections_group_parts_part_description_text_ellipsis(void)
 
         Defaults: "horizontal"
     @endproperty
-*/
-static void st_collections_group_parts_part_description_box_layout(void)
+ */
+static void
+st_collections_group_parts_part_description_box_layout(void)
 {
    Edje_Part_Description_Box *ed;
 
@@ -11724,7 +11939,7 @@ static void st_collections_group_parts_part_description_box_layout(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Box*) current_desc;
+   ed = (Edje_Part_Description_Box *)current_desc;
 
    ed->box.layout = parse_str(0);
    if (is_param(1))
@@ -11742,8 +11957,9 @@ static void st_collections_group_parts_part_description_box_layout(void)
 
         Defaults: 0.5 0.5
     @endproperty
-*/
-static void st_collections_group_parts_part_description_box_align(void)
+ */
+static void
+st_collections_group_parts_part_description_box_align(void)
 {
    Edje_Part_Description_Box *ed;
 
@@ -11756,7 +11972,7 @@ static void st_collections_group_parts_part_description_box_align(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Box*) current_desc;
+   ed = (Edje_Part_Description_Box *)current_desc;
 
    ed->box.align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
    ed->box.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
@@ -11773,8 +11989,9 @@ static void st_collections_group_parts_part_description_box_align(void)
 
         Defaults: 0 0
     @endproperty
-*/
-static void st_collections_group_parts_part_description_box_padding(void)
+ */
+static void
+st_collections_group_parts_part_description_box_padding(void)
 {
    Edje_Part_Description_Box *ed;
 
@@ -11787,7 +12004,7 @@ static void st_collections_group_parts_part_description_box_padding(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Box*) current_desc;
+   ed = (Edje_Part_Description_Box *)current_desc;
 
    ed->box.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->box.padding.y = parse_int_range(1, 0, 0x7fffffff);
@@ -11805,7 +12022,7 @@ static void st_collections_group_parts_part_description_box_padding(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_box_min(void)
 {
@@ -11820,12 +12037,11 @@ st_collections_group_parts_part_description_box_min(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Box*) current_desc;
+   ed = (Edje_Part_Description_Box *)current_desc;
 
    ed->box.min.h = parse_bool(0);
    ed->box.min.v = parse_bool(1);
 }
-
 
 /** @edcsubsection{collections_group_parts_description_table,
  *                 Group.Parts.Part.Description.Table} */
@@ -11866,8 +12082,9 @@ st_collections_group_parts_part_description_box_min(void)
 
         Defaults: NONE
     @endproperty
-*/
-static void st_collections_group_parts_part_description_table_homogeneous(void)
+ */
+static void
+st_collections_group_parts_part_description_table_homogeneous(void)
 {
    Edje_Part_Description_Table *ed;
 
@@ -11880,13 +12097,13 @@ static void st_collections_group_parts_part_description_table_homogeneous(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Table*) current_desc;
+   ed = (Edje_Part_Description_Table *)current_desc;
 
    ed->table.homogeneous = parse_enum(0,
-				     "NONE", EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE,
-				     "TABLE", EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE,
-				     "ITEM", EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM,
-				     NULL);
+                                      "NONE", EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE,
+                                      "TABLE", EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE,
+                                      "ITEM", EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM,
+                                      NULL);
 }
 
 /**
@@ -11900,8 +12117,9 @@ static void st_collections_group_parts_part_description_table_homogeneous(void)
 
         Defaults: 0.5 0.5
     @endproperty
-*/
-static void st_collections_group_parts_part_description_table_align(void)
+ */
+static void
+st_collections_group_parts_part_description_table_align(void)
 {
    Edje_Part_Description_Table *ed;
 
@@ -11914,7 +12132,7 @@ static void st_collections_group_parts_part_description_table_align(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Table*) current_desc;
+   ed = (Edje_Part_Description_Table *)current_desc;
 
    ed->table.align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
    ed->table.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
@@ -11931,8 +12149,9 @@ static void st_collections_group_parts_part_description_table_align(void)
 
         Defaults: 0 0
     @endproperty
-*/
-static void st_collections_group_parts_part_description_table_padding(void)
+ */
+static void
+st_collections_group_parts_part_description_table_padding(void)
 {
    Edje_Part_Description_Table *ed;
 
@@ -11945,7 +12164,7 @@ static void st_collections_group_parts_part_description_table_padding(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Table*) current_desc;
+   ed = (Edje_Part_Description_Table *)current_desc;
 
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
@@ -11963,7 +12182,7 @@ static void st_collections_group_parts_part_description_table_padding(void)
 
         Defaults: 0 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_table_min(void)
 {
@@ -11978,7 +12197,7 @@ st_collections_group_parts_part_description_table_min(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Table*) current_desc;
+   ed = (Edje_Part_Description_Table *)current_desc;
 
    ed->table.min.h = parse_bool(0);
    ed->table.min.v = parse_bool(1);
@@ -12033,7 +12252,7 @@ st_collections_group_parts_part_description_table_min(void)
 
         Defaults: 1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_proxy_source_clip(void)
 {
@@ -12048,7 +12267,7 @@ st_collections_group_parts_part_description_proxy_source_clip(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Proxy*) current_desc;
+   ed = (Edje_Part_Description_Proxy *)current_desc;
    ed->proxy.source_clip = parse_bool(0);
 }
 
@@ -12066,7 +12285,7 @@ st_collections_group_parts_part_description_proxy_source_visible(void)
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_Proxy*) current_desc;
+   ed = (Edje_Part_Description_Proxy *)current_desc;
    ed->proxy.source_visible = parse_bool(0);
 }
 
@@ -12103,7 +12322,7 @@ st_collections_group_parts_part_description_proxy_source_visible(void)
     @effect
         Sets the point of CAMERA, LIGHT or MESH_NODE centre.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_position_point(void)
 {
@@ -12112,44 +12331,47 @@ st_collections_group_parts_part_description_position_point(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_CAMERA:
-        {
-           Edje_Part_Description_Camera *ed;
+      {
+         Edje_Part_Description_Camera *ed;
 
-           ed = (Edje_Part_Description_Camera*) current_desc;
+         ed = (Edje_Part_Description_Camera *)current_desc;
 
-           ed->camera.position.point.x = FROM_DOUBLE(parse_float(0));
-           ed->camera.position.point.y = FROM_DOUBLE(parse_float(1));
-           ed->camera.position.point.z = FROM_DOUBLE(parse_float(2));
-           break;
-        }
+         ed->camera.position.point.x = FROM_DOUBLE(parse_float(0));
+         ed->camera.position.point.y = FROM_DOUBLE(parse_float(1));
+         ed->camera.position.point.z = FROM_DOUBLE(parse_float(2));
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-        {
-           Edje_Part_Description_Light *ed;
+      {
+         Edje_Part_Description_Light *ed;
 
-           ed = (Edje_Part_Description_Light*) current_desc;
+         ed = (Edje_Part_Description_Light *)current_desc;
 
-           ed->light.position.point.x = FROM_DOUBLE(parse_float(0));
-           ed->light.position.point.y = FROM_DOUBLE(parse_float(1));
-           ed->light.position.point.z = FROM_DOUBLE(parse_float(2));
-           break;
-        }
+         ed->light.position.point.x = FROM_DOUBLE(parse_float(0));
+         ed->light.position.point.y = FROM_DOUBLE(parse_float(1));
+         ed->light.position.point.z = FROM_DOUBLE(parse_float(2));
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           Edje_Part_Description_Mesh_Node *ed;
+      {
+         Edje_Part_Description_Mesh_Node *ed;
 
-           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+         ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
-           ed->mesh_node.position.point.x = FROM_DOUBLE(parse_float(0));
-           ed->mesh_node.position.point.y = FROM_DOUBLE(parse_float(1));
-           ed->mesh_node.position.point.z = FROM_DOUBLE(parse_float(2));
-           break;
-        }
+         ed->mesh_node.position.point.x = FROM_DOUBLE(parse_float(0));
+         ed->mesh_node.position.point.y = FROM_DOUBLE(parse_float(1));
+         ed->mesh_node.position.point.z = FROM_DOUBLE(parse_float(2));
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. camera and light attributes in non-CAMERA, non-LIGHT, and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. camera and light attributes in non-CAMERA, non-LIGHT, and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12167,7 +12389,7 @@ st_collections_group_parts_part_description_position_point(void)
             @li PARENT
             @li WORLD
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_position_space(void)
 {
@@ -12176,46 +12398,49 @@ st_collections_group_parts_part_description_position_space(void)
    check_arg_count(1);
 
    space = parse_enum(0,
-                     "LOCAL", EVAS_CANVAS3D_SPACE_LOCAL,
-                     "PARENT", EVAS_CANVAS3D_SPACE_PARENT,
-                     "WORLD", EVAS_CANVAS3D_SPACE_WORLD,
-                     NULL);
+                      "LOCAL", EVAS_CANVAS3D_SPACE_LOCAL,
+                      "PARENT", EVAS_CANVAS3D_SPACE_PARENT,
+                      "WORLD", EVAS_CANVAS3D_SPACE_WORLD,
+                      NULL);
 
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_CAMERA:
-        {
-           Edje_Part_Description_Camera *ed;
+      {
+         Edje_Part_Description_Camera *ed;
 
-           ed = (Edje_Part_Description_Camera*) current_desc;
+         ed = (Edje_Part_Description_Camera *)current_desc;
 
-           ed->camera.position.space = space;
-           break;
-        }
+         ed->camera.position.space = space;
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-        {
-           Edje_Part_Description_Light *ed;
+      {
+         Edje_Part_Description_Light *ed;
 
-           ed = (Edje_Part_Description_Light*) current_desc;
+         ed = (Edje_Part_Description_Light *)current_desc;
 
-           ed->light.position.space = space;
-           break;
-        }
+         ed->light.position.space = space;
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           Edje_Part_Description_Mesh_Node *ed;
+      {
+         Edje_Part_Description_Mesh_Node *ed;
 
-           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+         ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
-           ed->mesh_node.position.space = space;
-           break;
-        }
+         ed->mesh_node.position.space = space;
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. camera and light attributes in non-CAMERA, non-LIGHT, and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. camera and light attributes in non-CAMERA, non-LIGHT, and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12249,7 +12474,7 @@ st_collections_group_parts_part_description_position_space(void)
     @effect
         Specifies the basic attributes of the camera.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_camera_properties(void)
 {
@@ -12259,7 +12484,7 @@ st_collections_group_parts_part_description_camera_properties(void)
      {
         Edje_Part_Description_Camera *ed;
 
-        ed = (Edje_Part_Description_Camera*) current_desc;
+        ed = (Edje_Part_Description_Camera *)current_desc;
 
         ed->camera.camera.fovy = FROM_DOUBLE(parse_float(0));
         ed->camera.camera.aspect = FROM_DOUBLE(parse_float(1));
@@ -12270,7 +12495,7 @@ st_collections_group_parts_part_description_camera_properties(void)
      {
         Edje_Part_Description_Light *ed;
 
-        ed = (Edje_Part_Description_Light*) current_desc;
+        ed = (Edje_Part_Description_Light *)current_desc;
 
         ed->light.light.fovy = FROM_DOUBLE(parse_float(0));
         ed->light.light.aspect = FROM_DOUBLE(parse_float(1));
@@ -12333,7 +12558,7 @@ st_collections_group_parts_part_description_camera_properties(void)
 
         Defaults: 50 50 50 255
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_properties_ambient(void)
 {
@@ -12342,29 +12567,31 @@ st_collections_group_parts_part_description_properties_ambient(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_LIGHT:
-        {
-           Edje_Part_Description_Light *ed;
+      {
+         Edje_Part_Description_Light *ed;
 
-           ed = (Edje_Part_Description_Light*) current_desc;
+         ed = (Edje_Part_Description_Light *)current_desc;
 
-           parse_color(0, &(ed->light.properties.ambient));
-           break;
-        }
+         parse_color(0, &(ed->light.properties.ambient));
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           Edje_Part_Description_Mesh_Node *ed;
+      {
+         Edje_Part_Description_Mesh_Node *ed;
 
-           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+         ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
-           parse_color(0, &(ed->mesh_node.properties.ambient));
-           break;
-        }
+         parse_color(0, &(ed->mesh_node.properties.ambient));
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12388,7 +12615,7 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
         Defaults: 255 255 255 255
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_properties_diffuse(void)
 {
@@ -12397,29 +12624,31 @@ st_collections_group_parts_part_description_properties_diffuse(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_LIGHT:
-        {
-           Edje_Part_Description_Light *ed;
+      {
+         Edje_Part_Description_Light *ed;
 
-           ed = (Edje_Part_Description_Light*) current_desc;
+         ed = (Edje_Part_Description_Light *)current_desc;
 
-           parse_color(0, &(ed->light.properties.diffuse));
-           break;
-        }
+         parse_color(0, &(ed->light.properties.diffuse));
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           Edje_Part_Description_Mesh_Node *ed;
+      {
+         Edje_Part_Description_Mesh_Node *ed;
 
-           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+         ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
-           parse_color(0, &(ed->mesh_node.properties.diffuse));
-           break;
-        }
+         parse_color(0, &(ed->mesh_node.properties.diffuse));
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12443,7 +12672,7 @@ st_collections_group_parts_part_description_properties_diffuse(void)
 
         Defaults: 255 255 255 255
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_properties_specular(void)
 {
@@ -12452,29 +12681,31 @@ st_collections_group_parts_part_description_properties_specular(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_LIGHT:
-        {
-           Edje_Part_Description_Light *ed;
+      {
+         Edje_Part_Description_Light *ed;
 
-           ed = (Edje_Part_Description_Light*) current_desc;
+         ed = (Edje_Part_Description_Light *)current_desc;
 
-           parse_color(0, &(ed->light.properties.specular));
-           break;
-        }
+         parse_color(0, &(ed->light.properties.specular));
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           Edje_Part_Description_Mesh_Node *ed;
+      {
+         Edje_Part_Description_Mesh_Node *ed;
 
-           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+         ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
-           parse_color(0, &(ed->mesh_node.properties.specular));
-           break;
-        }
+         parse_color(0, &(ed->mesh_node.properties.specular));
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12492,7 +12723,7 @@ st_collections_group_parts_part_description_properties_specular(void)
             @li EMISSION
             @li NORMAL
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_properties_material(void)
 {
@@ -12501,18 +12732,18 @@ st_collections_group_parts_part_description_properties_material(void)
    check_arg_count(1);
 
    material_attrib = parse_enum(0,
-                     "AMBIENT", EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
-                     "DIFFUSE", EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
-                     "SPECULAR", EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
-                     "EMISSION", EVAS_CANVAS3D_MATERIAL_ATTRIB_EMISSION,
-                     "NORMAL", EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL,
-                     NULL);
+                                "AMBIENT", EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
+                                "DIFFUSE", EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
+                                "SPECULAR", EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
+                                "EMISSION", EVAS_CANVAS3D_MATERIAL_ATTRIB_EMISSION,
+                                "NORMAL", EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL,
+                                NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.properties.material_attrib = material_attrib;
      }
@@ -12533,7 +12764,7 @@ st_collections_group_parts_part_description_properties_material(void)
     @effect
         Sets the material attribute enable flag of the given material.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_properties_normal(void)
 {
@@ -12543,7 +12774,7 @@ st_collections_group_parts_part_description_properties_normal(void)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.properties.normal = parse_bool(0);
      }
@@ -12564,7 +12795,7 @@ st_collections_group_parts_part_description_properties_normal(void)
     @effect
         Sets the shininess of the given material.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_properties_shininess(void)
 {
@@ -12574,7 +12805,7 @@ st_collections_group_parts_part_description_properties_shininess(void)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.properties.shininess = FROM_DOUBLE(parse_float(0));
      }
@@ -12601,7 +12832,7 @@ st_collections_group_parts_part_description_properties_shininess(void)
             @li MAP
             @li RENDER
     @endproperty
-*/
+ */
 
 static void
 st_collections_group_parts_part_description_properties_shade(void)
@@ -12611,19 +12842,19 @@ st_collections_group_parts_part_description_properties_shade(void)
    check_arg_count(1);
 
    shade = parse_enum(0,
-                     "VERTEX_COLOR", EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR,
-                     "PARENT", EVAS_CANVAS3D_SHADER_MODE_DIFFUSE,
-                     "WORLD", EVAS_CANVAS3D_SHADER_MODE_FLAT,
-                     "PHONG", EVAS_CANVAS3D_SHADER_MODE_PHONG,
-                     "NORMAL_MAP", EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP,
-                     "RENDER", EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER,
-                     NULL);
+                      "VERTEX_COLOR", EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR,
+                      "PARENT", EVAS_CANVAS3D_SHADER_MODE_DIFFUSE,
+                      "WORLD", EVAS_CANVAS3D_SHADER_MODE_FLAT,
+                      "PHONG", EVAS_CANVAS3D_SHADER_MODE_PHONG,
+                      "NORMAL_MAP", EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP,
+                      "RENDER", EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER,
+                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.properties.shade = shade;
      }
@@ -12671,7 +12902,7 @@ st_collections_group_parts_part_description_properties_shade(void)
         Indicates a target point for CAMERA and MESH_NODE or for LIGHT to see or
         to illuminate.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_orientation_look1(void)
 {
@@ -12680,26 +12911,29 @@ st_collections_group_parts_part_description_orientation_look1(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_CAMERA:
-        {
-           SET_LOOK1(Camera, camera);
-           break;
-        }
+      {
+         SET_LOOK1(Camera, camera);
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-        {
-           SET_LOOK1(Light, light);
-           break;
-        }
+      {
+         SET_LOOK1(Light, light);
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           SET_LOOK1(Mesh_Node, mesh_node);
-           break;
-        }
+      {
+         SET_LOOK1(Mesh_Node, mesh_node);
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12712,7 +12946,7 @@ st_collections_group_parts_part_description_orientation_look1(void)
     @effect
         Specifies the angle at which the target point will be caught.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_orientation_look2(void)
 {
@@ -12721,26 +12955,29 @@ st_collections_group_parts_part_description_orientation_look2(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_CAMERA:
-        {
-           SET_LOOK2(Camera, camera);
-           break;
-        }
+      {
+         SET_LOOK2(Camera, camera);
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-        {
-           SET_LOOK2(Light, light);
-           break;
-        }
+      {
+         SET_LOOK2(Light, light);
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           SET_LOOK2(Mesh_Node, mesh_node);
-           break;
-        }
+      {
+         SET_LOOK2(Mesh_Node, mesh_node);
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12754,7 +12991,7 @@ st_collections_group_parts_part_description_orientation_look2(void)
         Indicates another part to make target of CAMERA, LIGHT or MESH_NODE
         or LIGHT.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_orientation_look_to(void)
 {
@@ -12767,26 +13004,29 @@ st_collections_group_parts_part_description_orientation_look_to(void)
    switch (current_part->type)
      {
       case EDJE_PART_TYPE_CAMERA:
-        {
-           SET_LOOK_TO(pc, Camera, camera);
-           break;
-        }
+      {
+         SET_LOOK_TO(pc, Camera, camera);
+         break;
+      }
+
       case EDJE_PART_TYPE_LIGHT:
-        {
-           SET_LOOK_TO(pc, Light, light);
-           break;
-        }
+      {
+         SET_LOOK_TO(pc, Light, light);
+         break;
+      }
+
       case EDJE_PART_TYPE_MESH_NODE:
-        {
-           SET_LOOK_TO(pc, Mesh_Node, mesh_node);
-           break;
-        }
+      {
+         SET_LOOK_TO(pc, Mesh_Node, mesh_node);
+         break;
+      }
+
       default:
-        {
-           ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
-               file_in, line - 1);
-           exit(-1);
-        }
+      {
+         ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+             file_in, line - 1);
+         exit(-1);
+      }
      }
 }
 
@@ -12799,7 +13039,7 @@ st_collections_group_parts_part_description_orientation_look_to(void)
     @effect
         Specifies the angle and indicates what proportions the MESH_NODE rotates in.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_orientation_angle_axis(void)
 {
@@ -12825,7 +13065,6 @@ st_collections_group_parts_part_description_orientation_angle_axis(void)
      }
 }
 
-
 /**
     @page edcref
     @property
@@ -12835,7 +13074,7 @@ st_collections_group_parts_part_description_orientation_angle_axis(void)
     @effect
         Specifies the axis and arccosinus of half angle to rotate on the MESH_NODE, CAMERA or LIGHT.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_orientation_quaternion(void)
 {
@@ -12870,7 +13109,7 @@ st_collections_group_parts_part_description_orientation_quaternion(void)
     @effect
         Specifies the scale parameter for MESH_NODE.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_scale(void)
 {
@@ -12878,7 +13117,7 @@ st_collections_group_parts_part_description_scale(void)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.scale_3d.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1000.0));
         ed->mesh_node.scale_3d.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1000.0));
@@ -12920,17 +13159,16 @@ st_collections_group_parts_part_description_scale(void)
         A texture block is used to set texture, this texture will be imposed on
         MESH_NODE model.
     @endblock
-*/
+ */
 
 static void
 ob_collections_group_parts_part_description_texture(void)
 {
    Edje_Part_Description_Mesh_Node *ed;
 
-
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.texture.need_texture = EINA_TRUE;
      }
@@ -12943,25 +13181,25 @@ ob_collections_group_parts_part_description_texture(void)
      }
 }
 
- /**
-     @page edcref
-     @property
-         shade
-         image
-     @parameters
-         [SHADE]
-         [texture's filename]
-     @effect
-         Sets the shade mode for MESH_NODE. Valid shade modes:
-            @li COLOR
-            @li DIFFUSE
-            @li FLAT
-            @li PHONG
-            @li MAP
-            @li RENDER
-         Name of image to be used as previously declared in the image block.
-         It's required in any mesh_node part.
-     @endproperty
+/**
+    @page edcref
+    @property
+        shade
+        image
+    @parameters
+        [SHADE]
+        [texture's filename]
+    @effect
+        Sets the shade mode for MESH_NODE. Valid shade modes:
+           @li COLOR
+           @li DIFFUSE
+           @li FLAT
+           @li PHONG
+           @li MAP
+           @li RENDER
+        Name of image to be used as previously declared in the image block.
+        It's required in any mesh_node part.
+    @endproperty
  */
 static void
 st_collections_group_parts_part_description_texture_image(void)
@@ -12973,7 +13211,7 @@ st_collections_group_parts_part_description_texture_image(void)
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         char *name;
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.texture.textured = EINA_TRUE;
 
@@ -13003,7 +13241,7 @@ st_collections_group_parts_part_description_texture_image(void)
             @li REPEAT
             @li REFLECT
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_texture_wrap1(void)
 {
@@ -13012,16 +13250,16 @@ st_collections_group_parts_part_description_texture_wrap1(void)
    check_arg_count(1);
 
    wrap1 = parse_enum(0,
-                     "CLAMP", EVAS_CANVAS3D_WRAP_MODE_CLAMP,
-                     "REPEAT", EVAS_CANVAS3D_WRAP_MODE_REPEAT,
-                     "REFLECT", EVAS_CANVAS3D_WRAP_MODE_REFLECT,
-                     NULL);
+                      "CLAMP", EVAS_CANVAS3D_WRAP_MODE_CLAMP,
+                      "REPEAT", EVAS_CANVAS3D_WRAP_MODE_REPEAT,
+                      "REFLECT", EVAS_CANVAS3D_WRAP_MODE_REFLECT,
+                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.texture.wrap1 = wrap1;
      }
@@ -13045,7 +13283,7 @@ st_collections_group_parts_part_description_texture_wrap1(void)
             @li REPEAT
             @li REFLECT
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_texture_wrap2(void)
 {
@@ -13054,16 +13292,16 @@ st_collections_group_parts_part_description_texture_wrap2(void)
    check_arg_count(1);
 
    wrap2 = parse_enum(0,
-                     "CLAMP", EVAS_CANVAS3D_WRAP_MODE_CLAMP,
-                     "REPEAT", EVAS_CANVAS3D_WRAP_MODE_REPEAT,
-                     "REFLECT", EVAS_CANVAS3D_WRAP_MODE_REFLECT,
-                     NULL);
+                      "CLAMP", EVAS_CANVAS3D_WRAP_MODE_CLAMP,
+                      "REPEAT", EVAS_CANVAS3D_WRAP_MODE_REPEAT,
+                      "REFLECT", EVAS_CANVAS3D_WRAP_MODE_REFLECT,
+                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.texture.wrap2 = wrap2;
      }
@@ -13089,7 +13327,7 @@ st_collections_group_parts_part_description_texture_wrap2(void)
             @li LINEAR_MIPMAP_NEAREST
             @li NEAREST_MIPMAP_LINEAR
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_texture_filter1(void)
 {
@@ -13098,19 +13336,19 @@ st_collections_group_parts_part_description_texture_filter1(void)
    check_arg_count(1);
 
    filter1 = parse_enum(0,
-                     "NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
-                     "LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
-                     "NEAREST_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
-                     "LINEAR_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
-                     "NEAREST_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
-                     "LINEAR_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
-                     NULL);
+                        "NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
+                        "LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
+                        "NEAREST_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+                        "LINEAR_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+                        "NEAREST_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+                        "LINEAR_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+                        NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.texture.filter1 = filter1;
      }
@@ -13136,7 +13374,7 @@ st_collections_group_parts_part_description_texture_filter1(void)
             @li LINEAR_MIPMAP_NEAREST
             @li NEAREST_MIPMAP_LINEAR
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_texture_filter2(void)
 {
@@ -13145,19 +13383,19 @@ st_collections_group_parts_part_description_texture_filter2(void)
    check_arg_count(1);
 
    filter2 = parse_enum(0,
-                     "NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
-                     "LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
-                     "NEAREST_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
-                     "LINEAR_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
-                     "NEAREST_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
-                     "LINEAR_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
-                     NULL);
+                        "NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
+                        "LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
+                        "NEAREST_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+                        "LINEAR_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+                        "NEAREST_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+                        "LINEAR_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+                        NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.texture.filter2 = filter2;
      }
@@ -13204,7 +13442,7 @@ st_collections_group_parts_part_description_texture_filter2(void)
             @li CUBE
             @li SPHERE
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_mesh_primitive(void)
 {
@@ -13213,16 +13451,16 @@ st_collections_group_parts_part_description_mesh_primitive(void)
    check_arg_count(1);
 
    primitive = parse_enum(0,
-                     "NONE", EVAS_CANVAS3D_MESH_PRIMITIVE_NONE,
-                     "CUBE", EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE,
-                     "SPHERE", EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE,
-                     NULL);
+                          "NONE", EVAS_CANVAS3D_MESH_PRIMITIVE_NONE,
+                          "CUBE", EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE,
+                          "SPHERE", EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE,
+                          NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.mesh.primitive = primitive;
      }
@@ -13250,7 +13488,7 @@ st_collections_group_parts_part_description_mesh_primitive(void)
             @li TRIANGLE_STRIP
             @li TRIANGLE_FAN
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_mesh_assembly(void)
 {
@@ -13259,20 +13497,20 @@ st_collections_group_parts_part_description_mesh_assembly(void)
    check_arg_count(1);
 
    assembly = parse_enum(0,
-                     "POINTS", EVAS_CANVAS3D_VERTEX_ASSEMBLY_POINTS,
-                     "LINES", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES,
-                     "LINE_STRIP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_STRIP,
-                     "LINE_LOOP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_LOOP,
-                     "TRIANGLES", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES,
-                     "TRIANGLE_STRIP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
-                     "TRIANGLE_FAN", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
-                     NULL);
+                         "POINTS", EVAS_CANVAS3D_VERTEX_ASSEMBLY_POINTS,
+                         "LINES", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES,
+                         "LINE_STRIP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_STRIP,
+                         "LINE_LOOP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_LOOP,
+                         "TRIANGLES", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES,
+                         "TRIANGLE_STRIP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
+                         "TRIANGLE_FAN", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
+                         NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.mesh.assembly = assembly;
      }
@@ -13294,7 +13532,7 @@ st_collections_group_parts_part_description_mesh_assembly(void)
         Name of model to be used as previously declared in the model block.
         It's required in any mesh_node part.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_mesh_geometry(void)
 {
@@ -13305,7 +13543,7 @@ st_collections_group_parts_part_description_mesh_geometry(void)
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         char *name;
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         name = parse_str(0);
         if (!ecore_file_exists(name))
@@ -13332,12 +13570,11 @@ st_collections_group_parts_part_description_mesh_frame(void)
 {
    check_arg_count(1);
 
-
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
      {
         Edje_Part_Description_Mesh_Node *ed;
 
-        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+        ed = (Edje_Part_Description_Mesh_Node *)current_desc;
 
         ed->mesh_node.mesh.frame = parse_int(0);
      }
@@ -13398,7 +13635,7 @@ st_collections_group_parts_part_description_mesh_frame(void)
         so it will be immovable, static.
     @since 1.8
     @endproperty
-*/
+ */
 
 #ifdef HAVE_EPHYSICS
 static void
@@ -13408,6 +13645,7 @@ st_collections_group_parts_part_description_physics_mass(void)
 
    current_desc->physics.mass = parse_float(0);
 }
+
 #endif
 
 /**
@@ -13428,7 +13666,7 @@ st_collections_group_parts_part_description_physics_mass(void)
 
     @since 1.8
     @endproperty
-*/
+ */
 
 #ifdef HAVE_EPHYSICS
 static void
@@ -13438,6 +13676,7 @@ st_collections_group_parts_part_description_physics_restitution(void)
 
    current_desc->physics.restitution = parse_float(0);
 }
+
 #endif
 
 /**
@@ -13458,7 +13697,7 @@ st_collections_group_parts_part_description_physics_restitution(void)
 
     @since 1.8
     @endproperty
-*/
+ */
 
 #ifdef HAVE_EPHYSICS
 static void
@@ -13468,6 +13707,7 @@ st_collections_group_parts_part_description_physics_friction(void)
 
    current_desc->physics.friction = parse_float(0);
 }
+
 #endif
 
 /**
@@ -13484,7 +13724,7 @@ st_collections_group_parts_part_description_physics_friction(void)
         Default is 1 (enabled).
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_ignore_part_pos(void)
@@ -13493,6 +13733,7 @@ st_collections_group_parts_part_description_physics_ignore_part_pos(void)
 
    current_desc->physics.ignore_part_pos = parse_bool(0);
 }
+
 #endif
 
 /**
@@ -13510,7 +13751,7 @@ st_collections_group_parts_part_description_physics_ignore_part_pos(void)
         Values should be between 0.0 and 1.0, and are set to 0 by default.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_damping(void)
@@ -13520,6 +13761,7 @@ st_collections_group_parts_part_description_physics_damping(void)
    current_desc->physics.damping.linear = parse_float_range(0, 0, 1.0);
    current_desc->physics.damping.angular = parse_float_range(1, 0, 1.0);
 }
+
 #endif
 
 /**
@@ -13542,7 +13784,7 @@ st_collections_group_parts_part_description_physics_damping(void)
         57.29 degrees / sec (1 rad/sec).
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_sleep(void)
@@ -13552,6 +13794,7 @@ st_collections_group_parts_part_description_physics_sleep(void)
    current_desc->physics.sleep.linear = parse_float(0);
    current_desc->physics.sleep.angular = parse_float(1);
 }
+
 #endif
 
 /**
@@ -13578,7 +13821,7 @@ st_collections_group_parts_part_description_physics_sleep(void)
 
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_material(void)
@@ -13586,15 +13829,16 @@ st_collections_group_parts_part_description_physics_material(void)
    check_arg_count(1);
 
    current_desc->physics.material = parse_enum(0,
-      "CUSTOM", EPHYSICS_BODY_MATERIAL_CUSTOM,
-      "CONCRETE", EPHYSICS_BODY_MATERIAL_CONCRETE,
-      "IRON", EPHYSICS_BODY_MATERIAL_IRON,
-      "PLASTIC", EPHYSICS_BODY_MATERIAL_PLASTIC,
-      "POLYSTYRENE", EPHYSICS_BODY_MATERIAL_POLYSTYRENE,
-      "RUBBER", EPHYSICS_BODY_MATERIAL_RUBBER,
-      "WOOD", EPHYSICS_BODY_MATERIAL_WOOD,
-      NULL);
+                                               "CUSTOM", EPHYSICS_BODY_MATERIAL_CUSTOM,
+                                               "CONCRETE", EPHYSICS_BODY_MATERIAL_CONCRETE,
+                                               "IRON", EPHYSICS_BODY_MATERIAL_IRON,
+                                               "PLASTIC", EPHYSICS_BODY_MATERIAL_PLASTIC,
+                                               "POLYSTYRENE", EPHYSICS_BODY_MATERIAL_POLYSTYRENE,
+                                               "RUBBER", EPHYSICS_BODY_MATERIAL_RUBBER,
+                                               "WOOD", EPHYSICS_BODY_MATERIAL_WOOD,
+                                               NULL);
 }
+
 #endif
 
 /**
@@ -13609,7 +13853,7 @@ st_collections_group_parts_part_description_physics_material(void)
         When a mass is explicitely set the density will be unset.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_density(void)
@@ -13618,6 +13862,7 @@ st_collections_group_parts_part_description_physics_density(void)
 
    current_desc->physics.density = parse_float(0);
 }
+
 #endif
 
 /**
@@ -13635,7 +13880,7 @@ st_collections_group_parts_part_description_physics_density(void)
         Valid values vary from 0.0 to 1.0. Only works on soft bodies and cloths.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_hardness(void)
@@ -13644,6 +13889,7 @@ st_collections_group_parts_part_description_physics_hardness(void)
 
    current_desc->physics.hardness = parse_float_range(0, 0, 1.0);
 }
+
 #endif
 
 /**
@@ -13658,7 +13904,7 @@ st_collections_group_parts_part_description_physics_hardness(void)
         Disabled by default (0).
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_light_on(void)
@@ -13667,6 +13913,7 @@ st_collections_group_parts_part_description_physics_light_on(void)
 
    current_desc->physics.light_on = parse_bool(0);
 }
+
 #endif
 
 /**
@@ -13679,7 +13926,7 @@ st_collections_group_parts_part_description_physics_light_on(void)
         Defines body position in z axis. It's set to -15 by default.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_z(void)
@@ -13688,6 +13935,7 @@ st_collections_group_parts_part_description_physics_z(void)
 
    current_desc->physics.z = parse_int(0);
 }
+
 #endif
 
 /**
@@ -13700,7 +13948,7 @@ st_collections_group_parts_part_description_physics_z(void)
         Defines body's depth (z axis). It's set to 30 by default.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_depth(void)
@@ -13709,6 +13957,7 @@ st_collections_group_parts_part_description_physics_depth(void)
 
    current_desc->physics.depth = parse_int(0);
 }
+
 #endif
 
 /**
@@ -13723,7 +13972,7 @@ st_collections_group_parts_part_description_physics_depth(void)
         This means that the object will be hidden when "backface culled".
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_backface_cull(void)
@@ -13732,6 +13981,7 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
 
    current_desc->physics.backcull = parse_bool(0);
 }
+
 #endif
 
 /** @edcsubsection{collections_group_parts_description_physics_movement_freedom,
@@ -13767,7 +14017,7 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
         Axes x and y are enabled by default.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_movement_freedom_linear(void)
@@ -13778,6 +14028,7 @@ st_collections_group_parts_part_description_physics_movement_freedom_linear(void
    current_desc->physics.mov_freedom.lin.y = parse_bool(1);
    current_desc->physics.mov_freedom.lin.z = parse_bool(2);
 }
+
 #endif
 
 /**
@@ -13792,7 +14043,7 @@ st_collections_group_parts_part_description_physics_movement_freedom_linear(void
         Z axis is enabled by default.
     @since 1.8
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_movement_freedom_angular(void)
@@ -13803,6 +14054,7 @@ st_collections_group_parts_part_description_physics_movement_freedom_angular(voi
    current_desc->physics.mov_freedom.ang.y = parse_bool(1);
    current_desc->physics.mov_freedom.ang.z = parse_bool(2);
 }
+
 #endif
 
 /** @edcsubsection{collections_group_parts_description_physics_faces,
@@ -13832,7 +14084,7 @@ st_collections_group_parts_part_description_physics_movement_freedom_angular(voi
         Only the "faces" block declared in the "default" description
         will be considered.
     @endblock
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_face(void)
@@ -13845,6 +14097,7 @@ st_collections_group_parts_part_description_physics_face(void)
    pface->type = 0;
    pface->source = NULL;
 }
+
 #endif
 
 /**
@@ -13874,7 +14127,7 @@ st_collections_group_parts_part_description_physics_face(void)
             @li SPHERE_FRONT
             @li SPHERE_BACK
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_face_type(void)
@@ -13884,35 +14137,36 @@ st_collections_group_parts_part_description_physics_face_type(void)
 
    pface = eina_list_data_get(eina_list_last(current_desc->physics.faces));
    pface->type = parse_enum(0,
-      "BOX_MIDDLE_FRONT", EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT,
-      "BOX_MIDDLE_BACK", EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK,
-      "BOX_FRONT", EPHYSICS_BODY_BOX_FACE_FRONT,
-      "BOX_BACK", EPHYSICS_BODY_BOX_FACE_BACK,
-      "BOX_LEFT", EPHYSICS_BODY_BOX_FACE_LEFT,
-      "BOX_RIGHT", EPHYSICS_BODY_BOX_FACE_RIGHT,
-      "BOX_TOP", EPHYSICS_BODY_BOX_FACE_TOP,
-      "BOX_BOTTOM", EPHYSICS_BODY_BOX_FACE_BOTTOM,
-      "CLOTH_FRONT", EPHYSICS_BODY_CLOTH_FACE_FRONT,
-      "CLOTH_BACK", EPHYSICS_BODY_CLOTH_FACE_BACK,
-      "CYLINDER_MIDDLE_FRONT", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,
-      "CYLINDER_MIDDLE_BACK", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK,
-      "CYLINDER_FRONT", EPHYSICS_BODY_CYLINDER_FACE_FRONT,
-      "CYLINDER_BACK", EPHYSICS_BODY_CYLINDER_FACE_BACK,
-      "CYLINDER_CURVED", EPHYSICS_BODY_CYLINDER_FACE_CURVED,
-      "SPHERE_FRONT", EPHYSICS_BODY_SPHERE_FACE_FRONT,
-      "SPHERE_BACK", EPHYSICS_BODY_SPHERE_FACE_BACK,
-      NULL);
+                            "BOX_MIDDLE_FRONT", EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT,
+                            "BOX_MIDDLE_BACK", EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK,
+                            "BOX_FRONT", EPHYSICS_BODY_BOX_FACE_FRONT,
+                            "BOX_BACK", EPHYSICS_BODY_BOX_FACE_BACK,
+                            "BOX_LEFT", EPHYSICS_BODY_BOX_FACE_LEFT,
+                            "BOX_RIGHT", EPHYSICS_BODY_BOX_FACE_RIGHT,
+                            "BOX_TOP", EPHYSICS_BODY_BOX_FACE_TOP,
+                            "BOX_BOTTOM", EPHYSICS_BODY_BOX_FACE_BOTTOM,
+                            "CLOTH_FRONT", EPHYSICS_BODY_CLOTH_FACE_FRONT,
+                            "CLOTH_BACK", EPHYSICS_BODY_CLOTH_FACE_BACK,
+                            "CYLINDER_MIDDLE_FRONT", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,
+                            "CYLINDER_MIDDLE_BACK", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK,
+                            "CYLINDER_FRONT", EPHYSICS_BODY_CYLINDER_FACE_FRONT,
+                            "CYLINDER_BACK", EPHYSICS_BODY_CYLINDER_FACE_BACK,
+                            "CYLINDER_CURVED", EPHYSICS_BODY_CYLINDER_FACE_CURVED,
+                            "SPHERE_FRONT", EPHYSICS_BODY_SPHERE_FACE_FRONT,
+                            "SPHERE_BACK", EPHYSICS_BODY_SPHERE_FACE_BACK,
+                            NULL);
 
    EINA_LIST_FOREACH(current_desc->physics.faces, l, pface2)
      {
-	if ((pface != pface2) && (pface->type == pface2->type))
-	  {
-	     ERR("parse error %s:%i. There is already a face of type \"%i\"",
-		 file_in, line - 1, pface->type);
-	     exit(-1);
-	  }
+        if ((pface != pface2) && (pface->type == pface2->type))
+          {
+             ERR("parse error %s:%i. There is already a face of type \"%i\"",
+                 file_in, line - 1, pface->type);
+             exit(-1);
+          }
      }
 }
+
 #endif
 
 /**
@@ -13925,7 +14179,7 @@ st_collections_group_parts_part_description_physics_face_type(void)
         This sets the group that is used as the object representing the physics
         body face.
     @endproperty
-*/
+ */
 #ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_description_physics_face_source(void)
@@ -13938,6 +14192,7 @@ st_collections_group_parts_part_description_physics_face_source(void)
    pface->source = parse_str(0);
    data_queue_face_group_lookup(pface->source);
 }
+
 #endif
 
 /** @edcsubsection{collections_group_parts_description_map,
@@ -13982,7 +14237,7 @@ st_collections_group_parts_part_description_physics_face_source(void)
         This also implicitly enables perspective transforms (see the on
         parameter for the map section).
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_perspective(void)
 {
@@ -14020,7 +14275,7 @@ st_collections_group_parts_part_description_map_perspective(void)
         the ambient lighting when calculating brightness (alpha also not
         used).
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_light(void)
 {
@@ -14050,7 +14305,7 @@ st_collections_group_parts_part_description_map_light(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_on(void)
 {
@@ -14073,7 +14328,7 @@ st_collections_group_parts_part_description_map_on(void)
 
         Defaults: 1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_smooth(void)
 {
@@ -14093,7 +14348,7 @@ st_collections_group_parts_part_description_map_smooth(void)
 
         Defaults: 1
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_alpha(void)
 {
@@ -14115,7 +14370,7 @@ st_collections_group_parts_part_description_map_alpha(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_backface_cull(void)
 {
@@ -14138,7 +14393,7 @@ st_collections_group_parts_part_description_map_backface_cull(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_perspective_on(void)
 {
@@ -14176,7 +14431,7 @@ st_collections_group_parts_part_description_map_perspective_on(void)
 
         Defaults: 255 255 255 255
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_color(void)
 {
@@ -14209,8 +14464,8 @@ st_collections_group_parts_part_description_map_color(void)
    *color = tmp;
    current_desc->map.colors_count++;
    current_desc->map.colors =
-      realloc(current_desc->map.colors,
-              sizeof(Edje_Map_Color*) * current_desc->map.colors_count);
+     realloc(current_desc->map.colors,
+             sizeof(Edje_Map_Color *) * current_desc->map.colors_count);
    current_desc->map.colors[current_desc->map.colors_count - 1] = color;
 }
 
@@ -14225,7 +14480,7 @@ st_collections_group_parts_part_description_map_color(void)
 
         Defaults: 1.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_zoom_x(void)
 {
@@ -14245,7 +14500,7 @@ st_collections_group_parts_part_description_map_zoom_x(void)
 
         Defaults: 1.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_zoom_y(void)
 {
@@ -14275,7 +14530,7 @@ st_collections_group_parts_part_description_map_zoom_y(void)
     @description
         Rotates the part, optionally with the center on another part.
     @endblock
-    
+
     @property
         center
     @parameters
@@ -14287,7 +14542,7 @@ st_collections_group_parts_part_description_map_zoom_y(void)
         x, y and z axes. If no center is given, the parts original center
         itself is used for the rotation center.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_rotation_center(void)
 {
@@ -14318,7 +14573,7 @@ st_collections_group_parts_part_description_map_rotation_center(void)
 
         Defaults: 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_rotation_x(void)
 {
@@ -14339,7 +14594,7 @@ st_collections_group_parts_part_description_map_rotation_x(void)
 
         Defaults: 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_rotation_y(void)
 {
@@ -14360,7 +14615,7 @@ st_collections_group_parts_part_description_map_rotation_y(void)
 
         Defaults: 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_map_rotation_z(void)
 {
@@ -14389,7 +14644,7 @@ st_collections_group_parts_part_description_map_rotation_z(void)
         Adds focal and plane perspective to the part. Active if perspective_on is true.
         Must be provided if the part is being used by other part as it's perspective target.
     @endblock
-    
+
     @property
         zplane
     @parameters
@@ -14400,7 +14655,7 @@ st_collections_group_parts_part_description_map_rotation_z(void)
 
         Defaults: 0
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_perspective_zplane(void)
 {
@@ -14408,7 +14663,6 @@ st_collections_group_parts_part_description_perspective_zplane(void)
 
    current_desc->persp.zplane = parse_int(0);
 }
-
 
 /**
     @page edcref
@@ -14422,7 +14676,7 @@ st_collections_group_parts_part_description_perspective_zplane(void)
 
         Defaults: 1000
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_perspective_focal(void)
 {
@@ -14430,7 +14684,6 @@ st_collections_group_parts_part_description_perspective_focal(void)
 
    current_desc->persp.focal = parse_int_range(0, 1, 0x7fffffff);
 }
-
 
 /** @edcsubsection{collections_group_parts_description_filter,
  *                 Group.Parts.Part.Description.Filter} */
@@ -14478,7 +14731,7 @@ st_collections_group_parts_part_description_perspective_focal(void)
         @ref evasfiltersref "here" or a filter name defined in the
         @ref sec_collections_group_filters "Filters" section.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_filter_code(void)
 {
@@ -14501,7 +14754,7 @@ st_collections_group_parts_part_description_filter_code(void)
         exit(-1);
      }
 
-   free((void*) filter->code);
+   free((void *)filter->code);
    filter->code = parse_str(0);
 }
 
@@ -14517,7 +14770,7 @@ st_collections_group_parts_part_description_filter_code(void)
         text or image filter operation. Optionally, a buffer name may be
         specified, so the same filter code can be used with different sources.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_filter_source(void)
 {
@@ -14529,7 +14782,7 @@ st_collections_group_parts_part_description_filter_source(void)
    int args;
 
    static const char allowed_name_chars[] =
-         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
+     "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
 
    if (current_part->type == EDJE_PART_TYPE_TEXT)
      filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
@@ -14619,7 +14872,7 @@ st_collections_group_parts_part_description_filter_source(void)
         mycc = { r = 255, g = 0, b, a, r2, g2, b2, a2, r3, g3, b3, a3 }
         @endcode
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_filter_data(void)
 {
@@ -14685,7 +14938,7 @@ st_collections_group_parts_part_description_filter_data(void)
         Set parameters for EXTERNAL parts. The value overwrites previous
         definitions with the same name.
     @endblock
-*/
+ */
 static void
 _st_collections_group_parts_part_description_params(Edje_External_Param_Type type)
 {
@@ -14704,25 +14957,25 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
         exit(-1);
      }
 
-   ed = (Edje_Part_Description_External*) current_desc;
+   ed = (Edje_Part_Description_External *)current_desc;
 
    name = parse_str(0);
 
    /* if a param with this name already exists, overwrite it */
    EINA_LIST_FOREACH(ed->external_params, l, param)
      {
-	if (!strcmp(param->name, name))
-	  {
-	     found = 1;
+        if (!strcmp(param->name, name))
+          {
+             found = 1;
              free(name);
-	     break;
-	  }
+             break;
+          }
      }
 
    if (!found)
      {
-	param = mem_alloc(SZ(Edje_External_Param));
-	param->name = name;
+        param = mem_alloc(SZ(Edje_External_Param));
+        param->name = name;
      }
 
    param->type = type;
@@ -14733,22 +14986,26 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
    switch (type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-	 param->i = parse_bool(1);
-	 break;
+        param->i = parse_bool(1);
+        break;
+
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
-	 param->i = parse_int(1);
-	 break;
+        param->i = parse_int(1);
+        break;
+
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-	 param->d = parse_float(1);
-	 break;
+        param->d = parse_float(1);
+        break;
+
       case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-	 param->s = parse_str(1);
-	 break;
+        param->s = parse_str(1);
+        break;
+
       default:
-	 ERR("parse error %s:%i. Invalid param type.",
-	     file_in, line - 1);
-	 break;
+        ERR("parse error %s:%i. Invalid param type.",
+            file_in, line - 1);
+        break;
      }
 
    if (!found)
@@ -14764,7 +15021,7 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
     @effect
         Adds an integer parameter for an external object
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_params_int(void)
 {
@@ -14780,7 +15037,7 @@ st_collections_group_parts_part_description_params_int(void)
     @effect
         Adds a double parameter for an external object
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_params_double(void)
 {
@@ -14796,7 +15053,7 @@ st_collections_group_parts_part_description_params_double(void)
     @effect
         Adds a string parameter for an external object
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_params_string(void)
 {
@@ -14812,7 +15069,7 @@ st_collections_group_parts_part_description_params_string(void)
     @effect
         Adds an boolean parameter for an external object.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_params_bool(void)
 {
@@ -14830,7 +15087,7 @@ st_collections_group_parts_part_description_params_bool(void)
         choice values are defined by external type at their register time
         and will be validated at runtime.
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_params_choice(void)
 {
@@ -14862,7 +15119,7 @@ st_collections_group_parts_part_description_params_choice(void)
         signal: "edje,signal"; source: "edje";
     @since 1.10
     @endblock
-*/
+ */
 static void
 ob_collections_group_parts_part_description_link(void)
 {
@@ -14872,10 +15129,10 @@ ob_collections_group_parts_part_description_link(void)
    const char *nm;
 
    pcp = eina_list_last_data_get(edje_collections);
-   epp = (Edje_Part_Parser*)current_part;
+   epp = (Edje_Part_Parser *)current_part;
 
    ob_collections_group_programs_program();
-   _edje_program_remove((Edje_Part_Collection*)pcp, current_program);
+   _edje_program_remove((Edje_Part_Collection *)pcp, current_program);
    el = mem_alloc(SZ(Edje_Part_Description_Link));
    el->pr = current_program;
    el->ed = current_desc;
@@ -14899,7 +15156,7 @@ ob_collections_group_parts_part_description_link(void)
         default value if it is not provided.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_parts_part_description_link_base(void)
 {
@@ -14913,7 +15170,7 @@ st_collections_group_parts_part_description_link_base(void)
    el = eina_list_last_data_get(pcp->links);
 
    if ((!el) || (el->pr != current_program) ||
-       (el->ed != current_desc) || (el->epp != (Edje_Part_Parser*)current_part) ||
+       (el->ed != current_desc) || (el->epp != (Edje_Part_Parser *)current_part) ||
        el->pr->source)
      ob_collections_group_parts_part_description_link();
    el = eina_list_last_data_get(pcp->links);
@@ -14923,17 +15180,17 @@ st_collections_group_parts_part_description_link_base(void)
    if (current_program->signal && pcp->link_hash)
      {
         snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal,
-                 current_program->source ? current_program->source: "");
+                 current_program->source ? current_program->source : "");
         eina_hash_list_remove(pcp->link_hash, buf, el);
      }
    if (!pcp->link_hash)
      pcp->link_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
-   free((void*)current_program->signal);
+   free((void *)current_program->signal);
    current_program->signal = name;
    if (get_arg_count() == 2)
      {
         name = parse_str(1);
-        free((void*)current_program->source);
+        free((void *)current_program->source);
         current_program->source = name;
      }
    snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal,
@@ -14971,13 +15228,13 @@ st_collections_group_parts_part_description_link_base(void)
     @description
         The programs group contain one ore more program.
     @endblock
-*/
+ */
 static void
 _program_sequence_check(void)
 {
    if (sequencing != current_program) return;
    ERR("parse error %s:%i. cannot set sequence parent program attributes within sequence block",
-                 file_in, line - 1);
+       file_in, line - 1);
    exit(-1);
 }
 
@@ -14997,14 +15254,14 @@ _program_after(const char *name)
 
    EINA_LIST_FOREACH(ep->after, l, pa2)
      {
-        if (!strcmp(name, (char*) (pa2 + 1)))
+        if (!strcmp(name, (char *)(pa2 + 1)))
           return;
      }
 
    pa = mem_alloc(SZ(Edje_Program_After) + strlen(name) + 1);
    pa->id = -1;
    ep->after = eina_list_append(ep->after, pa);
-   copy = (char*)(pa + 1);
+   copy = (char *)(pa + 1);
    memcpy(copy, name, strlen(name) + 1);
    pl = data_queue_program_lookup(pc, name, &(pa->id));
    if (pl)
@@ -15054,7 +15311,7 @@ _program_sequence_new(void)
         Programs can change the state of parts, react to events or trigger
         other events.
     @endblock
-*/
+ */
 static void
 ob_collections_group_programs_program(void)
 {
@@ -15120,7 +15377,7 @@ _program_name(char *name)
     @effect
         Symbolic name of program as a unique identifier.
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_name(void)
 {
@@ -15162,7 +15419,7 @@ st_collections_group_programs_program_name(void)
           - focus,part,in;
           - focus,part,out.
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_signal(void)
 {
@@ -15190,7 +15447,7 @@ st_collections_group_programs_program_signal(void)
         keyword per program may be used. ex: source: "button-*"; (Signals from
         any part or program named "button-*" are accepted).
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_source(void)
 {
@@ -15203,7 +15460,7 @@ st_collections_group_programs_program_source(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    _edje_program_remove(pc, current_program);
-   free((void*)current_program->source);
+   free((void *)current_program->source);
    current_program->source = parse_str(0);
    _edje_program_insert(pc, current_program);
 }
@@ -15219,7 +15476,7 @@ st_collections_group_programs_program_source(void)
         Only one filter per program can be used. If [part] is not given, the source of
         the event will be used instead.
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_filter(void)
 {
@@ -15227,12 +15484,15 @@ st_collections_group_programs_program_filter(void)
 
    _program_sequence_check();
 
-   if(is_param(1)) {
-	   current_program->filter.part = parse_str(0);
-	   current_program->filter.state = parse_str(1);
-   } else {
-	   current_program->filter.state = parse_str(0);
-   }
+   if (is_param(1))
+     {
+        current_program->filter.part = parse_str(0);
+        current_program->filter.state = parse_str(1);
+     }
+   else
+     {
+        current_program->filter.state = parse_str(0);
+     }
 }
 
 /**
@@ -15247,7 +15507,7 @@ st_collections_group_programs_program_filter(void)
 
         Defaults: 0.0 0.0
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_in(void)
 {
@@ -15302,7 +15562,7 @@ st_collections_group_programs_program_in(void)
         @li ALERT
 
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_action(void)
 {
@@ -15343,11 +15603,11 @@ st_collections_group_programs_program_action(void)
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
-	ep->state = parse_str(1);
-	if (get_arg_count() == 2)
-	  ep->value = 0.0;
-	else
-	  ep->value = parse_float_range(2, 0.0, 1.0);
+        ep->state = parse_str(1);
+        if (get_arg_count() == 2)
+          ep->value = 0.0;
+        else
+          ep->value = parse_float_range(2, 0.0, 1.0);
      }
    else if ((ep->action == EDJE_ACTION_TYPE_FOCUS_SET) ||
             (ep->action == EDJE_ACTION_TYPE_FOCUS_OBJECT))
@@ -15359,8 +15619,8 @@ st_collections_group_programs_program_action(void)
      }
    else if (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
      {
-	ep->state = parse_str(1);
-	ep->state2 = parse_str(2);
+        ep->state = parse_str(1);
+        ep->state2 = parse_str(2);
      }
    else if (ep->action == EDJE_ACTION_TYPE_SOUND_SAMPLE)
      {
@@ -15431,44 +15691,44 @@ st_collections_group_programs_program_action(void)
      }
    else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
      {
-	ep->value = parse_float(1);
-	ep->value2 = parse_float(2);
+        ep->value = parse_float(1);
+        ep->value2 = parse_float(2);
      }
    else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
      {
-	ep->value = parse_float(1);
-	ep->value2 = parse_float(2);
+        ep->value = parse_float(1);
+        ep->value2 = parse_float(2);
      }
    else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
      {
-	ep->value = parse_float(1);
-	ep->value2 = parse_float(2);
+        ep->value = parse_float(1);
+        ep->value2 = parse_float(2);
      }
    else if (ep->action == EDJE_ACTION_TYPE_PARAM_COPY)
      {
-	char *src_part, *dst_part;
-        
-	src_part = parse_str(1);
-	ep->state = parse_str(2);
-	dst_part = parse_str(3);
-	ep->state2 = parse_str(4);
-        
-	data_queue_part_lookup(pc, src_part, &(ep->param.src));
-	data_queue_part_lookup(pc, dst_part, &(ep->param.dst));
-        
-	free(src_part);
-	free(dst_part);
+        char *src_part, *dst_part;
+
+        src_part = parse_str(1);
+        ep->state = parse_str(2);
+        dst_part = parse_str(3);
+        ep->state2 = parse_str(4);
+
+        data_queue_part_lookup(pc, src_part, &(ep->param.src));
+        data_queue_part_lookup(pc, dst_part, &(ep->param.dst));
+
+        free(src_part);
+        free(dst_part);
      }
    else if (ep->action == EDJE_ACTION_TYPE_PARAM_SET)
      {
-	char *part;
-        
-	part = parse_str(1);
-	ep->state = parse_str(2);
-	ep->state2 = parse_str(3);
-        
-	data_queue_part_lookup(pc, part, &(ep->param.dst));
-	free(part);
+        char *part;
+
+        part = parse_str(1);
+        ep->state = parse_str(2);
+        ep->state2 = parse_str(3);
+
+        data_queue_part_lookup(pc, part, &(ep->param.dst));
+        free(part);
      }
 #ifdef HAVE_EPHYSICS
    else if ((ep->action == EDJE_ACTION_TYPE_PHYSICS_IMPULSE) ||
@@ -15494,14 +15754,16 @@ st_collections_group_programs_program_action(void)
    switch (ep->action)
      {
       case EDJE_ACTION_TYPE_SCRIPT:
-	/* this is implicitly set by script {} so this is here just for
-	 * completeness */
-	break;
+        /* this is implicitly set by script {} so this is here just for
+         * completeness */
+        break;
+
       case EDJE_ACTION_TYPE_ACTION_STOP:
       case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
         check_arg_count(1);
         break;
+
       case EDJE_ACTION_TYPE_PARAM_SET:
       case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
@@ -15511,22 +15773,27 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
         check_arg_count(4);
         break;
+
       case EDJE_ACTION_TYPE_PARAM_COPY:
       case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
         check_arg_count(5);
         break;
+
       case EDJE_ACTION_TYPE_SOUND_SAMPLE:
       case EDJE_ACTION_TYPE_VIBRATION_SAMPLE:
         break;
+
       case EDJE_ACTION_TYPE_STATE_SET:
         check_min_arg_count(2);
         break;
+
       case EDJE_ACTION_TYPE_FOCUS_SET:
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
         check_min_arg_count(1);
         break;
+
       default:
-	check_arg_count(3);
+        check_arg_count(3);
      }
 }
 
@@ -15552,23 +15819,23 @@ st_collections_group_programs_program_action(void)
         @li BOUNCE
         @li SPRING
         @li CUBIC_BEZIER
-        
+
         ACCEL_FAC, DECEL_FAC and SIN_FAC need the extra optional
         "interp val 1" to determine the "factor" of curviness. 1.0 is the same
         as their non-factor counterparts, where 0.0 is equal to linear.
         Numbers higher than one make the curve angles steeper with a more
         pronounced curve point.
-        
+
         DIVIS, BOUNCE and SPRING also require "interp val 2" in addition
         to "interp val 1".
-        
+
         DIVIS uses val 1 as the initial gradient start
         (0.0 is horizontal, 1.0 is diagonal (linear), 2.0 is twice the
         gradient of linear etc.). val 2 is interpreted as an integer factor
         defining how much the value swings "outside" the gradient only to come
         back to the final resting spot at the end. 0.0 for val 2 is equivalent
         to linear interpolation. Note that DIVIS can exceed 1.0
-        
+
         BOUNCE uses val 2 as the number of bounces (so its rounded down to
         the nearest integer value), with val 1 determining how much the
         bounce decays, with 0.0 giving linear decay per bounce, and higher
@@ -15583,7 +15850,7 @@ st_collections_group_programs_program_action(void)
         Can be used as the last parameter of any transition type. (since 1.1.0)
 
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_transition(void)
 {
@@ -15595,38 +15862,38 @@ st_collections_group_programs_program_transition(void)
    _program_sequence_check();
 
    current_program->tween.v1 = current_program->tween.v2 =
-   current_program->tween.v3 = current_program->tween.v4 = 0.0;
+       current_program->tween.v3 = current_program->tween.v4 = 0.0;
 
    current_program->tween.mode = parse_enum(0,
-                                            // short names
-					    "LIN", EDJE_TWEEN_MODE_LINEAR,
-					    "SIN", EDJE_TWEEN_MODE_SINUSOIDAL,
-					    "ACCEL", EDJE_TWEEN_MODE_ACCELERATE,
-					    "DECEL", EDJE_TWEEN_MODE_DECELERATE,
-					    "ACCEL_FAC", EDJE_TWEEN_MODE_ACCELERATE_FACTOR,
-					    "DECEL_FAC", EDJE_TWEEN_MODE_DECELERATE_FACTOR,
-					    "SIN_FAC", EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR,
-					    "DIVIS", EDJE_TWEEN_MODE_DIVISOR_INTERP,
-                                            
-                                            // long/full names
-					    "LINEAR", EDJE_TWEEN_MODE_LINEAR,
-					    "SINUSOIDAL", EDJE_TWEEN_MODE_SINUSOIDAL,
-					    "CUBIC_BEZIER", EDJE_TWEEN_MODE_CUBIC_BEZIER,
-					    "ACCELERATE", EDJE_TWEEN_MODE_ACCELERATE,
-					    "DECELERATE", EDJE_TWEEN_MODE_DECELERATE,
-					    "ACCELERATE_FACTOR", EDJE_TWEEN_MODE_ACCELERATE_FACTOR,
-					    "DECELERATE_FACTOR", EDJE_TWEEN_MODE_DECELERATE_FACTOR,
-					    "SINUSOIDAL_FACTOR", EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR,
-					    "DIVISOR_INTERP", EDJE_TWEEN_MODE_DIVISOR_INTERP,
-                                            
-                                            // long/full is short enough
-					    "BOUNCE", EDJE_TWEEN_MODE_BOUNCE,
-					    "SPRING", EDJE_TWEEN_MODE_SPRING,
-					    NULL);
+     // short names
+                                            "LIN", EDJE_TWEEN_MODE_LINEAR,
+                                            "SIN", EDJE_TWEEN_MODE_SINUSOIDAL,
+                                            "ACCEL", EDJE_TWEEN_MODE_ACCELERATE,
+                                            "DECEL", EDJE_TWEEN_MODE_DECELERATE,
+                                            "ACCEL_FAC", EDJE_TWEEN_MODE_ACCELERATE_FACTOR,
+                                            "DECEL_FAC", EDJE_TWEEN_MODE_DECELERATE_FACTOR,
+                                            "SIN_FAC", EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR,
+                                            "DIVIS", EDJE_TWEEN_MODE_DIVISOR_INTERP,
+
+     // long/full names
+                                            "LINEAR", EDJE_TWEEN_MODE_LINEAR,
+                                            "SINUSOIDAL", EDJE_TWEEN_MODE_SINUSOIDAL,
+                                            "CUBIC_BEZIER", EDJE_TWEEN_MODE_CUBIC_BEZIER,
+                                            "ACCELERATE", EDJE_TWEEN_MODE_ACCELERATE,
+                                            "DECELERATE", EDJE_TWEEN_MODE_DECELERATE,
+                                            "ACCELERATE_FACTOR", EDJE_TWEEN_MODE_ACCELERATE_FACTOR,
+                                            "DECELERATE_FACTOR", EDJE_TWEEN_MODE_DECELERATE_FACTOR,
+                                            "SINUSOIDAL_FACTOR", EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR,
+                                            "DIVISOR_INTERP", EDJE_TWEEN_MODE_DIVISOR_INTERP,
+
+     // long/full is short enough
+                                            "BOUNCE", EDJE_TWEEN_MODE_BOUNCE,
+                                            "SPRING", EDJE_TWEEN_MODE_SPRING,
+                                            NULL);
    current_program->tween.time = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
 
-  //Check the index of params not related to tweenmode's param
-  //This index use for count of the tweenmode's param
+   //Check the index of params not related to tweenmode's param
+   //This index use for count of the tweenmode's param
    if ((index = get_param_index("USE_DURATION_FACTOR")) != -1)
      {
         current_program->tween.use_duration_factor = parse_bool(index + 1);
@@ -15638,87 +15905,89 @@ st_collections_group_programs_program_transition(void)
           index = current;
         required_args++;
      }
-   switch(current_program->tween.mode)
+   switch (current_program->tween.mode)
      {
-        case EDJE_TWEEN_MODE_LINEAR:
-        case EDJE_TWEEN_MODE_SINUSOIDAL:
-        case EDJE_TWEEN_MODE_ACCELERATE:
-        case EDJE_TWEEN_MODE_DECELERATE:
-          {
-             required_args += 2;
-             check_arg_count(required_args);
-          }
-        break;
+      case EDJE_TWEEN_MODE_LINEAR:
+      case EDJE_TWEEN_MODE_SINUSOIDAL:
+      case EDJE_TWEEN_MODE_ACCELERATE:
+      case EDJE_TWEEN_MODE_DECELERATE:
+      {
+         required_args += 2;
+         check_arg_count(required_args);
+      }
+      break;
 
-        // the following need v1
-        case EDJE_TWEEN_MODE_ACCELERATE_FACTOR:
-        case EDJE_TWEEN_MODE_DECELERATE_FACTOR:
-        case EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR:
-          {
-             required_args += 3;
-             check_arg_count(required_args);
-             if (index == -1 || index > 2)
-               {
-                   current_program->tween.v1 =
-                      FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
-                   break;
-               }
-             else
-               {
-                  ERR("parse error %s:%i. Need 3rd parameter to set factor",
+      // the following need v1
+      case EDJE_TWEEN_MODE_ACCELERATE_FACTOR:
+      case EDJE_TWEEN_MODE_DECELERATE_FACTOR:
+      case EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR:
+      {
+         required_args += 3;
+         check_arg_count(required_args);
+         if (index == -1 || index > 2)
+           {
+              current_program->tween.v1 =
+                FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
+              break;
+           }
+         else
+           {
+              ERR("parse error %s:%i. Need 3rd parameter to set factor",
                   file_in, line - 1);
-                  exit(-1);
-               }
-          }
-        case EDJE_TWEEN_MODE_DIVISOR_INTERP:
-        case EDJE_TWEEN_MODE_BOUNCE:
-        case EDJE_TWEEN_MODE_SPRING:
-          {
-             required_args += 4;
-             check_arg_count(required_args);
-             if (index == -1 || index > 3)
-               {
-                   current_program->tween.v1 =
-                      FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
-                   current_program->tween.v2 =
-                      FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
-                   break;
-               }
-             else
-               {
-                  ERR("parse error %s:%i. "
+              exit(-1);
+           }
+      }
+
+      case EDJE_TWEEN_MODE_DIVISOR_INTERP:
+      case EDJE_TWEEN_MODE_BOUNCE:
+      case EDJE_TWEEN_MODE_SPRING:
+      {
+         required_args += 4;
+         check_arg_count(required_args);
+         if (index == -1 || index > 3)
+           {
+              current_program->tween.v1 =
+                FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
+              current_program->tween.v2 =
+                FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
+              break;
+           }
+         else
+           {
+              ERR("parse error %s:%i. "
                   "Need 3rd and 4th parameters to set factor and counts",
                   file_in, line - 1);
-                  exit(-1);
-               }
-          }
-        case EDJE_TWEEN_MODE_CUBIC_BEZIER:
-          {
-             required_args += 6;
-             check_arg_count(required_args);
-             if (index == -1 || index > 5)
-               {
-                   current_program->tween.v1 =
-                      FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
-                   current_program->tween.v2 =
-                      FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
-                   current_program->tween.v3 =
-                      FROM_DOUBLE(parse_float_range(4, -999999999.0, 999999999.0));
-                   current_program->tween.v4 =
-                      FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
-                   break;
-               }
-             else
-               {
-                  ERR("parse error %s:%i. "
+              exit(-1);
+           }
+      }
+
+      case EDJE_TWEEN_MODE_CUBIC_BEZIER:
+      {
+         required_args += 6;
+         check_arg_count(required_args);
+         if (index == -1 || index > 5)
+           {
+              current_program->tween.v1 =
+                FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
+              current_program->tween.v2 =
+                FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
+              current_program->tween.v3 =
+                FROM_DOUBLE(parse_float_range(4, -999999999.0, 999999999.0));
+              current_program->tween.v4 =
+                FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
+              break;
+           }
+         else
+           {
+              ERR("parse error %s:%i. "
                   "Need 3rd, 4th, 5th and 6th parameters to set x1, y1, x2 and y2",
                   file_in, line - 1);
-                  exit(-1);
-               }
-          }
-        }
-      if (current > 0)
-        current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+              exit(-1);
+           }
+      }
+     }
+   if (current > 0)
+     current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
 }
 
 static void
@@ -15736,7 +16005,7 @@ _program_target_add(char *name)
 
    EINA_LIST_FOREACH(ep->targets, l, etw)
      {
-        if (!strcmp(name, (char*) (etw + 1)))
+        if (!strcmp(name, (char *)(etw + 1)))
           {
              free(name);
              return;
@@ -15745,13 +16014,14 @@ _program_target_add(char *name)
 
    et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
    ep->targets = eina_list_append(ep->targets, et);
-   copy = (char*) (et + 1);
+   copy = (char *)(et + 1);
    memcpy(copy, name, strlen(name) + 1);
    switch (ep->action)
      {
       case EDJE_ACTION_TYPE_ACTION_STOP:
-         data_queue_program_lookup(pc, name, &(et->id));
-         break;
+        data_queue_program_lookup(pc, name, &(et->id));
+        break;
+
       case EDJE_ACTION_TYPE_STATE_SET:
       case EDJE_ACTION_TYPE_SIGNAL_EMIT:
       case EDJE_ACTION_TYPE_DRAG_VAL_SET:
@@ -15770,12 +16040,13 @@ _program_target_add(char *name)
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
       case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
 #endif
-         data_queue_part_lookup(pc, name, &(et->id));
-         break;
+        data_queue_part_lookup(pc, name, &(et->id));
+        break;
+
       default:
-         ERR("parse error %s:%i. target may only be used after action",
-             file_in, line - 1);
-         exit(-1);
+        ERR("parse error %s:%i. target may only be used after action",
+            file_in, line - 1);
+        exit(-1);
      }
    free(name);
 }
@@ -15791,7 +16062,7 @@ _program_target_add(char *name)
         keywords may be specified, one per target. SIGNAL_EMITs can have
         targets.
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_target(void)
 {
@@ -15814,7 +16085,7 @@ st_collections_group_programs_program_target(void)
         targets.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_targets(void)
 {
@@ -15840,7 +16111,7 @@ st_collections_group_programs_program_targets(void)
         and 'targets' keywords may be specified. SIGNAL_EMITs can have targets.
     @since 1.10
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_target_groups(void)
 {
@@ -15873,7 +16144,7 @@ st_collections_group_programs_program_target_groups(void)
              continue;
           }
         ERR("parse error %s:%i. There is no target_group with the name '%s'",
-                   file_in, line - 1, name);
+            file_in, line - 1, name);
         exit(-1);
      }
 }
@@ -15889,7 +16160,7 @@ st_collections_group_programs_program_target_groups(void)
         source and signal parameters of a program run as an "after" are ignored.
         Multiple "after" statements can be specified per program.
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_after(void)
 {
@@ -15910,11 +16181,11 @@ st_collections_group_programs_program_after(void)
         [name] [description]
     @effect
         Specifies a hint to let applications (or IDE's) know how to bind
-	things. The parameter name should contain the name of the function that
-	the application should use, and description describes how it should
-	be used.
+        things. The parameter name should contain the name of the function that
+        the application should use, and description describes how it should
+        be used.
     @endproperty
-*/
+ */
 static void
 st_collections_group_programs_program_api(void)
 {
@@ -15926,8 +16197,8 @@ st_collections_group_programs_program_api(void)
 
    if (is_param(1))
      {
-       check_arg_count(2);
-       current_program->api.description = parse_str(1);
+        check_arg_count(2);
+        current_program->api.description = parse_str(1);
      }
 }
 
@@ -15978,14 +16249,14 @@ st_collections_group_programs_program_api(void)
         sequenced program.
         @since 1.10
     @endblock
-*/
+ */
 static void
 ob_collections_group_programs_program_sequence(void)
 {
    sequencing = current_program;
    sequencing_lookups = current_program_lookups;
    current_program_lookups = NULL;
-   ((Edje_Program_Parser*)sequencing)->can_override = EINA_FALSE;
+   ((Edje_Program_Parser *)sequencing)->can_override = EINA_FALSE;
 }
 
 static void
@@ -15996,8 +16267,8 @@ st_collections_group_parts_part_api(void)
    current_part->api.name = parse_str(0);
    if (is_param(1))
      {
-       check_arg_count(2);
-       current_part->api.description = parse_str(1);
+        check_arg_count(2);
+        current_part->api.description = parse_str(1);
      }
 }
 
@@ -16137,6 +16408,7 @@ st_collections_group_physics_world_gravity(void)
    pc->physics.world.gravity.y = parse_int(1);
    pc->physics.world.gravity.z = parse_int(2);
 }
+
 #endif
 
 /**
@@ -16164,6 +16436,7 @@ st_collections_group_physics_world_rate(void)
 
    pc->physics.world.rate = parse_float(0);
 }
+
 #endif
 
 /**
@@ -16190,6 +16463,7 @@ st_collections_group_physics_world_depth(void)
 
    pc->physics.world.depth = parse_int(0);
 }
+
 #endif
 
 /**
@@ -16217,13 +16491,13 @@ st_collections_group_physics_world_z(void)
 
    pc->physics.world.z = parse_int(0);
 }
+
 #endif
 
 /**
     @page edcref
     </table>
-*/
-
+ */
 
 void
 edje_cc_handlers_pop_notify(const char *token)
@@ -16231,7 +16505,7 @@ edje_cc_handlers_pop_notify(const char *token)
    if (sequencing && (!strcmp(token, "sequence")))
      {
         current_program = sequencing;
-        ((Edje_Program_Parser*)sequencing)->can_override = EINA_TRUE;
+        ((Edje_Program_Parser *)sequencing)->can_override = EINA_TRUE;
         eina_list_free(current_program_lookups);
         current_program_lookups = sequencing_lookups;
         sequencing_lookups = NULL;
@@ -16251,39 +16525,39 @@ edje_cc_handlers_pop_notify(const char *token)
 static void
 edje_cc_handlers_hierarchy_set(Edje_Part *src)
 {  /* This funcion makes current part rel_1.id, rel_2.id relative to src */
-   if (!src->name)
-     {
-        ERR("parse error %s:%i. You must set parent name before creating nested part",
-            file_in, line - 1);
-        exit(-1);
-     }
-   st_collections_group_parts_part_description_rel1_to_set(src->name);
-   st_collections_group_parts_part_description_rel2_to_set(src->name);
+  if (!src->name)
+    {
+       ERR("parse error %s:%i. You must set parent name before creating nested part",
+           file_in, line - 1);
+       exit(-1);
+    }
+  st_collections_group_parts_part_description_rel1_to_set(src->name);
+  st_collections_group_parts_part_description_rel2_to_set(src->name);
 }
 
 static Edje_Part *
 edje_cc_handlers_hierarchy_parent_get(void)
 {  /* Return the parent part pointer */
-   int idx = eina_array_count(part_hierarchy) - 2;
-   Edje_Cc_Handlers_Hierarchy_Info *info = (idx >= 0) ?
-      eina_array_data_get(part_hierarchy, idx) : NULL;
+  int idx = eina_array_count(part_hierarchy) - 2;
+  Edje_Cc_Handlers_Hierarchy_Info *info = (idx >= 0) ?
+    eina_array_data_get(part_hierarchy, idx) : NULL;
 
-   return (info) ? info->ep : NULL;
+  return (info) ? info->ep : NULL;
 }
 
 static void
 edje_cc_handlers_hierarchy_push(Edje_Part *ep, Edje_Part *cp)
 {  /* Remove part from hierarchy stack when finished parsing it */
-   Edje_Cc_Handlers_Hierarchy_Info *info = malloc(sizeof(*info));
-   info->current_de = current_de;
-   info->current_part = cp;  /* current_part restored on pop */
-   info->current_item = current_item;
-   info->current_desc = current_desc;
-   info->parent_desc = parent_desc;
-   info->current_program = current_program;
-   info->ep = ep;
+  Edje_Cc_Handlers_Hierarchy_Info *info = malloc(sizeof(*info));
+  info->current_de = current_de;
+  info->current_part = cp;   /* current_part restored on pop */
+  info->current_item = current_item;
+  info->current_desc = current_desc;
+  info->parent_desc = parent_desc;
+  info->current_program = current_program;
+  info->ep = ep;
 
-   eina_array_push(part_hierarchy, info);
+  eina_array_push(part_hierarchy, info);
 }
 
 static void
@@ -16294,10 +16568,10 @@ edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new)
    unsigned int i;
 
    EINA_ARRAY_ITER_NEXT(part_hierarchy, i, item, iterator)
-     {
-        if (item->ep == old) item->ep = new;
-        if (item->current_part == old) item->current_part = new;
-     }
+   {
+      if (item->ep == old) item->ep = new;
+      if (item->current_part == old) item->current_part = new;
+   }
 }
 
 void
@@ -16316,44 +16590,44 @@ edje_cc_handlers_hierarchy_free(void)
 static void
 edje_cc_handlers_hierarchy_pop(void)
 {  /* Remove part from hierarchy stack when finished parsing it */
-   Edje_Cc_Handlers_Hierarchy_Info *info = eina_array_pop(part_hierarchy);
+  Edje_Cc_Handlers_Hierarchy_Info *info = eina_array_pop(part_hierarchy);
 
-   if (current_part)
-     {
-        unsigned int i;
+  if (current_part)
+    {
+       unsigned int i;
 
-        if (!current_part->name)
-          {
-             WRN("Parse error near %s:%i. Unnamed part exists in Group \"%s\".",
-                 file_in, line - 1, current_de->entry);
-          }
+       if (!current_part->name)
+         {
+            WRN("Parse error near %s:%i. Unnamed part exists in Group \"%s\".",
+                file_in, line - 1, current_de->entry);
+         }
 
-        for (i = 0; i < current_part->other.desc_count; i++)
-          {
-             if (!current_part->other.desc[i]->state.name)
-               {
-                  ERR("syntax error near %s:%i. Non-default or inherited parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
-                        file_in, line - 1, current_de->entry, current_part->name);
-                    exit(-1);
-               }
-          }
+       for (i = 0; i < current_part->other.desc_count; i++)
+         {
+            if (!current_part->other.desc[i]->state.name)
+              {
+                 ERR("syntax error near %s:%i. Non-default or inherited parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
+                     file_in, line - 1, current_de->entry, current_part->name);
+                 exit(-1);
+              }
+         }
 
-        /* auto-add default desc if it was omitted */
-        if (!current_part->default_desc)
-          ob_collections_group_parts_part_description();
-     }
+       /* auto-add default desc if it was omitted */
+       if (!current_part->default_desc)
+         ob_collections_group_parts_part_description();
+    }
 
-   if (info)
-     {
-        current_de = info->current_de;
-        current_part = info->current_part;
-        current_item = info->current_item;
-        current_desc = info->current_desc;
-        parent_desc = info->parent_desc;
-        current_program = info->current_program;
+  if (info)
+    {
+       current_de = info->current_de;
+       current_part = info->current_part;
+       current_item = info->current_item;
+       current_desc = info->current_desc;
+       parent_desc = info->parent_desc;
+       current_program = info->current_program;
 
-        free(info);
-     }
+       free(info);
+    }
 }
 
 Eina_Bool
@@ -16393,12 +16667,12 @@ edje_cc_handlers_wildcard(void)
                {
                   if ((!current_desc->state.name) || strcmp(current_desc->state.name, token))
                     {
-                       free((char*)current_desc->state.name);
+                       free((char *)current_desc->state.name);
                        current_desc->state.name = token;
                        _part_description_state_update(current_desc);
                     }
-                    stack_pop_quick(EINA_FALSE, current_desc->state.name != token);
-                    return EINA_TRUE;
+                  stack_pop_quick(EINA_FALSE, current_desc->state.name != token);
+                  return EINA_TRUE;
                }
 
              if (!isdigit(token[0])) return EINA_FALSE;
@@ -16459,9 +16733,9 @@ edje_cc_handlers_wildcard(void)
    if (edje_file->styles && (!strcmp(last, "style")))
      {
         if (!had_quote) return EINA_FALSE;
-         _style_name(token);
-         stack_pop_quick(EINA_FALSE, EINA_FALSE);
-         return EINA_TRUE;
+        _style_name(token);
+        stack_pop_quick(EINA_FALSE, EINA_FALSE);
+        return EINA_TRUE;
      }
    if (edje_file->color_classes && (!strcmp(last, "color_class")))
      {
@@ -16486,3 +16760,4 @@ edje_cc_handlers_wildcard(void)
      }
    return EINA_FALSE;
 }
+

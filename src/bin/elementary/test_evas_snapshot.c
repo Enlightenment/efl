@@ -55,7 +55,7 @@ _render_post(void *data, const Efl_Event *ev)
 {
    Eo *snap = data;
 
-   efl_event_callback_del(ev->object, EFL_CANVAS_EVENT_RENDER_POST, _render_post, data);
+   efl_event_callback_del(ev->object, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _render_post, data);
    efl_file_save(snap, eina_slstr_printf("%s/snap-efl.png", eina_environment_tmp_get()), NULL, NULL);
 }
 
@@ -67,7 +67,7 @@ _save_image(void *data, const Efl_Event *ev EINA_UNUSED)
 
    // Save is available only during render_post
    snap = efl_key_wref_get(win, "snap");
-   efl_event_callback_add(win, EFL_CANVAS_EVENT_RENDER_POST, _render_post, snap);
+   efl_event_callback_add(win, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _render_post, snap);
 
    // Force a render in order to ensure post_render is called. EO API provides
    // no way to do manual render, so we add a damage to the snapshot object.
@@ -118,7 +118,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Eo *win, *table, *o, *snap, *box;
    const char *path;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Evas Snapshot"),
                  efl_ui_win_autodel_set(efl_added, 1));
 
@@ -204,5 +204,5 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    efl_key_wref_set(win, "snap", snap);
    efl_key_wref_set(win, "table", table);
-   efl_gfx_size_set(win, EINA_SIZE2D(400,  400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(400,  400));
 }

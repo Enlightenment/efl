@@ -68,7 +68,7 @@ _efl_model_acessor_free(Efl_Model_Accessor *acc)
        
         EINA_ARRAY_ITER_NEXT(acc->children, i, item, iterator)
           {
-            efl_del(item);
+            efl_unref(item);
           }
         eina_array_free(acc->children);
         acc->children = NULL;

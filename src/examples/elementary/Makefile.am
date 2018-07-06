@@ -54,6 +54,7 @@ LDADD = \
 -lm \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/efl/libefl.la \
 $(top_builddir)/src/lib/eet/libeet.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -177,13 +178,10 @@ efl_thread_3.c \
 efl_thread_4.c \
 efl_thread_5.c \
 efl_thread_6.c \
-efl_thread_win32_1.c \
-efl_thread_win32_2.c \
-efl_thread_win32_3.c \
-efl_thread_win32_4.c \
 efl_ui_list_example_1.c \
-efl_ui_list_example_2.c \
-efl_ui_list_example_3.c
+efl_ui_view_list_example_1.c \
+efl_ui_view_list_example_2.c \
+efl_ui_view_list_example_3.c
 
 SRCS += \
 bg_cxx_example_01.cc \
@@ -214,7 +212,7 @@ evas3d_map_example.edc \
 theme_example.edc \
 layout_example.edc \
 codegen_example.edc \
-efl_ui_list_example.edc
+efl_ui_view_list_example.edc
 
 EDJS = $(EDCS:%.edc=%.edj)
 
@@ -237,14 +235,14 @@ files_DATA += \
 	codegen_example.edj \
 	evas3d_map_example.edj \
 	twitter_example_01.edj \
-	efl_ui_list_example.edj
+	efl_ui_view_list_example.edj
 
 CLEANFILES = \
 	theme_example.edj \
 	layout_example.edj\
 	evas3d_map_example.edj \
 	twitter_example_01.edj \
-	efl_ui_list_example.edj
+	efl_ui_view_list_example.edj
 
 clean-local:
 	rm -f *.epb *.cfg *.cfg.bkp
@@ -268,24 +266,23 @@ codegen_example_generated.h
 if HAVE_CSHARP
 
 if HAVE_WIN32
-MCS_FLAGS := $(MCS_FLAGS)
-MCS_FLAGS += -define:WIN32
+MCSFLAGS ?=
+MCSFLAGS += -define:WIN32
 endif
 
 efl_ui_slider_mono_SOURCES = \
 	efl_ui_slider_mono.cs
 
-efl_ui_slider_mono(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+efl_ui_slider_mono$(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f efl_ui_slider_mono$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 efl_ui_unit_converter_SOURCES = \
 	efl_ui_unit_converter.cs
 
-efl_ui_unit_converter: $(efl_ui_unit_converter_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f efl_ui_unit_converter
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
+efl_ui_unit_converter$(EXEEXT): $(efl_ui_unit_converter_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f efl_ui_unit_converter$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 endif
 
@@ -399,8 +396,9 @@ efl_thread_4 \
 efl_thread_5 \
 efl_thread_6 \
 efl_ui_list_example_1 \
-efl_ui_list_example_2 \
-efl_ui_list_example_3
+efl_ui_view_list_example_1 \
+efl_ui_view_list_example_2 \
+efl_ui_view_list_example_3
 #benchmark3d
 #sphere-hunter
 
@@ -453,13 +451,6 @@ $(NULL)
 endif
 
 if HAVE_CSHARP
-
-efl_ui_slider_mono_SOURCES = \
-	efl_ui_slider_mono.cs
-
-efl_ui_slider_mono$(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 examples_PROGRAMS += \
 	efl_ui_slider_mono \
@@ -620,7 +611,7 @@ screenshots: examples
 		convert $(HTML_SS_DIR)/$${SS_FILE} $(LATEX_SS_DIR)/$${SS_FILE/.png/.eps} ; \
 	done
 
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc efl_ui_list_example.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png codegen_example_generated.c codegen_example_generated.h codegen_example.edj prefs_example_01.epc prefs_example_02.epc prefs_example_03.epc prefs_example_03.edc
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc efl_ui_view_list_example.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png codegen_example_generated.c codegen_example_generated.h codegen_example.edj prefs_example_01.epc prefs_example_02.epc prefs_example_03.epc prefs_example_03.edc
 
 if HAVE_CSHARP
 EXTRA_DIST += $(MONO_SRCS)

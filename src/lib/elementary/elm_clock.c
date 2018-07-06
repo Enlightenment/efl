@@ -2,12 +2,14 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_ADAPTER_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
+#include "efl_ui_focus_composition_adapter.eo.h"
 
 #define MY_CLASS ELM_CLOCK_CLASS
 
@@ -193,7 +195,9 @@ _access_activate_cb(void *data,
    digit = evas_object_smart_parent_get(part_obj);
    if (!digit) return;
 
+   edje_object_freeze(digit);
    inc_btn = (Evas_Object *)edje_object_part_object_get(digit, "access.t");
+   edje_object_thaw(digit);
 
    if (part_obj != inc_btn)
      _on_clock_val_down_start(data, digit, NULL, NULL);
@@ -284,6 +288,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
           }
 
         /* no need to propagate mouse event with acess */
+        edje_object_freeze(sd->digit[i]);
         po = (Evas_Object *)edje_object_part_object_get
                (sd->digit[i], "access.t");
         evas_object_propagate_events_set(po, !is_access);
@@ -291,7 +296,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
         po = (Evas_Object *)edje_object_part_object_get
                (sd->digit[i], "access.b");
         evas_object_propagate_events_set(po, !is_access);
-
+        edje_object_thaw(sd->digit[i]);
      }
 
    /* am, pm edit button  */
@@ -329,6 +334,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
      }
 
     /* no need to propagate mouse event with access */
+   edje_object_freeze(sd->am_pm_obj);
     po = (Evas_Object *)edje_object_part_object_get
            (sd->am_pm_obj, "access.t");
     evas_object_propagate_events_set(po, !is_access);
@@ -336,21 +342,32 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
     po = (Evas_Object *)edje_object_part_object_get
            (sd->am_pm_obj, "access.b");
     evas_object_propagate_events_set(po, !is_access);
-
+   edje_object_thaw(sd->am_pm_obj);
 }
 
 static Evas_Object*
-_part_get(Evas_Object *part, const char *part_name)
+_focus_part_get(Evas_Object *part, const char *part_name)
 {
-   Evas_Object *po;
+   Evas_Object *po, *adapter;
 
+   edje_object_freeze(part);
    po = (Evas_Object *)edje_object_part_object_get
           (part, part_name);
+   edje_object_thaw(part);
 
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_ON)
-     return po;
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     po = evas_object_data_get(po, "_part_access_obj");
 
-   return evas_object_data_get(po, "_part_access_obj");
+   adapter = evas_object_data_get(po, "_focus_adapter_object");
+
+   if (!adapter)
+     {
+        adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, po);
+        efl_ui_focus_composition_adapter_canvas_object_set(adapter, part);
+        evas_object_data_set(po, "_focus_adapter_object", adapter);
+     }
+
+   return adapter;
 }
 
 static void
@@ -366,15 +383,15 @@ _flush_clock_composite_elements(Evas_Object *obj, Elm_Clock_Data *sd)
              if ((!sd->seconds) && (i >= 4)) break;
              if (sd->digedit & (1 << i))
                {
-                  items = eina_list_append(items, _part_get(sd->digit[i], "access.t"));
-                  items = eina_list_append(items, _part_get(sd->digit[i], "access.b"));
+                  items = eina_list_append(items, _focus_part_get(sd->digit[i], "access.t"));
+                  items = eina_list_append(items, _focus_part_get(sd->digit[i], "access.b"));
                }
           }
 
         if (sd->am_pm)
           {
-             items = eina_list_append(items, _part_get(sd->am_pm_obj, "access.t"));
-             items = eina_list_append(items, _part_get(sd->am_pm_obj, "access.b"));
+             items = eina_list_append(items, _focus_part_get(sd->am_pm_obj, "access.t"));
+             items = eina_list_append(items, _focus_part_get(sd->am_pm_obj, "access.b"));
           }
      }
 
@@ -422,7 +439,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
           }
 
         edje_object_scale_set
-          (wd->resize_obj, efl_gfx_scale_get(obj) *
+          (wd->resize_obj, efl_gfx_entity_scale_get(obj) *
           elm_config_scale_get());
 
         for (i = 0; i < 6; i++)
@@ -435,7 +452,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
              elm_widget_theme_object_set
                (obj, sd->digit[i], "clock", "flipdigit", style);
              edje_object_scale_set
-               (sd->digit[i], efl_gfx_scale_get(obj) *
+               (sd->digit[i], efl_gfx_entity_scale_get(obj) *
                elm_config_scale_get());
 
              if ((sd->edit) && (sd->digedit & (1 << i)))
@@ -459,8 +476,13 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
              edje_object_size_min_restricted_calc
                (sd->digit[i], &mw, &mh, mw, mh);
              evas_object_size_hint_min_set(sd->digit[i], mw, mh);
-             snprintf(buf, sizeof(buf), "d%i", i);
-             elm_layout_content_set(obj, buf, sd->digit[i]);
+             snprintf(buf, sizeof(buf), "elm.d%i", i);
+             if (!elm_layout_content_set(obj, buf, sd->digit[i]))
+               {
+                  // Previous versions of the theme did not have the namespace
+                  snprintf(buf, sizeof(buf), "d%i", i);
+                  elm_layout_content_set(obj, buf, sd->digit[i]);
+               }
              evas_object_show(sd->digit[i]);
           }
         if (sd->am_pm)
@@ -469,7 +491,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
                edje_object_add(evas_object_evas_get(wd->resize_obj));
              elm_widget_theme_object_set
                (obj, sd->am_pm_obj, "clock", "flipampm", style);
-             edje_object_scale_set(sd->am_pm_obj, efl_gfx_scale_get(obj) *
+             edje_object_scale_set(sd->am_pm_obj, efl_gfx_entity_scale_get(obj) *
                                    _elm_config->scale);
              if (sd->edit)
                edje_object_signal_emit
@@ -492,7 +514,8 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
              edje_object_size_min_restricted_calc
                (sd->am_pm_obj, &mw, &mh, mw, mh);
              evas_object_size_hint_min_set(sd->am_pm_obj, mw, mh);
-             elm_layout_content_set(obj, "ampm", sd->am_pm_obj);
+             if (!elm_layout_content_set(obj, "elm.ampm", sd->am_pm_obj))
+               elm_layout_content_set(obj, "ampm", sd->am_pm_obj);
              evas_object_show(sd->am_pm_obj);
           }
 
@@ -784,7 +807,7 @@ _elm_clock_efl_object_constructor(Eo *obj, Elm_Clock_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_TEXT);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TEXT);
 
    return obj;
 }
@@ -825,7 +848,7 @@ _elm_clock_time_set(Eo *obj, Elm_Clock_Data *sd, int hrs, int min, int sec)
 }
 
 EOLIAN static void
-_elm_clock_time_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, int *hrs, int *min, int *sec)
+_elm_clock_time_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, int *hrs, int *min, int *sec)
 {
    if (hrs) *hrs = sd->hrs;
    if (min) *min = sd->min;
@@ -845,7 +868,7 @@ _elm_clock_edit_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool edit)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_edit_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_edit_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->edit;
 }
@@ -861,7 +884,7 @@ _elm_clock_edit_mode_set(Eo *obj, Elm_Clock_Data *sd, Elm_Clock_Edit_Mode digedi
 }
 
 EOLIAN static Elm_Clock_Edit_Mode
-_elm_clock_edit_mode_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_edit_mode_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->digedit;
 }
@@ -874,7 +897,7 @@ _elm_clock_show_am_pm_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool am_pm)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_show_am_pm_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_show_am_pm_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->am_pm;
 }
@@ -887,7 +910,7 @@ _elm_clock_show_seconds_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool seconds)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_show_seconds_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_show_seconds_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->seconds;
 }
@@ -899,7 +922,7 @@ _elm_clock_first_interval_set(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, double in
 }
 
 EOLIAN static double
-_elm_clock_first_interval_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_first_interval_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->first_interval;
 }
@@ -921,7 +944,7 @@ _elm_clock_pause_set(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, Eina_Bool paused)
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_pause_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
+_elm_clock_pause_get(const Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->paused;
 }

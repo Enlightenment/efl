@@ -10,7 +10,7 @@
 
 #include "elua_suite.h"
 
-START_TEST(elua_api)
+EFL_START_TEST(elua_api)
 {
     Elua_State *st;
     lua_State *lst;
@@ -24,8 +24,6 @@ START_TEST(elua_api)
     cargv[0] = arg1;
     cargv[1] = arg2;
     char *spath = NULL;
-
-    fail_if(!elua_init());
 
     st = elua_state_new("test");
     fail_if(!st);
@@ -127,10 +125,8 @@ START_TEST(elua_api)
     fail_if(remove(buf));
 
     elua_state_free(st);
-
-    elua_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elua_lib_test(TCase *tc)
 {

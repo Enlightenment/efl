@@ -3,23 +3,43 @@
 #endif
 
 #define EFL_ACCESS_SELECTION_PROTECTED
-#define EFL_ACCESS_BETA
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_BETA
+#define EFL_ACCESS_OBJECT_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
+
+EFL_START_TEST (elm_list_legacy_type_check)
+{
+   Evas_Object *win, *list;
+   const char *type;
+
+   win = win_add(NULL, "list", ELM_WIN_BASIC);
+
+   list = elm_list_add(win);
+
+   type = elm_object_widget_type_get(list);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_List"));
+
+   type = evas_object_type_get(list);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_list"));
+
+}
+EFL_END_TEST
 
 #if 0
 // Skip following tests until Elm_Widget_Item will migrate to Eo infrastructure
 // and following features can be implemented
 
-START_TEST (elm_list_atspi_selection_selected_children_count_get)
+EFL_START_TEST (elm_list_atspi_selection_selected_children_count_get)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
  int val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
@@ -35,18 +55,17 @@ START_TEST (elm_list_atspi_selection_selected_children_count_get)
  val = elm_interface_atspi_selection_selected_children_count_get(list);
  ck_assert(val == 0);
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_child_select)
+EFL_START_TEST (elm_list_atspi_selection_child_select)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
@@ -55,18 +74,17 @@ START_TEST (elm_list_atspi_selection_child_select)
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item));
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_selected_child_deselect)
+EFL_START_TEST (elm_list_atspi_selection_selected_child_deselect)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  elm_list_multi_select_set(list, EINA_TRUE);
@@ -78,18 +96,17 @@ START_TEST (elm_list_atspi_selection_selected_child_deselect)
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_is_child_selected)
+EFL_START_TEST (elm_list_atspi_selection_is_child_selected)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
@@ -101,18 +118,17 @@ START_TEST (elm_list_atspi_selection_is_child_selected)
  val = elm_interface_atspi_selection_is_child_selected(list, 0);
  ck_assert(val == EINA_TRUE);
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_all_children_select)
+EFL_START_TEST (elm_list_atspi_selection_all_children_select)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
 
@@ -128,19 +144,18 @@ START_TEST (elm_list_atspi_selection_all_children_select)
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item1));
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item2));
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST (elm_list_atspi_selection_clear)
+EFL_START_TEST (elm_list_atspi_selection_clear)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
  Eina_Bool val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  elm_list_multi_select_set(list, EINA_TRUE);
@@ -155,18 +170,17 @@ START_TEST (elm_list_atspi_selection_clear)
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item1));
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item2));
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_list_atspi_selection_child_deselect)
+EFL_START_TEST (elm_list_atspi_selection_child_deselect)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
  Eina_Bool val;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
  elm_list_multi_select_set(list, EINA_TRUE);
@@ -178,70 +192,68 @@ START_TEST (elm_list_atspi_selection_child_deselect)
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #endif
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
  Evas_Object *win, *list;
  Efl_Access_Role role;
 
- elm_init(1, NULL);
- win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+ win = win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
- role = efl_access_role_get(list);
+ role = efl_access_object_role_get(list);
 
  ck_assert(role == EFL_ACCESS_ROLE_LIST);
 
- elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 /**
  * Validate if genlist implementation properly reset parent to Elm_Genlist_Item
  * from Elm_Genlist
  */
-START_TEST(elm_atspi_children_parent)
+EFL_START_TEST(elm_atspi_children_parent)
 {
-   Efl_Access *parent;
+   Efl_Access_Object *parent;
+   Elm_Object_Item *it;
 
-   elm_init(1, NULL);
-   Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+   Evas_Object *win = win_add(NULL, "list", ELM_WIN_BASIC);
 
    Evas_Object *icon = elm_icon_add(win);
    Evas_Object *end = elm_icon_add(win);
 
    Evas_Object *list = elm_list_add(win);
-   elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
+   it = elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
 
    evas_object_show(list);
 
-   parent = efl_access_parent_get(icon);
-   ck_assert(list == parent);
+   parent = efl_provider_find(efl_parent_get(icon), EFL_ACCESS_OBJECT_MIXIN);
+   ck_assert(it == parent);
 
-   parent = efl_access_parent_get(end);
-   ck_assert(list == parent);
+   parent = efl_provider_find(efl_parent_get(end), EFL_ACCESS_OBJECT_MIXIN);
+   ck_assert(it == parent);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_list(TCase *tc)
 {
- tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_list_legacy_type_check);
+   tcase_add_test(tc, elm_atspi_role_get);
 #if 0
- tcase_add_test(tc, elm_list_atspi_selection_selected_children_count_get);
- tcase_add_test(tc, elm_list_atspi_selection_child_select);
- tcase_add_test(tc, elm_list_atspi_selection_selected_child_deselect);
- tcase_add_test(tc, elm_list_atspi_selection_is_child_selected);
- tcase_add_test(tc, elm_list_atspi_selection_all_children_select);
- tcase_add_test(tc, elm_list_atspi_selection_clear);
- tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
+   tcase_add_test(tc, elm_list_atspi_selection_selected_children_count_get);
+   tcase_add_test(tc, elm_list_atspi_selection_child_select);
+   tcase_add_test(tc, elm_list_atspi_selection_selected_child_deselect);
+   tcase_add_test(tc, elm_list_atspi_selection_is_child_selected);
+   tcase_add_test(tc, elm_list_atspi_selection_all_children_select);
+   tcase_add_test(tc, elm_list_atspi_selection_clear);
+   tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
 #endif
- tcase_add_test(tc, elm_atspi_children_parent);
+   tcase_add_test(tc, elm_atspi_children_parent);
 }

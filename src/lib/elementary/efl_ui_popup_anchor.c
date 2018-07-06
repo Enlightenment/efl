@@ -23,9 +23,9 @@ _anchor_calc(Eo *obj)
 
    Eina_Position2D pos = {0, 0};
 
-   Eina_Rect a_geom = efl_gfx_geometry_get(pd->anchor);
-   Eina_Rect o_geom = efl_gfx_geometry_get(obj);
-   Eina_Rect p_geom = efl_gfx_geometry_get(ppd->win_parent);
+   Eina_Rect a_geom = efl_gfx_entity_geometry_get(pd->anchor);
+   Eina_Rect o_geom = efl_gfx_entity_geometry_get(obj);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(ppd->win_parent);
 
    pd->used_align = EFL_UI_POPUP_ALIGN_NONE;
 
@@ -192,7 +192,7 @@ _anchor_calc(Eo *obj)
 
 end:
    if (pd->used_align != EFL_UI_POPUP_ALIGN_NONE)
-     efl_gfx_position_set(efl_super(obj, EFL_UI_POPUP_CLASS), pos);
+     efl_gfx_entity_position_set(efl_super(obj, EFL_UI_POPUP_CLASS), pos);
 }
 
 static void
@@ -207,7 +207,7 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    EFL_UI_POPUP_DATA_GET_OR_RETURN(data, ppd);
    EFL_UI_POPUP_ANCHOR_DATA_GET(data, pd);
 
-   efl_event_callback_del(ppd->win_parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, data);
+   efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, data);
 
    pd->anchor = NULL;
    //Add align calc only
@@ -224,9 +224,9 @@ _anchor_detach(Eo *obj)
 
    if (!pd->anchor) return;
 
-   efl_event_callback_del(ppd->win_parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
-   efl_event_callback_del(pd->anchor, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
-   efl_event_callback_del(pd->anchor, EFL_GFX_EVENT_MOVE, _anchor_geom_cb, obj);
+   efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_MOVE, _anchor_geom_cb, obj);
    efl_event_callback_del(pd->anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
 }
 
@@ -240,9 +240,9 @@ _efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *ancho
 
    if (anchor)
      {
-        efl_event_callback_add(ppd->win_parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
-        efl_event_callback_add(anchor, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
-        efl_event_callback_add(anchor, EFL_GFX_EVENT_MOVE, _anchor_geom_cb, obj);
+        efl_event_callback_add(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_MOVE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
      }
 
@@ -253,7 +253,7 @@ _efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *ancho
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_popup_anchor_anchor_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Anchor_Data *pd)
+_efl_ui_popup_anchor_anchor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Anchor_Data *pd)
 {
    return pd->anchor;
 }
@@ -275,7 +275,7 @@ _efl_ui_popup_anchor_align_priority_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_align_priority_get(Eo *obj EINA_UNUSED,
+_efl_ui_popup_anchor_align_priority_get(const Eo *obj EINA_UNUSED,
                                         Efl_Ui_Popup_Anchor_Data *pd,
                                         Efl_Ui_Popup_Align *first,
                                         Efl_Ui_Popup_Align *second,
@@ -291,13 +291,13 @@ _efl_ui_popup_anchor_align_priority_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_efl_gfx_position_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eina_Position2D pos)
+_efl_ui_popup_anchor_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eina_Position2D pos)
 {
    _anchor_detach(obj);
 
    pd->anchor = NULL;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 }
 
 EOLIAN static void

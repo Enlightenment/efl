@@ -1,4 +1,4 @@
-interface Efl.Ui.Bg (Efl.Interface, Efl.Gfx, Efl.Image, Efl.File)
+interface Efl.Ui.Bg (Efl.Interface, Efl.Gfx.Entity, Efl.Gfx.Image, Efl.File)
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 

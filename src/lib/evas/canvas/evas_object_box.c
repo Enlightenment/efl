@@ -48,7 +48,7 @@ static void _sizing_eval(Evas_Object *obj);
    EVAS_OBJECT_BOX_DATA_GET(o, ptr);                                    \
 if (!ptr)                                                               \
 {                                                                       \
-   CRI("no widget data for object %p (%s)",                            \
+   ERR("No widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    fflush(stderr);                                                      \
    return;                                                              \
@@ -58,7 +58,7 @@ if (!ptr)                                                               \
    EVAS_OBJECT_BOX_DATA_GET(o, ptr);                                    \
 if (!ptr)                                                               \
 {                                                                       \
-   CRI("no widget data for object %p (%s)",                            \
+   ERR("No widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    fflush(stderr);                                                      \
    return val;                                                          \
@@ -121,7 +121,7 @@ _on_child_resize(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_on_child_del(void *data, const Efl_Event *event)
+_on_child_invalidate(void *data, const Efl_Event *event)
 {
    Evas_Object *box = data;
 
@@ -165,9 +165,9 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
-  { EFL_GFX_EVENT_RESIZE, _on_child_resize },
-  { EFL_EVENT_DEL, _on_child_del },
-  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+  { EFL_GFX_ENTITY_EVENT_RESIZE, _on_child_resize },
+  { EFL_EVENT_INVALIDATE, _on_child_invalidate },
+  { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
 static void
@@ -432,22 +432,22 @@ _evas_box_efl_canvas_group_group_del(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static void
-_evas_box_efl_gfx_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Size2D sz)
+_evas_box_efl_gfx_entity_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(o, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(o, MY_CLASS), sz);
    evas_object_smart_changed(o);
 }
 
 EOLIAN static void
-_evas_box_efl_gfx_position_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Position2D pos)
+_evas_box_efl_gfx_entity_position_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_MOVE , 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(o, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(o, MY_CLASS), pos);
    evas_object_smart_changed(o);
 }
 
@@ -478,7 +478,7 @@ evas_object_box_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -1678,7 +1678,7 @@ _evas_box_align_set(Eo *o, Evas_Object_Box_Data *priv, double horizontal, double
 }
 
 EOLIAN static void
-_evas_box_align_get(Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, double *horizontal, double *vertical)
+_evas_box_align_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, double *horizontal, double *vertical)
 {
    if (priv)
      {
@@ -1703,7 +1703,7 @@ _evas_box_padding_set(Eo *o, Evas_Object_Box_Data *priv, Evas_Coord horizontal, 
 }
 
 EOLIAN static void
-_evas_box_padding_get(Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
+_evas_box_padding_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    if (priv)
      {

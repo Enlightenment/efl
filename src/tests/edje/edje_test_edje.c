@@ -16,19 +16,12 @@
 
 #define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
 
-START_TEST(edje_test_edje_init)
+EFL_START_TEST(edje_test_edje_init)
 {
-   int ret;
-
-   ret = edje_init();
-   fail_if(ret != 1);
-
-   ret = edje_shutdown();
-   fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_edje_load)
+EFL_START_TEST(edje_test_edje_load)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Edje_Load_Error error;
@@ -41,7 +34,7 @@ START_TEST(edje_test_edje_load)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 static const char *
 test_layout_get(const char *name)
@@ -53,7 +46,7 @@ test_layout_get(const char *name)
    return filename;
 }
 
-START_TEST(edje_test_load_simple_layout)
+EFL_START_TEST(edje_test_load_simple_layout)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *obj;
@@ -67,9 +60,9 @@ START_TEST(edje_test_load_simple_layout)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_simple_layout_geometry)
+EFL_START_TEST(edje_test_simple_layout_geometry)
 {
    int x, y, w, h;
    int r, g, b, a;
@@ -96,9 +89,9 @@ START_TEST(edje_test_simple_layout_geometry)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_complex_layout)
+EFL_START_TEST(edje_test_complex_layout)
 {
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -144,9 +137,9 @@ START_TEST(edje_test_complex_layout)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_calculate_parens)
+EFL_START_TEST(edje_test_calculate_parens)
 {
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -167,9 +160,9 @@ START_TEST(edje_test_calculate_parens)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_masking)
+EFL_START_TEST(edje_test_masking)
 {
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -183,27 +176,35 @@ START_TEST(edje_test_masking)
    edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
    fail_if(x != 0 || y != 0 || w != 100 || h != 100);
 
+   edje_object_freeze(obj);
    clip = edje_object_part_object_get(obj, "clip2");
+   edje_object_thaw(obj);
    fail_if(!clip);
 
    /* check value of no_render flag as seen from evas land */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* check that text has a clip (based on description.clip_to) */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "text");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_clip_get(sub));
 
    /* test description.clip_to override */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "noclip");
+   edje_object_thaw(obj);
    clip2 = efl_canvas_object_clip_get(sub);
    fail_if(clip != clip2);
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_filters)
+EFL_START_TEST(edje_test_filters)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *text, *sub;
@@ -218,17 +219,25 @@ START_TEST(edje_test_filters)
    evas_object_resize(obj, 200, 200);
 
    /* check value of no_render flag as seen from evas land */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* check no_render inheritance */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask2");
+   edje_object_thaw(obj);
    fail_if(efl_canvas_object_no_render_get(sub));
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "mask3");
+   edje_object_thaw(obj);
    fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* text part: check filter status */
+   edje_object_freeze(obj);
    text = edje_object_part_object_get(obj, "text");
+   edje_object_thaw(obj);
    fail_if(!text);
 
    efl_gfx_filter_program_get(text, &prg, &name);
@@ -242,9 +251,9 @@ START_TEST(edje_test_filters)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_snapshot)
+EFL_START_TEST(edje_test_snapshot)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub;
@@ -258,7 +267,9 @@ START_TEST(edje_test_snapshot)
    evas_object_resize(obj, 200, 200);
 
    /* check value of no_render flag as seen from evas land */
+   edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "snap");
+   edje_object_thaw(obj);
    fail_if(!efl_isa(sub, EFL_CANVAS_SNAPSHOT_CLASS) &&
            !evas_object_image_snapshot_get(sub));
 
@@ -266,9 +277,9 @@ START_TEST(edje_test_snapshot)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_size_class)
+EFL_START_TEST(edje_test_size_class)
 {
    int minw, minh, minw2, minh2;
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -320,9 +331,9 @@ START_TEST(edje_test_size_class)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_color_class)
+EFL_START_TEST(edje_test_color_class)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
 
@@ -355,9 +366,9 @@ START_TEST(edje_test_color_class)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_swallows)
+EFL_START_TEST(edje_test_swallows)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *ly, *o1, *o2;
@@ -386,9 +397,29 @@ START_TEST(edje_test_swallows)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_swallows_eoapi)
+EFL_START_TEST(edje_test_swallows_lifetime)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *ly, *o1;
+
+   ly = edje_object_add(evas);
+   fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"), "test_group"));
+
+   fail_unless(edje_object_part_exists(ly, "swallow"));
+
+   o1 = edje_object_add(ly);
+   fail_if(!edje_object_part_swallow(ly, "swallow", o1));
+
+   evas_object_del(ly);
+   fail_if(!efl_parent_get(o1));
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
+
+EFL_START_TEST(edje_test_swallows_eoapi)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *ly, *o1, *o2;
@@ -417,9 +448,9 @@ START_TEST(edje_test_swallows_eoapi)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_access)
+EFL_START_TEST(edje_test_access)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const char *name;
@@ -460,9 +491,9 @@ START_TEST(edje_test_access)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_box)
+EFL_START_TEST(edje_test_box)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[5];
@@ -487,7 +518,9 @@ START_TEST(edje_test_box)
    edje_object_part_box_insert_after(obj, "box", sobjs[4], sobjs[3]);
    edje_object_part_box_insert_at(obj, "box", sobjs[2], 2);
 
+   edje_object_freeze(obj);
    box = edje_object_part_object_get(obj, "box");
+   edje_object_thaw(obj);
    it = evas_object_box_iterator_new(box);
 
    i = 0;
@@ -499,9 +532,9 @@ START_TEST(edje_test_box)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_box_eoapi)
+EFL_START_TEST(edje_test_box_eoapi)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[5];
@@ -559,9 +592,9 @@ START_TEST(edje_test_box_eoapi)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_table)
+EFL_START_TEST(edje_test_table)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[4];
@@ -634,9 +667,9 @@ START_TEST(edje_test_table)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_table_eoapi)
+EFL_START_TEST(edje_test_table_eoapi)
 {
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[4], *proxy;
@@ -716,9 +749,9 @@ START_TEST(edje_test_table_eoapi)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_combine_keywords)
+EFL_START_TEST(edje_test_combine_keywords)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -730,7 +763,7 @@ START_TEST(edje_test_combine_keywords)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _message_signal_reply_cb(void *data, Evas_Object *obj EINA_UNUSED,
@@ -760,7 +793,7 @@ _message_signal_reply_cb(void *data, Evas_Object *obj EINA_UNUSED,
    (*id)++;
 }
 
-START_TEST(edje_test_message_send_legacy)
+EFL_START_TEST(edje_test_message_send_legacy)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -814,9 +847,9 @@ START_TEST(edje_test_message_send_legacy)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_message_send_eo)
+EFL_START_TEST(edje_test_message_send_eo)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -872,9 +905,9 @@ START_TEST(edje_test_message_send_eo)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(edje_test_signals)
+EFL_START_TEST(edje_test_signals)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -884,8 +917,8 @@ START_TEST(edje_test_signals)
 
    obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
                  efl_file_set(efl_added, test_layout_get("test_signals.edj"), "level1"),
-                 efl_gfx_size_set(efl_added, EINA_SIZE2D(320, 240)),
-                 efl_gfx_visible_set(efl_added, 1));
+                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(320, 240)),
+                 efl_gfx_entity_visible_set(efl_added, 1));
 
    edje_object_signal_emit(obj, "mouse,in", "text");
 
@@ -905,7 +938,7 @@ START_TEST(edje_test_signals)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
 
 static int _signal_count;
 
@@ -917,7 +950,7 @@ _signal_callback_count_cb(void *data, Evas_Object *obj EINA_UNUSED,
    _signal_count += *_data;
 }
 
-START_TEST(edje_test_signal_callback_del_full)
+EFL_START_TEST(edje_test_signal_callback_del_full)
 {
    Evas *evas;
    Evas_Object *obj;
@@ -928,8 +961,8 @@ START_TEST(edje_test_signal_callback_del_full)
    obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
                  efl_file_set(efl_added,
                  test_layout_get("test_signal_callback_del_full.edj"), "test"),
-                 efl_gfx_size_set(efl_added, EINA_SIZE2D(320, 240)),
-                 efl_gfx_visible_set(efl_added, 1));
+                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(320, 240)),
+                 efl_gfx_entity_visible_set(efl_added, 1));
 
    edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[0]);
    edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[1]);
@@ -948,7 +981,135 @@ START_TEST(edje_test_signal_callback_del_full)
 
    EDJE_TEST_FREE_EVAS();
 }
-END_TEST
+EFL_END_TEST
+
+EFL_START_TEST(edje_test_text_cursor)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   const char *buf = "ABC<br/>DEF";
+   const char *txt;
+   int i, old_pos, new_pos;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_text_cursor.edj"), "test_text_cursor"));
+   edje_object_part_text_set(obj, "text", buf);
+   txt = edje_object_part_text_get(obj, "text");
+   fail_if(!txt || strcmp(txt, buf));
+
+   edje_object_part_text_cursor_pos_set(obj, "text", EDJE_CURSOR_MAIN, 0);
+   ck_assert_int_eq(edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN), 0);
+   edje_object_part_text_cursor_pos_set(obj, "text", EDJE_CURSOR_MAIN, 1);
+   ck_assert_int_eq(edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN), 1);
+
+   /* Move cursor to the 0 pos from 1 pos */
+   old_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert(edje_object_part_text_cursor_prev(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_ne(old_pos, new_pos);
+
+   /* Move cursor to the -1 pos from 0 pos. It has to fail. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_prev(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   /* Jump to 2nd line from 1st line.
+    * It has to return EINA_TRUE which means success. */
+   old_pos = new_pos;
+   ck_assert(edje_object_part_text_cursor_down(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_ne(old_pos, new_pos);
+
+   /* Try to jump to 3rd line from 2nd line. But, 3rd line does not exist.
+    * So, it has to return EINA_FALSE which means failure. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_down(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   /* Move cursor to the end of 2nd line. */
+   for (i = 0; i < 3; i++)
+     {
+        old_pos = new_pos;
+        ck_assert(edje_object_part_text_cursor_next(obj, "text", EDJE_CURSOR_MAIN));
+        new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+        ck_assert_int_ne(old_pos, new_pos);
+     }
+
+   /* Move cursor to the next of the end of 2nd line which does not exist. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_next(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   /* Jump to 1st line from 2nd line.
+    * It has to return EINA_TRUE which means success. */
+   old_pos = new_pos;
+   ck_assert(edje_object_part_text_cursor_up(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_ne(old_pos, new_pos);
+
+   /* Try to jump to the above of 1st line from 1st line. But, there is no such line.
+    * So, it has to return EINA_FALSE which means failure. */
+   old_pos = new_pos;
+   ck_assert(!edje_object_part_text_cursor_up(obj, "text", EDJE_CURSOR_MAIN));
+   new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
+   ck_assert_int_eq(old_pos, new_pos);
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
+
+EFL_START_TEST(edje_test_part_caching)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *ly, *o1, *global_p = NULL;
+
+   ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
+    efl_file_set(efl_added, test_layout_get("test_swallows.edj"), "test_group")
+   );
+
+   for (int i = 0; i < 10; ++i)
+     {
+        Evas_Object *p;
+
+        p = efl_part(ly, "swallow");
+        o1 = efl_content_get(p);
+
+        if (global_p)
+          ck_assert_ptr_eq(global_p, p);
+        global_p = p;
+
+        ck_assert_int_eq(efl_ref_count(p), 1);
+        ck_assert_ptr_eq(efl_parent_get(p), NULL);
+
+     }
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
+
+EFL_START_TEST(edje_test_textblock)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   const char *buf = "Hello";
+   const char *txt;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
+   edje_object_part_text_set(obj, "text", buf);
+   txt = edje_object_part_text_get(obj, "text");
+   fail_if(!txt || strcmp(txt, buf));
+
+   EDJE_TEST_FREE_EVAS();
+}
+EFL_END_TEST
 
 void edje_test_edje(TCase *tc)
 {
@@ -964,6 +1125,7 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_size_class);
    tcase_add_test(tc, edje_test_color_class);
    tcase_add_test(tc, edje_test_swallows);
+   tcase_add_test(tc, edje_test_swallows_lifetime);
    tcase_add_test(tc, edje_test_swallows_eoapi);
    tcase_add_test(tc, edje_test_access);
    tcase_add_test(tc, edje_test_box);
@@ -975,4 +1137,7 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_message_send_eo);
    tcase_add_test(tc, edje_test_signals);
    tcase_add_test(tc, edje_test_signal_callback_del_full);
+   tcase_add_test(tc, edje_test_text_cursor);
+   tcase_add_test(tc, edje_test_part_caching);
+   tcase_add_test(tc, edje_test_textblock);
 }

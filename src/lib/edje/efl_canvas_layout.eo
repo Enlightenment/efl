@@ -1,5 +1,3 @@
-import edje_types;
-
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
@@ -80,10 +78,11 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
                                     The value passed is the part name.]]
    }
    implements {
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Object.debug_name_override;
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { set; }
@@ -113,11 +112,11 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Layout.Signal.signal_process;
       Efl.Ui.Base.mirrored { set; get; }
       Efl.Ui.Base.language { set; get; }
-      Efl.Gfx.scale { set; get; }
+      Efl.Gfx.Entity.scale { set; get; }
       Efl.File.load_error { get; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
-      Efl.Part.part; [[Returns @Efl.Canvas.Layout.Part.]]
+      Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]
       Efl.Observer.update;
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }

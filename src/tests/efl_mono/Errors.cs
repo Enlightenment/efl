@@ -19,7 +19,7 @@ class TestEolianError
 
     public static void global_eina_error()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
         Test.AssertRaises<efl.EflException>(() => obj.RaisesEinaError());
     }
 
@@ -28,7 +28,7 @@ class TestEolianError
 
     public static void global_eina_error_inherited()
     {
-        test.Testing obj = new Child();
+        test.ITesting obj = new Child();
         Test.AssertRaises<efl.EflException>(() => obj.RaisesEinaError());
     }
 
@@ -44,7 +44,7 @@ class TestEolianError
 
     public static void exception_raised_from_inherited_virtual()
     {
-        test.Testing obj = new Overrider();
+        test.ITesting obj = new Overrider();
 
         Test.AssertRaises<efl.EflException>(obj.CallChildrenRaiseError);
     }
@@ -52,7 +52,7 @@ class TestEolianError
     // return eina_error
     public static void eina_error_return()
     {
-        test.Testing obj = new test.TestingConcrete();
+        test.ITesting obj = new test.Testing();
         eina.Error expected = 42;
         obj.SetErrorRet(expected);
         eina.Error error = obj.ReturnsError();
@@ -79,7 +79,7 @@ class TestEolianError
 
     public static void eina_error_return_from_inherited_virtual()
     {
-        test.Testing obj = new ReturnOverride();
+        test.ITesting obj = new ReturnOverride();
         eina.Error expected = 42;
         obj.SetErrorRet(expected);
         eina.Error error = obj.ReturnsError();
@@ -108,11 +108,11 @@ class TestEolianError
         // An event whose managed delegate generates an exception
         // must set an eina_error so it can be reported back to
         // the managed code
-        efl.Loop loop = new efl.LoopConcrete();
+        test.ITesting obj = new test.Testing();
         Listener listener = new Listener();
-        loop.CALLBACK_ADD += listener.callback;
+        obj.EvtWithIntEvt += listener.callback;
 
-        Test.AssertRaises<efl.EflException>(() => loop.IDLE += listener.another_callback);
+        Test.AssertRaises<efl.EflException>(() => { obj.EmitEventWithInt(2); });
     }
 }
 }

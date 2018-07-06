@@ -1,9 +1,9 @@
-class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack.Layout)
+class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack_Layout)
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
    methods {
       @property box_flow_homogenous {
-      	 [[Box flow homogenous property]]
+          [[Box flow homogenous property]]
          set {}
          get {}
          values {
@@ -11,7 +11,7 @@ class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack.Layout)
          }
       }
       @property box_flow_max_size {
-      	 [[Box flow maximum size property]]
+          [[Box flow maximum size property]]
          set {}
          get {}
          values {
@@ -20,6 +20,6 @@ class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack.Layout)
       }
    }
    implements {
-      Efl.Pack.Layout.layout_update;
+      Efl.Pack_Layout.layout_update;
    }
 }

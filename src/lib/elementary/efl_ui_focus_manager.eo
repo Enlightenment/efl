@@ -18,7 +18,7 @@ struct Efl.Ui.Focus.Relations {
     position_in_history : int; [[The position in the history stack]]
 }
 
-struct Efl.Ui.Focus.Manager.Logical_End_Detail {
+struct Efl.Ui.Focus.Manager_Logical_End_Detail {
     [[Structure holding the focus object with extra information on logical end
 
       @since 1.21
@@ -49,11 +49,11 @@ interface Efl.Ui.Focus.Manager {
             return : Efl.Ui.Focus.Object; [[The element which is now focused]]
         }
         request_move {
-            [[Returns the object which would be the next object to focus in the
-              given direction.
-            ]]
+            [[Return the object next in the $direction from $child.]]
             params {
                 direction : Efl.Ui.Focus.Direction; [[Direction to move focus]]
+                child : Efl.Ui.Focus.Object; [[The child where to look from. Pass $null to indicate the last focused child.]]
+                logical : bool; [[Weather you want to have a logical node as result or a logical. Note, at a move call no logical node will get focus, and this is passed as $false there.]]
             }
             return : Efl.Ui.Focus.Object; [[Next object to focus]]
         }
@@ -136,7 +136,7 @@ interface Efl.Ui.Focus.Manager {
 
               The returned object is the last object that would be returned if you start at the root and move the direction into next.
             ]]
-            return : Efl.Ui.Focus.Manager.Logical_End_Detail; [[Last object]]
+            return : Efl.Ui.Focus.Manager_Logical_End_Detail; [[Last object]]
         }
         reset_history {
             [[Reset the history stack of this manager object.
@@ -159,8 +159,8 @@ interface Efl.Ui.Focus.Manager {
     events {
         redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect
             object has changed, the old manager is passed as event info]]
-        flush,pre; [[Emitted once the graph calculationg will be performed]]
-        coords,dirty; [[Emitted once the graph is dirty, this means there are
+        flush,pre: void; [[Emitted once the graph calculationg will be performed]]
+        coords,dirty: void; [[Emitted once the graph is dirty, this means there are
             potential changes in border_elements you want to know about]]
         focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
             object, the passed focus object is the last focused object]]

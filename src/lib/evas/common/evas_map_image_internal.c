@@ -15,6 +15,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    RGBA_Gfx_Func func = NULL, func2 = NULL;
    Eina_Bool havea = EINA_FALSE;
    Eina_Bool sa, ssa, da;
+   Eina_Bool saa;  //Source alpha overriding with anti-alias flag.
    int havecol = 4;
 
    cx = clip_x;
@@ -102,21 +103,24 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    else
      {
         buf = alloca(cw * sizeof(DATA32));
-        if (havea) sa = 1;
+        if (havea) sa = EINA_TRUE;
+
+        saa = (anti_alias | sa);
+
         if (!mask_ie)
           {
              if (mul_col != 0xffffffff)
-               func = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, render_op);
+               func = evas_common_gfx_func_composite_pixel_color_span_get(saa, ssa, mul_col, da, cw, render_op);
              else
-               func = evas_common_gfx_func_composite_pixel_span_get(sa, ssa, da, cw, render_op);
+               func = evas_common_gfx_func_composite_pixel_span_get(saa, ssa, da, cw, render_op);
           }
         else
           {
-             func = evas_common_gfx_func_composite_pixel_mask_span_get(sa, ssa, da, cw, render_op);
+             func = evas_common_gfx_func_composite_pixel_mask_span_get(saa, ssa, da, cw, render_op);
              if (mul_col != 0xffffffff)
-               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, EVAS_RENDER_COPY);
+               func2 = evas_common_gfx_func_composite_pixel_color_span_get(saa, ssa, mul_col, da, cw, EVAS_RENDER_COPY);
           }
-        if (sa || anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
+        if (sa) src->cache_entry.flags.alpha = EINA_TRUE;
      }
    if (havecol == 0)
      {
@@ -134,7 +138,7 @@ static void
 FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
              RGBA_Draw_Context *dc,
              const RGBA_Map_Spans *ms,
-             int smooth, int anti_alias EINA_UNUSED, int level EINA_UNUSED) // level unused for now - for future use
+             int smooth, int anti_alias, int level EINA_UNUSED) // level unused for now - for future use
 {
    Line *spans;
    DATA32 *buf = NULL, *sp;
@@ -145,6 +149,7 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    int havecol;
    int i;
    Eina_Bool sa, ssa, da;
+   Eina_Bool saa;  //Source alpha overriding with anti-alias flag.
 
    RGBA_Image *mask_ie = dc->clip.mask;
    int mask_x = dc->clip.mask_x;
@@ -184,21 +189,24 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    if (!direct)
      {
         buf = alloca(cw * sizeof(DATA32));
-        if (ms->havea) sa = 1;
+        if (ms->havea) sa = EINA_TRUE;
+
+        saa = (anti_alias | sa);
+
         if (!mask_ie)
           {
              if (mul_col != 0xffffffff)
-               func = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, dc->render_op);
+               func = evas_common_gfx_func_composite_pixel_color_span_get(saa, ssa, dc->mul.col, da, cw, dc->render_op);
              else
-               func = evas_common_gfx_func_composite_pixel_span_get(sa, ssa, da, cw, dc->render_op);
+               func = evas_common_gfx_func_composite_pixel_span_get(saa, ssa, da, cw, dc->render_op);
           }
         else
           {
-             func = evas_common_gfx_func_composite_pixel_mask_span_get(sa, ssa, da, cw, dc->render_op);
+             func = evas_common_gfx_func_composite_pixel_mask_span_get(saa, ssa, da, cw, dc->render_op);
              if (mul_col != 0xffffffff)
-               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, EVAS_RENDER_COPY);
+               func2 = evas_common_gfx_func_composite_pixel_color_span_get(saa, ssa, dc->mul.col, da, cw, EVAS_RENDER_COPY);
           }
-        if (sa || anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
+        if (sa) src->cache_entry.flags.alpha = EINA_TRUE;
      }
 
    if (havecol == 0)

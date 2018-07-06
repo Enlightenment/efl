@@ -42,7 +42,7 @@ enum Efl.Ui.Focus.Move_Policy
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum Efl.Ui.Slider.Indicator_Visible_Mode
+enum Efl.Ui.Slider_Indicator_Visible_Mode
 {
    [[Slider's indicator visiblity mode.
 
@@ -88,7 +88,7 @@ enum Efl.Ui.Activate
    back, [[Activate back]]
 }
 
-enum Efl.Ui.Widget.Orientation_Mode
+enum Efl.Ui.Widget_Orientation_Mode
 {
    [[Widget orientation mode, or how the theme handles screen orientation.
 

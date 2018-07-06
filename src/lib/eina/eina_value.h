@@ -383,6 +383,14 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_VALUE;
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR;
 
 /**
+ * @var EINA_VALUE_TYPE_UCHAR
+ * manages unsigned char type.
+ *
+ * @since 1.21
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BOOL;
+
+/**
  * @var EINA_VALUE_TYPE_USHORT
  * manages unsigned short type.
  *
@@ -1828,6 +1836,7 @@ static inline Eina_Bool eina_value_array_value_get(const Eina_Value *src,
 /**
  * @def EINA_VALUE_ARRAY_FOREACH
  * @brief Definition for the macro to iterate over an array contained in an Eina_Value.
+ * @since 1.21
  *
  * @param array The list to iterate over.
  * @param length Contain the length of the array
@@ -1843,21 +1852,16 @@ static inline Eina_Bool eina_value_array_value_get(const Eina_Value *src,
  * Eina_Value array;
  * Eina_Error err;
  * unsigned int i, len;
- * Eina_Value v = EINA_VALUE_EMPTY;
  *
- * // array is already filled,
+ * // array is already filled with EINA_VALUE_TYPE_ERROR,
  * // its elements are unknown,
  * // EINA_VALUE_ARRAY_FOREACH will be used to check if there is no error
  *
  *
- * EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+ * EINA_VALUE_ARRAY_FOREACH(&array, len, i, err)
  *   {
- *      if (v.type == EINA_VALUE_TYPE_ERROR)
- *        {
- *           eina_value_get(&v, &err);
- *           fprintf(stderr, "Something has gone wrong: %s at index: %i\n", eina_error_msg_get(err), i);
- *           abort();
- *        }
+ *      eina_value_get(&v, &err);
+ *      fprintf(stderr, "Something has gone wrong: %s at index: %i\n", eina_error_msg_get(err), i);
  *   }
  * @endcode
  *
@@ -1866,10 +1870,10 @@ static inline Eina_Bool eina_value_array_value_get(const Eina_Value *src,
 #define EINA_VALUE_ARRAY_FOREACH(Array, Length, It, Value) \
   for (Length = eina_value_array_count(Array),             \
          It = 0,                                           \
-         eina_value_array_get(Array, It, Value);           \
+         eina_value_array_get(Array, It, &Value);          \
        It < Length;                                        \
        It++,                                               \
-         eina_value_array_get(Array, It, Value))
+         eina_value_array_get(Array, It, &Value))
 
 /**
  * @}
@@ -3167,7 +3171,7 @@ struct _Eina_Value_Struct
 };
 
 #define EINA_VALUE_STRUCT_DESC_DEFINE(Name, Ops, Size, ...)             \
-  static Eina_Value_Struct_Desc *                                       \
+  static inline Eina_Value_Struct_Desc *                                \
   Name(void)                                                            \
   {                                                                     \
      Eina_Value_Struct_Member tmp[] = { __VA_ARGS__ };                  \

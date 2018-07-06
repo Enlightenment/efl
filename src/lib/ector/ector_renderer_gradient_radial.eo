@@ -1,10 +1,10 @@
-mixin Ector.Renderer.Gradient.Radial (Efl.Gfx.Gradient.Radial)
+mixin Ector.Renderer.Gradient.Radial (Efl.Gfx.Gradient_Radial)
 {
    [[Ector gradient radial renderer mixin]]
    eo_prefix: ector_renderer_gradient_radial;
    implements {
-      Efl.Gfx.Gradient.Radial.center { get; set; }
-      Efl.Gfx.Gradient.Radial.radius { get; set; }
-      Efl.Gfx.Gradient.Radial.focal { get; set; }
+      Efl.Gfx.Gradient_Radial.center { get; set; }
+      Efl.Gfx.Gradient_Radial.radius { get; set; }
+      Efl.Gfx.Gradient_Radial.focal { get; set; }
    }
 }

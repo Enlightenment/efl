@@ -62,6 +62,7 @@ group { name: "e/modules/notification/main";
             WIN_SHADOW;
          }
       }
+      alias: "e.event.close" "notification.event.close";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "rel1";
@@ -174,7 +175,7 @@ group { name: "e/modules/notification/main";
             color: 200 200 200 255;
          }
       }
-      part { name: "e.event.close"; type: RECT;
+      part { name: "notification.event.close"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "base";

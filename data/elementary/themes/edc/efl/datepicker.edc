@@ -1,0 +1,345 @@
+group { "efl/datepicker";
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+             min: 150 170;
+         }
+      }
+      rect { "base_bg";
+         scale;
+         desc { "default";
+            rel.to: "base";
+            color_class: "datepicker_bg";
+         }
+      }
+      spacer { "padding_bg_top";
+         scale;
+         desc { "default";
+            min: 0 10;
+            max: -1 10;
+            fixed: 0 1;
+            rel1 {
+               relative: 0.0 0.0;
+               to: "base_bg";
+            }
+            rel2 {
+               relative: 1.0 0.0;
+               to: "base_bg";
+            }
+            align: 0.5 0.0;
+         }
+      }
+      spacer { "padding_bg_bottom";
+         scale;
+         desc { "default";
+            min: 0 10;
+            max: -1 10;
+            fixed: 0 1;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "base_bg";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "base_bg";
+            }
+            align: 0.5 1.0;
+         }
+      }
+      spacer { "bg";
+         scale;
+         desc { "default";
+            min: 150 150;
+            max: 150 150;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "padding_bg_top";
+            }
+            rel2 {
+               relative: 1.0 0.0;
+               to: "padding_bg_bottom";
+            }
+         }
+      }
+      spacer { "padding_left";
+         scale;
+         desc { "default";
+            min: 5 0;
+            max: 5 -1;
+            fixed: 1 0;
+            rel1 {
+               relative: 0.0 0.0;
+               to: "bg";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to: "bg";
+            }
+            align: 0.0 0.0;
+         }
+      }
+      spacer { "padding_right";
+         scale;
+         desc { "default";
+            min: 5 0;
+            max: 5 -1;
+            fixed: 1 0;
+            rel2.to: "bg";
+            rel1 {
+               relative: 1.0 0.0;
+               to: "bg";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "bg";
+            }
+            align: 1.0 1.0;
+         }
+      }
+      swallow { "efl.field0";
+         mouse;
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 40 0;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "padding_left";
+            }
+            rel2.to: "padding_left";
+            align: 0.0 0.5;
+         }
+      }
+      spacer { "padding_center1";
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 10 0;
+            max: 10 -1;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "efl.field0";
+            }
+            rel2.to: "efl.field0";
+            align: 0.0 0.5;
+         }
+      }
+      swallow { "efl.field1";
+         mouse;
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 40 0;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "padding_center1";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "padding_center2";
+               to_y: "padding_center1";
+            }
+         }
+      }
+      spacer { "padding_center2";
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 10 0;
+            max: 10 -1;
+            rel1.to: "efl.field2";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "efl.field2";
+            }
+            align: 1.0 0.5;
+         }
+      }
+      swallow { "efl.field2";
+         mouse;
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            min: 40 0;
+            rel1.to: "padding_right";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "padding_right";
+            }
+            align: 1.0 0.5;
+         }
+      }
+      rect { "access";
+         repeat;
+         desc { "default";
+            fixed: 1 1;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            color: 0 0 0 0;
+         }
+      }
+   }
+}
+
+group { "efl/datepicker/spin_button";
+   parts {
+      rect { "clip";
+         desc { "default";
+            rel.to: "efl.text_button";
+         }
+      }
+      spacer { "base";
+         scale;
+         desc { "default";
+           min: 40 150;
+         }
+      }
+      rect { "bg";
+         scale;
+         desc { "default";
+            color_class: "spinner_bg";
+         }
+      }
+      rect { "access";
+         repeat;
+         desc { "default";
+            fixed: 1 1;
+            color: 0 0 0 0;
+            rel1.to: "base";
+            rel2.to: "base";
+            hid;
+         }
+         desc { "active";
+            inherit: "default";
+            vis;
+         }
+      }
+      swallow { "efl.inc_button";
+         scale;
+         desc { "default";
+            align: 0.5 0.0;
+            min: 40 40;
+            max: 40 40;
+            fixed: 1 1;
+         }
+      }
+      swallow { "efl.dec_button";
+         scale;
+         desc { "default";
+            align: 0.5 1.0;
+            min: 40 40;
+            max: 40 40;
+            fixed: 1 1;
+         }
+      }
+      swallow { "efl.entry";
+         clip: "clip";
+         desc { "default";
+            fixed: 1 1;
+            rel1.to: "efl.text_button";
+            rel2.to: "efl.text_button";
+            hid;
+         }
+         desc { "active";
+            inherit: "default";
+            vis;
+         }
+      }
+      swallow { "efl.text_button";
+         scale;
+         desc { "default";
+            rel.to_x: "base";
+            rel1 {
+               to_y: "efl.inc_button";
+               relative: 0.0 1.0;
+            }
+            rel2 {
+               to_y: "efl.dec_button";
+               relative: 1.0 0.0;
+            }
+            min: 0 70;
+            max: -1 70;
+            fixed: 0 1;
+         }
+         desc { "inactive";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect { "disabler";
+         norepeat;
+         nomouse;
+         desc { "default";
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+   }
+   programs {
+      program { "entry_active";
+         signal: "efl,state,entry,active";
+         source: "efl";
+         action: STATE_SET "active";
+         target: "efl.entry";
+      }
+      program { "entry_inactive";
+         signal: "efl,state,entry,inactive";
+         source: "efl";
+         action: STATE_SET "default";
+         target: "efl.entry";
+      }
+      program { "text_button_active";
+         signal: "efl,state,button,active";
+         source: "efl";
+         action: STATE_SET "default";
+         target: "efl.text_button";
+      }
+      program { "text_button_inactive";
+         signal: "efl,state,button,inactive";
+         source: "efl";
+         action: STATE_SET "inactive";
+         target: "efl.text_button";
+      }
+      program { "access_activate";
+         signal: "efl,state,access,active";
+         source: "efl";
+         action:  STATE_SET "active";
+         target: "access";
+      }
+      program { "access_inactivate";
+         signal: "efl,state,access,inactive";
+         source: "efl";
+         action:  STATE_SET "default";
+         target: "access";
+      }
+      program { "disable";
+         signal: "efl,state,disabled";
+         source: "efl";
+         action: STATE_SET "disabled";
+         target: "disabler";
+      }
+      program { "enable";
+         signal: "efl,state,enabled";
+         source: "efl";
+         action: STATE_SET "default";
+         target: "disabler";
+      }
+   }
+}
+
+group { "efl/datepicker/spin_button/text_button";
+   inherit: "efl/spin_button/text_button";
+}
+
+group { "efl/datepicker/spin_button/inc_button";
+   inherit: "efl/spin_button/inc_button:vertical";
+}
+
+group { "efl/datepicker/spin_button/dec_button";
+   inherit: "efl/spin_button/dec_button:vertical";
+}

@@ -1,4 +1,4 @@
-class Elm.Player (Efl.Ui.Layout, Efl.Access.Widget.Action)
+class Elm.Player (Efl.Ui.Layout.Object, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary player class]]
    legacy_prefix: elm_player;
@@ -10,19 +10,19 @@ class Elm.Player (Efl.Ui.Layout, Efl.Access.Widget.Action)
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      forward,clicked; [[Called when forward was clicked]]
-      info,clicked; [[Called when info was clicked]]
-      next,clicked; [[Called when next was clicked]]
-      pause,clicked; [[Called when pause was clicked]]
-      play,clicked; [[Called when play was clicked]]
-      prev,clicked; [[Called when previous was clicked]]
-      rewind,clicked; [[Called when rewind was clicked]]
-      quality,clicked; [[Called when quality was clicked]]
-      eject,clicked; [[Called when eject was clicked]]
-      volume,clicked; [[Called when volume was clicked]]
-      mute,clicked; [[Called when mute was clicked]]
+      forward,clicked: void; [[Called when forward was clicked]]
+      info,clicked: void; [[Called when info was clicked]]
+      next,clicked: void; [[Called when next was clicked]]
+      pause,clicked: void; [[Called when pause was clicked]]
+      play,clicked: void; [[Called when play was clicked]]
+      prev,clicked: void; [[Called when previous was clicked]]
+      rewind,clicked: void; [[Called when rewind was clicked]]
+      quality,clicked: void; [[Called when quality was clicked]]
+      eject,clicked: void; [[Called when eject was clicked]]
+      volume,clicked: void; [[Called when volume was clicked]]
+      mute,clicked: void; [[Called when mute was clicked]]
    }
 }

@@ -1,13 +1,13 @@
-class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Shape)
+class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Shape, Efl.Gfx.Path)
 {
    [[Ector cairo renderer shape class]]
    eo_prefix: ector_renderer_cairo_shape;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
+      Efl.Gfx.Path.bounds_get;
       Ector.Renderer.crc { get; }
-      Ector.Renderer.Cairo.fill;
+      Ector.Renderer.Cairo.op_fill;
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;

@@ -48,7 +48,7 @@ static const char *built_engines[] = {
   NULL
 };
 
-START_TEST(evas_render_engines)
+EFL_START_TEST(evas_render_engines)
 {
    Eina_List *lst = evas_render_method_list();
    const char **itr;
@@ -61,9 +61,9 @@ START_TEST(evas_render_engines)
 
    evas_render_method_list_free(lst);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_render_lookup)
+EFL_START_TEST(evas_render_lookup)
 {
    const char **itr;
 
@@ -73,7 +73,7 @@ START_TEST(evas_render_lookup)
         fail_if(id == 0, "could not load engine: %s", *itr);
      }
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_render_engines(TCase *tc)
 {

@@ -18,45 +18,45 @@ abstract Ector.Renderer (Efl.Object)
       @property surface {
          [[Surface associated with this renderer]]
          set {
-	    [[Do not use.]]
-	 }
-	 get {
-	    [[Gets the surface associated with this renderer. Can not be set.]]
-	 }
-	 values {
-	    s: Ector.Surface; [[Associated surface]]
-	 }
+       [[Do not use.]]
+    }
+    get {
+       [[Gets the surface associated with this renderer. Can not be set.]]
+    }
+    values {
+       s: Ector.Surface; [[Associated surface]]
+    }
       }
       @property transformation {
-      	 [[Transformation property]]
+          [[Transformation property]]
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    @cref m: Eina.Matrix3; [[Transformation matrix]]
-	 }
+    }
+    get {
+    }
+    values {
+       @cref m: Eina.Matrix3; [[Transformation matrix]]
+    }
       }
       @property origin {
-      	 [[Renderer origin]]
+          [[Renderer origin]]
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    x: double; [[X coordinate]]
-	    y: double; [[Y coordinate]]
-	 }
+    }
+    get {
+    }
+    values {
+       x: double; [[X coordinate]]
+       y: double; [[Y coordinate]]
+    }
       }
       @property visibility {
          [[The given Ector renderer can be visible or invisible.]]
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    v: bool; [[$true to make the object visible, $false otherwise]]
-	 }
+    }
+    get {
+    }
+    values {
+       v: bool; [[$true to make the object visible, $false otherwise]]
+    }
       }
       @property color {
          [[Retrieves the general/main color of the given Ector renderer.
@@ -73,61 +73,55 @@ abstract Ector.Renderer (Efl.Object)
          set {
          }
          get {
-	 }
-	 values {
+    }
+    values {
             r: int; [[The red component of the given color.]]
             g: int; [[The green component of the given color.]]
             b: int; [[The blue component of the given color.]]
             a: int; [[The alpha component of the given color.]]
-	 }
+    }
       }
       @property mask {
-      	 [[Rendering mask]]
+          [[Rendering mask]]
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    r: Ector.Renderer; [[Rendering mask]]
-	 }
+    }
+    get {
+    }
+    values {
+       r: Ector.Renderer; [[Rendering mask]]
+    }
       }
       @property quality {
          [[Quality of the renderer]]
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    q: Ector.Quality; [[Quality of the renderer]]
-	 }
+    }
+    get {
+    }
+    values {
+       q: Ector.Quality; [[Quality of the renderer]]
+    }
       }
       @property crc {
          [[Cyclic redundancy check]]
          get {
             return: uint; [[CRC value]]
-	 }
-      }
-      bounds_get @pure_virtual {
-         [[Retrieves the bounds of the renderer]]
-	 params {
-	    @out r: Eina.Rect; [[Bounds as @Eina.Rect]]
-	 }
+    }
       }
       draw @pure_virtual {
-      	 [[Actual draw operation]]
+          [[Actual draw operation]]
          return: bool; [[$true on success, $false otherwise]]
-	 params {
-	    @in op: Efl.Gfx.Render_Op; [[Renderer operation]]
-	    @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
-	    @in mul_col: uint; [[Premultiplied color]]
-	 }
+    params {
+       @in op: Efl.Gfx.Render_Op; [[Renderer operation]]
+       @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
+       @in mul_col: uint; [[Premultiplied color]]
+    }
       }
       prepare {
-      	 [[Prepare for rendering]]
+          [[Prepare for rendering]]
          return: bool; [[$true on success, $false otherwise]]
       }
       done @pure_virtual {
-      	 [[Done with rendering]]
+          [[Done with rendering]]
          return: bool; [[$true on success, $false otherwise]]
       }
    }

@@ -1416,7 +1416,7 @@ _edje_embryo_fn_run_program(Embryo_Program *ep, Embryo_Cell *params)
    pr = ed->collection->patterns.table_programs[program_id % ed->collection->patterns.table_programs_size];
    if (pr)
      {
-        _edje_program_run(ed, pr, 0, "", "");
+        _edje_program_run(ed, pr, 0, "", "", NULL);
      }
    return 0;
 }

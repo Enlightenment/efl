@@ -69,7 +69,7 @@ static const Eet_Test_Image test_alpha = {
    }
 };
 
-START_TEST(eet_test_image_normal)
+EFL_START_TEST(eet_test_image_normal)
 {
    Eet_File *ef;
    char *file;
@@ -84,8 +84,6 @@ START_TEST(eet_test_image_normal)
    int tmpfd;
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   eet_init();
 
    fail_if(-1 == (tmpfd = mkstemp(file)));
    fail_if(!!close(tmpfd));
@@ -428,11 +426,10 @@ START_TEST(eet_test_image_normal)
 
    fail_if(unlink(file) != 0);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_image_small)
+EFL_START_TEST(eet_test_image_small)
 {
    char *file;
    unsigned int image[4];
@@ -453,8 +450,6 @@ START_TEST(eet_test_image_small)
    image[1] = IM1;
    image[2] = IM2;
    image[3] = IM3;
-
-   eet_init();
 
    fail_if(-1 == (tmpfd = mkstemp(file)));
    fail_if(!!close(tmpfd));
@@ -491,9 +486,8 @@ START_TEST(eet_test_image_small)
 
    free(data);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_image(TCase *tc)
 {

@@ -1,0 +1,8 @@
+class Efl.Ui.Radio_Legacy_Part (Efl.Ui.Layout.Part_Content)
+{
+   [[Elementary radio internal part class]]
+   data: null;
+   implements {
+      Efl.Content.content { set; }
+   }
+}

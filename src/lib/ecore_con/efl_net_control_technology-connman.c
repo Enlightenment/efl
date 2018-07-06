@@ -301,7 +301,7 @@ _efl_net_control_technology_powered_set(Eo *o, Efl_Net_Control_Technology_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_technology_powered_get(Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
+_efl_net_control_technology_powered_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
 {
    return pd->powered;
 }
@@ -319,7 +319,7 @@ _efl_net_control_technology_tethering_set(Eo *o, Efl_Net_Control_Technology_Data
 }
 
 EOLIAN static void
-_efl_net_control_technology_tethering_get(Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd, Eina_Bool *enabled, const char **identifier, const char **passphrase)
+_efl_net_control_technology_tethering_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd, Eina_Bool *enabled, const char **identifier, const char **passphrase)
 {
    if (enabled) *enabled = pd->tethering.enabled;
    if (identifier) *identifier = pd->tethering.identifier;
@@ -327,19 +327,19 @@ _efl_net_control_technology_tethering_get(Eo *o EINA_UNUSED, Efl_Net_Control_Tec
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_technology_connected_get(Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
+_efl_net_control_technology_connected_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
 {
    return pd->connected;
 }
 
 EOLIAN static const char *
-_efl_net_control_technology_name_get(Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
+_efl_net_control_technology_efl_object_name_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
 {
    return pd->name;
 }
 
 EOLIAN static Efl_Net_Control_Technology_Type
-_efl_net_control_technology_type_get(Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
+_efl_net_control_technology_type_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Technology_Data *pd)
 {
    return pd->type;
 }
@@ -429,7 +429,7 @@ efl_net_connman_technology_path_get(Efl_Net_Control_Technology *o)
 }
 
 Efl_Net_Control_Technology *
-efl_net_connman_technology_new(Efl_Net_Control *ctl, const char *path, Eldbus_Message_Iter *itr)
+efl_net_connman_technology_new(Efl_Net_Control_Manager *ctl, const char *path, Eldbus_Message_Iter *itr)
 {
    Eo *o;
    Efl_Net_Control_Technology_Data *pd;

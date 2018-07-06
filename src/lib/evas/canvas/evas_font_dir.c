@@ -537,7 +537,8 @@ evas_font_desc_cmp(const Evas_Font_Description *a,
    /* FIXME: Do actual comparison, i.e less than and bigger than. */
    return !((a->name == b->name) && (a->weight == b->weight) &&
             (a->slant == b->slant) && (a->width == b->width) &&
-            (a->spacing == b->spacing) && (a->lang == b->lang));
+            (a->spacing == b->spacing) && (a->lang == b->lang) &&
+            (a->fallbacks == b->fallbacks));
 }
 
 const char *
@@ -873,10 +874,11 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
         /* Handle font fallbacks */
         if (fdesc->fallbacks)
           {
-             while (1)
+             const char *start, *end;
+             start = fdesc->fallbacks;
+
+             while (start)
                {
-                  const char *start, *end;
-                  start = fdesc->fallbacks;
                   end = strchr(start, ',');
                   if (end)
                     {
@@ -884,6 +886,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
                        strncpy(tmp, start, end - start);
                        tmp[end - start] = 0;
                        FcPatternAddString (p_nm, FC_FAMILY, (FcChar8*) tmp);
+                       start = end + 1;
                     }
                   else
                     {

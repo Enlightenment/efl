@@ -71,7 +71,7 @@ _eina_test_lock_thread(void *data, Eina_Thread t)
    fail_if(!eina_thread_equal(t, thread));
    fail_if(strcmp("test", data));
 
-   for (i = 0; i < 10000; i++)
+   for (i = 0; i < 150; i++)
      {
         fail_if(eina_spinlock_take(&spin) != EINA_LOCK_SUCCEED);
         counter++;
@@ -81,18 +81,17 @@ _eina_test_lock_thread(void *data, Eina_Thread t)
    return data;
 }
 
-START_TEST(eina_test_spinlock)
+EFL_START_TEST(eina_test_spinlock)
 {
    unsigned int i;
 
-   fail_if(!eina_init());
 
    counter = 0;
    fail_if(!eina_spinlock_new(&spin));
 
    fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _eina_test_lock_thread, "test"));
 
-   for (i = 0; i < 10000; i++)
+   for (i = 0; i < 150; i++)
      {
         fail_if(eina_spinlock_take(&spin) != EINA_LOCK_SUCCEED);
         counter++;
@@ -101,16 +100,15 @@ START_TEST(eina_test_spinlock)
 
    fail_if(strcmp("test", eina_thread_join(thread)));
 
-   fail_if(counter != 20000);
+   fail_if(counter != 300);
 
    fail_if(eina_spinlock_take_try(&spin) != EINA_LOCK_SUCCEED);
    fail_if(eina_spinlock_release(&spin) != EINA_LOCK_SUCCEED);
 
    eina_spinlock_free(&spin);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_TLS key;
 static int _eina_tls_free_count = 0;
@@ -148,9 +146,8 @@ _eina_test_tls_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eina_test_tls)
+EFL_START_TEST(eina_test_tls)
 {
-   fail_if(!eina_init());
 
    fail_if(!eina_tls_cb_new(&key, _eina_test_tls_free));
 
@@ -167,9 +164,8 @@ START_TEST(eina_test_tls)
 
    eina_tls_free(key);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Barrier barrier;
 static Eina_Lock mtcond;
@@ -197,12 +193,11 @@ _eina_test_rwlock_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eina_test_rwlock)
+EFL_START_TEST(eina_test_rwlock)
 {
    struct timespec ts, ts2;
    long delay;
 
-   fail_if(!eina_init());
 
    fail_if(!eina_rwlock_new(&mutex));
    fail_if(!eina_lock_new(&mtcond));
@@ -251,9 +246,8 @@ START_TEST(eina_test_rwlock)
    eina_lock_free(&mtcond);
    eina_rwlock_free(&mutex);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_locking(TCase *tc)

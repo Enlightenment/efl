@@ -5,9 +5,9 @@
 
 typedef struct _App_Data
 {
-   Efl_Animation        *show_anim;
-   Efl_Animation        *hide_anim;
-   Efl_Animation_Player *anim_obj;
+   Efl_Canvas_Animation        *show_anim;
+   Efl_Canvas_Animation        *hide_anim;
+   Efl_Canvas_Animation_Player *anim_obj;
 
    Eina_Bool             is_btn_visible;
 } App_Data;
@@ -27,8 +27,8 @@ _anim_ended_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Animation_Player_Running_Event_Info *event_info = event->info;
-   double progress = event_info->progress;
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double progress = event_running->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
 
@@ -83,13 +83,13 @@ test_efl_anim_alpha(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_show(btn);
 
    //Show Animation
-   Efl_Animation *show_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 1.0);
    efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
 
    //Hide Animation
-   Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 1.0);
    efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
@@ -97,7 +97,7 @@ test_efl_anim_alpha(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    //Initialize App Data
    ad->show_anim = show_anim;
    ad->hide_anim = hide_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+   ad->anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
                           efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts

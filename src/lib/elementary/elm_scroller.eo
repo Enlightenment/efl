@@ -1,6 +1,6 @@
-class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
+class Elm.Scroller (Efl.Ui.Layout.Object, Elm.Interface_Scrollable,
                     Efl.Access.Widget.Action,
-                    Efl.Ui.Scrollable, Efl.Content)
+                    Efl.Ui.Scrollable, Efl.Content, Efl.Ui.Legacy)
 {
    [[Elementary scroller class]]
    legacy_prefix: elm_scroller;
@@ -42,8 +42,8 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
@@ -55,24 +55,24 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.single_direction { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Ui.Widget.focus_state_apply;
    }
    events {
-      scroll,page,changed; [[Called when scroll page changed]]
-      hbar,unpress; [[Called when horizontal bar is no longer pressed]]
-      hbar,press; [[Called when horizontal bar is pressed]]
-      hbar,drag; [[Called when horizontal bar is dragged]]
-      vbar,unpress; [[Called when vertical bar is no longer pressed]]
-      vbar,press; [[Called when vertical bar is pressed]]
-      vbar,drag; [[Called when vertical bar is dragged]]
-      scroll,left; [[Called when scrolling to left]]
-      scroll,right; [[Called when scrolling to right]]
-      scroll,up;  [[Called scrolled upwards]]
-      scroll,down; [[Called when scrolled downwards]]
-      edge,left; [[Called when hitting the left edge]]
-      edge,right; [[Called when hitting the right edge]]
-      edge,top; [[Called when hitting the top edge]]
-      edge,bottom; [[Called when hitting the bottom edge]]
+      scroll,page,changed: void; [[Called when scroll page changed]]
+      hbar,unpress: void; [[Called when horizontal bar is no longer pressed]]
+      hbar,press: void; [[Called when horizontal bar is pressed]]
+      hbar,drag: void; [[Called when horizontal bar is dragged]]
+      vbar,unpress: void; [[Called when vertical bar is no longer pressed]]
+      vbar,press: void; [[Called when vertical bar is pressed]]
+      vbar,drag: void; [[Called when vertical bar is dragged]]
+      scroll,left: void; [[Called when scrolling to left]]
+      scroll,right: void; [[Called when scrolling to right]]
+      scroll,up: void;  [[Called scrolled upwards]]
+      scroll,down: void; [[Called when scrolled downwards]]
+      edge,left: void; [[Called when hitting the left edge]]
+      edge,right: void; [[Called when hitting the right edge]]
+      edge,top: void; [[Called when hitting the top edge]]
+      edge,bottom: void; [[Called when hitting the bottom edge]]
    }
 }

@@ -1,7 +1,4 @@
-import efl_types;
-import eina_types;
-
-class Efl.Loop.Message.Future (Efl.Loop.Message)
+class Efl.Loop_Message_Future (Efl.Loop_Message)
 {
    [[ Used internally for futures on the loop ]]
    methods {

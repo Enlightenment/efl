@@ -102,7 +102,7 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
     }
 
     events {
-        slice,changed; [[The read-slice returned by @.slice may have changed.]]
+        slice,changed: void; [[The read-slice returned by @.slice may have changed.]]
     }
 
     implements {
@@ -116,6 +116,6 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
     }
 }

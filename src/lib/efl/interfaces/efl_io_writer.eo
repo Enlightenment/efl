@@ -41,13 +41,13 @@ interface Efl.Io.Writer {
             set @protected { }
             values {
                 can_write: bool; [[$true if it can be written without blocking or failure, $false
-                		   otherwise]]
+                         otherwise]]
             }
         }
     }
 
     events {
-        can_write,changed; [[Notifies can_write property changed.
+        can_write,changed: void; [[Notifies can_write property changed.
 
                              If @.can_write is $true there is data to
                              @.write without blocking/error. If

@@ -17,7 +17,6 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    Domain_Public_Data *pd = class_data;
    printf("Set Begin\n");
    pd->a = a;
-   sleep(1);
    printf("Set End\n");
    printf("Call Events\n");
    efl_event_callback_legacy_call(obj, EV_DOMAIN_A_CHANGED, &pd->a);
@@ -32,7 +31,7 @@ _a_get(Eo *obj EINA_UNUSED, void *class_data)
    return pd->a;
 }
 
-//return obj = efl_add(DOMAIN_CLASS, NULL);
+//return obj = efl_add_ref(DOMAIN_CLASS, NULL);
 
 EFL_VOID_FUNC_BODYV(domain_recursive, EFL_FUNC_CALL(n), int n);
 

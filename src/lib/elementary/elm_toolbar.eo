@@ -1,6 +1,6 @@
 import elm_general;
 
-enum Elm.Toolbar.Shrink_Mode
+enum Elm.Toolbar_Shrink_Mode
 {
    [[Set toolbar's items display behavior, it can be scrollable,
      show a menu with exceeding items, or simply hide them.
@@ -24,14 +24,44 @@ enum Elm.Toolbar.Shrink_Mode
 }
 
 class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
-                   Efl.Access.Widget.Action, Efl.Access.Selection,
-                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu)
+                   Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
+                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;
    eo_prefix: elm_obj_toolbar;
    event_prefix: elm_toolbar;
    methods {
+      @property selected_item {
+         get {
+            [[Get the selected item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The selected item or $null.]]
+         }
+      }
+      @property first_item {
+         get {
+            [[Get the first item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The first item or $null.]]
+         }
+      }
+      @property last_item {
+         get {
+            [[Get the last item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The last item or $null.]]
+         }
+      }
+      @property items {
+         get {
+            [[Returns a list of the widget item.]]
+            return: iterator<Elm.Widget.Item> @owned @warn_unused; [[iterator to widget items]]
+         }
+      }
       @property homogeneous {
          [[Control homogeneous mode.
 
@@ -118,7 +148,7 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          get {
          }
          values {
-            shrink_mode: Elm.Toolbar.Shrink_Mode; [[Toolbar's items display behavior]]
+            shrink_mode: Elm.Toolbar_Shrink_Mode; [[Toolbar's items display behavior]]
          }
       }
       @property menu_parent {
@@ -316,8 +346,8 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.on_access_update;
@@ -330,8 +360,8 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
       Efl.Ui.Widget.focus_state_apply;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.children { get; }
-      Efl.Access.state_set { get; }
+      Efl.Access.Object.access_children { get; }
+      Efl.Access.Object.state_set { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;
@@ -339,15 +369,11 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.child_deselect;
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.clear;
-      Efl.Ui.Menu.selected_item { get; }
-      Efl.Ui.Menu.first_item { get; }
-      Efl.Ui.Menu.last_item { get; }
-      Efl.Ui.Menu.items { get; }
+      Efl.Access.Selection.access_selection_clear;
       Efl.Ui.Focus.Composition.prepare;
    }
    events {
-      item,focused; [[Called when toolbar item got focus]]
-      item,unfocused; [[Called when toolbar item lost focus]]
+      item,focused: Efl.Object; [[Called when toolbar item got focus]]
+      item,unfocused: Efl.Object; [[Called when toolbar item lost focus]]
    }
 }

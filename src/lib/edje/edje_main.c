@@ -83,7 +83,7 @@ edje_init(void)
      }
 
    _edje_scale = FROM_DOUBLE(1.0);
-   _edje_global_obj = efl_add(EDJE_GLOBAL_CLASS, NULL);
+   _edje_global_obj = efl_add(EDJE_GLOBAL_CLASS, efl_main_loop_get());
    if (!_edje_global_obj ||
        !efl_loop_register(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE, _edje_global_obj) ||
        !efl_loop_register(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj) ||
@@ -274,11 +274,11 @@ void
 _edje_class_init(void)
 {
    if (!_edje_color_class_member)
-     _edje_color_class_member = efl_add(EFL_OBSERVABLE_CLASS, NULL);
+     _edje_color_class_member = efl_add(EFL_OBSERVABLE_CLASS, efl_main_loop_get());
    if (!_edje_text_class_member)
-     _edje_text_class_member = efl_add(EFL_OBSERVABLE_CLASS, NULL);
+     _edje_text_class_member = efl_add(EFL_OBSERVABLE_CLASS, efl_main_loop_get());
    if (!_edje_size_class_member)
-     _edje_size_class_member = efl_add(EFL_OBSERVABLE_CLASS, NULL);
+     _edje_size_class_member = efl_add(EFL_OBSERVABLE_CLASS, efl_main_loop_get());
 }
 
 void

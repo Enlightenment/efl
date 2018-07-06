@@ -23,6 +23,8 @@
 #include <Eina.hh>
 #include <Eolian_Cxx.hh>
 
+#include <eolian/mono/logging.hh>
+#include <eolian/mono/name_helpers.hh>
 #include <eolian/mono/klass.hh>
 #include <eolian/mono/enum_definition.hh>
 #include <eolian/mono/struct_definition.hh>
@@ -30,6 +32,7 @@
 #include <eolian/mono/marshall_type_impl.hh>
 #include <eolian/mono/marshall_annotation.hh>
 #include <eolian/mono/function_pointer.hh>
+#include <eolian/mono/alias_definition.hh>
 
 namespace eolian_mono {
 
@@ -40,14 +43,12 @@ struct options_type
    std::string in_file;
    std::string out_file;
    std::string dllimport;
-   mutable Eolian* state;
+   mutable Eolian_State* state;
    mutable Eolian_Unit const* unit;
    int v_major;
    int v_minor;
    std::map<const std::string, std::string> references_map;
 };
-
-efl::eina::log_domain domain("eolian_mono");
 
 // Parses a CSV file in the format 'filename,library' (without trimming spaces around ',')
 static std::vector<std::pair<std::string, std::string> >
@@ -99,8 +100,8 @@ run(options_type const& opts)
    const Eolian_Typedecl *tp = NULL;
    char* dup = strdup(opts.in_file.c_str());
    std::string basename_input = basename(dup);
-   klass = ::eolian_class_get_by_file(opts.unit, basename_input.c_str());
-   aliases= ::eolian_typedecl_aliases_get_by_file(opts.unit, basename_input.c_str());
+   klass = ::eolian_state_class_by_file_get(opts.state, basename_input.c_str());
+   aliases= ::eolian_state_aliases_by_file_get(opts.state, basename_input.c_str());
    free(dup);
 
    std::string class_file_name = opts.out_file;
@@ -137,22 +138,20 @@ run(options_type const& opts)
                                                         efl::eolian::grammar::context_null());
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
-         if (eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
-             continue;
-
-         const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
-         efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER, opts.unit);
-         std::vector<std::string> namespaces;
-
-         for (efl::eina::iterator<const char> namespace_iterator(::eolian_typedecl_namespaces_get(tp)), namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+         if (eolian_typedecl_type_get(tp) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
            {
-              namespaces.push_back(&*namespace_iterator);
+              const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
+              efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER, tp, opts.unit);
+              if (!eolian_mono::function_pointer.generate(iterator, function_def, context))
+                throw std::runtime_error("Failed to generate function pointer wrapper");
            }
-
-         if (!eolian_mono::function_pointer
-               .generate(iterator, function_def, escape_namespace(namespaces), context))
+         else // Regular aliases
            {
-              throw std::runtime_error("Failed to generate function pointer wrapper");
+              efl::eolian::grammar::attributes::alias_def alias(tp, opts.unit);
+              auto alias_cxt = context_add_tag(class_context{class_context::alias}, context);
+
+              if (!eolian_mono::alias_definition.generate(iterator, alias, alias_cxt))
+                throw std::runtime_error("Failed to generate alias.");
            }
      }
 
@@ -167,36 +166,35 @@ run(options_type const& opts)
             throw std::runtime_error("Failed to generate class");
          }
      }
-   //else
+
+   // Enums
+   for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_state_enums_by_file_get(opts.state, basename_input.c_str()))
+           , enum_last; enum_iterator != enum_last; ++enum_iterator)
      {
-       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_typedecl_enums_get_by_file(opts.unit, basename_input.c_str()))
-               , enum_last; enum_iterator != enum_last; ++enum_iterator)
-         {
-            efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator, opts.unit);
-            if (!eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null()))
-              {
-                 throw std::runtime_error("Failed to generate enum");
-              }
-         }
+        efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator, opts.unit);
+        if (!eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null()))
+          {
+             throw std::runtime_error("Failed to generate enum");
+          }
+     }
 
-       for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_typedecl_structs_get_by_file(opts.unit, basename_input.c_str()))
-               , struct_last; struct_iterator != struct_last; ++struct_iterator)
-         {
-            efl::eolian::grammar::attributes::struct_def struct_(&*struct_iterator, opts.unit);
-            auto structs_cxt = context_add_tag(class_context{class_context::structs}, context);
-            if (!eolian_mono::struct_entities.generate(iterator, struct_, structs_cxt))
-              {
-                 throw std::runtime_error("Failed to generate struct");
-              }
-         }
-
-    }
+   // Structs
+   for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_state_structs_by_file_get(opts.state, basename_input.c_str()))
+           , struct_last; struct_iterator != struct_last; ++struct_iterator)
+     {
+        efl::eolian::grammar::attributes::struct_def struct_(&*struct_iterator, opts.unit);
+        auto structs_cxt = context_add_tag(class_context{class_context::structs}, context);
+        if (!eolian_mono::struct_entities.generate(iterator, struct_, structs_cxt))
+          {
+             throw std::runtime_error("Failed to generate struct");
+          }
+     }
 }
 
 static void
 state_init(options_type const& opts)
 {
-   Eolian *eos = ::eolian_new();
+   Eolian_State *eos = ::eolian_state_new();
    if (!eos)
      {
         EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
@@ -212,13 +210,13 @@ database_load(options_type const& opts)
 {
    for (auto src : opts.include_dirs)
      {
-        if (!::eolian_directory_scan(opts.state, src.c_str()))
+        if (!::eolian_state_directory_add(opts.state, src.c_str()))
           {
              EINA_CXX_DOM_LOG_WARN(eolian_mono::domain)
                << "Couldn't load eolian from '" << src << "'.";
           }
      }
-   if (!::eolian_all_eot_files_parse(opts.state))
+   if (!::eolian_state_all_eot_files_parse(opts.state))
      {
         EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
           << "Eolian failed parsing eot files";
@@ -230,7 +228,7 @@ database_load(options_type const& opts)
          << "No input file.";
        assert(false && "Error parsing input file");
      }
-   if (!::eolian_file_parse(opts.state, opts.in_file.c_str()))
+   if (!::eolian_state_file_parse(opts.state, opts.in_file.c_str()))
      {
        EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
          << "Failed parsing: " << opts.in_file << ".";

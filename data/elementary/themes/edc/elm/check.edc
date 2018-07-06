@@ -52,7 +52,7 @@ group { name: "elm/check/base/default";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
             visible: 0;
@@ -356,7 +356,7 @@ group { name: "elm/check/base/toggle";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
             visible: 0;

@@ -5,7 +5,7 @@ AM_DISTCHECK_CONFIGURE_FLAGS = \
 --with-systemdunitdir=. \
 --enable-always-build-examples
 
-SUBDIRS = src data config doc
+SUBDIRS = src data doc
 
 if HAVE_PO
 
@@ -470,12 +470,11 @@ lcov-baseline:
 lcov-report: lcov-baseline
 	lcov --capture --compat-libtool --no-external --output-file $(abs_top_builddir)/coverage/coverage-check.info --directory $(abs_top_builddir) --config-file .lcov-config
 	lcov --no-external --compat-libtool --add-tracefile $(abs_top_builddir)/coverage/coverage-baseline.info --add-tracefile $(abs_top_builddir)/coverage/coverage-check.info --output-file $(abs_top_builddir)/coverage/coverage.info --config-file .lcov-config
-	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.info '*.h' --output-file $(abs_top_builddir)/coverage/coverage.cleaned.info --config-file .lcov-config
-	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.cleaned.info '*/tests/*' --output-file $(abs_top_builddir)/coverage/coverage.cleaned2.info --config-file .lcov-config
-	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.cleaned2.info '*NONE*' --output-file $(abs_top_builddir)/coverage/coverage.cleaned3.info --config-file .lcov-config
-	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.cleaned3.info '*/doc/*' --output-file $(abs_top_builddir)/coverage/coverage.cleaned4.info --config-file .lcov-config
-	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.cleaned4.info '*usr/include*' --output-file $(abs_top_builddir)/coverage/coverage.cleaned5.info --config-file .lcov-config
-	genhtml --config-file .lcov-config --legend -t "$(PACKAGE_STRING)" -o $(abs_top_builddir)/coverage/html $(abs_top_builddir)/coverage/coverage.cleaned5.info
+	lcov --no-external --compat-libtool --remove $(abs_top_builddir)/coverage/coverage.info \
+	  '*.h' '*/tests/*' '*NONE*' '*/doc/*' '*usr/include*' '*/bin*' '*/edje_external*' \
+	  '*/generic/*' '*/modules/*' '*/static_libs/*' \
+	  --output-file $(abs_top_builddir)/coverage/coverage.cleaned.info --config-file .lcov-config
+	genhtml --config-file .lcov-config --legend -t "$(PACKAGE_STRING)" -o $(abs_top_builddir)/coverage/html $(abs_top_builddir)/coverage/coverage.cleaned.info
 	@echo "Coverage Report at $(abs_top_builddir)/coverage/html"
 
 endif

@@ -149,7 +149,6 @@ _efl_net_server_simple_efl_object_finalize(Eo *o, Efl_Net_Server_Simple_Data *pd
         DBG("created new inner server %p (%s)", server, efl_class_name_get(efl_class_get(server)));
 
         efl_net_server_simple_inner_server_set(o, server);
-        efl_unref(server);
      }
 
  end:
@@ -157,18 +156,19 @@ _efl_net_server_simple_efl_object_finalize(Eo *o, Efl_Net_Server_Simple_Data *pd
 }
 
 EOLIAN static void
-_efl_net_server_simple_efl_object_destructor(Eo *o, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_efl_object_invalidate(Eo *o, Efl_Net_Server_Simple_Data *pd)
 {
-   if (pd->inner_class) pd->inner_class = NULL;
-
    if (pd->inner_server)
      {
         efl_event_callback_array_del(pd->inner_server, _efl_net_server_simple_inner_server_cbs(), o);
-        if (efl_parent_get(pd->inner_server) == o)
-          efl_parent_set(pd->inner_server, NULL);
+
+        efl_xunref(pd->inner_server, o);
+        pd->inner_server = NULL;
      }
 
-   efl_destructor(efl_super(o, MY_CLASS));
+   pd->inner_class = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static Eina_Error
@@ -178,13 +178,13 @@ _efl_net_server_simple_efl_net_server_serve(Eo *o EINA_UNUSED, Efl_Net_Server_Si
 }
 
 EOLIAN static const char *
-_efl_net_server_simple_efl_net_server_address_get(Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_efl_net_server_address_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
 {
    return efl_net_server_address_get(pd->inner_server);
 }
 
 EOLIAN static unsigned int
-_efl_net_server_simple_efl_net_server_clients_count_get(Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_efl_net_server_clients_count_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
 {
    return efl_net_server_clients_count_get(pd->inner_server);
 }
@@ -196,13 +196,13 @@ _efl_net_server_simple_efl_net_server_clients_limit_set(Eo *o EINA_UNUSED, Efl_N
 }
 
 EOLIAN static void
-_efl_net_server_simple_efl_net_server_clients_limit_get(Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd, unsigned int *limit, Eina_Bool *reject_excess)
+_efl_net_server_simple_efl_net_server_clients_limit_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd, unsigned int *limit, Eina_Bool *reject_excess)
 {
    efl_net_server_clients_limit_get(pd->inner_server, limit, reject_excess);
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_simple_efl_net_server_serving_get(Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_efl_net_server_serving_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
 {
    return efl_net_server_serving_get(pd->inner_server);
 }
@@ -217,7 +217,7 @@ _efl_net_server_simple_inner_class_set(Eo *o, Efl_Net_Server_Simple_Data *pd, co
 }
 
 EOLIAN static const Efl_Class *
-_efl_net_server_simple_inner_class_get(Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_inner_class_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
 {
    return pd->inner_class;
 }
@@ -230,13 +230,13 @@ _efl_net_server_simple_inner_server_set(Eo *o, Efl_Net_Server_Simple_Data *pd, E
    EINA_SAFETY_ON_TRUE_RETURN(pd->inner_server != NULL);
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(server, EFL_NET_SERVER_INTERFACE));
 
-   pd->inner_server = efl_ref(server);
+   pd->inner_server = efl_xref(server, o);
    efl_event_callback_array_add(server, _efl_net_server_simple_inner_server_cbs(), o);
    DBG("%p inner_server=%p (%s)", o, server, efl_class_name_get(efl_class_get(server)));
 }
 
 EOLIAN static Efl_Object *
-_efl_net_server_simple_inner_server_get(Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
+_efl_net_server_simple_inner_server_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Simple_Data *pd)
 {
    return pd->inner_server;
 }

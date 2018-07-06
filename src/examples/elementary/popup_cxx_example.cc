@@ -147,12 +147,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         auto repeat_events_btn = lrepeat_events_btn.get();
         if (!repeat_events_btn) return;
 
-        if (efl::eo::downcast<efl::canvas::Object>(g_popup.part("backwall")).repeat_events_get()) {
-           efl::eo::downcast<efl::canvas::Object>(g_popup.part("backwall")).repeat_events_set(false);
+        if (efl::eo::downcast<efl::canvas::Object>(g_popup.part_get("backwall")).repeat_events_get()) {
+           efl::eo::downcast<efl::canvas::Object>(g_popup.part_get("backwall")).repeat_events_set(false);
            repeat_events_btn.text_set("Set Repeat Events");
         }
         else {
-           efl::eo::downcast<efl::canvas::Object>(g_popup.part("backwall")).repeat_events_set(true);
+           efl::eo::downcast<efl::canvas::Object>(g_popup.part_get("backwall")).repeat_events_set(true);
            repeat_events_btn.text_set("Unset Repeat Events");
         }
      }));
@@ -207,11 +207,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
         backwall_visible = !backwall_visible;
         if (backwall_visible) {
-           efl::eo::downcast<efl::File>(g_popup.part("backwall")).file_set("./sky_01.jpg", nullptr);
+           efl::eo::downcast<efl::File>(g_popup.part_get("backwall")).file_set("./sky_01.jpg", nullptr);
            backwall_btn.text_set("Unset Backwall");
         }
         else {
-           efl::eo::downcast<efl::File>(g_popup.part("backwall")).file_set(nullptr, nullptr);
+           efl::eo::downcast<efl::File>(g_popup.part_get("backwall")).file_set(nullptr, nullptr);
            backwall_btn.text_set("Set Backwall");
         }
      }));

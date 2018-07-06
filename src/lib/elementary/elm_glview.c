@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -86,12 +86,12 @@ _glview_update_surface(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_efl_gfx_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
+_elm_glview_efl_gfx_entity_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    sd->resized = EINA_TRUE;
 
@@ -358,7 +358,7 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
 }
 
@@ -375,7 +375,7 @@ _elm_glview_efl_object_finalize(Eo *obj, Elm_Glview_Data *sd)
 }
 
 EOLIAN static Evas_GL_API*
-_elm_glview_gl_api_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_gl_api_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return evas_gl_context_api_get(sd->evasgl, sd->context);
 }
@@ -515,7 +515,7 @@ _elm_glview_efl_gfx_view_view_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D
 }
 
 EOLIAN static Eina_Size2D
-_elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return EINA_SIZE2D(sd->w, sd->h);
 }
@@ -536,13 +536,13 @@ _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
 }
 
 EOLIAN static Evas_GL *
-_elm_glview_evas_gl_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_evas_gl_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return sd->evasgl;
 }
 
 EOLIAN static int
-_elm_glview_rotation_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_rotation_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return evas_gl_rotation_get(sd->evasgl);
 }

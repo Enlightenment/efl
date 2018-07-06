@@ -53,9 +53,16 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects such as text, content and the children of box and table. */
    Eina_List            *edje_signals; /**< The list of edje signal callbacks. */
    Eina_List            *parts_cursors; /**< The list of cursor names of layout parts. This is a list of Elm_Layout_Sub_Object_Cursor struct. */
-   Eina_List            *prop_connect; /**< The list of properties connected to layout parts. */
-   Eina_Hash            *factories; /**< The hash with parts connected to factories. */
-   Efl_Model            *model; /**< The model */
+
+   struct {
+      Eina_Hash         *properties; /**< The list of properties connected to layout parts. */
+      Eina_Hash         *signals; /**< The list of signals connected. */
+      Eina_Hash         *factories; /**< The hash with parts connected to factories. */
+      Efl_Model         *model; /**< The model */
+
+      Eina_Bool          updating : 1;
+   } connect;
+
    int                   frozen; /**< Layout freeze counter */
 
    Eina_Bool             needs_size_calc : 1; /**< This flas is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
@@ -64,18 +71,17 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/
-   Eina_Bool             view_updated : 1; /**< This flag indicates to Efl.Ui.Layout don't update model in text_set */
-} Efl_Ui_Layout_Data;
+} Efl_Ui_Layout_Object_Data;
 
 /**
  * @}
  */
 
 #define EFL_UI_LAYOUT_DATA_GET(o, sd) \
-  Efl_Ui_Layout_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_CLASS)
+  Efl_Ui_Layout_Object_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_OBJECT_CLASS)
 
 #define EFL_UI_LAYOUT_CHECK(obj) \
-  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))) \
     return
 
 #endif

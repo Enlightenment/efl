@@ -177,8 +177,7 @@ static void
 _evas_cache_vg_data_free_cb(void *data)
 {
    Vg_File_Data *val = data;
-
-   efl_del(val->root);
+   efl_unref(val->root);
    free(val);
 }
 
@@ -190,7 +189,7 @@ _evas_cache_svg_entry_free_cb(void *data)
    eina_stringshare_del(entry->file);
    eina_stringshare_del(entry->key);
    free(entry->hash_key);
-   efl_del(entry->root);
+   efl_unref(entry->root);
    free(entry);
 }
 
@@ -262,17 +261,16 @@ _apply_transformation(Efl_VG *root, double w, double h, Vg_File_Data *vg_data)
         eina_matrix3_scale(&m, sx, sy);
         eina_matrix3_translate(&m, -vg_data->view_box.x, -vg_data->view_box.y);
      }
-   evas_vg_node_transformation_set(root, &m);
+   efl_canvas_vg_node_transformation_set(root, &m);
 }
 
 static Efl_VG *
 _evas_vg_dup_vg_tree(Vg_File_Data *fd, double w, double h)
 {
-
    Efl_VG *root;
 
    if (!fd) return NULL;
-   if ( !w || !h ) return NULL;
+   if (w < 1 || h < 1) return NULL;
 
    root = efl_duplicate(fd->root);
    _apply_transformation(root, w, h, fd);
@@ -335,9 +333,8 @@ evas_cache_vg_tree_get(Evas_Cache_Vg_Entry *entry)
    if (entry->root) return entry->root;
 
    if (entry->file)
-     {
-        _evas_cache_svg_vg_tree_update(entry);
-     }
+     _evas_cache_svg_vg_tree_update(entry);
+
    return entry->root;
 }
 

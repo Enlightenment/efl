@@ -106,7 +106,7 @@ _dev_added_or_removed(void *data, const Efl_Event *event)
           dev, efl_name_get(dev),
           _device_type_to_string(efl_input_device_type_get(dev)),
           efl_comment_get(dev),
-          event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed",
+          event->desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED ? "added" : "removed",
           data);
 }
 
@@ -197,18 +197,18 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    mouse_wheel = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
                                         _mouse_wheel, NULL);
 
-   efl_event_callback_add(evas1, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(evas1, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _dev_added_or_removed, ee1);
-   efl_event_callback_add(evas1, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_add(evas1, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _dev_added_or_removed, ee1);
-   efl_event_callback_add(evas1, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+   efl_event_callback_add(evas1, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                           _dev_changed, ee1);
 
-   efl_event_callback_add(evas2, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(evas2, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _dev_added_or_removed, ee2);
-   efl_event_callback_add(evas2, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_add(evas2, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _dev_added_or_removed, ee2);
-   efl_event_callback_add(evas2, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+   efl_event_callback_add(evas2, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                           _dev_changed, ee2);
 
    ecore_main_loop_begin();

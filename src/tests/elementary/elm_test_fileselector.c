@@ -2,36 +2,55 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 
+EFL_START_TEST (elm_fileselector_legacy_type_check)
+{
+   Evas_Object *win, *fileselector;
+   const char *type;
 
-START_TEST (elm_atspi_role_get)
+   win = win_add(NULL, "fileselector", ELM_WIN_BASIC);
+
+   fileselector = elm_fileselector_add(win);
+
+   type = elm_object_widget_type_get(fileselector);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Fileselector"));
+
+   type = evas_object_type_get(fileselector);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_fileselector"));
+
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *fileselector;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
-   role = efl_access_role_get(fileselector);
+   role = efl_access_object_role_get(fileselector);
 
    ck_assert(role == EFL_ACCESS_ROLE_FILE_CHOOSER);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _ready_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     Eina_Bool *ret = data;
     *ret = EINA_TRUE;
+
+    ecore_main_loop_quit();
 }
 
-START_TEST (elm_fileselector_selected)
+EFL_START_TEST (elm_fileselector_selected)
 {
    Evas_Object *win, *fileselector;
    Eina_Tmpstr *tmp_path;
@@ -39,8 +58,6 @@ START_TEST (elm_fileselector_selected)
    FILE *fp;
    char *path;
    Eina_Bool open, selected;
-
-   elm_init(1, NULL);
 
    if (!eina_file_mkdtemp("elm_test-XXXXXX", &tmp_path))
      {
@@ -57,7 +74,7 @@ START_TEST (elm_fileselector_selected)
    fp = fopen(exist, "w");
    fclose(fp);
 
-   win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   win = win_add(NULL, "fileselector", ELM_WIN_BASIC);
 
    fileselector = elm_fileselector_add(win);
    evas_object_smart_callback_add(fileselector, "directory,open", _ready_cb, &open);
@@ -81,12 +98,12 @@ START_TEST (elm_fileselector_selected)
    eina_stringshare_del(no_exist);
    free(path);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_fileselector(TCase *tc)
 {
+   tcase_add_test(tc, elm_fileselector_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_fileselector_selected);
 }

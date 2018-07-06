@@ -9,7 +9,7 @@ mixin Efl.File {
             [[Gets the (last) file loading error for a given object.]]
          }
          values {
-            error: Efl.Image.Load.Error(Efl.Image.Load.Error.none); [[The load error code.]]
+            error: Efl.Gfx.Image_Load_Error(Efl.Gfx.Image_Load_Error.none); [[The load error code.]]
          }
       }
       @property mmap {

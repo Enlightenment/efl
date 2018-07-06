@@ -7,19 +7,19 @@ typedef struct {
 
 
 EOLIAN static Eina_Rect
-_focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return EINA_RECT(0, 0, 20, 20);
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_sub_main_efl_ui_focus_object_focus_manager_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_object_focus_manager_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_manager");
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_sub_main_efl_ui_focus_object_focus_parent_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_object_focus_parent_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_parent");
 }
@@ -75,7 +75,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
     EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_unregister, _unregister),
     );
 
-   Efl_Ui_Focus_Manager *manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
+   Efl_Ui_Focus_Manager *manager = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root_manager)
    );
    //flush now all changes
@@ -85,7 +85,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_object_override(manager, &manager_tracker);
 
-   Focus_Test_Sub_Main *focus_main = efl_add(FOCUS_TEST_SUB_MAIN_CLASS, NULL);
+   Focus_Test_Sub_Main *focus_main = efl_add_ref(FOCUS_TEST_SUB_MAIN_CLASS, NULL);
 
    efl_key_data_set(focus_main, "__user_manager", manager);
    efl_key_data_set(focus_main, "__user_parent", root_manager);
@@ -105,13 +105,11 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
    *r = root;
 }
 
-START_TEST(correct_register)
+EFL_START_TEST(correct_register)
 {
    Eina_List *set1 = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   elm_init(0, NULL);
-
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -136,22 +134,19 @@ START_TEST(correct_register)
    efl_ui_focus_manager_calc_unregister(sub, child1);
    efl_ui_focus_manager_calc_unregister(sub, child2);
    efl_ui_focus_manager_calc_unregister(sub, child3);
-   efl_del(child1);
-   efl_del(child2);
-   efl_del(child3);
-   efl_del(sub);
-   efl_del(manager);
-   elm_shutdown();
+   efl_unref(child1);
+   efl_unref(child2);
+   efl_unref(child3);
+   efl_unref(sub);
+   efl_unref(manager);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(correct_unregister)
+EFL_START_TEST(correct_unregister)
 {
    Eina_List *set = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   elm_init(0, NULL);
-
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -178,23 +173,20 @@ START_TEST(correct_unregister)
    eina_list_free(unregistered);
    unregistered = NULL;
 
-   efl_del(sub);
-   efl_del(manager);
-   efl_del(root);
-   efl_del(child1);
-   efl_del(child2);
-   efl_del(child3);
-   elm_shutdown();
+   efl_unref(sub);
+   efl_unref(manager);
+   efl_unref(root);
+   efl_unref(child1);
+   efl_unref(child2);
+   efl_unref(child3);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(correct_un_register)
+EFL_START_TEST(correct_un_register)
 {
    Eina_List *set_add = NULL, *set_del = NULL;
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *manager, *sub;
-   elm_init(0, NULL);
-
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -219,15 +211,14 @@ START_TEST(correct_un_register)
    fail_if(!_set_equal(registered, set_add));
    fail_if(!_set_equal(unregistered, set_del));
 
-   efl_del(sub);
-   efl_del(manager);
-   efl_del(root);
-   efl_del(child1);
-   efl_del(child2);
-   efl_del(child3);
-   elm_shutdown();
+   efl_unref(sub);
+   efl_unref(manager);
+   efl_unref(root);
+   efl_unref(child1);
+   efl_unref(child2);
+   efl_unref(child3);
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_focus_sub(TCase *tc)
 {

@@ -41,16 +41,16 @@ _choices = ['start', 'classes', 'enums', 'structs', 'aliases']
 parser.add_argument('--step', '-s', metavar='STEP', default=None,
                     choices=_choices,
                     help='A single step to run (default to all), '
-                         'valid choises: '+ ', '.join(_choices))
+                         'valid choices: '+ ', '.join(_choices))
 args = parser.parse_args()
 
 
 # load the whole eolian db (from .eo files in source tree)
-eolian_db = eolian.Eolian()
-if not isinstance(eolian_db, eolian.Eolian):
+eolian_db = eolian.Eolian_State()
+if not isinstance(eolian_db, eolian.Eolian_State):
     raise(RuntimeError('Eolian, failed to create Eolian state'))
 
-if not eolian_db.directory_scan(SCAN_FOLDER):
+if not eolian_db.directory_add(SCAN_FOLDER):
     raise(RuntimeError('Eolian, failed to scan source directory'))
 
 if not eolian_db.all_eot_files_parse():
@@ -72,44 +72,90 @@ def page_path_for_object(obj):
     path = ['data', 'pages', 'develop', 'api']
     for ns in obj.namespaces:
         path.append(ns.lower())
-    output_file = obj.name.lower() + '.txt'
+    output_file = obj.short_name.lower() + '.txt'
     return os.path.join(args.root_path, *path, output_file)
+
+
+# render a (temporary) page for analizying the namespaces hierarchy
+t = Template('namespaces.template')
+nspaces = [ ns for ns in eolian_db.all_namespaces
+            if ns.name.startswith(args.namespace) ]
+
+tot_classes = tot_regulars = tot_abstracts = tot_mixins = tot_ifaces = 0
+tot_enums = tot_structs = tot_aliases = 0
+for ns in nspaces:
+    for cls in ns.classes:
+        tot_classes += 1
+        if cls.type == eolian.Eolian_Class_Type.REGULAR:
+            tot_regulars += 1
+        elif cls.type == eolian.Eolian_Class_Type.ABSTRACT:
+            tot_abstracts += 1
+        elif cls.type == eolian.Eolian_Class_Type.MIXIN:
+            tot_mixins += 1
+        elif cls.type == eolian.Eolian_Class_Type.INTERFACE:
+            tot_ifaces += 1
+    tot_enums += len(ns.enums)
+    tot_structs += len(ns.structs)
+    tot_aliases += len(ns.aliases)
+
+
+totals = [
+    ('Namespaces', len(nspaces)),
+    ('ALL Classes', tot_classes),
+    ('Regular classes', tot_regulars),
+    ('Abstract classes', tot_abstracts),
+    ('Mixins', tot_mixins),
+    ('Interfaces', tot_ifaces),
+    ('Enums', tot_enums),
+    ('Structs', tot_structs),
+    ('Aliases', tot_aliases),
+]
+
+root_ns = eolian_db.namespace_get_by_name(args.namespace)
+
+output_file = os.path.join(args.root_path,'data','pages','develop','api','namespaces.txt')
+t.render(output_file, args.verbose, root_ns=root_ns, totals=totals)
 
 
 # render the main start.txt page
 if args.step in ('start', None):
     t = Template('doc_start.template')
+
+    nspaces = [ ns for ns in eolian_db.all_namespaces
+                if ns.name.startswith(args.namespace) ]
+
     output_file = os.path.join(args.root_path,'data','pages','develop','api','start.txt')
-    t.render(output_file, args.verbose, nspaces=eolian_db.all_namespaces)
+    t.render(output_file, args.verbose, nspaces=nspaces)
+
 
 # render a page for each Class
 if args.step in ('classes', None):
     t = Template('doc_class.template')
-    for cls in eolian_db.all_classes:
-        if cls.full_name.startswith(args.namespace):
+    for cls in eolian_db.classes:
+        if cls.name.startswith(args.namespace):
             output_file = page_path_for_object(cls)
-            t.render(output_file, args.verbose, cls=cls.full_name)
+            t.render(output_file, args.verbose, cls=cls.name)
 
 # render a page for each Enum
 if args.step in ('enums', None):
     t = Template('doc_enum.template')
-    for enum in eolian_db.typedecl_all_enums:
-        if enum.full_name.startswith(args.namespace):
+    for enum in eolian_db.enums:
+        if enum.name.startswith(args.namespace):
             output_file = page_path_for_object(enum)
-            t.render(output_file, args.verbose, enum=enum.full_name)
+            t.render(output_file, args.verbose, enum=enum.name)
 
 # render a page for each Struct
 if args.step in ('structs', None):
     t = Template('doc_struct.template')
-    for struct in eolian_db.typedecl_all_structs:
-        if struct.full_name.startswith(args.namespace):
+    for struct in eolian_db.structs:
+        if struct.name.startswith(args.namespace):
             output_file = page_path_for_object(struct)
-            t.render(output_file, args.verbose, struct=struct.full_name)
+            t.render(output_file, args.verbose, struct=struct.name)
 
 # render a page for each Alias
 if args.step in ('aliases', None):
     t = Template('doc_alias.template')
-    for alias in eolian_db.typedecl_all_aliases:
-        if alias.full_name.startswith(args.namespace):
+    for alias in eolian_db.aliases:
+        if alias.name.startswith(args.namespace):
             output_file = page_path_for_object(alias)
-            t.render(output_file, args.verbose, alias=alias.full_name)
+            t.render(output_file, args.verbose, alias=alias.name)

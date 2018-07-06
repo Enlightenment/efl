@@ -8,7 +8,7 @@
 
 Eina_Error my_error, my_error_2;
 
-START_TEST(eina_cxx_get_error)
+EFL_START_TEST(eina_cxx_get_error)
 {
   efl::eina::eina_init eina_init;
 
@@ -33,9 +33,9 @@ START_TEST(eina_cxx_get_error)
 
   ck_assert(ec3.message() == strerror(ENOMEM));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_throw_on_error)
+EFL_START_TEST(eina_cxx_throw_on_error)
 {
   efl::eina::eina_init eina_init;
 
@@ -65,7 +65,7 @@ START_TEST(eina_cxx_throw_on_error)
       ck_assert(!efl::eina::get_error_code());
     }
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_error(TCase *tc)

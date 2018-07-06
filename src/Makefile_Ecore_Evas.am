@@ -23,7 +23,9 @@ lib/ecore_evas/ecore_evas_wayland.h \
 lib/ecore_evas/ecore_evas_cocoa.h \
 lib/ecore_evas/ecore_evas_win32.h \
 lib/ecore_evas/ecore_evas_x11.h \
-lib/ecore_evas/ecore_evas_util.c
+lib/ecore_evas/ecore_evas_util.c \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_ecore_evas_libecore_evas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
@@ -31,6 +33,7 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_evas\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @ECORE_EVAS_CFLAGS@
 lib_ecore_evas_libecore_evas_la_LIBADD = @ECORE_EVAS_LIBS@
 lib_ecore_evas_libecore_evas_la_DEPENDENCIES = @ECORE_EVAS_INTERNAL_LIBS@
@@ -268,7 +271,8 @@ endif
 
 if BUILD_ECORE_EVAS_VNC_SERVER
 VNCSERVERSOURCES = \
-modules/ecore_evas/vnc_server/ecore_evas_vnc_server.c
+modules/ecore_evas/vnc_server/ecore_evas_vnc_server.c \
+modules/ecore_evas/vnc_server/ecore_evas_vnc_server_fb_keymap.c
 ecoreevasenginevncserverpkgdir = $(libdir)/ecore_evas/vnc_server/$(MODULE_ARCH)
 ecoreevasenginevncserverpkg_LTLIBRARIES = modules/ecore_evas/vnc_server/module.la
 
@@ -279,26 +283,16 @@ $(install_ecoreevasenginevncserverpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_ecore_evas_vnc_server_module_la_SOURCES = $(VNCSERVERSOURCES)
 modules_ecore_evas_vnc_server_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
-@ECORE_EVAS_CFLAGS@ \
-@LIBVNCSERVER_CFLAGS@
+-I$(top_builddir)/src/lib/ecore_fb \
+@LIBVNCSERVER_CFLAGS@ \
+@ECORE_EVAS_CFLAGS@
 modules_ecore_evas_vnc_server_module_la_LIBADD = \
-@USE_ECORE_EVAS_LIBS@ \
-@LIBVNCSERVER_LIBS@
+@LIBVNCSERVER_LIBS@ \
+@USE_ECORE_EVAS_LIBS@
 modules_ecore_evas_vnc_server_module_la_DEPENDENCIES = \
 @USE_ECORE_EVAS_INTERNAL_LIBS@
 modules_ecore_evas_vnc_server_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_vnc_server_module_la_LIBTOOLFLAGS = --tag=disable-static
-if BUILD_ECORE_EVAS_FB
-modules_ecore_evas_vnc_server_module_la_CPPFLAGS += @ECORE_FB_CFLAGS@ -I$(top_srcdir)/src/modules/evas/engines/fb
-modules_ecore_evas_vnc_server_module_la_LIBADD += @USE_ECORE_FB_LIBS@
-VNCSERVERSOURCES += \
-modules/ecore_evas/vnc_server/ecore_evas_vnc_server_fb_keymap.c \
-modules/ecore_evas/vnc_server/ecore_evas_vnc_server_fb_keymap.h
-endif
-if BUILD_ECORE_EVAS_X11
-modules_ecore_evas_vnc_server_module_la_LIBADD += @USE_ECORE_X_LIBS@
-modules_ecore_evas_vnc_server_module_la_CPPFLAGS += @ECORE_X_CFLAGS@ -I$(top_srcdir)/src/modules/evas/engines/software_x11
-endif
 endif
 
 ### Binary

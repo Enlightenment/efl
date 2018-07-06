@@ -23,25 +23,8 @@ static Ecore_Timer *timeout = NULL;
 * @defgroup eldbus_signal_handler
 *
 * @precondition
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   ecore_shutdown();
-   int ret = eldbus_shutdown();
-   ck_assert_int_eq(ret, 0);
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -109,7 +92,7 @@ _signal_handler_get(Eldbus_Connection *conn)
         return NULL;
      }
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    if (!timeout)
      {
         eldbus_signal_handler_unref(signal_handler);
@@ -154,11 +137,11 @@ _signal_handler_get(Eldbus_Connection *conn)
  * @}
  * @}
  */
-START_TEST(utc_eldbus_signal_handler_add_p)
+EFL_START_TEST(utc_eldbus_signal_handler_add_p)
 {
    is_success_cb = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -172,18 +155,17 @@ START_TEST(utc_eldbus_signal_handler_add_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _response_message_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success_cb, "Signal %s is not call", signal_name);
 
-   eldbus_message_unref(msg);
    eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -221,11 +203,11 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_signal_handler_del_p)
+EFL_START_TEST(utc_eldbus_signal_handler_del_p)
 {
    is_success_cb = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -241,18 +223,16 @@ START_TEST(utc_eldbus_signal_handler_del_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _response_message_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(!is_success_cb, "Signal %s was called", signal_name);
 
-   eldbus_message_unref(msg);
-   eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -290,9 +270,9 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_signal_handler_get_p)
+EFL_START_TEST(utc_eldbus_signal_handler_get_p)
 {
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, bus, path, interface,
@@ -321,7 +301,7 @@ START_TEST(utc_eldbus_signal_handler_get_p)
    eldbus_signal_handler_unref(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -362,11 +342,11 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_signal_handler_ref_unref_p)
+EFL_START_TEST(utc_eldbus_signal_handler_ref_unref_p)
 {
    is_success_cb = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -385,17 +365,16 @@ START_TEST(utc_eldbus_signal_handler_ref_unref_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _response_message_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(!is_success_cb, "Signal %s was called", signal_name);
 
-   eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_signal_handler
@@ -436,9 +415,9 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
+EFL_START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
 {
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = _signal_handler_get(conn);
@@ -466,7 +445,7 @@ START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
 
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  *@}
@@ -474,7 +453,6 @@ END_TEST
 void
 eldbus_test_eldbus_signal_handler(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_signal_handler_add_p);
    tcase_add_test(tc, utc_eldbus_signal_handler_del_p);
    tcase_add_test(tc, utc_eldbus_signal_handler_get_p);

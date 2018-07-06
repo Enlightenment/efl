@@ -1,5 +1,3 @@
-import eina_types;
-
 interface Efl.Pack (Efl.Container)
 {
    [[API common to all UI container objects.]]
@@ -19,7 +17,7 @@ interface Efl.Pack (Efl.Container)
       unpack {
          [[Removes an existing item from the container, without deleting it.]]
          params {
-            subobj: Efl.Gfx; [[The unpacked object.]]
+            subobj: Efl.Gfx.Entity; [[The unpacked object.]]
          }
          return: bool; [[$false if $subobj wasn't a child or can't be removed]]
       }
@@ -35,7 +33,7 @@ interface Efl.Pack (Efl.Container)
            without deleting it.
          ]]
          params {
-            subobj: Efl.Gfx; [[An object to pack.]]
+            subobj: Efl.Gfx.Entity; [[An object to pack.]]
          }
          return: bool; [[$false if $subobj could not be packed.]]
       }
@@ -60,6 +58,6 @@ interface Efl.Pack (Efl.Container)
       }
    }
    events {
-      layout,updated; [[Sent after the layout was updated.]]
+      layout,updated: void; [[Sent after the layout was updated.]]
    }
 }

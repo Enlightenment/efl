@@ -26,6 +26,17 @@ typedef struct _Efl_Net_Ip_Address_Data {
    Eina_Slice addr_slice;
 } Efl_Net_Ip_Address_Data;
 
+typedef struct _Efl_Net_Ip_Address_Resolve_Value
+{
+   Eina_Stringshare *request_address; /**< The 'address' argument given to
+                                 * Efl.Net.Ip_Address.resolve */
+   Eina_Stringshare *canonical_name; /**< The canonical name, if it was requested in
+                                * flags */
+   const Eina_Value_Array results;  /**< The resolved objects. Do not modify this array but
+                                     * you can keep reference to elements using efl_ref()
+                                     * and efl_unref() */
+} Efl_Net_Ip_Address_Resolve_Value;
+
 #define MY_CLASS EFL_NET_IP_ADDRESS_CLASS
 
 EOLIAN static Eo *
@@ -60,7 +71,7 @@ _efl_net_ip_address_efl_object_finalize(Eo *o, Efl_Net_Ip_Address_Data *pd)
 }
 
 EOLIAN static const char *
-_efl_net_ip_address_string_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_string_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return pd->string;
 }
@@ -85,7 +96,7 @@ _efl_net_ip_address_family_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, i
 }
 
 EOLIAN static int
-_efl_net_ip_address_family_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_family_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return pd->addr.sa_family;
 }
@@ -112,7 +123,7 @@ _efl_net_ip_address_port_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, uin
 }
 
 EOLIAN static uint16_t
-_efl_net_ip_address_port_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_port_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    const uint16_t *pport;
 
@@ -167,7 +178,7 @@ _efl_net_ip_address_address_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, 
 }
 
 EOLIAN static Eina_Slice
-_efl_net_ip_address_address_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_address_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return pd->addr_slice;
 }
@@ -197,7 +208,7 @@ _efl_net_ip_address_sockaddr_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd,
 }
 
 EOLIAN static const void *
-_efl_net_ip_address_sockaddr_get(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
+_efl_net_ip_address_sockaddr_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
 {
    return &pd->addr;
 }
@@ -300,7 +311,7 @@ _efl_net_ip_address_create(Eo *cls, void *pd EINA_UNUSED, uint16_t port, const E
    else
      family = AF_INET;
 
-   return efl_add(cls, NULL,
+   return efl_add_ref(cls, efl_main_loop_get(),
                   efl_net_ip_address_family_set(efl_added, family),
                   efl_net_ip_address_port_set(efl_added, port),
                   efl_net_ip_address_set(efl_added, address));
@@ -314,7 +325,7 @@ _efl_net_ip_address_create_sockaddr(Eo *cls, void *pd EINA_UNUSED, const void *p
    EINA_SAFETY_ON_NULL_RETURN_VAL(sockaddr, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((sockaddr->sa_family != AF_INET) && (sockaddr->sa_family != AF_INET6), NULL);
 
-   return efl_add(cls, NULL,
+   return efl_add_ref(cls, efl_main_loop_get(),
                   efl_net_ip_address_sockaddr_set(efl_added, sockaddr));
 }
 
@@ -357,45 +368,49 @@ _efl_net_ip_address_parse(Eo *cls, void *pd EINA_UNUSED, const char *numeric_add
         return NULL;
      }
 
-   return efl_add(cls, NULL,
+   return efl_add_ref(cls, efl_main_loop_get(),
                   efl_net_ip_address_sockaddr_set(efl_added, &ss));
 }
 
 typedef struct _Efl_Net_Ip_Address_Resolve_Context {
-   Efl_Net_Ip_Address_Resolve_Results *result;
+   Eina_Stringshare *request_address;
    Ecore_Thread *thread;
-   Efl_Promise *promise;
+   Eina_Promise *promise;
 } Efl_Net_Ip_Address_Resolve_Context;
 
-static void
-_efl_net_ip_address_resolve_results_free(void *data)
+static Eina_Value_Struct_Desc *
+_efl_net_ip_address_resolve_value_desc_get(void)
 {
-   Efl_Net_Ip_Address_Resolve_Results *r = data;
+   static Eina_Value_Struct_Member struct_members[] = {
+     // no eina_value_type as they are not constant initializers, see below.
+     EINA_VALUE_STRUCT_MEMBER(NULL, Efl_Net_Ip_Address_Resolve_Value, canonical_name),
+     EINA_VALUE_STRUCT_MEMBER(NULL, Efl_Net_Ip_Address_Resolve_Value, request_address),
+     EINA_VALUE_STRUCT_MEMBER(NULL, Efl_Net_Ip_Address_Resolve_Value, results)
+   };
+   static Eina_Value_Struct_Desc struct_desc = {
+      EINA_VALUE_STRUCT_DESC_VERSION,
+      NULL,
+      struct_members,
+      EINA_C_ARRAY_LENGTH(struct_members),
+      sizeof (Efl_Net_Ip_Address_Resolve_Value)
+   };
+   struct_members[0].type = EINA_VALUE_TYPE_STRINGSHARE;
+   struct_members[1].type = EINA_VALUE_TYPE_STRINGSHARE;
+   struct_members[2].type = EINA_VALUE_TYPE_ARRAY;
+   struct_desc.ops = EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH;
 
-   if (r->results)
-     {
-        Eina_Array_Iterator it;
-        unsigned int i;
-        Efl_Net_Ip_Address *o;
-
-        EINA_ARRAY_ITER_NEXT(r->results, i, o, it)
-          efl_unref(o);
-
-        eina_array_free(r->results);
-        r->results = NULL;
-     }
-
-   eina_stringshare_replace(&r->canonical_name, NULL);
-   eina_stringshare_replace(&r->request_address, NULL);
-   free(r);
+   return &struct_desc;
 }
 
 static void
-_efl_net_ip_address_resolve_del(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_net_ip_address_resolve_del(void *data,
+                                const Eina_Promise *dead_promise EINA_UNUSED)
 {
    Efl_Net_Ip_Address_Resolve_Context *ctx = data;
 
    ctx->promise = NULL;
+
+   eina_stringshare_replace(&ctx->request_address, NULL);
 
    if (ctx->thread)
      {
@@ -403,39 +418,29 @@ _efl_net_ip_address_resolve_del(void *data, const Efl_Event *event EINA_UNUSED)
         ctx->thread = NULL;
      }
 
-   if (ctx->result)
-     {
-        _efl_net_ip_address_resolve_results_free(ctx->result);
-        ctx->result = NULL;
-     }
-
    free(ctx);
 }
 
 static inline int
-_efl_net_ip_address_find(const Eina_Array *array, const struct sockaddr *addr)
+_efl_net_ip_address_find(const Eina_Value *array, const struct sockaddr *addr)
 {
-   Eina_Array_Iterator it;
-   unsigned int i;
    const Efl_Net_Ip_Address *o;
+   unsigned int i, len;
 
-   if (addr->sa_family == AF_INET6)
+   EINA_VALUE_ARRAY_FOREACH(array, len, i, o)
      {
-        EINA_ARRAY_ITER_NEXT(array, i, o, it)
+        const struct sockaddr *other = efl_net_ip_address_sockaddr_get(o);
+
+        if (addr->sa_family == AF_INET6)
           {
-             const struct sockaddr *other = efl_net_ip_address_sockaddr_get(o);
              if (other->sa_family == AF_INET6)
                {
                   if (memcmp(other,  addr, sizeof(struct sockaddr_in6)) == 0)
                     return (int)i;
                }
           }
-     }
-   else
-     {
-        EINA_ARRAY_ITER_NEXT(array, i, o, it)
+        else
           {
-             const struct sockaddr *other = efl_net_ip_address_sockaddr_get(o);
              if (other->sa_family == AF_INET)
                {
                   if (memcmp(other,  addr, sizeof(struct sockaddr_in)) == 0)
@@ -447,66 +452,89 @@ _efl_net_ip_address_find(const Eina_Array *array, const struct sockaddr *addr)
 }
 
 static void
-_efl_net_ip_address_resolve_done(void *data, const char *host, const char *port, const struct addrinfo *hints EINA_UNUSED, struct addrinfo *result, int gai_error)
+_efl_net_ip_address_resolve_done(void *data,
+                                 const char *host, const char *port,
+                                 const struct addrinfo *hints EINA_UNUSED,
+                                 struct addrinfo *result,
+                                 int gai_error)
 {
    Efl_Net_Ip_Address_Resolve_Context *ctx = data;
-   Efl_Net_Ip_Address_Resolve_Results *r;
+   Eina_Value_Array desc = { 0 };
+   Eina_Value s = EINA_VALUE_EMPTY;
+   Eina_Value r = EINA_VALUE_EMPTY;
+   Eina_Error err = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
    const struct addrinfo *a;
 
    DBG("done resolving '%s' (host='%s', port='%s'): %s",
-       ctx->result->request_address, host, port,
+       ctx->request_address, host, port,
        gai_error ? gai_strerror(gai_error) : "success");
 
    ctx->thread = NULL;
 
    if (gai_error)
      {
-        Eina_Error err = EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
-
         if (gai_error == EAI_SYSTEM)
           err = errno;
 
-        efl_promise_failed_set(ctx->promise, err);
-        return;
+        goto on_error;
      }
 
-   ctx->result->results = eina_array_new(16);
-   if (!ctx->result->results)
-     {
-        efl_promise_failed_set(ctx->promise, ENOMEM);
-        return;
-     }
+   err = ENOMEM;
+   if (!eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 1))
+     goto on_error;
 
-   r = ctx->result;
-   ctx->result = NULL; /* steal for efl_promise_value_set() */
+   if (!eina_value_struct_setup(&s, _efl_net_ip_address_resolve_value_desc_get()))
+     goto on_error;
+
+   eina_value_struct_set(&s, "request_address", ctx->request_address);
 
    for (a = result; a != NULL; a = a->ai_next)
      {
+        Eina_Stringshare *canonical_name = NULL;
         Eo *o;
 
-        if (EINA_UNLIKELY((r->canonical_name == NULL) &&
+        eina_value_struct_get(&s, "canonical_name", &canonical_name);
+        if (EINA_UNLIKELY((canonical_name == NULL) &&
                           (a->ai_canonname != NULL)))
-          r->canonical_name = eina_stringshare_add(a->ai_canonname);
+          {
+             canonical_name = eina_stringshare_add(a->ai_canonname);
+             eina_value_struct_set(&s, "canonical_name", canonical_name);
+             eina_stringshare_del(canonical_name);
+          }
 
         /* some addresses get duplicated with different options that we
          * do not care, so check for duplicates.
          */
-        if (EINA_UNLIKELY(_efl_net_ip_address_find(r->results, a->ai_addr) >= 0))
+        if (EINA_UNLIKELY(_efl_net_ip_address_find(&r, a->ai_addr) >= 0))
           continue;
 
         o = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, a->ai_addr);
-        if (o)
-          {
-             if (!eina_array_push(r->results, o))
-               efl_del(o);
-          }
+        if (!o) continue ;
+
+        eina_value_array_append(&r, o);
+        efl_unref(o);
      }
    freeaddrinfo(result);
 
-   efl_promise_value_set(ctx->promise, r, _efl_net_ip_address_resolve_results_free);
+   if (!eina_value_pget(&r, &desc)) goto on_error;
+   if (!eina_value_struct_pset(&s, "results", &desc)) goto on_error;
+   eina_value_flush(&r);
+
+   eina_promise_resolve(ctx->promise, s);
+
+   eina_stringshare_replace(&ctx->request_address, NULL);
+   free(ctx);
+
+   return ;
+
+ on_error:
+   eina_promise_reject(ctx->promise, err);
+
+   eina_stringshare_replace(&ctx->request_address, NULL);
+   free(ctx);
 }
 
-EOLIAN static Efl_Future *
+EOLIAN static Eina_Future *
 _efl_net_ip_address_resolve(Eo *cls EINA_UNUSED, void *pd EINA_UNUSED, const char *address, int family, int flags)
 {
    Efl_Net_Ip_Address_Resolve_Context *ctx;
@@ -538,29 +566,23 @@ _efl_net_ip_address_resolve(Eo *cls EINA_UNUSED, void *pd EINA_UNUSED, const cha
    ctx = calloc(1, sizeof(Efl_Net_Ip_Address_Resolve_Context));
    EINA_SAFETY_ON_NULL_GOTO(ctx, error_ctx);
 
-   ctx->result = calloc(1, sizeof(Efl_Net_Ip_Address_Resolve_Results));
-   EINA_SAFETY_ON_NULL_GOTO(ctx->result, error_result);
-
-   ctx->result->request_address = eina_stringshare_add(address);
-   EINA_SAFETY_ON_NULL_GOTO(ctx->result->request_address, error_result_address);
+   ctx->request_address = eina_stringshare_add(address);
+   EINA_SAFETY_ON_NULL_GOTO(ctx->request_address, error_result_address);
 
    ctx->thread = efl_net_ip_resolve_async_new(host, port, &hints, _efl_net_ip_address_resolve_done, ctx);
    EINA_SAFETY_ON_NULL_GOTO(ctx->thread, error_thread);
 
-   ctx->promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get(),
-                          efl_event_callback_add(efl_added, EFL_EVENT_DEL, _efl_net_ip_address_resolve_del, ctx));
+   ctx->promise = eina_promise_new(efl_loop_future_scheduler_get(efl_main_loop_get()), _efl_net_ip_address_resolve_del, ctx);
    EINA_SAFETY_ON_NULL_GOTO(ctx->promise, error_promise);
 
    free(str);
-   return efl_promise_future_get(ctx->promise);
+   return eina_future_new(ctx->promise);
 
  error_promise:
    ecore_thread_cancel(ctx->thread);
  error_thread:
-   eina_stringshare_del(ctx->result->request_address);
+   eina_stringshare_del(ctx->request_address);
  error_result_address:
-   free(ctx->result);
- error_result:
    free(ctx);
  error_ctx:
    free(str);

@@ -1,7 +1,16 @@
-struct Efl.Model.Property_Event {
+struct Efl.Model_Property_Event {
      [[EFL model property event data structure]]
      changed_properties: array<string>; [[List of changed properties]]
      invalidated_properties: array<string>; [[Removed properties identified by name]]
+}
+
+struct Efl.Model_Children_Event {
+     [[Every time a child is added the event EFL_MODEL_EVENT_CHILD_ADDED is dispatched
+     passing along this structure.]]
+     index: uint; [[index is a hint and is intended to provide a way for applications
+                    to control/know children relative positions through listings.]]
+     child: Efl.Object; [[If an object has been built for this index and it is currently tracked by
+                          the parent, it will be available here.]]
 }
 
 interface Efl.Model ()
@@ -22,50 +31,50 @@ interface Efl.Model ()
 
                  @since 1.14
                ]]
-         }
-         values {
-               properties: const(array<string>); [[Array of current properties]]
+            }
+            values {
+               properties: array<string>; [[Array of current properties]]
             }
         }
-        property_set {
-           [[Set a property value of a given property name.
+	@property property {
+           set {
+              [[Set a property value of a given property name.
 
-             The caller must ensure to call at least efl_model_prop_list
-             before being able to see/set properties. This function sets
-             a new property value into given property name. Once the
-             operation is completed the concrete implementation should
-             raise EFL_MODEL_EVENT_PROPERTIES_CHANGED event in order to
-             notify listeners of the new value of the property.
+               The caller must ensure to call at least efl_model_prop_list
+               before being able to see/set properties. This function sets
+               a new property value into given property name. Once the
+               operation is completed the concrete implementation should
+               raise EFL_MODEL_EVENT_PROPERTIES_CHANGED event in order to
+               notify listeners of the new value of the property.
 
-             If the model doesn't have the property then there are two
-             possibilities, either raise an error or create the new
-             property in model
+               If the model doesn't have the property then there are two
+               possibilities, either raise an error or create the new
+               property in model
 
-             See @.property_get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
+               See @.property.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
 
-             @since 1.14
-            ]]
-           params {
-               @in property: string; [[Property name]]
-               @in value: const(any_value_ptr); [[New value]]
+               @since 1.14
+              ]]
+              return: future<any_value_ptr>; [[Return an error in case the property could not be set, the value that was set otherwise.]]
            }
-           return: future<any_value>; [[Future returning the recorded value or error]]
-        }
-        property_get {
-           [[Retrieve the value of a given property name.
+           get {
+              [[Retrieve the value of a given property name.
 
-             At this point the caller is free to get values from properties.
-             The event EFL_MODEL_EVENT_PROPERTIES_CHANGED may be raised to
-             notify listeners of the property/value.
+                At this point the caller is free to get values from properties.
+                The event EFL_MODEL_EVENT_PROPERTIES_CHANGED may be raised to
+                notify listeners of the property/value.
 
-             See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
+                See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
 
-             @since 1.14
-           ]]
-           params {
-               @in property: string; [[Property name]]
+                @since 1.14
+              ]]
            }
-           return: future<any_value>; [[Future of the value that was got]]
+           keys {
+              property: string; [[Property name]]
+           }
+           values {
+              value: any_value_ptr; [[Property value]]
+           }
         }
         children_slice_get {
                [[Get children slice OR full range.
@@ -89,7 +98,7 @@ interface Efl.Model ()
                  Optionally the user can call children_count_get to know the
                  number of children so a valid range can be known in advance.
 
-                 See @.children_count_get
+                 See @.children_count.get
 
                  @since 1.14
                ]]
@@ -98,10 +107,12 @@ interface Efl.Model ()
                 @in count: uint; [[Range size. If count is 0, start is
                                ignored.]]
             }
-            return: future<accessor<Efl.Object> >; [[Future of the children]]
+            /* XXX: is this right? */
+            return: future<accessor<Efl.Object>>; [[Array of childrens]]
          }
-         children_count_get {
-                [[Get children count.
+         @property children_count {
+	    get {
+               [[Get children count.
 
                   When efl_model_load is completed efl_model_coildren_count_get
                   can be used to get the number of children. children_count_get
@@ -112,8 +123,11 @@ interface Efl.Model ()
                   See also @.children_slice_get.
 
                   @since 1.14
-                ]]
-            return: future<uint>; [[Future of the children count]]
+               ]]
+            }
+            values {
+               count: uint; [[Current known children count]]
+            }
          }
          child_add {
             [[Add a new child.
@@ -144,11 +158,11 @@ interface Efl.Model ()
       }
 
    events {
-      properties,changed: Efl.Model.Property_Event; [[Event dispatched when
+      properties,changed: Efl.Model_Property_Event; [[Event dispatched when
                                                       properties list is
                                                       available.]]
-      child,added: Efl.Object; [[Event dispatched when new child is added.]]
-      child,removed: Efl.Object; [[Event dispatched when child is removed.]]
-      children,count,changed; [[Event dispatched when children count is finished.]]
+      child,added: Efl.Model_Children_Event; [[Event dispatched when new child is added.]]
+      child,removed: Efl.Model_Children_Event; [[Event dispatched when child is removed.]]
+      children,count,changed: void; [[Event dispatched when children count is finished.]]
    }
 }

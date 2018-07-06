@@ -1034,7 +1034,6 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer EINA_UNU
     * here for any corner-cases */
    /* _ecore_wl_input_cursor_update(input); */
 
-   if (!surface) return;
    if (!(win = ecore_wl_window_surface_find(surface))) return;
 
    win->pointer_device = NULL;
@@ -1108,7 +1107,6 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
 
    input->display->serial = serial;
 
-   if (!surface) return;
    if (!(win = ecore_wl_window_surface_find(surface))) return;
 
    win->keyboard_device = NULL;

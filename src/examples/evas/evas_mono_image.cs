@@ -6,7 +6,7 @@ class TestMain
     static int WIDTH = 320;
     static int HEIGHT = 240;
 
-    evas.Image image;
+    evas.IImage image;
 
 
     static string ImagePath([CallerFilePath] string folder="")
@@ -14,7 +14,7 @@ class TestMain
         return System.IO.Path.GetDirectoryName(folder);
     }
 
-    public TestMain(evas.Image image)
+    public TestMain(evas.IImage image)
     {
         this.image = image;
     }
@@ -23,18 +23,18 @@ class TestMain
     {
         efl.All.Init();
 
-        efl.Loop loop = new efl.LoopConcrete();
+        efl.Loop loop = new efl.Loop();
 
         EcoreEvas ecore_evas = new EcoreEvas();
         eina.Size2D size = new eina.Size2D();
         
-        efl.canvas.Object canvas = ecore_evas.canvas;
+        efl.canvas.IObject canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.Object parent = canvas.GetParent();
+        efl.IObject parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
         
-        efl.canvas.Rectangle bg = new efl.canvas.RectangleConcrete(canvas);
+        efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);
         bg.SetColor(255, 255, 255, 255);
         size.W = WIDTH;
         size.H = HEIGHT;
@@ -42,7 +42,7 @@ class TestMain
         bg.SetVisible(true);
 
         string valid_path = args[0];
-        evas.Image image = new evas.ImageConcrete(canvas);
+        evas.Image image = new evas.Image(canvas);
         image.SetFile(valid_path, null);
 
         /* FIXME evas-image uses error handling code from

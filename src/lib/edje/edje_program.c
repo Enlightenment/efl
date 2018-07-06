@@ -128,24 +128,56 @@ _edje_emit_child(Edje *ed, Edje_Real_Part *rp, const char *part, const char *sig
    return ed->collection->broadcast_signal;
 }
 
+static Edje_Message_Signal_Data *
+_edje_signal_data_setup(void *data, Ecore_Cb free_func, void *seat_data, Ecore_Cb seat_free_func)
+{
+   Edje_Message_Signal_Data *out = NULL;
+
+   if (data || seat_data)
+     {
+        out = calloc(1, sizeof(*out));
+        if (!out) return NULL;
+
+        out->ref = 1;
+        out->data = data;
+        out->free_func = free_func;
+        out->seat_data = seat_data;
+        out->seat_free_func = seat_free_func;
+     }
+   return out;
+}
+
+void
+_edje_signal_data_free(Edje_Message_Signal_Data *mdata)
+{
+   if (!mdata) return;
+   if (--(mdata->ref)) return;
+
+   if (mdata->free_func)
+     {
+        mdata->free_func(mdata->data);
+     }
+   if (mdata->seat_free_func)
+     {
+        mdata->seat_free_func(mdata->seat_data);
+     }
+   free(mdata);
+}
+
+void
+_edje_signal_data_ref(Edje_Message_Signal_Data *mdata)
+{
+   if (mdata) mdata->ref++;
+}
+
 static void
-_edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src, void *data, Ecore_Cb free_func)
+_edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src, Edje_Message_Signal_Data *mdata)
 {
    Edje_Message_Signal emsg;
 
    emsg.sig = sig;
    emsg.src = src;
-   if (data)
-     {
-        emsg.data = calloc(1, sizeof(*(emsg.data)));
-        emsg.data->ref = 1;
-        emsg.data->data = data;
-        emsg.data->free_func = free_func;
-     }
-   else
-     {
-        emsg.data = NULL;
-     }
+   emsg.data = mdata;
    /* new sends code */
    if (broadcast)
      edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
@@ -163,14 +195,6 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
       _edje_util_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
       }
     */
-   if (emsg.data && (--(emsg.data->ref) == 0))
-     {
-        if (emsg.data->free_func)
-          {
-             emsg.data->free_func(emsg.data->data);
-          }
-        free(emsg.data);
-     }
 }
 
 /*============================================================================*
@@ -178,13 +202,13 @@ _edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src,
 *============================================================================*/
 
 EOLIAN Eina_Stringshare*
-_efl_canvas_layout_seat_name_get(Eo *obj EINA_UNUSED, Edje *ed, Efl_Input_Device *device)
+_efl_canvas_layout_seat_name_get(const Eo *obj EINA_UNUSED, Edje *ed, Efl_Input_Device *device)
 {
    return _edje_seat_name_get(ed, device);
 }
 
 EOLIAN Efl_Input_Device *
-_efl_canvas_layout_seat_get(Eo *obj EINA_UNUSED, Edje *ed, Eina_Stringshare *name)
+_efl_canvas_layout_seat_get(const Eo *obj EINA_UNUSED, Edje *ed, Eina_Stringshare *name)
 {
    return _edje_seat_get(ed, name);
 }
@@ -356,7 +380,7 @@ break_prog:
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_animation_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;
@@ -463,7 +487,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
              if (pa->id >= 0)
                {
                   pr = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
-                  if (pr) _edje_program_run(ed, pr, 0, "", "");
+                  if (pr) _edje_program_run(ed, pr, 0, "", "", NULL);
                   if (_edje_block_break(ed))
                     {
                        if ((!ed->walking_actions) && (runp->ref == 0))
@@ -620,7 +644,7 @@ not_allowed:
 }
 
 void
-_edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc)
+_edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc, Edje_Message_Signal_Data *mdata)
 {
    Eina_List *l;
    Edje_Real_Part *rp;
@@ -780,7 +804,7 @@ low_mem_current:
                   if (pa->id >= 0)
                     {
                        pr2 = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
-                       if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+                       if (pr2) _edje_program_run(ed, pr2, 0, "", "", mdata);
                        if (_edje_block_break(ed)) goto break_prog;
                     }
                }
@@ -841,12 +865,12 @@ low_mem_current:
                        Eina_Bool broadcast;
 
                        broadcast = _edje_emit_child(ed, rp, rp->part->name, pr->state, pr->state2);
-                       _edje_emit_send(ed, broadcast, pr->state, pr->state2, NULL, NULL);
+                       _edje_emit_send(ed, broadcast, pr->state, pr->state2, mdata);
                     }
                }
           }
         else
-          _edje_emit(ed, pr->state, pr->state2);
+          _edje_emit_full_data(ed, pr->state, pr->state2, mdata);
         if (_edje_block_break(ed)) goto break_prog;
         // _edje_emit(ed, "program,stop", pr->name);
         if (_edje_block_break(ed)) goto break_prog;
@@ -1202,7 +1226,7 @@ low_mem_current:
              if (pa->id >= 0)
                {
                   pr2 = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
-                  if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+                  if (pr2) _edje_program_run(ed, pr2, 0, "", "", mdata);
                   if (_edje_block_break(ed)) goto break_prog;
                }
           }
@@ -1224,32 +1248,51 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 void
 _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *src)
 {
-   Efl_Input_Device *seat;
+   Edje_Message_Signal_Data *mdata = NULL;
+   Efl_Input_Device *seat = NULL;
    char buf[128];
+   char *sname;
 
-   /* keep sending signals without seat information for legacy compatibility */
-   _edje_emit_full(ed, sig, src, NULL, NULL);
+   if (dev) seat = efl_input_device_seat_get(dev);
+   if (seat)
+     {
+        sname = strdup(efl_name_get(seat));
+        mdata = _edje_signal_data_setup(NULL, NULL, sname, free);
+     }
+   /* keep sending old style signals for legacy compatibility, but provide */
+   /* queryable seat data for callers that can make use of it.  */
+   _edje_emit_full_data(ed, sig, src, mdata);
 
    /* send extra signal with ",$SEAT" suffix if the input device originating
     * the signal belongs to a seat */
-   if (!dev) return;
-
-   seat = efl_input_device_seat_get(dev);
    if (!seat) return;
 
    snprintf(buf, sizeof(buf), "seat,%s,%s", _edje_seat_name_get(ed, seat), sig);
-   _edje_emit_full(ed, buf, src, NULL, NULL);
+   _edje_emit_full_data(ed, buf, src, mdata);
+   _edje_signal_data_free(mdata);
 }
 
 /* data should either be NULL or a malloc allocated data */
 void
 _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *))
 {
+   Edje_Message_Signal_Data *mdata;
+
+   mdata = _edje_signal_data_setup(data, free_func, NULL, NULL);
+   _edje_emit_full_data(ed, sig, src, mdata);
+   _edje_signal_data_free(mdata);
+}
+
+void
+_edje_emit_full_data(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *mdata)
+{
    const char *sep;
    Eina_Bool broadcast;
 
    if (!ed->collection) return;
    if (ed->delete_me) return;
+
+   _edje_signal_data_ref(mdata);
 
    sep = strchr(sig, EDJE_PART_PATH_SEPARATOR);
    /* If we are not sending the signal to a part of the child, the
@@ -1269,14 +1312,16 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 
         newsig = sep + 1;
 
-        if (_edje_emit_aliased(ed, part, newsig, src)) return;
+        if (_edje_emit_aliased(ed, part, newsig, src)) goto out;
 
         broadcast = _edje_emit_child(ed, NULL, part, newsig, src);
      }
    else
      broadcast = ed->collection->broadcast_signal;
 
-   _edje_emit_send(ed, broadcast, sig, src, data, free_func);
+   _edje_emit_send(ed, broadcast, sig, src, mdata);
+out:
+   _edje_signal_data_free(mdata);
 }
 
 void
@@ -1457,7 +1502,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
                 EINA_LIST_FOREACH(matches, l, pr)
                   if (pr->exec)
                     {
-                       _edje_program_run(ed, pr, 0, sig, src);
+                       _edje_program_run(ed, pr, 0, sig, src, sdata);
                        if (_edje_block_break(ed))
                          {
                             goto break_prog;
@@ -1512,7 +1557,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 #endif
                     {
                        if (pr->exec)
-                         _edje_program_run(ed, pr, 0, sig, src);
+                         _edje_program_run(ed, pr, 0, sig, src, sdata);
 
                        if (_edje_block_break(ed))
                          {
@@ -1555,12 +1600,21 @@ break_prog:
 
 /* Extra data for callbacks */
 static void *callback_extra_data = NULL;
+static void *callback_seat_data = NULL;
 
 EAPI void *
 edje_object_signal_callback_extra_data_get(void)
 {
    return callback_extra_data;
 }
+
+#ifdef EFL_BETA_API_SUPPORT
+EAPI void *
+edje_object_signal_callback_seat_data_get(void)
+{
+   return callback_seat_data;
+}
+#endif
 
 /* FIXME: what if we delete the evas object??? */
 static void
@@ -1587,6 +1641,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
         EINA_REFCOUNT_REF(m);
 
         callback_extra_data = (data) ? data->data : NULL;
+        callback_seat_data = (data) ? data->seat_data : NULL;
 
         if (eina_inarray_count(&ssp->u.callbacks.globing))
           r = edje_match_callback_exec(ssp,

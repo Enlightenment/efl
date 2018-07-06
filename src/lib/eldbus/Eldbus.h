@@ -225,6 +225,7 @@ typedef void (*Eldbus_Signal_Cb)(void *data, const Eldbus_Message *msg);
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include "eldbus_model.eo.h"
 #include "eldbus_model_arguments.eo.h"
 #include "eldbus_model_connection.eo.h"
 #include "eldbus_model_method.eo.h"

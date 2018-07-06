@@ -134,7 +134,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
         j = va_arg(args, int);
         if (obj->interceptors)
           blocked = evas_object_intercept_call_resize(eo_obj, obj, i, j);
-        if (!blocked && _efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j, internal))
+        if (!blocked && _efl_canvas_object_efl_gfx_entity_size_set_block(eo_obj, obj, i, j, internal))
           blocked = 1;
         break;
 

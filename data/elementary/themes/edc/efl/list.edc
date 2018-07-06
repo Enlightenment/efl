@@ -1,8 +1,471 @@
 group { "efl/list";
-   inherit: "elm/list/base/default";
+   inherit: "efl/scroller";
 }
 
-group { "efl/list/item";
-   inherit: "elm/list/item/default";
+group { "efl/view_list";
+   inherit: "efl/list";
 }
 
+group { "efl/list_item";
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   images.image: "bevel_curved_horiz_out.png" COMP;
+   images.image: "shadow_rounded_horiz.png" COMP;
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_horiz_out.png" COMP;
+   images.image: "shine.png" COMP;
+   parts {
+      rect { "event";
+         desc { "default";
+            color: 0 0 0 0;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect { "base"; nomouse;
+         desc { "default";
+            color: 64 64 64 255;
+            color_class: "list_item_base";
+         }
+         desc { "odd";
+            color: 56 56 56 255;
+            color_class: "list_item_base_odd";
+         }
+      }
+
+      image { "bevel"; nomouse;
+         desc { "default";
+            image.normal: "bevel_curved_horiz_out.png";
+            image.border: 0 0 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      swallow { "efl.background";
+         desc { "default";
+            rel.to: "base";
+            vis;
+         }
+      }
+      image { "sel_shadow"; nomouse;
+         desc { "default";
+            image.normal: "shadow_rounded_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_base"; nomouse;
+         desc { "default";
+            image.normal: "vgrad_med_dark.png";
+            fill.smooth: 0;
+            hid;
+            TILED_HORIZ(120)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_bevel"; nomouse;
+         desc { "default";
+            image.normal: "bevel_horiz_out.png";
+            image.border: 0 0 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+
+      //##//
+      text { "efl.text"; nomouse;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "efl.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "efl.end";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2"; nomouse;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc { "default";
+            rel1.to: "efl.text";
+            rel2.to: "efl.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "efl.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      text { "label3"; nomouse;
+         effect: GLOW;
+         scale: 1;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "efl.text";
+            rel2.offset: 1 1;
+            rel2.to: "efl.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "efl.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      //##//
+      swallow { "efl.icon";
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "efl.end";
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+      }
+      //##//
+      image { "sel_shine"; nomouse;
+         desc { "default";
+            image.normal: "shine.png";
+            rel1.offset: 0 -2;
+            rel1.to: "sel_base";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            rel2.to: "sel_base";
+            hid;
+            FIXED_SIZE(69, 5)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "event_block";
+         desc { "default";
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "efl,state,odd"; source: "efl";
+         action: STATE_SET "odd";
+         target: "base";
+      }
+      program {
+         signal: "efl,state,even"; source: "efl";
+         action: STATE_SET "default";
+         target: "base";
+      }
+      program {
+         signal: "efl,state,pressed"; source: "efl";
+         action: STATE_SET "selected";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,unpressed"; source: "efl";
+         action: STATE_SET "default";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,selected"; source: "efl";
+         action: STATE_SET "selected";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,unselected"; source: "efl";
+         action: STATE_SET "default";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,disabled"; source: "efl";
+         action: STATE_SET "disabled";
+         target: "event";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "event_block";
+      }
+      program {
+         signal: "efl,state,enabled"; source: "efl";
+         action: STATE_SET "default";
+         target: "event";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "event_block";
+      }
+   }
+}
+
+group { "efl/list_item:empty";
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   images.image: "bevel_curved_horiz_out.png" COMP;
+   images.image: "shadow_rounded_horiz.png" COMP;
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_horiz_out.png" COMP;
+   images.image: "shine.png" COMP;
+   parts {
+      rect { "event";
+         desc { "default";
+            color: 0 0 0 0;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect { "base"; nomouse;
+         desc { "default";
+            color: 64 64 64 255;
+            color_class: "list_item_base";
+         }
+         desc { "odd";
+            color: 56 56 56 255;
+            color_class: "list_item_base_odd";
+         }
+      }
+
+      image { "bevel"; nomouse;
+         desc { "default";
+            image.normal: "bevel_curved_horiz_out.png";
+            image.border: 0 0 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      swallow { "efl.background";
+         desc { "default";
+            rel.to: "base";
+            vis;
+         }
+      }
+      image { "sel_shadow"; nomouse;
+         desc { "default";
+            image.normal: "shadow_rounded_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_base"; nomouse;
+         desc { "default";
+            image.normal: "vgrad_med_dark.png";
+            fill.smooth: 0;
+            hid;
+            TILED_HORIZ(120)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_bevel"; nomouse;
+         desc { "default";
+            image.normal: "bevel_horiz_out.png";
+            image.border: 0 0 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      //##//
+      swallow { "efl.content"; mouse;
+         scale;
+         desc { "default";
+            min: 19 19;
+            rel1.offset: -1 2;
+            rel2.offset: -3 -3;
+         }
+      }
+      //##//
+      image { "sel_shine";
+         desc { "default";
+            image.normal: "shine.png";
+            rel1.offset: 0 -2;
+            rel1.to: "sel_base";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            rel2.to: "sel_base";
+            hid;
+            FIXED_SIZE(69, 5)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "event_block"; mouse;
+         desc { "default";
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "efl,state,odd"; source: "efl";
+         action: STATE_SET "odd";
+         target: "base";
+      }
+      program {
+         signal: "efl,state,even"; source: "efl";
+         action: STATE_SET "default";
+         target: "base";
+      }
+      program {
+         signal: "efl,state,pressed"; source: "efl";
+         action: STATE_SET "selected";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,unpressed"; source: "efl";
+         action: STATE_SET "default";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,selected"; source: "efl";
+         action: STATE_SET "selected";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,unselected"; source: "efl";
+         action: STATE_SET "default";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shine";
+      }
+      program {
+         signal: "efl,state,disabled"; source: "efl";
+         action: STATE_SET "disabled";
+         target: "event";
+         target: "event_block";
+      }
+      program {
+         signal: "efl,state,enabled"; source: "efl";
+         action: STATE_SET "default";
+         target: "event";
+         target: "event_block";
+      }
+   }
+}

@@ -17,6 +17,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include <linux/dma-buf.h>
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 #define SYM(lib, xx)               \
@@ -39,6 +40,8 @@ struct _Buffer_Manager
    void *(*map)(Ecore_Wl2_Buffer *buf);
    void (*unmap)(Ecore_Wl2_Buffer *buf);
    void (*discard)(Ecore_Wl2_Buffer *buf);
+   void (*lock)(Ecore_Wl2_Buffer *buf);
+   void (*unlock)(Ecore_Wl2_Buffer *buf);
    void (*manager_destroy)(void);
    void *priv;
    void *dl_handle;
@@ -99,6 +102,36 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
    zwp_linux_buffer_params_v1_destroy(dp);
 
    return buf;
+}
+
+static void
+_dmabuf_lock(Ecore_Wl2_Buffer *b)
+{
+   int ret;
+   struct dma_buf_sync s;
+
+   s.flags = DMA_BUF_SYNC_START | DMA_BUF_SYNC_RW;
+   do
+     {
+        ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+     } while (ret && ((errno == EAGAIN) || (errno == EINTR)));
+
+   if (ret) WRN("Failed to lock dmabuf");
+}
+
+static void
+_dmabuf_unlock(Ecore_Wl2_Buffer *b)
+{
+   int ret;
+   struct dma_buf_sync s;
+
+   s.flags = DMA_BUF_SYNC_END | DMA_BUF_SYNC_RW;
+   do
+     {
+        ret = ioctl(b->fd, DMA_BUF_IOCTL_SYNC, &s);
+     } while (ret && ((errno == EAGAIN) || (errno == EINTR)));
+
+   if (ret) WRN("Failed to unlock dmabuf");
 }
 
 static Buffer_Handle *
@@ -192,6 +225,8 @@ _intel_buffer_manager_setup(int fd)
    buffer_manager->map = _intel_map;
    buffer_manager->unmap = _intel_unmap;
    buffer_manager->discard = _intel_discard;
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
    buffer_manager->manager_destroy = _intel_manager_destroy;
    buffer_manager->dl_handle = drm_intel_lib;
 
@@ -298,6 +333,8 @@ _exynos_buffer_manager_setup(int fd)
    buffer_manager->map = _exynos_map;
    buffer_manager->unmap = _exynos_unmap;
    buffer_manager->discard = _exynos_discard;
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
    buffer_manager->manager_destroy = _exynos_manager_destroy;
    buffer_manager->dl_handle = drm_exynos_lib;
    return EINA_TRUE;
@@ -310,15 +347,15 @@ err:
 static Buffer_Handle *
 _wl_shm_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
 {
-   Efl_Vpath_File *file_obj;
    Eina_Tmpstr *fullname;
    size_t size = w * h * 4;
    void *out = NULL;
+   char *tmp;
 
-   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                      "(:run:)/evas-wayland_shm-XXXXXX");
-   *fd = eina_file_mkstemp(efl_vpath_file_result_get(file_obj), &fullname);
-   efl_del(file_obj);
+   tmp = eina_vpath_resolve("(:usr.run:)/evas-wayland_shm-XXXXXX");
+   *fd = eina_file_mkstemp(tmp, &fullname);
+   free(tmp);
+
    if (*fd < 0) return NULL;
 
    unlink(fullname);
@@ -528,6 +565,8 @@ _vc4_buffer_manager_setup(int fd)
    buffer_manager->map = _vc4_map;
    buffer_manager->unmap = _vc4_unmap;
    buffer_manager->discard = _vc4_discard;
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
    buffer_manager->manager_destroy = NULL;
    buffer_manager->dl_handle = drm_lib;
    return EINA_TRUE;
@@ -616,19 +655,40 @@ _buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int
 }
 
 EAPI struct wl_buffer *
-ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *buf)
+ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf)
 {
-   return buffer_manager->to_buffer(ewd, buf);
+   return buf->wl_buffer;
 }
 
 EAPI void *
-ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf)
+ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride)
 {
    void *out;
 
-   _buffer_manager_ref();
-   out = buffer_manager->map(buf);
-   if (!out) _buffer_manager_deref();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
+
+   if (buf->mapping)
+     {
+        out = buf->mapping;
+     }
+   else
+     {
+        _buffer_manager_ref();
+        out = buffer_manager->map(buf);
+        if (!out)
+          {
+             _buffer_manager_deref();
+             return NULL;
+          }
+        buf->locked = EINA_TRUE;
+        buf->mapping = out;
+     }
+   if (w) *w = buf->w;
+   if (h) *h = buf->h;
+   if (stride) *stride = (int)buf->stride;
+
+   if (!buf->locked) ecore_wl2_buffer_lock(buf);
+
    return out;
 }
 
@@ -647,10 +707,18 @@ ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf)
 }
 
 EAPI void
+ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b)
+{
+   if (b->locked) ERR("Buffer already locked\n");
+   if (buffer_manager->lock) buffer_manager->lock(b);
+   b->locked = EINA_TRUE;
+}
+
+EAPI void
 ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b)
 {
-   ecore_wl2_buffer_unmap(b);
-   b->mapping = NULL;
+   if (!b->locked) ERR("Buffer already unlocked\n");
+   if (buffer_manager->unlock) buffer_manager->unlock(b);
    b->locked = EINA_FALSE;
 }
 
@@ -670,6 +738,73 @@ ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b)
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
    free(b);
+}
+
+EAPI Eina_Bool
+ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buffer, EINA_FALSE);
+
+   return (buffer->locked) || (buffer->busy);
+}
+
+EAPI void
+ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN(buffer);
+
+   buffer->busy = EINA_TRUE;
+}
+
+EAPI int
+ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buffer, 0);
+
+   return buffer->age;
+}
+
+EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age)
+{
+   EINA_SAFETY_ON_NULL_RETURN(buffer);
+
+   buffer->age = age;
+}
+
+EAPI void
+ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer)
+{
+   EINA_SAFETY_ON_NULL_RETURN(buffer);
+
+   buffer->age++;
+}
+
+/* The only user of this function has been removed, but it
+ * will likely come back later.  The problem is that
+ * a dmabuf buffer needs to be resized on the compositor
+ * even if the allocation still fits.  Doing the resize
+ * properly isn't something that will be fixed in the 1.21
+ * timeframe, so the optimization has been (temporarily)
+ * removed.
+ *
+ * This is currently beta api - don't move it out of beta
+ * with no users...
+ */
+EAPI Eina_Bool
+ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h)
+{
+   int stride;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(b, EINA_FALSE);
+
+   stride = b->stride;
+   if ((w >= b->w) && (w <= stride / 4) && (h == b->h))
+     {
+        b->w = w;
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
 }
 
 static Ecore_Wl2_Buffer *
@@ -703,7 +838,7 @@ ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
    out = _ecore_wl2_buffer_partial_create(w, h, alpha);
    if (!out) return NULL;
 
-   out->wl_buffer = ecore_wl2_buffer_wl_buffer_get(ewd, out);
+   out->wl_buffer = buffer_manager->to_buffer(ewd, out);
 
    return out;
 }

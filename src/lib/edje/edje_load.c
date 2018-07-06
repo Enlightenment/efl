@@ -166,25 +166,25 @@ _efl_canvas_layout_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char *
    if (group) *group = ed->group;
 }
 
-EOLIAN Efl_Image_Load_Error
-_efl_canvas_layout_efl_file_load_error_get(Eo *obj, Edje *ed)
+EOLIAN Efl_Gfx_Image_Load_Error
+_efl_canvas_layout_efl_file_load_error_get(const Eo *obj, Edje *ed)
 {
-   Efl_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EFL_CANVAS_LAYOUT_CLASS));
+   Efl_Gfx_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EFL_CANVAS_LAYOUT_CLASS));
 
-   if (p != EFL_IMAGE_LOAD_ERROR_NONE) return p;
+   if (p != EFL_GFX_IMAGE_LOAD_ERROR_NONE) return p;
    switch (ed->load_error)
      {
-      case EDJE_LOAD_ERROR_NONE: return EFL_IMAGE_LOAD_ERROR_NONE;
-      case EDJE_LOAD_ERROR_GENERIC: return EFL_IMAGE_LOAD_ERROR_GENERIC;
-      case EDJE_LOAD_ERROR_DOES_NOT_EXIST: return EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
-      case EDJE_LOAD_ERROR_PERMISSION_DENIED: return EFL_IMAGE_LOAD_ERROR_PERMISSION_DENIED;
-      case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED: return EFL_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-      case EDJE_LOAD_ERROR_CORRUPT_FILE: return EFL_IMAGE_LOAD_ERROR_CORRUPT_FILE;
-      case EDJE_LOAD_ERROR_UNKNOWN_FORMAT: return EFL_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
-      case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: return EFL_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
-      case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: return EFL_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
-      case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: return EFL_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
-      default: return EFL_IMAGE_LOAD_ERROR_GENERIC;
+      case EDJE_LOAD_ERROR_NONE: return EFL_GFX_IMAGE_LOAD_ERROR_NONE;
+      case EDJE_LOAD_ERROR_GENERIC: return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
+      case EDJE_LOAD_ERROR_DOES_NOT_EXIST: return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+      case EDJE_LOAD_ERROR_PERMISSION_DENIED: return EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED;
+      case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED: return EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+      case EDJE_LOAD_ERROR_CORRUPT_FILE: return EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE;
+      case EDJE_LOAD_ERROR_UNKNOWN_FORMAT: return EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+      case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: return EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
+      case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: return EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
+      case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: return EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
+      default: return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 }
 
@@ -260,20 +260,16 @@ edje_file_collection_list(const char *file)
 {
    Eina_File *f;
    Eina_List *lst;
+   char *tmp;
 
    if ((!file) || (!*file)) return NULL;
-   Efl_Vpath_File *file_obj =
-     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-   efl_vpath_file_do(file_obj);
-   // XXX:FIXME: allow this to be async
-   efl_vpath_file_wait(file_obj);
-   file = efl_vpath_file_result_get(file_obj);
-   f = eina_file_open(file, EINA_FALSE);
+   tmp = eina_vpath_resolve(file);
+   f = eina_file_open(tmp, EINA_FALSE);
 
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
-   efl_del(file_obj);
+   free(tmp);
    return lst;
 }
 
@@ -728,6 +724,20 @@ _edje_device_changed_cb(void *data, const Efl_Event *event)
 }
 
 static void
+_edje_device_canvas_del(void *data, const Efl_Event *event)
+{
+   Edje *ed = data;
+   efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
+                          _edje_device_added_cb, ed);
+   efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
+                          _edje_device_removed_cb, ed);
+
+   if (ed->collection && ed->collection->use_custom_seat_names)
+     efl_event_callback_del(event->object, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
+                            _edje_device_changed_cb, ed);
+}
+
+static void
 _edje_devices_add(Edje *ed, Evas *tev)
 {
    const Eina_List *devices, *l;
@@ -739,14 +749,15 @@ _edje_devices_add(Edje *ed, Evas *tev)
         if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           _edje_device_add(ed, dev);
      }
+   efl_event_callback_add(tev, EFL_EVENT_DEL, _edje_device_canvas_del, ed);
 
-   efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_ADDED,
+   efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
                           _edje_device_added_cb, ed);
-   efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                           _edje_device_removed_cb, ed);
 
    if (ed->collection && ed->collection->use_custom_seat_names)
-     efl_event_callback_add(tev, EFL_CANVAS_EVENT_DEVICE_CHANGED,
+     efl_event_callback_add(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                             _edje_device_changed_cb, ed);
 }
 
@@ -1086,7 +1097,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           Evas_Canvas3D_Material *material = NULL;
                           Edje_Part_Description_Mesh_Node *pd_mesh_node;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
                           mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, ed->base.evas);
                           evas_canvas3d_node_mesh_add(rp->node, mesh);
@@ -1119,7 +1130,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Light *light = NULL;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
                           light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base.evas);
                           evas_canvas3d_node_light_set(rp->node, light);
 
@@ -1131,7 +1142,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Camera *camera = NULL;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
                           camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base.evas);
                           evas_canvas3d_node_camera_set(rp->node, camera);
 
@@ -1317,7 +1328,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                    }
                               }
 
-                            if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+                            if ((rp->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+                                  rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                               {
                                  _edje_entry_real_part_init(ed, rp);
                                  if (!ed->has_entries)
@@ -1840,25 +1852,35 @@ _edje_object_collect(Edje *ed)
 }
 
 void
+_edje_file_callbacks_del(Edje *ed, Evas *e)
+{
+   Evas *tev = e;
+
+   if (!tev) tev = evas_object_evas_get(ed->obj);
+   efl_event_callback_del(tev, EFL_EVENT_DEL, _edje_device_canvas_del, ed);
+   efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
+                          _edje_device_added_cb, ed);
+   efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
+                          _edje_device_removed_cb, ed);
+   if (ed->collection && ed->collection->use_custom_seat_names)
+     efl_event_callback_del(tev, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
+                            _edje_device_changed_cb, ed);
+}
+
+void
 _edje_file_del(Edje *ed)
 {
    Edje_User_Defined *eud;
    Evas *tev = NULL;
 
-   if (ed->obj) tev = evas_object_evas_get(ed->obj);
+   if (ed->obj && (!efl_invalidated_get(ed->obj)))
+     tev = evas_object_evas_get(ed->obj);
 
    ed->groups = eina_list_free(ed->groups);
 
    if (tev)
      {
-        efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_ADDED,
-                               _edje_device_added_cb, ed);
-        efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_REMOVED,
-                               _edje_device_removed_cb, ed);
-        if (ed->collection && ed->collection->use_custom_seat_names)
-          efl_event_callback_del(tev, EFL_CANVAS_EVENT_DEVICE_CHANGED,
-                                 _edje_device_changed_cb, ed);
-
+        _edje_file_callbacks_del(ed, tev);
         evas_event_freeze(tev);
      }
 
@@ -2115,6 +2137,16 @@ _edje_file_free(Edje_File *edf)
    HASH_FREE(edf->fonts);
    HASH_FREE(edf->collection);
    HASH_FREE(edf->data);
+   HASH_FREE(edf->image_id_hash);
+
+   if (edf->requires_count)
+     {
+        unsigned int i;
+
+        for (i = 0; i < edf->requires_count; i++)
+          eina_stringshare_del(edf->requires[i]);
+        free(edf->requires);
+     }
 
    if (edf->image_dir)
      {
@@ -2233,6 +2265,7 @@ _edje_file_free(Edje_File *edf)
    if (edf->collection_patterns) edje_match_patterns_free(edf->collection_patterns);
    if (edf->path) eina_stringshare_del(edf->path);
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
+   if (edf->free_strings) eina_stringshare_del(edf->id);
    _edje_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
    if (edf->f) eina_file_close(edf->f);
@@ -2670,7 +2703,7 @@ edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
 
    if (*root_node == NULL)
      *root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas,
-                                 evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
+                                 evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    if (scene == NULL)
      scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, ed->base.evas);

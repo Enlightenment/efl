@@ -43,6 +43,11 @@ typedef enum
 /**
  * Add a compositor widget to the given canvas.
  *
+ * The following smart callbacks will trigger on the compositor object:
+ * "child_added" - A toplevel surface with a parent has been added; event info is Evas_Object *surface
+ * "popup_added" - A popup surface has been added; event info is Evas_Object *surface
+ * "seat_added" - A compositor seat has been added; event info is Eo *dev
+ *
  * @param e The canvas
  * @return The compositor object, @c NULL on failure
  */
@@ -59,6 +64,37 @@ EAPI Evas_Object *efl_wl_add(Evas *e);
  * @return The Ecore_Exe from the executed process, @c NULL on failure
  */
 EAPI Ecore_Exe *efl_wl_run(Evas_Object *obj, const char *cmd);
+
+/**
+ * Run a command in the compositor widget with specified flags.
+ *
+ * @note If GL is available, the ELM_ACCEL environment variable will be
+ * set to "gl" while executing the command.
+ *
+ * @param obj The compositor widget
+ * @param cmd The command to run
+ * @param flags The flags to use
+ * @return The Ecore_Exe from the executed process, @c NULL on failure
+ */
+Ecore_Exe *efl_wl_flags_run(Evas_Object *obj, const char *cmd, Ecore_Exe_Flags flags);
+
+/**
+ * Add a process to the list of allowed clients for the compositor widget
+ *
+ * @param obj The compositor widget
+ * @param pid The process to allow
+ * @since 1.21
+ */
+EAPI void efl_wl_pid_add(Evas_Object *obj, int32_t pid);
+
+/**
+ * Remove a process from the list of allowed clients for the compositor widget
+ *
+ * @param obj The compositor widget
+ * @param pid The process to deny
+ * @since 1.21
+ */
+EAPI void efl_wl_pid_del(Evas_Object *obj, int32_t pid);
 
 /**
  * Put the bottom-most toplevel window on top and apply focus to it
@@ -155,6 +191,33 @@ EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
  * @since 1.21
  */
 EAPI Evas_Object *efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface);
+
+/**
+ * Set external xkbcommon resources to be used read-only by the compositor object
+ *
+ * Use this function if you have available the necessary xkbcommon objects which are used
+ * to handle keyboard states in a compositor. The passed objects will not be modified or copied,
+ * so this function must be called again in the case that the compositor widget outlives the
+ * lifetime of any of the passed pointers.
+ *
+ * @param obj The compositor widget
+ * @param seat The seat to set the keymap for, NULL to set the keymap for all seats
+ * @param keymap The xkb_keymap object to use
+ * @param state The xkb_state object to use
+ * @param fd The fd created from a mmapped xkb_keymap
+ * @param size The size of the xkb_keymap memory
+ * @param wl_key_array A pointer to the wl_array in which keys are stored
+ * @since 1.21
+ */
+EAPI void efl_wl_seat_keymap_set(Evas_Object *obj, Eo *seat, void *state, int fd, size_t size, void *wl_key_array);
+
+/**
+ * Set the key repeat rate for a seat in the compositor
+ *
+ * @param obj The compositor widget
+ * @since 1.21
+ */
+EAPI void efl_wl_seat_key_repeat_set(Evas_Object *obj, Eo *seat, int repeat_rate, int repeat_delay);
 #endif
 
 #endif

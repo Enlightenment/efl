@@ -5,10 +5,10 @@ struct Evas_Event_Clicked_Double_Info {
 class Events {
    event_prefix: totally_not_events;
    events {
-      clicked @beta; [[Comment for clicked]]
+      clicked @beta: void; [[Comment for clicked]]
       clicked,double: Evas_Event_Clicked_Double_Info; /* No comment */
-      hot @hot;
-      restart @restart;
-      hot_restart @hot @restart;
+      hot @hot: void;
+      restart @restart: void;
+      hot_restart @hot @restart: void;
    }
 }

@@ -17,6 +17,7 @@
  */
 #include <math.h>
 #include <float.h>
+#include <stdio.h>
 
 #include "eina_private.h"
 #include "eina_bezier.h"
@@ -40,9 +41,9 @@ _eina_bezier_1st_derivative(const Eina_Bezier *bz,
    *py = 3 * ( a * bz->start.y + b * bz->ctrl_start.y + c * bz->ctrl_end.y + d * bz->end.y);
 }
 
-// approximate sqrt(x*x + y*y) using alpha max plus beta min algorithm.
-// With alpha = 1, beta = 3/8, giving results with a largest error less
-// than 7% compared to the exact value.
+// Approximate sqrt(x*x + y*y) using the alpha max plus beta min algorithm.
+// This uses alpha = 1, beta = 3/8, which results in a maximum error of less
+// than 7% compared to the correct value.
 static double
 _line_length(double x1, double y1, double x2, double y2)
 {
@@ -79,8 +80,6 @@ _eina_bezier_split(const Eina_Bezier *b,
    first->end.y = second->start.y = (first->ctrl_end.y + second->ctrl_start.y) * 0.5;
 }
 
-#include <stdio.h>
-
 static float
 _eina_bezier_length_helper(const Eina_Bezier *b)
 {
@@ -95,10 +94,10 @@ _eina_bezier_length_helper(const Eina_Bezier *b)
 
    chord = _line_length(b->start.x, b->start.y, b->end.x, b->end.y);
 
-   if (fabsf(len - chord) > FLT_MIN) {
-      _eina_bezier_split(b, &left, &right);       /* split in two */
+   if (!EINA_FLT_EQ(len, chord)) {
+      _eina_bezier_split(b, &left, &right); /* split in two */
       length =
-        _eina_bezier_length_helper(&left) +  /* try left side */
+        _eina_bezier_length_helper(&left) + /* try left side */
         _eina_bezier_length_helper(&right); /* try right side */
 
       return length;

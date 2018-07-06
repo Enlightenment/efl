@@ -36,7 +36,7 @@ void call_async(efl::eina::mutex& mutex, efl::eina::condition_variable& cond, in
     );
 }
 
-START_TEST(ecore_cxx_safe_call_async)
+EFL_START_TEST(ecore_cxx_safe_call_async)
 {
   efl::ecore::ecore_init init;
 
@@ -65,7 +65,7 @@ START_TEST(ecore_cxx_safe_call_async)
   ::eina_error_set(0);
   std::cout << "end of ecore_cxx_safe_call_async" << std::endl;
 }
-END_TEST
+EFL_END_TEST
 
 struct big_pod
 {
@@ -244,7 +244,7 @@ void call_sync_int()
   ck_assert(constructor_called == destructor_called);
 }
 
-START_TEST(ecore_cxx_safe_call_sync)
+EFL_START_TEST(ecore_cxx_safe_call_sync)
 {
   efl::ecore::ecore_init init;
 
@@ -256,7 +256,7 @@ START_TEST(ecore_cxx_safe_call_sync)
 
   thread.join();
 }
-END_TEST
+EFL_END_TEST
 
 void
 ecore_cxx_test_safe_call(TCase* tc)

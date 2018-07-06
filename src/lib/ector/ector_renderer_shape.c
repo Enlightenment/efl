@@ -16,7 +16,7 @@ _ector_renderer_shape_fill_set(Eo *obj EINA_UNUSED,
 }
 
 static const Ector_Renderer *
-_ector_renderer_shape_fill_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_fill_get(const Eo *obj EINA_UNUSED,
                                        Ector_Renderer_Shape_Data *pd)
 {
    return pd->fill;
@@ -31,7 +31,7 @@ _ector_renderer_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
 }
 
 static const Ector_Renderer *
-_ector_renderer_shape_stroke_fill_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_stroke_fill_get(const Eo *obj EINA_UNUSED,
                                               Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.fill;
@@ -46,7 +46,7 @@ _ector_renderer_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
 }
 
 static const Ector_Renderer *
-_ector_renderer_shape_stroke_marker_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_stroke_marker_get(const Eo *obj EINA_UNUSED,
                                                 Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.marker;

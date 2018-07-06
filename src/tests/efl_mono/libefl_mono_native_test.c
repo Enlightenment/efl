@@ -3,6 +3,9 @@
 #include "config.h"
 #endif
 
+#define EFL_PART_PROTECTED
+
+#include <Ecore.h>
 #include <Eo.h>
 
 #undef EOAPI
@@ -34,6 +37,8 @@
 #include "test_numberwrapper.eo.h"
 #include "test_testing.eo.h"
 
+#include <interfaces/efl_part.eo.h>
+
 #define EQUAL(a, b) ((a) == (b) ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s)", __FILE__, __LINE__, __FUNCTION__), fflush(stderr), 0))
 #define STR_EQUAL(a, b) (strcmp((a), (b)) == 0 ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s) '%s' != '%s'", __FILE__, __LINE__, __FUNCTION__, (a), (b)), fflush(stderr), 0))
 
@@ -44,7 +49,12 @@ typedef struct Test_Testing_Data
   Eina_Free_Cb free_cb;
   Eina_Error error_code;
   Eina_Value *stored_value;
-
+  Test_StructSimple stored_struct;
+  int stored_int;
+  Eo *part1;
+  Eo *part2;
+  Eina_Promise *promise;
+  Eina_List *list_for_accessor;
 } Test_Testing_Data;
 
 typedef struct Test_Numberwrapper_Data
@@ -80,7 +90,7 @@ char **_new_str_ref(const char* str)
 static
 Test_Numberwrapper *_new_obj(int n)
 {
-   return efl_add(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
+   return efl_add_ref(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
 }
 
 static
@@ -95,9 +105,35 @@ Test_Numberwrapper **_new_obj_ref(int n)
 // Test.Testing //
 // ############ //
 
+static Efl_Object*
+_test_testing_efl_object_constructor(Eo *obj, Test_Testing_Data *pd)
+{
+   efl_constructor(efl_super(obj, TEST_TESTING_CLASS));
+
+   // To avoid an infinite loop calling the same constructor
+   if (!efl_parent_get(obj))
+     {
+        pd->part1 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part1"));
+        pd->part2 = efl_add(TEST_TESTING_CLASS, obj, efl_name_set(efl_added, "part2"));
+     }
+
+   return obj;
+}
+
 Efl_Object *_test_testing_return_object(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return obj;
+}
+
+void _test_testing_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, int x, int *y)
+{
+    *y = -x;
+}
+
+void _test_testing_int_ptr_out(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, int x, int **y)
+{
+    pd->stored_int = x * 2;
+    *y = &pd->stored_int;
 }
 
 const char *_test_testing_in_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char *str)
@@ -3248,46 +3284,6 @@ Eina_Bool check_and_modify_struct_simple(Test_StructSimple *simple)
 }
 
 static
-Eina_Bool check_zeroed_struct_simple(Test_StructSimple *simple)
-{
-   Eina_Bool ret =
-     simple->fbyte == 0
-     && simple->fubyte == 0
-     && simple->fchar == '\0'
-     && simple->fshort == 0
-     && simple->fushort == 0
-     && simple->fint == 0
-     && simple->fuint == 0
-     && simple->flong == 0
-     && simple->fulong == 0
-     && simple->fllong == 0
-     && simple->fullong == 0
-     && simple->fint8 == 0
-     && simple->fuint8 == 0
-     && simple->fint16 == 0
-     && simple->fuint16 == 0
-     && simple->fint32 == 0
-     && simple->fuint32 == 0
-     && simple->fint64 == 0
-     && simple->fuint64 == 0
-     && simple->fssize == 0
-     && simple->fsize == 0
-     && simple->fintptr == 0x00
-     && simple->fptrdiff == 0
-     && simple->ffloat == 0
-     && simple->fdouble == 0
-     && simple->fbool == EINA_FALSE
-     && simple->fvoid_ptr == NULL
-     && simple->fenum == TEST_SAMPLEENUM_V0
-     && simple->fstring == NULL
-     && simple->fmstring == NULL
-     && simple->fstringshare == NULL
-   ;
-
-   return ret;
-}
-
-static
 void struct_complex_with_values(Test_StructComplex *complex)
 {
    complex->farray = eina_array_new(4);
@@ -3374,32 +3370,6 @@ Eina_Bool check_and_modify_struct_complex(Test_StructComplex *complex)
    return EINA_TRUE;
 }
 
-static
-Eina_Bool check_zeroed_struct_complex(Test_StructComplex *complex)
-{
-   Eina_Bool ret =
-      complex->farray == NULL
-      && complex->finarray == NULL
-      && complex->flist == NULL
-      && complex->finlist == NULL
-      && complex->fhash == NULL
-      && complex->fiterator == NULL
-
-      && complex->fany_value.type == NULL
-      && complex->fany_value.value._guarantee == 0
-
-      && complex->fany_value_ptr == NULL
-      && complex->fbinbuf == NULL
-
-      && complex->fslice.len == 0
-      && complex->fslice.mem == NULL
-
-      && complex->fobj == NULL
-   ;
-
-   return ret;
-}
-
 // with simple types
 
 EOLIAN
@@ -3408,20 +3378,34 @@ Eina_Bool _test_testing_struct_simple_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_T
    return check_and_modify_struct_simple(&simple);
 }
 
-EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+static void _reverse_string(char *str)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   int len = strlen(str);
+   if (len > 0) {
+       for (int i=0, k=len-1; i < len/2; i++, k--) {
+           char tmp = str[k];
+           str[k] = str[i];
+           str[i] = tmp;
+       }
+   }
 }
 
 EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+Eina_Bool _test_testing_struct_simple_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   simple->fint = -simple->fint;
+   _reverse_string(simple->fmstring);
+   return EINA_TRUE;
+}
+
+EOLIAN
+Test_StructSimple _test_testing_struct_simple_ptr_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+   Test_StructSimple ret = *simple;
+   free(simple);
+   ret.fint = -ret.fint;
+   _reverse_string(ret.fmstring);
+   return ret;
 }
 
 EOLIAN
@@ -3439,19 +3423,20 @@ Eina_Bool _test_testing_struct_simple_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_
 }
 
 EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+Test_StructSimple _test_testing_struct_simple_ptr_out(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Test_StructSimple **simple)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   struct_simple_with_values(&pd->stored_struct);
+   *simple = &pd->stored_struct;
+   return **simple;
 }
 
 EOLIAN
-Eina_Bool _test_testing_struct_simple_ptr_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+Test_StructSimple _test_testing_struct_simple_ptr_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
 {
-   (void) simple;
-   EINA_LOG_ERR("Not implemented!");
-   return EINA_FALSE;
+   *simple = malloc(sizeof(Test_StructSimple));
+   struct_simple_with_values(*simple);
+   (*simple)->fstring = "Ptr Out Own";
+   return **simple;
 }
 
 EOLIAN
@@ -3465,15 +3450,72 @@ Test_StructSimple _test_testing_struct_simple_return(EINA_UNUSED Eo *obj, EINA_U
 EOLIAN
 Test_StructSimple *_test_testing_struct_simple_ptr_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
-   EINA_LOG_ERR("Not implemented!");
-   return NULL;
+   struct_simple_with_values(&pd->stored_struct);
+   pd->stored_struct.fstring = "Ret Ptr";
+   return &pd->stored_struct;
 }
 
 EOLIAN
 Test_StructSimple *_test_testing_struct_simple_ptr_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
-   EINA_LOG_ERR("Not implemented!");
-   return NULL;
+   Test_StructSimple *ret = malloc(sizeof(Test_StructSimple));
+   struct_simple_with_values(ret);
+   ret->fstring = "Ret Ptr Own";
+   return ret;
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_in(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple simple)
+{
+    test_testing_struct_simple_in(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_in(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+    test_testing_struct_simple_ptr_in(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_in_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+    test_testing_struct_simple_ptr_in_own(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_out(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+    test_testing_struct_simple_out(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_out(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+{
+    test_testing_struct_simple_ptr_out(obj, simple);
+}
+
+EOLIAN
+void _test_testing_call_struct_simple_ptr_out_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+{
+    test_testing_struct_simple_ptr_out_own(obj, simple);
+}
+
+EOLIAN
+Test_StructSimple _test_testing_call_struct_simple_return(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    return test_testing_struct_simple_return(obj);
+}
+
+EOLIAN
+Test_StructSimple *_test_testing_call_struct_simple_ptr_return(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    return test_testing_struct_simple_ptr_return(obj);
+}
+
+EOLIAN
+Test_StructSimple *_test_testing_call_struct_simple_ptr_return_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    return test_testing_struct_simple_ptr_return_own(obj);
 }
 
 // with complex types
@@ -3588,7 +3630,7 @@ void _test_numberwrapper_number_set(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data
    pd->number = n;
 }
 
-int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd)
+int _test_numberwrapper_number_get(EINA_UNUSED const Eo *obj, Test_Numberwrapper_Data *pd)
 {
    return pd->number;
 }
@@ -3625,6 +3667,11 @@ void _test_testing_set_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Eina_Va
     eina_value_copy(&value, pd->stored_value);
 }
 
+void _test_testing_call_set_value(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const Eina_Value v)
+{
+    test_testing_set_value(obj, v);
+}
+
 Eina_Value *_test_testing_get_value_ptr_own(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
     Eina_Value *val = pd->stored_value;
@@ -3636,14 +3683,6 @@ Eina_Value *_test_testing_get_value_ptr(EINA_UNUSED Eo *obj, Test_Testing_Data *
 {
     return pd->stored_value;
 }
-
-/* Currently the Eolian declaration FUNC_BODY in the .eo.c file seems to be broken for
- * generic value.
- */
-/* Eina_Value _test_testing_get_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
-{
-    return *pd->stored_value;
-}*/
 
 void _test_testing_clear_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
@@ -3667,6 +3706,157 @@ void _test_testing_out_value_ptr_own(EINA_UNUSED Eo *obj, Test_Testing_Data *pd,
 void _test_testing_out_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Eina_Value *value)
 {
     *value = *pd->stored_value;
+}
+
+void _test_testing_emit_event_with_string(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char *data)
+{
+    char *ptr = strdup(data);
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_STRING, ptr);
+    free(ptr);
+}
+
+void _test_testing_emit_event_with_bool(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Bool data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_BOOL, (void *) (uintptr_t) data);
+}
+
+void _test_testing_emit_event_with_int(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, int data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_INT, (void *) (uintptr_t) data);
+}
+
+void _test_testing_emit_event_with_uint(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, unsigned int data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_UINT, (void *) (uintptr_t) data);
+}
+
+void _test_testing_emit_event_with_obj(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eo *data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_OBJ, data);
+}
+
+void _test_testing_emit_event_with_error(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Error data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_ERROR, &data);
+}
+
+void _test_testing_emit_event_with_struct(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple data)
+{
+    efl_event_callback_legacy_call(obj, TEST_TESTING_EVENT_EVT_WITH_STRUCT, &data);
+}
+
+
+Efl_Object *_test_testing_efl_part_part_get(EINA_UNUSED const Eo *obj, Test_Testing_Data *pd, const char *name)
+{
+    if (!strcmp(name, "part1"))
+      return pd->part1;
+    else if (!strcmp(name, "part2"))
+      return pd->part2;
+    else
+      return NULL;
+}
+
+void _test_testing_append_to_strbuf(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Strbuf *buf, const char *str)
+{
+    eina_strbuf_append(buf, str);
+}
+
+void _test_testing_call_append_to_strbuf(Eo * obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Strbuf *buf, const char *str)
+{
+    test_testing_append_to_strbuf(obj, buf, str);
+}
+
+void _test_testing_call_format_cb(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Strbuf *buf, const Eina_Value value,
+                               void *func_data, Test_FormatCb func, Eina_Free_Cb func_free_cb)
+{
+    func(func_data, buf, value);
+    func_free_cb(func_data);
+}
+
+Test_MyInt _test_testing_bypass_typedef(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_MyInt data, Test_MyInt *receiver)
+{
+    *receiver = data;
+    return data;
+}
+
+/* Class Properties */
+static int _test_testing_klass_prop = 0;
+
+int _test_testing_klass_prop_get(const Eo *klass, EINA_UNUSED void *pd)
+{
+    EINA_LOG_ERR("FAIL on GET");
+   if (klass != test_testing_class_get())
+     {
+        eina_error_set(EINVAL);
+        return -1;
+     }
+   return _test_testing_klass_prop;
+}
+
+void _test_testing_klass_prop_set(Eo *klass, EINA_UNUSED void *pd, int value)
+{
+    EINA_LOG_ERR("FAIL on SET");
+   if (klass != test_testing_class_get())
+     {
+        eina_error_set(EINVAL);
+     }
+   _test_testing_klass_prop = value;
+}
+
+static void _promise_cancelled(void *data, EINA_UNUSED const Eina_Promise *p)
+{
+    Test_Testing_Data *pd = data;
+    pd->promise = NULL;
+}
+
+Eina_Future* _test_testing_get_future(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
+{
+    if (pd->promise == NULL)
+      {
+         Eo *loop = efl_app_loop_main_get(EFL_APP_CLASS);
+         Eina_Future_Scheduler *scheduler = efl_loop_future_scheduler_get(loop);
+         pd->promise = eina_promise_new(scheduler, _promise_cancelled, pd);
+      }
+    return eina_future_new(pd->promise);
+}
+
+void _test_testing_fulfill_promise(Eo *obj, Test_Testing_Data *pd, int data)
+{
+    if (pd->promise == NULL)
+      {
+         EINA_LOG_ERR("Can't fulfill an object without a valid promise.");
+         return;
+      }
+    Eina_Value v;
+    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+    eina_value_set(&v, data);
+    eina_promise_resolve(pd->promise, v);
+}
+
+void _test_testing_reject_promise(Eo *obj, Test_Testing_Data *pd, Eina_Error err)
+{
+    if (pd->promise == NULL)
+      {
+         EINA_LOG_ERR("Can't fulfill an object without a valid promise.");
+         return;
+      }
+
+    eina_promise_reject(pd->promise, err);
+}
+
+Eina_Accessor *_test_testing_clone_accessor(Eo *obj, Test_Testing_Data *pd, Eina_Accessor *acc)
+{
+   if (pd->list_for_accessor)
+     eina_list_free(pd->list_for_accessor);
+
+   unsigned int i;
+   int *data;
+   EINA_ACCESSOR_FOREACH(acc, i, data)
+     {
+         pd->list_for_accessor = eina_list_append(pd->list_for_accessor, data);
+     }
+
+   return eina_list_accessor_new(pd->list_for_accessor);
 }
 
 #include "test_testing.eo.c"

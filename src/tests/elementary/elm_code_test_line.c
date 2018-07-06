@@ -7,13 +7,14 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-START_TEST (elm_code_line_create_test)
+EFL_START_TEST (elm_code_line_create_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -25,15 +26,16 @@ START_TEST (elm_code_line_create_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_line_token_count_test)
+EFL_START_TEST (elm_code_line_token_count_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -49,15 +51,16 @@ START_TEST (elm_code_line_token_count_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_line_split_test)
+EFL_START_TEST (elm_code_line_split_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
    Elm_Code_Line *line, *newline;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -73,7 +76,7 @@ START_TEST (elm_code_line_split_test)
    ck_assert_int_eq(5, newline->length);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_line(TCase *tc)
 {

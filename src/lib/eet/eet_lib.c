@@ -93,8 +93,7 @@ read_binbuf_from_disk(Eet_File      *ef,
                       Eet_File_Node *efn);
 
 static Eet_Error
-eet_internal_close(Eet_File *ef,
-                   Eina_Bool locked);
+eet_internal_close(Eet_File *ef, Eina_Bool locked, Eina_Bool shutdown);
 
 static Eina_Lock eet_cache_lock;
 
@@ -147,7 +146,7 @@ eet_test_close(int       test,
    if (test)
      {
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
      }
 
    return test;
@@ -205,7 +204,7 @@ eet_cache_add(Eet_File   *ef,
         if (del_ef)
           {
              del_ef->delete_me_now = 1;
-             eet_internal_close(del_ef, EINA_TRUE);
+             eet_internal_close(del_ef, EINA_TRUE, EINA_FALSE);
           }
      }
 
@@ -643,7 +642,7 @@ eet_shutdown(void)
         for (i = 0; i < num; i++)
           {
              ERR("File '%s' is still open %i times !", closelist[i]->path, closelist[i]->references);
-             eet_internal_close(closelist[i], EINA_TRUE);
+             eet_internal_close(closelist[i], EINA_TRUE, EINA_TRUE);
           }
      }
    eet_node_shutdown();
@@ -734,7 +733,7 @@ eet_clearcache(void)
 
         for (i = 0; i < num; i++)
           {
-             eet_internal_close(closelist[i], EINA_TRUE);
+             eet_internal_close(closelist[i], EINA_TRUE, EINA_FALSE);
           }
      }
 
@@ -886,7 +885,10 @@ eet_internal_read2(Eet_File *ef)
           {
              efn->data = malloc(efn->size);
              if (efn->data)
-               memcpy(efn->data, ef->data + efn->offset, efn->size);
+               {
+                  memcpy(efn->data, ef->data + efn->offset, efn->size);
+                  ef->header->directory->free_count++;
+               }
           }
 
         /* compute the possible position of a signature */
@@ -1190,6 +1192,7 @@ eet_internal_read1(Eet_File *ef)
 
              strncpy(efn->name, (char *)p + HEADER_SIZE, name_size);
              efn->name[name_size] = 0;
+             ef->header->directory->free_count++;
 
              WRN(
                "File: %s is not up to date for key \"%s\" - needs rebuilding sometime",
@@ -1212,7 +1215,10 @@ eet_internal_read1(Eet_File *ef)
           {
              data = malloc(efn->size);
              if (data)
-               memcpy(data, ef->data + efn->offset, efn->size);
+               {
+                  memcpy(data, ef->data + efn->offset, efn->size);
+                  ef->header->directory->free_count++;
+               }
 
              efn->data = data;
           }
@@ -1254,7 +1260,7 @@ eet_internal_read(Eet_File *ef)
 
       default:
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
         break;
      }
 
@@ -1263,7 +1269,7 @@ eet_internal_read(Eet_File *ef)
 
 static Eet_Error
 eet_internal_close(Eet_File *ef,
-                   Eina_Bool locked)
+                   Eina_Bool locked, Eina_Bool shutdown)
 {
    Eet_Error err = EET_ERROR_NONE;
 
@@ -1321,30 +1327,43 @@ eet_internal_close(Eet_File *ef,
                   int i, num;
 
                   num = (1 << ef->header->directory->size);
-                  for (i = 0; i < num; i++)
+                  for (i = 0; i < num && ef->header->directory->free_count; i++)
                     {
                        Eet_File_Node *efn;
 
                        while ((efn = ef->header->directory->nodes[i]))
                          {
                             if (efn->data)
-                              free(efn->data);
+                              {
+                                 free(efn->data);
+                                 ef->header->directory->free_count--;
+                              }
 
                             ef->header->directory->nodes[i] = efn->next;
 
                             if (efn->free_name)
-                              free(efn->name);
+                              {
+                                 free(efn->name);
+                                 ef->header->directory->free_count--;
+                              }
 
-                            eet_file_node_mp_free(efn);
+                            if (shutdown)
+                              {
+                                 if (!ef->header->directory->free_count) break;
+                              }
+                            else
+                              eet_file_node_mp_free(efn);
                          }
                     }
                   free(ef->header->directory->nodes);
                }
 
-             eet_file_directory_mp_free(ef->header->directory);
+             if (!shutdown)
+               eet_file_directory_mp_free(ef->header->directory);
           }
 
-        eet_file_header_mp_free(ef->header);
+        if (!shutdown)
+          eet_file_header_mp_free(ef->header);
      }
 
    eet_dictionary_free(ef->ed);
@@ -1365,7 +1384,8 @@ eet_internal_close(Eet_File *ef,
 
    /* free it */
    eina_stringshare_del(ef->path);
-   eet_file_mp_free(ef);
+   if (!shutdown)
+     eet_file_mp_free(ef);
    return err;
 
 on_error:
@@ -1434,7 +1454,7 @@ eet_mmap(const Eina_File *file)
         eet_sync(ef);
         ef->references++;
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
      }
 
    ef = eet_cache_find(path, eet_readers, eet_readers_num);
@@ -1510,7 +1530,7 @@ eet_open(const char   *file,
              eet_sync(ef);
              ef->references++;
              ef->delete_me_now = 1;
-             eet_internal_close(ef, EINA_TRUE);
+             eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
           }
 
         ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
@@ -1523,7 +1543,7 @@ eet_open(const char   *file,
           {
              ef->delete_me_now = 1;
              ef->references++;
-             eet_internal_close(ef, EINA_TRUE);
+             eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
           }
 
         ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
@@ -1574,7 +1594,7 @@ open_error:
      {
         ef->delete_me_now = 1;
         ef->references++;
-        eet_internal_close(ef, EINA_TRUE);
+        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
         ef = NULL;
      }
 
@@ -1890,7 +1910,7 @@ eet_identity_set(Eet_File *ef,
 EAPI Eet_Error
 eet_close(Eet_File *ef)
 {
-   return eet_internal_close(ef, EINA_FALSE);
+   return eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
 }
 
 EAPI void *
@@ -2307,12 +2327,14 @@ eet_alias(Eet_File   *ef,
         efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
         efn->free_name = 1;
+        ef->header->directory->free_count++;
         efn->data = NULL;
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
 
         eet_define_data(ef, efn, in, strlen(destination) + 1, comp, 0);
+        ef->header->directory->free_count++;
      }
 
    efn->alias = 1;
@@ -2455,12 +2477,14 @@ eet_write_cipher(Eet_File   *ef,
         efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
         efn->free_name = 1;
+        ef->header->directory->free_count++;
         efn->data = NULL;
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
 
         eet_define_data(ef, efn, in, size, comp, !!cipher_key);
+        ef->header->directory->free_count++;
      }
 
    /* flags that writes are pending */

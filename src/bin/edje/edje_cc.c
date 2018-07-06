@@ -6,12 +6,17 @@
 #include <locale.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
 
 #include "edje_cc.h"
 int _edje_cc_log_dom = -1;
 static void main_help(void);
 
-Eina_Prefix  *pfx = NULL;
+Eina_Prefix *pfx = NULL;
 Eina_List *snd_dirs = NULL;
 Eina_List *mo_dirs = NULL;
 Eina_List *vibration_dirs = NULL;
@@ -20,29 +25,33 @@ Eina_List *model_dirs = NULL;
 Eina_List *fnt_dirs = NULL;
 Eina_List *data_dirs = NULL;
 Eina_List *defines = NULL;
-char      *file_in = NULL;
-char      *tmp_dir = NULL;
-char      *file_out = NULL;
-char      *watchfile = NULL;
-char      *depfile = NULL;
-char      *authors = NULL;
-char      *license = NULL;
+char *file_in = NULL;
+char *tmp_dir = NULL;
+char *file_out = NULL;
+char *watchfile = NULL;
+char *depfile = NULL;
+char *authors = NULL;
+char *license = NULL;
 Eina_List *licenses = NULL;
+Eina_Array *requires;
 
 static const char *progname = NULL;
 
-int        no_lossy = 0;
-int        no_comp = 0;
-int        no_raw = 0;
-int        no_save = 0;
-int        min_quality = 0;
-int        max_quality = 100;
-int        compress_mode = EET_COMPRESSION_HI;
-int        threads = 0;
-int        annotate = 0;
-int        no_etc1 = 0;
-int        no_etc2 = 0;
-int        beta = 0;
+int no_lossy = 0;
+int no_comp = 0;
+int no_raw = 0;
+int no_save = 0;
+int min_quality = 0;
+int max_quality = 100;
+int compress_mode = EET_COMPRESSION_HI;
+int threads = 0;
+int annotate = 0;
+int no_etc1 = 0;
+int no_etc2 = 0;
+int beta = 0;
+Eina_Bool namespace_verify;
+
+unsigned int max_open_files;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -63,16 +72,19 @@ _edje_cc_log_cb(const Eina_Log_Domain *d,
         switch (level)
           {
            case EINA_LOG_LEVEL_CRITICAL:
-              prefix = "Critical. ";
-              break;
+             prefix = "Critical. ";
+             break;
+
            case EINA_LOG_LEVEL_ERR:
-              prefix = "Error. ";
-              break;
+             prefix = "Error. ";
+             break;
+
            case EINA_LOG_LEVEL_WARN:
-              prefix = "Warning. ";
-              break;
+             prefix = "Warning. ";
+             break;
+
            default:
-              prefix = "";
+             prefix = "";
           }
         fprintf(stderr, "%s: %s", progname, prefix);
         eina_log_console_color_set(stderr, EINA_COLOR_RESET);
@@ -119,8 +131,9 @@ main_help(void)
       "-fastdecomp              Use a faster decompression algorithm (LZ4HC) (mutually exclusive with -fastcomp)\n"
       "-threads                 Compile the edje file using multiple parallel threads (by default)\n"
       "-nothreads               Compile the edje file using only the main loop\n"
+      "-N                       Use the first segment of each group name as a namespace to verify parts/signals\n"
       "-V [--version]           show program version\n"
-      ,progname);
+     , progname);
 }
 
 int
@@ -140,11 +153,11 @@ main(int argc, char **argv)
      return -1;
 
    _edje_cc_log_dom = eina_log_domain_register
-     ("edje_cc", EDJE_CC_DEFAULT_LOG_COLOR);
+       ("edje_cc", EDJE_CC_DEFAULT_LOG_COLOR);
    if (_edje_cc_log_dom < 0)
      {
-       EINA_LOG_ERR("Enable to create a log domain.");
-       exit(-1);
+        EINA_LOG_ERR("Enable to create a log domain.");
+        exit(-1);
      }
    if (!eina_log_domain_level_check(_edje_cc_log_dom, EINA_LOG_LEVEL_WARN))
      eina_log_domain_level_set("edje_cc", EINA_LOG_LEVEL_WARN);
@@ -163,27 +176,27 @@ main(int argc, char **argv)
 
    for (i = 1; i < argc; i++)
      {
-	if (!strcmp(argv[i], "-h"))
-	  {
-	     main_help();
-	     exit(0);
-	  }
-	else if ((!strcmp(argv[i], "-V")) || (!strcmp(argv[i], "--version")))
-	  {
-	     printf("Version: %s\n", PACKAGE_VERSION);
-	     exit(0);
-	  }
-	else if (!strcmp(argv[i], "-v"))
-	  {
-	     eina_log_domain_level_set("edje_cc", EINA_LOG_LEVEL_INFO);
-	  }
-	else if (!strcmp(argv[i], "-no-lossy"))
-	  {
-	     no_lossy = 1;
-	  }
-	else if (!strcmp(argv[i], "-no-comp"))
-	  {
-	     no_comp = 1;
+        if (!strcmp(argv[i], "-h"))
+          {
+             main_help();
+             exit(0);
+          }
+        else if ((!strcmp(argv[i], "-V")) || (!strcmp(argv[i], "--version")))
+          {
+             printf("Version: %s\n", PACKAGE_VERSION);
+             exit(0);
+          }
+        else if (!strcmp(argv[i], "-v"))
+          {
+             eina_log_domain_level_set("edje_cc", EINA_LOG_LEVEL_INFO);
+          }
+        else if (!strcmp(argv[i], "-no-lossy"))
+          {
+             no_lossy = 1;
+          }
+        else if (!strcmp(argv[i], "-no-comp"))
+          {
+             no_comp = 1;
           }
         else if (!strcmp(argv[i], "-no-raw"))
           {
@@ -197,25 +210,25 @@ main(int argc, char **argv)
           {
              no_etc2 = 1;
           }
-	else if (!strcmp(argv[i], "-no-save"))
-	  {
-	     no_save = 1;
-	  }
-	else if ((!strcmp(argv[i], "-id") || !strcmp(argv[i], "--image_dir")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     img_dirs = eina_list_append(img_dirs, argv[i]);
-	  }
-	else if ((!strcmp(argv[i], "-mod") || !strcmp(argv[i], "--model_dir")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     model_dirs = eina_list_append(model_dirs, argv[i]);
-	  }
-	else if ((!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--font_dir")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     fnt_dirs = eina_list_append(fnt_dirs, argv[i]);
-	  }
+        else if (!strcmp(argv[i], "-no-save"))
+          {
+             no_save = 1;
+          }
+        else if ((!strcmp(argv[i], "-id") || !strcmp(argv[i], "--image_dir")) && (i < (argc - 1)))
+          {
+             i++;
+             img_dirs = eina_list_append(img_dirs, argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-mod") || !strcmp(argv[i], "--model_dir")) && (i < (argc - 1)))
+          {
+             i++;
+             model_dirs = eina_list_append(model_dirs, argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--font_dir")) && (i < (argc - 1)))
+          {
+             i++;
+             fnt_dirs = eina_list_append(fnt_dirs, argv[i]);
+          }
         else if ((!strcmp(argv[i], "-sd") || !strcmp(argv[i], "--sound_dir")) && (i < (argc - 1)))
           {
              i++;
@@ -236,12 +249,12 @@ main(int argc, char **argv)
              i++;
              data_dirs = eina_list_append(data_dirs, argv[i]);
           }
-	else if ((!strcmp(argv[i], "-td") || !strcmp(argv[i], "--tmp_dir")) && (i < (argc - 1)))
-	  {
-	     i++;
+        else if ((!strcmp(argv[i], "-td") || !strcmp(argv[i], "--tmp_dir")) && (i < (argc - 1)))
+          {
+             i++;
              if (!tmp_dir)
                tmp_dir = argv[i];
-	  }
+          }
         else if ((!strcmp(argv[i], "-l") || !strcmp(argv[i], "--license")) && (i < (argc - 1)))
           {
              i++;
@@ -256,88 +269,92 @@ main(int argc, char **argv)
              if (!authors)
                authors = argv[i];
           }
-	else if ((!strcmp(argv[i], "-min-quality")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     min_quality = atoi(argv[i]);
-	     if (min_quality < 0) min_quality = 0;
-	     if (min_quality > 100) min_quality = 100;
-	  }
-	else if ((!strcmp(argv[i], "-max-quality")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     max_quality = atoi(argv[i]);
-	     if (max_quality < 0) max_quality = 0;
-	     if (max_quality > 100) max_quality = 100;
-	  }
-	else if (!strcmp(argv[i], "-fastcomp"))
-	  {
+        else if ((!strcmp(argv[i], "-min-quality")) && (i < (argc - 1)))
+          {
+             i++;
+             min_quality = atoi(argv[i]);
+             if (min_quality < 0) min_quality = 0;
+             if (min_quality > 100) min_quality = 100;
+          }
+        else if ((!strcmp(argv[i], "-max-quality")) && (i < (argc - 1)))
+          {
+             i++;
+             max_quality = atoi(argv[i]);
+             if (max_quality < 0) max_quality = 0;
+             if (max_quality > 100) max_quality = 100;
+          }
+        else if (!strcmp(argv[i], "-fastcomp"))
+          {
              compress_mode = EET_COMPRESSION_SUPERFAST;
-	  }
-	else if (!strcmp(argv[i], "-fastdecomp"))
-	  {
+          }
+        else if (!strcmp(argv[i], "-fastdecomp"))
+          {
              compress_mode = EET_COMPRESSION_VERYFAST;
-	  }
-	else if (!strcmp(argv[i], "-threads"))
-	  {
+          }
+        else if (!strcmp(argv[i], "-threads"))
+          {
              threads = 1;
-	  }
-	else if (!strcmp(argv[i], "-nothreads"))
-	  {
+          }
+        else if (!strcmp(argv[i], "-nothreads"))
+          {
              threads = 0;
-	  }
-	else if (!strncmp(argv[i], "-D", 2))
-	  {
-	     defines = eina_list_append(defines, mem_strdup(argv[i]));
-	  }
-	else if ((!strcmp(argv[i], "-o")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     file_out = argv[i];
-	  }
-	else if ((!strcmp(argv[i], "-w")) && (i < (argc - 1)))
-	  {
+          }
+        else if (!strncmp(argv[i], "-D", 2))
+          {
+             defines = eina_list_append(defines, mem_strdup(argv[i]));
+          }
+        else if ((!strcmp(argv[i], "-o")) && (i < (argc - 1)))
+          {
+             i++;
+             file_out = argv[i];
+          }
+        else if ((!strcmp(argv[i], "-w")) && (i < (argc - 1)))
+          {
              i++;
              watchfile = argv[i];
              unlink(watchfile);
-	  }
-	else if (!strcmp(argv[i], "-annotate"))
-	  {
+          }
+        else if (!strcmp(argv[i], "-annotate"))
+          {
              annotate = 1;
           }
-	else if ((!strcmp(argv[i], "-deps")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     depfile = argv[i];
-	     unlink(depfile);
-	  }
+        else if ((!strcmp(argv[i], "-deps")) && (i < (argc - 1)))
+          {
+             i++;
+             depfile = argv[i];
+             unlink(depfile);
+          }
         else if (!strcmp(argv[i], "-beta"))
           {
              beta = 1;
           }
-	else if (!file_in)
-	  file_in = argv[i];
-	else if (!file_out)
-	  file_out = argv[i];
+        else if (!strcmp(argv[i], "-N"))
+          {
+             namespace_verify = 1;
+          }
+        else if (!file_in)
+          file_in = argv[i];
+        else if (!file_out)
+          file_out = argv[i];
      }
 
    if (!file_in)
      {
-	ERR("no input file specified.");
-	main_help();
-	exit(-1);
+        ERR("no input file specified.");
+        main_help();
+        exit(-1);
      }
 
-   pfx = eina_prefix_new(argv[0],            /* argv[0] value (optional) */
-                         main,               /* an optional symbol to check path of */
-                         "EDJE",             /* env var prefix to use (XXX_PREFIX, XXX_BIN_DIR etc. */
-                         "edje",             /* dir to add after "share" (PREFIX/share/DIRNAME) */
+   pfx = eina_prefix_new(argv[0], /* argv[0] value (optional) */
+                         main, /* an optional symbol to check path of */
+                         "EDJE", /* env var prefix to use (XXX_PREFIX, XXX_BIN_DIR etc. */
+                         "edje", /* dir to add after "share" (PREFIX/share/DIRNAME) */
                          "include/edje.inc", /* a magic file to check for in PREFIX/share/DIRNAME for success */
                          PACKAGE_BIN_DIR,    /* package bin dir @ compile time */
                          PACKAGE_LIB_DIR,    /* package lib dir @ compile time */
                          PACKAGE_DATA_DIR,   /* package data dir @ compile time */
                          PACKAGE_DATA_DIR    /* if locale needed  use LOCALE_DIR */
-                        );
+                         );
 
    /* check whether file_in exists */
 #ifdef HAVE_REALPATH
@@ -346,41 +363,41 @@ main(int argc, char **argv)
    if (stat(file_in, &st) || !S_ISREG(st.st_mode))
 #endif
      {
-	ERR("file not found: %s.", file_in);
-	main_help();
-	exit(-1);
+        ERR("file not found: %s.", file_in);
+        main_help();
+        exit(-1);
      }
 
    if (!file_out)
-      {
-         char *suffix;
+     {
+        char *suffix;
 
-         if ((suffix = strstr(file_in,".edc")) && (suffix[4] == 0))
-            {
-               file_out = strdup(file_in);
-               if (file_out)
-                  {
-                     suffix = strstr(file_out,".edc");
-                     strcpy(suffix,".edj");
-                  }
-            }
-      }
+        if ((suffix = strstr(file_in, ".edc")) && (suffix[4] == 0))
+          {
+             file_out = strdup(file_in);
+             if (file_out)
+               {
+                  suffix = strstr(file_out, ".edc");
+                  strcpy(suffix, ".edj");
+               }
+          }
+     }
    if (!file_out)
      {
-	ERR("no output file specified.");
-	main_help();
-	exit(-1);
+        ERR("no output file specified.");
+        main_help();
+        exit(-1);
      }
 
 #ifdef HAVE_REALPATH
-   if (realpath(file_out, rpath2) && !strcmp (rpath, rpath2))
+   if (realpath(file_out, rpath2) && !strcmp(rpath, rpath2))
 #else
-   if (!strcmp (file_in, file_out))
+   if (!strcmp(file_in, file_out))
 #endif
      {
-	ERR("input file equals output file.");
-	main_help();
-	exit(-1);
+        ERR("input file equals output file.");
+        main_help();
+        exit(-1);
      }
 
    using_file(file_in, 'E');
@@ -394,10 +411,10 @@ main(int argc, char **argv)
    edje_file->version = EDJE_FILE_VERSION;
    edje_file->minor = EDJE_FILE_MINOR;
    edje_file->feature_ver = 1; /* increment this every time we add a field
-				* or feature to the edje file format that
-				* does not load nicely as a NULL or 0 value
-				* and needs a special fallback initialization
-				*/
+                                * or feature to the edje file format that
+                                * does not load nicely as a NULL or 0 value
+                                * and needs a special fallback initialization
+                                */
    /* efl_version is used for specify efl's version
     * which was used for developing a edje file.
     * It is useful if Edje(or other EFL libs) need to keep
@@ -408,6 +425,19 @@ main(int argc, char **argv)
    edje_file->efl_version.major = 1;
    edje_file->efl_version.minor = 18;
    edje_file->base_scale = FROM_INT(1);
+   requires = eina_array_new(10);
+
+#ifdef HAVE_SYS_RESOURCE_H
+   {
+      struct rlimit lim;
+      if (getrlimit(RLIMIT_NOFILE, &lim))
+        fprintf(stderr, "error getting max open file limit: %s\n", strerror(errno));
+      max_open_files = lim.rlim_cur;
+   }
+#else
+   max_open_files = 1024;
+#endif
+   ecore_evas_init();
 
    source_edd();
    source_fetch();
@@ -422,10 +452,11 @@ main(int argc, char **argv)
 
    eina_prefix_free(pfx);
    pfx = NULL;
-   
+
    edje_shutdown();
    eina_log_domain_unregister(_edje_cc_log_dom);
    eina_shutdown();
 
    return 0;
 }
+

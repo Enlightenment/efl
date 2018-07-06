@@ -125,7 +125,7 @@ interface#!
    <!--(for n in cls.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${cls.name.lower()}$|${cls.full_name}$]]
+:${cls.short_name.lower()}$|${cls.name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  EVENT_LINK(cls, ev)  ###################################################
@@ -135,9 +135,9 @@ interface#!
    <!--(for n in cls.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${cls.name.lower()}$#!
+:${cls.short_name.lower()}$#!
 :event#!
-:${ev.name.lower().replace(',','_')}$|${ev.name}$]]
+:${ev.short_name.lower().replace(',','_')}$|${ev.name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  TYPEDECL_LINK(typedecl)  ###############################################
@@ -147,7 +147,7 @@ interface#!
    <!--(for n in typedecl.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${typedecl.name.lower()}$|${typedecl.full_name}$]]
+:${typedecl.short_name.lower()}$|${typedecl.name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  TYPE_LINK(type)  #######################################################
@@ -157,7 +157,7 @@ interface#!
    <!--(for n in type.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${type.name.lower()}$|${type.full_name}$]]
+:${type.short_name.lower()}$|${type.name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  FUNC_LINK(func)  #######################################################
@@ -172,7 +172,7 @@ interface#!
    <!--(else)-->
 :property#!
    <!--(end)-->
-:${func.name}$|${func.name}$]]
+:${func.short_name}$|${func.short_name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  FUNC_SCOPE(func)  ######################################################
@@ -253,7 +253,7 @@ interface#!
       <!--(if i == 0)-->
 ^ parameters ^ type ^ description ^
       <!--(end)-->
-|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${par.type.full_name}$ #!
+|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${par.type.name}$ #!
 |${BEST_SUMMARY(obj=par)}$ ${BEST_DESCRIPTION(obj=par)}$|
    <!--(else)-->
 **This function do not accept any parameter.**
@@ -262,7 +262,7 @@ interface#!
    <!--(if func.method_return_type)-->
 ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
 ^ return ^ description ^
-|**${func.method_return_type.full_name}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
+|**${func.method_return_type.name}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
    <!--(else)-->
 **This function do not return anything.**
    <!--(end)-->
@@ -277,14 +277,14 @@ ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
       <!--(if i == 0)-->
 ^ values ^ type ^ description ^
       <!--(end)-->
-|**${val.name}$**|${val.type.full_name}$|${BEST_SUMMARY(obj=val)}$|
+|**${val.name}$**|${val.type.name}$|${BEST_SUMMARY(obj=val)}$|
    <!--(end)-->
 
    <!--(for i, key in enumerate(func.getter_keys or func.setter_keys))-->
       <!--(if i == 0)-->
 ^ keys ^ type ^ description ^
       <!--(end)-->
-|**${key.name}$**|${key.type.full_name}$|${BEST_SUMMARY(obj=key)}$|
+|**${key.name}$**|${key.type.name}$|${BEST_SUMMARY(obj=key)}$|
    <!--(end)-->
 
 <!--(end)-->
@@ -296,19 +296,19 @@ ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
 (#!
    <!--(if impl.is_property)-->
       <!--(for i, val in enumerate(impl.function.getter_values or impl.function.setter_values))-->
-${', ' if i else ''}$${val.type.name}$#!
+${', ' if i else ''}$${val.type.short_name}$#!
       <!--(end)-->
    <!--(elif impl.is_method)-->
       <!--(for i, param in enumerate(impl.function.parameters))-->
 ${', ' if i else ''}$#!
-//${param.type.name}$// ''${param.direction.name.lower()}$'' **${param.name}$**#!
+//${param.type.short_name}$// ''${param.direction.name.lower()}$'' **${param.short_name}$**#!
       <!--(end)-->
    <!--(end)-->
 ) #!
 ${IMPLEMENT_TAGS}$ #!
    <!--(if impl.is_method)-->
       <!--(if impl.function.method_return_type)-->
- => //${impl.function.method_return_type.name}$// #!
+ => //${impl.function.method_return_type.short_name}$// #!
       <!--(else)-->
  => //None// #!
       <!--(end)-->

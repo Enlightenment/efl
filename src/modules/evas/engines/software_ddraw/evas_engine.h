@@ -5,6 +5,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
+
 #include <ddraw.h>
 
 #include "../software_generic/Evas_Engine_Software_Generic.h"
@@ -14,7 +15,6 @@ typedef struct _DD_Output_Buffer      DD_Output_Buffer;
 
 struct _Outbuf
 {
-   Outbuf_Depth              depth;
    int                       width;
    int                       height;
    int                       rot;
@@ -28,7 +28,6 @@ struct _Outbuf
          LPDIRECTDRAWSURFACE surface_primary;
          LPDIRECTDRAWSURFACE surface_back;
          LPDIRECTDRAWCLIPPER clipper;
-         int                 depth;
          unsigned char       fullscreen : 1;
          unsigned char       swap       : 1;
          unsigned char       bit_swap   : 1;
@@ -67,7 +66,6 @@ struct _DD_Output_Buffer
    void *data;
    int   width;
    int   height;
-   int   depth;
    int   pitch;
    int   psize;
 };
@@ -108,9 +106,7 @@ void evas_software_ddraw_outbuf_free(Outbuf *buf);
 Outbuf *evas_software_ddraw_outbuf_setup(int          width,
                                          int          height,
                                          int          rotation,
-                                         Outbuf_Depth depth,
                                          HWND         window,
-                                         int          w_depth,
                                          int          fullscreen);
 
 void evas_software_ddraw_outbuf_reconfigure(Outbuf      *buf,
@@ -144,14 +140,11 @@ int evas_software_ddraw_outbuf_width_get(Outbuf *buf);
 
 int evas_software_ddraw_outbuf_height_get(Outbuf *buf);
 
-Outbuf_Depth evas_software_ddraw_outbuf_depth_get(Outbuf *buf);
-
 int evas_software_ddraw_outbuf_rot_get(Outbuf *buf);
 
 /* evas_ddraw_buffer.c */
 
-DD_Output_Buffer *evas_software_ddraw_output_buffer_new(int   depth,
-                                                        int   width,
+DD_Output_Buffer *evas_software_ddraw_output_buffer_new(int   width,
                                                         int   height,
                                                         void *data);
 
@@ -162,14 +155,11 @@ void evas_software_ddraw_output_buffer_paste(DD_Output_Buffer *ddob,
                                              int               ddraw_width,
                                              int               ddraw_height,
                                              int               ddraw_pitch,
-                                             int               ddraw_depth,
                                              int               x,
                                              int               y);
 
 DATA8 *evas_software_ddraw_output_buffer_data(DD_Output_Buffer *ddob,
                                               int              *bytes_per_line_ret);
-
-int evas_software_ddraw_output_buffer_depth(DD_Output_Buffer *ddob);
 
 /* evas_ddraw_main.cpp */
 
@@ -178,7 +168,6 @@ extern "C" {
 #endif
 
 int evas_software_ddraw_init (HWND    window,
-                              int     depth,
                               int     fullscreen,
                               Outbuf *buf);
 
@@ -189,8 +178,7 @@ int evas_software_ddraw_masks_get(Outbuf *buf);
 void *evas_software_ddraw_lock(Outbuf *buf,
                                int    *ddraw_width,
                                int    *ddraw_height,
-                               int    *ddraw_pitch,
-                               int    *ddraw_depth);
+                               int    *ddraw_pitch);
 
 void evas_software_ddraw_unlock_and_flip(Outbuf *buf);
 

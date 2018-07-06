@@ -10,13 +10,7 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
-/* #include "type.hh" */
-/* #include "marshall_type.hh" */
 #include "parameter.hh"
-#include "function_pointer.hh"
-/* #include "keyword.hh" */
-/* #include "using_decl.hh" */
-/* #include "generation_contexts.hh" */
 
 namespace eolian_mono {
 
@@ -98,9 +92,11 @@ struct native_function_definition_epilogue_generator
       if (!as_generator(
                   scope_tab << scope_tab << "//Assigning out variables\n"
                   << *(scope_tab << scope_tab << native_convert_out_assign(*klass) << "\n")
+                  << scope_tab << scope_tab << "//Placeholder in ptr variables that need to be updated\n"
+                  << *(scope_tab << scope_tab << native_convert_in_ptr_assign << "\n")
                   << scope_tab << scope_tab << "//Converting return variable\n"
                   << scope_tab << scope_tab << native_convert_return(*klass)
-                  ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
+                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -117,9 +113,11 @@ struct function_definition_epilogue_generator
                   scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
                   << scope_tab << scope_tab << "//Assigning out variables\n"
                   << *(scope_tab << scope_tab << convert_out_assign << "\n")
+                  << scope_tab << scope_tab << "//Placeholder in ptr variables that need to be updated\n"
+                  << *(scope_tab << scope_tab << convert_in_ptr_assign << "\n")
                   << scope_tab << scope_tab << "//Converting return variable\n"
                   << scope_tab << scope_tab << convert_return
-                  ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
+                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -159,6 +157,10 @@ struct native_function_definition_epilogue_parameterized
   native_function_definition_epilogue_generator const operator()(attributes::klass_def const& klass) const
   {
     return {&klass};
+  }
+  native_function_definition_epilogue_generator const operator()(attributes::klass_def const* klass=nullptr) const
+  {
+    return {klass};
   }
 } const native_function_definition_epilogue;
 

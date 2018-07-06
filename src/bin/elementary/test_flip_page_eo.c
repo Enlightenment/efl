@@ -134,7 +134,7 @@ _slice_3d(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coo
         efl_gfx_map_coord_absolute_get(sl->obj, i, &xx, &yy, NULL);
         efl_gfx_map_coord_absolute_set(sl->obj, i, xx, yy, 0);
      }
-   efl_gfx_visible_set(sl->obj, efl_gfx_map_clockwise_get(sl->obj));
+   efl_gfx_entity_visible_set(sl->obj, efl_gfx_map_clockwise_get(sl->obj));
 }
 
 static void

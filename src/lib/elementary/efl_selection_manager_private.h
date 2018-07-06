@@ -118,6 +118,7 @@ struct _Sel_Manager_Selection
    Ecore_Win32_Window       *win;
 #endif
 
+   Efl_Selection_Format      want_format;
    Efl_Selection_Format      format;
    Efl_Selection_Action      action;
    Eina_Bool                 active : 1;
@@ -279,7 +280,7 @@ char *sm_wl_vcard[] = {"text/x-vcard", NULL};
 char *sm_wl_image[] = {"image/", "text/uri-list", NULL};
 
 Sel_Manager_Wl_Format_Translation sm_wl_convertion[] = {
-  {EFL_SELECTION_FORMAT_MARKUP, sm_wl_markup},
+  {EFL_SELECTION_FORMAT_MARKUP | EFL_SELECTION_FORMAT_TEXT, sm_wl_markup},
   {EFL_SELECTION_FORMAT_TEXT, sm_wl_text},
   {EFL_SELECTION_FORMAT_HTML, sm_wl_html},
   {EFL_SELECTION_FORMAT_VCARD, sm_wl_vcard},

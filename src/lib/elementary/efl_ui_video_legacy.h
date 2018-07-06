@@ -1,3 +1,5 @@
+typedef Eo Elm_Video;
+
 /**
  * @brief Add a new Elm_Player object to the given parent Elementary (container) object.
  *

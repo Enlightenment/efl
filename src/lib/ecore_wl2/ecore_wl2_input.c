@@ -624,11 +624,8 @@ static void
 _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_keysym_t sym, xkb_keysym_t sym_name, unsigned int code, unsigned int state, unsigned int timestamp)
 {
    Ecore_Event_Key *ev;
-   char key[256], keyname[256], compose[256];
-
-   memset(key, 0, sizeof(key));
-   memset(keyname, 0, sizeof(keyname));
-   memset(compose, 0, sizeof(compose));
+   char key[256] = "", keyname[256] = "", compose[256] = "";
+   int name_len, key_len, comp_len;
 
    /*try to get a name or utf char of the given symbol */
    _ecore_wl2_input_symbol_rep_find(sym, key, sizeof(key), code);
@@ -636,18 +633,21 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    _ecore_wl2_input_key_translate(sym, input->keyboard.modifiers,
                                   compose, sizeof(compose));
 
-   ev = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
-               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
+   name_len = strlen(keyname);
+   key_len = strlen(key);
+   comp_len = strlen(compose);
+
+   ev = calloc(1, sizeof(Ecore_Event_Key) + key_len + name_len + comp_len + 3);
    if (!ev) return;
 
    ev->keyname = (char *)(ev + 1);
-   ev->key = ev->keyname + strlen(keyname) + 1;
-   ev->compose = strlen(compose) ? ev->key + strlen(key) + 1 : NULL;
+   ev->key = ev->keyname + name_len + 1;
+   ev->compose = comp_len ? ev->key + key_len + 1 : NULL;
    ev->string = ev->compose;
 
    strcpy((char *)ev->keyname, keyname);
    strcpy((char *)ev->key, key);
-   if (strlen(compose)) strcpy((char *)ev->compose, compose);
+   if (comp_len) strcpy((char *)ev->compose, compose);
 
    ev->window = window->id;
    ev->event_window = window->id;
@@ -716,13 +716,6 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    input->focus.pointer = window;
 
    _ecore_wl2_input_mouse_in_send(input, window);
-
-   if ((window->moving) && (input->grab.window == window))
-     {
-        _ecore_wl2_input_mouse_up_send(input, window, 0, input->grab.button,
-                                       input->grab.timestamp);
-        window->moving = EINA_FALSE;
-     }
 }
 
 static void
@@ -744,9 +737,6 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    /* find the window which this surface belongs to */
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
-
-   /* NB: Don't send a mouse out if we grabbed this window for moving */
-   if ((window->moving) && (input->grab.window == window)) return;
 
    _ecore_wl2_input_mouse_out_send(input, window);
 }
@@ -1762,22 +1752,6 @@ _ecore_wl2_input_window_remove(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
            _ecore_wl2_devices_free(devices);
            input->devices_list = eina_list_remove_list(input->devices_list, l);
         }
-}
-
-EAPI void
-ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
-{
-   EINA_SAFETY_ON_NULL_RETURN(input);
-   EINA_SAFETY_ON_NULL_RETURN(input->display);
-   _ecore_wl2_input_grab(input, window, button);
-}
-
-EAPI void
-ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
-{
-   EINA_SAFETY_ON_NULL_RETURN(input);
-   EINA_SAFETY_ON_NULL_RETURN(input->display);
-   _ecore_wl2_input_ungrab(input);
 }
 
 EAPI struct wl_seat *

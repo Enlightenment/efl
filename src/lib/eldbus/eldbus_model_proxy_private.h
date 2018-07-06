@@ -13,20 +13,21 @@ typedef struct _Eldbus_Model_Proxy_Data Eldbus_Model_Proxy_Data;
 struct _Eldbus_Model_Proxy_Data
 {
    Eo *obj;
-   Eina_Bool is_listed : 1;
-   Eina_Bool is_loaded : 1;
+
+   const Eldbus_Introspection_Interface *interface;
+
    Eldbus_Object *object;
    Eldbus_Proxy *proxy;
-   Eina_Array *properties_array;
-   Eina_Hash *properties_hash;
-   Eina_List *children_list;
+   Eina_Hash *properties;
+   Eina_List *childrens;
+   Eina_List *pendings;
+   Eina_List *promises;
+
    Eina_Stringshare *name;
-   Eina_List *pending_list;
-   Eina_List *promise_list;
-   bool monitoring;
-   const Eldbus_Introspection_Interface *interface;
-   Eina_Value tmp_value;
+
+   Eina_Bool monitoring : 1;
+   Eina_Bool is_listed : 1;
+   Eina_Bool is_loaded : 1;
 };
 
 #endif
-

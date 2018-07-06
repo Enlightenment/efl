@@ -10,9 +10,6 @@
 
 #define EOLIAN
 
-/* When used, this indicates that the function is an Eo API. */
-#define EOAPI EAPI EAPI_WEAK
-
 #ifdef _WIN32
 # ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
@@ -23,17 +20,24 @@
 # else
 #  define EAPI __declspec(dllimport)
 # endif
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
+#   define EAPI_WEAK
 # endif
 #endif
+
+/* When used, this indicates that the function is an Eo API. */
+#define EOAPI EAPI EAPI_WEAK
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,8 +148,8 @@ extern "C" {
  * EO_LIFECYCLE_NO_DEBUG=class1,class2.
  *
  * @verbatim
-   # Log all but Efl_Future, Efl_Promise and Efl_Loop_Timer
-   export EO_LIFECYCLE_NO_DEBUG=Efl_Future,Efl_Promise,Efl_Loop_Timer
+   # Log all but Efl_Loop_Timer
+   export EO_LIFECYCLE_NO_DEBUG=Efl_Loop_Timer
    export EINA_LOG_LEVELS=eo_lifecycle:4
    eo_debug my_app
  * @endverbatim
@@ -210,12 +214,6 @@ EAPI extern unsigned int _efl_object_init_generation;
  */
 typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
-/**
- * @typedef Efl_Future
- * The type of Efl Future used in asynchronous operation, the read side of a promise.
- */
-typedef Eo Efl_Future;
-
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
 #include "efl_interface.eo.h"
@@ -241,9 +239,24 @@ typedef short Efl_Callback_Priority;
  */
 typedef struct _Efl_Callback_Array_Item
 {
-  const Efl_Event_Description *desc; /**< The event description. */
-  Efl_Event_Cb func; /**< The callback function. */
+   const Efl_Event_Description *desc; /**< The event description. */
+   Efl_Event_Cb func; /**< The callback function. */
 } Efl_Callback_Array_Item;
+
+
+/**
+ * @struct _Efl_Callback_Array_Item_Full
+ * @brief An item provided by EFL_EVENT_CALLBACK_ADD/EFL_EVENT_CALLBACK_DEL.
+ *
+ * See also EFL_EVENT_CALLBACK_ADD EFL_EVENT_CALLBACK_DEL.
+ */
+typedef struct _Efl_Callback_Array_Item_Full
+{
+   const Efl_Event_Description *desc; /**< The event description. */
+   Efl_Callback_Priority priority; /** < The priorit of the event */
+   Efl_Event_Cb func; /**< The callback function. */
+   void *user_data; /**< The user data pointer to be passed to the func */
+} Efl_Callback_Array_Item_Full;
 
 /**
  * @brief Add a callback for an event with a specific priority.
@@ -330,15 +343,6 @@ EOAPI Eina_Bool efl_event_callback_call(Eo *obj, const Efl_Event_Description *de
  * @since 1.19
  */
 EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Description *desc, void *event_info);
-
-/**
- * @brief Track a future life cycle and cancel it if the object dies.
- *
- * @param[in] link The future to link with the object
- *
- * @return @c true if it succeeds in setting up tracking.
- */
-EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
 
 
 /**
@@ -523,7 +527,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * @see #Efl_Future_Cb_Desc
  * @see efl_key_data_set()
  */
-EOAPI Eina_Future_Desc efl_future_cb_from_desc(Eo *obj, const Efl_Future_Cb_Desc desc) EINA_ARG_NONNULL(1);
+EOAPI Eina_Future_Desc efl_future_cb_from_desc(const Eo *obj, const Efl_Future_Cb_Desc desc) EINA_ARG_NONNULL(1);
 
 /**
  * Syntax suger over efl_future_cb_from_desc()
@@ -1427,20 +1431,23 @@ EAPI Eo *_efl_added_get(void);
 
 /**
  * @def efl_add
- * @brief Create a new object and call its constructor (If it exists).
+ * @brief Create a new object and add it to an existing parent object.
  *
  * The object returned by this function will always have 1 ref
- * (reference count) irrespective of whether the parent is NULL or
- * not.
+ * (reference count) which belongs to its parent. Therefore, it is not safe
+ * to use the returned object outside the constructor methods passed as
+ * parameters. If you need to further manipulate the object, use #efl_add_ref
+ * and remember to #efl_unref the object when done.
+ *
  * If the object is created using this function, then it will
  * automatically be deleted when the parent object is.
  * There is no need to call efl_unref on the child. This is convenient
  * in C.
  *
- * If you want a more "consistent" behaviour, see #efl_add_ref.
+ * If the object's class has a constructor, it is called.
  *
- * @param klass the class of the object to create.
- * @param parent the parent to set to the object.
+ * @param klass The class of the object to create.
+ * @param parent The parent to set to the object (MUST not be @c NULL)
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
@@ -1448,22 +1455,56 @@ EAPI Eo *_efl_added_get(void);
 
 /**
  * @def efl_add_ref
- * @brief Create a new object and call its constructor (If it exists).
+ * @brief Create a new object, add it to an existing parent object and return
+ *        an extra reference for further manipulation.
  *
- * The object returned by this function has 1 ref for itself, 1 ref from the
- * parent (if exists) and possible other refs if were added during construction.
- * If a child object is created using this, then it won't get deleted
- * when the parent object is until you manually remove the ref
- * by calling efl_unref().
+ * The object returned by this function has 1 ref which belongs to the caller.
+ * If a parent object is provided (@c parent is not @c NULL) then the object
+ * has an additional reference for the parent. Note that if a child object is
+ * created in this way then it won't get automatically deleted with the parent.
+ * You need to manually remove the extra ref by calling #efl_unref.
  *
- * @param klass the class of the object to create.
- * @param parent the parent to set to the object.
+ * If the object's class has a constructor, it is called.
+ *
+ * @param klass The class of the object to create.
+ * @param parent The parent to set to the object (can be @c NULL).
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
 #define efl_add_ref(klass, parent, ...) _efl_add_common(klass, parent, EINA_TRUE, ##__VA_ARGS__)
 
+/**
+ * @def efl_new
+ * @brief Create a new object
+ *
+ * The object returned by this function has 1 ref which belongs to the caller.
+ * You need to manually remove the ref by calling #efl_unref when you are done
+ * working with the object. The object will be destroyed when all other refs
+ * obtained with #efl_ref have been returned with #efl_unref.
+ *
+ * If the object's class has a constructor, it is called.
+ *
+ * @param klass The class of the object to create.
+ * @param ... The ops to run.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+#define efl_new(klass, ...) efl_add_ref(klass, NULL, __VA_ARGS__)
+
 EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
+
+/**
+ * @brief Unrefs the object and reparents it to NULL.
+ *
+ * Because efl_del() unrefs and reparents to NULL, it doesn't really delete the
+ * object.
+ *
+ * This method accepts a const object for convenience, so all objects can be
+ * passed to it easily.
+ * @param[in] obj The object.
+ *
+ * @ingroup Efl_Object
+ */
+EAPI void efl_del(const Eo *obj);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
@@ -2032,7 +2073,7 @@ static inline void
 efl_replace(Eo **storage, Eo *new_obj)
 {
    if (!storage || *storage == new_obj) return;
-   efl_ref(new_obj);
+   if (new_obj) efl_ref(new_obj);
    efl_unref(*storage);
    *storage = new_obj;
 }
@@ -2043,6 +2084,7 @@ EOAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT;
  * @brief Create a new #Eina_Value containing the passed parameter.
  * @param obj The object to use
  * @return The #Eina_Value
+ * @see eina_value_object_get(), eina_value_object_init()
  * @since 1.21
  */
 static inline Eina_Value *
@@ -2059,6 +2101,7 @@ eina_value_object_new(Eo *obj)
  * @brief Create a new #Eina_Value initialized with the passed parameter
  * @param obj The object to use
  * @return The #Eina_Value
+ * @see eina_value_object_new(), eina_value_object_get()
  * @since 1.21
  */
 static inline Eina_Value
@@ -2072,10 +2115,40 @@ eina_value_object_init(Eo *obj)
 }
 
 /**
+ * @brief Get the object contained in an #Eina_Value
+ * @param v The #Eina_Value to extract the object from
+ * @return The object.
+ * @see eina_value_object_new(), eina_value_object_init()
+ * @since 1.21
+ */
+static inline Eo *
+eina_value_object_get(Eina_Value *v)
+{
+   Eo *r = NULL;
+
+   if (!v) return NULL;
+   if (eina_value_type_get(v) != EINA_VALUE_TYPE_OBJECT)
+     return NULL;
+
+   eina_value_pget(v, &r);
+   return r;
+}
+
+/**
+ * @brief Event triggered when a callback was added to the object
+ */
+#define EFL_EVENT_CALLBACK_ADD (&(_EFL_EVENT_CALLBACK_ADD))
+EAPI extern const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD;
+
+/**
+ * @brief Event triggered when a callback was removed from the object
+ */
+#define EFL_EVENT_CALLBACK_DEL (&(_EFL_EVENT_CALLBACK_DEL))
+EAPI extern const Efl_Event_Description _EFL_EVENT_CALLBACK_DEL;
+
+/**
  * @}
  */
-
-#include "efl_future.h"
 
 /**
  * @addtogroup Eo_Iterators Eo iterators
@@ -2108,12 +2181,6 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
  * @}
  */
 
-
-   /* Private for EFL internal use only. Do not use these! */
-EAPI int ___efl_ref2_count(const Eo *obj_id);
-EAPI void ___efl_ref2_reset(const Eo *obj_id);
-EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool val);
-
 #endif
 
 #ifdef __cplusplus
@@ -2122,5 +2189,8 @@ EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool val);
 
 #undef EAPI
 #define EAPI
+
+#undef EOAPI
+#define EOAPI
 
 #endif

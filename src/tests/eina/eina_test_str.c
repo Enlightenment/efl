@@ -26,13 +26,12 @@
 
 #include "eina_suite.h"
 
-START_TEST(str_simple)
+EFL_START_TEST(str_simple)
 {
    size_t i;
    char *str, *ret;
    const char *escape_ret = "\\ a\\\\x\\'";
 
-   eina_init();
 
    fail_if(!eina_str_has_prefix("", ""));
 
@@ -115,17 +114,15 @@ START_TEST(str_simple)
    free(str);
    free(ret);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_split)
+EFL_START_TEST(str_split)
 {
    char **result;
    unsigned int elements;
    char *str;
 
-   eina_init();
 
    result = eina_str_split_full(NULL, ":", 1, &elements);
         fail_if(result != NULL);
@@ -248,17 +245,15 @@ START_TEST(str_split)
         free(result[0]);
         free(result);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_lcat_lcpy)
+EFL_START_TEST(str_lcat_lcpy)
 {
    char dst[9];
    size_t ret;
    size_t ds = (sizeof(dst) / sizeof(char));
 
-   eina_init();
 
    dst[0] = '\0';
 
@@ -290,17 +285,15 @@ START_TEST(str_lcat_lcpy)
         fail_if(ret != 10);
         fail_if(strcmp(dst, "copy2cop") != 0);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_join_len)
+EFL_START_TEST(str_join_len)
 {
    char dst[9];
    size_t ret;
    size_t ds = (sizeof(dst) / sizeof(char));
 
-   eina_init();
 
    dst[0] = '\0';
 
@@ -320,11 +313,10 @@ START_TEST(str_join_len)
         fail_if(ret != 9);
         fail_if(strcmp(dst, "abcd#efg") != 0);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_memdup)
+EFL_START_TEST(str_memdup)
 {
    struct temp {
       int i;
@@ -334,7 +326,6 @@ START_TEST(str_memdup)
    unsigned char buf[7];
    unsigned char *temp_buf;
 
-   eina_init();
 
    t1.i = 1234;
    t1.s = "hello";
@@ -351,16 +342,14 @@ START_TEST(str_memdup)
    fail_if(strcmp((char *) temp_buf, "aaabbb") != 0);
    free(temp_buf);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(str_strftime)
+EFL_START_TEST(str_strftime)
 {
    time_t curr_time;
    struct tm *info;
    char *buf;
-   eina_init();
 
    curr_time = time(NULL);
    info = localtime(&curr_time);
@@ -369,12 +358,11 @@ START_TEST(str_strftime)
    fail_if(buf == NULL);
    free(buf);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef HAVE_ICONV
-START_TEST(str_convert)
+EFL_START_TEST(str_convert)
 {
    char *utf8 = "\xc3\xa9\xc3\xa1\xc3\xba\xc3\xad\xc3\xa8\xc3\xa0\xc3\xb9\xc3\xac\xc3\xab\xc3\xa4\xc3\xbc\xc3\xaf";
    char *utf16 = "\xe9\x0\xe1\x0\xfa\x0\xed\x0\xe8\x0\xe0\x0\xf9\x0\xec\x0\xeb\x0\xe4\x0\xfc\x0\xef\x0";
@@ -382,7 +370,6 @@ START_TEST(str_convert)
    size_t ret_sz;
    int i;
 
-   eina_init();
 
    ret = eina_str_convert("UTF-8", "UTF-16LE", utf8);
         fail_if(ret == NULL);
@@ -398,9 +385,8 @@ START_TEST(str_convert)
           fail_if(ret[i] != utf16[i]);
    free(ret);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

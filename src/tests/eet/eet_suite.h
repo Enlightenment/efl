@@ -2,7 +2,7 @@
 # define _EET_SUITE_H
 
 #include <check.h>
-
+#include "../efl_check.h"
 void eet_test_init(TCase *tc);
 void eet_test_data(TCase *tc);
 void eet_test_file(TCase *tc);

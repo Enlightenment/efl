@@ -317,7 +317,7 @@ _image_cb(void *data, const Efl_Event *ev)
      {
         efl_file_get(ev->object, &f, &k);
         o = efl_add(EFL_UI_IMAGE_CLASS, win,
-                    efl_image_scale_type_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                    efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
                     efl_file_set(efl_added, f, k)
                     );
         efl_content_set(efl_part(win, "background"), o);
@@ -330,7 +330,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *win, *box, *cs;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Win)"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_ui_win_alpha_set(efl_added, 1));
@@ -367,7 +367,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
            efl_pack(box, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }
 
 static void
@@ -375,7 +375,7 @@ _cb_radio_changed_scale_type(void *data, const Efl_Event *ev)
 {
    Evas_Object *o_bg = data;
 
-   efl_image_scale_type_set(o_bg, efl_ui_nstate_value_get(ev->object));
+   efl_gfx_image_scale_type_set(o_bg, efl_ui_nstate_value_get(ev->object));
 }
 
 static void
@@ -403,7 +403,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Evas_Object *rd, *rdg;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Bg)"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_ui_win_alpha_set(efl_added, EINA_FALSE));
@@ -432,14 +432,14 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                   efl_pack(box, efl_added));
 
    rdg = rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                efl_ui_radio_state_value_set(efl_added, EFL_IMAGE_SCALE_TYPE_FILL),
+                efl_ui_radio_state_value_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FILL),
                 efl_text_set(efl_added, "Fill"),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                efl_ui_radio_state_value_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_INSIDE),
+                efl_ui_radio_state_value_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE),
                 efl_ui_radio_group_add(efl_added, rdg),
                 efl_text_set(efl_added, "Fit Inside"),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
@@ -448,7 +448,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                efl_ui_radio_state_value_set(efl_added, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                efl_ui_radio_state_value_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
                 efl_ui_radio_group_add(efl_added, rdg),
                 efl_text_set(efl_added, "Fit Outside"),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
@@ -456,7 +456,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_pack(hbox, efl_added));
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                efl_ui_radio_state_value_set(efl_added, EFL_IMAGE_SCALE_TYPE_NONE),
+                efl_ui_radio_state_value_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_NONE),
                 efl_ui_radio_group_add(efl_added, rdg),
                 efl_text_set(efl_added, "None"),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
@@ -464,14 +464,14 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_pack(hbox, efl_added));
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                efl_ui_radio_state_value_set(efl_added, EFL_IMAGE_SCALE_TYPE_TILE),
+                efl_ui_radio_state_value_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_TILE),
                 efl_ui_radio_group_add(efl_added, rdg),
                 efl_text_set(efl_added, "Tile"),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
-   efl_ui_nstate_value_set(rdg, EFL_IMAGE_SCALE_TYPE_FILL);
+   efl_ui_nstate_value_set(rdg, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
 
    efl_add(EFL_UI_CHECK_CLASS, hbox,
                 efl_text_set(efl_added, "Bg Color"),
@@ -479,7 +479,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED, _cb_check_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }
 
 

@@ -1,0 +1,66 @@
+collections {
+   group { "tab_page_layout";
+      parts {
+         spacer { "base";
+            scale;
+            desc { "default";
+            }
+         }
+         swallow { "menu";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               align: 0 0;
+               min: 200 0;
+               max: 200 -1;
+               fixed: 0 1;
+            }
+         }
+         rect { "separator";
+            scale;
+            desc { "default";
+               rel.to: "menu";
+               rel1.relative: 1 0;
+               align: 0 0;
+               min: 1 0;
+               max: 1 -1;
+               fixed: 0 1;
+               color: 75 75 75 255;
+            }
+         }
+         swallow { "tab_pager";
+            scale;
+            desc { "default";
+               rel1.to: "separator";
+               rel2.to: "base";
+               rel1.relative: 1 0;
+            }
+         }
+      }
+   }
+   group { "page_layout";
+      parts {
+         spacer { "base";
+            scale;
+            desc { "default";
+            }
+         }
+         rect { "bg";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               color: 255 255 255 255;
+            }
+         }
+         text { "text";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               align: 0.5 0.5;
+               color: 0 0 0 255;
+               text.size: 20;
+            }
+         }
+      }
+   }
+}

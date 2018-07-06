@@ -626,7 +626,7 @@ static int _eet_data_words_bigendian = -1;
                                               Size,                                \
                                               SubSize > 0 ? Data_Ret : NULL,       \
                                               SubSize);                            \
-       if (!Data_Ret) { goto Label; }                                              \
+       EINA_SAFETY_ON_NULL_GOTO(Data_Ret, Label);                                 \
     } while (0)
 
 #define EET_I_STRING         1 << 4
@@ -1727,8 +1727,7 @@ case EET_T_ ## Type: type += EET_I_ ## Type; break;
    size = eet_data_put_int(ed, &s, &size_ret);
 
    /* FIXME: If something goes wrong the resulting file will be corrupted. */
-   if (!size)
-     goto on_error;
+   EINA_SAFETY_ON_TRUE_GOTO(!size, on_error);
 
    eet_data_stream_write(ds, buf, 4);
 
@@ -2279,6 +2278,7 @@ eet_data_read_cipher(Eet_File            *ef,
    int required_free = 0;
    int size;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
    ed = eet_dictionary_get(ef);
 
    if (!cipher_key)
@@ -2317,6 +2317,7 @@ eet_data_read_cipher_buffer(Eet_File            *ef,
    int required_free = 0;
    int size;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
    ed = eet_dictionary_get(ef);
 
    if (!cipher_key)
@@ -2555,7 +2556,9 @@ _eet_free_unref(Eet_Free *ef)
 }
 
 #define _eet_freelist_add(Ctx, Data) _eet_free_add(&Ctx->freelist, Data);
+#if 0
 #define _eet_freelist_del(Ctx, Data) _eet_free_del(&Ctx->freelist, Data);
+#endif
 #define _eet_freelist_reset(Ctx)     _eet_free_reset(&Ctx->freelist);
 #define _eet_freelist_ref(Ctx)       _eet_free_ref(&Ctx->freelist);
 #define _eet_freelist_unref(Ctx)     _eet_free_unref(&Ctx->freelist);
@@ -3606,12 +3609,12 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
 
    memset(&chnk, 0, sizeof(Eet_Data_Chunk));
    eet_data_chunk_get(ed, &chnk, data_in, size_in);
-   if (!chnk.name)
-     goto error;
+   EINA_SAFETY_ON_NULL_GOTO(chnk.name, error);
 
    if (edd)
-     if (strcmp(chnk.name, edd->name))
-       goto error;
+     {
+        EINA_SAFETY_ON_TRUE_GOTO(strcmp(chnk.name, edd->name), error);
+     }
 
    p = chnk.data;
    if (ed)
@@ -3655,6 +3658,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
            case EET_G_UNION:
            case EET_G_VARIANT:
            default:
+             ERR("Decoding error!");
              goto error;
           }
      }
@@ -3670,8 +3674,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
         /* get next data chunk */
         memset(&echnk, 0, sizeof(Eet_Data_Chunk));
         eet_data_chunk_get(ed, &echnk, p, size);
-        if (!echnk.name)
-          goto error;  /* FIXME: don't REPLY on edd - work without */
+        EINA_SAFETY_ON_NULL_GOTO(echnk.name, error); /* FIXME: don't REPLY on edd - work without */
 
         if (edd)
           {
@@ -3719,8 +3722,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
                                      echnk.data,
                                      ((char *)echnk.data) + echnk.size,
                                      dd);
-             if (ret <= 0)
-               goto error;
+             EINA_SAFETY_ON_TRUE_GOTO(ret <= 0, error);
 
              child = eet_data_node_simple_type(type, echnk.name, dd);
 
@@ -3740,8 +3742,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
                  &p,
                  &size);
 
-             if (ret <= 0)
-               goto error;
+             EINA_SAFETY_ON_TRUE_GOTO(ret <= 0, error);
           }
 
         /* advance to next chunk */
@@ -3884,11 +3885,9 @@ eet_data_get_hash(Eet_Free_Context     *context,
                            echnk->data,
                            ((char *)echnk->data) + echnk->size,
                            &key);
-   if (ret <= 0)
-     goto on_error;
+   EINA_SAFETY_ON_TRUE_GOTO(ret <= 0, on_error);
 
-   if (!key)
-     goto on_error;
+   EINA_SAFETY_ON_NULL_GOTO(key, on_error);
 
    /* Advance to next chunk */
    NEXT_CHUNK((*p), (*size), (*echnk), ed);
@@ -3896,13 +3895,15 @@ eet_data_get_hash(Eet_Free_Context     *context,
 
    /* Read value */
    eet_data_chunk_get(ed, echnk, *p, *size);
-   if (!echnk->name)
-     goto on_error;
+   EINA_SAFETY_ON_NULL_GOTO(echnk->name, on_error);
 
    if (ede)
      if ((ede->group_type != echnk->group_type)
          || (ede->type != echnk->type))
-       goto on_error;
+       {
+          ERR("ERROR!");
+          goto on_error;
+       }
 
    if (IS_POINTER_TYPE(echnk->type))
      POINTER_TYPE_DECODE(context,
@@ -4023,17 +4024,26 @@ eet_data_get_array(Eet_Free_Context     *context,
 
         eet_data_chunk_get(ed, echnk, *p, *size);
         if (!echnk->name || strcmp(echnk->name, name) != 0)
-          goto on_error;  /* get the data */
+          {
+             ERR("ERROR!");
+             goto on_error;
+          }
 
         if ((echnk->group_type != group_type)
             || ((echnk->type != type) && (echnk->type != EET_T_NULL)))
-          goto on_error;
+          {
+             ERR("ERROR!");
+             goto on_error;
+          }
 
         if (ede)
           if ((ede->group_type != echnk->group_type)
               || ((echnk->type != ede->type) && (echnk->type != EET_T_NULL)))
-            goto on_error;
-
+            {
+               ERR("ERROR!");
+               goto on_error;
+            }
+        /* get the data */
         /* get the destination pointer */
         if (ede)
           {
@@ -4089,8 +4099,7 @@ eet_data_get_array(Eet_Free_Context     *context,
         else
           array = eet_node_var_array_new(name, childs);
 
-        if (!array)
-          goto on_error;
+        EINA_SAFETY_ON_NULL_GOTO(array, on_error);
 
         eet_node_struct_append(parent, name, array);
      }
@@ -4189,8 +4198,7 @@ eet_data_get_union(Eet_Free_Context     *context,
                            echnk->data,
                            ((char *)echnk->data) + echnk->size,
                            &union_type);
-   if (ret <= 0)
-     goto on_error;
+   EINA_SAFETY_ON_TRUE_GOTO(ret <= 0, on_error);
 
    /* Advance to next chunk */
    NEXT_CHUNK((*p), (*size), (*echnk), ed);
@@ -4198,13 +4206,12 @@ eet_data_get_union(Eet_Free_Context     *context,
 
    /* Read value */
    eet_data_chunk_get(ed, echnk, *p, *size);
-   if (!echnk->name)
-     goto on_error;
+   EINA_SAFETY_ON_NULL_GOTO(echnk->name, on_error);
 
    if (ede)
      {
         EET_ASSERT(!(ede->group_type != group_type || ede->type != type),
-                   goto on_error);
+                   ERR("ERROR!"); goto on_error);
 
         /* Search the structure of the union to decode */
         for (i = 0; i < ede->subtype->elements.num; ++i)
@@ -4229,7 +4236,7 @@ eet_data_get_union(Eet_Free_Context     *context,
                  }
                else
                  {
-                  EET_ASSERT(sede->subtype, goto on_error);
+                  EET_ASSERT(sede->subtype, ERR("ERROR!"); goto on_error);
                   data_ret = _eet_data_descriptor_decode(context,
                                                       ed,
                                                       sede->subtype,
@@ -4237,8 +4244,7 @@ eet_data_get_union(Eet_Free_Context     *context,
                                                       echnk->size,
                                                       data,
                                                       sede->subtype->size);
-                  if (!data_ret)
-                    goto on_error;
+                  EINA_SAFETY_ON_NULL_GOTO(data_ret, on_error);
                }
 
                /* Set union type. */
@@ -4269,6 +4275,7 @@ eet_data_get_union(Eet_Free_Context     *context,
                                     ed, NULL,
                                     echnk->data, echnk->size,
                                     NULL, 0);
+        ERR("ERROR!");
         goto on_error;
      }
 
@@ -4418,8 +4425,7 @@ eet_data_get_variant(Eet_Free_Context     *context,
                            echnk->data,
                            ((char *)echnk->data) + echnk->size,
                            &union_type);
-   if (ret <= 0)
-     goto on_error;
+   EINA_SAFETY_ON_TRUE_GOTO(ret <= 0, on_error);
 
    /* Advance to next chunk */
    NEXT_CHUNK((*p), (*size), (*echnk), ed);
@@ -4427,14 +4433,13 @@ eet_data_get_variant(Eet_Free_Context     *context,
 
    /* Read value */
    eet_data_chunk_get(ed, echnk, *p, *size);
-   if (!echnk->name)
-     goto on_error;
+   EINA_SAFETY_ON_NULL_GOTO(echnk->name, on_error);
 
    if (ede)
      {
         char *ut;
 
-        EET_ASSERT(ede->subtype, goto on_error);
+        EET_ASSERT(ede->subtype, ERR("ERROR!"); goto on_error);
 
         if ((!ed) || (!ede->subtype->func.str_direct_alloc))
           {
@@ -4472,15 +4477,13 @@ eet_data_get_variant(Eet_Free_Context     *context,
                          memset(&chnk, 0, sizeof(Eet_Data_Chunk));
                          eet_data_chunk_get(ed, &chnk, p2, size2);
 
-                         if (!chnk.name)
-                           goto on_error;
+                         EINA_SAFETY_ON_NULL_GOTO(chnk.name, on_error);
 
                          ret = eet_group_codec[sede->group_type - 100].get
                              (context, ed, sede->subtype, sede, &chnk, sede->type,
                              sede->group_type, data, &p2, &size2);
 
-                         if (ret <= 0)
-                           goto on_error;
+                         EINA_SAFETY_ON_TRUE_GOTO(ret <= 0, on_error);
 
 /* advance to next chunk */
                          NEXT_CHUNK(p2, size2, chnk, ed);
@@ -4502,8 +4505,7 @@ eet_data_get_variant(Eet_Free_Context     *context,
                                                       echnk->data,
                                                       echnk->size,
                                                       NULL, 0);
-               if (!data_ret)
-                 break;
+               EINA_SAFETY_ON_TRUE_GOTO(!data_ret, on_error);
 
                /* And point to the variant data. */
                *(void **)data = data_ret;
@@ -4519,8 +4521,7 @@ eet_data_get_variant(Eet_Free_Context     *context,
              Eet_Variant_Unknow *evu;
 
              evu = calloc(1, sizeof (Eet_Variant_Unknow) + echnk->size - 1);
-             if (!evu)
-               goto on_error;
+             EINA_SAFETY_ON_NULL_GOTO(evu, on_error);
 
              evu->size = echnk->size;
              memcpy(evu->data, echnk->data, evu->size);
@@ -4541,6 +4542,7 @@ eet_data_get_variant(Eet_Free_Context     *context,
                                     ed, NULL,
                                     echnk->data, echnk->size,
                                     NULL, 0);
+        ERR("ERROR!");
         goto on_error;
      }
 

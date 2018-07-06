@@ -49,7 +49,7 @@ struct _Evas_Object_Grid_Accessor
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-      CRI("no widget data for object %p (%s)",				\
+      ERR("No widget data for object %p (%s)",				\
 	   o, evas_object_type_get(o));					\
        return;								\
     }
@@ -58,7 +58,7 @@ struct _Evas_Object_Grid_Accessor
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       CRI("No widget data for object %p (%s)",	                \
+       ERR("No widget data for object %p (%s)",	                \
 	       o, evas_object_type_get(o));				\
        return val;							\
     }
@@ -276,7 +276,7 @@ evas_object_grid_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -302,7 +302,7 @@ _evas_grid_add_to(Eo *parent, Evas_Grid_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
+_evas_grid_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
 {
    if ((priv->size.w == w) && (priv->size.h == h)) return;
    priv->size.w = w;
@@ -311,7 +311,7 @@ _evas_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
 }
 
 EOLIAN static void
-_evas_grid_size_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, int *w, int *h)
+_evas_grid_grid_size_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv, int *w, int *h)
 {
    if (w) *w = priv->size.w;
    if (h) *h = priv->size.h;
@@ -468,7 +468,7 @@ _evas_grid_accessor_new(const Eo *o, Evas_Grid_Data *priv)
 }
 
 EOLIAN static Eina_List*
-_evas_grid_children_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
+_evas_grid_children_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
    Eina_List *new_list = NULL, *l;
    Evas_Object_Grid_Option *opt;
@@ -480,13 +480,13 @@ _evas_grid_children_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 }
 
 EOLIAN static Eina_Bool
-_evas_grid_mirrored_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
+_evas_grid_efl_ui_base_mirrored_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
    return priv->is_mirrored;
 }
 
 EOLIAN static void
-_evas_grid_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
+_evas_grid_efl_ui_base_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
 {
    mirrored = !!mirrored;
    if (priv->is_mirrored != mirrored)
@@ -494,6 +494,18 @@ _evas_grid_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirro
         priv->is_mirrored = mirrored;
         _evas_object_grid_smart_calculate(o);
      }
+}
+
+EAPI void
+evas_object_grid_mirrored_set(Evas_Grid *obj, Eina_Bool mirrored)
+{
+   efl_ui_mirrored_set(obj, mirrored);
+}
+
+EAPI Eina_Bool
+evas_object_grid_mirrored_get(const Evas_Grid *obj)
+{
+   return efl_ui_mirrored_get(obj);
 }
 
 #include "canvas/evas_grid.eo.c"

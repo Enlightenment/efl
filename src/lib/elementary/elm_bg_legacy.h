@@ -1,3 +1,5 @@
+typedef Eo Elm_Bg;
+
 /**
  * @brief Identifiers on how a background widget is to display its image
  *

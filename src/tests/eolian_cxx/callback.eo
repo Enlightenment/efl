@@ -8,7 +8,7 @@ class Callback (Efl.Object)
 {
    data: Callback_Data;
    events {
-     prefix,event1;
+     prefix,event1: void;
      prefix,event2: Callback;
      prefix,event3: int;
      prefix,event4: list<int*>;

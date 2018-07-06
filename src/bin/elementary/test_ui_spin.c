@@ -36,7 +36,7 @@ test_ui_spin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 {
    Eo *win, *bx, *sp;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Spin"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
@@ -65,5 +65,5 @@ test_ui_spin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _dec_clicked, sp),
            efl_pack(bx, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(100, 80));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 120));
 }

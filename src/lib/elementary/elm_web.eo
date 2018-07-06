@@ -5,16 +5,7 @@ type Elm_Web_Dialog_Confirm: __undefined_type; [[Elementary web dialog confirm t
 type Elm_Web_Dialog_Prompt: __undefined_type; [[Elementary web dialog prompt type]]
 type Elm_Web_Dialog_Alert: __undefined_type; [[Elementary web dialog alert type]]
 
-enum Elm.Web.Zoom_Mode
-{
-   [[Types of zoom available.]]
-   manual = 0, [[Zoom controlled normally by elm_web_zoom_set]]
-   auto_fit, [[Zoom until content fits in web object]]
-   auto_fill, [[Zoom until content fills web object]]
-   last [[Sentinel value to indicate last enum field during iteration]]
-}
-
-class Elm.Web (Efl.Ui.Widget)
+class Elm.Web (Efl.Ui.Widget, Efl.Ui.Legacy, Efl.Ui.Zoom)
 {
    [[Elementary web view class]]
    legacy_prefix: elm_web;
@@ -136,58 +127,6 @@ class Elm.Web (Efl.Ui.Widget)
          }
          values {
             enable: bool; [[Whether to enable or disable the browsing history.]]
-         }
-      }
-      @property zoom_mode @pure_virtual {
-         set {
-            [[Sets the zoom mode to use.
-
-              The modes can be any of those defined in .Elm_Web_Zoom_Mode,
-              except .ELM_WEB_ZOOM_MODE_LAST. The default is
-              .ELM_WEB_ZOOM_MODE_MANUAL.
-
-              .ELM_WEB_ZOOM_MODE_MANUAL means the zoom level will be
-              controlled with the @.zoom.set function.
-
-              .ELM_WEB_ZOOM_MODE_AUTO_FIT will calculate the needed zoom
-              level to make sure the entirety of the web object's contents
-              are shown.
-
-              .ELM_WEB_ZOOM_MODE_AUTO_FILL will calculate the needed zoom
-              level to fit the contents in the web object's size, without
-              leaving any space unused.
-            ]]
-         }
-         get {
-            [[Get the currently set zoom mode.]]
-         }
-         values {
-            mode: Elm.Web.Zoom_Mode; [[The mode to set.]]
-         }
-      }
-      @property zoom @pure_virtual {
-         set {
-            [[Sets the zoom level of the web object.
-
-              Zoom level matches the Webkit API, so 1.0 means normal zoom,
-              with higher values meaning zoom in and lower meaning zoom out.
-              This function will only affect the zoom level if the mode set
-              with @.zoom_mode.set is .ELM_WEB_ZOOM_MODE_MANUAL.
-            ]]
-         }
-         get {
-            [[Get the current zoom level set on the web object
-
-              Note that this is the zoom level set on the web object and
-              not that of the underlying Webkit one. In the
-              .ELM_WEB_ZOOM_MODE_MANUAL mode, the two zoom levels should
-              match, but for the other two modes the Webkit zoom is
-              calculated internally to match the chosen mode without
-              changing the zoom level set for the web object.
-            ]]
-         }
-         values {
-            zoom: double; [[The zoom level to set.]]
          }
       }
       @property console_message_hook {
@@ -503,8 +442,10 @@ class Elm.Web (Efl.Ui.Widget)
       Efl.Object.constructor;
    }
    events {
+      /* FIXME: Nobody is emitting these
       uri,changed; [[Called when URI changed]]
       url,changed; [[Called when URL changed]]
       windows,close,request; [[Called when window closed event was received]]
+      */
    }
 }

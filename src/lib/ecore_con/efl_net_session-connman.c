@@ -618,31 +618,31 @@ _efl_net_session_efl_object_destructor(Eo *o, Efl_Net_Session_Data *pd)
 }
 
 EOLIAN static const char *
-_efl_net_session_name_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
+_efl_net_session_network_name_get(const Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
 {
    return pd->name;
 }
 
 EOLIAN static Efl_Net_Session_State
-_efl_net_session_state_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
+_efl_net_session_state_get(const Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
 {
    return pd->state;
 }
 
 EOLIAN static Efl_Net_Session_Technology
-_efl_net_session_technology_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
+_efl_net_session_technology_get(const Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
 {
    return pd->technology;
 }
 
 EOLIAN static const char *
-_efl_net_session_interface_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
+_efl_net_session_interface_get(const Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd)
 {
    return pd->interface;
 }
 
 EOLIAN static void
-_efl_net_session_ipv4_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd, const char **address, const char **netmask, const char **gateway)
+_efl_net_session_ipv4_get(const Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd, const char **address, const char **netmask, const char **gateway)
 {
    if (address) *address = pd->ipv4.address;
    if (netmask) *netmask = pd->ipv4.netmask;
@@ -650,7 +650,7 @@ _efl_net_session_ipv4_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd, const cha
 }
 
 EOLIAN static void
-_efl_net_session_ipv6_get(Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd, const char **address, uint8_t *prefix_length, const char **netmask, const char **gateway)
+_efl_net_session_ipv6_get(const Eo *o EINA_UNUSED, Efl_Net_Session_Data *pd, const char **address, uint8_t *prefix_length, const char **netmask, const char **gateway)
 {
    if (address) *address = pd->ipv6.address;
    if (netmask) *netmask = pd->ipv6.netmask;

@@ -63,11 +63,11 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Gfx *
+EOLIAN static Efl_Gfx_Entity *
 _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd
-                                                        , Efl_Model *model, Efl_Gfx *parent)
+                                                        , Efl_Model *model, Efl_Gfx_Entity *parent)
 {
-   Efl_Gfx *layout;
+   Efl_Gfx_Entity *layout;
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 /*
    if (eina_array_count(pd->layouts))
@@ -78,9 +78,9 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
      }
    else */
      {
-        layout = efl_add(EFL_UI_LAYOUT_CLASS, parent,
+        layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, parent,
                          efl_ui_view_model_set(efl_added, model),
-                         elm_layout_theme_set(efl_added, pd->klass, pd->group, pd->style));
+                         efl_ui_layout_object_theme_set(efl_added, pd->klass, pd->group, pd->style));
 
         eina_hash_foreach(pd->connects, _model_connect, layout);
 
@@ -92,7 +92,7 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
 }
 
 EOLIAN static void
-_efl_ui_layout_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd EINA_UNUSED, Efl_Gfx *layout)
+_efl_ui_layout_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd EINA_UNUSED, Efl_Gfx_Entity *layout)
 {
    efl_ui_view_model_set(layout, NULL);
    efl_del(layout);

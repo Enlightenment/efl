@@ -698,6 +698,19 @@ struct _Ecore_Event_Signal_Realtime
 EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data);
 
 /**
+ * @brief Adds an event handler to the beginning of the handler list.
+ * @param type The type of the event this handler will get called for
+ * @param func The function to call when the event is found in the queue
+ * @param data A data pointer to pass to the called function @p func
+ * @return A new Event handler, or @c NULL on failure.
+ *
+ * This function is identical to ecore_event_handler_add() except that it
+ * creates the handler at the start of the list. Do not use this function.
+ * @since 1.21
+ */
+EAPI Ecore_Event_Handler *ecore_event_handler_prepend(int type, Ecore_Event_Handler_Cb func, const void *data);
+
+/**
  * @brief Deletes an event handler.
  * @param event_handler Event handler handle to delete
  * @return Data passed to handler
@@ -1022,9 +1035,6 @@ enum _Ecore_Exe_Win32_Priority
 };
 typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
 
-#ifdef EFL_BETA_API_SUPPORT
-#include "ecore_exe.eo.h"
-#endif
 #include "ecore_exe.eo.legacy.h"
 
 #define _ECORE_EXE_EO_CLASS_TYPE
@@ -1597,9 +1607,9 @@ EAPI double ecore_loop_time_get(void);
 
 /**
  * Sets the loop time.
- * 
+ *
  * @param t The new loop time
- * 
+ *
  * You should never need/call this, unless you are implementing a custom
  * tick source for an ecore animator. Only then inside your function that
  * calls ecore_animator_custom_tick(), just before it, if you are able to
@@ -1611,7 +1621,7 @@ EAPI double ecore_loop_time_get(void);
  * you get from ecore_time_get() and ecore_loop_time_get() (same 0 point).
  * What this point is is undefined, sou unless your source uses the same
  * 0 time, then you may have to adjust and do some guessing.
- * 
+ *
  * @see ecore_animator_custom_tick()
  * @see ecore_loop_time_get()
  * @since 1.11
@@ -2009,13 +2019,13 @@ EAPI int ecore_thread_pending_total_get(void);
  *
  * This returns the maximum number of Ecore_Thread's that may be running at
  * the same time. If this number is reached, new jobs started by either
- *ecore_thread_run() or ecore_thread_feedback_run() will be added to the
+ * ecore_thread_run() or ecore_thread_feedback_run() will be added to the
  * respective pending queue until one of the running threads finishes its
  * task and becomes available to run a new one.
  *
- * By default, this will be the number of available CPUs for the
- * running program (as returned by eina_cpu_count()), or 1 if this value
- * could not be fetched.
+ * By default, this will be the proportional to the number of CPU cores
+ * found, and will be at least 1 so at least 1 worker can run through
+ * the quque of work to do.
  *
  * @see ecore_thread_max_set()
  * @see ecore_thread_max_reset()
@@ -2028,8 +2038,10 @@ EAPI int ecore_thread_max_get(void);
  * @param num The new maximum
  *
  * This sets a new value for the maximum number of concurrently running
- * Ecore_Thread's. It @b must an integer between 1 and (16 * @c x), where @c x
- * is the number for CPUs available.
+ * Ecore_Thread's. It @b must an interger of at least 1 and may be limited
+ * to a reasonable value as to not overload the system too much with
+ * too many workers. This limit may change based on the number of CPU
+ * cores detected.
  *
  * @see ecore_thread_max_get()
  * @see ecore_thread_max_reset()
@@ -2402,14 +2414,14 @@ EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
 
 /**
  * Creates a pipe with more parameters.
- * 
+ *
  * @param handler Same as ecore_pipe_add()
  * @param data Same as ecore_pipe_add()
  * @param fd_read An fd to use for reading or @c -1 otherwise
  * @param fd_write An fd to use for writing or @c -1 otherwise
  * @param read_survive_fork Should read fd survive a fork
  * @param write_survive_fork Should write fd survive a fork
- * 
+ *
  * This is the same as ecore_pipe_add() but with some added parameters.
  *
  * @return A pointer to the new Ecore_Pipe object on success, else NULL.
@@ -3194,18 +3206,5 @@ typedef struct _Ecore_Job Ecore_Job;    /**< A job handle */
 /**
  * @}
  */
-
-
-#ifdef EFL_BETA_API_SUPPORT
-
-/*
- * @brief Function callback type for when creating Ecore_Thread that
- * uses Efl_Future for communication.
- */
-typedef void (*Ecore_Thread_Future_Cb)(const void *data, Eo *promise, Ecore_Thread *thread);
-
-EAPI Efl_Future *ecore_thread_future_run(Ecore_Thread_Future_Cb heavy, const void *data, Eina_Free_Cb free_cb);
-
-#endif
 
 #endif

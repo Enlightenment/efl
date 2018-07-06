@@ -26,13 +26,6 @@ eolian_parameter_default_value_get(const Eolian_Function_Parameter *param)
    return param->value;
 }
 
-EAPI Eina_Stringshare *
-eolian_parameter_name_get(const Eolian_Function_Parameter *param)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
-   return param->name;
-}
-
 EAPI const Eolian_Documentation *
 eolian_parameter_documentation_get(const Eolian_Function_Parameter *param)
 {

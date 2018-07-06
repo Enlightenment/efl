@@ -37,13 +37,6 @@ eolian_function_type_get(const Eolian_Function *fid)
    return fid->type;
 }
 
-EAPI Eina_Stringshare *
-eolian_function_name_get(const Eolian_Function *fid)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   return fid->name;
-}
-
 static const char *
 _get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
 {
@@ -52,7 +45,7 @@ _get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
       return foo_id->klass->legacy_prefix;
     else if (foo_id->klass->eo_prefix)
       return foo_id->klass->eo_prefix;
-    strcpy(buf, foo_id->klass->full_name);
+    strcpy(buf, foo_id->klass->base.name);
     eina_str_tolower(&buf);
     while ((tmp = strchr(tmp, '.'))) *tmp = '_';
     return buf;
@@ -229,7 +222,7 @@ EAPI Eina_Bool
 eolian_function_is_constructor(const Eolian_Function *fid, const Eolian_Class *klass)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   Eina_Stringshare *s = eina_stringshare_ref(klass->full_name);
+   Eina_Stringshare *s = eina_stringshare_ref(klass->base.name);
    Eina_Bool r = !!eina_list_search_sorted_list
      (fid->ctor_of, EINA_COMPARE_CB(strcmp), s);
    eina_stringshare_del(s);

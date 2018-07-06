@@ -25,11 +25,11 @@ class Efl.Ui.Popup_Anchor(Efl.Ui.Popup)
             [[Get the align priority of a popup.]]
          }
          values {
-            first: Efl.Ui.Popup.Align;  [[First align priority]]
-            second: Efl.Ui.Popup.Align; [[Second align priority]]
-            third: Efl.Ui.Popup.Align;  [[Third align priority]]
-            fourth: Efl.Ui.Popup.Align; [[Fourth align priority]]
-            fifth: Efl.Ui.Popup.Align;  [[Fifth align priority]]
+            first: Efl.Ui.Popup_Align;  [[First align priority]]
+            second: Efl.Ui.Popup_Align; [[Second align priority]]
+            third: Efl.Ui.Popup_Align;  [[Third align priority]]
+            fourth: Efl.Ui.Popup_Align; [[Fourth align priority]]
+            fifth: Efl.Ui.Popup_Align;  [[Fifth align priority]]
          }
       }
    }
@@ -37,6 +37,6 @@ class Efl.Ui.Popup_Anchor(Efl.Ui.Popup)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Gfx.position { set; }
+      Efl.Gfx.Entity.position { set; }
    }
 }

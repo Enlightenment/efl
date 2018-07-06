@@ -65,7 +65,7 @@ main(int argc, char *argv[])
    (void) argv;
    efl_object_init();
 
-   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
    Simple_Public_Data *pd = efl_data_scope_get(obj, SIMPLE_CLASS);
 
    /* The order of these two is undetermined. */

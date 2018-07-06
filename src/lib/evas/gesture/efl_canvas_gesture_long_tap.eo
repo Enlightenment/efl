@@ -1,0 +1,13 @@
+class Efl.Canvas.Gesture_Long_Tap (Efl.Canvas.Gesture)
+{
+   [[EFL Gesture Long Tap class]]
+   eo_prefix: efl_gesture_long_tap;
+   event_prefix: efl;
+   events {
+      gesture,long_tap: Efl.Canvas.Gesture; [[Event for tap gesture]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

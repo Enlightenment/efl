@@ -1,9 +1,10 @@
 import efl_text_types;
-import efl_animation_types;
 
-abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
-                            Efl.Input.Interface, Efl.Gfx.Size.Hint,
-                            Efl.Gfx.Map, Efl.Loop.Consumer, Efl.Ui.Base, Efl.Canvas.Pointer)
+struct Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
+
+abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
+                            Efl.Input.Interface, Efl.Gfx.Size_Hint,
+                            Efl.Gfx.Map, Efl.Loop_Consumer, Efl.Ui.Base, Efl.Canvas.Pointer)
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -443,7 +444,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
            The default paragraph direction is $inherit.
          ]]
          values {
-            dir: Efl.Text.Bidirectional_Type; [[Paragraph direction for the given object.]]
+            dir: Efl.Text_Bidirectional_Type; [[Paragraph direction for the given object.]]
          }
       }
       clipees_has @const {
@@ -576,32 +577,32 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
          }
       }
       @property event_animation {
-         [[Set the $animation which starts when the given $event_name happens to the object.]]
+         [[Set the $animation which starts when the given $desc happens to the object.]]
          get { legacy: null; }
          set { legacy: null; }
          keys {
-            @cref event_type: Efl.Event.Description;
+            @cref desc: Efl.Event_Description;
                [[The event description for which the given $animation is set.]]
          }
          values {
-            animation: Efl.Animation;
-               [[The animation which starts when the given $event_name
+            animation: Efl.Canvas.Animation;
+               [[The animation which starts when the given $desc
                  happens to the object.]]
          }
       }
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Object.invalidate;
+      Efl.Object.destructor;
       Efl.Object.provider_find;
-      Efl.Object.del;
       Efl.Object.debug_name_override;
-      Efl.Gfx.visible { get; set; }
+      Efl.Gfx.Entity.visible { get; set; }
       Efl.Gfx.Color.color { get; set; }
-      Efl.Gfx.geometry { get; set; }
-      Efl.Gfx.position { get; set; }
-      Efl.Gfx.size { get; set; }
+      Efl.Gfx.Entity.geometry { get; set; }
+      Efl.Gfx.Entity.position { get; set; }
+      Efl.Gfx.Entity.size { get; set; }
       Efl.Gfx.Stack.layer { get; set; }
       Efl.Gfx.Stack.below { get; }
       Efl.Gfx.Stack.above { get; }
@@ -609,17 +610,22 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;
       Efl.Gfx.Stack.lower;
-      Efl.Gfx.Size.Hint.hint_aspect { get; set; }
-      Efl.Gfx.Size.Hint.hint_align { get; set; }
-      Efl.Gfx.Size.Hint.hint_combined_min { get; }
-      Efl.Gfx.Size.Hint.hint_restricted_min { get; set; }
-      Efl.Gfx.Size.Hint.hint_min { get; set; }
-      Efl.Gfx.Size.Hint.hint_max { get; set; }
-      Efl.Gfx.Size.Hint.hint_margin { get; set; }
-      Efl.Gfx.Size.Hint.hint_weight { get; set; }
-      Efl.Gfx.scale { set; get; }
+      Efl.Gfx.Size_Hint.hint_aspect { get; set; }
+      Efl.Gfx.Size_Hint.hint_align { get; set; }
+      Efl.Gfx.Size_Hint.hint_combined_min { get; }
+      Efl.Gfx.Size_Hint.hint_restricted_min { get; set; }
+      Efl.Gfx.Size_Hint.hint_min { get; set; }
+      Efl.Gfx.Size_Hint.hint_max { get; set; }
+      Efl.Gfx.Size_Hint.hint_margin { get; set; }
+      Efl.Gfx.Size_Hint.hint_weight { get; set; }
+      Efl.Gfx.Entity.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
-      Efl.Loop.Consumer.loop { get; }
+      Efl.Loop_Consumer.loop { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
+   }
+   events {
+      anim_started: Efl.Canvas.Object_Animation_Event; [[Animation is started.]]
+      anim_running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
+      anim_ended: Efl.Canvas.Object_Animation_Event; [[Animation is ended.]]
    }
 }

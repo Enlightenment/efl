@@ -53,9 +53,44 @@ EAPI int ECORE_WL2_EVENT_WINDOW_HIDE = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_ACTIVATE = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_DEACTIVATE = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE = 0;
+EAPI int ECORE_WL2_EVENT_WINDOW_OFFSCREEN = 0;
 
 EAPI int _ecore_wl2_event_window_www = -1;
 EAPI int _ecore_wl2_event_window_www_drag = -1;
+
+static Eina_Array *supplied_modules = NULL;
+static Eina_Array *local_modules = NULL;
+
+static Eina_Bool
+_ecore_wl2_surface_modules_init(void)
+{
+   const char *mod_dir;
+
+   supplied_modules = eina_module_arch_list_get(NULL,
+                                                PACKAGE_LIB_DIR"/ecore_wl2/engines",
+                                                MODULE_ARCH);
+   eina_module_list_load(supplied_modules);
+
+   mod_dir = getenv("ECORE_WL2_SURFACE_MODULE_DIR");
+   if (mod_dir)
+     {
+        local_modules = eina_module_list_get(NULL, mod_dir,
+                                             EINA_TRUE, NULL, NULL);
+        eina_module_list_load(local_modules);
+     }
+
+   if (!supplied_modules && !local_modules)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static void
+_ecore_wl2_surface_modules_unload(void)
+{
+   eina_module_list_unload(supplied_modules);
+   eina_module_list_unload(local_modules);
+}
 
 /* public API functions */
 EAPI int
@@ -87,6 +122,12 @@ ecore_wl2_init(void)
      {
         ERR("Could not initialize Ecore_Event");
         goto ecore_event_err;
+     }
+
+   if (!_ecore_wl2_surface_modules_init())
+     {
+        ERR("Could not load surface modules");
+        goto module_load_err;
      }
 
    /* handle creating new Ecore_Wl2 event types */
@@ -133,11 +174,15 @@ ecore_wl2_init(void)
    ECORE_WL2_EVENT_WINDOW_ACTIVATE = ecore_event_type_new();
    ECORE_WL2_EVENT_WINDOW_DEACTIVATE = ecore_event_type_new();
    ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE = ecore_event_type_new();
+   ECORE_WL2_EVENT_WINDOW_OFFSCREEN = ecore_event_type_new();
 
    if (!no_session_recovery)
      no_session_recovery = !!getenv("EFL_NO_WAYLAND_SESSION_RECOVERY");
 
    return _ecore_wl2_init_count;
+
+module_load_err:
+   ecore_event_shutdown();
 
 ecore_event_err:
    ecore_shutdown();
@@ -203,7 +248,8 @@ ecore_wl2_shutdown(void)
                           ECORE_WL2_EVENT_WINDOW_HIDE,
                           ECORE_WL2_EVENT_WINDOW_ACTIVATE,
                           ECORE_WL2_EVENT_WINDOW_DEACTIVATE,
-                          ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE);
+                          ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
+                          ECORE_WL2_EVENT_WINDOW_OFFSCREEN);
 
    /* shutdown Ecore_Event */
    ecore_event_shutdown();
@@ -214,6 +260,8 @@ ecore_wl2_shutdown(void)
    /* unregister logging domain */
    eina_log_domain_unregister(_ecore_wl2_log_dom);
    _ecore_wl2_log_dom = -1;
+
+   _ecore_wl2_surface_modules_unload();
 
    /* shutdown eina */
    eina_shutdown();

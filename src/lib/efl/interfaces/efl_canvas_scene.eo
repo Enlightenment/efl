@@ -1,0 +1,242 @@
+import efl_input_device;
+import efl_gfx_types;
+
+interface Efl.Canvas.Scene ()
+{
+   [[Common interface for window and some internal classes in EFL.]]
+   methods {
+      @property image_max_size {
+         get {
+            [[Get the maximum image size evas can possibly handle.
+
+              This function returns the largest image or surface size that
+              evas can handle in pixels, and if there is one, returns $true.
+              It returns $false if no extra constraint on maximum image
+              size exists. You still should check the return values of
+              $maxw and $maxh as there may still be a limit, just a
+              much higher one.
+
+            ]]
+            return: bool; [[$true on success, $false otherwise]] 
+         }
+         values {
+            max: Eina.Size2D; [[The maximum image size (in pixels).]]
+         }
+      }
+      smart_objects_calculate {
+         [[Call user-provided $calculate smart functions and unset the
+           flag signalling that the object needs to get recalculated to
+           all smart objects in the canvas.
+         ]]
+      }
+      @property smart_objects_calculating {
+         get {
+            [[Get if the canvas is currently calculating smart objects.]]
+         }
+         values {
+            calculating: bool; [[$true if currently calculating smart objects.]]
+         }
+      }
+      objects_at_xy_get {
+         [[Retrieve a list of objects lying over a given position in
+           a canvas.
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas covering the
+           given position. The user can remove from query objects which are
+           hidden and/or which are set to pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[
+            The list of objects that are over the given position in $e.
+         ]]
+         params {
+            @in pos: Eina.Position2D; [[The pixel position.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
+      object_top_at_xy_get @const {
+         [[Retrieve the object stacked at the top of a given position
+           in a canvas.
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas covering the
+           given position. The user can remove from the query
+           objects which are hidden and/or which are set to pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: Efl.Gfx.Entity @warn_unused; [[The Evas object that is over all other objects at the given position.]]
+         params {
+            @in pos: Eina.Position2D; [[The pixel position.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
+      objects_in_rectangle_get {
+         [[Retrieve a list of objects lying over a given
+           rectangular region in a canvas.
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas overlapping
+           with the given rectangular region inside $e. The user can remove
+           from the query objects which are hidden and/or which are set to
+           pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to objects]] 
+         params {
+            @in rect: Eina.Rect; [[The rectangular region.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
+      object_top_in_rectangle_get @const {
+         [[Retrieve the Evas object stacked at the top of a given
+           rectangular region in a canvas
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas overlapping
+           with the given rectangular region inside $e. The user can remove
+           from the query objects which are hidden and/or which are set to
+           pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: Efl.Gfx.Entity @warn_unused; [[
+            The object that is over all other objects at the given
+            rectangular region.
+         ]]
+         params {
+            @in rect: Eina.Rect; [[The rectangular region.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
+      seats {
+         [[Iterate over the input device seats.
+
+           @since 1.20
+         ]]
+         return: iterator<Efl.Input.Device> @owned;
+            [[An iterator over the attached seats.]]
+      }
+      @property device {
+         [[An input device attached to this canvas, found by name.
+
+           Note: This function is meant to find seats and not individual
+           input devices.
+
+           See also @.seat to find a seat by id instead of by name.
+         ]]
+         get {
+            [[Get a device by name.]]
+         }
+         keys {
+            name: string; [[The name of the seat to find.]]
+         }
+         values {
+            seat: Efl.Input.Device; [[The device or seat, $null if not found.]]
+         }
+      }
+      @property seat {
+         [[A seat attached to this canvas, found by id.
+
+           See also @.device to find a seat by name instead of by id.
+         ]]
+         get {
+            [[Get a seat by id.]]
+         }
+         keys {
+            id: int; [[The id of the seat to find.]]
+         }
+         values {
+            seat: Efl.Input.Device; [[The seat or $null if not found.]]
+         }
+      }
+      @property pointer_position {
+         get {
+            [[This function returns the current known pointer coordinates
+
+              This function returns the current position of the main input
+              pointer (mouse, pen, etc...).
+            ]]
+         }
+         /* FIXME: missing keys { seat } */
+         values {
+            pos: Eina.Position2D; [[The pointer position in pixels.]]
+         }
+      }
+      /* FIXME: maybe not necessary if gesture supports this */
+      pointer_iterate @const @beta {
+         [[Returns an iterator over the current known pointer positions.
+
+           This is used to iterate over the current known multi-touch positions,
+           including the first finger. Each pointer position is represented by
+           an object of type @Efl.Input.Pointer.
+
+           Each finger in a multi touch environment can then be identified
+           by the @Efl.Input.Pointer.tool property. The order of the pointers
+           in this iterator is not defined.
+
+           Note: If the input surface supports hovering input, some pointers
+           may not be in a "down" state. To retrieve the list of such pointers,
+           set the $hover value to $true. Remember though that most devices
+           currently don't support this.
+         ]]
+         params {
+            /* FIXME: missing seat. hover is not useful */
+            hover: bool @optional; [[$false by default, $true means to include
+                                     fingers that are currently hovering.]]
+         }
+         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
+      }
+   }
+   events {
+      focus,in: Efl.Input.Focus; [[Called when canvas got focus]]
+      focus,out: Efl.Input.Focus; [[Called when canvas lost focus]]
+      object,focus,in: Efl.Input.Focus; [[Called when object got focus]]
+      object,focus,out: Efl.Input.Focus; [[Called when object lost focus]]
+      render,pre: void; [[Called when pre render happens]]
+      /* FIXME: event_info can be NULL, but @nullable tag does not work on events yet */
+      render,post: Efl.Gfx.Event.Render_Post; [[Called when post render happens]]
+      device,changed: Efl.Input.Device; [[Called when input device changed]]
+      device,added: Efl.Input.Device; [[Called when input device was added]]
+      device,removed: Efl.Input.Device; [[Called when input device was removed]]
+   }
+}

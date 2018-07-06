@@ -78,7 +78,7 @@ _efl_net_socket_fd_efl_object_constructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
    o = efl_constructor(efl_super(o, MY_CLASS));
 
    efl_io_closer_close_on_exec_set(o, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(o, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(o, EINA_TRUE);
    efl_io_reader_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    efl_io_writer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    efl_io_closer_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
@@ -87,9 +87,9 @@ _efl_net_socket_fd_efl_object_constructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_socket_fd_efl_object_destructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
+_efl_net_socket_fd_efl_object_invalidate(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UNUSED)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
@@ -97,6 +97,12 @@ _efl_net_socket_fd_efl_object_destructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
         efl_event_thaw(o);
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_socket_fd_efl_object_destructor(Eo *o, Efl_Net_Socket_Fd_Data *pd)
+{
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address_local, NULL);
@@ -182,7 +188,7 @@ _efl_net_socket_fd_efl_io_closer_close(Eo *o, Efl_Net_Socket_Fd_Data *pd EINA_UN
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_fd_efl_io_closer_closed_get(Eo *o, Efl_Net_Socket_Fd_Data *pd)
+_efl_net_socket_fd_efl_io_closer_closed_get(const Eo *o, Efl_Net_Socket_Fd_Data *pd)
 {
    if (pd->family == AF_UNSPEC) return EINA_FALSE;
    return (SOCKET)efl_io_closer_fd_get(o) == INVALID_SOCKET;
@@ -335,7 +341,7 @@ _efl_net_socket_fd_efl_net_socket_address_local_set(Eo *o EINA_UNUSED, Efl_Net_S
 }
 
 EOLIAN static const char *
-_efl_net_socket_fd_efl_net_socket_address_local_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
+_efl_net_socket_fd_efl_net_socket_address_local_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
 {
    return pd->address_local;
 }
@@ -347,7 +353,7 @@ _efl_net_socket_fd_efl_net_socket_address_remote_set(Eo *o EINA_UNUSED, Efl_Net_
 }
 
 EOLIAN static const char *
-_efl_net_socket_fd_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
+_efl_net_socket_fd_efl_net_socket_address_remote_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
 {
    return pd->address_remote;
 }
@@ -359,7 +365,7 @@ _efl_net_socket_fd_family_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd, int
 }
 
 EOLIAN static int
-_efl_net_socket_fd_family_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
+_efl_net_socket_fd_family_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Fd_Data *pd)
 {
    return pd->family;
 }

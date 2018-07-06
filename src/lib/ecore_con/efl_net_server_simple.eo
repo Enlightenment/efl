@@ -1,5 +1,5 @@
-class Efl.Net.Server.Simple (Efl.Loop.Consumer, Efl.Net.Server) {
-    [[A network server wrapper that creates clients based on @Efl.Net.Socket.Simple.
+class Efl.Net.Server_Simple (Efl.Loop_Consumer, Efl.Net.Server) {
+    [[A network server wrapper that creates clients based on @Efl.Net.Socket_Simple.
 
       This is just a wrapper server. It takes an actual server
       using @.inner_server or creates one using @.inner_class.
@@ -44,7 +44,7 @@ class Efl.Net.Server.Simple (Efl.Loop.Consumer, Efl.Net.Server) {
 
     implements {
         Efl.Object.finalize;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
         Efl.Net.Server.serve;
         Efl.Net.Server.client_announce;
         Efl.Net.Server.address { get; }

@@ -244,7 +244,6 @@ efl_net_socket_ssl_sock_connected(void *data, const Efl_Event *event EINA_UNUSED
      {
         WRN("SSL=%p failed handshake: %s", o, eina_error_msg_get(err));
         efl_io_closer_close(o);
-        return;
      }
 
    efl_unref(o);
@@ -329,7 +328,7 @@ _efl_net_socket_ssl_adopt(Eo *o, Efl_Net_Socket_Ssl_Data *pd, Efl_Net_Socket *so
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_adopted_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Efl_Net_Socket **sock, Efl_Net_Ssl_Context **context)
+_efl_net_socket_ssl_adopted_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Efl_Net_Socket **sock, Efl_Net_Ssl_Context **context)
 {
    if (sock) *sock = pd->sock;
    if (context) *context = pd->context;
@@ -337,7 +336,7 @@ _efl_net_socket_ssl_adopted_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, 
 }
 
 static Efl_Net_Ssl_Verify_Mode
-_efl_net_socket_ssl_verify_mode_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_verify_mode_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->verify_mode;
 }
@@ -353,7 +352,7 @@ _efl_net_socket_ssl_verify_mode_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *
 }
 
 static Eina_Bool
-_efl_net_socket_ssl_hostname_verify_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_hostname_verify_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->hostname_verify;
 }
@@ -369,7 +368,7 @@ _efl_net_socket_ssl_hostname_verify_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Da
 }
 
 static const char *
-_efl_net_socket_ssl_hostname_override_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_hostname_override_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->hostname_override;
 }
@@ -445,17 +444,15 @@ _efl_net_socket_ssl_efl_object_constructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_object_invalidate(Eo *o, Efl_Net_Socket_Ssl_Data *pd EINA_UNUSED)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
         efl_io_closer_close(o);
         efl_event_thaw(o);
      }
-
-   efl_destructor(efl_super(o, MY_CLASS));
 
    pd->torndown = EINA_TRUE;
    efl_net_ssl_conn_teardown(&pd->ssl_conn);
@@ -475,7 +472,15 @@ _efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
         pd->context = NULL;
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
+{
    eina_stringshare_replace(&pd->hostname_override, NULL);
+
+   efl_destructor(efl_super(o, MY_CLASS));
 }
 
 EOLIAN static Eina_Error
@@ -493,7 +498,7 @@ _efl_net_socket_ssl_efl_io_closer_close(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return (!pd->sock) || efl_io_closer_closed_get(pd->sock);
 }
@@ -535,13 +540,13 @@ _efl_net_socket_ssl_efl_io_reader_can_read_set(Eo *o, Efl_Net_Socket_Ssl_Data *p
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->can_read;
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_reader_eos_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->eos;
 }
@@ -598,7 +603,7 @@ _efl_net_socket_ssl_efl_io_writer_can_write_set(Eo *o, Efl_Net_Socket_Ssl_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->can_write;
 }
@@ -611,32 +616,32 @@ _efl_net_socket_ssl_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_S
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    return pd->sock && efl_io_closer_close_on_exec_get(pd->sock);
 }
 
 EOLIAN static void
-_efl_net_socket_ssl_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Eina_Bool close_on_destructor)
+_efl_net_socket_ssl_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd, Eina_Bool close_on_invalidate)
 {
-   if (pd->sock) efl_io_closer_close_on_destructor_set(pd->sock, close_on_destructor);
+   if (pd->sock) efl_io_closer_close_on_invalidate_set(pd->sock, close_on_invalidate);
 }
 
 EOLIAN static Eina_Bool
-_efl_net_socket_ssl_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
-   return pd->sock && efl_io_closer_close_on_destructor_get(pd->sock);
+   return pd->sock && efl_io_closer_close_on_invalidate_get(pd->sock);
 }
 
 EOLIAN static const char *
-_efl_net_socket_ssl_efl_net_socket_address_local_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_net_socket_address_local_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    if (!pd->sock) return "unbound";
    return efl_net_socket_address_local_get(pd->sock);
 }
 
 EOLIAN static const char *
-_efl_net_socket_ssl_efl_net_socket_address_remote_get(Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
+_efl_net_socket_ssl_efl_net_socket_address_remote_get(const Eo *o EINA_UNUSED, Efl_Net_Socket_Ssl_Data *pd)
 {
    if (!pd->sock) return "unbound";
    return efl_net_socket_address_remote_get(pd->sock);

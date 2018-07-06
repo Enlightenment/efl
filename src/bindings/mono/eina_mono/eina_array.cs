@@ -24,6 +24,8 @@ public static class ArrayNativeFunctions
 
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
         eina_array_iterator_new(IntPtr array);
+    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+        eina_array_accessor_new(IntPtr array);
 
     [DllImport(efl.Libs.CustomExports)] public static extern void
         eina_array_clean_custom_export_mono(IntPtr array);
@@ -287,6 +289,12 @@ public class Array<T> : IEnumerable<T>, IDisposable
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
         return this.GetEnumerator();
+    }
+
+    /// <summary> Gets an Accessor for this Array.</summary>
+    public eina.Accessor<T> GetAccessor()
+    {
+        return new eina.Accessor<T>(eina_array_accessor_new(Handle), Ownership.Managed);
     }
 }
 

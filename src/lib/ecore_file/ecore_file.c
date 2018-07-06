@@ -320,11 +320,6 @@ ecore_file_recursive_rm(const char *dir)
    Eina_Bool is_dir;
 
 #ifdef _WIN32
-   char buf[PATH_MAX];
-
-   if (readlink(dir, buf, sizeof(buf) - 1) > 0)
-     return ecore_file_unlink(dir);
-
    if (!_ecore_file_stat(dir, NULL, NULL, NULL, &is_dir, NULL))
      return EINA_FALSE;
 #else
@@ -492,7 +487,7 @@ ecore_file_mv(const char *src, const char *dst)
                     }
 
                   // Set file permissions of temp file to match src
-                  if (chmod(buf, mode) == -1)
+                  if (chmod(tmpstr, mode) == -1)
                     {
                        eina_tmpstr_del(tmpstr);
                        goto FAIL;
@@ -545,9 +540,13 @@ FAIL:
 EAPI Eina_Bool
 ecore_file_symlink(const char *src, const char *dest)
 {
-   if (!symlink(src, dest)) return EINA_TRUE;
-
+#ifndef _WIN32
+   return !symlink(src, dest);
+#else
    return EINA_FALSE;
+   (void)src;
+   (void)dest;
+#endif
 }
 
 EAPI char *
@@ -630,12 +629,17 @@ ecore_file_can_exec(const char *file)
 EAPI char *
 ecore_file_readlink(const char *link)
 {
+#ifndef _WIN32
    char buf[PATH_MAX];
    int count;
 
    if ((count = readlink(link, buf, sizeof(buf) - 1)) < 0) return NULL;
    buf[count] = 0;
    return strdup(buf);
+#else
+   return NULL;
+   (void)link;
+#endif
 }
 
 EAPI Eina_List *

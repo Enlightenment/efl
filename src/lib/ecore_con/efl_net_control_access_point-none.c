@@ -18,19 +18,19 @@ _efl_net_control_access_point_efl_object_destructor(Eo *obj, Efl_Net_Control_Acc
 }
 
 EOLIAN static Efl_Net_Control_Access_Point_State
-_efl_net_control_access_point_state_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_state_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN static Efl_Net_Control_Access_Point_Error
-_efl_net_control_access_point_error_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_error_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN static const char *
-_efl_net_control_access_point_name_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_ssid_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
@@ -41,25 +41,25 @@ _efl_net_control_access_point_priority_set(Eo *obj EINA_UNUSED, Efl_Net_Control_
 }
 
 EOLIAN static unsigned int
-_efl_net_control_access_point_priority_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_priority_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN static Efl_Net_Control_Technology *
-_efl_net_control_access_point_technology_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_technology_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static uint8_t
-_efl_net_control_access_point_strength_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_strength_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_access_point_roaming_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_roaming_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -70,59 +70,59 @@ _efl_net_control_access_point_auto_connect_set(Eo *obj EINA_UNUSED, Efl_Net_Cont
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_access_point_auto_connect_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_auto_connect_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_access_point_remembered_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_remembered_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_access_point_immutable_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_immutable_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Efl_Net_Control_Access_Point_Security
-_efl_net_control_access_point_security_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_security_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return 0;
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_point_name_servers_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_name_servers_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_point_time_servers_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_time_servers_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_point_domains_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_domains_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static void
-_efl_net_control_access_point_ipv4_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv4_Method *method EINA_UNUSED, const char **address EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
+_efl_net_control_access_point_ipv4_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv4_Method *method EINA_UNUSED, const char **address EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
 {
 }
 
 EOLIAN static void
-_efl_net_control_access_point_ipv6_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv6_Method *method EINA_UNUSED, const char **address EINA_UNUSED, uint8_t *prefix_length EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
+_efl_net_control_access_point_ipv6_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv6_Method *method EINA_UNUSED, const char **address EINA_UNUSED, uint8_t *prefix_length EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
 {
 }
 
 EOLIAN static void
-_efl_net_control_access_point_proxy_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Proxy_Method *method EINA_UNUSED, const char **url EINA_UNUSED, Eina_Iterator **servers EINA_UNUSED, Eina_Iterator **excludes EINA_UNUSED)
+_efl_net_control_access_point_proxy_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Proxy_Method *method EINA_UNUSED, const char **url EINA_UNUSED, Eina_Iterator **servers EINA_UNUSED, Eina_Iterator **excludes EINA_UNUSED)
 {
 }
 
@@ -132,7 +132,7 @@ _efl_net_control_access_point_configuration_name_servers_set(Eo *obj EINA_UNUSED
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_point_configuration_name_servers_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_configuration_name_servers_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
@@ -143,7 +143,7 @@ _efl_net_control_access_point_configuration_time_servers_set(Eo *obj EINA_UNUSED
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_point_configuration_time_servers_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_configuration_time_servers_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
@@ -154,7 +154,7 @@ _efl_net_control_access_point_configuration_domains_set(Eo *obj EINA_UNUSED, Efl
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_point_configuration_domains_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
+_efl_net_control_access_point_configuration_domains_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
@@ -165,7 +165,7 @@ _efl_net_control_access_point_configuration_ipv4_set(Eo *obj EINA_UNUSED, Efl_Ne
 }
 
 EOLIAN static void
-_efl_net_control_access_point_configuration_ipv4_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv4_Method *method EINA_UNUSED, const char **address EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
+_efl_net_control_access_point_configuration_ipv4_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv4_Method *method EINA_UNUSED, const char **address EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
 {
 }
 
@@ -175,7 +175,7 @@ _efl_net_control_access_point_configuration_ipv6_set(Eo *obj EINA_UNUSED, Efl_Ne
 }
 
 EOLIAN static void
-_efl_net_control_access_point_configuration_ipv6_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv6_Method *method EINA_UNUSED, const char **address EINA_UNUSED, uint8_t *prefix_length EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
+_efl_net_control_access_point_configuration_ipv6_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Ipv6_Method *method EINA_UNUSED, const char **address EINA_UNUSED, uint8_t *prefix_length EINA_UNUSED, const char **netmask EINA_UNUSED, const char **gateway EINA_UNUSED)
 {
 }
 
@@ -185,7 +185,7 @@ _efl_net_control_access_point_configuration_proxy_set(Eo *obj EINA_UNUSED, Efl_N
 }
 
 EOLIAN static void
-_efl_net_control_access_point_configuration_proxy_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Proxy_Method *method EINA_UNUSED, const char **url EINA_UNUSED, Eina_Iterator **servers EINA_UNUSED, Eina_Iterator **excludes EINA_UNUSED)
+_efl_net_control_access_point_configuration_proxy_get(const Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED, Efl_Net_Control_Access_Point_Proxy_Method *method EINA_UNUSED, const char **url EINA_UNUSED, Eina_Iterator **servers EINA_UNUSED, Eina_Iterator **excludes EINA_UNUSED)
 {
 }
 

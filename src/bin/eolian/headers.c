@@ -66,7 +66,7 @@ eo_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf,
 }
 
 static void
-_gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
+_gen_func(const Eolian_State *state, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf, char *cname,
           char *cnameu, Eina_Bool legacy)
 {
@@ -104,7 +104,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
      hasdoc = !!eolian_implement_documentation_get(fimp, EOLIAN_PROPERTY);
    if (hasdoc)
      {
-        Eina_Strbuf *dbuf = eo_gen_docs_func_gen(src, fid, ftype, 0, legacy);
+        Eina_Strbuf *dbuf = eo_gen_docs_func_gen(state, fid, ftype, 0, legacy);
         eina_strbuf_append(buf, eina_strbuf_string_get(dbuf));
         eina_strbuf_append_char(buf, '\n');
         eina_strbuf_free(dbuf);
@@ -181,7 +181,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
 }
 
 void
-eo_gen_header_gen(const Eolian_Unit *src, const Eolian_Class *cl,
+eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
                   Eina_Strbuf *buf, Eina_Bool legacy)
 {
    if (!cl)
@@ -197,8 +197,8 @@ eo_gen_header_gen(const Eolian_Unit *src, const Eolian_Class *cl,
         const Eolian_Documentation *doc = eolian_class_documentation_get(cl);
         if (doc)
           {
-             Eina_Strbuf *cdoc = eo_gen_docs_full_gen(src, doc,
-                eolian_class_full_name_get(cl), 0, EINA_FALSE);
+             Eina_Strbuf *cdoc = eo_gen_docs_full_gen(state, doc,
+                eolian_class_name_get(cl), 0, EINA_FALSE);
              if (cdoc)
                {
                   eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));
@@ -237,15 +237,15 @@ eo_gen_header_gen(const Eolian_Unit *src, const Eolian_Class *cl,
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_func(src, fid, ftype, buf, cname, cnameu, legacy);
+                _gen_func(state, fid, ftype, buf, cname, cnameu, legacy);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_func(src, fid, EOLIAN_PROP_SET, buf, cname, cnameu, legacy);
+                _gen_func(state, fid, EOLIAN_PROP_SET, buf, cname, cnameu, legacy);
                 eina_strbuf_append_char(buf, '\n');
-                _gen_func(src, fid, EOLIAN_PROP_GET, buf, cname, cnameu, legacy);
+                _gen_func(state, fid, EOLIAN_PROP_GET, buf, cname, cnameu, legacy);
                 break;
               default:
-                _gen_func(src, fid, EOLIAN_METHOD, buf, cname, cnameu, legacy);
+                _gen_func(state, fid, EOLIAN_METHOD, buf, cname, cnameu, legacy);
              }
         }
       eina_iterator_free(itr);
@@ -282,8 +282,8 @@ events:
              eina_strbuf_append_printf(buf, "EWAPI extern const "
                                        "Efl_Event_Description _%s;\n\n", evn);
 
-             Eina_Strbuf *evdbuf = eo_gen_docs_event_gen(src, ev,
-                eolian_class_full_name_get(cl));
+             Eina_Strbuf *evdbuf = eo_gen_docs_event_gen(state, ev,
+                eolian_class_name_get(cl));
              eina_strbuf_append(buf, eina_strbuf_string_get(evdbuf));
              eina_strbuf_append_char(buf, '\n');
              eina_strbuf_free(evdbuf);

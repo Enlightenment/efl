@@ -8,14 +8,1215 @@
  */
 
 group { "efl/border";
-   inherit: "elm/border/base/default";
+   images.image: "vgrad_med_lighter.png" COMP;
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "shine.png" COMP;
+   images.image: "bevel_dark_out.png" COMP;
+   images.image: "sym_close_dark_normal.png" COMP;
+   images.image: "sym_close_dark_selected.png" COMP;
+   images.image: "sym_close_light_normal.png" COMP;
+   images.image: "sym_close_light_selected.png" COMP;
+   images.image: "sym_down_dark_normal.png" COMP;
+   images.image: "sym_down_dark_selected.png" COMP;
+   images.image: "sym_down_light_normal.png" COMP;
+   images.image: "sym_down_light_selected.png" COMP;
+   images.image: "sym_up_dark_normal.png" COMP;
+   images.image: "sym_up_dark_selected.png" COMP;
+   images.image: "sym_up_light_normal.png" COMP;
+   images.image: "sym_up_light_selected.png" COMP;
+   images.image: "glow_round_corners_small.png" COMP;
+   images.image: "knob_round_small_busy.png" COMP;
+   images.image: "screen_circular_shadow.png" COMP;
+   images.image: "win_shadow.png" COMP;
+   data.item: "shadow" "1";
+   data.item: "version" "119";
+   parts {
+      /* opaque region of the window, to inform the compositor */
+      spacer { "efl.spacer.opaque";
+         desc {
+            rel1.to: "top_clip";
+            rel2.to: "bottom_clip";
+         }
+         desc { "max"; inherit: "default"; }
+      }
+      /* covers the entire client contents, excluding the main menu */
+      spacer { "efl.spacer.content";
+         required; // since 1.19
+         desc {
+            rel1.to: "efl.menu";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "efl.keyboard";
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      /* shadow spacer and clipper */
+      spacer { "shadow_spacer";
+         desc { "default";
+            WIN_SHADOW_SPACER;
+         }
+         desc { "hidden";
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+         }
+      }
+      image { "shadow"; nomouse;
+         desc { "default";
+            rel.to: "shadow_spacer";
+            WIN_SHADOW;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      /* window background: solid color */
+      rect { "bg_clip";
+         nomouse;
+         desc { "default";
+            rel1.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bottom_clip";
+         }
+      }
+      rect { "efl.rect.background";
+         required; // @since 1.19
+         clip: "bg_clip";
+         desc { "default";
+            color: 255 255 255 255;
+            color_class: "elm/win/background"; // FIXME: color_class naming scheme
+            visible: 0;
+         }
+         desc { "visible";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      /* window background: image */
+      swallow { "efl.background";
+         required; // @since 1.19
+         clip: "client_clip";
+      }
+      image { "background_bevel";
+         desc { "default";
+            image {
+               normal: "bevel_dark_out.png";
+               border: 1 1 1 1;
+               middle: 0;
+            }
+            fill.smooth: 0;
+            rel.to: "efl.spacer.content";
+            visible: 0;
+         }
+         desc { "visible";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      spacer { "indicator_spacer";
+         desc { "default";
+            rel.to: "efl.indicator";
+         }
+         desc { "hidden";
+            rel.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+         }
+      }
+
+      /* main menu */
+      rect { "menu_bg";
+         desc { "default";
+            color: 64 64 64 255; // FIXME: color_class
+            align: 0.5 0.0;
+            rel.to: "efl.menu";
+         }
+      }
+      swallow { "efl.menu";
+         required: 1; // since 1.19
+         desc { "default";
+            rel.to: "indicator_spacer";
+            rel1.relative: 0.0 1.0;
+            visible: 0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+         }
+         desc { "visible"; inherit: "default";
+            visible: 1;
+            fixed: 0 1;
+         }
+      }
+
+      /* application contents - spacer and clipper (without main menu) */
+      spacer { "client_spacer";
+         desc { "default";
+            rel1.to: "efl.menu";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "efl.keyboard";
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      rect { "client_clip";
+         nomouse;
+         desc { "default";
+            rel.to: "client_spacer";
+         }
+      }
+
+      /* application contents */
+      swallow { "efl.client";
+         clip: "client_clip";
+         desc { "default";
+            rel.to: "client_spacer";
+         }
+      }
+
+      /* modal window blocker */
+      rect { "rect.blocker";
+         required;
+         desc { "default";
+            rel1.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bottom_clip";
+            rel2.relative: 1.0 0.0;
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "visible";
+            inherit: "default";
+            color_class: "elm/win/blocker";
+            color: 255 255 255 255;
+            vis;
+         }
+      }
+
+      /* top title bar - spacer and clipper */
+      rect { "top_clip"; //nomouse;
+         desc { "default";
+            rel1.to: "shadow_spacer";
+            rel2.to_y: "title2";
+            rel2.to_x: "shadow_spacer";
+            vis;
+         }
+         desc { "hidden";
+            inherit: "default";
+            rel1.relative: 0.0 0.0;
+            rel2.to: "shadow_spacer";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 -1;
+            max: -1 0;
+            min: 0 0;
+            fixed: 0 1;
+            hid;
+         }
+      }
+      /* top title bar */
+      image { "top"; nomouse;
+         clip: "top_clip";
+         desc { "default";
+            image.normal: "vgrad_med_lighter.png";
+            rel.to: "top_clip";
+            fill.smooth: 0;
+            TILED_HORIZ(120)
+            color_class: "border_frame";
+         }
+         desc { "focused";
+            inherit: "default";
+            image.normal: "vgrad_med_dark.png";
+            color_class: "border_frame_active";
+         }
+      }
+      image { "bevel"; nomouse;
+         clip: "top_clip";
+         desc { "default";
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            rel.to: "top_clip";
+            fill.smooth: 0;
+         }
+      }
+      text {  "efl.text.title"; nomouse;
+         scale: 1;
+         effect: SHADOW BOTTOM;
+         clip: "top_clip";
+         desc { "default";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 3;
+            rel1.to_x: "event.icon";
+            rel1.to_y: "shadow_spacer";
+            rel2.relative: 0.0 0.0;
+            rel2.offset: -2 3;
+            rel2.to_x: "event.minimize";
+            rel2.to_y: "shadow_spacer";
+            align: 0.5 0.0;
+            color_class: "border_title";
+            color3: 255 255 255 255;
+            text { font: FNBD; size: 10;
+               text_class: "title_bar";
+               align: 0.5 0.0;
+               min: 0 1;
+            }
+            fixed: 0 1;
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 0;
+         }
+      }
+      text {  "title2"; nomouse;
+         scale: 1;
+         effect: SOFT_SHADOW BOTTOM;
+         clip: "top_clip";
+         desc { "default";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 2;
+            rel1.to_x: "event.icon";
+            rel1.to_y: "shadow_spacer";
+            rel2.relative: 0.0 0.0;
+            rel2.offset: -1 2;
+            rel2.to_x: "event.minimize";
+            rel2.to_y: "shadow_spacer";
+            align: 0.5 0.0;
+            color_class: "border_title_active";
+            color3: 255 255 255 255;
+            text { font: FNBD; size: 10;
+               text_source: "efl.text.title";
+               text_class: "title_bar";
+               align: 0.5 0.0;
+               min: 0 1;
+            }
+            fixed: 0 1;
+            visible: 0;
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      spacer {  "icon";
+         desc { "default";
+            rel1.to: "event.icon";
+            rel2.to: "event.icon";
+         }
+         desc { "bounce1";
+            inherit: "default";
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
+         }
+         desc { "bounce2";
+            inherit: "default";
+            rel1.relative: -0.5 -0.5;
+            rel2.relative: 1.2 1.2;
+         }
+      }
+      swallow {  "efl.icon"; nomouse;
+         clip_to: "top_clip";
+         desc { "default";
+            rel1.to: "icon";
+            rel1.relative: 0.15 0.15;
+            rel2.to: "icon";
+            rel2.relative: 0.85 0.85;
+            rel2.offset: 0 0;
+         }
+      }
+      rect {  "busy_clip"; nomouse;
+         desc { "default";
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         desc { "hung";
+            inherit: "default";
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      image { "knob"; nomouse;
+         clip: "busy_clip";
+         desc { "default";
+            fixed: 1 1;
+            image.normal: "knob_round_small_busy.png";
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            max: 20 20;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 2 -0;
+            rel1.to: "event.icon";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: 2 -1;
+            rel2.to: "event.icon";
+            align: 0.0 0.5;
+            fixed: 1 1;
+         }
+      }
+      image { "knob_spinner"; nomouse;
+         clip: "busy_clip";
+         desc { "default";
+            fixed: 1 1;
+            rel1.to: "knob";
+            rel2.to: "knob";
+            image.normal: "glow_round_corners_small.png";
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "knob";
+         }
+         desc { "spin";
+            inherit: "default";
+            map.rotation.z: 360;
+         }
+      }
+      rect {  "clip1"; nomouse;
+         desc { "default";
+            rel1.to: "top_clip";
+            rel2.to: "top_clip";
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 0;
+         }
+      }
+      rect {  "clip2"; nomouse;
+         desc { "default";
+            rel1.to: "top_clip";
+            rel2.to: "top_clip";
+            visible: 0;
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      image { "close1";  nomouse;
+         clip: "clip1";
+         desc { "default";
+            image.normal: "sym_close_dark_normal.png";
+            rel1.to: "event.close";
+            rel2.to: "event.close";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_close_dark_selected.png";
+         }
+      }
+      image { "max1"; nomouse;
+         clip: "clip1";
+         desc { "default";
+            image.normal: "sym_up_dark_normal.png";
+            rel1.to: "event.maximize";
+            rel2.to: "event.maximize";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_up_dark_selected.png";
+         }
+      }
+      image { "min1"; nomouse;
+         clip: "clip1";
+         desc { "default";
+            image.normal: "sym_down_dark_normal.png";
+            rel1.to: "event.minimize";
+            rel2.to: "event.minimize";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_down_dark_selected.png";
+         }
+      }
+      image { "close2"; nomouse;
+         clip: "clip2";
+         desc { "default";
+            image.normal: "sym_close_light_normal.png";
+            rel1.to: "event.close";
+            rel2.to: "event.close";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_close_light_selected.png";
+         }
+      }
+      image { "max2"; nomouse;
+         clip: "clip2";
+         desc { "default";
+            image.normal: "sym_up_light_normal.png";
+            rel1.to: "event.maximize";
+            rel2.to: "event.maximize";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_up_light_selected.png";
+         }
+      }
+      image { "min2"; nomouse;
+         clip: "clip2";
+         desc { "default";
+            image.normal: "sym_down_light_normal.png";
+            rel1.to: "event.minimize";
+            rel2.to: "event.minimize";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_down_light_selected.png";
+         }
+      }
+      rect {  "event.icon";
+         desc { "default";
+            rel1.relative: 0.0 0.0;
+            rel1.to: "top_clip";
+            rel2.relative: 0.0 1.0;
+            rel2.to: "top_clip";
+            align: 0.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+         }
+      }
+      rect {  "event.titlebar";
+         desc { "default";
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "event.icon";
+            rel1.to_y: "top_clip";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -1;
+            rel2.to_x: "event.minimize";
+            rel2.to_y: "top_clip";
+            color: 0 0 0 0;
+         }
+      }
+      rect {  "event.close";
+         desc { "default";
+            rel.to: "top_clip";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+         }
+      }
+      rect {  "event.maximize";
+         desc { "default";
+            rel1.relative: -0.25 0.0;
+            rel1.offset: -1 0;
+            rel1.to_x: "event.close";
+            rel1.to_y: "top_clip";
+            rel2.relative: -0.25 1.0;
+            rel2.to_x: "event.close";
+            rel2.to_y: "top_clip";
+            align: 1.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+         }
+      }
+      rect {  "event.minimize";
+         desc { "default";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: -1 0;
+            rel1.to_x: "event.maximize";
+            rel1.to_y: "top_clip";
+            rel2.relative: 0.0 1.0;
+            rel2.to_y: "top_clip";
+            rel2.to_x: "event.maximize";
+            align: 1.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+         }
+      }
+      rect { "top_resize_clip";
+         clip: "top_clip";
+         desc { "default";
+            rel.to: "top_clip";
+         }
+         desc { "hidden";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect {  "efl.event.resize.tl";
+         clip: "top_resize_clip";
+         desc { "default";
+            rel.to: "top_clip";
+            rel2.relative: 0.0 0.0;
+            min: 32 4;
+            align: 0.0 0.0;
+            color: 0 0 0 0;
+            fixed: 1 1;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      rect {  "efl.event.resize.t";
+         clip: "top_resize_clip";
+         desc { "default";
+            rel1.relative: 1.0 0.0;
+            rel1.to_y: "top_clip";
+            rel1.to_x: "efl.event.resize.tl";
+            rel2.relative: 0.0 0.0;
+            rel2.to_x: "efl.event.resize.tr";
+            rel2.to_y: "top_clip";
+            min: 0 4;
+            align: 0.5 0.0;
+            color: 0 0 0 0;
+            fixed: 1 1;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      rect {  "efl.event.resize.tr";
+         clip: "top_resize_clip";
+         desc { "default";
+            rel.to: "top_clip";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 0.0;
+            min: 32 4;
+            align: 1.0 0.0;
+            color: 0 0 0 0;
+            fixed: 1 1;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      /* bottom border - spacer and clipper */
+      swallow { "efl.keyboard";
+         desc { "default";
+           rel.to: "bottom_clip";
+           rel2.relative: 1.0 0.0;
+           align: 0.0 1.0;
+           fixed: 0 1;
+         }
+      }
+      rect { "bottom_clip";
+         desc { "default";
+            rel.to: "shadow_spacer";
+            rel1 { relative: 0.0 1.0; offset: 0 -5; }
+            min: 0 5;
+            fixed: 0 1;
+         }
+         desc { "hidden";
+            inherit: "default";
+            rel1 { relative: 0.0 1.0; offset: 0 0; }
+            min: 0 0;
+            hid;
+         }
+      }
+      rect { "bottom";
+         nomouse;
+         desc { "default";
+            color_class: "border_bottom";
+            color: 64 64 64 255; /* FIXME */
+            rel.to: "bottom_clip";
+         }
+      }
+      image { "bevel2"; nomouse;
+         clip: "bottom_clip";
+         desc { "default";
+            image.normal: "bevel_dark_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            rel.to: "bottom_clip";
+            fill.smooth: 0;
+         }
+      }
+      rect {  "efl.event.resize.bl";
+         clip: "bottom_clip";
+         desc { "default";
+            rel1.relative: 0.0 1.0;
+            rel1.to: "bottom_clip";
+            rel2.relative: 0.0 1.0;
+            rel2.to: "bottom_clip";
+            min: 32 5;
+            align: 0.0 1.0;
+            color: 0 0 0 0;
+            fixed: 1 1;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      rect {  "efl.event.resize.b";
+         clip: "bottom_clip";
+         desc { "default";
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "efl.event.resize.tl";
+            rel1.to_y: "bottom_clip";
+            rel1.offset: 0 -1;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "efl.event.resize.tr";
+            rel2.to_y: "bottom_clip";
+            min: 0 5;
+            align: 0.5 1.0;
+            color: 0 0 0 0;
+            fixed: 0 1;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      rect {  "efl.event.resize.br";
+         clip: "bottom_clip";
+         desc { "default";
+            rel1.relative: 1.0 1.0;
+            rel1.to: "bottom_clip";
+            rel2.relative: 1.0 1.0;
+            rel2.to: "bottom_clip";
+            min: 32 5;
+            align: 1.0 1.0;
+            color: 0 0 0 0;
+            fixed: 1 1;
+         }
+         desc { "hidden"; inherit: "default"; hid; }
+      }
+      /* top title bar decoration */
+      image { "shine"; nomouse;
+         clip: "top_clip";
+         desc { "default";
+            image.normal: "shine.png";
+            rel.to: "top_clip";
+            rel1.offset: 0 -2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            FIXED_SIZE(69, 5)
+         }
+      }
+      rect { "indicator_bg";
+         clip: "bg_clip";
+         desc { "default";
+            color: 148 23 45 255;
+            rel.to: "efl.indicator";
+         }
+         desc { "bg_transparent";
+            inherit: "default";
+            color: 0 0 0 0;
+         }
+      }
+      swallow { "efl.indicator";
+         clip: "bg_clip";
+         desc { "default";
+            rel.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            visible: 0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+         }
+         desc { "visible"; inherit: "default";
+            visible: 1;
+            fixed: 0 1;
+         }
+         desc { "hidden"; inherit: "visible";
+            align: 0.5 1.0;
+         }
+      }
+   }
+
+#define BORDERLESS  1
+#define MAXIMIZED   2
+#define UNRESIZABLE 4
+#define SET_MODE(a) script { new m = get_int(border_mode); m |= (a); set_int(border_mode, m); eval_mode(m); }
+#define UNSET_MODE(a) script { new m = get_int(border_mode); m &= ~(a); set_int(border_mode, m); eval_mode(m); }
+
+#define INDICATOR_TYPE_UNKNOWN 0
+#define INDICATOR_TYPE_BG_OPAQUE 1
+#define INDICATOR_TYPE_BG_TRANSPARENT 2
+#define INDICATOR_TYPE_HIDDEN 3
+
+   programs {
+      script {
+         public border_mode;
+         public indicator_type = 0;
+         public indicator_enabled = 0;
+         public eval_mode(m) {
+            if (m & (BORDERLESS | MAXIMIZED | UNRESIZABLE)) {
+               set_state(PART:"bottom_clip", "hidden", 0.0);
+               set_state(PART:"top_resize_clip", "hidden", 0.0);
+            } else {
+               set_state(PART:"bottom_clip", "default", 0.0);
+               set_state(PART:"top_resize_clip", "default", 0.0);
+            }
+         }
+      }
+      program {
+         signal: "efl,state,borderless,on"; source: "efl";
+         action: STATE_SET "hidden";
+         targets: "top_clip" "bottom_clip";
+         after: "borderless,on";
+      }
+      program { "borderless,on"; SET_MODE(BORDERLESS); }
+      program {
+         signal: "efl,state,borderless,off"; source: "efl";
+         action: STATE_SET "default";
+         targets: "top_clip" "bottom_clip";
+         after: "borderless,off";
+      }
+      program { "borderless,off"; UNSET_MODE(BORDERLESS); }
+      program {
+         signal: "efl,state,unresizable,on"; source: "efl";
+         SET_MODE(UNRESIZABLE);
+      }
+      program {
+         signal: "efl,state,unresizable,off"; source: "efl";
+         UNSET_MODE(UNRESIZABLE);
+      }
+      program {
+         signal: "efl,state,shadow,on"; source: "efl";
+         action: STATE_SET "default";
+         targets: "shadow_spacer" "shadow";
+      }
+      program {
+         signal: "efl,state,shadow,off"; source: "efl";
+         action: STATE_SET "hidden";
+         targets: "shadow_spacer" "shadow";
+      }
+      program {
+         signal: "efl,state,background,solid,on"; source: "efl";
+         action: STATE_SET "visible";
+         target: "efl.rect.background";
+      }
+      program {
+         signal: "efl,state,background,solid,off"; source: "efl";
+         action: STATE_SET "default";
+         target: "efl.rect.background";
+      }
+      program {
+         signal: "efl,state,background,standard,on"; source: "efl";
+         action: STATE_SET "visible";
+         target: "background_bevel";
+      }
+      program {
+         signal: "efl,state,background,standard,off"; source: "efl";
+         action: STATE_SET "default";
+         target: "background_bevel";
+      }
+      program {
+         signal: "efl,action,focus"; source: "efl";
+         action: STATE_SET "focused";
+         target: "top";
+         target: "efl.text.title";
+         target: "title2";
+         target: "clip1";
+         target: "clip2";
+      }
+      program {
+         signal: "efl,action,unfocus"; source: "efl";
+         action: STATE_SET "default";
+         target: "top";
+         target: "efl.text.title";
+         target: "title2";
+         target: "clip1";
+         target: "clip2";
+      }
+      program {
+         signal: "efl,state,urgent"; source: "efl";
+         action: STATE_SET "bounce1";
+         target: "icon";
+         after: "urg1";
+      }
+      program { name: "urg1";
+         action: STATE_SET "bounce2";
+         transition: DECELERATE 0.4;
+         target: "icon";
+         after: "urg2";
+      }
+      program { name: "urg2";
+         action: STATE_SET "bounce1";
+         transition: ACCELERATE 0.3;
+         target: "icon";
+         after: "urg1";
+      }
+      program {
+         signal: "efl,state,not_urgent"; source: "efl";
+         action: STATE_SET "default";
+         target: "icon";
+      }
+      program { name: "spin";
+         signal: "efl,state,hung"; source: "efl";
+         action: STATE_SET "spin";
+         transition: LINEAR 1.0;
+         target: "knob_spinner";
+         after: "spin2";
+      }
+      program { name: "spin2";
+         action: STATE_SET "default";
+         target: "knob_spinner";
+         after: "spin";
+      }
+      program {
+         signal: "efl,state,hung"; source: "efl";
+         action: STATE_SET "hung";
+         transition: SINUSOIDAL 0.25;
+         target: "busy_clip";
+      }
+      program {
+         signal: "efl,state,unhung"; source: "efl";
+         action: STATE_SET "default";
+         transition: SINUSOIDAL 1.0;
+         target: "busy_clip";
+         after: "spin3";
+      }
+      program { name: "spin3";
+         action: ACTION_STOP;
+         target: "spin";
+         target: "spin2";
+         after: "spin4";
+      }
+      program { name: "spin4";
+         action: STATE_SET "default";
+         target: "knob_spinner";
+      }
+
+      /* maximize & unmaximize */
+      program {
+         signal: "efl,state,maximize*"; source: "efl";
+         action: STATE_SET "max";
+         target: "efl.spacer.opaque";
+      }
+      program {
+         signal: "efl,state,maximize*"; source: "efl";
+         SET_MODE(MAXIMIZED);
+      }
+      program {
+         signal: "efl,state,unmaximize*"; source: "efl";
+         action: STATE_SET "default";
+         target: "efl.spacer.opaque";
+      }
+      program {
+         signal: "efl,state,unmaximize*"; source: "efl";
+         UNSET_MODE(MAXIMIZED);
+      }
+
+      /*indicator*/
+      program {
+         signal: "efl,action,show_indicator"; source: "efl";
+         script {
+            set_int(indicator_enabled, 1);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "efl,action,hide_indicator"; source: "efl";
+         script {
+            set_int(indicator_enabled, 0);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "efl,action,indicator,bg_opaque"; source: "efl";
+         script {
+            set_int(indicator_type, INDICATOR_TYPE_BG_OPAQUE);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "efl,action,indicator,bg_transparent"; source: "efl";
+         script {
+            set_int(indicator_type, INDICATOR_TYPE_BG_TRANSPARENT);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "efl,action,indicator,hidden"; source: "efl";
+         script {
+            set_int(indicator_type, INDICATOR_TYPE_HIDDEN);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "efl,action,indicator,show_effect"; source: "efl";
+         action: STATE_SET "visible";
+         transition: DECELERATE 0.2;
+         target: "efl.indicator";
+      }
+      program {
+         signal: "efl,action,indicator,hide_effect"; source: "efl";
+         action: STATE_SET "hidden";
+         transition: DECELERATE 0.2;
+         target: "efl.indicator";
+      }
+      program { name: "update_indicator";
+         script {
+            if (get_int(indicator_enabled)) {
+              if ((get_int(indicator_type) == INDICATOR_TYPE_BG_OPAQUE) ||
+                  (get_int(indicator_type) == INDICATOR_TYPE_UNKNOWN)) {
+                set_state(PART:"efl.indicator", "visible", 0.0);
+                set_state(PART:"indicator_spacer", "default", 0.0);
+                set_state(PART:"indicator_bg", "default", 0.0);
+              } else if (get_int(indicator_type) == INDICATOR_TYPE_BG_TRANSPARENT) {
+                set_state(PART:"efl.indicator", "visible", 0.0);
+                set_state(PART:"indicator_spacer", "default", 0.0);
+                set_state(PART:"indicator_bg", "bg_transparent", 0.0);
+              } else if (get_int(indicator_type) == INDICATOR_TYPE_HIDDEN) {
+                set_state(PART:"efl.indicator", "hidden", 0.0);
+                set_state(PART:"indicator_spacer", "hidden", 0.0);
+                set_state(PART:"indicator_bg", "default", 0.0);
+              }
+            } else {
+             set_state(PART:"efl.indicator", "default", 0.0);
+             set_state(PART:"indicator_spacer", "default", 0.0);
+            }
+         }
+      }
+
+      /* application desktop menu */
+      program { name: "show_menu";
+         signal: "efl,action,show_menu"; source: "efl";
+         action: STATE_SET "visible";
+         target: "efl.menu";
+      }
+      program { name: "hide_menu";
+         signal: "efl,action,hide"; source: "efl";
+         action: STATE_SET "default";
+         target: "efl.menu";
+      }
+
+      /* modal windows */
+      program { name: "hide_blocker";
+         signal: "efl,action,hide_blocker"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "rect.blocker";
+         transition: DECELERATE 0.2;
+      }
+      program { name: "show_blocker";
+         signal: "efl,action,show_blocker"; source: "efl";
+         action: STATE_SET "visible" 0.0;
+         target: "rect.blocker";
+         transition: DECELERATE 0.2;
+      }
+
+      /* minimize, maximize & close buttons */
+      program {
+         signal: "mouse,down,*"; source: "event.close";
+         action: STATE_SET "selected";
+         target: "close1";
+         target: "close2";
+      }
+      program {
+         signal: "mouse,up,*"; source: "event.close";
+         action: STATE_SET "default";
+         target: "close1";
+         target: "close2";
+      }
+      program {
+         signal: "mouse,down,*"; source: "event.maximize";
+         action: STATE_SET "selected";
+         target: "max1";
+         target: "max2";
+      }
+      program {
+         signal: "mouse,up,*"; source: "event.maximize";
+         action: STATE_SET "default";
+         target: "max1";
+         target: "max2";
+      }
+      program {
+         signal: "mouse,down,*"; source: "event.minimize";
+         action: STATE_SET "selected";
+         target: "min1";
+         target: "min2";
+      }
+      program {
+         signal: "mouse,up,*"; source: "event.minimize";
+         action: STATE_SET "default";
+         target: "min1";
+         target: "min2";
+      }
+      program {
+         signal: "mouse,down,1"; source: "event.titlebar";
+         action: SIGNAL_EMIT "efl,action,move,start" "efl";
+      }
+      program {
+         signal: "mouse,up,1"; source: "event.titlebar";
+         action: SIGNAL_EMIT "efl,action,move,stop" "efl";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "event.minimize";
+         action: SIGNAL_EMIT "efl,action,minimize" "efl";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "event.maximize";
+         action: SIGNAL_EMIT "efl,action,maximize" "efl";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "event.close";
+         action: SIGNAL_EMIT "efl,action,close" "efl";
+      }
+      program {
+         signal: "mouse,in"; source: "efl.event.resize.t";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.t";
+      }
+      program {
+         signal: "mouse,out"; source: "efl.event.resize.t";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.t";
+      }
+      program {
+         signal: "mouse,down,1"; source: "efl.event.resize.t";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.t";
+      }
+      program {
+         signal: "mouse,in"; source: "efl.event.resize.b";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.b";
+      }
+      program {
+         signal: "mouse,out"; source: "efl.event.resize.b";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.b";
+      }
+      program {
+         signal: "mouse,down,1"; source: "efl.event.resize.b";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.b";
+      }
+      program {
+         signal: "mouse,in"; source: "efl.event.resize.tl";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.tl";
+      }
+      program {
+         signal: "mouse,out"; source: "efl.event.resize.tl";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.tl";
+      }
+      program {
+         signal: "mouse,down,1"; source: "efl.event.resize.tl";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.tl";
+      }
+      program {
+         signal: "mouse,in"; source: "efl.event.resize.tr";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.tr";
+      }
+      program {
+         signal: "mouse,out"; source: "efl.event.resize.tr";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.tr";
+      }
+      program {
+         signal: "mouse,down,1"; source: "efl.event.resize.tr";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.tr";
+      }
+      program {
+         signal: "mouse,in"; source: "efl.event.resize.bl";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.bl";
+      }
+      program {
+         signal: "mouse,out"; source: "efl.event.resize.bl";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.bl";
+      }
+      program {
+         signal: "mouse,down,1"; source: "efl.event.resize.bl";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.bl";
+      }
+      program {
+         signal: "mouse,in"; source: "efl.event.resize.br";
+         action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.br";
+      }
+      program {
+         signal: "mouse,out"; source: "efl.event.resize.br";
+         action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.br";
+      }
+      program {
+         signal: "mouse,down,1"; source: "efl.event.resize.br";
+         action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.br";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "event.icon";
+         action: SIGNAL_EMIT "efl,action,menu" "efl";
+      }
+   }
 }
 
 group { "efl/border/dialog";
-   inherit: "elm/border/dialog/default";
+   inherit:   "efl/border";
+   parts {
+      text {  "efl.text.title";
+         clip: "top_clip";
+         desc { "default";
+            rel2.to_x: "event.close";
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 0;
+         }
+      }
+      text {  "title2";
+         desc { "default";
+            rel2.to_x: "event.close";
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      image { "max1";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      image { "min1";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      image { "max2";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      image { "min2";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      rect {  "event.maximize";
+         desc { "default";
+            visible: 0;
+         }
+      }
+      rect {  "event.minimize";
+         desc { "default";
+            visible: 0;
+         }
+      }
+   }
 }
 
 group { "efl/border/naviframe";
-   inherit: "elm/border/naviframe/default";
+   inherit:   "efl/border";
+   images.image: "sym_left_dark_normal.png" COMP;
+   images.image: "sym_left_glow_normal.png" COMP;
+   images.image: "sym_left_light_normal.png" COMP;
+   parts {
+      image { "close1";
+         desc { "default";
+            image.normal: "sym_left_dark_normal.png";
+         }
+         desc { "selected";
+            image.normal: "sym_left_glow_normal.png";
+         }
+      }
+      image { "close2"; nomouse;
+         clip: "clip2";
+         desc { "default";
+            image.normal: "sym_left_light_normal.png";
+         }
+         desc { "selected";
+            image.normal: "sym_left_glow_normal.png";
+         }
+      }
+   }
 }
 
+#undef UNRESIZABLE
+#undef BORDERLESS
+#undef MAXIMIZED
+#undef SET_MODE
+#undef UNSET_MODE

@@ -42,7 +42,7 @@ interface Efl.Access.Selection ()
          [[Adds selection for all children]]
          return: bool; [[$true if selection was added to all children, $false otherwise]]
       }
-      clear @protected @beta {
+      access_selection_clear @protected @beta {
          [[Clears the current selection]]
          return: bool; [[$true if selection was cleared, $false otherwise]]
       }
@@ -55,6 +55,6 @@ interface Efl.Access.Selection ()
       }
    }
    events {
-      selection,changed; [[Called when selection has been changed.]]
+      selection,changed: void; [[Called when selection has been changed.]]
    }
 }

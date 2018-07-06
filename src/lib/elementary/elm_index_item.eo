@@ -1,4 +1,4 @@
-class Elm.Index.Item(Elm.Widget.Item, Efl.Access.Widget.Action)
+class Elm.Index.Item(Elm.Widget.Item, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary index item class]]
    legacy_prefix: elm_index_item;
@@ -44,7 +44,7 @@ class Elm.Index.Item(Elm.Widget.Item, Efl.Access.Widget.Action)
         Efl.Object.constructor;
         Efl.Object.destructor;
         Elm.Widget.Item.access_register;
-        Efl.Access.name { get; }
+        Efl.Access.Object.i18n_name { get; }
         Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

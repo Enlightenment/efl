@@ -5,61 +5,6 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI const Eolian_Variable *
-eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->state->unit.globals, shr);
-   eina_stringshare_del(shr);
-   return v;
-}
-
-EAPI const Eolian_Variable *
-eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->state->unit.constants, shr);
-   eina_stringshare_del(shr);
-   return v;
-}
-
-EAPI Eina_Iterator *
-eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(unit->state->globals_f, shr);
-   eina_stringshare_del(shr);
-   if (!l) return NULL;
-   return eina_list_iterator_new(l);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_constants_get_by_file(const Eolian_Unit *unit,
-                                      const char *fname)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(unit->state->constants_f, shr);
-   eina_stringshare_del(shr);
-   if (!l) return NULL;
-   return eina_list_iterator_new(l);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_all_constants_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.constants) : NULL);
-}
-
-EAPI Eina_Iterator *
-eolian_variable_all_globals_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.globals) : NULL);
-}
-
 EAPI Eolian_Variable_Type
 eolian_variable_type_get(const Eolian_Variable *var)
 {
@@ -74,13 +19,6 @@ eolian_variable_documentation_get(const Eolian_Variable *var)
    return var->doc;
 }
 
-EAPI Eina_Stringshare *
-eolian_variable_file_get(const Eolian_Variable *var)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return var->base.file;
-}
-
 EAPI const Eolian_Type *
 eolian_variable_base_type_get(const Eolian_Variable *var)
 {
@@ -93,28 +31,6 @@ eolian_variable_value_get(const Eolian_Variable *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
    return var->value;
-}
-
-EAPI Eina_Stringshare *
-eolian_variable_name_get(const Eolian_Variable *var)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return var->name;
-}
-
-EAPI Eina_Stringshare *
-eolian_variable_full_name_get(const Eolian_Variable *var)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   return var->full_name;
-}
-
-EAPI Eina_Iterator *
-eolian_variable_namespaces_get(const Eolian_Variable *var)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
-   if (!var->namespaces) return NULL;
-   return eina_list_iterator_new(var->namespaces);
 }
 
 EAPI Eina_Bool

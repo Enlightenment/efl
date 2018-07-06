@@ -55,7 +55,6 @@ struct _Elm_Naviframe_Item_Data
    Evas_Display_Mode dispmode;
    Elm_Naviframe_Item_Pop_Cb pop_cb;
    void        *pop_data;
-   const char  *style;
    const char  *title_label;
    const char  *subtitle_label;
 
@@ -104,7 +103,7 @@ struct _Elm_Naviframe_Text_Item_Pair
   ELM_NAVIFRAME_DATA_GET(o, ptr);                    \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -113,7 +112,7 @@ struct _Elm_Naviframe_Text_Item_Pair
   ELM_NAVIFRAME_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                                \
     {                                                     \
-       CRI("No widget data for object %p (%s)",           \
+       ERR("No widget data for object %p (%s)",           \
            o, evas_object_type_get(o));                   \
        return val;                                        \
     }

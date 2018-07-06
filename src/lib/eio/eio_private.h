@@ -545,5 +545,30 @@ Eio_File * _eio_file_xattr(const char *path,
 void _eio_string_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
 void _eio_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
 
+static inline void
+_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   eio_file_cancel(data);
+}
+
+EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,
+                              NULL,
+                              sizeof (Eina_Stat),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, dev),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ino),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, mode),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, nlink),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, uid),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, gid),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, rdev),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, size),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blksize),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blocks),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, atime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, atimensec),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, mtime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, mtimensec),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, ctime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctimensec));
 
 #endif

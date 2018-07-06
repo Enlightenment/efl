@@ -4,6 +4,7 @@
 
 #include "ecore_con_suite.h"
 #include "../efl_check.h"
+#include <Ecore_Con.h>
 
 static const Efl_Test_Case etc[] = {
   { "Ecore_Con", ecore_con_test_ecore_con },
@@ -12,6 +13,16 @@ static const Efl_Test_Case etc[] = {
   { "Efl_Net_Ip_Address", ecore_con_test_efl_net_ip_address },
   { NULL, NULL }
 };
+
+SUITE_INIT(ecore_con)
+{
+   ck_assert_int_eq(ecore_con_init(), 1);
+}
+
+SUITE_SHUTDOWN(ecore_con)
+{
+   ck_assert_int_eq(ecore_con_shutdown(), 0);
+}
 
 int
 main(int argc, char **argv)
@@ -26,7 +37,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Ecore_Con", etc);
+                                           "Ecore_Con", etc, SUITE_INIT_FN(ecore_con), SUITE_SHUTDOWN_FN(ecore_con));
 
    return (failed_count == 0) ? 0 : 255;
 }

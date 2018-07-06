@@ -41,11 +41,11 @@ class Elm.Color.Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Access.Widget.Act
       Efl.Object.destructor;
       Elm.Widget.Item.access_register;
       Elm.Widget.Item.signal_emit;
-      Elm.Widget.Item.focus { get; set; }
+      Elm.Widget.Item.item_focus { get; set; }
       Efl.Ui.Focus.Object.focus { set; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
-      Efl.Access.state_set { get; }
-      Efl.Access.name { get; }
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

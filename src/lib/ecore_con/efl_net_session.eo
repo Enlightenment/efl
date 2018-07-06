@@ -1,4 +1,4 @@
-enum Efl.Net.Session.State {
+enum Efl.Net.Session_State {
     [[Provides the session connectivity state.
 
       @since 1.19
@@ -9,7 +9,7 @@ enum Efl.Net.Session.State {
 }
 
 /* keep in sync with efl_net_control_technology.eo, comment what doesn't make sense */
-enum Efl.Net.Session.Technology {
+enum Efl.Net.Session_Technology {
     [[Bitwise-able technologies to allow for a network session.
 
       @since 1.9
@@ -24,10 +24,10 @@ enum Efl.Net.Session.Technology {
     vpn = (1 << 6), [[Type: Virtual Private Network]]
     gadget = (1 << 7), [[Type: USB gadget]]
 /*    p2p = (1 << 8), [[Type: Peer-2-Peer]]*/
-    all = (Efl.Net.Session.Technology.ethernet | Efl.Net.Session.Technology.wifi | Efl.Net.Session.Technology.bluetooth | Efl.Net.Session.Technology.cellular | Efl.Net.Session.Technology.vpn | Efl.Net.Session.Technology.gadget), [[All technology types]]
+    all = (Efl.Net.Session_Technology.ethernet | Efl.Net.Session_Technology.wifi | Efl.Net.Session_Technology.bluetooth | Efl.Net.Session_Technology.cellular | Efl.Net.Session_Technology.vpn | Efl.Net.Session_Technology.gadget), [[All technology types]]
 }
 
-class Efl.Net.Session (Efl.Loop.Consumer) {
+class Efl.Net.Session (Efl.Loop_Consumer) {
     [[Used by application to request network connectivity.
 
       This API is targeted at applications that need access to the
@@ -37,9 +37,9 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
 
       Some platforms may not implement the backend for this class. In
       this cases the system will report always @.state "online"
-      (@Efl.Net.Session.State.online) and other properties will be
-      NULL, such as @.name, @.interface, @.ipv4 and @.ipv6; as well as
-      @.technology is set to @Efl.Net.Session.Technology.unknown. As such
+      (@Efl.Net.Session_State.online) and other properties will be
+      NULL, such as @.network_name, @.interface, @.ipv4 and @.ipv6; as well as
+      @.technology is set to @Efl.Net.Session_Technology.unknown. As such
       if you need to detect for an actual backend, check if the
       state is online but those properties are NULL or technology is
       unknown.
@@ -51,7 +51,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
       @since 1.19
     ]]
     events {
-        changed; [[Called when some properties were changed.]]
+        changed: void; [[Called when some properties were changed.]]
     }
 
     methods {
@@ -70,7 +70,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
             ]]
             params {
                 online_required: bool; [[If $false, access points with local state are enough. If $true, the access point must be in online state, with a validated internet connection]]
-                technologies_allowed: Efl.Net.Session.Technology; [[Bitwise OR of technologies to allow]]
+                technologies_allowed: Efl.Net.Session_Technology; [[Bitwise OR of technologies to allow]]
             }
         }
 
@@ -84,7 +84,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
             ]]
         }
 
-        @property name {
+        @property network_name {
             [[The user-friendly access point name.]]
             get { }
             values {
@@ -97,12 +97,12 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
 
               \@note if there is no backend for this class, then state
               will be always online, however @.technology will be
-              unknown, @.interface, @.name, @.ipv4 and @.ipv6 will be
+              unknown, @.interface, @.network_name, @.ipv4 and @.ipv6 will be
               NULL.
             ]]
             get { }
             values {
-                state: Efl.Net.Session.State; [[Network session state]]
+                state: Efl.Net.Session_State; [[Network session state]]
             }
         }
 
@@ -110,7 +110,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
             [[The access point technology that backs this session]]
             get { }
             values {
-                technology: Efl.Net.Session.Technology; [[Network session technology]]
+                technology: Efl.Net.Session_Technology; [[Network session technology]]
             }
         }
 

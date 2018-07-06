@@ -230,7 +230,7 @@ EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) E
  * or allocation fails, this function returns @c NULL.
  */
 EAPI char *
- eina_module_symbol_path_get(const void *symbol, const char *sub_dir) EINA_PURE EINA_MALLOC EINA_ARG_NONNULL(1, 2);
+ eina_module_symbol_path_get(const void *symbol, const char *sub_dir) EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Returns the path built from the value of an environment variable and a
@@ -247,7 +247,7 @@ EAPI char *
  * allocation fails, this function returns @c NULL.
  */
 EAPI char *
- eina_module_environment_path_get(const char *env, const char *sub_dir) EINA_PURE EINA_MALLOC EINA_ARG_NONNULL(1, 2);
+ eina_module_environment_path_get(const char *env, const char *sub_dir) EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 
 /**

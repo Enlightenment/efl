@@ -2,7 +2,7 @@ interface Efl.Access.Editable.Text ()
 {
    [[Elementary editable text interface]]
    methods {
-      @property content @protected @beta {
+      @property text_content @protected @beta {
          [[Editable content property]]
          set {
             return: bool; [[$true if setting the value succeeded, $false otherwise]]

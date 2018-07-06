@@ -80,7 +80,7 @@ _efl_input_device_efl_object_parent_set(Eo *obj, Efl_Input_Device_Data *pd EINA_
                   _seat_pointers_update(p, pd);
                }
           }
-        else if(!efl_isa(parent, EFL_CANVAS_INTERFACE))
+        else if(!efl_isa(parent, EFL_CANVAS_SCENE_INTERFACE))
           {
              EINA_SAFETY_ERROR("The parent of a device must be a seat or the canvas");
              return;
@@ -114,7 +114,7 @@ _efl_input_device_device_type_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_
 }
 
 EOLIAN static Efl_Input_Device_Type
-_efl_input_device_device_type_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+_efl_input_device_device_type_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {
    return pd->klass;
 }
@@ -128,7 +128,7 @@ _efl_input_device_source_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Efl
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_device_source_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+_efl_input_device_source_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {
    return pd->source;
 }
@@ -141,7 +141,7 @@ _efl_input_device_seat_id_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, un
 }
 
 EOLIAN static unsigned int
-_efl_input_device_seat_id_get(Eo *obj, Efl_Input_Device_Data *pd)
+_efl_input_device_seat_id_get(const Eo *obj, Efl_Input_Device_Data *pd)
 {
    if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
      return pd->id;
@@ -149,15 +149,19 @@ _efl_input_device_seat_id_get(Eo *obj, Efl_Input_Device_Data *pd)
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_device_seat_get(Eo *obj, Efl_Input_Device_Data *pd)
+_efl_input_device_seat_get(const Eo *obj, Efl_Input_Device_Data *pd)
 {
-   for (; obj; obj = efl_parent_get(obj))
-     {
-        if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
-          return pd->eo;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
+   if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
+     return pd->eo;
+
+   while ((obj = efl_parent_get(obj)))
+     {
         if (!efl_isa(obj, MY_CLASS)) break;
         pd = efl_data_scope_get(obj, MY_CLASS);
+        if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
+          return pd->eo;
      }
 
    return NULL;

@@ -6,17 +6,10 @@
 
 #include "eeze_suite.h"
 
-START_TEST(eeze_test_eeze_init)
+EFL_START_TEST(eeze_test_eeze_init)
 {
-   int ret;
-
-   ret = eeze_init();
-   fail_if(ret != 1);
-
-   ret = eeze_shutdown();
-   fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void eeze_test_init(TCase *tc)
 {

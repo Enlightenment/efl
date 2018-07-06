@@ -24,7 +24,7 @@ struct is_eolian_object< ::wrapper> : std::true_type {};
     
 } }
 
-START_TEST(eina_cxx_accessor_indexing)
+EFL_START_TEST(eina_cxx_accessor_indexing)
 {
   efl::eina::eina_init eina_init;
 
@@ -41,9 +41,9 @@ START_TEST(eina_cxx_accessor_indexing)
   ck_assert(accessor[2] == 15);
   ck_assert(accessor[3] == 20);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_eo_accessor_indexing)
+EFL_START_TEST(eina_cxx_eo_accessor_indexing)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -67,9 +67,9 @@ START_TEST(eina_cxx_eo_accessor_indexing)
   ck_assert(accessor[2] == w3);
   ck_assert(accessor[3] == w4);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_accessor_iterator)
+EFL_START_TEST(eina_cxx_accessor_iterator)
 {
   efl::eina::eina_init eina_init;
 
@@ -95,9 +95,9 @@ START_TEST(eina_cxx_accessor_iterator)
       ck_assert(pos != 3u || *first == 20);
     }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_eo_accessor_iterator)
+EFL_START_TEST(eina_cxx_eo_accessor_iterator)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -130,9 +130,9 @@ START_TEST(eina_cxx_eo_accessor_iterator)
        ck_assert(pos != 3u || *first == w4);
     }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_accessor_relops)
+EFL_START_TEST(eina_cxx_accessor_relops)
 {
   efl::eina::eina_init eina_init;
 
@@ -183,7 +183,7 @@ START_TEST(eina_cxx_accessor_relops)
   ck_assert(fourth >= first); ck_assert(fourth >= second);
   ck_assert(fourth >= third); ck_assert(fourth >= fourth);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_accessor(TCase* tc)

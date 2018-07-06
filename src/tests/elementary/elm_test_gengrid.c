@@ -2,28 +2,45 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 #include "elm_test_helper.h"
 
+EFL_START_TEST (elm_gengrid_legacy_type_check)
+{
+   Evas_Object *win, *gengrid;
+   const char *type;
 
-START_TEST (elm_atspi_role_get)
+   win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
+
+   gengrid = elm_gengrid_add(win);
+
+   type = elm_object_widget_type_get(gengrid);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Gengrid"));
+
+   type = evas_object_type_get(gengrid);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_gengrid"));
+
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *gengrid;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
-   role = efl_access_role_get(gengrid);
+   role = efl_access_object_role_get(gengrid);
 
    ck_assert(role == EFL_ACCESS_ROLE_TREE_TABLE);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // Temporary commnted since gengrid fields_update function do not call content callbacks
 // (different behaviour then genlist - which calls)
@@ -33,7 +50,7 @@ static Evas_Object *content;
 static Evas_Object *
 gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_UNUSED)
 {
-   content = elm_button_add(obj);
+   content = elm_gengrid_add(obj);
    evas_object_show(content);
    return content;
 }
@@ -42,18 +59,17 @@ gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_U
  * Validate if gengrid implementation properly reset AT-SPI parent to Elm_Gengrid_Item
  * from Elm_Gengrid
  */
-START_TEST(elm_atspi_children_parent)
+EFL_START_TEST(elm_atspi_children_parent)
 {
-   elm_init(1, NULL);
    elm_config_atspi_mode_set(EINA_TRUE);
    static Elm_Gengrid_Item_Class itc;
 
-   Evas_Object *win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   Evas_Object *win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
    evas_object_resize(win, 100, 100);
    Evas_Object *gengrid = elm_gengrid_add(win);
    evas_object_resize(gengrid, 100, 100);
 
-   Efl_Access *parent;
+   Efl_Access_Object *parent;
    content = NULL;
 
    itc.item_style = "default";
@@ -66,16 +82,16 @@ START_TEST(elm_atspi_children_parent)
    elm_gengrid_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
 
    ck_assert(content != NULL);
-   parent = efl_access_parent_get(content);
+   parent = efl_provider_find(efl_parent_get(content), EFL_ACCESS_OBJECT_MIXIN);
    ck_assert(it == parent);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void elm_test_gengrid(TCase *tc)
 {
+   tcase_add_test(tc, elm_gengrid_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
 #if 0
    tcase_add_test(tc, elm_atspi_children_parent);

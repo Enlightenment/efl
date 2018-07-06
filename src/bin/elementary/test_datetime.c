@@ -34,7 +34,6 @@ _bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUS
    efl_ui_clock_pause_set(dt1, EINA_TRUE);
    elm_datetime_value_set(dt1, &new_time);
    elm_object_disabled_set(dt1, EINA_TRUE);
-
    elm_object_disabled_set(obj, EINA_TRUE);
    evas_object_del(dt2);
    evas_object_del(dt3);

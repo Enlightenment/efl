@@ -16,6 +16,7 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Ecore_Ipc.h>
+#include <Ecore_Con.h>
 
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_cache_log_dom
@@ -99,6 +100,8 @@ static void icon_cache_update_free(void *data, void *ev);
 
 static void *hash_array_string_add(void *hash, const char *key, void *data);
 
+static Eina_Bool disable_cache;
+
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
@@ -162,11 +165,14 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    double t;
    IPC_HEAD(Del);
    ipc = NULL;
+
+   if (disable_cache) return ECORE_CALLBACK_RENEW;
    if (reconnect_count > 10)
      {
+        char *address = ecore_con_local_path_new(EINA_FALSE, "efreetd", 0);
         reconnect_timer = NULL;
-        ERR("efreetd connection failed 10 times! check for stale socket files in %s/.ecore/efreetd",
-          efreet_runtime_dir_get());
+        ERR("efreetd connection failed 10 times! check for stale socket file at %s", address);
+        free(address);
         return EINA_FALSE;
      }
    t = ecore_time_get();
@@ -179,6 +185,24 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      _cb_server_reconnect(NULL);
    last_del = t;
    return ECORE_CALLBACK_DONE;
+}
+
+static void
+_efreet_cache_reset()
+{
+   const char *s;
+   int len = 0;
+
+   if (ipc) ecore_ipc_server_del(ipc);
+   ipc = NULL;
+   if (!disable_cache)
+     ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+   if (!ipc) return;
+
+   s = efreet_language_get();
+   if (s) len = strlen(s);
+   ecore_ipc_server_send(ipc, 1, 0, 0, 0, 0, s, len);
+   efreet_icon_extensions_refresh();
 }
 
 static void
@@ -300,8 +324,13 @@ efreet_cache_init(void)
        pfx = eina_prefix_new
          (NULL, efreet_icon_cache_file, "EFREET", "efreet", "checkme",
           PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-       ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
-       if (!ipc) _ipc_launch();
+       if (disable_cache)
+         ipc = NULL;
+       else
+         {
+            ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+            if (!ipc) _ipc_launch();
+         }
        if (ipc)
          {
             const char *s;
@@ -321,7 +350,8 @@ efreet_cache_init(void)
          {
             Efreet_Event_Cache_Update *ev;
 
-            WRN("Can't contact efreetd daemon for desktop/icon etc. changes");
+            if (!disable_cache)
+              WRN("Can't contact efreetd daemon for desktop/icon etc. changes");
             ev = NEW(Efreet_Event_Cache_Update, 1);
             if (ev)
               {
@@ -330,6 +360,7 @@ efreet_cache_init(void)
               }
          }
     }
+    ecore_fork_reset_callback_add(_efreet_cache_reset, NULL);
 
     return 1;
 error:
@@ -354,7 +385,7 @@ efreet_cache_shutdown(void)
     ecore_event_type_flush(EFREET_EVENT_ICON_CACHE_UPDATE,
                            EFREET_EVENT_DESKTOP_CACHE_UPDATE,
                            EFREET_EVENT_DESKTOP_CACHE_BUILD);
-
+    ecore_fork_reset_callback_del(_efreet_cache_reset, NULL);
     IF_RELEASE(theme_name);
 
     icon_cache = efreet_cache_close(icon_cache);
@@ -1322,4 +1353,32 @@ hash_array_string_add(void *hash, const char *key, void *data)
         return NULL;
     eina_hash_add(hash, key, data);
     return hash;
+}
+
+EAPI void
+efreet_cache_disable(void)
+{
+   Eina_Bool prev = disable_cache;
+
+   disable_cache = EINA_TRUE;
+
+   if (_efreet_cache_log_dom < 0) return; // not yet initialized
+   if (prev == disable_cache) return; // same value
+   if (ipc)
+     {
+        ecore_ipc_server_del(ipc);
+        ipc = NULL;
+     }
+}
+
+EAPI void
+efreet_cache_enable(void)
+{
+   Eina_Bool prev = disable_cache;
+
+   disable_cache = EINA_FALSE;
+
+   if (_efreet_cache_log_dom < 0) return; // not yet initialized
+   if (prev == disable_cache) return; // same value
+   if (!ipc) _ipc_launch();
 }

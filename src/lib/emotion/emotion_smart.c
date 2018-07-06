@@ -69,7 +69,6 @@ struct _Efl_Canvas_Video_Data
 
    Ecore_Job     *job;
 
-   Efl_Vpath_File *file_obj;
    Emotion_Xattr_Data *xattr;
 
    const char *title;
@@ -231,7 +230,7 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
 EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -363,7 +362,7 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    sd->video.h = 0;
    if ((file) && (file[0] != 0))
      {
-        const char *file2 = NULL;
+        char *file2 = NULL;
 
         eina_stringshare_replace(&sd->file, file);
         emotion_engine_instance_file_close(sd->engine_instance);
@@ -372,35 +371,17 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
         _emotion_image_data_zero(sd->obj);
         sd->open = 0;
 
-        if (sd->file_obj)
-          {
-             efl_del(sd->file_obj);
-             sd->file_obj = NULL;
-          }
         if (file)
           {
-             sd->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-             efl_vpath_file_do(sd->file_obj);
-             // XXX:FIXME: allow this to be async
-             efl_vpath_file_wait(sd->file_obj);
-             file2 = efl_vpath_file_result_get(sd->file_obj);
+             file2 = eina_vpath_resolve(file);
           }
 
         if (!emotion_engine_instance_file_open(sd->engine_instance, file2))
           {
              WRN("Couldn't open file=%s", sd->file);
-             if (sd->file_obj)
-               {
-                  efl_del(sd->file_obj);
-                  sd->file_obj = NULL;
-               }
              return EINA_FALSE;
           }
-        if ((sd->file_obj) && (!efl_vpath_file_keep_get(sd->file_obj)))
-          {
-             efl_del(sd->file_obj);
-             sd->file_obj = NULL;
-          }
+        free(file2);
         DBG("successfully opened file=%s", sd->file);
         sd->pos = 0.0;
         if (sd->play) emotion_engine_instance_play(sd->engine_instance, 0.0);
@@ -431,7 +412,7 @@ emotion_object_file_get(const Evas_Object *obj)
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, const char **file, const char **key)
+_efl_canvas_video_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, const char **file, const char **key)
 {
    if (file) *file = sd->file;
    if (key) *key = NULL;
@@ -667,7 +648,7 @@ emotion_object_play_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_play_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return sd->play;
@@ -676,11 +657,11 @@ _efl_canvas_video_efl_player_play_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data
 EAPI void
 emotion_object_position_set(Evas_Object *obj, double sec)
 {
-   efl_player_position_set(obj, sec);
+   efl_player_pos_set(obj, sec);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_player_position_set(Eo *obj, Efl_Canvas_Video_Data *sd, double sec)
+_efl_canvas_video_efl_player_pos_set(Eo *obj, Efl_Canvas_Video_Data *sd, double sec)
 {
    DBG("sec=%f", sec);
    if (!sd->engine_instance) return;
@@ -701,11 +682,11 @@ _efl_canvas_video_efl_player_position_set(Eo *obj, Efl_Canvas_Video_Data *sd, do
 EAPI double
 emotion_object_position_get(const Evas_Object *obj)
 {
-   return efl_player_position_get(obj);
+   return efl_player_pos_get(obj);
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_position_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_pos_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    sd->pos = emotion_engine_instance_pos_get(sd->engine_instance);
@@ -759,13 +740,13 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 {
    Eina_Size2D sz;
 
-   sz = efl_image_load_size_get(obj);
+   sz = efl_gfx_image_load_controller_load_size_get(obj);
    if (iw) *iw = sz.w;
    if (ih) *ih = sz.h;
 }
 
 EOLIAN static Eina_Size2D
-_efl_canvas_video_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    // FIXME: Shouldn't this be efl_gfx_view_size instead?
    return EINA_SIZE2D(sd->video.w, sd->video.h);
@@ -774,11 +755,11 @@ _efl_canvas_video_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Canvas_V
 EAPI void
 emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
-   efl_image_smooth_scale_set(obj, smooth);
+   efl_gfx_image_smooth_scale_set(obj, smooth);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool smooth)
+_efl_canvas_video_efl_gfx_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool smooth)
 {
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
@@ -786,11 +767,11 @@ _efl_canvas_video_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vid
 EAPI Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
-   return efl_image_smooth_scale_get(obj);
+   return efl_gfx_image_smooth_scale_get(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    return evas_object_image_smooth_scale_get(sd->obj);
 }
@@ -798,11 +779,11 @@ _efl_canvas_video_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vid
 EAPI double
 emotion_object_ratio_get(const Evas_Object *obj)
 {
-   return efl_image_ratio_get(obj);
+   return efl_gfx_image_ratio_get(obj);
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_image_ratio_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_gfx_image_ratio_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    return sd->ratio;
@@ -842,7 +823,7 @@ emotion_object_audio_volume_get(const Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_volume_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_volume_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
@@ -869,7 +850,7 @@ emotion_object_audio_mute_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_mute_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_mute_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);
@@ -1159,13 +1140,13 @@ emotion_object_progress_status_get(const Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_progress_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_progress_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    return sd->progress.stat;
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_length_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_length_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    sd->len = emotion_engine_instance_len_get(sd->engine_instance);
@@ -1173,7 +1154,7 @@ _efl_canvas_video_efl_player_length_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_seekable_get(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_seekable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_seekable(sd->engine_instance);
@@ -1952,29 +1933,30 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
    sd->ref.file = NULL;
    _xattr_data_unref(sd->xattr);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
+   emotion_shutdown();
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_gfx_position_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Eina_Position2D pos)
+_efl_canvas_video_efl_gfx_entity_position_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Eina_Position2D pos)
 {
    Eina_Size2D sz;
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
-   sz = efl_gfx_size_get(obj);
+   sz = efl_gfx_entity_size_get(obj);
    _clipper_position_size_update(obj, pos.x, pos.y, sz.w, sz.h, sd->video.w, sd->video.h);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_gfx_size_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Eina_Size2D sz)
+_efl_canvas_video_efl_gfx_entity_size_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    _efl_canvas_video_aspect_border_apply(obj, sd, sz.w, sz.h);
    evas_object_resize(sd->bg, sz.w, sz.h);

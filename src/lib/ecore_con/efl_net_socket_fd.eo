@@ -1,11 +1,11 @@
-class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io.Closer.Fd, Efl.Net.Socket) {
+class Efl.Net.Socket_Fd (Efl.Loop_Fd, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Net.Socket) {
     [[A base implementation for sockets over filedescriptors (fd)
 
       This is the common class and takes an existing FD, usually
       created by an dialer or server.
 
       @Efl.Io.Closer.close_on_exec and
-      @Efl.Io.Closer.close_on_destructor are respected and default to
+      @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true.
 
       @since 1.19
@@ -18,7 +18,7 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
               It will be one of AF_INET (IPv4), AF_INET6 (IPv6),
               AF_UNIX...
 
-              It must be set before the @Efl.Loop.Fd.fd.set is called
+              It must be set before the @Efl.Loop_Fd.fd.set is called
               with a valid file descriptor.
             ]]
             get { }
@@ -32,8 +32,9 @@ class Efl.Net.Socket.Fd (Efl.Loop.Fd, Efl.Io.Reader.Fd, Efl.Io.Writer.Fd, Efl.Io
     implements {
         Efl.Object.finalize;
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
-        Efl.Loop.Fd.fd { set; }
+        Efl.Loop_Fd.fd { set; }
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Reader.read;

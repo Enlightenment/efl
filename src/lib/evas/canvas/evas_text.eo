@@ -1,7 +1,7 @@
 type @extern Evas.Text_Style_Type : __undefined_type; [[External text style type]]
 
-class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
-                 Efl.Text.Font, Efl.Canvas.Filter.Internal, Efl.Ui.Base)
+class Evas.Text (Efl.Canvas.Object, Efl.Text,
+                 Efl.Text_Font, Efl.Canvas.Filter.Internal, Efl.Ui.Base)
 {
    [[Evas text class]]
    legacy_prefix: evas_object_text;
@@ -165,7 +165,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          }
       }
       @property max_descent {
-      	 [[Maximal descent property]]
+          [[Maximal descent property]]
          get {
             return: int; [[Evas coordinate]]
          }
@@ -186,41 +186,41 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
             [[Retrieves the direction of the text currently being displayed in the
             text object.]]
 
-            return: Efl.Text.Bidirectional_Type; [[Bidirectional type]]
+            return: Efl.Text_Bidirectional_Type; [[Bidirectional type]]
          }
       }
       @property ascent {
-      	 [[Ascent property]]
+          [[Ascent property]]
          get {
             return: int; [[Evas coordinate]]
          }
       }
       @property horiz_advance {
-      	 [[Horizontal advance property]]
+          [[Horizontal advance property]]
          get {
             return: int; [[Evas coordinate]]
          }
       }
       @property inset {
-      	 [[Inset property]]
+          [[Inset property]]
          get {
             return: int; [[Evas coordinate]]
          }
       }
       @property max_ascent {
-      	 [[Maximal ascent property]]
+          [[Maximal ascent property]]
          get {
             return: int; [[Evas coordinate]]
          }
       }
       @property vert_advance {
-      	 [[Vertical advance property]]
+          [[Vertical advance property]]
          get {
             return: int; [[Evas coordinate]]
          }
       }
       @property descent {
-      	 [[descent property]]
+          [[descent property]]
          get {
             return: int; [[Evas coordinate]]
          }
@@ -239,7 +239,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
          }
       }
       char_coords_get @const {
-      	 [[Get character coordinates]]
+          [[Get character coordinates]]
          return: int; [[Logical position of char]]
          params {
             @in x: int; [[X coordinate]]
@@ -271,12 +271,12 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.size { set; }
-      Efl.Gfx.scale { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.scale { set; }
       Efl.Text.text { get; set; }
-      Efl.Text.Properties.font { get; set; }
-      Efl.Text.Properties.font_source { get; set; }
-      Efl.Text.Font.font_bitmap_scalable { get; set; }
+      Efl.Text_Font.font { get; set; }
+      Efl.Text_Font.font_source { get; set; }
+      Efl.Text_Font.font_bitmap_scalable { get; set; }
       Efl.Gfx.Filter.filter_program { set; }
       Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_alpha;

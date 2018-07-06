@@ -429,8 +429,9 @@ typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY         2
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1    3
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2    4
-#define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL             5
-#define EDJE_IMAGE_SOURCE_TYPE_LAST                 6
+#define EDJE_IMAGE_SOURCE_TYPE_USER             5
+#define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL             6
+#define EDJE_IMAGE_SOURCE_TYPE_LAST                 7
 
 #define EDJE_SOUND_SOURCE_TYPE_NONE           0
 #define EDJE_SOUND_SOURCE_TYPE_INLINE_RAW     1
@@ -551,6 +552,11 @@ struct _AABB {
    int               rel_to;
 };
 
+typedef struct Edje_Image_Hash
+{
+   int id;
+} Edje_Image_Hash;
+
 struct _Edje_File
 {
    const char                     *path;
@@ -562,6 +568,10 @@ struct _Edje_File
    Edje_Vibration_Directory       *vibration_dir;
    Edje_Mo_Directory              *mo_dir;
    Edje_Gfx_Filter_Directory      *filter_dir;
+
+   Eina_Hash                      *image_id_hash;
+   Eina_Stringshare              **requires;
+   unsigned int                    requires_count;
 
    Eina_List                      *styles;
 
@@ -600,6 +610,7 @@ struct _Edje_File
       int                          major;
       int                          minor;
    } efl_version;
+   Eina_Stringshare               *id;
 
    FLOAT_T                         base_scale;
 
@@ -681,6 +692,7 @@ struct _Edje_Image_Directory_Entry
    const char *entry; /* the nominal name of the image - if any */
    int   source_type; /* alternate source mode. 0 = none */
    int   source_param; /* extra params on encoding */
+   Eina_Stringshare *external_id;
    int   id; /* the id no. of the image */
 };
 
@@ -2189,6 +2201,8 @@ struct _Edje_Message_Signal_Data
    int ref;
    void *data;
    void (*free_func)(void *);
+   void *seat_data;
+   void (*seat_free_func)(void *);
 };
 
 struct _Edje_Message_Signal
@@ -2376,6 +2390,7 @@ extern Eina_Cow *_edje_calc_params_map_cow;
 extern Eina_Cow *_edje_calc_params_physics_cow;
 
 extern Eina_Hash       *_edje_file_hash;
+extern Eina_Hash       *_edje_id_hash;
 
 extern const char      *_edje_language;
 extern const char      *_edje_cache_path;
@@ -2484,6 +2499,7 @@ EAPI void _edje_edd_shutdown(void);
 
 int _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
+void  _edje_file_callbacks_del(Edje *ed, Evas *e);
 void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
 void  _edje_file_cache_shutdown(void);
@@ -2507,15 +2523,19 @@ void  _edje_unref(Edje *ed);
 void _edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp);
 Eina_Bool _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
-void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc);
+void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc, Edje_Message_Signal_Data *mdata);
 void _edje_programs_patterns_clean(Edje_Part_Collection *ed);
 void _edje_programs_patterns_init(Edje_Part_Collection *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *src);
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
+void _edje_emit_full_data(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *mdata);
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 const char * _edje_object_part_state_get(Edje *ed, const char *part, double *val_ret);
+
+void _edje_signal_data_free(Edje_Message_Signal_Data *mdata);
+void _edje_signal_data_ref(Edje_Message_Signal_Data *mdata);
 
 void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);
@@ -2531,6 +2551,7 @@ void _edje_signal_callback_reset(Edje_Signal_Callback_Flags *flags, unsigned int
 
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *gp);
 
+const char *   _set_translated_string(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_init(void);
 void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
 void           _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
@@ -2861,6 +2882,8 @@ Eina_Bool _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp);
 void _edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand);
 Eina_Bool _edje_entry_input_panel_show_on_demand_get(Edje_Real_Part *rp);
 void _edje_entry_prediction_hint_set(Edje_Real_Part *rp, const char *prediction_hint);
+Eina_Bool _edje_entry_prediction_hint_hash_set(Edje_Real_Part *rp, const char *key, const char *value);
+Eina_Bool _edje_entry_prediction_hint_hash_del(Edje_Real_Part *rp, const char *key);
 Eina_Bool _edje_entry_hide_visible_password(Edje *edje, Edje_Real_Part *rp);
 
 void _edje_external_init(void);
@@ -3159,8 +3182,8 @@ Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
 /* part containers: swallow */
 Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
-Efl_Gfx *_edje_efl_content_content_get(Edje *ed, const char *part);
-Eina_Bool _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
+Efl_Gfx_Entity *_edje_efl_content_content_get(Edje *ed, const char *part);
+Eina_Bool _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx_Entity *obj_swallow);
 
 /* part containers: external */
 Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
@@ -3172,8 +3195,8 @@ Evas_Object *_edje_object_part_external_content_get(Edje *ed, const char *part, 
 
 /* part text */
 Eo *_edje_text_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
-Eina_Bool   _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text, Eina_Bool legacy, Eina_Bool set_markup);
-const char *_edje_efl_text_get(Eo *obj, Edje *ed, const char *part, Eina_Bool legacy, Eina_Bool get_markup);
+Eina_Bool   _edje_efl_text_text_set(Eo *obj, Edje *ed, const char *part, const char *text, Eina_Bool legacy, Eina_Bool set_markup);
+const char *_edje_efl_text_text_get(const Eo *obj, Edje *ed, const char *part, Eina_Bool legacy, Eina_Bool get_markup);
 Eina_Bool   _edje_efl_text_markup_set(Eo *obj, Edje *ed, const char *part, const char *markup);
 const char *_edje_efl_text_markup_get(Eo *obj, Edje *ed, const char *part);
 Evas_Textblock_Cursor *_edje_text_cursor_get(Edje_Real_Part *rp, Edje_Cursor cur);

@@ -43,7 +43,7 @@ struct _Efl_Input_Pointer_Data
       int          z;
       Eina_Bool    horizontal;
    } wheel;
-   Efl_Gfx                    *source; /* could it be ecore? */
+   Efl_Gfx_Entity                    *source; /* could it be ecore? */
    Efl_Input_Device           *device;
    Efl_Pointer_Action          action;
    Efl_Pointer_Flags           button_flags;

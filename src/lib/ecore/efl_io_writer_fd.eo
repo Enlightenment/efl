@@ -1,4 +1,4 @@
-mixin Efl.Io.Writer.Fd (Efl.Io.Writer) {
+mixin Efl.Io.Writer_Fd (Efl.Io.Writer) {
     [[Writes fd using write(2).
 
       @since 1.19

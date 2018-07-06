@@ -36,9 +36,9 @@ struct _Group
 struct _Efl_Ui_Radio_Data
 {
    int                   value;
-   Eina_Bool             state;
-
    Group                *group;
+
+   Eina_Bool             state : 1;
 };
 
 /**
@@ -52,7 +52,7 @@ struct _Efl_Ui_Radio_Data
   ELM_RADIO_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -61,7 +61,7 @@ struct _Efl_Ui_Radio_Data
   ELM_RADIO_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",       \
+       ERR("No widget data for object %p (%s)",       \
            o, evas_object_type_get(o));               \
        return val;                                    \
     }

@@ -12,8 +12,8 @@ database_function_del(Eolian_Function *fid)
    Eina_Stringshare *cls_name;
    if (!fid) return;
 
-   if (fid->base.file) eina_stringshare_del(fid->base.file);
-   eina_stringshare_del(fid->name);
+   eina_stringshare_del(fid->base.file);
+   eina_stringshare_del(fid->base.name);
    EINA_LIST_FREE(fid->prop_values, param) database_parameter_del(param);
    EINA_LIST_FREE(fid->prop_values_get, param) database_parameter_del(param);
    EINA_LIST_FREE(fid->prop_values_set, param) database_parameter_del(param);
@@ -55,7 +55,7 @@ database_function_constructor_add(Eolian_Function *func, const Eolian_Class *cls
 {
    func->ctor_of = _list_sorted_insert_no_dup
      (func->ctor_of, EINA_COMPARE_CB(strcmp),
-      eina_stringshare_ref(cls->full_name));
+      eina_stringshare_ref(cls->base.name));
 }
 
 Eina_Bool

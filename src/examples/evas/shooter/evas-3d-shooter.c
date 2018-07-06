@@ -1004,7 +1004,7 @@ _scene_setup(Scene_Data *data)
    evas_canvas3d_scene_size_set(global_scene, WIDTH, HEIGHT);
    evas_canvas3d_scene_background_color_set(global_scene, 0.5, 0.5, 0.9, 0.0);
 
-   data->root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   data->root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);
@@ -1069,7 +1069,7 @@ _scene_setup(Scene_Data *data)
           }
      }
 
-   data->carp_mediator_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   data->carp_mediator_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    evas_canvas3d_node_member_add(data->carp_mediator_node, data->mesh_node_carpet);
 

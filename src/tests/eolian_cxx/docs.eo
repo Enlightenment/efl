@@ -81,6 +81,6 @@ class Docs {
         }
     }
     events {
-        clicked; [[Event docs.]]
+        clicked: void; [[Event docs.]]
     }
 }

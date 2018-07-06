@@ -59,21 +59,21 @@ mixin Efl.Io.Closer {
             }
         }
 
-        @property close_on_destructor {
-            [[If true will automatically close() on object destructor.
+        @property close_on_invalidate {
+            [[If true will automatically close() on object invalidate.
 
-              If the object was deleted without close, this property
-              will state whenever it should be closed or not.
+              If the object was disconnected from its parent (including the main loop) without close,
+	      this property will state whenever it should be closed or not.
             ]]
             get @pure_virtual { }
             set @pure_virtual { }
             values {
-                close_on_destructor: bool; [[$true if close on destructor, $false otherwise]]
+                close_on_invalidate: bool; [[$true if close on invalidate, $false otherwise]]
             }
         }
     }
 
     events {
-        closed; [[Notifies closed, when property is marked as true]]
+        closed: void; [[Notifies closed, when property is marked as true]]
     }
 }

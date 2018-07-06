@@ -330,14 +330,13 @@ _eina_file_win32_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **d
 
    if (attr & FILE_ATTRIBUTE_DIRECTORY)
      it->info.type = EINA_FILE_DIR;
-   else if (attr & FILE_ATTRIBUTE_REPARSE_POINT)
-     it->info.type = EINA_FILE_LNK;
    else if (attr & (FILE_ATTRIBUTE_ARCHIVE |
                     FILE_ATTRIBUTE_COMPRESSED |
                     FILE_ATTRIBUTE_HIDDEN |
                     FILE_ATTRIBUTE_NORMAL |
                     FILE_ATTRIBUTE_SPARSE_FILE |
-                    FILE_ATTRIBUTE_TEMPORARY))
+                    FILE_ATTRIBUTE_TEMPORARY |
+                    FILE_ATTRIBUTE_REPARSE_POINT))
      it->info.type = EINA_FILE_REG;
    else
      it->info.type = EINA_FILE_UNKNOWN;
@@ -1061,8 +1060,7 @@ eina_file_statat(void *container EINA_UNUSED, Eina_File_Direct_Info *info, Eina_
 
    if (stat64(info->path, &buf))
      {
-        if (info->type != EINA_FILE_LNK)
-          info->type = EINA_FILE_UNKNOWN;
+        info->type = EINA_FILE_UNKNOWN;
         return -1;
      }
 

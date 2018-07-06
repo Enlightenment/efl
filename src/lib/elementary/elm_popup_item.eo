@@ -1,4 +1,4 @@
-class Elm.Popup.Item(Elm.Widget.Item)
+class Elm.Popup.Item(Elm.Widget.Item, Efl.Ui.Legacy)
 {
    [[Elementary popup item class]]
    legacy_prefix: elm_popup_item;

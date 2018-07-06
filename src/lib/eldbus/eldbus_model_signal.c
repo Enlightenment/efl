@@ -28,7 +28,7 @@ _eldbus_model_signal_efl_object_constructor(Eo *obj, Eldbus_Model_Signal_Data *p
 }
 
 static void
-_eldbus_model_signal_constructor(Eo *obj EINA_UNUSED,
+_eldbus_model_signal_signal_constructor(Eo *obj EINA_UNUSED,
                                  Eldbus_Model_Signal_Data *pd,
                                  Eldbus_Proxy *proxy,
                                  const Eldbus_Introspection_Signal *signal)
@@ -36,7 +36,7 @@ _eldbus_model_signal_constructor(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(proxy);
    EINA_SAFETY_ON_NULL_RETURN(signal);
 
-   eldbus_model_arguments_constructor(efl_super(obj, MY_CLASS), proxy, signal->name, signal->arguments);
+   eldbus_model_arguments_custom_constructor(efl_super(obj, MY_CLASS), proxy, signal->name, signal->arguments);
 
    pd->signal = signal;
    _eldbus_model_signal_callback_add(pd);

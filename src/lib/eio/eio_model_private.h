@@ -4,8 +4,9 @@
 #define PROP_LIST_SIZE 8
 
 typedef struct _Eio_Model_Data                 Eio_Model_Data;
-typedef struct _Eio_Model_Monitor_Data         Eio_Model_Monitor_Data;
+typedef struct _Eio_Model_Info                 Eio_Model_Info;
 
+typedef struct _Eio_Model_Monitor_Data         Eio_Model_Monitor_Data;
 struct _Eio_Model_Monitor_Data
 {
    Ecore_Event_Handler *ecore_child_add_handler[3];
@@ -14,70 +15,60 @@ struct _Eio_Model_Monitor_Data
    int mon_event_child_del[3]; /**< plus EIO_MONITOR_ERROR */
 };
 
-typedef enum _Eio_Property_Name {
-   EIO_MODEL_PROP_FILENAME = 0,
-   EIO_MODEL_PROP_PATH,
-   EIO_MODEL_PROP_MTIME,
-   EIO_MODEL_PROP_IS_DIR,
-   EIO_MODEL_PROP_IS_LNK,
-   EIO_MODEL_PROP_SIZE,
-   EIO_MODEL_PROP_MIME_TYPE,
-   EIO_MODEL_PROP_LAST
-} _Eio_Property_Name;
+// FIXME: Would be more efficient to introduce an Eina_Path that assemble
+// an array of stringshare instead of using one mega stringshare directly.
 
-static const char* _eio_model_prop_names[] =
+struct _Eio_Model_Info
 {
-   [EIO_MODEL_PROP_FILENAME]  = "filename",
-   [EIO_MODEL_PROP_PATH]      = "path",
-   [EIO_MODEL_PROP_MTIME]     = "mtime",
-   [EIO_MODEL_PROP_IS_DIR]    = "is_dir",
-   [EIO_MODEL_PROP_IS_LNK]    = "is_lnk",
-   [EIO_MODEL_PROP_SIZE]      = "size",
-   [EIO_MODEL_PROP_MIME_TYPE] = "mime_type"
+   Eina_Stringshare *path;
+   Eo *object;
+
+   size_t path_length;
+   size_t name_length;
+   size_t name_start;
+
+   Eina_File_Type type;
+
+   Eina_Bool parent_ref : 1;
+   Eina_Bool child_ref : 1;
 };
 
-typedef struct _Eio_Property_Promise _Eio_Property_Promise;
-struct _Eio_Property_Promise
-{
-  _Eio_Property_Name property;
-  Efl_Promise* promise;
-};
-
-typedef struct _Eio_Children_Slice_Promise _Eio_Children_Slice_Promise;
-struct _Eio_Children_Slice_Promise
-{
-  unsigned start;
-  unsigned count;
-  Efl_Promise* promise;
-};
-
-typedef struct _Eio_Model_Data _Eio_Model_Data;
 struct _Eio_Model_Data
 {
-   Eo *obj;
-   Eina_Stringshare *path;
-   Eina_Array *properties_name;
-   Eina_Bool is_listed : 1;
-   Eina_Bool is_listing : 1;
-   Eina_List *children_list;
-   Eina_List *property_promises;
-   Eina_List *children_promises;
-   Eina_List *count_promises;
-   /**< EIO data */
-   Eio_File *stat_file;
-   Eio_File *listing_file;
-   Eio_File *move_file;
-   Eio_File *del_file;
-   Eio_Monitor *monitor;
-   Eio_Model_Monitor_Data mon;
-   int cb_count_child_add; /**< monitor reference counter for child add event */
-   int cb_count_child_del; /**< monitor reference counter for child del event*/
-   unsigned int count;
-   Eio_Filter_Direct_Cb filter_cb;
-   void *filter_userdata;
-   Eina_Spinlock filter_lock; /**< filter callback is called from another thread */
+   Efl_Loop *loop;
+   Eio_Model *self;
 
-   Eina_List *fetching_mime;
+   Eina_Stringshare *path;
+
+   Eio_Model_Info *info;
+   Eina_Stat *st;
+   const char *mime_type;
+
+   struct {
+      Eio_File *stat; // Move to use efl.io.manager.stat
+      Eina_Future *listing; // Move to use efl.io.manager.direct_ls
+      Eio_File *move;
+      Eio_File *del;
+      Eina_Future *mime;
+   } request;
+
+   struct {
+      EflIoFilter cb;
+      Eina_Free_Cb free;
+      void *data;
+   } filter;
+
+   Eio_Model_Monitor_Data mon;
+
+   Eio_Monitor *monitor; // Notification stuff
+   // FIXME: would be interesting to figure a more efficient structure for holding files
+   Eina_List *parent;
+   Eina_List *files; // Eio_Model_Info
+
+   Eina_Error error;
+
+   Eina_Bool listed : 1;
+   Eina_Bool delete_me : 1;
 };
 
 #endif

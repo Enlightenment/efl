@@ -2,9 +2,10 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -19,7 +20,6 @@
 #define MY_CLASS_PFX efl_ui_progressbar
 
 #define MY_CLASS_NAME "Efl.Ui.Progressbar"
-#define MY_CLASS_NAME_LEGACY "elm_progressbar"
 
 static const char SIG_CHANGED[] = "changed";
 
@@ -40,12 +40,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"icon", "elm.swallow.content"},
-   {NULL, NULL}
-};
-
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
    {NULL, NULL}
 };
 
@@ -118,12 +112,21 @@ _units_set(Evas_Object *obj)
 
         eina_strbuf_reset(sd->format_strbuf);
         sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
-        elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
+
+        if (elm_widget_is_legacy(obj))
+          elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
+        else
+          elm_layout_text_set(obj, "efl.text.status", eina_strbuf_string_get(sd->format_strbuf));
 
         eina_value_flush(&val);
      }
    else
-     elm_layout_text_set(obj, "elm.text.status", NULL);
+     {
+        if (elm_widget_is_legacy(obj))
+          elm_layout_text_set(obj, "elm.text.status", NULL);
+        else
+          elm_layout_text_set(obj, "efl.text.status", NULL);
+     }
 }
 
 static void
@@ -131,17 +134,23 @@ _val_set(Evas_Object *obj)
 {
    Eina_Bool rtl;
    double pos;
+   Efl_Ui_Progress_Status *ps;
+   Eina_List *l;
 
    EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    rtl = efl_ui_mirrored_get(obj);
-   Efl_Ui_Progress_Status *ps;
-   Eina_List *l;
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
      {
-        pos = ps->val;
+        if (EINA_DBL_EQ(ps->val_max, ps->val_min))
+          {
+             WRN("progressbar min and max are equal.");
+             continue;
+          }
+        pos = (ps->val - ps->val_min)/(ps->val_max - ps->val_min);
+
         if ((!rtl && _is_inverted(sd->dir)) ||
             (rtl && ((sd->dir == EFL_UI_DIR_UP) ||
                      (sd->dir == EFL_UI_DIR_RIGHT))))
@@ -162,41 +171,6 @@ _efl_ui_progressbar_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Progressbar_Data *_pd
      (wd->resize_obj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
-}
-
-/* FIXME: replicated from elm_layout just because progressbar's icon
- * spot is elm.swallow.content, not elm.swallow.icon. Fix that
- * whenever we can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   char buf[64];
-
-   if (!elm_widget_resize_object_get(obj)) return;
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_progressbar_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
-{
-   if (!efl_ui_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj))
-     return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_efl_ui_progressbar_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
-{
-   if (!efl_ui_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj))
-     return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-   return EINA_TRUE;
 }
 
 //TODO: efl_ui_slider also use this.
@@ -274,38 +248,59 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
-   if (sd->pulse)
-     elm_layout_signal_emit(obj, "elm,state,pulse", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->pulse)
+          elm_layout_signal_emit(obj, "elm,state,pulse", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,fraction", "elm");
+
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+
+        if (sd->format_cb && (!sd->pulse))
+          elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,fraction", "elm");
+     {
+        if (sd->pulse)
+          elm_layout_signal_emit(obj, "efl,state,pulse", "efl");
+        else
+          elm_layout_signal_emit(obj, "efl,state,fraction", "efl");
 
-   if (sd->pulse_state)
-     elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "efl,state,pulse,start", "efl");
 
-   if (sd->format_cb && (!sd->pulse))
-     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+        if (sd->format_cb && (!sd->pulse))
+          elm_layout_signal_emit(obj, "efl,state,units,visible", "efl");
+     }
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
-   if (_is_inverted(sd->dir))
-     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (_is_inverted(sd->dir))
+          elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+     {
+        if (_is_inverted(sd->dir))
+          elm_layout_signal_emit(obj, "efl,state,inverted,on", "efl");
+        else
+          elm_layout_signal_emit(obj, "efl,state,inverted,off", "efl");
+     }
 
    _units_set(obj);
    _val_set(obj);
-
-   /* FIXME: replicated from elm_layout just because progressbar's
-    * icon spot is elm.swallow.content, not elm.swallow.icon. Fix that
-    * whenever we can changed the theme API */
-   _icon_signal_emit(obj);
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -332,7 +327,12 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    Eina_Strbuf *buf;
    buf = eina_strbuf_new();
 
-   const char *txt = elm_layout_text_get(obj, "elm.text.status");
+   const char *txt;
+   if (elm_widget_is_legacy(obj))
+     txt = elm_layout_text_get(obj, "elm.text.status");
+   else
+     txt = elm_layout_text_get(obj, "efl.text.status");
+
    if (txt) eina_strbuf_append(buf, txt);
 
    if (elm_widget_disabled_get(obj))
@@ -362,7 +362,7 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    priv->dir = EFL_UI_DIR_RIGHT;
    priv->val = MIN_RATIO_LVL;
-
+   priv->val_max = 1.0;
    group = _efl_ui_progressbar_theme_group_get(obj, priv);
 
    if (!elm_widget_theme_object_set(obj, wd->resize_obj,
@@ -373,13 +373,16 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    free(group);
 
-   efl_ui_format_string_set(obj, "%.0f %%");
+   efl_ui_format_string_set(obj, "%.0f%%");
 
    priv->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
 
-   elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
+   if (elm_widget_is_legacy(obj))
+     elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
+   else
+     elm_layout_content_set(obj, "efl.bar", priv->spacer);
 
    _units_set(obj);
    _val_set(obj);
@@ -421,10 +424,9 @@ EOLIAN static Eo *
 _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
-
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
+   efl_ui_range_min_max_set(obj, 0.0, 1.0);
    return obj;
 }
 
@@ -440,7 +442,7 @@ _efl_ui_progressbar_pulse_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_pulse_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->pulse;
 }
@@ -454,7 +456,7 @@ _efl_ui_progressbar_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Progressbar_D
 }
 
 EOLIAN static Efl_Ui_Dir
-_efl_ui_progressbar_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->dir;
 }
@@ -468,14 +470,69 @@ _progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
    elm_layout_sizing_eval(obj);
+}
+
+static void
+_progress_part_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *part_name, double min, double max)
+{
+   Efl_Ui_Progress_Status *ps;
+   Eina_Bool  existing_ps = EINA_FALSE;
+   Eina_List *l;
+
+   if (EINA_DBL_EQ(min, max))
+     {
+        ERR("min & max provided are equal.");
+        return;
+     }
+
+   if (min > max)
+     {
+        WRN("min is greater than max.");
+     }
+
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!strcmp(part_name, "elm.cur.progressbar"))
+          {
+             sd->val_min = min;
+             sd->val_max = max;
+          }
+     }
+   else
+     {
+        if (!strcmp(part_name, "efl.cur.progressbar"))
+          {
+             sd->val_min = min;
+             sd->val_max = max;
+          }
+     }
+
+   EINA_LIST_FOREACH(sd->progress_status, l, ps)
+     {
+        if (!strcmp(ps->part_name, part_name))
+          {
+             existing_ps = EINA_TRUE;
+             ps->val_min = min;
+             ps->val_max = max;
+             break;
+          }
+     }
+    if (!existing_ps)
+    {
+      ps = _progress_status_new(part_name, min);
+      ps->val_min = min;
+      ps->val_max = max;
+      sd->progress_status = eina_list_append(sd->progress_status, ps);
+    }
+    _val_set(obj);
 }
 
 static void
@@ -484,12 +541,23 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    Efl_Ui_Progress_Status *ps;
    Eina_Bool  existing_ps = EINA_FALSE;
    Eina_List *l;
+   double min = 0.0, max = 0.0;
 
-   if (val < MIN_RATIO_LVL) val = MIN_RATIO_LVL;
-   if (val > MAX_RATIO_LVL) val = MAX_RATIO_LVL;
+   efl_ui_range_min_max_get(efl_part(obj, part_name), &min, &max);
 
-   if (!strcmp(part_name, "elm.cur.progressbar"))
-     sd->val = val;
+   if (val < min) val = min;
+   if (val > max) val = max;
+
+   if (elm_widget_is_legacy(obj))
+     {
+        if (!strcmp(part_name, "elm.cur.progressbar"))
+          sd->val = val;
+     }
+   else
+     {
+        if (!strcmp(part_name, "efl.cur.progressbar"))
+          sd->val = val;
+     }
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
      {
@@ -503,6 +571,9 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    if (!existing_ps)
       {
          ps = _progress_status_new(part_name, val);
+         ps->val_min = 0.0;
+         ps->val_max = 1.0;
+         ps->val = val;
          sd->progress_status = eina_list_append(sd->progress_status, ps);
       }
    else
@@ -533,13 +604,19 @@ _efl_ui_progressbar_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Progressbar_Dat
 {
    if (EINA_DBL_EQ(sd->val, val)) return;
 
-   _progressbar_part_value_set(obj, sd, "elm.cur.progressbar", val);
+   if (elm_widget_is_legacy(obj))
+     _progressbar_part_value_set(obj, sd, "elm.cur.progressbar", val);
+   else
+     _progressbar_part_value_set(obj, sd, "efl.cur.progressbar", val);
 }
 
 EOLIAN static double
-_efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_range_range_value_get(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED)
 {
-   return sd->val;
+   if (elm_widget_is_legacy(obj))
+     return efl_ui_range_value_get(efl_part(obj, "elm.cur.progressbar"));
+   else
+     return efl_ui_range_value_get(efl_part(obj, "efl.cur.progressbar"));
 }
 
 EOLIAN static void
@@ -558,7 +635,10 @@ _efl_ui_progressbar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Progressbar_Data
    sd->format_free_cb = func_free_cb;
    if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
 
-   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   if (elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,state,units,visible", "efl");
    edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
@@ -573,28 +653,48 @@ _efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool st
 
    sd->pulse_state = state;
 
-   if (sd->pulse_state)
-     elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
+        else
+          elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
+     {
+        if (sd->pulse_state)
+          elm_layout_signal_emit(obj, "efl,state,pulse,start", "efl");
+        else
+          elm_layout_signal_emit(obj, "efl,state,pulse,stop", "efl");
+     }
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_pulse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return (sd->pulse_state && sd->pulse);
 }
 
 EOLIAN static void
-_efl_ui_progressbar_class_constructor(Efl_Class *klass)
+_efl_ui_progressbar_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double min, double max)
 {
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+  if (elm_widget_is_legacy(obj))
+    _progress_part_min_max_set(obj, sd, "elm.cur.progressbar", min, max);
+  else
+    _progress_part_min_max_set(obj, sd, "efl.cur.progressbar", min, max);
+}
+
+EOLIAN static void
+_efl_ui_progressbar_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, double *min, double *max)
+{
+   if (min) *min = sd->val_min;
+   if (max) *max = sd->val_max;
 }
 
 /* Efl.Part begin */
 
 EOLIAN static Eo *
-_efl_ui_progressbar_efl_part_part(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED, const char *part)
+_efl_ui_progressbar_efl_part_part_get(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -603,7 +703,7 @@ _efl_ui_progressbar_efl_part_part(const Eo *obj, Efl_Ui_Progressbar_Data *sd EIN
    if (edje_object_part_drag_dir_get(wd->resize_obj, part) != EFL_UI_DRAG_DIR_NONE)
      return ELM_PART_IMPLEMENT(EFL_UI_PROGRESSBAR_PART_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void
@@ -616,7 +716,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_set(Eo *obj, void *_pd EINA_UN
 }
 
 EOLIAN static double
-_efl_ui_progressbar_part_efl_ui_range_range_value_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_progressbar_part_efl_ui_range_range_value_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
@@ -625,9 +725,38 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_get(Eo *obj, void *_pd EINA_UN
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd, double *value, const char **text EINA_UNUSED)
+_efl_ui_progressbar_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd, double *value, const char **text EINA_UNUSED)
 {
    if (value) *value = _pd->val;
+}
+
+EOLIAN static void
+_efl_ui_progressbar_part_efl_ui_range_range_min_max_set(Eo *obj, void *_pd EINA_UNUSED, double min, double max)
+{
+  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+  Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+
+  _progress_part_min_max_set(pd->obj, sd, pd->part, min, max);
+}
+
+EOLIAN static void
+_efl_ui_progressbar_part_efl_ui_range_range_min_max_get(const Eo *obj, void *_pd EINA_UNUSED, double *min, double *max)
+{
+   Efl_Ui_Progress_Status *ps;
+   Eina_List *l;
+
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+
+   EINA_LIST_FOREACH(sd->progress_status, l, ps)
+     {
+        if (!strcmp(ps->part_name, pd->part))
+          {
+             if (min) *min = ps->val_min;
+             if (max) *max = ps->val_max;
+             break;
+          }
+     }
 }
 
 #include "efl_ui_progressbar_part.eo.c"
@@ -637,28 +766,120 @@ _efl_ui_progressbar_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl
 /* Internal EO APIs and hidden overrides */
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_progressbar, _content_aliases[0].real_part)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_progressbar), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
 
-/* Legacy APIs */
+#include "efl_ui_progressbar_legacy.eo.h"
+#include "efl_ui_progressbar_legacy_part.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_progressbar"
+
+static void
+_efl_ui_progressbar_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_progressbar_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static void
+_icon_signal_emit(Evas_Object *obj)
+{
+   char buf[64];
+
+   if (!elm_widget_resize_object_get(obj)) return;
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(elm_layout_edje_get(obj));
+   elm_layout_sizing_eval(obj);
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Efl_Ui_Theme_Apply
+_efl_ui_progressbar_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   _icon_signal_emit(obj);
+
+   return int_ret;
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+EOLIAN static Eina_Bool
+_efl_ui_progressbar_legacy_efl_ui_widget_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *sobj)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = elm_widget_sub_object_del(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* FIXME: replicated from elm_layout just because progressbar's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_efl_ui_progressbar_legacy_content_set(Eo *obj, void *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   int_ret = efl_content_set(efl_part(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS), part), content);
+   if (!int_ret) return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* Efl.Part for legacy begin */
+
+static Eina_Bool
+_part_is_efl_ui_progressbar_legacy_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return eina_streq(part, "elm.swallow.content");
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_progressbar_legacy, EFL_UI_PROGRESSBAR_LEGACY, void, _part_is_efl_ui_progressbar_legacy_part)
+ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(efl_ui_progressbar_legacy)
+#include "efl_ui_progressbar_legacy_part.eo.c"
+
+/* Efl.Part for legacy end */
 
 EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Eo *obj = elm_legacy_add(MY_CLASS, parent);
-   elm_progressbar_unit_format_set(obj, "%.0f %%");
+   Eo *obj = elm_legacy_add(EFL_UI_PROGRESSBAR_LEGACY_CLASS, parent);
+   elm_progressbar_unit_format_set(obj, "%.0f%%");
 
    return obj;
 }
@@ -703,17 +924,16 @@ elm_progressbar_part_value_get(const Evas_Object *obj, const char *part)
 EAPI Eina_Bool
 elm_progressbar_horizontal_get(const Evas_Object *obj)
 {
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
-   return _is_horizontal(dir);
+   return _is_horizontal(sd->dir);
 }
 
 EAPI void
 elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    Efl_Ui_Dir dir;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
 
    dir = _direction_get(_is_horizontal(sd->dir), inverted);
 
@@ -723,17 +943,16 @@ elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 EAPI Eina_Bool
 elm_progressbar_inverted_get(const Evas_Object *obj)
 {
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
-   return _is_inverted(dir);
+   return _is_inverted(sd->dir);
 }
 
 EAPI void
 elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Efl_Ui_Dir dir;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
 
    dir = _direction_get(horizontal, _is_inverted(sd->dir));
 
@@ -825,3 +1044,5 @@ elm_progressbar_value_get(const Evas_Object *obj)
 {
    return efl_ui_range_value_get(obj);
 }
+
+#include "efl_ui_progressbar_legacy.eo.c"

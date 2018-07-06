@@ -1,4 +1,4 @@
-class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load)
+class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller)
 {
    [[Efl canvas video class]]
    methods {
@@ -53,39 +53,39 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
    }
    implements {
         Efl.Object.constructor;
-        Efl.Gfx.position { set; }
-        Efl.Gfx.size { set; }
+        Efl.Gfx.Entity.position { set; }
+        Efl.Gfx.Entity.size { set; }
         Efl.File.file { get; set; }
         Efl.Player.play { get; set; }
-        Efl.Player.position { get; set; }
+        Efl.Player.pos { get; set; }
         Efl.Player.progress { get; }
         Efl.Player.volume { get; set; }
         Efl.Player.mute { get; set; }
         Efl.Player.length { get; }
         Efl.Player.seekable { get; }
-        Efl.Image.Load.load_size { get; }
-        Efl.Image.ratio { get; }
-        Efl.Image.smooth_scale { get; set; }
+        Efl.Gfx.Image_Load_Controller.load_size { get; }
+        Efl.Gfx.Image.ratio { get; }
+        Efl.Gfx.Image.smooth_scale { get; set; }
    }
    events {
-        frame,decode; [[Called when the frame was decoded]]
-        position,change; [[Called when the position changed]]
-        length,change; [[Called when the length changed]]
-        frame,resize; [[Called when the frame was resized]]
-        playback,start; [[Called when playback started]]
-        playback,stop; [[Called when playback stopped]]
-        volume,change; [[Called when volume changed]]
-        channels,change; [[Called when the channels changed]]
-        title,change; [[Called when the title changed]]
-        progress,change; [[Called when the progress changed]]
-        ref,change; [[Called when ref changed]]
-        button,num,change; [[Called when button number changed]]
-        button,change; [[Called when button changed]]
-        open,done; [[Called when the files was opened]]
-        position,save,done; [[Called when the position was saved]]
-        position,save,fail; [[Called when saving the position failed]]
-        position,load,done; [[Called when the position loaded]]
-        position,load,fail; [[Called when loading the position failed]]
+        frame,decode: void; [[Called when the frame was decoded]]
+        position,change: void; [[Called when the position changed]]
+        length,change: void; [[Called when the length changed]]
+        frame,resize: void; [[Called when the frame was resized]]
+        playback,start: void; [[Called when playback started]]
+        playback,stop: void; [[Called when playback stopped]]
+        volume,change: void; [[Called when volume changed]]
+        channels,change: void; [[Called when the channels changed]]
+        title,change: void; [[Called when the title changed]]
+        progress,change: void; [[Called when the progress changed]]
+        ref,change: void; [[Called when ref changed]]
+        button,num,change: void; [[Called when button number changed]]
+        button,change: void; [[Called when button changed]]
+        open,done: void; [[Called when the files was opened]]
+        position,save,done: void; [[Called when the position was saved]]
+        position,save,fail: void; [[Called when saving the position failed]]
+        position,load,done: void; [[Called when the position loaded]]
+        position,load,fail: void; [[Called when loading the position failed]]
    }
 }
 

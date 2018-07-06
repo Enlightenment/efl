@@ -45,7 +45,7 @@ test_efl_gfx_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Evas_Object *win, *img;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Efl Gfx Map"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -54,12 +54,12 @@ test_efl_gfx_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    img = efl_add(EFL_UI_IMAGE_CLASS, win,
                  efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(64, 64)),
                  efl_file_set(efl_added, buf, NULL));
-   efl_image_scale_type_set(img, EFL_IMAGE_SCALE_TYPE_FILL);
+   efl_gfx_image_scale_type_set(img, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
    evas_object_event_callback_add(img, EVAS_CALLBACK_RESIZE,
                                   _image_resize_cb, NULL);
 
    _map_set(img);
 
    efl_content_set(win, img);
-   efl_gfx_size_set(win, EINA_SIZE2D(W, H));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(W, H));
 }

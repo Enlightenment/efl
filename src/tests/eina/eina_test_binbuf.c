@@ -25,7 +25,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(binbuf_simple)
+EFL_START_TEST(binbuf_simple)
 {
    Eina_Binbuf *buf, *test_buf;
    unsigned char *txt;
@@ -33,8 +33,6 @@ START_TEST(binbuf_simple)
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
    Eina_Slice ro_slice;
    Eina_Rw_Slice rw_slice;
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -80,18 +78,15 @@ START_TEST(binbuf_simple)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 #undef TEXT
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_remove)
+EFL_START_TEST(binbuf_remove)
 {
    Eina_Binbuf *buf;
    const unsigned char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -112,16 +107,14 @@ START_TEST(binbuf_remove)
    fail_if(0 != eina_binbuf_length_get(buf));
 
    eina_binbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /* eina_binbuf_manage_new_length and eina_binbuf_manage_read_only_new_length
  * are deprecated */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-START_TEST(binbuf_manage_simple)
+EFL_START_TEST(binbuf_manage_simple)
 {
    Eina_Binbuf *buf;
    const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
@@ -129,8 +122,6 @@ START_TEST(binbuf_manage_simple)
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
    unsigned char *alloc_buf = malloc(size);
    memcpy(alloc_buf, cbuf, size);
-
-   eina_init();
 
    buf = eina_binbuf_manage_new_length(alloc_buf, size);
    fail_if(!buf);
@@ -144,18 +135,15 @@ START_TEST(binbuf_manage_simple)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_manage_read_only_simple)
+EFL_START_TEST(binbuf_manage_read_only_simple)
 {
    Eina_Binbuf *buf;
    const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
    const unsigned char *cbuf = (const unsigned char *) _cbuf;
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
-
-   eina_init();
 
    buf = eina_binbuf_manage_read_only_new_length(cbuf, size);
    fail_if(!buf);
@@ -174,17 +162,14 @@ START_TEST(binbuf_manage_read_only_simple)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #pragma GCC diagnostic pop
 
-START_TEST(binbuf_insert)
+EFL_START_TEST(binbuf_insert)
 {
 #if 0
    Eina_Binbuf *buf;
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -227,12 +212,11 @@ START_TEST(binbuf_insert)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 #endif
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_realloc)
+EFL_START_TEST(binbuf_realloc)
 {
    Eina_Binbuf *buf;
    unsigned char pattern[1024 * 16];
@@ -247,8 +231,6 @@ START_TEST(binbuf_realloc)
            pattern[i] = 'a' + (i % 27);
      }
    pattern[i] = '\0';
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -302,11 +284,10 @@ START_TEST(binbuf_realloc)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(binbuf_expand)
+EFL_START_TEST(binbuf_expand)
 {
    Eina_Binbuf *buf;
    Eina_Rw_Slice rw_slice;
@@ -315,8 +296,6 @@ START_TEST(binbuf_expand)
    Eina_Slice hi_there = EINA_SLICE_STR_LITERAL("Hi There");
    size_t i;
    Eina_Bool r;
-
-   eina_init();
 
    buf = eina_binbuf_new();
    fail_if(!buf);
@@ -369,9 +348,8 @@ START_TEST(binbuf_expand)
 
    eina_binbuf_free(buf);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 void

@@ -6,3 +6,4 @@
 #include "elm_priv.h"
 
 #include "efl_ui_focus_manager.eo.c"
+#include "efl_ui_focus_manager_window_root.eo.c"

@@ -1,6 +1,8 @@
 #ifndef EMOTION_GENERIC_H
 #define EMOTION_GENERIC_H
 
+#include <sys/types.h>
+
 #include "Emotion_Generic_Plugin.h"
 
 /* default values */

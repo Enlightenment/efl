@@ -38,6 +38,16 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_move(Ecore_Evas *ee, int x, int y)
+{
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+
+   if (bdata->image) return;
+   ee->x = ee->req.x = x;
+   ee->y = ee->req.y = y;
+}
+
+static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    Evas_Engine_Info_Buffer *einfo;
@@ -90,7 +100,8 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
      }
    if (bdata->image)
       evas_object_image_data_set(bdata->image, bdata->pixels);
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+   else
+     bdata->resized = 1;
 }
 
 static void
@@ -152,6 +163,11 @@ _ecore_evas_buffer_prepare(Ecore_Evas *ee)
         if ((w != ee->w) || (h != ee->h))
            _ecore_evas_resize(ee, w, h);
         bdata->pixels = evas_object_image_data_get(bdata->image, 1);
+     }
+   else if (bdata->resized)
+     {
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        bdata->resized = 0;
      }
 
    return EINA_TRUE;
@@ -493,7 +509,8 @@ _ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
                einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
              else
                einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
           }
      }
 }
@@ -637,7 +654,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL,
+     _ecore_evas_move,
      NULL,
      _ecore_evas_resize,
      _ecore_evas_move_resize,
@@ -783,11 +800,14 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create a Canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
+
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    bdata->pixels = bdata->alloc_func(bdata->data, w * h * sizeof(int));
 

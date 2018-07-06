@@ -70,8 +70,6 @@ _eet_data_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, const char *protoco
    char toSend[] = SRV_MSG;
    ECE_Test *received = value;
 
-   fprintf(stderr, "id: %d\n message: %s\n",
-           received->id, received->message);
    fail_if(strcmp(received->message, CLI_MSG));
    fail_if(received->id != 1);
 
@@ -111,16 +109,14 @@ _eet_raw_data_cb(void *data, Ecore_Con_Reply *reply, const char *protocol_name E
    ecore_con_server_del(cl);
 }
 
-START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
+EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
 {
    Ecore_Con_Eet *ece_svr, *ece_cl;
    Ecore_Con_Server *svr, *cl;
    int *cb_data = (int *) malloc(sizeof(int));
    *cb_data = 1;
 
-   eina_init();
    eet_init();
-   ecore_con_init();
    _ece_test_descriptor_init();
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
@@ -165,11 +161,9 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
    free(cb_data);
    _ece_test_descriptor_shutdown();
    ecore_con_server_del(svr);
-   ecore_con_shutdown();
    eet_shutdown();
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _eet_svr_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, Ecore_Con_Server *conn EINA_UNUSED)
@@ -193,16 +187,14 @@ _eet_svr_raw_data_cb(void *data, Ecore_Con_Reply *reply, const char *protocol_na
    ecore_con_server_del(svr);
 }
 
-START_TEST(ecore_con_test_ecore_con_eet_svr_del)
+EFL_START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 {
    Ecore_Con_Eet *ece_svr, *ece_cl;
    Ecore_Con_Server *svr, *cl;
    int *cb_data = (int *) malloc(sizeof(int));
    *cb_data = 0;
 
-   eina_init();
    eet_init();
-   ecore_con_init();
    _ece_test_descriptor_init();
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
@@ -235,11 +227,9 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 
    free(cb_data);
    _ece_test_descriptor_shutdown();
-   ecore_con_shutdown();
    eet_shutdown();
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_con_test_ecore_con_eet(TCase *tc)
 {

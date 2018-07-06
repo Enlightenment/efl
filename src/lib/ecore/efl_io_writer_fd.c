@@ -23,7 +23,7 @@ _efl_io_writer_fd_writer_fd_set(Eo *o EINA_UNUSED, Efl_Io_Writer_Fd_Data *pd, in
 }
 
 EOLIAN static int
-_efl_io_writer_fd_writer_fd_get(Eo *o EINA_UNUSED, Efl_Io_Writer_Fd_Data *pd)
+_efl_io_writer_fd_writer_fd_get(const Eo *o EINA_UNUSED, Efl_Io_Writer_Fd_Data *pd)
 {
    return pd->fd;
 }
@@ -72,7 +72,7 @@ _efl_io_writer_fd_efl_io_writer_write(Eo *o, Efl_Io_Writer_Fd_Data *pd EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_io_writer_fd_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Io_Writer_Fd_Data *pd)
+_efl_io_writer_fd_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Io_Writer_Fd_Data *pd)
 {
    return pd->can_write;
 }

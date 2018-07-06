@@ -1,16 +1,18 @@
-class Elm.Grid (Efl.Ui.Widget, Efl.Ui.Focus.Composition)
+class Elm.Grid (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary grid class]]
    legacy_prefix: elm_grid;
    eo_prefix: elm_obj_grid;
    data: null;
    methods {
-      @property size {
+      @property grid_size {
          set {
             [[Set the virtual size of the grid]]
+            legacy: elm_grid_size_set;
          }
          get {
             [[Get the virtual size of the grid]]
+            legacy: elm_grid_size_get;
          }
          values {
             w: int; [[The virtual width of the grid]]

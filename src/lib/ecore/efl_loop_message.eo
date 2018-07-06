@@ -1,14 +1,11 @@
-import efl_types;
-import eina_types;
-
-class Efl.Loop.Message (Efl.Object)
+class Efl.Loop_Message (Efl.Object)
 {
    [[Base message payload object class. Inherit this and extend for
      specific message types.]]
    methods {
    }
    events {
-      message: Efl.Loop.Message; [[The message payload data]]
+      message: Efl.Loop_Message; [[The message payload data]]
    }
    implements {
       Efl.Object.constructor;

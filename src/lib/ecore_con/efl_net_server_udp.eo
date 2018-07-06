@@ -1,4 +1,4 @@
-class Efl.Net.Server.Udp (Efl.Net.Server.Ip) {
+class Efl.Net.Server_Udp (Efl.Net.Server_Ip) {
     [[A UDP server.
 
       @since 1.19
@@ -97,7 +97,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Ip) {
         Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Net.Server.serve;
-        Efl.Net.Server.Fd.process_incoming_data;
-        Efl.Net.Server.Fd.socket_activate;
+        Efl.Net.Server_Fd.process_incoming_data;
+        Efl.Net.Server_Fd.socket_activate;
     }
 }

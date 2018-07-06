@@ -373,7 +373,7 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
 }
 
 EOLIAN static void
-_evas_canvas3d_texture_efl_file_mmap_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, const Eina_File **f, const char **key)
+_evas_canvas3d_texture_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, const Eina_File **f, const char **key)
 {
    if (f) *f = pd->f;
    if (key) *key = pd->key;
@@ -482,7 +482,7 @@ _evas_canvas3d_texture_source_visible_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Tex
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd)
+_evas_canvas3d_texture_source_visible_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd)
 {
    Evas_Object_Protected_Data *src_obj;
 
@@ -587,7 +587,7 @@ _evas_canvas3d_texture_atlas_enable_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Textu
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_texture_atlas_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd)
+_evas_canvas3d_texture_atlas_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd)
 {
    return pd->atlas_enable;
 }

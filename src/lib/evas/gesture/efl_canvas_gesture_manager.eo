@@ -1,0 +1,37 @@
+class Efl.Canvas.Gesture_Manager (Efl.Object)
+{
+   [[EFL Gesture Manager class]]
+   eo_prefix: efl_gesture_manager;
+   methods {
+      recognizer_register {
+         [[This function is called to register a new Efl.Canvas.Gesture_Recognizer]]
+         params {
+            @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
+         }
+         return: ptr(const(Efl.Event_Description)); [[Returns the Efl.Event_Description type the recognizer supports]]
+      }
+      recognizer_unregister {
+         [[This function is called to unregister a Efl.Canvas.Gesture_Recognizer]]
+         params {
+            @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
+         }
+      }
+      @property config {
+         [[This property holds the config value for the recognizer]]
+         set {
+         }
+         get {
+         }
+         keys {
+            name: string; [[propery name]]
+         }
+         values {
+            value: any_value_ptr; [[value of the property]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

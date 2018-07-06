@@ -54,7 +54,7 @@ _ector_renderer_software_gradient_linear_ector_renderer_draw(Eo *obj EINA_UNUSED
 }
 
 static Eina_Bool
-_ector_renderer_software_gradient_linear_ector_renderer_software_fill(Eo *obj EINA_UNUSED,
+_ector_renderer_software_gradient_linear_ector_renderer_software_op_fill(Eo *obj EINA_UNUSED,
                                                                       Ector_Renderer_Software_Gradient_Data *pd)
 {
    ector_software_rasterizer_linear_gradient_set(pd->surface->rasterizer, pd);
@@ -102,7 +102,7 @@ _ector_renderer_software_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj, Ecto
 }
 
 static unsigned int
-_ector_renderer_software_gradient_linear_ector_renderer_crc_get(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd)
+_ector_renderer_software_gradient_linear_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_Software_Gradient_Data *pd)
 {
    unsigned int crc;
 

@@ -551,7 +551,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
      }
    eina_list_free(copy);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -765,7 +765,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
           }
      }
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -833,7 +833,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
      }
    eina_list_free(copy);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -915,7 +915,7 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
      }
    eina_list_free(copy);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -983,7 +983,7 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
      }
    eina_list_free(copy);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -1041,7 +1041,7 @@ _evas_event_source_multi_up_events(Evas_Object_Protected_Data *obj, Evas_Public_
      }
     eina_list_free(copy);
 
-    efl_del(evt);
+    efl_unref(evt);
 }
 
 static void
@@ -1156,7 +1156,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
           eina_list_free(ins);
      }
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -1246,7 +1246,7 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
      }
    EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -1307,7 +1307,7 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
      proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
    EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static Eina_List *
@@ -1378,7 +1378,7 @@ _evas_canvas_event_default_flags_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, 
 }
 
 EOLIAN Evas_Event_Flags
-_evas_canvas_event_default_flags_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_event_default_flags_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->default_event_flags;
 }
@@ -1701,7 +1701,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
    if (pdata->seat->inside)
      _evas_canvas_event_pointer_move_event_dispatch(e, pdata, ev->data);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -1850,7 +1850,7 @@ _canvas_event_feed_mouse_updown(Eo *eo_e, int b, Evas_Button_Flags flags,
    else
      _canvas_event_feed_mouse_up_internal(e, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -1952,7 +1952,7 @@ evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
 
    _canvas_event_feed_mouse_cancel_internal(e, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -2024,7 +2024,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e, event_id);
 
-   efl_del(evt);
+   efl_unref(evt);
    _evas_unwalk(e);
 }
 
@@ -2044,7 +2044,7 @@ evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timesta
    ev->device = efl_ref(_evas_event_legacy_device_get(eo_e, EINA_TRUE));
 
    _canvas_event_feed_mouse_wheel_internal(eo_e, ev);
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -2485,7 +2485,7 @@ _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int
 
    _canvas_event_feed_mouse_move_internal(e, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EAPI void
@@ -2713,7 +2713,7 @@ _canvas_event_feed_mouse_inout_legacy(Eo *eo_e, unsigned int timestamp,
    else
      _canvas_event_feed_mouse_out_internal(eo_e, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EAPI void
@@ -2961,7 +2961,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
       default: break;
      }
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EAPI void
@@ -3414,7 +3414,7 @@ _canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
    else
      _canvas_event_feed_key_up_internal(e, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EAPI void
@@ -3502,7 +3502,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    _evas_unwalk(e);
    _evas_object_event_new();
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 void
@@ -3671,7 +3671,7 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
 
    _canvas_event_feed_axis_update_internal(e, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -3708,7 +3708,7 @@ _efl_canvas_object_freeze_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_freeze_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->freeze_events;
 }
@@ -3724,7 +3724,7 @@ _efl_canvas_object_pass_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, 
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_pass_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_pass_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->pass_events;
 }
@@ -3739,7 +3739,7 @@ _efl_canvas_object_repeat_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_repeat_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_repeat_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->repeat_events;
 }
@@ -3751,7 +3751,7 @@ _efl_canvas_object_propagate_events_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_propagate_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_propagate_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return !(obj->no_propagate);
 }
@@ -3838,7 +3838,7 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
 }
 
 EOLIAN Evas_Object_Pointer_Mode
-_efl_canvas_object_pointer_mode_by_device_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_pointer_mode_by_device_get(const Eo *eo_obj EINA_UNUSED,
                                               Evas_Object_Protected_Data *obj,
                                               Efl_Input_Device *dev)
 {
@@ -3862,13 +3862,13 @@ _efl_canvas_object_pointer_mode_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 EOLIAN Evas_Object_Pointer_Mode
-_efl_canvas_object_pointer_mode_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_pointer_mode_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    return _efl_canvas_object_pointer_mode_by_device_get(eo_obj, obj, NULL);
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_efl_canvas_pointer_pointer_inside_get(Eo *eo_obj,
+_efl_canvas_object_efl_canvas_pointer_pointer_inside_get(const Eo *eo_obj,
                                                          Evas_Object_Protected_Data *obj,
                                                          Efl_Input_Device *pointer)
 {
@@ -4007,7 +4007,7 @@ evas_event_refeed_event(Eo *eo_e, void *event_copy, Evas_Callback_Type event_typ
 
 
 EOLIAN int
-_evas_canvas_event_down_count_by_device_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+_evas_canvas_event_down_count_by_device_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
                                             Efl_Input_Device *dev)
 {
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
@@ -4016,7 +4016,7 @@ _evas_canvas_event_down_count_by_device_get(Eo *eo_e EINA_UNUSED, Evas_Public_Da
 }
 
 EOLIAN int
-_evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_event_down_count_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return _evas_canvas_event_down_count_by_device_get(eo_e, e, NULL);
 }
@@ -4194,7 +4194,7 @@ _evas_canvas_event_pointer_move_event_dispatch(Evas_Public_Data *edata,
 
    _canvas_event_feed_mouse_move_internal(edata, ev);
 
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 void

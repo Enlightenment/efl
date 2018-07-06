@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Manager.Sub (Efl.Interface, Efl.Ui.Focus.Manager, Efl.Object)
+mixin Efl.Ui.Focus.Manager_Sub (Efl.Interface, Efl.Ui.Focus.Manager, Efl.Object)
 {
     [[A class that automatically registeres its border elements in the parent manager
 
@@ -18,5 +18,6 @@ mixin Efl.Ui.Focus.Manager.Sub (Efl.Interface, Efl.Ui.Focus.Manager, Efl.Object)
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
+        Efl.Ui.Focus.Manager.move;
     }
 }

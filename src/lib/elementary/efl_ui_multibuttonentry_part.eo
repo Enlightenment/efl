@@ -1,9 +1,0 @@
-class Efl.Ui.Multibuttonentry.Part (Efl.Ui.Layout.Part_Text)
-{
-   [[Elementary multibuttonentry internal part class]]
-   data: null;
-   implements {
-      Efl.Text.text { set; get; }
-   }
-}
-

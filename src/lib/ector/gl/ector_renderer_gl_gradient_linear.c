@@ -40,7 +40,7 @@ _ector_renderer_gl_gradient_linear_ector_renderer_draw(Eo *obj, Ector_Renderer_G
 }
 
 static void
-_ector_renderer_gl_gradient_linear_ector_renderer_bounds_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gl_gradient_linear_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_GL_Gradient_Linear_Data *pd,
                                                              Eina_Rect *r)
 {
@@ -52,7 +52,7 @@ _ector_renderer_gl_gradient_linear_ector_renderer_bounds_get(Eo *obj EINA_UNUSED
 }
 
 static Eina_Bool
-_ector_renderer_gl_gradient_linear_ector_renderer_gl_fill(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd, uint64_t flags, GLshort *vertex, unsigned int vertex_count, unsigned int mul_col)
+_ector_renderer_gl_gradient_linear_ector_renderer_gl_op_fill(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd, uint64_t flags, GLshort *vertex, unsigned int vertex_count, unsigned int mul_col)
 {
    // FIXME: The idea here is to select the right shader and push the needed parameter for it
    // along with the other value
@@ -95,7 +95,7 @@ _ector_renderer_gl_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj, Ector_Rend
 }
 
 static unsigned int
-_ector_renderer_gl_gradient_linear_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
+_ector_renderer_gl_gradient_linear_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd)
 {
    unsigned int crc;
 

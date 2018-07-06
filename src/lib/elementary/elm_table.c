@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -18,8 +18,17 @@
 static void
 _elm_table_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
 {
+   Eina_List *l, *ll;
+   Efl_Ui_Widget *elem;
+
    Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
    Eina_List *order = evas_object_table_children_get(wpd->resize_obj);
+
+   EINA_LIST_FOREACH_SAFE(order, l, ll, elem)
+     {
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
+          order = eina_list_remove(order, elem);
+     }
 
    efl_ui_focus_composition_elements_set(obj, order);
 }
@@ -137,7 +146,7 @@ _elm_table_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
 }
@@ -152,7 +161,7 @@ _elm_table_homogeneous_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool homogeneous
 }
 
 EOLIAN static Eina_Bool
-_elm_table_homogeneous_get(Eo *obj, void *_pd EINA_UNUSED)
+_elm_table_homogeneous_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    return evas_object_table_homogeneous_get(wd->resize_obj);
@@ -168,7 +177,7 @@ _elm_table_padding_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord horizontal, Ev
 }
 
 EOLIAN static void
-_elm_table_padding_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
+_elm_table_padding_get(const Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -186,7 +195,7 @@ _elm_table_align_set(Eo *obj, void *_pd EINA_UNUSED, double horizontal, double v
 }
 
 EOLIAN static void
-_elm_table_align_get(Eo *obj, void *_pd EINA_UNUSED, double *horizontal, double *vertical)
+_elm_table_align_get(const Eo *obj, void *_pd EINA_UNUSED, double *horizontal, double *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

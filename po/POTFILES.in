@@ -49,6 +49,7 @@ src/bin/elementary/test_panes.c
 src/bin/elementary/test_photo.c
 src/bin/elementary/test_photocam.c
 src/bin/elementary/test_progressbar.c
+src/bin/elementary/test_ui_progressbar.c
 src/bin/elementary/test_radio.c
 src/bin/elementary/test_scaling.c
 src/bin/elementary/test_scroller.c
@@ -96,7 +97,7 @@ src/lib/elementary/elc_fileselector.c
 src/lib/elementary/elc_fileselector_button.c
 src/lib/elementary/elc_fileselector_entry.c
 src/lib/elementary/elc_hoversel.c
-src/lib/elementary/efl_ui_multibuttonentry.c
+src/lib/elementary/elc_multibuttonentry.c
 src/lib/elementary/elc_naviframe.c
 src/lib/elementary/elc_player.c
 src/lib/elementary/elc_popup.c
@@ -136,7 +137,7 @@ src/lib/elementary/elm_index.c
 src/lib/elementary/elm_interface_scrollable.c
 src/lib/elementary/elm_inwin.c
 src/lib/elementary/elm_label.c
-src/lib/elementary/efl_ui_layout.c
+src/lib/elementary/efl_ui_layout_object.c
 src/lib/elementary/elm_list.c
 src/lib/elementary/elm_main.c
 src/lib/elementary/elm_map.c

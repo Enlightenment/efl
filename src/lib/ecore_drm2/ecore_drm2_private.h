@@ -232,6 +232,12 @@ struct _Ecore_Drm2_Output
         Ecore_Drm2_Backlight_Type type;
      } backlight;
 
+   struct
+     {
+        const char *to;
+        Ecore_Drm2_Relative_Mode mode;
+     } relative;
+
    drmModeCrtcPtr ocrtc;
 
    /* prep is for state we're preparing and have never

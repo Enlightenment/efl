@@ -1,44 +1,6 @@
 import elm_general;
 
-type @extern Elm.Genlist.Item.Class: __undefined_type; [[External elm genlist item class]]
-
-enum Elm.Genlist.Item.Type
-{
-   [[Defines if the item is of any special type (has subitems or it's the
-     index of a group), or is just a simple item.
-   ]]
-   legacy: elm_genlist_item;
-   none = 0, [[Simple item.]]
-   tree = (1 << 0), [[This may be expanded and have child items.]]
-   group = (1 << 1), [[An index item of a group of items. this item can have child items.]]
-   max = (1 << 2) [[Sentinel value to indicate last enum field during iteration]]
-}
-
-enum Elm.Genlist.Item.Field_Type
-{
-   [[Defines the type of the item part
-     Used while updating item's parts
-     It can be used at updating multi fields.
-   ]]
-   legacy: elm_genlist_item_field;
-   all = 0, [[Type all]]
-   text = (1 << 0), [[Type text]]
-   content = (1 << 1), [[Type content]]
-   state = (1 << 2) [[Type state]]
-}
-
-enum Elm.Genlist.Item.Scrollto_Type
-{
-   [[Defines where to position the item in the genlist.]]
-   legacy: elm_genlist_item_scrollto;
-   none = 0,   [[Nothing will happen, Don't use this value.]]
-   in = (1 << 0),   [[To the nearest viewport.]]
-   top = (1 << 1),   [[To the top of viewport.]]
-   middle = (1 << 2),   [[To the middle of viewport.]]
-   bottom = (1 << 3)   [[To the bottom of viewport.]]
-}
-
-class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
+class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
 {
    [[Elementary genlist item class]]
    legacy_prefix: elm_genlist_item;
@@ -55,6 +17,12 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
 
                        If filter is set on genlist, this returns the filtered
                        item placed before $item in the list.
+
+                       Note that parent / child relationship is not taken into
+                       account, the previous visual item is always returned,
+                       could it be a parent, a child or a group item.
+
+                       NULL is returned if called on the first item.
                      ]]
                 }
                 values {
@@ -72,17 +40,18 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
                        If filter is set on genlist, this returns the filtered
                        item placed after $item in the list.
 
-                       Also the next item means item in the same tree level.
-                       If a item has subitems, and it have expand all subitems
-                       will be ignore, and will get the next item in the same
-                       level.
+                       Note that parent / child relationship is not taken into
+                       account, the next visual item is always returned, could
+                       it be a parent, a child or a group item.
+
+                       NULL is returned if called on the last item.
                      ]]
                 }
                 values {
                      item: Elm.Widget.Item; [[The item after $item, or $null if there's none (and on errors).]]
                 }
            }
-           @property parent {
+           @property parent_item {
                 get {
                      [[Get the parent item of the given item
 
@@ -90,6 +59,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
                        of the item $it on \@ref elm_genlist_item_append
                        and insertion related functions.
                      ]]
+                     legacy: elm_genlist_item_parent_get;
                 }
                 values {
                      item: Elm.Widget.Item; [[The parent of the item or $null if it has no parent.]]
@@ -97,7 +67,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
            }
            @property subitems {
                 get {
-                     [[et the list of subitems of a given item
+                     [[Get the list of subitems of a given item
 
                        This returns the list of subitems that an item
                        possesses. It cannot be changed.
@@ -449,7 +419,7 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
            Elm.Widget.Item.disable;
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.style { get; set; }
-           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.part_text { get; }
            Elm.Widget.Item.part_content { get; }
            Elm.Widget.Item.tooltip_text_set;
@@ -459,8 +429,8 @@ class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus)
            Elm.Widget.Item.tooltip_unset;
            Elm.Widget.Item.cursor { set; }
            Elm.Widget.Item.cursor_unset;
-           Efl.Access.name { get; }
-           Efl.Access.state_set { get; }
-           Efl.Ui.Focus.Object.prepare_logical;
+           Efl.Access.Object.i18n_name { get; }
+           Efl.Access.Object.state_set { get; }
+           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
       }
 }

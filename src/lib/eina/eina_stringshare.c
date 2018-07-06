@@ -61,7 +61,7 @@
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_share_stringshare_log_dom, __VA_ARGS__)
 
-static int _eina_share_stringshare_log_dom = -1;
+int _eina_share_stringshare_log_dom = -1;
 
 /* The actual share */
 static Eina_Share *stringshare_share;
@@ -679,6 +679,8 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
 
    if (size < 1)
      return "";
+   if ((unsigned int)size > len)
+     size = len;
 
    return eina_stringshare_add_length(tmp, size);
 }

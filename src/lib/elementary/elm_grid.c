@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -17,8 +17,17 @@
 static void
 _elm_grid_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
 {
+   Eina_List *l, *ll;
+   Efl_Ui_Widget *elem;
+
    Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
    Eina_List *order = evas_object_grid_children_get(wpd->resize_obj);
+
+   EINA_LIST_FOREACH_SAFE(order, l, ll, elem)
+     {
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
+          order = eina_list_remove(order, elem);
+     }
 
    efl_ui_focus_composition_elements_set(obj, order);
 }
@@ -98,13 +107,13 @@ _elm_grid_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
 }
 
 EOLIAN static void
-_elm_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_elm_grid_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -112,7 +121,7 @@ _elm_grid_size_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 }
 
 EOLIAN static void
-_elm_grid_size_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *w, Evas_Coord *h)
+_elm_grid_grid_size_get(const Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *w, Evas_Coord *h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -191,7 +200,7 @@ elm_grid_pack_get(Evas_Object *subobj,
 }
 
 EOLIAN static Eina_List*
-_elm_grid_children_get(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_children_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return evas_object_grid_children_get(wd->resize_obj);

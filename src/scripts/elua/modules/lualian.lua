@@ -107,7 +107,7 @@ local typeconv = function(tps, expr, isin)
         return build_calln(tps, expr, isin)
     end
 
-    local tp = tps:name_get()
+    local tp = tps:short_name_get()
 
     if is_num(tp) then
         return isin and expr or ("tonumber(%s)"):format(expr)
@@ -407,7 +407,7 @@ local Mixin = Node:clone {
 
     generate = function(self, s)
         dom:log(log.level.INFO, "  Generating for interface/mixin: "
-            .. self.klass:full_name_get())
+            .. self.klass:name_get())
 
         s:write("ffi.cdef [[\n")
         self:gen_ffi(s)
@@ -419,7 +419,7 @@ local Mixin = Node:clone {
         self:gen_children(s)
         s:write("}\n")
 
-        local knu = self.klass:full_name_get():gsub("%.", "_")
+        local knu = self.klass:name_get():gsub("%.", "_")
         if not self.iface then
             s:write(("__body[\"__mixin_%s\"] = true\n"):format(knu))
         else
@@ -462,7 +462,7 @@ local Class = Node:clone {
 
     generate = function(self, s)
         dom:log(log.level.INFO, "  Generating for class: "
-            .. self.klass:full_name_get())
+            .. self.klass:name_get())
 
         s:write("ffi.cdef [[\n")
         self:gen_ffi(s)
@@ -482,7 +482,7 @@ local Class = Node:clone {
     return eo.__ctor_common(__class, parent, eo.class_get("%s").__eo_ctor,
                             1, ...)
 end
-]]):format(mname, self.klass:name_get(), self.klass:full_name_get():gsub("%.",
+]]):format(mname, self.klass:short_name_get(), self.klass:name_get():gsub("%.",
         "_")))
     end,
 
@@ -572,7 +572,7 @@ local File = Node:clone {
         local kls  = self.klass
         local ckls = self.children[1]
 
-        local kn  = kls:full_name_get()
+        local kn  = kls:name_get()
 
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
         dom:log(log.level.INFO, "  Class            : " .. kn)
@@ -669,7 +669,7 @@ end
 local gen_class = function(klass)
     local tp = klass:type_get()
     if tp == class_type.UNKNOWN then
-        error(klass:full_name_get() .. ": unknown type")
+        error(klass:name_get() .. ": unknown type")
     elseif tp == class_type.MIXIN or tp == class_type.INTERFACE then
         return Mixin(tp == class_type.INTERFACE, klass, gen_contents(klass))
     end
@@ -684,14 +684,14 @@ local gen_class = function(klass)
         elseif tp == class_type.INTERFACE or tp == class_type.MIXIN then
             mixins[#mixins + 1] = v
         else
-            error(klass:full_name_get() .. ": unknown inherit " .. v)
+            error(klass:name_get() .. ": unknown inherit " .. v)
         end
     end
     return Class(klass, parents, mixins, gen_contents(klass))
 end
 
 M.include_dir = function(dir)
-    if not get_state():directory_scan(dir) then
+    if not get_state():directory_add(dir) then
         error("Failed including directory: " .. dir)
     end
 end
@@ -700,8 +700,8 @@ M.load_eot_files = function()
     return get_state():all_eot_files_parse()
 end
 
-M.system_directory_scan = function()
-    return get_state():system_directory_scan()
+M.system_directory_add = function()
+    return get_state():system_directory_add()
 end
 
 M.generate = function(fname, fstream)
@@ -711,7 +711,7 @@ M.generate = function(fname, fstream)
     end
     gen_unit = unit
     local sfn = fname:match(".*[\\/](.+)$") or fname
-    local klass = eolian.class_get_by_file(unit, sfn)
+    local klass = get_state():class_by_file_get(sfn)
     File(fname, klass, { gen_class(klass) }):generate(fstream or io.stdout)
 end
 

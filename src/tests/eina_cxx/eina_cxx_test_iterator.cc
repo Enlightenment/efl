@@ -10,7 +10,7 @@
 #include "eina_cxx_suite.h"
 #include "simple.eo.hh"
 
-START_TEST(eina_cxx_iterator_equal)
+EFL_START_TEST(eina_cxx_iterator_equal)
 {
   efl::eina::eina_init eina_init;
 
@@ -30,9 +30,9 @@ START_TEST(eina_cxx_iterator_equal)
 
   ck_assert(std::equal(iterator, last_iterator, result));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_eo_iterator_equal)
+EFL_START_TEST(eina_cxx_eo_iterator_equal)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -56,7 +56,7 @@ START_TEST(eina_cxx_eo_iterator_equal)
 
   ck_assert(std::equal(iterator, last_iterator, result));
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_iterator(TCase *tc)

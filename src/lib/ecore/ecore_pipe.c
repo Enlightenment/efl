@@ -140,6 +140,7 @@ EAPI int
 ecore_pipe_read_fd(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
+   if (!p) return PIPE_FD_INVALID;
    return p->fd_read;
 }
 
@@ -201,6 +202,7 @@ EAPI int
 ecore_pipe_write_fd(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
+   if (!p) return PIPE_FD_INVALID;
    return p->fd_write;
 }
 
@@ -494,7 +496,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
    int64_t timerfdbuf;
    struct epoll_event pollincoming[2];
    double timeout;
-   int ret;
+   int ret = 0;
    int total = 0;
    int time_exit = -1;
    Eina_Bool fd_read_found;
@@ -531,7 +533,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
           }
      }
 
-   while ((ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit)) > 0)
+   while ((p->pollfd != PIPE_FD_INVALID) && (ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit)) > 0)
      {
         fd_read_found  = EINA_FALSE;
         fd_timer_found = EINA_FALSE;
@@ -589,6 +591,11 @@ _ecore_pipe_handler_call(Ecore_Pipe *p,
                          unsigned char *buf,
                          size_t len)
 {
+   // on windows we seem to get a pipe wake with no data. don't pass on
+   // zero data as there is nothing useful to do with it... and it causes
+   // segfaults
+   if ((!buf) || (!len)) return;
+
    void *data = (void*) p->data;
 
    // clear all values of pipe first.

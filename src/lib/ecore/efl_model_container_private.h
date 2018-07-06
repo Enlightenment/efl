@@ -4,17 +4,18 @@
 typedef struct _Child_Property_Data Child_Property_Data;
 struct _Child_Property_Data
 {
-   const Eina_Value_Type            *property_type;
-   Eina_Array                       *property_values;
+   const Eina_Value_Type            *type;
+   Eina_Array                       *values;
 };
 
 typedef struct _Efl_Model_Container_Data Efl_Model_Container_Data;
 struct _Efl_Model_Container_Data
 {
    Eo                               *obj;
-   Eina_Hash                        *property_data;
-   Eina_Array                       *defined_properties;
-   Eina_List                        *children;
+
+   Eina_Hash                        *properties;
+
+   Eina_List                        *childrens;
 };
 
 

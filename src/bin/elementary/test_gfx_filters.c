@@ -247,7 +247,7 @@ _text_resize(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Size2D sz;
 
-   sz = efl_gfx_size_get(ev->object);
+   sz = efl_gfx_entity_size_get(ev->object);
    efl_gfx_size_hint_min_set(ev->object, sz);
 }
 
@@ -296,8 +296,8 @@ _font_size_change(void *data, const Efl_Event *ev)
    const char *font;
 
    text = efl_key_wref_get(win, "text");
-   efl_text_properties_font_get(text, &font, NULL);
-   efl_text_properties_font_set(text, font, elm_spinner_value_get(ev->object));
+   efl_text_font_get(text, &font, NULL);
+   efl_text_font_set(text, font, elm_spinner_value_get(ev->object));
 }
 
 static void
@@ -333,7 +333,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 {
    Eo *win, *box, *box2, *o, *text = NULL, *spinner, *code, *split, *flip, *tb;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Gfx Filter Editor"),
                  efl_ui_win_autodel_set(efl_added, 1));
 
@@ -459,11 +459,11 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
       // Note: No TEXT object with EO APIs
       o = text = evas_object_text_add(evas_object_evas_get(win));
-      efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _text_resize, NULL);
-      efl_text_properties_font_set(o, "Sans:style=Bold", default_font_size);
-      efl_gfx_scale_set(text, elm_config_scale_get());
+      efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_RESIZE, _text_resize, NULL);
+      efl_text_font_set(o, "Sans:style=Bold", default_font_size);
+      efl_gfx_entity_scale_set(text, elm_config_scale_get());
       efl_text_set(o, "EFL");
-      efl_gfx_visible_set(o, 1);
+      efl_gfx_entity_visible_set(o, 1);
       efl_pack(box2, o);
 
       o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
@@ -491,7 +491,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       // Experimental textblock support
       o = tb = evas_object_textblock_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, _textblock_resize, NULL);
-      efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _textblock_resize, NULL);
+      efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_RESIZE, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
       evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=20 color=#FFF wrap=word'");
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(programs); k++)
@@ -500,7 +500,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
         efl_gfx_filter_data_set(o, prg_data[k].name, prg_data[k].value, prg_data[k].exec);
       evas_object_textblock_style_set(o, st);
       evas_object_textblock_text_markup_set(o, tbtxt);
-      efl_gfx_scale_set(o, elm_config_scale_get());
+      efl_gfx_entity_scale_set(o, elm_config_scale_get());
       efl_pack(box2, o);
       evas_object_resize(o, 1, 1);
    }
@@ -534,5 +534,5 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_spinner_value_set(spinner, 1.0);
    _spinner_cb(win, spinner, NULL);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(500,  600));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500,  600));
 }

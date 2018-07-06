@@ -22,7 +22,7 @@ _efl_canvas_scene3d_scene3d_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Canvas3D_
 }
 
 EOLIAN static Evas_Canvas3D_Scene *
-_efl_canvas_scene3d_scene3d_get(Eo *eo_obj, void *pd EINA_UNUSED)
+_efl_canvas_scene3d_scene3d_get(const Eo *eo_obj, void *pd EINA_UNUSED)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    return o->cur->scene;

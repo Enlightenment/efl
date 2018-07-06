@@ -1,4 +1,4 @@
-import efl_ui_direction; // For documentation references
+parse efl_ui_direction;
 
 enum Efl.Orient
 {

@@ -1578,7 +1578,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          target: "elm.text.flip";
       }
       //##//
-      text { "sizer.content";
+      text { "sizer_content";
          scale;
          desc { "default";
             offscale;
@@ -1617,8 +1617,8 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 1;
             aspect: 1.0 1.0;
-            rel1.to: "sizer.content";
-            rel2.to: "sizer.content";
+            rel1.to: "sizer_content";
+            rel2.to: "sizer_content";
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -1639,7 +1639,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/icon_top_text_bottom/default", "elm/
 group { "elm/genlist/tree/icon_top_text_bottom/default";
    inherit: "elm/genlist/item/icon_top_text_bottom/default";
    parts {
-      image { "sizer.content";
+      image { "sizer_content";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 4 4;

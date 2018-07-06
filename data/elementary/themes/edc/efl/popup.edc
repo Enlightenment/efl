@@ -15,7 +15,7 @@ group { "efl/popup";
             image.normal: "rounded_square.png";
          }
       }
-      swallow { "elm.swallow.content";
+      swallow { "efl.content";
          desc { "default";
             rel.to: "base";
          }
@@ -28,7 +28,7 @@ group { "efl/popup_alert";
    alias: "efl/popup_alert_text";
    images.image: "rounded_square.png" COMP;
    parts {
-      alias: "title" "elm.text.title";
+      alias: "title" "efl.text.title";
       image { "bg";
          desc { "default";
             min: 100 100;
@@ -57,7 +57,7 @@ group { "efl/popup_alert";
             min: 0 20;
          }
       }
-      textblock { "elm.text.title";
+      textblock { "efl.text.title";
          scale;
          desc { "default";
             fixed: 1 1;
@@ -72,7 +72,7 @@ group { "efl/popup_alert";
             vis;
          }
       }
-      swallow { "buttons";
+      swallow { "efl.buttons";
          desc { "default";
             fixed: 0 1;
             rel.to: "base";
@@ -85,12 +85,12 @@ group { "efl/popup_alert";
             min: 0 30;
          }
       }
-      swallow { "elm.swallow.content";
+      swallow { "efl.content";
          desc { "default";
             rel1.to_x: "base";
             rel1.to_y: "title_bg";
             rel2.to_x: "base";
-            rel2.to_y: "buttons";
+            rel2.to_y: "efl.buttons";
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 0.0;
          }
@@ -98,15 +98,15 @@ group { "efl/popup_alert";
    }
    programs {
       program {
-         signal: "elm,title,show"; source: "elm";
+         signal: "efl,title,show"; source: "efl";
          action: STATE_SET "title_visible" 0.0;
          target: "title_bg";
-         target: "elm.text.title";
+         target: "efl.text.title";
       }
       program {
-         signal: "elm,buttons,show"; source: "elm";
+         signal: "efl,buttons,show"; source: "efl";
          action: STATE_SET "button_visible" 0.0;
-         target: "buttons";
+         target: "efl.buttons";
       }
    }
 }
@@ -125,17 +125,17 @@ group { "efl/popup/backwall";
          desc { "default";
             color: 0 0 0 64;
          }
-         desc { "show_image";
+         desc { "content_visible";
             inherit: "default";
             hid;
          }
       }
-      swallow { "elm.swallow.image";
+      swallow { "efl.content";
          desc { "default";
             rel.to: "base";
             hid;
          }
-         desc { "show_image";
+         desc { "content_visible";
             inherit: "default";
             vis;
          }
@@ -150,20 +150,20 @@ group { "efl/popup/backwall";
 
    programs {
       program {
-         signal: "elm,state,image,visible"; source: "elm";
-         action: STATE_SET "show_image" 0.0;
+         signal: "efl,state,content,set"; source: "efl";
+         action: STATE_SET "content_visible" 0.0;
          target: "base";
-         target: "elm.swallow.image";
+         target: "efl.content";
       }
       program {
-         signal: "elm,state,image,hidden"; source: "elm";
+         signal: "efl,state,content,unset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "elm.swallow.image";
+         target: "efl.content";
       }
       program {
          signal: "mouse,clicked,1"; source: "block";
-         action: SIGNAL_EMIT "elm,action,clicked" "elm";
+         action: SIGNAL_EMIT "efl,action,clicked" "efl";
       }
    }
 }
@@ -172,7 +172,7 @@ group { "efl/popup_alert/button_layout1";
    alias: "efl/popup_alert_scroll/button_layout1";
    alias: "efl/popup_alert_text/button_layout1";
    parts {
-      swallow { "elm.swallow.button1";
+      swallow { "efl.button1";
       }
    }
 }
@@ -188,13 +188,13 @@ group { "efl/popup_alert/button_layout2";
             min: 5 5;
          }
       }
-      swallow { "elm.swallow.button1";
+      swallow { "efl.button1";
          desc { "default";
             rel2.to_x: "div1";
             rel2.relative: 0.0 1.0;
          }
       }
-      swallow { "elm.swallow.button2";
+      swallow { "efl.button2";
          desc { "default";
             rel1.to_x: "div1";
             rel1.relative: 1.0 0.0;
@@ -221,13 +221,13 @@ group { "efl/popup_alert/button_layout3";
             min: 5 5;
          }
       }
-      swallow { "elm.swallow.button1";
+      swallow { "efl.button1";
          desc { "default";
             rel2.to_x: "div1";
             rel2.relative: 0.0 1.0;
          }
       }
-      swallow { "elm.swallow.button2";
+      swallow { "efl.button2";
          desc { "default";
             rel1.to_x: "div1";
             rel2.to_x: "div2";
@@ -235,7 +235,7 @@ group { "efl/popup_alert/button_layout3";
             rel2.relative: 0.0 1.0;
          }
       }
-      swallow { "elm.swallow.button3";
+      swallow { "efl.button3";
          desc { "default";
             rel1.to_x: "div2";
             rel1.relative: 1.0 0.0;
@@ -251,8 +251,26 @@ group { "efl/popup_alert/button";
 }
 
 group { "efl/popup_alert_scroll/scroller";
-   inherit: "elm/scroller/base/popup/no_inset_shadow";
+   inherit: "efl/scroller";
    alias: "efl/popup_alert_text/scroller";
+   parts {
+       swallow { "efl.content";
+         desc { "default";
+            rel1.offset: 0 0;
+            rel2.offset: 0 0;
+         }
+      }
+      spacer { "inset";
+         desc { "default";
+            hid;
+         }
+      }
+      spacer { "shadow";
+         desc { "default";
+            hid;
+         }
+      }
+   }
 }
 
 group { "efl/popup_alert_text/text";

@@ -106,7 +106,11 @@ evas_layer_free_objects(Evas_Layer *lay)
 
    EINA_INLIST_FREE(lay->objects, obj)
      {
-        evas_object_free(obj->object, EINA_FALSE);
+        if (obj->object == NULL)
+          {
+             ERR("Object still present in the canvas stack, but without a valid object pointer (%s@%p).", obj->type, obj);
+          }
+        evas_object_free(obj, EINA_FALSE);
      }
 }
 
@@ -268,7 +272,7 @@ evas_object_layer_get(const Evas_Object *obj)
 }
 
 EOLIAN short
-_efl_canvas_object_efl_gfx_stack_layer_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_stack_layer_get(const Eo *eo_obj EINA_UNUSED,
                                      Evas_Object_Protected_Data *obj)
 {
    if (obj->smart.parent)

@@ -1,4 +1,4 @@
-class Efl.Net.Dialer.Tcp (Efl.Net.Socket.Tcp, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Tcp (Efl.Net.Socket_Tcp, Efl.Net.Dialer) {
     [[Connects to a remote TCP server.
 
       If the proxy is NULL (default), then the system proxy will be
@@ -24,6 +24,7 @@ class Efl.Net.Dialer.Tcp (Efl.Net.Socket.Tcp, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }

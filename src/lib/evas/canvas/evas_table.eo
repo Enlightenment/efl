@@ -86,20 +86,6 @@ class Evas.Table (Efl.Canvas.Group)
             vertical: int; [[Vertical padding]]
          }
       }
-      @property mirrored {
-         [[Control the mirrored mode of the table. In mirrored mode, the table items go
-          from right to left instead of left to right. That is, 1,1 is top right, not
-          top left.
-
-          @since 1.1]]
-         set {
-         }
-         get {
-         }
-         values {
-            mirrored: bool; [[$true if mirrored, $false otherwise]]
-         }
-      }
       @property col_row_size {
          get {
             [[Get the number of columns and rows this table takes.
@@ -217,8 +203,9 @@ class Evas.Table (Efl.Canvas.Group)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.size { set; }
-      Efl.Gfx.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.position { set; }
       Efl.Canvas.Group.group_calculate;
+      Efl.Ui.Base.mirrored { get; set; }
    }
 }

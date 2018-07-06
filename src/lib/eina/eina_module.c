@@ -565,7 +565,7 @@ EAPI void eina_module_list_load(Eina_Array *array)
    Eina_Module *m;
    unsigned int i;
 
-   EINA_SAFETY_ON_NULL_RETURN(array);
+   if (!array) return;
    DBG("array %p, count %u", array, array->count);
    EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
      {
@@ -580,7 +580,7 @@ EAPI void eina_module_list_unload(Eina_Array *array)
    Eina_Module *m;
    unsigned int i;
 
-   EINA_SAFETY_ON_NULL_RETURN(array);
+   if (!array) return;
    DBG("array %p, count %u", array, array->count);
    EINA_ARRAY_ITER_NEXT(array, i, m, iterator)
      eina_module_unload(m);

@@ -175,14 +175,14 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
         timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
         if (timerfd >= 0) eina_file_close_on_exec(timerfd, EINA_TRUE);
      }
-   if (timerfd < 0)
+   if ((timerfd < 0) && (pollfd >= 0))
      {
         close(pollfd);
         pollfd = -1;
      }
 
-#define INPUT_TIMER_CONTROL ((void *) ((unsigned long) 0x11))
-#define INPUT_TIMER_TIMERFD ((void *) ((unsigned long) 0x22))
+#define INPUT_TIMER_CONTROL (&(pollincoming[0]))
+#define INPUT_TIMER_TIMERFD (&(pollincoming[1]))
 
    if (pollfd >= 0)
      {
@@ -989,7 +989,7 @@ _ecore_animator_run(void *data)
           pos = 0.0;
      }
    run_ret = animator->run_func(animator->run_data, pos);
-   if (t >= (animator->start + animator->run) && (pos >= 1.0)) run_ret = EINA_FALSE;
+   if (eina_dbl_exact(pos, 1.0)) run_ret = EINA_FALSE;
    return run_ret;
 }
 

@@ -1119,17 +1119,7 @@ eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a, const Eina_M
         return;
      }
 
-   MATRIX_XX(out) = MATRIX_XX(mat_b) * MATRIX_XX(mat_a) + MATRIX_YX(mat_b) * MATRIX_XY(mat_a) + MATRIX_ZX(mat_b) * MATRIX_XZ(mat_a);
-   MATRIX_XY(out) = MATRIX_XY(mat_b) * MATRIX_XX(mat_a) + MATRIX_YY(mat_b) * MATRIX_XY(mat_a) + MATRIX_ZY(mat_b) * MATRIX_XZ(mat_a);
-   MATRIX_XZ(out) = MATRIX_XZ(mat_b) * MATRIX_XX(mat_a) + MATRIX_YZ(mat_b) * MATRIX_XY(mat_a) + MATRIX_ZZ(mat_b) * MATRIX_XZ(mat_a);
-
-   MATRIX_YX(out) = MATRIX_XX(mat_b) * MATRIX_YX(mat_a) + MATRIX_YX(mat_b) * MATRIX_YY(mat_a) + MATRIX_ZX(mat_b) * MATRIX_YZ(mat_a);
-   MATRIX_YY(out) = MATRIX_XY(mat_b) * MATRIX_YX(mat_a) + MATRIX_YY(mat_b) * MATRIX_YY(mat_a) + MATRIX_ZY(mat_b) * MATRIX_YZ(mat_a);
-   MATRIX_YZ(out) = MATRIX_XZ(mat_b) * MATRIX_YX(mat_a) + MATRIX_YZ(mat_b) * MATRIX_YY(mat_a) + MATRIX_ZZ(mat_b) * MATRIX_YZ(mat_a);
-
-   MATRIX_ZX(out) = MATRIX_XX(mat_b) * MATRIX_ZX(mat_a) + MATRIX_YX(mat_b) * MATRIX_ZY(mat_a) + MATRIX_ZX(mat_b) * MATRIX_ZZ(mat_a);
-   MATRIX_ZY(out) = MATRIX_XY(mat_b) * MATRIX_ZX(mat_a) + MATRIX_YY(mat_b) * MATRIX_ZY(mat_a) + MATRIX_ZY(mat_b) * MATRIX_ZZ(mat_a);
-   MATRIX_ZZ(out) = MATRIX_XZ(mat_b) * MATRIX_ZX(mat_a) + MATRIX_YZ(mat_b) * MATRIX_ZY(mat_a) + MATRIX_ZZ(mat_b) * MATRIX_ZZ(mat_a);
+   eina_matrix3_compose(mat_a, mat_b, out);
 }
 
 EAPI void

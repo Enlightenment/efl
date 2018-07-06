@@ -1,4 +1,4 @@
-import elm_genlist_item;
+import elm_general;
 
 class Elm.View.List (Efl.Object)
 {
@@ -34,34 +34,27 @@ class Elm.View.List (Efl.Object)
                  @in part: string; [[Edje's theme part]]
              }
         }
-        model_set {
-             [[Set model
+        @property model {
+	     set {
+                [[Set model
 
-               @since 1.11
-             ]]
-             params {
-                 @in model: Efl.Model; [[New Emodel to set]]
+                  @since 1.11
+                ]]
              }
-        }
-        model_unset {
-             [[Unset model
-
-               @since 1.11
-             ]]
-        }
-        model_get {
+             get {
              [[Get model
 
                @since 1.11
              ]]
-             params {
-                 @out model: Efl.Model; [[Returned Emodel]]
+             }
+             values {
+                 model: Efl.Model; [[Efl.Model to set]]
              }
         }
     }
     /* For some reason the following comment after the event doesn't work: Event dispatch when a model is selected */
     events {
-        model,selected; [[Called when model was selected]]
+        model,selected: Efl.Object; [[Called when model was selected]]
     }
     implements {
         Efl.Object.destructor;

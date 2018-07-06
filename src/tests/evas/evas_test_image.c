@@ -38,10 +38,6 @@ static const char *exts[] = {
 #ifdef BUILD_LOADER_WEBP
   ,"webp"
 #endif
-#ifdef BUILD_LOADER_JPEG
-  ,"jpeg"
-  ,"jpg"
-#endif
 #ifdef BUILD_LOADER_TGV
   ,"tgv"
 #endif
@@ -49,9 +45,16 @@ static const char *exts[] = {
   ,"jp2"
   ,"j2k"
 #endif
+/* ADD NEW FORMATS HERE
+ * JPEG MUST BE LAST
+ */
+#ifdef BUILD_LOADER_JPEG
+  ,"jpeg"
+  ,"jpg"
+#endif
 };
 
-START_TEST(evas_object_image_loader)
+EFL_START_TEST(evas_object_image_loader)
 {
    Evas *e = _setup_evas();
    Evas_Object *o;
@@ -87,9 +90,8 @@ START_TEST(evas_object_image_loader)
    evas_object_del(o);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Orientation_Test_Res Orientation_Test_Res;
 struct _Orientation_Test_Res {
@@ -236,7 +238,7 @@ static int _compare_img_transverse(const uint32_t *d1, const uint32_t *d2, int w
    return 0;
 }
 
-START_TEST(evas_object_image_loader_orientation)
+EFL_START_TEST(evas_object_image_loader_orientation)
 {
    Evas *e = _setup_evas();
    Evas_Object *orig, *rot;
@@ -282,11 +284,10 @@ START_TEST(evas_object_image_loader_orientation)
    evas_object_del(rot);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_object_image_orient)
+EFL_START_TEST(evas_object_image_orient)
 {
    Evas *e = _setup_evas();
    Evas_Object *orig;
@@ -332,12 +333,11 @@ START_TEST(evas_object_image_orient)
    evas_object_del(orig);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef BUILD_LOADER_TGV
-START_TEST(evas_object_image_tgv_loader_data)
+EFL_START_TEST(evas_object_image_tgv_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -390,85 +390,78 @@ START_TEST(evas_object_image_tgv_loader_data)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(evas_object_image_all_loader_data)
+EFL_START_TEST(evas_object_image_all_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
    Eina_Strbuf *str;
-   unsigned int i;
+   struct stat st;
+   int w, h, s, r_w, r_h, r_s;
+   const uint32_t *d, *r_d;
+   Evas_Colorspace c, r_c;
 
    obj = evas_object_image_add(e);
    ref = evas_object_image_add(e);
    str = eina_strbuf_new();
 
-   for (i = 0; i < sizeof (exts) / sizeof (exts[0]); i++)
+   eina_strbuf_reset(str);
+
+   eina_strbuf_append_printf(str, "%s/Pic4-%s.png", TESTS_IMG_DIR, exts[_i]);
+
+   if (stat(eina_strbuf_string_get(str), &st) != 0) goto end;
+
+   evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
+   fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
+   evas_object_image_size_get(obj, &w, &h);
+   s = evas_object_image_stride_get(obj);
+   c = evas_object_image_colorspace_get(obj);
+   d = evas_object_image_data_get(obj, EINA_FALSE);
+
+   eina_strbuf_reset(str);
+
+   eina_strbuf_append_printf(str, "%s/Pic4.%s", TESTS_IMG_DIR, exts[_i]);
+   evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
+   fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
+   evas_object_image_size_get(ref, &r_w, &r_h);
+   r_s = evas_object_image_stride_get(ref);
+   r_c = evas_object_image_colorspace_get(ref);
+   r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+   fail_if(w != r_w || h != r_h);
+   fail_if(s != r_s);
+   fail_if(c != r_c);
+   fail_if(w*4 != s);
+   if (strcmp(exts[_i], "jpeg") == 0 || strcmp(exts[_i], "jpg") == 0)
      {
-        struct stat st;
-        int w, h, s, r_w, r_h, r_s;
-        const uint32_t *d, *r_d;
-        Evas_Colorspace c, r_c;
-
-        eina_strbuf_reset(str);
-
-        eina_strbuf_append_printf(str, "%s/Pic4-%s.png", TESTS_IMG_DIR, exts[i]);
-
-        if (stat(eina_strbuf_string_get(str), &st) != 0) continue;
-
-        evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
-        fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
-        evas_object_image_size_get(obj, &w, &h);
-        s = evas_object_image_stride_get(obj);
-        c = evas_object_image_colorspace_get(obj);
-        d = evas_object_image_data_get(obj, EINA_FALSE);
-
-        eina_strbuf_reset(str);
-
-        eina_strbuf_append_printf(str, "%s/Pic4.%s", TESTS_IMG_DIR, exts[i]);
-        evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
-        fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
-        evas_object_image_size_get(ref, &r_w, &r_h);
-        r_s = evas_object_image_stride_get(ref);
-        r_c = evas_object_image_colorspace_get(ref);
-        r_d = evas_object_image_data_get(ref, EINA_FALSE);
-
-        fail_if(w != r_w || h != r_h);
-        fail_if(s != r_s);
-        fail_if(c != r_c);
-        fail_if(w*4 != s);
-        if (strcmp(exts[i], "jpeg") == 0 || strcmp(exts[i], "jpg") == 0)
+        //jpeg norm allows a variation of 1 bit per component
+        for (int j = 0; j < s * h; j++)
           {
-             //jpeg norm allows a variation of 1 bit per component
-             for (int j = 0; j < s * h; j++)
-               {
-                  fail_if(abs(((char*)d)[j] - ((char*)r_d)[j]) > 1);
-               }
-          }
-        else
-          {
-             fail_if(memcmp(d, r_d, w * h * 4));
+             fail_if(abs(((char*)d)[j] - ((char*)r_d)[j]) > 1);
           }
      }
-
+   else
+     {
+        fail_if(memcmp(d, r_d, w * h * 4));
+     }
+end:
    evas_object_del(obj);
    evas_object_del(ref);
 
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 const char *buggy[] = {
   "BMP301K"
 };
 
-START_TEST(evas_object_image_buggy)
+EFL_START_TEST(evas_object_image_buggy)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -521,9 +514,8 @@ START_TEST(evas_object_image_buggy)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void check_rotate_region(Evas_Image_Orient orientation, int *r_x, int *r_y, int *r_w, int *r_h, int w, int h)
 {
@@ -579,7 +571,7 @@ static void check_rotate_region(Evas_Image_Orient orientation, int *r_x, int *r_
 }
 
 
-START_TEST(evas_object_image_partially_load_orientation)
+EFL_START_TEST(evas_object_image_partially_load_orientation)
 {
    static const Orientation_Test_Res res[] = {
      { TESTS_IMG_DIR"/Light_exif.jpg", "Original", EVAS_IMAGE_ORIENT_NONE, _compare_img },
@@ -632,11 +624,10 @@ START_TEST(evas_object_image_partially_load_orientation)
    evas_object_del(orig);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evas_object_image_defaults)
+EFL_START_TEST(evas_object_image_defaults)
 {
    Evas *e = _setup_evas();
    Evas_Object *o;
@@ -659,12 +650,11 @@ START_TEST(evas_object_image_defaults)
    efl_del(o);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // FIXME: belongs to another file
-START_TEST(evas_object_image_map_unmap)
+EFL_START_TEST(evas_object_image_map_unmap)
 {
    Evas *e = _setup_evas();
    Evas_Object *o, *o2;
@@ -823,12 +813,11 @@ START_TEST(evas_object_image_map_unmap)
    // TODO: test more color conversions
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #if BUILD_LOADER_JP2K
-START_TEST(evas_object_image_jp2k_loader_data)
+EFL_START_TEST(evas_object_image_jp2k_loader_data)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj, *ref;
@@ -875,9 +864,8 @@ START_TEST(evas_object_image_jp2k_loader_data)
    eina_strbuf_free(str);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void evas_test_image_object(TCase *tc)
@@ -893,9 +881,25 @@ void evas_test_image_object(TCase *tc)
 # if BUILD_LOADER_JP2K
    tcase_add_test(tc, evas_object_image_jp2k_loader_data);
 # endif
-   tcase_add_test(tc, evas_object_image_all_loader_data);
+#ifdef BUILD_LOADER_JPEG
+   /* jpeg takes forever from manual value comparisons */
+   tcase_add_loop_test(tc, evas_object_image_all_loader_data, 0, EINA_C_ARRAY_LENGTH(exts) - 2);
+#else
+   tcase_add_loop_test(tc, evas_object_image_all_loader_data, 0, EINA_C_ARRAY_LENGTH(exts));
+#endif
    tcase_add_test(tc, evas_object_image_buggy);
    tcase_add_test(tc, evas_object_image_map_unmap);
 #endif
    tcase_add_test(tc, evas_object_image_partially_load_orientation);
+}
+
+
+void evas_test_image_object2(TCase *tc)
+{
+#if BUILD_LOADER_PNG
+#ifdef BUILD_LOADER_JPEG
+   /* jpeg takes forever from manual value comparisons */
+   tcase_add_loop_test(tc, evas_object_image_all_loader_data, EINA_C_ARRAY_LENGTH(exts) - 2, EINA_C_ARRAY_LENGTH(exts));
+#endif
+#endif
 }

@@ -6,6 +6,7 @@
 
 #include "eet_suite.h"
 #include "../efl_check.h"
+#include <Eet.h>
 
 char argv0[PATH_MAX];
 
@@ -25,6 +26,16 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(eet)
+{
+   ck_assert_int_eq(eet_init(), 1);
+}
+
+SUITE_SHUTDOWN(eet)
+{
+   ck_assert_int_eq(eet_shutdown(), 0);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -40,7 +51,7 @@ main(int argc, char *argv[])
    memcpy(argv0, argv[0], strlen(argv[0]) + 1);
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eet", etc);
+                                           "Eet", etc, SUITE_INIT_FN(eet), SUITE_SHUTDOWN_FN(eet));
 
    return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

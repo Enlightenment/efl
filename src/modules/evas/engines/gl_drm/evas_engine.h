@@ -28,6 +28,7 @@
 
 extern int _evas_engine_gl_drm_log_dom;
 extern int _extn_have_buffer_age;
+extern int _extn_have_context_priority;
 
 # ifdef ERR
 #  undef ERR
@@ -64,6 +65,9 @@ extern Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize;
 extern Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
+extern Evas_Gl_Symbols glsym_evas_gl_symbols;
+extern void * (*glsym_eglGetProcAddress) (const char *a);
+extern Evas_Gl_Extension_String_Check _ckext;
 
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
@@ -138,7 +142,7 @@ void *evas_outbuf_egl_display_get(Outbuf *ob);
 Context_3D *evas_outbuf_gl_context_new(Outbuf *ob);
 void evas_outbuf_gl_context_use(Context_3D *ctx);
 
-void eng_gl_symbols(EGLDisplay edsp);
+void eng_egl_symbols(EGLDisplay edsp);
 
 static inline Eina_Bool
 _re_wincheck(Outbuf *ob)

@@ -1,0 +1,225 @@
+import eina_types;
+import efl_net_control_access_point;
+import efl_net_control_technology;
+
+enum Efl.Net.Control.State {
+    [[Provides the global network connectivity state.
+
+      For more details, use @Efl.Net.Control.Manager access points and
+      their property state.
+
+      @since 1.19
+    ]]
+    offline, [[No access point is connected.]]
+    local, [[At least one access point is connected and the internet connection hasn't been verified.]]
+    online, [[At least one access point is connected and the internet has been verified]]
+}
+
+enum Efl.Net.Control.Agent_Request_Input_Field {
+    [[Bitwise-able fields requested to the agent.
+
+      @since 1.19
+    ]]
+    name = (1 << 0), [[Used for hidden WiFi access points. If SSID is present, this is an alternative to that.]]
+    ssid = (1 << 1), [[Used for hidden WiFi access points. If name is present, this is an alternative to that.]]
+    username = (1 << 2), [[Identity or username requested]]
+    passphrase = (1 << 3), [[Password or passphrase requested]]
+    wps = (1 << 4), [[Use WPS authentication. If passphrase is present, this is an alternative to that.]]
+}
+
+struct Efl.Net.Control.Agent_Request_Input_Information {
+    [[Name-value information pair provided to the agent.
+
+      @since 1.19
+    ]]
+    name: string; [[The information name, such as PreviousPassphrase, Host, Name...]]
+    value: string; [[The contents of the information]]
+}
+
+struct Efl.Net.Control.Agent_Request_Input {
+    [[Requests input to the agent.
+
+      @since 1.19
+    ]]
+    access_point: Efl.Net.Control.Access_Point; [[The access point which triggered this request.]]
+    fields: Efl.Net.Control.Agent_Request_Input_Field; [[Bitwise OR of fields present in this request.]]
+    passphrase_type: string; [[Extra detail for the passphrase field, such as wep, psk, response (IEEE802.X GTC/OTP), string...]]
+    informational: list<ptr(Efl.Net.Control.Agent_Request_Input_Information)>; [[Such as the previous passphrase, VPN host]]
+}
+
+struct Efl.Net.Control.Agent_Error {
+    [[Reports error to the agent.
+
+      @since 1.19
+    ]]
+    access_point: Efl.Net.Control.Access_Point; [[The access point that triggered this error.]]
+    message: string; [[The error message.]]
+}
+
+struct Efl.Net.Control.Agent_Browser_Url {
+    [[Reports to agent that it should open a browser at a given URL.
+
+      @since 1.19
+    ]]
+    access_point: Efl.Net.Control.Access_Point; [[The access point that triggered this request.]]
+    url: string; [[The URL to point the browser at.]]
+}
+
+class Efl.Net.Control.Manager (Efl.Loop_Consumer) {
+    [[Controls network connectivity.
+
+      This class and its child objects are only useful to implement
+      control of the network connectivity. If your application only
+      needs to request access to the network, use
+      \@Efl.Net.Session instead.
+
+      Network connectivity is defined on top of technologies that
+      provide access points. A technology can be "ethernet", "wifi",
+      "bluetooth" or something else. Ethernet will provide a single
+      access point, while "wifi" will expose zero or more access
+      points that can come and go.
+
+      Users willing to use access points are expected to monitor
+      "access_point,add" event to know when access points are
+      added. To know when they were deleted, "access_point,del" or an
+      @Efl.Net.Control.Access_Point "del" event. Finally
+      "access_points,changed" is relative to additions, deletions and
+      reordering of access point due changes in their priorities.
+
+      The backend system is responsible for remembering connection details
+      such as passphrase, last connected access point and
+      priority. The user is NOT supposed to do that.
+
+      For ease of use @.state determines if at least one access point is
+      online (verified connectivity), local (connected but unverified)
+      or offline.
+
+      For safety reasons all radio transmissions may be disabled with
+      @.radios_offline property. This is usually called "airplane
+      mode" on some platforms.
+
+      Some platforms may not implement the backend for this class, in
+      which case the system will report @.state as permanently "online"
+      (@Efl.Net.Control.State.online) and iterators for
+      @.access_points and @.technologies will be empty (they will be
+      returned but won't contain any items).
+
+
+      @since 1.19
+    ]]
+    events {
+        access_point,add: Efl.Net.Control.Access_Point; [[The given access point has been added]]
+        access_point,del: Efl.Net.Control.Access_Point; [[The given access point will be deleted]]
+        access_points,changed: void; [[Access points were added, deleted or reordered.]]
+        technology,add: Efl.Net.Control.Technology; [[The given technology has been added]]
+        technology,del: Efl.Net.Control.Technology; [[The given technology will be deleted]]
+        radios_offline,changed: void; [[Property @.radios_offline changed]]
+        state,changed: void; [[Property @.state changed]]
+
+        agent_released: void; [[Notifies we're not the agent anymore]]
+        agent_error: Efl.Net.Control.Agent_Error; [[Requires the error to be reported to the user]]
+        agent_browser_url: Efl.Net.Control.Agent_Browser_Url; [[Requires the user to visit a web page]]
+        agent_request_input: Efl.Net.Control.Agent_Request_Input; [[Requires the user to enter information in order to proceed, such as hidden SSID, passphrase, etc. After the user enters the information, reply by calling @.agent_reply]]
+    }
+
+    methods {
+        @property radios_offline {
+            [[If $true disable all network technologies that use radio transmission, such as bluetooth and wifi. If $false, allows radio to be used.]]
+            get { }
+            set { }
+            values {
+                radios_offline: bool; [[$true if all radios are offline, $false otherwise]]
+            }
+        }
+
+        @property state {
+            [[Summary of network connectivity.
+
+              - offline means no connectivity;
+
+              - local means local connectivity, that is, the access
+                point is connected but couldn't reach the internet;
+
+              - online means verified connectivity.
+
+              \@note if there is no backend for this class, then state
+              will always be online, however @.access_points and
+              @.technologies will be empty iterators (valid pointers
+              but no items in them).
+            ]]
+            get { }
+            values {
+                state: Efl.Net.Control.State; [[Network state]]
+            }
+        }
+
+        @property access_points {
+            [[The iterator of current access points.
+
+              The iterator is valid only before the function returns
+              to the main loop. By then, if the events
+              "access_point,add" or "access_point,del" are emitted,
+              the iterator will become invalid.
+            ]]
+            get { }
+            values {
+                access_points: iterator<Efl.Net.Control.Access_Point> @owned; [[Iterator of current access points]]
+            }
+        }
+
+        @property technologies {
+            [[The iterator of current technologies.
+
+              The iterator is valid only before the function returns
+              to the main loop. By then, if the events
+              "technology,add" or "technology,del" are emitted,
+              the iterator will become invalid.
+            ]]
+            get { }
+            values {
+                technologies: iterator<Efl.Net.Control.Technology> @owned; [[Iterator of current technologies]]
+            }
+        }
+
+        @property agent_enabled {
+            [[The agent is responsible for user interaction.
+
+              When enabled, the local process will become the agent
+              for user interaction, such as requesting passphrases,
+              asking the user to open a browser to perform
+              web-authentication and report connection errors.
+
+              There can be only one agent in the system at any
+              time: Registering one will unregister the other.
+              Special permissions may be required to become an agent.
+
+              A useful agent should monitor "agent_error",
+              "agent_browser_url" and "agent_request_input"
+              events. When input is requested, reply using
+              @.agent_reply.
+            ]]
+            get { }
+            set { }
+            values {
+                agent_enabled: bool; [[$true if to become the agent, $false otherwise]]
+            }
+        }
+
+        agent_reply {
+            [[If event "agent_request_input" was emitted, this will reply with the requested data]]
+            params {
+                name: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.name was present, this should contain the network name or the 'ssid' parameter should be used.]]
+                @cref ssid: Eina.Slice @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.ssid was present, this should contain the network SSID or the 'name' parameter should be used.]]
+                username: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.username was present, this should contain the identity or username]]
+                passphrase: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.passphrase was present, this should contain the password or passphrase, more details on how it should be interpreted was given in Efl.Net.Control.Agent_Request_Input.passphrase_type.]]
+                wps: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.wps was present, this should contain the WPS PIN or an empty string "" to use the WPS push button instead.]]
+            }
+        }
+    }
+
+    implements {
+        Efl.Object.destructor;
+        Efl.Object.constructor;
+        Efl.Object.finalize;
+    }
+}

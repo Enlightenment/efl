@@ -1,7 +1,7 @@
 import efl_input_types;
 
-class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
-                   Efl.Loop.Consumer, Efl.Canvas.Pointer)
+class Evas.Canvas (Efl.Object, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
+                   Efl.Loop_Consumer, Efl.Canvas.Pointer)
 {
    [[Evas canvas class]]
    legacy_prefix: evas;
@@ -269,26 +269,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             y: int; [[The pointer to an integer to be filled in.]]
          }
       }
-      @property image_max_size {
-         get {
-            [[Get the maximum image size evas can possibly handle.
-
-              This function returns the largest image or surface size that
-              evas can handle in pixels, and if there is one, returns $true.
-              It returns $false if no extra constraint on maximum image
-              size exists. You still should check the return values of
-              $maxw and $maxh as there may still be a limit, just a
-              much higher one.
-
-              @since 1.1
-            ]]
-            return: bool; [[$true if it can handle the maximum image size, $false otherwise]]
-         }
-         values {
-            maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
-            maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
-         }
-      }
       @property object_bottom {
          get {
             [[Get the lowest (stacked) Evas object on the canvas $e.
@@ -460,35 +440,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             @in keyname: string @nonull; [[The name of the modifier to disable.]]
          }
       }
-      objects_at_xy_get @const {
-         [[Retrieve a list of Evas objects lying over a given position in
-           a canvas.
-
-           This function will traverse all the layers of the given canvas,
-           from top to bottom, querying for objects with areas covering the
-           given position. The user can remove from query objects which are
-           hidden and/or which are set to pass events.
-
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
-         ]]
-         return: list<Efl.Canvas.Object> @warn_unused; [[
-            The list of Evas objects that are over the given position in $e.
-         ]]
-         params {
-            @in x: int; [[The horizontal coordinate of the position.]]
-            @in y: int; [[The vertical coordinate of the position.]]
-            @in include_pass_events_objects: bool; [[
-               Boolean flag to include or not objects which pass events
-               in this calculation.
-            ]]
-            @in include_hidden_objects: bool; [[
-               Boolean flag to include or not hidden objects in this
-               calculation.
-            ]]
-         }
-      }
       render_async {
          [[Render the given Evas canvas asynchronously.
 
@@ -585,33 +536,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          [[Force the given evas and associated engine to flush its font cache.]]
 
       }
-      object_top_at_xy_get @const {
-         [[Retrieve the Evas object stacked at the top of a given position
-           in a canvas.
-
-           This function will traverse all the layers of the given canvas,
-           from top to bottom, querying for objects with areas covering the
-           given position. The user can remove from the query
-           objects which are hidden and/or which are set to pass events.
-
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
-         ]]
-         return: Efl.Canvas.Object @warn_unused; [[The Evas object that is over all other objects at the given position.]]
-         params {
-            @in x: int; [[The horizontal coordinate of the position.]]
-            @in y: int; [[The vertical coordinate of the position.]]
-            @in include_pass_events_objects: bool; [[
-               Boolean flag to include or not objects which pass events
-               in this calculation.
-            ]]
-            @in include_hidden_objects: bool; [[
-               Boolean flag to include or not hidden objects in this
-               calculation.
-            ]]
-         }
-      }
       key_modifier_on {
          [[Enables or turns on programmatically the modifier key with name
            $keyname for the default seat.
@@ -669,18 +593,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             after you're done.
          ]]
       }
-      objects_in_rectangle_get @const {
-      	 [[Get all objects in the given rectangle]]
-         return: list<Efl.Canvas.Object> @warn_unused; [[List of objects]]
-         params {
-            @in x: int; [[X coordinate]]
-            @in y: int; [[Y coordinate]]
-            @in w: int; [[Width]]
-            @in h: int; [[Height]]
-            @in include_pass_events_objects: bool; [[$true if the list should include objects which pass events]]
-            @in include_hidden_objects: bool; [[$true if the list should include hidden objects]]
-         }
-      }
       object_name_find @const {
          [[Retrieves the object on the given evas with the given name.
 
@@ -708,20 +620,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       }
       font_path_clear {
          [[Removes all font paths loaded into memory for the given evas.]]
-      }
-      smart_objects_calculate {
-         [[Call user-provided $calculate smart functions and unset the
-           flag signalling that the object needs to get recalculated to
-           all smart objects in the canvas.
-         ]]
-      }
-      @property smart_objects_calculating {
-         get {
-            [[Get if the canvas is currently calculating smart objects.]]
-         }
-         values {
-            calculating: bool; [[$true if currently calculating smart objects.]]
-         }
       }
       /* FIXME: The below function is only for efl.ui.win */
       touch_point_list_nth_xy_get {
@@ -952,45 +850,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            @.render_idle_flush might discard too.
          ]]
       }
-      object_top_in_rectangle_get @const {
-         [[Retrieve the Evas object stacked at the top of a given
-           rectangular region in a canvas
-
-           This function will traverse all the layers of the given canvas,
-           from top to bottom, querying for objects with areas overlapping
-           with the given rectangular region inside $e. The user can remove
-           from the query objects which are hidden and/or which are set to
-           pass events.
-
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
-         ]]
-         return: Efl.Canvas.Object @warn_unused; [[
-            The Evas object that is over all other objects at the given
-            rectangular region.
-         ]]
-         params {
-            @in x: int; [[
-               The top left corner's horizontal coordinate for the
-               rectangular region.
-            ]]
-            @in y: int; [[
-               The top left corner's vertical coordinate for the
-               rectangular region.
-            ]]
-            @in w: int; [[The width of the rectangular region.]]
-            @in h: int; [[The height of the rectangular region.]]
-            @in include_pass_events_objects: bool; [[
-               Boolean flag to include or not objects which pass events
-               in this calculation.
-            ]]
-            @in include_hidden_objects: bool; [[
-               Boolean flag to include or not hidden objects in this
-               calculation.
-            ]]
-         }
-      }
       render {
          [[Force renderization of the given canvas.]]
 
@@ -1089,7 +948,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          ]]
          get {}
          keys {
-            type: Efl.Input.Device.Type; [[The class of the default device to fetch.]]
+            type: Efl.Input.Device_Type; [[The class of the default device to fetch.]]
          }
          values {
             seat: Efl.Input.Device; [[The default device or $null on error.]]
@@ -1124,13 +983,21 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Object.event_thaw;
       Efl.Object.event_freeze;
       Efl.Object.provider_find;
-      Efl.Loop.Consumer.loop { get; }
+      Efl.Loop_Consumer.loop { get; }
       //Efl.Canvas.seats;
       Efl.Canvas.Pointer.pointer_inside { get; }
-      Efl.Canvas.device { get; }
-      Efl.Canvas.seat { get; }
+      Efl.Canvas.Scene.device { get; }
+      Efl.Canvas.Scene.seat { get; }
+      Efl.Canvas.Scene.image_max_size { get; }
+      Efl.Canvas.Scene.objects_at_xy_get;
+      Efl.Canvas.Scene.object_top_at_xy_get;
+      Efl.Canvas.Scene.objects_in_rectangle_get;
+      Efl.Canvas.Scene.object_top_in_rectangle_get;
+      Efl.Canvas.Scene.smart_objects_calculate;
+      Efl.Canvas.Scene.smart_objects_calculating { get; }
    }
 }

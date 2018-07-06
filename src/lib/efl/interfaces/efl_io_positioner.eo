@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Io.Positioner.Whence {
+enum Efl.Io.Positioner_Whence {
     [[Seek position modes]]
     start, [[Seek from start of the stream/file]]
     current, [[Seek from current position]]
@@ -20,7 +20,7 @@ mixin Efl.Io.Positioner {
             [[Seek in data]]
             params {
                 @in offset: int64; [[Offset in byte relative to whence]]
-                @in whence: Efl.Io.Positioner.Whence; [[Whence]]
+                @in whence: Efl.Io.Positioner_Whence; [[Whence]]
             }
             return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
         }
@@ -39,6 +39,6 @@ mixin Efl.Io.Positioner {
     }
 
     events {
-        position,changed; [[Notifies position changed]]
+        position,changed: void; [[Notifies position changed]]
     }
 }

@@ -1,0 +1,21 @@
+class Efl.Thread (Efl.Task, Efl.ThreadIO)
+{
+   methods {
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.parent { set; }
+      Efl.Task.run;
+      Efl.Task.end;
+      Efl.Io.Closer.close;
+      Efl.Io.Closer.closed { get; }
+      Efl.Io.Reader.read;
+      Efl.Io.Reader.can_read { get; set; }
+      Efl.Io.Reader.eos { get; set; }
+      Efl.Io.Writer.write;
+      Efl.Io.Writer.can_write { get; set; }
+      Efl.ThreadIO.call;
+      Efl.ThreadIO.call_sync;
+   }
+}

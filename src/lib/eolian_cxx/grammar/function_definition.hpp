@@ -18,6 +18,7 @@
 #include "grammar/attribute_reorder.hpp"
 #include "grammar/type_impl.hpp"
 #include "grammar/eps.hpp"
+#include "grammar/blacklist.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -30,6 +31,9 @@ struct function_definition_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::function_def const& f, Context const& ctx) const
    {
+      if (blacklist::is_blacklisted(f))
+        return true;
+
       std::string suffix;
       switch(_klass_name.type)
         {

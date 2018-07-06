@@ -3,6 +3,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 using static eina.NativeCustomExportFunctions;
 
@@ -51,16 +53,13 @@ public class Globals {
 
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
               System.IntPtr obj,
-              // FIXME commented to allow passing null stuff during test
-              //ref efl.kw_event.Description desc,
-              //efl.kw_event.Description desc,
               IntPtr desc,
               short priority,
               efl.Event_Cb cb,
               System.IntPtr data);
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
               System.IntPtr obj,
-              efl.kw_event.Description desc,
+              efl.Event_Description desc,
               efl.Event_Cb cb,
               System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
@@ -70,11 +69,11 @@ public class Globals {
 
     public delegate byte class_initializer(IntPtr klass);
     
-    public static IntPtr register_class(class_initializer initializer, IntPtr base_klass)
+    public static IntPtr register_class(class_initializer initializer, String class_name, IntPtr base_klass)
     {
         ClassDescription description;
         description.version = 2; // EO_VERSION
-        description.name = "BoxInherit";
+        description.name = class_name;
         description.class_type = 0; // REGULAR
         description.data_size = (UIntPtr)8;
         description.class_initializer = IntPtr.Zero;
@@ -94,20 +93,20 @@ public class Globals {
         eina.Log.Debug("Registered?");
         return klass;
     }
-    public static IntPtr instantiate_start(IntPtr klass, efl.Object parent)
+    public static IntPtr instantiate_start(IntPtr klass, efl.IObject parent)
     {
         eina.Log.Debug("Instantiating");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
             parent_ptr = parent.raw_handle;
 
-        System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 0, 0);
+        System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
         return eo;
     }
 
     public static IntPtr instantiate_end(IntPtr eo) {
         eina.Log.Debug("efl_add_internal_start returned");
-        eo = efl.eo.Globals._efl_add_end(eo, 0, 0);
+        eo = efl.eo.Globals._efl_add_end(eo, 1, 0);
         eina.Log.Debug("efl_add_end returned");
         return eo;
     }
@@ -178,7 +177,51 @@ public class Globals {
         GCHandle handle = GCHandle.FromIntPtr(ptr);
         handle.Free();
     }
-}
+
+    public static System.Threading.Tasks.Task<eina.Value> WrapAsync(eina.Future future, CancellationToken token)
+    {
+        // Creates a task that will wait for SetResult for completion.
+        // TaskCompletionSource is used to create tasks for 'external' Task sources.
+        var tcs = new System.Threading.Tasks.TaskCompletionSource<eina.Value>();
+
+        // Flag to be passed to the cancell callback
+        bool fulfilled = false;
+
+        future.Then((eina.Value received) => {
+                lock (future)
+                {
+                    // Convert an failed Future to a failed Task.
+                    if (received.GetValueType() == eina.ValueType.Error)
+                    {
+                        eina.Error err;
+                        received.Get(out err);
+                        if (err == eina.Error.ECANCELED)
+                            tcs.SetCanceled();
+                        else
+                            tcs.TrySetException(new efl.FutureException(received));
+                    }
+                    else
+                    {
+                        // Will mark the returned task below as completed.
+                        tcs.SetResult(received);
+                    }
+                    fulfilled = true;
+                    return received;
+                }
+        });
+        // Callback to be called when the token is cancelled.
+        token.Register(() => {
+                lock (future)
+                {
+                    // Will trigger the Then callback above with an eina.Error
+                    if (!fulfilled)
+                        future.Cancel();
+                }
+        });
+
+        return tcs.Task;
+    }
+} // Globals
 
 public static class Config
 {
@@ -383,12 +426,94 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler {
     static private StringshareKeepOwnershipMarshaler marshaler;
 }
 
+public class StrbufPassOwnershipMarshaler : ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        return new eina.Strbuf(pNativeData, eina.Ownership.Managed);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        eina.Strbuf buf = managedObj as eina.Strbuf;
+        buf.ReleaseOwnership();
+        return buf.Handle;
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to cleanup. C will take care of it.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StrbufPassOwnershipMarshaler();
+        }
+        return marshaler;
+    }
+    static private StrbufPassOwnershipMarshaler marshaler;
+}
+
+public class StrbufKeepOwnershipMarshaler: ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        return new eina.Strbuf(pNativeData, eina.Ownership.Unmanaged);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        eina.Strbuf buf = managedObj as eina.Strbuf;
+        return buf.Handle;
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to free. The Native side will keep the ownership.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StrbufKeepOwnershipMarshaler();
+        }
+        return marshaler;
+    }
+    static private StrbufKeepOwnershipMarshaler marshaler;
+}
+
+
+
 } // namespace eo
 
+/// <summary>General exception for errors inside the binding.</summary>
 public class EflException : Exception
 {
+    /// <summary>Create a new EflException with the given.
     public EflException(string message) : base(message)
     {
+    }
+}
+
+/// <summary>Exception to be raised when a Task fails due to a failed eina.Future.</summary>
+public class FutureException : EflException
+{
+    /// <summary>The error code returned by the failed eina.Future.</summary>
+    public eina.Error Error { get; private set; }
+
+    /// <summary>Construct a new exception from the eina.Error stored in the given eina.Value.</summary>
+    public FutureException(eina.Value value) : base("Future failed.")
+    {
+        if (value.GetValueType() != eina.ValueType.Error)
+            throw new ArgumentException("FutureException must receive an eina.Value with eina.Error.");
+        eina.Error err;
+        value.Get(out err);
+        Error = err;
     }
 }
 

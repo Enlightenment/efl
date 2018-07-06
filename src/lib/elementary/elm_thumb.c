@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -454,12 +454,12 @@ _thumb_show(Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_efl_gfx_visible_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool vis)
+_elm_thumb_efl_gfx_entity_visible_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    if (vis)
      {
@@ -587,7 +587,7 @@ _elm_thumb_efl_object_constructor(Eo *obj, Elm_Thumb_Data *sd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, "Elm_Thumb");
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
    sd->obj = obj;
 
@@ -635,7 +635,7 @@ _elm_thumb_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char
 }
 
 EOLIAN static void
-_elm_thumb_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
+_elm_thumb_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
 {
    if (file)
      *file = sd->file;
@@ -679,7 +679,7 @@ _elm_thumb_efl_ui_draggable_drag_target_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_elm_thumb_efl_ui_draggable_drag_target_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+_elm_thumb_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
 {
    return sd->edit;
 }

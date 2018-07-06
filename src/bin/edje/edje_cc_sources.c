@@ -59,8 +59,8 @@ source_fetch_file(const char *fil, const char *filname)
    f = fopen(fil, "rb");
    if (!f)
      {
-	ERR("Cannot open file '%s'", fil);
-	exit(-1);
+        ERR("Cannot open file '%s'", fil);
+        exit(-1);
      }
 
    fseek(f, 0, SEEK_END);
@@ -71,12 +71,12 @@ source_fetch_file(const char *fil, const char *filname)
    sf->file = mem_alloc(sz + 1);
    if (sz > 0)
      {
-	tmp = fread(sf->file, sz, 1, f);
-	if (tmp != 1)
-	  {
-	     ERR("file length for (%s) doesn't match!", filname);
-	     exit(-1);
-	  }
+        tmp = fread(sf->file, sz, 1, f);
+        if (tmp != 1)
+          {
+             ERR("file length for (%s) doesn't match!", filname);
+             exit(-1);
+          }
      }
 
    sf->file[sz] = '\0';
@@ -85,14 +85,14 @@ source_fetch_file(const char *fil, const char *filname)
 
    while (fgets(buf, sizeof(buf), f))
      {
-	char *p, *pp;
-	int forgetit = 0;
-	int haveinclude = 0;
-	char *file = NULL, *fname = NULL;
+        char *p, *pp;
+        int forgetit = 0;
+        int haveinclude = 0;
+        char *file = NULL, *fname = NULL;
 
-	p = buf;
-	while ((!forgetit) && (*p))
-	  {
+        p = buf;
+        while ((!forgetit) && (*p))
+          {
              if (!isspace(*p))
                {
                   if (*p != '#')
@@ -100,87 +100,87 @@ source_fetch_file(const char *fil, const char *filname)
                }
              p++;
 
-	     if (!haveinclude)
-	       {
-		  if (!isspace(*p))
-		    {
-		       if (!strncmp(p, "include", 7))
-			 {
-			    haveinclude = 1;
-			    p += 7;
-			 }
-		       /* HACK! the logic above should be fixed so
-			* preprocessor statements don't have to begin
-			* in column 0.
-			* otoh, edje_cc should print a warning in that case,
-			* since according to the standard, preprocessor
-			* statements need to be put in column 0.
-			*/
-		       else if (!strncmp(p, "#include", 8))
-			 {
-			    haveinclude = 1;
-			    p += 8;
-			 }
-		       else
-			 forgetit = 1;
-		    }
-	       }
-	     else
-	       {
-		  if (!isspace(*p))
-		    {
-		       char end = '\0';
-
-		       if (*p == '"') end = '"';
-		       else if (*p == '<') end = '>';
-
-		       if (end)
-			 {
-			    pp = strchr(p + 1, end);
-			    if (!pp)
-			      forgetit = 1;
-			    else
-			      {
-				 ssize_t l = 0;
-
-				 /* get the directory of the current file
-				  * if we haven't already done so
-				  */
-				 if (!dir)
-				   {
-                                      dir = ecore_file_dir_get(fil);
-				      if (dir) dir_len = strlen(dir);
-				   }
-
-				 l = pp - p + dir_len + 1;
-				 file = mem_alloc(l);
-
-				 if (!dir_len)
-				   {
-				      snprintf(file, l - 1, "%s", p + 1);
-				      file[l - 2] = 0;
-				   }
-				 else
-				   {
-				      snprintf(file, l, "%s/%s", dir, p + 1);
-				      file[l - 1] = 0;
-				   }
-
-
-				 fname = strdup(p + 1);
-				 pp = strrchr(fname, end);
-				 if (pp) *pp = 0;
-				 forgetit = 1;
-			      }
-			 }
-		       else
-			 forgetit = 1;
-		    }
-		  else
-		    p++;
+             if (!haveinclude)
+               {
+                  if (!isspace(*p))
+                    {
+                       if (!strncmp(p, "include", 7))
+                         {
+                            haveinclude = 1;
+                            p += 7;
+                         }
+                       /* HACK! the logic above should be fixed so
+                        * preprocessor statements don't have to begin
+                        * in column 0.
+                        * otoh, edje_cc should print a warning in that case,
+                        * since according to the standard, preprocessor
+                        * statements need to be put in column 0.
+                        */
+                       else if (!strncmp(p, "#include", 8))
+                         {
+                            haveinclude = 1;
+                            p += 8;
+                         }
+                       else
+                         forgetit = 1;
+                    }
                }
-	  }
-	if ((file) && (fname))
+             else
+               {
+                  if (!isspace(*p))
+                    {
+                       char end = '\0';
+
+                       if (*p == '"') end = '"';
+                       else if (*p == '<')
+                         end = '>';
+
+                       if (end)
+                         {
+                            pp = strchr(p + 1, end);
+                            if (!pp)
+                              forgetit = 1;
+                            else
+                              {
+                                 ssize_t l = 0;
+
+                                 /* get the directory of the current file
+                                  * if we haven't already done so
+                                  */
+                                 if (!dir)
+                                   {
+                                      dir = ecore_file_dir_get(fil);
+                                      if (dir) dir_len = strlen(dir);
+                                   }
+
+                                 l = pp - p + dir_len + 1;
+                                 file = mem_alloc(l);
+
+                                 if (!dir_len)
+                                   {
+                                      snprintf(file, l - 1, "%s", p + 1);
+                                      file[l - 2] = 0;
+                                   }
+                                 else
+                                   {
+                                      snprintf(file, l, "%s/%s", dir, p + 1);
+                                      file[l - 1] = 0;
+                                   }
+
+                                 fname = strdup(p + 1);
+                                 pp = strrchr(fname, end);
+                                 if (pp) *pp = 0;
+                                 forgetit = 1;
+                              }
+                         }
+                       else
+                         forgetit = 1;
+                    }
+                  else
+                    p++;
+               }
+          }
+        if ((file) && (fname))
           source_fetch_file(file, fname);
 
         if (file) free(file);
@@ -230,3 +230,4 @@ source_fontmap_load(Eet_File *ef)
    fl = eet_data_read(ef, _font_list_edd, "edje_source_fontmap");
    return fl;
 }
+

@@ -355,6 +355,14 @@ _evas_engine_context(Evas_Public_Data *e)
    return e->backend;
 }
 
+static inline void
+_evas_wrap_del(Evas_Object **eo, Evas_Object_Protected_Data *pd)
+{
+   if (!*eo) return ;
+   if (pd && pd->legacy.ctor) evas_object_del(*eo);
+   else efl_del(*eo);
+}
+
 #define _EVAS_COLOR_CLAMP(x, y) do { \
    if (x > y) { x = y; bad = 1; } \
    if (x < 0) { x = 0; bad = 1; } } while (0)

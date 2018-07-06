@@ -3,8 +3,8 @@ class Ector.Renderer.Software (Ector.Renderer)
    [[Ector software renderer class]]
    data: null;
    methods {
-      fill @pure_virtual {
-      	 [[Renderer fill operation]]
+      op_fill @pure_virtual {
+          [[Renderer fill operation]]
          return: bool; [[$true on success, $false otherwise]]
       }
    }

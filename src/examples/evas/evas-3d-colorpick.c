@@ -120,8 +120,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   efl_gfx_size_set(bg, EINA_SIZE2D(w,  h));
-   efl_gfx_size_set(image, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(bg, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(w,  h));
 }
 
 static Eina_Bool
@@ -281,13 +281,13 @@ _init_scene(const char *texture)
 
    globalscene.scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
-   globalscene.root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   globalscene.root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    globalscene.camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(globalscene.camera, 30.0, 1.0, 1.0, 1000.0);
 
    globalscene.camera_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(globalscene.camera_node, globalscene.camera);
    evas_canvas3d_node_member_add(globalscene.root_node, globalscene.camera_node);
    evas_canvas3d_node_position_set(globalscene.camera_node, 0.0, 30.0, 800.0);
@@ -299,7 +299,7 @@ _init_scene(const char *texture)
    evas_canvas3d_light_directional_set(globalscene.light, EINA_TRUE);
 
    globalscene.light_node =
-      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+      efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(globalscene.light_node, globalscene.light);
    evas_canvas3d_node_position_set(globalscene.light_node, 100.0, 50.0, 300.0);
    evas_canvas3d_node_look_at_set(globalscene.light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 1.0, 1.0, 1.0);
@@ -321,7 +321,7 @@ _init_scene(const char *texture)
              m->material = spheretmp->material;
              m->texture = spheretmp->texture;
           }
-        m->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
+        m->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
         m->speed = tmp;
         m->sphere_animate = _animate_sphere;
         m->animate = ecore_timer_add(m->speed, m->sphere_animate, m);
@@ -392,8 +392,8 @@ int main(int argc, char **argv)
 
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
 
-   efl_gfx_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
-   efl_gfx_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
    evas_object_focus_set(image, EINA_TRUE);
    efl_canvas_scene3d_set(image, globalscene.scene);
 

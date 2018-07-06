@@ -25,165 +25,90 @@
 #include <Efl.h>
 #include <Ecore.h>
 
-typedef struct _Test_Data
-{
-   Eina_Bool success_flag;
-   unsigned int child_count;
-} Test_Data;
-
-typedef struct _Test_Child_Data
-{
-   Test_Data *tdata;
-   unsigned int idx;
-} Test_Child_Data;
-
 const int child_number = 3;
 const int base_ints[] = { 41, 42, 43 };
 const Eina_Bool base_selections[] = { EINA_FALSE, EINA_FALSE, EINA_TRUE };
 
-static void
-_future_error_then(void *data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
+static Eina_Value
+_children_slice_get_then(void *data EINA_UNUSED,
+                         const Eina_Value v,
+                         const Eina_Future *dead_future EINA_UNUSED)
 {
-   fprintf(stderr, "Promise failed!\n"); fflush(stderr);
-   ck_abort_msg("Promise failed");
-}
-
-static void
-_property_get_then(void *data, Efl_Event const *event)
-{
-   Test_Child_Data *t = data;
-   Eina_Accessor *value_itt = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
-   int v_int = 0;
-   Eina_Bool v_bool = EINA_FALSE;
-
-#define _value_get_and_compare(it, i, var, cmp)  \
-   do { \
-      Eina_Value *vvv = NULL; \
-      if (!eina_accessor_data_get(it, i, (void **)&vvv) || !vvv || \
-          !eina_value_get(vvv, &var) || var != cmp) \
-        { \
-           fprintf(stderr, "Could not get value!\n"); fflush(stderr); \
-           ck_abort_msg("Could not get value"); \
-           return; \
-        } \
-   } while(0)
-
-   _value_get_and_compare(value_itt, 0, v_int, base_ints[t->idx]);
-   _value_get_and_compare(value_itt, 1, v_bool, EINA_TRUE);
-   _value_get_and_compare(value_itt, 2, v_bool, EINA_FALSE);
-
-   t->tdata->child_count++;
-   if (t->tdata->child_count == 3)
-     t->tdata->success_flag = EINA_TRUE;
-
-#undef _value_get_and_compare
-}
-
-static void
-_selection_property_get_then(void *data, Efl_Event const *event)
-{
-   Test_Child_Data *t = data;
-   Eina_Accessor *value_itt = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
-   int v_int = 0;
-   Eina_Bool v_bool = EINA_FALSE;
-
-
-#define EFL_TEST_value_get_and_compare(it, i, var, cmp)  \
-   do { \
-      Eina_Value *vvv = NULL; \
-      if (!eina_accessor_data_get(it, i, (void **)&vvv) || !vvv || \
-          !eina_value_get(vvv, &var)) \
-        { \
-           fprintf(stderr, "Could not get value!\n"); fflush(stderr); \
-           ck_abort_msg("Could not get value"); \
-           return; \
-        } \
-      else if(var != cmp)                       \
-        { \
-           fprintf(stderr, "Value did not match!\n"); fflush(stderr); \
-           ck_abort_msg("Value did not match"); \
-           return;                              \
-        }               \
-      else              \
-        fprintf(stderr, "Value matched\n"); fflush(stderr);    \
-   } while(0)
-
-   EFL_TEST_value_get_and_compare(value_itt, 0, v_bool, base_selections[t->idx]);
-   EFL_TEST_value_get_and_compare(value_itt, 1, v_int, base_ints[t->idx]);
-
-   t->tdata->child_count++;
-   if (t->tdata->child_count == 3)
-     t->tdata->success_flag = EINA_TRUE;
-
-#undef EFL_TEST_value_get_and_compare
-}
-
-static void
-_children_slice_get_then(void *data, Efl_Event const* event)
-{
-   Eina_Accessor *children = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
+   unsigned int i, len;
    Efl_Model *child;
-   Test_Child_Data *t;
-   unsigned int i = 0;
 
-   EINA_ACCESSOR_FOREACH(children, i, child)
+   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
-        Efl_Future *futures[3] = {NULL,};
-        Efl_Future *future_all = NULL;
+        Eina_Value *p_int = NULL;
+        Eina_Value *p_true = NULL;
+        Eina_Value *p_false = NULL;
+        int v_int = 0;
+        Eina_Bool v_true = EINA_FALSE;
+        Eina_Bool v_false = EINA_TRUE;
 
-        futures[0] = efl_model_property_get(child, "test_p_int");
-        futures[1] = efl_model_property_get(child, "test_p_true");
-        futures[2] = efl_model_property_get(child, "test_p_false");
+        p_int = efl_model_property_get(child, "test_p_int");
+        p_true = efl_model_property_get(child, "test_p_true");
+        p_false = efl_model_property_get(child, "test_p_false");
 
-        future_all = efl_future_all(futures[0], futures[1], futures[2]);
+        eina_value_get(p_int, &v_int);
+        eina_value_get(p_true, &v_true);
+        eina_value_get(p_false, &v_false);
 
-        t = calloc(1, sizeof(Test_Child_Data));
-        t->tdata = data;
-        t->idx = i;
-        efl_future_then(future_all, _property_get_then, _future_error_then, NULL, t);
+        fail_if(v_int != base_ints[i]);
+        fail_if(v_true != EINA_TRUE);
+        fail_if(v_false != EINA_FALSE);
      }
+
+   ecore_main_loop_quit();
+
+   return v;
 }
 
-static void
-_selection_children_slice_get_then(void *data, Efl_Event const* event)
+static Eina_Value
+_selection_children_slice_get_then(void *data EINA_UNUSED,
+                                   const Eina_Value v,
+                                   const Eina_Future *dead_future EINA_UNUSED)
 {
-   Eina_Accessor *children = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
-   Efl_Model *child;
-   Test_Child_Data *t;
-   unsigned int i = 0;
+   unsigned int i, len;
+   Efl_Model *child = NULL;
 
-   EINA_ACCESSOR_FOREACH(children, i, child)
+   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
-        Efl_Future *futures[2] = {NULL,};
-        Efl_Future *future_all = NULL;
+        Eina_Value *p_int = NULL;
+        Eina_Value *p_bool = NULL;
+        int v_int = 0;
+        Eina_Bool v_bool = EINA_FALSE;
 
-        futures[0] = efl_model_property_get(child, "selected");
-        futures[1] = efl_model_property_get(child, "test_p_int");
+        p_bool = efl_model_property_get(child, "selected");
+        p_int = efl_model_property_get(child, "test_p_int");
 
-        future_all = efl_future_all(futures[0], futures[1]);
+        eina_value_get(p_bool, &v_bool);
+        eina_value_get(p_int, &v_int);
 
-        t = calloc(1, sizeof(Test_Child_Data));
-        t->tdata = data;
-        t->idx = i;
-        efl_future_then(future_all, _selection_property_get_then, _future_error_then, NULL, t);
+        fail_if(v_bool != base_selections[i]);
+        fail_if(v_int != base_ints[i]);
      }
+
+   ecore_main_loop_quit();
+
+   return v;
 }
 
-START_TEST(efl_test_model_composite_boolean)
+EFL_START_TEST(efl_test_model_composite_boolean)
 {
    Efl_Model_Item *base_model, *child;
    int i;
    Eina_Value v;
    Efl_Model_Composite_Boolean *model;
-   Test_Data *tdata;
-   Efl_Future *future;
-
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
+   Eina_Future *future;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
-   base_model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
+   base_model = efl_add_ref(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
    ck_assert(!!base_model);
 
    for (i = 0; i < child_number; ++i)
@@ -194,39 +119,39 @@ START_TEST(efl_test_model_composite_boolean)
         efl_model_property_set(child, "test_p_int", &v);
      }
 
-   model = efl_add(EFL_MODEL_COMPOSITE_BOOLEAN_CLASS, NULL,
+   model = efl_add_ref(EFL_MODEL_COMPOSITE_BOOLEAN_CLASS, efl_main_loop_get(),
                   efl_ui_view_model_set(efl_added, base_model),
-                  efl_model_composite_boolean_property_add(efl_added, "test_p_true", EINA_TRUE),
-                  efl_model_composite_boolean_property_add(efl_added, "test_p_false", EINA_FALSE));
+                  efl_model_composite_boolean_add(efl_added, "test_p_true", EINA_TRUE),
+                  efl_model_composite_boolean_add(efl_added, "test_p_false", EINA_FALSE));
    ck_assert(!!model);
 
-   tdata = calloc(1, sizeof(Test_Data));
-   future = efl_model_children_slice_get(model, 0, 0);
-   efl_future_then(future, _children_slice_get_then, _future_error_then, NULL, tdata);
+   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
+   eina_future_then(future, _children_slice_get_then, NULL);
 
-   while (!tdata->success_flag) ecore_main_loop_iterate();
-
-   ck_assert(tdata->success_flag);
-
-   ecore_shutdown();
+   ecore_main_loop_begin();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(efl_test_model_composite_selection)
+static Eina_Value
+_wait_propagate(void *data EINA_UNUSED,
+                const Eina_Value v,
+                const Eina_Future *dead_future EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+   return v;
+}
+
+EFL_START_TEST(efl_test_model_composite_selection)
 {
    Efl_Model_Item *base_model, *child;
    int i;
    Eina_Value v;
    Efl_Model_Composite_Selection *model;
-   Test_Data *tdata;
-   Efl_Future *future;
-
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
-   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
+   Eina_Future *future;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
-   base_model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
+   base_model = efl_add_ref(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
    ck_assert(!!base_model);
 
    for (i = 0; i < child_number; ++i)
@@ -237,22 +162,19 @@ START_TEST(efl_test_model_composite_selection)
         efl_model_property_set(child, "test_p_int", &v);
      }
 
-   model = efl_add(EFL_MODEL_COMPOSITE_SELECTION_CLASS, NULL,
+   model = efl_add_ref(EFL_MODEL_COMPOSITE_SELECTION_CLASS, efl_main_loop_get(),
                    efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
-   efl_model_composite_selection_select(model, 2);
+   future = efl_model_property_set(model, "selected", eina_value_int_new(2));
+   eina_future_then(future, _wait_propagate, NULL);
+   ecore_main_loop_begin();
 
-   tdata = calloc(1, sizeof(Test_Data));
-   future = efl_model_children_slice_get(model, 0, 0);
-   efl_future_then(future, _selection_children_slice_get_then, _future_error_then, NULL, tdata);
+   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
+   eina_future_then(future, _selection_children_slice_get_then, NULL);
 
-   while (!tdata->success_flag) ecore_main_loop_iterate();
-
-   ck_assert(tdata->success_flag);
-
-   ecore_shutdown();
+   ecore_main_loop_begin();
 }
-END_TEST
+EFL_END_TEST
 
 void
 efl_test_case_model_composite_boolean(TCase *tc)

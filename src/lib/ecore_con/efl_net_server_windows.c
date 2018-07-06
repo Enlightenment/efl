@@ -231,7 +231,7 @@ _efl_net_server_windows_client_new(Eo *o, Efl_Net_Server_Windows_Data *pd)
      }
 
    pd->next_client = efl_add(EFL_NET_SOCKET_WINDOWS_CLASS, o,
-                             efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE));
+                             efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE));
    if (!pd->next_client)
      {
         err = ENOMEM;
@@ -263,7 +263,7 @@ _efl_net_server_windows_allow_remote_set(Eo *o EINA_UNUSED, Efl_Net_Server_Windo
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_windows_allow_remote_get(Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
+_efl_net_server_windows_allow_remote_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
 {
    return pd->allow_remote;
 }
@@ -277,14 +277,16 @@ _efl_net_server_windows_efl_object_constructor(Eo *o, Efl_Net_Server_Windows_Dat
 }
 
 EOLIAN static void
+_efl_net_server_windows_efl_object_invalidate(Eo *o, Efl_Net_Server_Windows_Data *pd)
+{
+   pd->next_client = NULL;
+
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
 _efl_net_server_windows_efl_object_destructor(Eo *o, Efl_Net_Server_Windows_Data *pd)
 {
-   if (pd->next_client)
-     {
-        efl_del(pd->next_client);
-        pd->next_client = NULL;
-     }
-
    while (pd->pending_clients)
      {
         Eo *client = pd->pending_clients->data;
@@ -304,7 +306,7 @@ _efl_net_server_windows_efl_net_server_address_set(Eo *o EINA_UNUSED, Efl_Net_Se
 }
 
 EOLIAN static const char *
-_efl_net_server_windows_efl_net_server_address_get(Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
+_efl_net_server_windows_efl_net_server_address_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
 {
    return pd->address + strlen(PIPE_NS);
 }
@@ -353,7 +355,7 @@ _efl_net_server_windows_efl_net_server_clients_count_set(Eo *o, Efl_Net_Server_W
 }
 
 EOLIAN static unsigned int
-_efl_net_server_windows_efl_net_server_clients_count_get(Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
+_efl_net_server_windows_efl_net_server_clients_count_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
 {
    return pd->clients_count;
 }
@@ -379,7 +381,7 @@ _efl_net_server_windows_efl_net_server_clients_limit_set(Eo *o EINA_UNUSED, Efl_
 }
 
 EOLIAN static void
-_efl_net_server_windows_efl_net_server_clients_limit_get(Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd, unsigned int *limit, Eina_Bool *reject_excess)
+_efl_net_server_windows_efl_net_server_clients_limit_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd, unsigned int *limit, Eina_Bool *reject_excess)
 {
    if (limit) *limit = pd->clients_limit;
    if (reject_excess) *reject_excess = pd->clients_reject_excess;
@@ -395,7 +397,7 @@ _efl_net_server_windows_efl_net_server_serving_set(Eo *o EINA_UNUSED, Efl_Net_Se
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_windows_efl_net_server_serving_get(Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
+_efl_net_server_windows_efl_net_server_serving_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Windows_Data *pd)
 {
    return pd->serving;
 }

@@ -1,0 +1,185 @@
+import eina_types;
+import efl_gfx_types;
+
+/*
+enum Efl.Gfx.Image_Load_Controller_State
+{
+   none = 0,      [[Not loading any image.]]
+   loaded = 1,    [[Image data is loaded, nothing is pending.]]
+   pending = 2,   [[The image has been queued for load, but actual loading may not have started yet.]]
+   loading = 3,   [[The image is currently loading.]]
+   error = 4,     [[Image load has failed. Call @Efl.Gfx.Image_Load_Controller.load_error.get to know why.]]
+   cancelled = 5  [[Image load has been cancelled.]]
+}
+*/
+
+interface Efl.Gfx.Image_Load_Controller ()
+{
+   [[Common APIs for all loadable 2D images.]]
+
+   methods {
+      load_async_start {
+         [[Begin preloading an image object's image data in the background.
+
+           Once the background task is complete the event $load,done will be
+           emitted.
+         ]]
+      }
+      load_async_cancel {
+         [[Cancel preloading an image object's image data in the background.
+
+           The object should be left in a state where it has no image data.
+           If cancel is called too late, the image will be kept in memory.
+         ]]
+      }
+      /*
+      @property load_state {
+         get {
+            [[Queries information on the current state of load of the image.
+
+              While more relevant to asynchronous load, this will also return
+              meaningful information about the last synchronous load.
+            ]]
+         }
+         values {
+            state: Efl.Gfx.Image_Load_Controller_State; [[Image loading status]]
+         }
+      }
+      */
+      @property load_size {
+         [[The load size of an image.
+
+           The image will be loaded into memory as if it was the specified
+           size instead of its original size. This can save a lot of memory
+           and is important for scalable types like svg.
+
+           By default, the load size is not specified, so it is 0x0.
+         ]]
+         set {
+            [[Requests the canvas to load the image at the given size.
+
+              EFL will try to load an image of the requested size but does
+              not guarantee an exact match between the request and the loaded
+              image dimensions.
+            ]]
+         }
+         get {
+            [[Returns the requested load size.]]
+         }
+         values {
+            size: Eina.Size2D; [[The image load size.]]
+         }
+      }
+      @property load_dpi {
+         set {
+            [[Set the DPI resolution of an image object's source image.
+
+              This function sets the DPI resolution of a given loaded canvas
+              image. Most useful for the SVG image loader.
+            ]]
+         }
+         get {
+            [[Get the DPI resolution of a loaded image object in the canvas.
+
+              This function returns the DPI resolution of the given canvas
+              image.
+            ]]
+         }
+         values {
+            dpi: double; [[The DPI resolution.]]
+         }
+      }
+      @property load_region_support {
+         [[Indicates whether the @.load_region property is supported for the
+           current file.
+
+           @since 1.2
+         ]]
+         get {}
+         values {
+            support: bool; [[$true if region load of the image is supported, $false otherwise]]
+         }
+      }
+      @property load_region {
+         set {
+            [[Inform a given image object to load a selective region of its
+              source image.
+
+              This function is useful when one is not showing all of an
+              image's area on its image object.
+
+              Note: The image loader for the image format in question has
+              to support selective region loading in order for this function
+              to work.
+            ]]
+         }
+         get {
+            [[Retrieve the coordinates of a given image object's selective
+              (source image) load region.
+            ]]
+         }
+         values {
+            region: Eina.Rect; [[A region of the image.]]
+         }
+      }
+      @property load_orientation {
+         [[Defines whether the orientation information in the image file
+           should be honored.
+
+           The orientation can for instance be set in the EXIF tags of a
+           JPEG image. If this flag is $false, then the orientation will be
+           ignored at load time, otherwise the image will be loaded with the
+           proper orientation.
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            enable: bool; [[$true means that it should honor the orientation
+                            information.]]
+         }
+      }
+      @property load_scale_down {
+         [[The scale down factor is a divider on the original image size.
+
+           Setting the scale down factor can reduce load time and memory usage
+           at the cost of having a scaled down image in memory.
+
+           This function sets the scale down factor of a given canvas
+           image. Most useful for the SVG image loader but also applies
+           to JPEG, PNG and BMP.
+
+           Powers of two (2, 4, 8) are best supported (especially with JPEG)
+         ]]
+         set {
+            [[Requests the image loader to scale down by $div times.
+              Call this before starting the actual image load.
+            ]]
+         }
+         get {}
+         values {
+            div: int; [[The scale down dividing factor.]]
+         }
+      }
+      @property load_skip_header {
+         [[Initial load should skip header check and leave it all to data load
+
+           If this is true, then future loads of images will defer header
+           loading to a preload stage and/or data load later on rather than
+           at the start when the load begins (e.g. when file is set).
+         ]]
+         set {
+            [[Set the skip header state for susbsequent loads of a file. ]]
+         }
+         get {}
+         values {
+            skip: bool; [[Will be true if header is to be skipped. ]]
+         }
+      }
+   }
+   events {
+      load,done: void; [[Called when he image was loaded]]
+      load,error: Efl.Gfx.Image_Load_Error; [[Called when an error happened during image loading]]
+   }
+}

@@ -5,9 +5,9 @@
 
 typedef struct _App_Data
 {
-   Efl_Animation        *sequential_show_anim;
-   Efl_Animation        *sequential_hide_anim;
-   Efl_Animation_Player *anim_obj;
+   Efl_Canvas_Animation        *sequential_show_anim;
+   Efl_Canvas_Animation        *sequential_hide_anim;
+   Efl_Canvas_Animation_Player *anim_obj;
 
    Eina_Bool             is_btn_visible;
 } App_Data;
@@ -27,8 +27,8 @@ _anim_ended_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Animation_Player_Running_Event_Info *event_info = event->info;
-   double progress = event_info->progress;
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double progress = event_running->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
 
@@ -85,19 +85,19 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    /* Animations to hide button */
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
+   Efl_Canvas_Animation *cw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, 0.5, 0.5);
 
    //Scale Animation to zoom in
-   Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, win);
+   Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
    efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
 
    //Hide Animation
-   Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
 
    //Hide Sequential Group Animation
-   Efl_Animation *sequential_hide_anim = efl_add(EFL_ANIMATION_GROUP_SEQUENTIAL_CLASS, win);
+   Efl_Canvas_Animation *sequential_hide_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_CLASS, win);
    efl_animation_duration_set(sequential_hide_anim, 1.0);
    efl_animation_final_state_keep_set(sequential_hide_anim, EINA_TRUE);
 
@@ -109,22 +109,22 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    /* Animations to show button */
    //Show Animation
-   Efl_Animation *show_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, win);
+   Efl_Canvas_Animation *show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 1.0);
 
    //Scale Animation to zoom out
-   Efl_Animation *scale_half_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, win);
+   Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
    efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, NULL, 0.5, 0.5);
    efl_animation_duration_set(scale_half_anim, 1.0);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
+   Efl_Canvas_Animation *ccw_45_degrees_anim = efl_add(EFL_CANVAS_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, 0.5, 0.5);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
 
    //Show Sequential Group Animation
-   Efl_Animation *sequential_show_anim = efl_add(EFL_ANIMATION_GROUP_SEQUENTIAL_CLASS, win);
+   Efl_Canvas_Animation *sequential_show_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_CLASS, win);
    efl_animation_final_state_keep_set(sequential_show_anim, EINA_TRUE);
    //efl_animation_duration_set() is called for each animation not to set the same duration
 
@@ -138,7 +138,7 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    //Initialize App Data
    ad->sequential_show_anim = sequential_show_anim;
    ad->sequential_hide_anim = sequential_hide_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+   ad->anim_obj = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, win,
                           efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts

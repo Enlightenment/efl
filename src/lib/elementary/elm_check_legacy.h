@@ -1,3 +1,5 @@
+typedef Eo Elm_Check;
+
 /**
  * @brief Add a new Check object
  *
@@ -13,7 +15,7 @@ EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
  *
  * @param obj The check object
  *
- * @ingroup Check
+ * @ingroup Elm_Check
  */
 EAPI Eina_Bool                   elm_check_state_get(const Evas_Object *obj);
 
@@ -28,7 +30,7 @@ EAPI Eina_Bool                   elm_check_state_get(const Evas_Object *obj);
  * @param obj The check object
  * @param state The state to use (1 == on, 0 == off)
  *
- * @ingroup Check
+ * @ingroup Elm_Check
  */
 EAPI void                        elm_check_state_set(Evas_Object *obj, Eina_Bool state);
 
@@ -45,7 +47,7 @@ EAPI void                        elm_check_state_set(Evas_Object *obj, Eina_Bool
  * @param obj The check object
  * @param statep pointer to the boolean to modify
  *
- * @ingroup Check
+ * @ingroup Elm_Check
  */
 EAPI void                        elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
 

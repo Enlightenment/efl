@@ -1,4 +1,4 @@
-class Elm.List.Item(Elm.Widget.Item)
+class Elm.List.Item(Elm.Widget.Item, Efl.Ui.Legacy)
 {
    [[Elementary list item class]]
    legacy_prefix: elm_list_item;
@@ -108,14 +108,16 @@ class Elm.List.Item(Elm.Widget.Item)
       }
       implements {
            Efl.Object.constructor;
+           Efl.Object.invalidate;
+           Efl.Object.destructor;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.del_pre;
            Elm.Widget.Item.signal_emit;
-           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }
            Elm.Widget.Item.part_content_unset;
-           Efl.Access.name { get; }
-           Efl.Access.state_set { get; }
+           Efl.Access.Object.i18n_name { get; }
+           Efl.Access.Object.state_set { get; }
       }
 }

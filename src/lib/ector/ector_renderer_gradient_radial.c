@@ -17,7 +17,7 @@ _ector_renderer_gradient_radial_efl_gfx_gradient_radial_center_set(Eo *obj EINA_
 }
 
 static void
-_ector_renderer_gradient_radial_efl_gfx_gradient_radial_center_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_radial_efl_gfx_gradient_radial_center_get(const Eo *obj EINA_UNUSED,
                                                                            Ector_Renderer_Gradient_Radial_Data *pd,
                                                                            double *x, double *y)
 {
@@ -34,7 +34,7 @@ _ector_renderer_gradient_radial_efl_gfx_gradient_radial_radius_set(Eo *obj EINA_
 }
 
 static double
-_ector_renderer_gradient_radial_efl_gfx_gradient_radial_radius_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_radial_efl_gfx_gradient_radial_radius_get(const Eo *obj EINA_UNUSED,
                                                                            Ector_Renderer_Gradient_Radial_Data *pd)
 {
    return pd->radius;
@@ -51,7 +51,7 @@ _ector_renderer_gradient_radial_efl_gfx_gradient_radial_focal_set(Eo *obj EINA_U
 }
 
 static void
-_ector_renderer_gradient_radial_efl_gfx_gradient_radial_focal_get(Eo *obj EINA_UNUSED,
+_ector_renderer_gradient_radial_efl_gfx_gradient_radial_focal_get(const Eo *obj EINA_UNUSED,
                                                                           Ector_Renderer_Gradient_Radial_Data *pd,
                                                                           double *x, double *y)
 {

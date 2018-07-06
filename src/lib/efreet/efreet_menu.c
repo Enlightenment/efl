@@ -528,12 +528,18 @@ efreet_menu_file_set(const char *file)
     if (file) efreet_menu_file = eina_stringshare_add(file);
 }
 
-EAPI void
+/* deprecated */
+EFREET_DEPRECATED_API EAPI void
 efreet_menu_async_get(Efreet_Menu_Cb func, const void *data)
 {
     char menu[PATH_MAX];
     const char *dir;
     Eina_List *config_dirs, *l;
+
+    ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+
+    return;
+
 
     if (!func) return;
 
@@ -598,11 +604,15 @@ efreet_menu_get(void)
     return NULL;
 }
 
-EAPI void
+/* deprecated */
+EFREET_DEPRECATED_API EAPI void
 efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data)
 {
     Efreet_Menu_Async *async;
 
+    ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+
+    return;
     async = NEW(Efreet_Menu_Async, 1);
     async->func = func;
     async->data = (void*)data;

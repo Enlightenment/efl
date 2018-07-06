@@ -1,0 +1,62 @@
+import eldbus_types;
+
+class Eldbus.Model (Efl.Object, Efl.Model) {
+    methods {
+        connect {
+            [[Define connection parameters.
+
+              @since 1.21]]
+            params {
+                @in type: Eldbus.Connection.Type; [[The connection type]]
+                @in address: string; [[Remote address of DBus]]
+                @in priv: bool; [[Non shared dbus connection]]
+            }
+        }
+        @property connection {
+            [[Define the connection.
+
+              @since 1.21]]
+            get { }
+            set { }
+            values {
+                dbus: ptr(Eldbus.Connection); [[The connection]]
+            }
+        }
+        @property type {
+            [[Connection type]]
+            get { }
+            values {
+                type: Eldbus.Connection.Type; [[Connection type]]
+            }
+        }
+        @property address {
+            [[Remote DBus address]]
+            get { }
+            values {
+                address: string; [[Address]]
+            }
+        }
+        @property private {
+            [[Indicate if the DBus connection is shared or private]]
+            get { }
+            values {
+                private_: bool; [[Private DBus connection]]
+            }
+        }
+    }
+    implements {
+        Efl.Object.finalize;
+        Efl.Object.invalidate;
+        Efl.Object.destructor;
+        Efl.Model.property { get; set; }
+        Efl.Model.properties { get; }
+        Efl.Model.child_add;
+        Efl.Model.child_del;
+        Efl.Model.children_slice_get;
+        Efl.Model.children_count { get; }
+    }
+    constructors {
+        .connect;
+	.connection;
+    }
+}

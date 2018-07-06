@@ -1,4 +1,6 @@
-enum Efl.Ui.Flip.Mode
+import efl_ui_direction;
+
+enum Efl.Ui.Flip_Mode
 {
    [[Efl UI flip mode ]]
    legacy: efl_ui_flip;
@@ -17,7 +19,7 @@ enum Efl.Ui.Flip.Mode
    cross_fade, [[Cross fade flip mode]]
 }
 
-enum Efl.Ui.Flip.Interaction
+enum Efl.Ui.Flip_Interaction
 {
    [[Efl UI flip interaction]]
    none, [[No interaction]]
@@ -26,7 +28,7 @@ enum Efl.Ui.Flip.Interaction
    page [[Page interaction]]
 }
 
-class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
+class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Part)
 {
    [[Efl UI flip class]]
    legacy_prefix: elm_flip;
@@ -56,7 +58,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
             [[Get the interactive flip mode.]]
          }
          values {
-            mode: Efl.Ui.Flip.Interaction; [[The interactive flip mode to use.]]
+            mode: Efl.Ui.Flip_Interaction; [[The interactive flip mode to use.]]
          }
       }
       @property front_visible {
@@ -172,7 +174,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
           * @image latex elm_flip.eps width=\textwidth
          */
          params {
-            @in mode: Efl.Ui.Flip.Mode; [[The mode type.]]
+            @in mode: Efl.Ui.Flip_Mode; [[The mode type.]]
          }
       }
       go_to {
@@ -222,12 +224,11 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
          params {
             @in front: bool; [[If $true, makes front visible, otherwise
                                makes back.]]
-            @in mode: Efl.Ui.Flip.Mode; [[The mode type.]]
+            @in mode: Efl.Ui.Flip_Mode; [[The mode type.]]
          }
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.theme_apply;
@@ -235,20 +236,20 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.Linear.pack_begin;
-      Efl.Pack.Linear.pack_end;
-      Efl.Pack.Linear.pack_before;
-      Efl.Pack.Linear.pack_after;
-      Efl.Pack.Linear.pack_at;
-      Efl.Pack.Linear.pack_content_get;
-      Efl.Pack.Linear.pack_unpack_at;
-      Efl.Pack.Linear.pack_index_get;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
    }
    events {
-      animate,begin; [[Called when flip animation begins]]
-      animate,done; [[Called when flip animation is done]]
+      animate,begin: void; [[Called when flip animation begins]]
+      animate,done: void; [[Called when flip animation is done]]
    }
 }

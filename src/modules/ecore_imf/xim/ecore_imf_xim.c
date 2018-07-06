@@ -739,7 +739,11 @@ static Ecore_IMF_Context_Class xim_class = {
 static Ecore_IMF_Context *
 xim_imf_module_create(void)
 {
-   Ecore_IMF_Context *ctx = ecore_imf_context_new(&xim_class);
+   Ecore_IMF_Context *ctx;
+
+   if (!ecore_x_init(NULL))
+     return NULL;
+   ctx = ecore_imf_context_new(&xim_class);
    DBG("ctx=%p", ctx);
    return ctx;
 }
@@ -747,6 +751,7 @@ xim_imf_module_create(void)
 static Ecore_IMF_Context *
 xim_imf_module_exit(void)
 {
+   ecore_x_shutdown();
    DBG(" ");
    return NULL;
 }
@@ -771,12 +776,6 @@ _ecore_imf_xim_init(void)
 
    DBG(" ");
 
-   if (!ecore_x_init(NULL))
-     {
-        eina_shutdown();
-        return EINA_FALSE;
-     }
-
    ecore_imf_module_register(&xim_info,
                              xim_imf_module_create,
                              xim_imf_module_exit);
@@ -794,8 +793,6 @@ _ecore_imf_xim_shutdown(void)
 
         _ecore_imf_xim_info_im_shutdown(display, EINA_FALSE, info);
      }
-
-   ecore_x_shutdown();
 
    if (_ecore_imf_xim_log_dom >= 0)
      {

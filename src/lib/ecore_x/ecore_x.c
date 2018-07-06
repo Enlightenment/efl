@@ -2519,6 +2519,13 @@ ecore_x_default_depth_get(Ecore_X_Display *disp,
    return depth;
 }
 
+EAPI Ecore_X_Connection *
+ecore_x_connection_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
+   return XGetXCBConnection(_ecore_x_disp);
+}
+
 EAPI void
 ecore_x_xkb_select_group(int group)
 {
@@ -2527,6 +2534,42 @@ ecore_x_xkb_select_group(int group)
    XkbLockGroup(_ecore_x_disp, XkbUseCoreKbd, group);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif
+}
+
+EAPI Eina_Bool
+ecore_x_xkb_track_state(void)
+{
+   Eina_Bool ret = EINA_FALSE;
+#ifdef ECORE_XKB
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+   ret = XkbSelectEvents(_ecore_x_disp, XkbUseCoreKbd, XkbStateNotifyMask, XkbStateNotifyMask);
+   if (_ecore_xlib_sync) ecore_x_sync();
+#endif
+   return ret;
+}
+
+EAPI Eina_Bool
+ecore_x_xkb_state_get(Ecore_X_Xkb_State *state)
+{
+   Eina_Bool ret = EINA_FALSE;
+#ifdef ECORE_XKB
+   XkbStateRec xkbstate;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+   ret = XkbGetState(_ecore_x_disp, XkbUseCoreKbd, &xkbstate);
+   if (!ret) return ret;
+
+   state->group = xkbstate.group;
+   state->base_group = xkbstate.base_group;
+   state->latched_group = xkbstate.latched_group;
+   state->locked_group = xkbstate.locked_group;
+
+   state->mods = xkbstate.mods;
+   state->base_mods = xkbstate.base_mods;
+   state->latched_mods = xkbstate.latched_mods;
+   state->locked_mods = xkbstate.locked_mods;
+#endif
+   return ret;
 }
 
 /*****************************************************************************/

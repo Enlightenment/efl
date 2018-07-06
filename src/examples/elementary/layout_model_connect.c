@@ -111,10 +111,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    if (argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
-   priv->model = efl_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(efl_added, dirname));
+   priv->model = efl_add(EIO_MODEL_CLASS, win, eio_model_path_set(efl_added, dirname));
 
    genlist = elm_genlist_add(win);
-   priv->fileview = efl_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
+   priv->fileview = efl_add(ELM_VIEW_LIST_CLASS, win, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
    elm_view_list_property_connect(priv->fileview, "filename", "elm.text");
    elm_view_list_model_set(priv->fileview, priv->model);
    _widget_init(genlist);
@@ -152,7 +152,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    /* Image widget */
    img_factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
    efl_ui_model_connect(img_factory, "", "path"); //connect to "path" property
-   efl_ui_model_factory_connect(priv->bt, "icon", img_factory);
+   efl_ui_factory_model_connect(priv->bt, "icon", img_factory);
 
    priv->img = efl_ui_factory_create(img_factory, NULL, win);
    elm_box_pack_end(bxr, priv->img);

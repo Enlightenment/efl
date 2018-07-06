@@ -1,0 +1,114 @@
+//Efl.Ui.Navigation_Bar Themes
+group { "efl/navigation_bar";
+   styles {
+      style { name: "navigation_bar_text";
+         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff color_class=navigation_bar_text style=shadow,bottom shadow_color=#00000080 ellipsis=1.0 wrap=mixed";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" text_class=label_light";
+         tag: "b" "+ font="FNBD" text_class=label_light";
+         tag: "whitecolor" "+ color=#fff";
+         tag: "tab" "\t";
+      }
+   }
+   parts {
+      spacer { "base";
+         desc { "default";
+         }
+      }
+      swallow { "efl.back_button";
+         desc { "default";
+            fixed: 1 0;
+            min: 0 0;
+            max: 0 -1;
+            rel.to: "base";
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.5;
+            hid;
+         }
+         desc { "visible";
+            inherit: "default";
+            min: 40 0;
+            max: 40 -1;
+            vis;
+         }
+      }
+      swallow { "efl.left_content";
+         desc { "default";
+            rel.to: "base";
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.5;
+         }
+      }
+      swallow { "efl.right_content";
+         desc { "default";
+            rel.to: "base";
+            rel1.relative: 1.0 0.0;
+            align: 1.0 0.5;
+         }
+      }
+      spacer { "text_base";
+         desc { "default";
+            rel1 {
+               to: "efl.back_button";
+               relative: 1.0 0.0;
+            }
+            rel2 {
+               to: "efl.right_content";
+               relative: 0.0 1.0;
+            }
+         }
+         desc { "left_content";
+            inherit: "default";
+            rel1 {
+               to: "efl.left_content";
+               relative: 1.0 0.0;
+            }
+         }
+      }
+      textblock { "efl.text";
+         scale;
+         desc { "default";
+            text {
+              style: "navigation_bar_text";
+            }
+            rel.to: "text_base";
+         }
+      }
+      programs {
+         program {
+            signal: "efl,state,back_button,visible"; source: "efl";
+            action: STATE_SET "visible" 0.0;
+            target: "efl.back_button";
+         }
+         program {
+            signal: "efl,state,back_button,hidden"; source: "efl";
+            action: STATE_SET "default" 0.0;
+            target: "efl.back_button";
+         }
+         program {
+            signal: "efl,state,left_content,set"; source: "efl";
+            action: STATE_SET "left_content" 0.0;
+            target: "text_base";
+         }
+         program {
+            signal: "efl,state,left_content,unset"; source: "efl";
+            action: STATE_SET "default" 0.0;
+            target: "text_base";
+         }
+      }
+   }
+}
+
+group { name: "efl/navigation_bar/back_button";
+   inherit: "efl/button";
+   images.image: "icon_arrow_left.png" COMP;
+   parts {
+      image { name: "icon_arrow_left";
+         insert_before: "efl.content";
+         desc { "default";
+            image.normal: "icon_arrow_left.png";
+            fill.smooth: 0;
+         }
+      }
+   }
+}

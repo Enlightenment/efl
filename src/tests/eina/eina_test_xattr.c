@@ -38,7 +38,7 @@ get_file_path(const char* tmpdirname, const char* filename)
 }
 
 #ifdef XATTR_TEST_DIR
-START_TEST(eina_test_xattr_set)
+EFL_START_TEST(eina_test_xattr_set)
 {
    char *filename = "tmpfile";
    char *attribute1 = "user.comment1";
@@ -50,7 +50,6 @@ START_TEST(eina_test_xattr_set)
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path;
 
-   eina_init();
 
    test_file_path = get_file_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -93,11 +92,10 @@ START_TEST(eina_test_xattr_set)
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_xattr_list)
+EFL_START_TEST(eina_test_xattr_list)
 {
    char *filename = "tmpfile";
    char *filename_cp = "tmpfile_cp";
@@ -121,7 +119,6 @@ START_TEST(eina_test_xattr_list)
    Eina_Iterator *it;
    Eina_Xattr *xattr;
 
-   eina_init();
 
    test_file_path = get_file_path(XATTR_TEST_DIR, filename);
    cp_file_path = get_file_path(XATTR_TEST_DIR, filename_cp);
@@ -243,11 +240,10 @@ START_TEST(eina_test_xattr_list)
    unlink(cp_file_path);
    eina_tmpstr_del(test_file_path);
    eina_tmpstr_del(cp_file_path);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_xattr_types)
+EFL_START_TEST(eina_test_xattr_types)
 {
    char *filename = "tmpfile";
    char *str_attr = "user.name", *ret_str;
@@ -260,7 +256,6 @@ START_TEST(eina_test_xattr_types)
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path;
 
-   eina_init();
 
    test_file_path = get_file_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -289,9 +284,8 @@ START_TEST(eina_test_xattr_types)
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

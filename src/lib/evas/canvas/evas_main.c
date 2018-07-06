@@ -1,5 +1,6 @@
 #define EVAS_CANVAS_BETA
 #define EFL_INPUT_EVENT_PROTECTED
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
@@ -10,6 +11,8 @@
 #include "evas_image_private.h"
 #include "evas_polygon_private.h"
 #include "evas_vg_private.h"
+
+#include "eo_internal.h"
 
 #include <Ecore.h>
 
@@ -96,6 +99,7 @@ evas_init(void)
 		   EINA_LOG_STATE_INIT);
 
    _efl_gfx_map_init();
+   evas_focus_init();
 
    return _evas_init_count;
 
@@ -105,8 +109,8 @@ evas_init(void)
 #ifdef EVAS_CSERVE2
    if (cs2) evas_cserve2_shutdown();
  shutdown_async_events:
-#endif
    evas_async_events_shutdown();
+#endif
  shutdown_module:
    evas_module_shutdown();
 #ifdef BUILD_LOADER_EET
@@ -141,7 +145,7 @@ evas_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
-   evas_common_shutdown();
+   evas_focus_shutdown();
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -149,9 +153,20 @@ evas_shutdown(void)
 #endif
    evas_cache_vg_shutdown();
 
+   evas_font_path_global_clear();
+
+   evas_thread_shutdown();
+   _evas_preload_thread_shutdown();
+   evas_async_events_shutdown();
+
+   ecore_shutdown();
+   evas_common_shutdown();
+
+   evas_filter_shutdown();
+   evas_module_shutdown();
+
    _efl_gfx_map_shutdown();
 
-   evas_font_path_global_clear();
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);
    eina_cow_del(evas_object_state_cow);
@@ -166,16 +181,8 @@ evas_shutdown(void)
    evas_object_image_load_opts_cow = NULL;
    evas_object_image_state_cow = NULL;
 
-   evas_filter_shutdown();
    eina_cow_del(evas_object_mask_cow);
    evas_object_mask_cow = NULL;
-
-   evas_thread_shutdown();
-   _evas_preload_thread_shutdown();
-   evas_async_events_shutdown();
-   evas_module_shutdown();
-
-   ecore_shutdown();
 
 #ifdef BUILD_LOADER_EET
    eet_shutdown();
@@ -198,7 +205,7 @@ evas_shutdown(void)
 EAPI Evas *
 evas_new(void)
 {
-   Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, NULL);
+   Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, efl_main_loop_get());
    return eo_obj;
 }
 
@@ -227,7 +234,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
-   e->gesture_manager = efl_add(EFL_GESTURE_MANAGER_CLASS, eo_obj);
+   efl_wref_add(efl_add(EFL_CANVAS_GESTURE_MANAGER_CLASS, eo_obj), &e->gesture_manager);
 
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
@@ -273,8 +280,166 @@ evas_free(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   if (efl_parent_get(eo_e))
+     efl_del(eo_e);
+   else
+     efl_unref(eo_e);
+}
+
+typedef struct _Forced_Death Forced_Death;
+struct _Forced_Death
+{
+   Eina_Bool invalidated;
+   Eina_Bool noref;
+   Eina_Bool destroyed;
+};
+
+static void
+_object_invalidate(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Forced_Death *force = data;
+   force->invalidated = EINA_TRUE;
+}
+
+static void
+_object_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Forced_Death *force = data;
+   force->destroyed = EINA_TRUE;
+}
+
+static void
+_object_noref(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Forced_Death *force = data;
+   force->noref = EINA_TRUE;
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_object_forced_death,
+                           { EFL_EVENT_DEL, _object_del },
+                           { EFL_EVENT_INVALIDATE, _object_invalidate },
+                           { EFL_EVENT_NOREF, _object_noref } );
+
+
+EOLIAN static void
+_evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
+{
+   Evas_Object_Protected_Data *o;
+   Evas_Layer *lay;
+   Eo *obj;
+   Eina_Array stash = { 0 };
+
    evas_sync(eo_e);
-   efl_unref(eo_e);
+
+   evas_canvas_async_block(e);
+   evas_render_idle_flush(eo_e);
+
+   efl_replace(&e->default_seat, NULL);
+   efl_replace(&e->default_mouse, NULL);
+   efl_replace(&e->default_keyboard, NULL);
+
+   _evas_post_event_callback_free(eo_e);
+   _evas_canvas_event_shutdown(eo_e, e);
+
+   e->cleanup = 1;
+
+   eina_array_step_set(&stash, sizeof (Eina_Array), 16);
+
+   // The first pass should destroy all object that are properly referenced
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        evas_layer_pre_free(lay);
+
+        EINA_INLIST_FOREACH(lay->objects, o)
+          {
+             if (!o->delete_me)
+               eina_array_push(&stash, o->object);
+          }
+     }
+
+   while ((obj = eina_array_pop(&stash)))
+     {
+        Evas_Object_Protected_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS);
+
+        // Properly destroy depending on the object being legacy or not
+        if (pd->legacy.ctor) evas_object_del(obj);
+        else efl_del(obj);
+     }
+
+   // We are now potentially only facing zombies
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        evas_layer_pre_free(lay);
+        EINA_INLIST_FOREACH(lay->objects, o)
+          {
+             if (!o->delete_me)
+               eina_array_push(&stash, o->object);
+          }
+     }
+
+   // Killing zombies now
+   while ((obj = eina_array_pop(&stash)))
+     {
+        Forced_Death force = {
+          efl_invalidated_get(obj),
+          efl_parent_get(obj) ? (efl_ref_count(obj) <= 1) : (efl_ref_count(obj) <= 0),
+          EINA_FALSE
+        };
+
+        efl_event_callback_array_add(obj, _object_forced_death(), &force);
+
+        ERR("Killing Zombie Object [%s:%i:%i]. Refs: %i:%i",
+            efl_debug_name_get(obj), force.invalidated, force.noref,
+            efl_ref_count(obj), ___efl_ref2_count(obj));
+        ___efl_ref2_reset(obj);
+        // This code explicitely bypass all refcounting to destroy them
+        if (!force.invalidated) efl_del(obj);
+        while (!force.destroyed) efl_unref(obj);
+
+        if (!force.invalidated)
+          {
+             ERR("Zombie Object [%s] %s@%p could not be invalidated. "
+                 "It seems like the call to efl_invalidated() wasn't "
+                 "propagated to all the parent classes.",
+                 efl_debug_name_get(obj), efl_class_name_get(obj), obj);
+          }
+        if (!force.destroyed)
+          {
+             ERR("Zombie Object [%s] %s@%p could not be destroyed. "
+                 "It seems like the call to efl_destructor() wasn't "
+                 "propagated to all the parent classes.",
+                 efl_debug_name_get(obj), efl_class_name_get(obj), obj);
+          }
+
+        // Forcefully remove the object from layers
+        EINA_INLIST_FOREACH(e->layers, lay)
+          EINA_INLIST_FOREACH(lay->objects, o)
+            if (o && (o->object == obj))
+              {
+                 ERR("Zombie Object [%s] %s@%p could not be removed "
+                     "from the canvas list of objects. Maybe this object "
+                     "was deleted but the call to efl_invalidated() "
+                     "was not propagated to all the parent classes? "
+                     "Forcibly removing it. This may leak! Refs: %i:%i",
+                     efl_debug_name_get(obj), efl_class_name_get(obj), obj,
+                     efl_ref_count(obj), ___efl_ref2_count(obj));
+                 lay->objects = (Evas_Object_Protected_Data *)
+                   eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
+                 goto next_zombie;
+              }
+
+     next_zombie:
+        continue;
+     }
+
+   eina_array_flush(&stash);
+
+   // Destroying layers and their associated objects completely
+   EINA_INLIST_FOREACH(e->layers, lay)
+     evas_layer_free_objects(lay);
+   evas_layer_clean(eo_e);
+
+   efl_invalidate(efl_super(eo_e, MY_CLASS));
 }
 
 EOLIAN static void
@@ -285,94 +450,23 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Evas_Post_Render_Job *job;
    Evas_Layer *lay;
    Efl_Canvas_Output *evo;
-   unsigned int prev_zombie_count = UINT_MAX;
    int i;
-   Eina_Bool del;
 
-   evas_canvas_async_block(e);
-   if (e->walking_list == 0) evas_render_idle_flush(eo_e);
-
-   if (e->walking_list > 0) return;
-
-   evas_render_idle_flush(eo_e);
-
-   _evas_post_event_callback_free(eo_e);
-   _evas_canvas_event_shutdown(eo_e, e);
-
-   efl_del(e->gesture_manager);
-   e->gesture_manager = NULL;
-
-   del = EINA_TRUE;
-   e->walking_list++;
-   e->cleanup = 1;
-   while (del)
+   if (e->layers)
      {
-        Eina_Bool detach_zombies = EINA_FALSE;
+        // This should never happen as during invalidate we explicitely
+        // destroy all layers. If they survive, we have a zombie appocallypse.
         Evas_Object_Protected_Data *o;
-        Eina_List *unrefs = NULL;
-        Eo *eo_obj;
 
-        del = EINA_FALSE;
+        CRI("The layers of %p are not empty !", eo_e);
+
         EINA_INLIST_FOREACH(e->layers, lay)
-          {
-             evas_layer_pre_free(lay);
-
-             EINA_INLIST_FOREACH(lay->objects, o)
-               {
-                  if (!o->delete_me)
-                    {
-                       if ((o->ref > 0) || (efl_ref_count(o->object) > 0))
-                         {
-                            ERR("obj(%s) ref count(%d) is bigger than 0. This "
-                                "object couldn't be deleted",
-                                efl_debug_name_get(o->object),
-                                efl_ref_count(o->object));
-                            continue;
-                         }
-                       unrefs = eina_list_append(unrefs, o->object);
-                       del = EINA_TRUE;
-                    }
-               }
-          }
-
-        if (eina_list_count(unrefs) >= prev_zombie_count)
-          detach_zombies = EINA_TRUE;
-        prev_zombie_count = eina_list_count(unrefs);
-
-        EINA_LIST_FREE(unrefs, eo_obj)
-          {
-             ERR("Killing Zombie Object [%s]. Refs: %i:%i",
-                 efl_debug_name_get(eo_obj), efl_ref_count(eo_obj), ___efl_ref2_count(eo_obj));
-             ___efl_ref2_reset(eo_obj);
-             while (efl_ref_count(eo_obj) > 1) efl_unref(eo_obj);
-             while (efl_ref_count(eo_obj) < 1) efl_ref(eo_obj);
-             efl_del(eo_obj);
-
-             if (!detach_zombies) continue;
-
-             EINA_INLIST_FOREACH(e->layers, lay)
-               EINA_INLIST_FOREACH(lay->objects, o)
-                 if (o && (o->object == eo_obj))
-                   {
-                      ERR("Zombie Object [%s] could not be removed "
-                          "from the list of objects. Maybe this object "
-                          "was deleted but the call to efl_destructor() "
-                          "was not propagated to all the parent classes? "
-                          "Forcibly removing it. This may leak! Refs: %i:%i",
-                          efl_debug_name_get(eo_obj), efl_ref_count(eo_obj), ___efl_ref2_count(eo_obj));
-                      lay->objects = (Evas_Object_Protected_Data *)
-                            eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
-                      goto next_zombie;
-                   }
-next_zombie:
-             continue;
-          }
+          EINA_INLIST_FOREACH(lay->objects, o)
+            {
+               CRI("Zombie object [%s] %s@%p still present.",
+                   efl_debug_name_get(o->object), efl_class_name_get(o->object), o->object);
+            }
      }
-   EINA_INLIST_FOREACH(e->layers, lay)
-     evas_layer_free_objects(lay);
-   evas_layer_clean(eo_e);
-
-   e->walking_list--;
 
    evas_font_path_clear(eo_e);
 
@@ -411,10 +505,12 @@ next_zombie:
      }
 
    /* Ector surface may require an existing output to finish its job */
-   e->engine.func->ector_destroy(_evas_engine_context(e), e->ector);
+   if (e->engine.func)
+     e->engine.func->ector_destroy(_evas_engine_context(e), e->ector);
    /* cleanup engine backend */
    EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
-   e->engine.func->engine_free(e->backend);
+   if (e->engine.func)
+     e->engine.func->engine_free(e->backend);
 
    for (i = 0; i < e->modifiers.mod.count; i++)
      free(e->modifiers.mod.list[i]);
@@ -466,6 +562,8 @@ next_zombie:
 EAPI Evas_Engine_Info *
 evas_engine_info_get(const Evas *obj)
 {
+   if (!obj) return NULL;
+
    Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
    Efl_Canvas_Output *output;
 
@@ -483,6 +581,8 @@ evas_engine_info_get(const Evas *obj)
 EAPI Eina_Bool
 evas_engine_info_set(Evas *obj, Evas_Engine_Info *info)
 {
+   if (!obj) return EINA_FALSE;
+
    Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
    Efl_Canvas_Output *output;
 
@@ -523,7 +623,7 @@ _evas_canvas_coord_world_y_to_screen(const Eo *eo_e EINA_UNUSED, Evas_Public_Dat
 }
 
 EOLIAN static Efl_Input_Device *
-_evas_canvas_default_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_default_device_get(const Eo *eo_e EINA_UNUSED,
                                 Evas_Public_Data *e,
                                 Efl_Input_Device_Type klass)
 {
@@ -583,7 +683,7 @@ evas_object_image_extension_can_load_fast_get(const char *file)
 }
 
 EOLIAN static void
-_evas_canvas_pointer_output_xy_by_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_pointer_output_xy_by_device_get(const Eo *eo_e EINA_UNUSED,
                                              Evas_Public_Data *e,
                                              Efl_Input_Device *dev,
                                              int *x, int *y)
@@ -604,7 +704,7 @@ _evas_canvas_pointer_output_xy_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_canvas_pointer_canvas_xy_by_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_pointer_canvas_xy_by_device_get(const Eo *eo_e EINA_UNUSED,
                                              Evas_Public_Data *e,
                                              Efl_Input_Device *dev,
                                              int *x, int *y)
@@ -624,7 +724,7 @@ _evas_canvas_pointer_canvas_xy_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static unsigned int
-_evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_pointer_button_down_mask_by_device_get(const Eo *eo_e EINA_UNUSED,
                                                     Evas_Public_Data *e,
                                                     Efl_Input_Device *dev)
 {
@@ -634,7 +734,7 @@ _evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_efl_canvas_pointer_pointer_inside_get(Eo *eo_e EINA_UNUSED,
+_evas_canvas_efl_canvas_pointer_pointer_inside_get(const Eo *eo_e EINA_UNUSED,
                                                    Evas_Public_Data *e,
                                                    Efl_Input_Device *dev)
 {
@@ -644,19 +744,19 @@ _evas_canvas_efl_canvas_pointer_pointer_inside_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_canvas_pointer_output_xy_get(Eo *eo_e, Evas_Public_Data *e, int *x, int *y)
+_evas_canvas_pointer_output_xy_get(const Eo *eo_e, Evas_Public_Data *e, int *x, int *y)
 {
    return _evas_canvas_pointer_output_xy_by_device_get(eo_e, e, NULL, x, y);
 }
 
 EOLIAN static void
-_evas_canvas_pointer_canvas_xy_get(Eo *eo_e, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
+_evas_canvas_pointer_canvas_xy_get(const Eo *eo_e, Evas_Public_Data *e, Evas_Coord *x, Evas_Coord *y)
 {
    return _evas_canvas_pointer_canvas_xy_by_device_get(eo_e, e, NULL, x, y);
 }
 
 EOLIAN static unsigned int
-_evas_canvas_pointer_button_down_mask_get(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_pointer_button_down_mask_get(const Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_pointer_button_down_mask_by_device_get(eo_e, e, NULL);
 }
@@ -668,7 +768,7 @@ _evas_canvas_data_attach_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, void *da
 }
 
 EOLIAN static void*
-_evas_canvas_data_attach_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_data_attach_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->attach_data;
 }
@@ -688,7 +788,7 @@ _evas_canvas_focus_inout_dispatch(Eo *eo_e, Efl_Input_Device *seat,
    efl_event_callback_call(eo_e,
                            in ? EFL_EVENT_FOCUS_IN : EFL_EVENT_FOCUS_OUT,
                            evt);
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EOLIAN static void
@@ -722,7 +822,7 @@ _evas_canvas_focus_out(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_seat_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
+_evas_canvas_seat_focus_state_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
                                   Efl_Input_Device *seat)
 {
    if (!seat) seat = e->default_seat;
@@ -730,13 +830,13 @@ _evas_canvas_seat_focus_state_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_focus_state_get(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_focus_state_get(const Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_seat_focus_state_get(eo_e, e, NULL);
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_changed_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_changed_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->changed;
 }
@@ -756,14 +856,13 @@ _evas_canvas_nochange_pop(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 void
 _evas_walk(Evas_Public_Data *e)
 {
-   e->walking_list++;
+   efl_ref(e->evas);
 }
 
 void
 _evas_unwalk(Evas_Public_Data *e)
 {
-   e->walking_list--;
-   if ((e->walking_list == 0) && (e->delete_me)) evas_free(e->evas);
+   efl_unref(e->evas);
 }
 
 EAPI const char *
@@ -837,13 +936,13 @@ _evas_canvas_efl_object_provider_find(const Eo *eo_e,
      return (Eo *)eo_e;
    else if (klass == EFL_LOOP_CLASS)
      return efl_main_loop_get();
-   else if (klass == EFL_GESTURE_MANAGER_CLASS)
+   else if (klass == EFL_CANVAS_GESTURE_MANAGER_CLASS)
      return e->gesture_manager;
    return efl_provider_find(efl_super(eo_e, MY_CLASS), klass);
 }
 
 EOLIAN static Efl_Loop *
-_evas_canvas_efl_loop_consumer_loop_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EINA_UNUSED)
+_evas_canvas_efl_loop_consumer_loop_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EINA_UNUSED)
 {
    return efl_main_loop_get();
 }
@@ -952,7 +1051,7 @@ _image_data_regenerate(Evas_Object *eo_obj)
    CHECK(EFL_CANVAS_IMAGE_INTERNAL_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_SCENE3D_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
-   //else CHECK(EFL_CANVAS_VG_CLASS, Efl_Canvas_Vg_Data,)
+   //else CHECK(EFL_CANVAS_VG_OBJECT_CLASS, Efl_Canvas_Vg_Object_Data,)
    //else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,)
    //else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
 }
@@ -967,6 +1066,92 @@ _evas_canvas_image_data_regenerate(Eina_List *list)
         _image_data_regenerate(eo_obj);
         evas_object_unref(eo_obj);
      }
+}
+
+
+EOLIAN void
+_evas_canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   evas_canvas_async_block(e);
+   evas_render_rendering_wait(e);
+   if (_evas_engine_context(e))
+     e->engine.func->image_cache_flush(_evas_engine_context(e));
+}
+
+EOLIAN void
+_evas_canvas_image_cache_reload(Eo *eo_e, Evas_Public_Data *e)
+{
+   Evas_Layer *layer;
+
+   evas_canvas_async_block(e);
+   evas_image_cache_flush(eo_e);
+   EINA_INLIST_FOREACH(e->layers, layer)
+     {
+        Evas_Object_Protected_Data *obj;
+
+        layer->walking_objects++;
+        EINA_INLIST_FOREACH(layer->objects, obj)
+          {
+             if (efl_isa(obj->object, MY_CLASS))
+               {
+                  _evas_image_unload(obj->object, obj, 1);
+                  evas_object_inform_call_image_unloaded(obj->object);
+               }
+          }
+        layer->walking_objects--;
+        _evas_layer_flush_removes(layer);
+     }
+   evas_image_cache_flush(eo_e);
+   EINA_INLIST_FOREACH(e->layers, layer)
+     {
+        Evas_Object_Protected_Data *obj;
+
+        layer->walking_objects++;
+        EINA_INLIST_FOREACH(layer->objects, obj)
+          {
+             if (efl_isa(obj->object, MY_CLASS))
+               {
+                  Evas_Image_Data *o = efl_data_scope_get(obj->object, MY_CLASS);
+                  _evas_image_load(obj->object, obj, o);
+                  o->changed = EINA_TRUE;
+                  evas_object_change(obj->object, obj);
+               }
+          }
+        layer->walking_objects--;
+        _evas_layer_flush_removes(layer);
+     }
+   evas_image_cache_flush(eo_e);
+}
+
+EOLIAN static void
+_evas_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
+{
+   if (size < 0) size = 0;
+   evas_canvas_async_block(e);
+   evas_render_rendering_wait(e);
+   if (_evas_engine_context(e))
+     e->engine.func->image_cache_set(_evas_engine_context(e), size);
+}
+
+EOLIAN static int
+_evas_canvas_image_cache_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   if (_evas_engine_context(e))
+     return e->engine.func->image_cache_get(_evas_engine_context(e));
+   return -1;
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas_efl_canvas_scene_image_max_size_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Size2D *max)
+{
+   int w = 0, h = 0;
+
+   if (max) *max = EINA_SIZE2D(0xffff, 0xffff);
+   if (!e->engine.func->image_max_size_get) return EINA_FALSE;
+   if (!max) return EINA_TRUE;
+   e->engine.func->image_max_size_get(_evas_engine_context(e), &w, &h);
+   *max = EINA_SIZE2D(w, h);
+   return EINA_TRUE;
 }
 
 /* Legacy deprecated functions */
@@ -1065,20 +1250,20 @@ evas_output_method_set(Evas *eo_e, int render_method)
         return;
      }
 
-   e->default_seat = evas_device_add_full(eo_e, "default", "The default seat",
-                                          NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
-                                          EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_seat = efl_ref(evas_device_add_full(eo_e, "default", "The default seat",
+                                                  NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                                                  EVAS_DEVICE_SUBCLASS_NONE));
    evas_device_seat_id_set(e->default_seat, 1);
-   e->default_mouse = evas_device_add_full(eo_e, "Mouse",
-                                           "The default mouse",
-                                           e->default_seat, NULL,
-                                           EVAS_DEVICE_CLASS_MOUSE,
-                                           EVAS_DEVICE_SUBCLASS_NONE);
-   e->default_keyboard = evas_device_add_full(eo_e, "Keyboard",
-                                              "The default keyboard",
-                                              e->default_seat, NULL,
-                                              EVAS_DEVICE_CLASS_KEYBOARD,
-                                              EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_mouse = efl_ref(evas_device_add_full(eo_e, "Mouse",
+                                                   "The default mouse",
+                                                   e->default_seat, NULL,
+                                                   EVAS_DEVICE_CLASS_MOUSE,
+                                                   EVAS_DEVICE_SUBCLASS_NONE));
+   e->default_keyboard = efl_ref(evas_device_add_full(eo_e, "Keyboard",
+                                                      "The default keyboard",
+                                                      e->default_seat, NULL,
+                                                      EVAS_DEVICE_CLASS_KEYBOARD,
+                                                      EVAS_DEVICE_SUBCLASS_NONE));
 }
 
 EAPI int
@@ -1247,25 +1432,24 @@ _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
    Evas_Pointer_Data *pdata;
    Evas_Pointer_Seat *pseat;
-   Eo *seat;
+   Evas_Pointer_Seat *hit = NULL;
 
-   seat = efl_input_device_seat_get(pointer);
    EINA_INLIST_FOREACH(edata->seats, pseat)
      {
-        if (pseat->seat != seat) continue;
         EINA_INLIST_FOREACH(pseat->pointers, pdata)
           if (pdata->pointer == pointer)
             {
                pseat->pointers = eina_inlist_remove(pseat->pointers, EINA_INLIST_GET(pdata));
                free(pdata);
+               hit = pseat;
                break;
             }
-        if (pseat->pointers) break;
-        eina_list_free(pseat->object.in);
-        edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(pseat));
-        free(pseat);
-        break;
      }
+   EINA_SAFETY_ON_NULL_RETURN(hit);
+   if (hit->pointers) return;
+   eina_list_free(hit->object.in);
+   edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(hit));
+   free(hit);
 }
 
 Eina_List *
@@ -1286,6 +1470,299 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
      }
 
    return list;
+}
+
+static Eina_Inlist *
+get_layer_objects(Evas_Layer *l)
+{
+   if ((!l) || (!l->objects)) return NULL;
+   return (EINA_INLIST_GET(l->objects));
+}
+
+typedef struct _Efl_Canvas_Iterator
+{
+   Eina_Iterator  iterator;
+   Eina_List     *list;
+   Eina_Iterator *real_iterator;
+   Eo            *object;
+} Efl_Canvas_Iterator;
+
+/* this iterator is the same as efl_ui_box */
+static Eina_Bool
+_efl_canvas_iterator_next(Efl_Canvas_Iterator *it, void **data)
+{
+   Efl_Gfx_Entity *sub;
+
+   if (!it->object) return EINA_FALSE;
+   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub;
+   return EINA_TRUE;
+}
+
+static Eo *
+_efl_canvas_iterator_get_container(Efl_Canvas_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_efl_canvas_iterator_free(Efl_Canvas_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   efl_wref_del(it->object, &it->object);
+   eina_list_free(it->list);
+   free(it);
+}
+
+EAPI Eina_Iterator *
+efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list)
+{
+   Efl_Canvas_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->list = list;
+   it->real_iterator = real_iterator;
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_canvas_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_canvas_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_iterator_free);
+   efl_wref_add(obj, &it->object);
+
+   return &it->iterator;
+}
+
+EOLIAN static Evas_Object*
+_evas_canvas_efl_canvas_scene_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Evas_Layer *lay;
+   int xx, yy;
+
+   xx = pos.x;
+   yy = pos.y;
+////   xx = evas_coord_world_x_to_screen(eo_e, x);
+////   yy = evas_coord_world_y_to_screen(eo_e, y);
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
+     {
+        Evas_Object *eo_obj;
+        Evas_Object_Protected_Data *obj;
+
+        EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
+          {
+             eo_obj = obj->object;
+             if (obj->delete_me) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
+             if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
+             evas_object_clip_recalc(obj);
+             if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
+                 (!obj->clip.clipees) &&
+                 RECTS_INTERSECT(xx, yy, 1, 1,
+                   obj->cur->geometry.x, obj->cur->geometry.y,
+                   obj->cur->geometry.w, obj->cur->geometry.h))
+               return eo_obj;
+          }
+     }
+   return NULL;
+}
+
+EAPI Evas_Object*
+evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_Position2D pos = {x, y};
+   return efl_canvas_scene_object_top_at_xy_get(eo_e, pos, include_pass_events_objects, include_hidden_objects);
+}
+
+EAPI Evas_Object *
+evas_object_top_at_pointer_get(const Evas *eo_e)
+{
+   Evas_Public_Data *e = efl_isa(eo_e, EVAS_CANVAS_CLASS) ?
+            efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS) : NULL;
+   if (!e) return NULL;
+
+   Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
+   return efl_canvas_scene_object_top_at_xy_get((Eo *)eo_e, EINA_POSITION2D(pdata->seat->x, pdata->seat->y), EINA_TRUE, EINA_TRUE);
+}
+
+EOLIAN Evas_Object*
+_evas_canvas_efl_canvas_scene_object_top_in_rectangle_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Evas_Layer *lay;
+   int xx, yy, ww, hh;
+
+   xx = rect.x;
+   yy = rect.y;
+   ww = rect.w;
+   hh = rect.h;
+////   xx = evas_coord_world_x_to_screen(eo_e, x);
+////   yy = evas_coord_world_y_to_screen(eo_e, y);
+////   ww = evas_coord_world_x_to_screen(eo_e, w);
+////   hh = evas_coord_world_y_to_screen(eo_e, h);
+   if (ww < 1) ww = 1;
+   if (hh < 1) hh = 1;
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
+     {
+        Evas_Object *eo_obj;
+        Evas_Object_Protected_Data *obj;
+
+        EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
+          {
+             eo_obj = obj->object;
+             if (obj->delete_me) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
+             if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
+             evas_object_clip_recalc(obj);
+             if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
+                 (!obj->clip.clipees) &&
+                 RECTS_INTERSECT(xx, yy, ww, hh,
+                   obj->cur->geometry.x, obj->cur->geometry.y,
+                   obj->cur->geometry.w, obj->cur->geometry.h)) return eo_obj;
+          }
+     }
+   return NULL;
+}
+
+EAPI Evas_Object *
+evas_object_top_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   return efl_canvas_scene_object_top_in_rectangle_get(obj, EINA_RECT(x, y, w, h), include_pass_events_objects, include_hidden_objects);
+}
+
+static Eina_List *
+_efl_canvas_evas_canvas_objects_at_xy_get_helper(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_List *in = NULL;
+   Evas_Layer *lay;
+   int xx, yy;
+
+   xx = x;
+   yy = y;
+////   xx = evas_coord_world_x_to_screen(eo_e, x);
+////   yy = evas_coord_world_y_to_screen(eo_e, y);
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
+     {
+        Evas_Object *eo_obj;
+        Evas_Object_Protected_Data *obj;
+
+        EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
+          {
+             eo_obj = obj->object;
+             // FIXME - Daniel: we don't know yet how to handle the next line
+             if (obj->delete_me) continue;
+             if ((!include_pass_events_objects) &&
+                   (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
+             if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
+             evas_object_clip_recalc(obj);
+             if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
+                 (!obj->clip.clipees))
+               {
+                  // evas_object_is_in_output_rect is based on the clip which
+                  // may be larger than the geometry (bounding box)
+                  if (!RECTS_INTERSECT(xx, yy, 1, 1,
+                                       obj->cur->geometry.x,
+                                       obj->cur->geometry.y,
+                                       obj->cur->geometry.w,
+                                       obj->cur->geometry.h))
+                    continue;
+                  in = eina_list_prepend(in, eo_obj);
+               }
+          }
+     }
+   return in;
+}
+
+EOLIAN static Eina_Iterator *
+_evas_canvas_efl_canvas_scene_objects_at_xy_get(Eo *eo_e, Evas_Public_Data *e, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_List *l = _efl_canvas_evas_canvas_objects_at_xy_get_helper(eo_e, e, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
+   if (l) return efl_canvas_iterator_create(eo_e, eina_list_iterator_new(l), l);
+   return NULL;
+}
+
+/**
+ * Retrieves the objects in the given rectangle region
+ * @param   eo_e The given evas object.
+ * @param   x The horizontal coordinate.
+ * @param   y The vertical coordinate.
+ * @param   w The width size.
+ * @param   h The height size.
+ * @param   include_pass_events_objects Boolean Flag to include or not pass events objects
+ * @param   include_hidden_objects Boolean Flag to include or not hidden objects
+ * @return  The list of evas object in the rectangle region.
+ *
+ */
+static Eina_List*
+_efl_canvas_objects_in_rectangle_get_helper(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_List *in = NULL;
+   Evas_Layer *lay;
+   int xx, yy, ww, hh;
+
+   xx = x;
+   yy = y;
+   ww = w;
+   hh = h;
+////   xx = evas_coord_world_x_to_screen(eo_e, x);
+////   yy = evas_coord_world_y_to_screen(eo_e, y);
+////   ww = evas_coord_world_x_to_screen(eo_e, w);
+////   hh = evas_coord_world_y_to_screen(eo_e, h);
+   if (ww < 1) ww = 1;
+   if (hh < 1) hh = 1;
+   EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
+     {
+        Evas_Object *eo_obj;
+        Evas_Object_Protected_Data *obj;
+
+        EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
+          {
+             eo_obj = obj->object;
+             // FIXME - Daniel: we don't know yet how to handle the next line
+             if (obj->delete_me) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
+             if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
+             evas_object_clip_recalc(obj);
+             if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
+                 (!obj->clip.clipees))
+               {
+                  if (!RECTS_INTERSECT(xx, yy, ww, hh,
+                                       obj->cur->geometry.x,
+                                       obj->cur->geometry.y,
+                                       obj->cur->geometry.w,
+                                       obj->cur->geometry.h))
+                    continue;
+                  in = eina_list_prepend(in, eo_obj);
+               }
+          }
+     }
+   return in;
+}
+
+
+EOLIAN static Eina_Iterator*
+_evas_canvas_efl_canvas_scene_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eina_Rect rect, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   Eina_List *l = _efl_canvas_objects_in_rectangle_get_helper(eo_e, e, rect.x, rect.y, rect.w, rect.h, include_pass_events_objects, include_hidden_objects);
+   if (!l) return NULL;
+   return efl_canvas_iterator_create(eo_e, eina_list_iterator_new(l), l);
+}
+
+EAPI Eina_List *
+evas_objects_in_rectangle_get(const Evas_Canvas *eo_e, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   EVAS_LEGACY_API(eo_e, e, NULL);
+   return _efl_canvas_objects_in_rectangle_get_helper(eo_e, e, x, y, w, h, include_pass_events_objects, include_hidden_objects);
 }
 
 /* font related api */
@@ -1343,7 +1820,7 @@ _evas_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 }
 
 EOLIAN static int
-_evas_canvas_font_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_font_cache_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    if (_evas_engine_context(e))
      return e->engine.func->font_cache_get(_evas_engine_context(e));
@@ -1421,6 +1898,35 @@ evas_font_available_list_free(Evas *eo_e, Eina_List *available)
 }
 
 
+EOLIAN static void
+_evas_canvas_efl_canvas_scene_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
+{
+   evas_call_smarts_calculate(eo_e);
+}
+
+EAPI void
+evas_smart_objects_calculate(Eo *eo_e)
+{
+   evas_call_smarts_calculate(eo_e);
+}
+
+EOLIAN Eina_Bool
+_evas_canvas_efl_canvas_scene_smart_objects_calculating_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return !!e->in_smart_calc;
+}
+
+EAPI Eina_Bool
+evas_smart_objects_calculating_get(const Eo *obj)
+{
+   return efl_canvas_scene_smart_objects_calculating_get(obj);
+}
+
+EOLIAN int
+_evas_canvas_smart_objects_calculate_count_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return e->smart_calc_count;
+}
 /* Legacy EAPI */
 
 EAPI Eina_Bool
@@ -1435,6 +1941,11 @@ evas_pointer_inside_by_device_get(const Evas *obj, Eo *dev)
    return efl_canvas_pointer_inside_get(obj, dev);
 }
 
+EAPI Eina_List*
+evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+{
+   return _efl_canvas_evas_canvas_objects_at_xy_get_helper(eo_e, efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS), x, y, include_pass_events_objects, include_hidden_objects);
+}
 /* Internal EO APIs */
 
 EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
@@ -1446,4 +1957,5 @@ EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
 EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
    EFL_EVENT_DESCRIPTION("viewport,resize");
 
+#include "evas_stack.x"
 #include "canvas/evas_canvas.eo.c"

@@ -65,7 +65,7 @@ public static class Config {
         // TODO Support elm command line arguments
 #if WIN32 // Not a native define, we define it in our build system
         // Ecore_Win32 uses OleInitialize, which requires single thread apartments
-        if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+        if (System.Threading.Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
             throw new InvalidOperationException("UI Applications require STAThreadAttribute in Main()");
 #endif
         elm_init(0, IntPtr.Zero);

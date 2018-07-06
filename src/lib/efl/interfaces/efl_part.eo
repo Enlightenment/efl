@@ -10,7 +10,10 @@ interface Efl.Part
      theme.
 
      Part proxy objects have a special lifetime that
-     is limited to one and only one function call.
+     is limited to one and only one function call. This
+     behavior is implemented in efl_part() which call
+     Efl.Part.part_get(). Calling Efl.Part.part_get() directly
+     should be avoided.
 
      In other words, the caller does not hold a reference
      to this proxy object. It may be possible, in languages
@@ -32,10 +35,8 @@ interface Efl.Part
        unref(part)
    ]]
    methods {
-      part @const {
+      part_get @protected @const {
          [[Get a proxy object referring to a part of an object.
-
-           The returned object is valid for only a single function call.
          ]]
          params {
             name: string; [[The part name.]]

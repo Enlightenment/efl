@@ -20,7 +20,7 @@ static void _parser_file_callback(Elm_Code_File *file EINA_UNUSED, void *data EI
    file_calls++;
 }
 
-START_TEST (elm_code_parse_hook_memory_test)
+EFL_START_TEST (elm_code_parse_hook_memory_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -28,7 +28,8 @@ START_TEST (elm_code_parse_hook_memory_test)
    line_calls = 0;
    file_calls = 0;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -41,9 +42,9 @@ START_TEST (elm_code_parse_hook_memory_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_parse_hook_file_test)
+EFL_START_TEST (elm_code_parse_hook_file_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -52,7 +53,8 @@ START_TEST (elm_code_parse_hook_file_test)
    line_calls = 0;
    file_calls = 0;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
 
    elm_code_parser_add(code, _parser_line_callback, _parser_file_callback, NULL);
@@ -65,15 +67,16 @@ START_TEST (elm_code_parse_hook_file_test)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_parse_todo_test)
+EFL_START_TEST (elm_code_parse_todo_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_TODO);
    file = elm_code_file_new(code);
@@ -89,7 +92,7 @@ START_TEST (elm_code_parse_todo_test)
    ck_assert_int_eq(ELM_CODE_STATUS_TYPE_DEFAULT, line->status);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_parse(TCase *tc)
 {

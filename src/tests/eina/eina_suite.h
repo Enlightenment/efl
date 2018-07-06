@@ -20,6 +20,7 @@
 #define EINA_SUITE_H_
 
 #include <check.h>
+#include "../efl_check.h"
 
 void eina_test_ustringshare(TCase *tc);
 void eina_test_binshare(TCase *tc);
@@ -74,5 +75,7 @@ void eina_test_safepointer(TCase *tc);
 void eina_test_slice(TCase *tc);
 void eina_test_freeq(TCase *tc);
 void eina_test_slstr(TCase *tc);
+void eina_test_vpath(TCase *tc);
+void eina_test_debug(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

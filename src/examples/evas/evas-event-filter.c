@@ -165,7 +165,7 @@ _device_added_removed_cb(void *data, const Efl_Event *event)
    if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
-   if (event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED)
+   if (event->desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
      {
         if (ctx->allowed_seat)
           efl_input_seat_event_filter_set(ctx->filtered_obj,
@@ -180,8 +180,8 @@ _device_added_removed_cb(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_device_callbacks,
-                           { EFL_CANVAS_EVENT_DEVICE_ADDED, _device_added_removed_cb },
-                           { EFL_CANVAS_EVENT_DEVICE_REMOVED, _device_added_removed_cb });
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _device_added_removed_cb },
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _device_added_removed_cb });
 
 EFL_CALLBACKS_ARRAY_DEFINE(_obj_callbacks,
                            { EFL_EVENT_FOCUS_IN, _obj_events_cb },

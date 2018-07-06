@@ -1,0 +1,39 @@
+class Efl.Canvas.Animation_Rotate (Efl.Canvas.Animation)
+{
+   [[Efl rotate animation class]]
+   eo_prefix: efl_animation_rotate;
+   data: Efl_Canvas_Animation_Rotate_Data;
+   methods {
+      @property rotate {
+         [[Rotate property]]
+         set {
+         }
+         get {
+         }
+         values {
+            from_degree: double; [[Rotation degree when animation starts]]
+            to_degree: double; [[Rotation degree when animation ends]]
+            pivot: Efl.Canvas.Object; [[Pivot object for the center point. If the pivot object is NULL, then the object is rotated on itself.]]
+            cx: double; [[X relative coordinate of the center point. The left end is 0.0 and the right end is 1.0 (the center is 0.5).]]
+            cy: double; [[Y relative coordinate of the center point. The top end is 0.0 and the bottom end is 1.0 (the center is 0.5).]]
+         }
+      }
+      @property rotate_absolute {
+         [[Rotate absolute property]]
+         set {
+         }
+         get {
+         }
+         values {
+            from_degree: double; [[Rotation degree when animation starts]]
+            to_degree: double; [[Rotation degree when animation ends]]
+            cx: int; [[X absolute coordinate of the center point.]]
+            cy: int; [[Y absolute coordinate of the center point.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Canvas.Animation.animation_apply;
+   }
+}

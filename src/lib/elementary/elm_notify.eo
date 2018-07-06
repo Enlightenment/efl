@@ -1,4 +1,4 @@
-class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part)
+class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part, Efl.Ui.Legacy)
 {
    [[Elementary notification class]]
    legacy_prefix: elm_notify;
@@ -80,19 +80,19 @@ class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Ui.Widget.widget_parent { get; set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      block,clicked; [[Called when block was clicked]]
-      timeout; [[Called when notify timed out]]
-      dismissed; [[Called when notify was dismissed]]
+      block,clicked: void; [[Called when block was clicked]]
+      timeout: void; [[Called when notify timed out]]
+      dismissed: void; [[Called when notify was dismissed]]
    }
 }

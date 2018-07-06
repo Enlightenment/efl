@@ -63,6 +63,16 @@
 extern "C" {
 #endif
 
+
+/**
+ * @typedef Eio_File
+ * Generic asynchronous I/O reference.
+ * @ingroup Eio
+ */
+typedef struct _Eio_File Eio_File;
+
+typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
+
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Eio_Legacy.h"
 #endif
@@ -109,6 +119,15 @@ static inline Eina_Bool eio_file_is_dir(const Eina_Stat *stat);
  * @return EINA_TRUE, if it was.
  */
 static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
+
+/**
+ * @ingroup Eio
+ *
+ * @brief Set the polling interval to control the fallback monitor behavior
+ * @param interval The interval (in seconds) to poll
+ * @since 1.21
+ */
+EAPI void eio_monitoring_interval_set(double interval);
 
 #include "eio_inline_helper.x"
 

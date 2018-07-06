@@ -45,7 +45,7 @@ _changed(void *data EINA_UNUSED, const Efl_Event *event)
           "INFO:  - state: %s\n"
           "INFO:  - technology: %s\n"
           "INFO:  - interface: '%s'\n",
-          efl_net_session_name_get(session),
+          efl_net_session_network_name_get(session),
           _state_str(efl_net_session_state_get(session)),
           _technology_str(efl_net_session_technology_get(session)),
           efl_net_session_interface_get(session));

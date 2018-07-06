@@ -107,9 +107,9 @@
 #define EFL_MAIN_EX()                                                   \
   EFL_CALLBACKS_ARRAY_DEFINE(_efl_main_ex,                              \
                              { EFL_LOOP_EVENT_ARGUMENTS, efl_main },    \
-                             { EFL_LOOP_EVENT_PAUSE, efl_pause },       \
-                             { EFL_LOOP_EVENT_RESUME, efl_resume },     \
-                             { EFL_LOOP_EVENT_TERMINATE, efl_terminate });         \
+                             { EFL_APP_EVENT_PAUSE, efl_pause },       \
+                             { EFL_APP_EVENT_RESUME, efl_resume },     \
+                             { EFL_APP_EVENT_TERMINATE, efl_terminate });         \
   int main(int argc, char **argv)                                       \
   {                                                                     \
      Eina_Value *ret__;                                                 \

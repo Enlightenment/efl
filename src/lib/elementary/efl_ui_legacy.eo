@@ -1,0 +1,9 @@
+interface Efl.Ui.Legacy (Efl.Interface)
+{
+   [[The bg (background) widget is used for setting (solid) background decorations
+
+   in a window (unless it has transparency enabled) or on any container object. It
+   works just like an image but has some properties useful for backgrounds, such as
+   setting it to tiled, centered, scaled or stretched.
+   ]]
+}

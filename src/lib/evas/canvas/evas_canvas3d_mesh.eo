@@ -1,4 +1,3 @@
-import eina_types;
 import evas_canvas3d_types;
 
 struct @extern Eina.Inarray; [[Eina inarray data structure]]

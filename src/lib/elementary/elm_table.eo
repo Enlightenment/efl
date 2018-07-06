@@ -1,4 +1,4 @@
-class Elm.Table (Efl.Ui.Widget, Efl.Ui.Focus.Composition)
+class Elm.Table (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary table class]]
    legacy_prefix: elm_table;

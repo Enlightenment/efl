@@ -1,4 +1,4 @@
-class Efl.Io.Stdout (Efl.Loop.Fd, Efl.Io.Writer.Fd) {
+class Efl.Io.Stdout (Efl.Loop_Fd, Efl.Io.Writer_Fd) {
     [[Application's standard output (stdout).
 
       @since 1.19
@@ -8,7 +8,7 @@ class Efl.Io.Stdout (Efl.Loop.Fd, Efl.Io.Writer.Fd) {
 
     implements {
         Efl.Object.finalize;
-        Efl.Loop.Fd.fd { set; }
+        Efl.Loop_Fd.fd { set; }
         Efl.Io.Writer.write;
         Efl.Io.Writer.can_write { set; }
     }

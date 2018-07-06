@@ -25,20 +25,15 @@
 #include "eina_evlog.h"
 #include "eina_debug_private.h"
 
-#ifdef EINA_HAVE_PTHREAD_SETNAME
-# ifndef __linux__
-# include <pthread_np.h>
-# endif
-#endif
-
+#ifndef _WIN32
 volatile int           _eina_debug_sysmon_reset = 0;
 volatile int           _eina_debug_sysmon_active = 0;
 volatile int           _eina_debug_evlog_active = 0;
+volatile int           _eina_debug_cpu_active = 0;
 
-static Eina_Lock       _sysmon_lock;
+Eina_Lock       _sysmon_lock;
 
-static Eina_Bool       _sysmon_thread_runs = EINA_FALSE;
-static pthread_t       _sysmon_thread;
+static Eina_Thread       _sysmon_thread;
 
 // this is a DEDICATED thread tojust collect system info and to have the
 // least impact it can on a cpu core or system. all this does right now
@@ -46,7 +41,7 @@ static pthread_t       _sysmon_thread;
 // right now that means iterating through cpu's and getting their cpu
 // frequency to match up with event logs.
 static void *
-_sysmon(void *_data EINA_UNUSED)
+_sysmon(void *data EINA_UNUSED, Eina_Thread thr EINA_UNUSED)
 {
    static int cpufreqs[64] = { 0 };
    int i, fd, freq;
@@ -64,19 +59,13 @@ _sysmon(void *_data EINA_UNUSED)
 #endif
 
    // set a name for this thread for system debugging
-#ifdef EINA_HAVE_PTHREAD_SETNAME
-# ifndef __linux__
-   pthread_set_name_np
-# else
-      pthread_setname_np
-# endif
-      (pthread_self(), "Edbg-sys");
-#endif
+   eina_thread_name_set(eina_thread_self(), "Edbg-sys");
    for (;;)
      {
         // wait on a mutex that will be locked for as long as this
         // threead is not meant to go running
         eina_lock_take(&_sysmon_lock);
+        if (!_eina_debug_cpu_active) break;
         // if we need to reset as we just started polling system stats...
         if (_eina_debug_sysmon_reset)
           {
@@ -135,7 +124,7 @@ _sysmon(void *_data EINA_UNUSED)
                }
              for (i = 0; i < _eina_debug_thread_active_num; i++)
                {
-                  pthread_t thread = _eina_debug_thread_active[i].thread;
+                  Eina_Thread thread = _eina_debug_thread_active[i].thread;
                   // get the clock for the thread and its cpu time usage
                   pthread_getcpuclockid(thread, &cid);
                   clock_gettime(cid, &t);
@@ -247,36 +236,63 @@ _sysmon(void *_data EINA_UNUSED)
           }
         usleep(1000); // 1ms sleep
      }
+   _eina_debug_cpu_active = -1;
+   eina_lock_release(&_sysmon_lock);
    return NULL;
 }
 
 static Eina_Bool
 _cpufreq_on_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
 {
+   Eina_Bool err;
    if (!_eina_debug_evlog_active)
      {
         _eina_debug_evlog_active = 1;
         eina_evlog_start();
      }
-   if (!_eina_debug_sysmon_active)
+   if (_eina_debug_sysmon_active) return EINA_TRUE;
+
+   eina_lock_take(&_sysmon_lock);
+
+   err = eina_thread_create(&_sysmon_thread, EINA_THREAD_NORMAL, -1, _sysmon, NULL);
+
+   if (!err)
      {
-        _eina_debug_sysmon_reset = 1;
-        _eina_debug_sysmon_active = 1;
-        // this is intended. taking this lock allows sysmon to run
+        e_debug("EINA DEBUG ERROR: Can't create debug sysmon thread!");
+        eina_lock_release(&_sysmon_lock);
+        return EINA_FALSE;
+     }
+   _eina_debug_cpu_active = 1;
+   _eina_debug_sysmon_reset = 1;
+   _eina_debug_sysmon_active = 1;
+   eina_lock_release(&_sysmon_lock);
+   return EINA_TRUE;
+}
+
+static void
+_stop_cpu_thread(void)
+{
+   extern Eina_Bool fork_resetting;
+   eina_lock_take(&_sysmon_lock);
+   _eina_debug_cpu_active = 0;
+   eina_lock_release(&_sysmon_lock);
+   /* wait for thread to exit */
+   while (!fork_resetting)
+     {
+        usleep(1000);
+        eina_lock_take(&_sysmon_lock);
+        if (_eina_debug_cpu_active == -1) break;
         eina_lock_release(&_sysmon_lock);
      }
-   return EINA_TRUE;
+   _eina_debug_cpu_active = 0;
+   eina_lock_release(&_sysmon_lock);
 }
 
 static Eina_Bool
 _cpufreq_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
 {
-   if (_eina_debug_sysmon_active)
-     {
-        // this is intended. taking this lock blocks sysmod from running
-        eina_lock_take(&_sysmon_lock);
-        _eina_debug_sysmon_active = 0;
-     }
+   if (!_eina_debug_sysmon_active) return EINA_TRUE;
+   _stop_cpu_thread();
    if (_eina_debug_evlog_active)
      {
         eina_evlog_stop();
@@ -290,44 +306,13 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(_OPS,
       {"CPU/Freq/off", NULL, &_cpufreq_off_cb},
       {NULL, NULL, NULL}
 );
+#endif
 
 Eina_Bool
 _eina_debug_cpu_init(void)
 {
-   // if it's already running - we're good.
 #ifndef _WIN32
-   if (!_sysmon_thread_runs)
-     {
-        int err;
-        sigset_t oldset, newset;
-
-        eina_lock_new(&_sysmon_lock);
-        eina_lock_take(&_sysmon_lock);
-        sigemptyset(&newset);
-        sigaddset(&newset, SIGPIPE);
-        sigaddset(&newset, SIGALRM);
-        sigaddset(&newset, SIGCHLD);
-        sigaddset(&newset, SIGUSR1);
-        sigaddset(&newset, SIGUSR2);
-        sigaddset(&newset, SIGHUP);
-        sigaddset(&newset, SIGQUIT);
-        sigaddset(&newset, SIGINT);
-        sigaddset(&newset, SIGTERM);
-#ifdef SIGPWR
-        sigaddset(&newset, SIGPWR);
-#endif
-        pthread_sigmask(SIG_BLOCK, &newset, &oldset);
-
-        err = pthread_create(&_sysmon_thread, NULL, _sysmon, NULL);
-
-        pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-        if (err != 0)
-          {
-             e_debug("EINA DEBUG ERROR: Can't create debug sysmon thread!");
-             abort();
-          }
-        _sysmon_thread_runs = EINA_TRUE;
-     }
+   eina_lock_new(&_sysmon_lock);
    eina_debug_opcodes_register(NULL, _OPS(), NULL, NULL);
 #endif
    return EINA_TRUE;
@@ -336,6 +321,11 @@ _eina_debug_cpu_init(void)
 Eina_Bool
 _eina_debug_cpu_shutdown(void)
 {
+#ifndef _WIN32
+   if (_eina_debug_sysmon_active)
+     _stop_cpu_thread();
+   eina_lock_free(&_sysmon_lock);
+   _eina_debug_sysmon_reset = _eina_debug_sysmon_active = _eina_debug_evlog_active = 0;
+#endif
    return EINA_TRUE;
 }
-

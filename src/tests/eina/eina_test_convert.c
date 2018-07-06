@@ -30,7 +30,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_convert_simple)
+EFL_START_TEST(eina_convert_simple)
 {
    char tmp[128];
    char ref[128];
@@ -63,7 +63,7 @@ START_TEST(eina_convert_simple)
    fail_if(eina_convert_xtoa(0xFF00EF0E, tmp) != 8);
    fail_if(strcmp(tmp, "ff00ef0e") != 0);
 }
-END_TEST
+EFL_END_TEST
 
 #define EET_TEST_DOUBLE0 123.45689
 #define EET_TEST_DOUBLE1 1.0
@@ -85,12 +85,10 @@ _eina_convert_check(double test, int length)
    fail_if(fabs(r - test) > DBL_MIN);
 }
 
-   START_TEST(eina_convert_double)
+   EFL_START_TEST(eina_convert_double)
 {
    long long int m = 0;
    long e = 0;
-
-   eina_init();
 
    _eina_convert_check(EET_TEST_DOUBLE0,  20);
    _eina_convert_check(-EET_TEST_DOUBLE0, 21);
@@ -103,9 +101,8 @@ _eina_convert_check(double test, int length)
    fail_if(eina_convert_atod("0xjo", 8, &m, &e) != EINA_FALSE);
    fail_if(eina_convert_atod("0xp", 8, &m, &e) != EINA_FALSE);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
@@ -152,7 +149,7 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
    fail_if(fabs(fpd - d) > DBL_MIN);
 }
 
-   START_TEST(eina_convert_fp)
+   EFL_START_TEST(eina_convert_fp)
 {
    _eina_convert_fp_check(1.0,     0x0000000100000000,  6);
    _eina_convert_fp_check(0.5,     0x0000000080000000,  8);
@@ -161,7 +158,7 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
    _eina_convert_fp_check(0.5,     0x0000000080000000,  8);
    _eina_convert_fp_check(128.625, 0x00000080a0000000, 10);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_convert(TCase *tc)

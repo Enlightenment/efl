@@ -1,6 +1,6 @@
-import efl_gfx_types;
+import efl_ui_direction;
 
-interface Efl.Pack.Table (Efl.Pack.Linear)
+interface Efl.Pack_Table (Efl.Pack_Linear)
 {
    [[2D containers aligned on a table with rows and columns]]
    eo_prefix: efl_pack;
@@ -13,7 +13,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
            container without deleting it.
          ]]
          params {
-            subobj: Efl.Gfx; [[A child object to pack in this table.]]
+            subobj: Efl.Gfx.Entity; [[A child object to pack in this table.]]
             col: int; [[Column number]]
             row: int; [[Row number]]
             colspan: int @optional; [[0 means 1, -1 means @.table_columns]]
@@ -23,7 +23,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
       }
       table_contents_get {
          [[Returns all objects at a given position in this table.]]
-         return: iterator<Efl.Gfx> @owned; [[Iterator to table contents]]
+         return: iterator<Efl.Gfx.Entity> @owned; [[Iterator to table contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]
@@ -32,7 +32,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
       }
       table_content_get {
          [[Returns a child at a given position, see @.table_contents_get.]]
-         return: Efl.Gfx; [[Child object]]
+         return: Efl.Gfx.Entity; [[Child object]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]
@@ -42,7 +42,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
          [[Position and span of the $subobj in this container, may be modified to move the $subobj]]
          get { return: bool; [[Returns false if item is not a child]] }
          keys {
-            subobj: Efl.Gfx; [[Child object]]
+            subobj: Efl.Gfx.Entity; [[Child object]]
          }
          values {
             col: int; [[Column number]]
@@ -61,7 +61,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
          }
       }
       @property table_columns {
-      	 [[Gird columns property]]
+          [[Gird columns property]]
          set { [[Specifies limit for linear adds - if direction is horizontal]] }
          get {}
          values {
@@ -69,7 +69,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
          }
       }
       @property table_rows {
-      	 [[Table rows property]]
+          [[Table rows property]]
          set { [[Specifies limit for linear adds - if direction is vertical]] }
          get {}
          values {

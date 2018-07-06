@@ -11,7 +11,7 @@ class TestMain
     {
         efl.All.Init();
 
-        efl.Loop loop = new efl.LoopConcrete();
+        efl.Loop loop = new efl.Loop();
 
         EcoreEvas ecore_evas = new EcoreEvas();
         
@@ -21,25 +21,25 @@ class TestMain
 
         eina.Size2D hint = new eina.Size2D();
 
-        efl.canvas.Object canvas = ecore_evas.canvas;
+        efl.canvas.IObject canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.Object parent = canvas.GetParent();
+        efl.IObject parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
         
-        efl.canvas.Rectangle bg = new efl.canvas.RectangleConcrete(canvas);
+        efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);
         bg.SetColor(255, 255, 255, 255);
         bg.SetSize(size);
         bg.SetVisible(true);
 
 
-        evas.Table table = new evas.TableConcrete(canvas);
+        evas.Table table = new evas.Table(canvas);
         table.SetHomogeneous(evas.object_table.Homogeneous_Mode.None);
         table.SetPadding(0, 0);
         table.SetSize(size);
         table.SetVisible(true);
 
-        efl.canvas.Rectangle rect = new efl.canvas.RectangleConcrete(canvas);
+        efl.canvas.Rectangle rect = new efl.canvas.Rectangle(canvas);
         rect.SetColor(255, 0, 0, 255);
         hint.W = 100;
         hint.H = 50;
@@ -47,7 +47,7 @@ class TestMain
         rect.SetVisible(true);
         table.Pack(rect, 1, 1, 2, 1);
         
-        rect = new efl.canvas.RectangleConcrete(canvas);
+        rect = new efl.canvas.Rectangle(canvas);
         rect.SetColor(0, 255, 0, 255);
         hint.W = 50;
         hint.H = 100;
@@ -55,7 +55,7 @@ class TestMain
         rect.SetVisible(true);
         table.Pack(rect, 1, 2, 1, 2);
 
-        rect = new efl.canvas.RectangleConcrete(canvas);
+        rect = new efl.canvas.Rectangle(canvas);
         rect.SetColor(0, 0, 255, 255);
         hint.W = 50;
         hint.H = 50;
@@ -63,7 +63,7 @@ class TestMain
         rect.SetVisible(true);
         table.Pack(rect, 2, 2, 1, 1);
 
-        rect = new efl.canvas.RectangleConcrete(canvas);
+        rect = new efl.canvas.Rectangle(canvas);
         rect.SetColor(255, 255, 0, 255);
         rect.SetHintMin(hint);
         rect.SetVisible(true);

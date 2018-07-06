@@ -1,6 +1,4 @@
-import eina_types;
-
-class Efl.Model.Item (Efl.Object, Efl.Model)
+class Efl.Model_Item (Efl.Object, Efl.Model)
 {
    [[
      Generic model that allows any property to be manually set.
@@ -16,11 +14,10 @@ class Efl.Model.Item (Efl.Object, Efl.Model)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Model.properties { get; }
-      Efl.Model.property_set;
-      Efl.Model.property_get;
+      Efl.Model.property { set; get; }
       Efl.Model.child_add;
       Efl.Model.child_del;
       Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
+      Efl.Model.children_count { get; }
    }
 }

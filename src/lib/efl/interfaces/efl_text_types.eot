@@ -1,4 +1,4 @@
-enum Efl.Text.Bidirectional_Type {
+enum Efl.Text_Bidirectional_Type {
    [[Bidirectionaltext type]]
    natural = 0, [[Natural text type, same as neutral]]
    neutral = 0, [[Neutral text type, same as natural]]
@@ -7,7 +7,7 @@ enum Efl.Text.Bidirectional_Type {
    inherit [[Inherit text type]]
 }
 
-struct Efl.Ui.Text.Change_Info {
+struct Efl.Ui.Text_Change_Info {
    [[This structure includes all the information about content changes.
 
      It's meant to be used to implement undo/redo.
@@ -19,7 +19,7 @@ struct Efl.Ui.Text.Change_Info {
    merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
 
-type @extern Efl.Text.Annotate.Annotation: __undefined_type; [[EFL text annotations data structure]]
+type @extern Efl.Text_Annotate_Annotation: __undefined_type; [[EFL text annotations data structure]]
 
-type @extern Efl.Text.Cursor.Cursor: __undefined_type; [[Text cursor data structure]]
+type @extern Efl.Text_Cursor_Cursor: __undefined_type; [[Text cursor data structure]]
 

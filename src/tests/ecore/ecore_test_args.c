@@ -24,16 +24,14 @@ _cb_args1(void *data EINA_UNUSED, const Efl_Event *event)
    ecore_main_loop_quit();
 }
 
-START_TEST(ecore_test_args1)
+EFL_START_TEST(ecore_test_args1)
 {
-   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS,
                         _cb_args1, NULL);
    ecore_loop_arguments_send(8, args);
    ecore_main_loop_begin();
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _cb_args2(void *data EINA_UNUSED, const Efl_Event *event)
@@ -45,20 +43,18 @@ _cb_args2(void *data EINA_UNUSED, const Efl_Event *event)
    ecore_main_loop_quit();
 }
 
-START_TEST(ecore_test_args2)
+EFL_START_TEST(ecore_test_args2)
 {
    const char *simple_args[] = {
      "hello world"
    };
 
-   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS,
                         _cb_args2, NULL);
    ecore_loop_arguments_send(1, simple_args);
    ecore_main_loop_begin();
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _cb_args3(void *data EINA_UNUSED, const Efl_Event *event)
@@ -69,16 +65,14 @@ _cb_args3(void *data EINA_UNUSED, const Efl_Event *event)
    ecore_main_loop_quit();
 }
 
-START_TEST(ecore_test_args3)
+EFL_START_TEST(ecore_test_args3)
 {
-   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS,
                         _cb_args3, NULL);
    ecore_loop_arguments_send(0, NULL);
    ecore_main_loop_begin();
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_args(TCase *tc)
 {

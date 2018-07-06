@@ -5,17 +5,12 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eina_Stringshare *
-eolian_event_name_get(const Eolian_Event *event)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
-   return event->name;
-}
-
 EAPI const Eolian_Type *
 eolian_event_type_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   if (event->type && (event->type->type == EOLIAN_TYPE_VOID))
+     return NULL;
    return event->type;
 }
 
@@ -61,15 +56,15 @@ eolian_event_c_name_get(const Eolian_Event *event)
     char *tmp = buf;
     const char *pfx = event->klass->ev_prefix;
     if (!pfx) pfx = event->klass->eo_prefix;
-    if (!pfx) pfx = event->klass->full_name;
-    snprintf(buf, sizeof(buf), "%s_EVENT_%s", pfx, event->name);
+    if (!pfx) pfx = event->klass->base.name;
+    snprintf(buf, sizeof(buf), "%s_EVENT_%s", pfx, event->base.name);
     eina_str_toupper(&tmp);
     while ((tmp = strpbrk(tmp, ".,"))) *tmp = '_';
     return eina_stringshare_add(buf);
 }
 
 EAPI const Eolian_Event *
-eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name)
+eolian_class_event_by_name_get(const Eolian_Class *klass, const char *event_name)
 {
    Eina_List *itr;
    Eolian_Event *event = NULL;
@@ -78,7 +73,7 @@ eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name
 
    EINA_LIST_FOREACH(klass->events, itr, event)
         {
-           if (event->name == shr_ev)
+           if (event->base.name == shr_ev)
               goto end;
         }
 

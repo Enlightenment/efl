@@ -1,4 +1,4 @@
-class Efl.Ui.Text.Factory.Fallback (Efl.Object, Efl.Canvas.Text.Factory)
+class Efl.Ui.Text_Factory.Fallback (Efl.Object, Efl.Canvas.Text_Factory)
 {
    [[Internal factory for fallback cases.
 
@@ -11,6 +11,6 @@ class Efl.Ui.Text.Factory.Fallback (Efl.Object, Efl.Canvas.Text.Factory)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Canvas.Text.Factory.create;
+      Efl.Canvas.Text_Factory.create;
    }
 }

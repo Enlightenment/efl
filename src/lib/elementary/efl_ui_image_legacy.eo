@@ -1,0 +1,9 @@
+class Efl.Ui.Image_Legacy (Efl.Ui.Image, Efl.Ui.Legacy)
+{
+   [[ Efl UI image class]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+   }
+}

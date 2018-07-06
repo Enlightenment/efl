@@ -1,0 +1,60 @@
+import efl_canvas_gesture_types;
+import efl_input_types;
+
+/* FIXME: This class lacks a lot of useful helpers. */
+
+class Efl.Canvas.Gesture_Touch(Efl.Object)
+{
+   [[EFL Gesture Touch class]]
+   eo_prefix: efl_gesture_touch;
+   methods {
+      point_record {
+         [[Touch point record method]]
+         params {
+            @in tool       : int; [[The finger id ]]
+            @in pos        : Eina.Vector2; [[Position of the event]]
+            @in timestamp  : double; [[The timestamp of the event]]
+            @in action     : Efl.Pointer.Action; [[action of the event]]
+         }
+      }
+      /* FIXME: This is most likely not useful (without timestamps). */
+      delta @const {
+         [[Compute the distance between the last two events]]
+         params {
+            @in tool        : int; [[The finger id ]]
+         }
+         return: Eina.Vector2; [[The distance vector.]]
+      }
+      distance @const {
+         [[Compute the distance between the first touch and the last event.]]
+         params {
+            @in tool        : int; [[The finger id ]]
+         }
+         return: Eina.Vector2; [[The distance vector.]]
+      }
+      @property start_point {
+         [[Returns the first touch point.]]
+         get {}
+         values {
+            pos: Eina.Vector2; [[The start position.]]
+         }
+      }
+      @property multi_touch {
+         [[This property tells if the event is multi touch.]]
+         get {
+            return: bool; [[returns $true if its a multi touch]]
+         }
+      }
+      @property state {
+         [[This property holds the state of the touch event.]]
+         get {
+            return : Efl.Canvas.Gesture_Touch_State; [[touch event state]]
+         }
+      }
+      /* FIXME: finger_list was broken by design - TODO */
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

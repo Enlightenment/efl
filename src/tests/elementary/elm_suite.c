@@ -6,8 +6,11 @@
 #include "elm_suite.h"
 #include "../efl_check.h"
 
+static int main_pid = -1;
+static Eina_Bool did_shutdown;
+static Evas_Object *global_win;
+
 static const Efl_Test_Case etc[] = {
-  { "Elementary", elm_test_init },
   { "elm_config", elm_test_config },
   { "elm_check", elm_test_check },
   { "elm_colorselector", elm_test_colorselector },
@@ -88,21 +91,109 @@ static const Efl_Test_Case etc[] = {
   { NULL, NULL }
 };
 
+SUITE_INIT(elm)
+{
+   char *args[] = { "exe" };
+   ck_assert_int_eq(elm_init(1, args), 1);
+}
+
+SUITE_INIT(elm2)
+{
+   char *args[] = { "exe" };
+
+   if (getpid() != main_pid)
+     {
+        ecore_fork_reset();
+        return;
+     }
+   if (!did_shutdown)
+     {
+        /* if running un-forked then remove cached init */
+        ck_assert_int_eq(elm_shutdown(), 0);
+        did_shutdown = 1;
+     }
+   ck_assert_int_eq(elm_init(1, args), 1);
+}
+
+SUITE_SHUTDOWN(elm)
+{
+   ck_assert_int_eq(elm_shutdown(), 0);
+   /* verify that ecore was de-initialized completely */
+   ck_assert_int_eq(ecore_init(), 1);
+   /* avoid slowdowns in fork mode */
+   if (getpid() != main_pid) return;
+   ck_assert_int_eq(ecore_shutdown(), 0);
+}
+
+
+static const Efl_Test_Case etc_init[] = {
+  { "init", elm_test_init },
+  { NULL, NULL }
+};
+
+Evas_Object *
+win_add()
+{
+   if (getpid() != main_pid)
+     {
+        if (global_win) return global_win;
+     }
+   return elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);;
+}
+
 int
 main(int argc, char **argv)
 {
    int failed_count;
+   Eina_Bool buffer = EINA_FALSE;
 
    if (!_efl_test_option_disp(argc, argv, etc))
      return 0;
 
 #ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
-   putenv("ELM_RUN_IN_TREE=1");
 #endif
+   if (!getenv("ELM_ENGINE"))
+     putenv("ELM_ENGINE=buffer");
+   if (eina_streq(getenv("ELM_ENGINE"), "buffer"))
+     {
+        putenv("TESTS_GL_DISABLED=1");
+        buffer = EINA_TRUE;
+     }
+
+   main_pid = getpid();
+   ecore_app_no_system_modules();
+   efreet_cache_disable();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Elementary", etc);
+                                           "Elementary_Init", etc_init, SUITE_INIT_FN(elm), SUITE_SHUTDOWN_FN(elm));
+   failed_count += !elm_init(1, (char*[]){"exe"});
+   if (buffer) global_win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
+   /* preload default theme */
+   failed_count += !elm_theme_group_path_find(NULL, "elm/button/base/default");
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
+   failed_count += !elm_theme_group_path_find(NULL, "elm/border/base/default");
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
+   failed_count += !elm_theme_group_path_find(NULL, "elm/win/base/default");
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
+
+   /* none of these will be found in the default theme,
+    * but all are "fetched" hundreds of times
+    * T6865
+    */
+   elm_theme_group_path_find(NULL, "elm/cursor/top_side/default");
+   elm_theme_group_path_find(NULL, "elm/cursor/bottom_side/default");
+   elm_theme_group_path_find(NULL, "elm/cursor/top_left_corner/default");
+   elm_theme_group_path_find(NULL, "elm/cursor/bottom_left_corner/default");
+   elm_theme_group_path_find(NULL, "elm/cursor/top_right_corner/default");
+   elm_theme_group_path_find(NULL, "elm/cursor/bottom_right_corner/default");
+
+
+   elm_theme_group_path_find(NULL, "elm/colorselector/item/color/default");
+
+   failed_count += _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                           "Elementary", etc, SUITE_INIT_FN(elm2), SUITE_SHUTDOWN_FN(elm));
 
    return (failed_count == 0) ? 0 : 255;
 }

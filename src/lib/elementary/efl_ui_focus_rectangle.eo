@@ -1,8 +1,0 @@
-class Efl.Ui.Focus.Rectangle (Efl.Canvas.Rectangle, Efl.Ui.Focus.Object)
-{
-   [[EFL UI Focus Rectangle class]]
-   implements {
-      Efl.Ui.Focus.Object.focus_geometry {get;}
-      Efl.Ui.Focus.Object.focus {set; get;}
-   }
-}

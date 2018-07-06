@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
@@ -23,61 +22,62 @@
 # define EPP_EXT
 #endif
 
+#define SKIP_NAMESPACE_VALIDATION_SUPPORTED " -DSKIP_NAMESPACE_VALIDATION=1 "
+
 #define EDJE_1_18_SUPPORTED " -DEFL_VERSION_1_18=1 "
 #define EDJE_1_19_SUPPORTED " -DEFL_VERSION_1_19=1 "
 #define EDJE_1_20_SUPPORTED " -DEFL_VERSION_1_20=1 "
 #define EDJE_1_21_SUPPORTED " -DEFL_VERSION_1_21=1 "
 
 #define EDJE_CC_EFL_VERSION_SUPPORTED \
-  EDJE_1_18_SUPPORTED \
-  EDJE_1_19_SUPPORTED \
-  EDJE_1_20_SUPPORTED \
+  EDJE_1_18_SUPPORTED                 \
+  EDJE_1_19_SUPPORTED                 \
+  EDJE_1_20_SUPPORTED                 \
   EDJE_1_21_SUPPORTED
 
-static void  new_object(void);
-static void  new_statement(void);
-static char *perform_math (char *input);
-static int   isdelim(char c);
-static char *next_token(char *p, char *end, char **new_p, int *delim);
+static void        new_object(void);
+static void        new_statement(void);
+static char       *perform_math(char *input);
+static int         isdelim(char c);
+static char       *next_token(char *p, char *end, char **new_p, int *delim);
 static const char *stack_id(void);
-static void  parse(char *data, off_t size);
+static void        parse(char *data, off_t size);
 
 /* simple expression parsing protos */
-static int my_atoi(const char * s);
-static char * _alphai(char *s, int * val);
-static char * _betai(char *s, int * val);
-static char * _gammai(char *s, int * val);
-static char * _deltai(char *s, int * val);
-static char * _get_numi(char *s, int * val);
-static int _is_numi(char c);
-static int _is_op1i(char c);
-static int _is_op2i(char c);
-static int _calci(char op, int a, int b);
+static int         my_atoi(const char *s);
+static char       *_alphai(char *s, int *val);
+static char       *_betai(char *s, int *val);
+static char       *_gammai(char *s, int *val);
+static char       *_deltai(char *s, int *val);
+static char       *_get_numi(char *s, int *val);
+static int         _is_numi(char c);
+static int         _is_op1i(char c);
+static int         _is_op2i(char c);
+static int         _calci(char op, int a, int b);
 
-static double my_atof(const char * s);
-static char * _alphaf(char *s, double * val);
-static char * _betaf(char *s, double * val);
-static char * _gammaf(char *s, double * val);
-static char * _deltaf(char *s, double * val);
-static char * _get_numf(char *s, double * val);
-static int _is_numf(char c);
-static int _is_op1f(char c);
-static int _is_op2f(char c);
-static double _calcf(char op, double a, double b);
-static int strstrip(const char *in, char *out, size_t size);
+static double      my_atof(const char *s);
+static char       *_alphaf(char *s, double *val);
+static char       *_betaf(char *s, double *val);
+static char       *_gammaf(char *s, double *val);
+static char       *_deltaf(char *s, double *val);
+static char       *_get_numf(char *s, double *val);
+static int         _is_numf(char c);
+static int         _is_op1f(char c);
+static int         _is_op2f(char c);
+static double      _calcf(char op, double a, double b);
+static int         strstrip(const char *in, char *out, size_t size);
 
-
-int        line = 0;
+int line = 0;
 Eina_List *stack = NULL;
 Eina_Array params;
 int had_quote = 0;
 int params_quote = 0;
 
-static char  file_buf[4096];
-static int   did_wildcard = 0;
-static int   verbatim = 0;
-static int   verbatim_line1 = 0;
-static int   verbatim_line2 = 0;
+static char file_buf[4096];
+static int did_wildcard = 0;
+static int verbatim = 0;
+static int verbatim_line1 = 0;
+static int verbatim_line2 = 0;
 static char *verbatim_str = NULL;
 static Eina_Strbuf *stack_buf = NULL;
 
@@ -102,9 +102,9 @@ err_show_params(void)
 
    ERR("PARAMS:");
    EINA_ARRAY_ITER_NEXT(&params, i, p, iterator)
-     {
-        ERR("  %s", p);
-     }
+   {
+      ERR("  %s", p);
+   }
 }
 
 static void
@@ -117,7 +117,7 @@ err_show(void)
 static char *
 _parse_param_get(int n)
 {
-   if (n < (int) eina_array_count(&params))
+   if (n < (int)eina_array_count(&params))
      return eina_array_data_get(&params, n);
    return NULL;
 }
@@ -304,7 +304,7 @@ new_statement_single(void)
 }
 
 static char *
-perform_math (char *input)
+perform_math(char *input)
 {
    char buf[256];
    double res;
@@ -344,9 +344,9 @@ next_token(char *p, char *end, char **new_p, int *delim)
    int in_tok = 0;
    int in_quote = 0;
    int in_parens = 0;
-   int in_comment_ss  = 0;
+   int in_comment_ss = 0;
    int in_comment_cpp = 0;
-   int in_comment_sa  = 0;
+   int in_comment_sa = 0;
    int is_escaped = 0;
 
    had_quote = 0;
@@ -377,7 +377,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
           {
              char *pp, fl[4096];
              char *tmpstr = NULL;
-             int   l, nm;
+             int l, nm;
 
              /* handle cpp comments */
              /* their line format is
@@ -470,14 +470,14 @@ next_token(char *p, char *end, char **new_p, int *delim)
 
                        /* check for end-of-token */
                        if (
-                          (isspace(*p)) ||
-                          ((*delim) && (!isdelim(*p))) ||
-                          (isdelim(*p))
-                          )
-                         {/*the line below this is never  used because it skips to
-                           * the 'done' label which is after the return call for
-                           * in_tok being 0. is this intentional?
-                           */
+                         (isspace(*p)) ||
+                         ((*delim) && (!isdelim(*p))) ||
+                         (isdelim(*p))
+                         ) /*the line below this is never  used because it skips to
+                            * the 'done' label which is after the return call for
+                            * in_tok being 0. is this intentional?
+                            */
+                         {
                             in_tok = 0;
 
                             tok_end = p - 1;
@@ -497,7 +497,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
    if (!in_tok) return NULL;
    tok_end = p - 1;
 
-   done:
+done:
    *new_p = p;
 
    tok = mem_alloc(tok_end - tok_start + 2);
@@ -661,7 +661,7 @@ stack_pop(void)
         if (do_remove)
           eina_strbuf_remove(stack_buf,
                              eina_strbuf_length_get(stack_buf) - tmp_length - 1,
-                             eina_strbuf_length_get(stack_buf)); /* remove: '.tmp' */
+                             eina_strbuf_length_get(stack_buf));  /* remove: '.tmp' */
      }
    else
      {
@@ -698,8 +698,8 @@ stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free)
           tmp = end + 1;
      }
    eina_strbuf_remove(stack_buf,
-                           eina_strbuf_length_get(stack_buf) - strlen(tmp) - 1,
-                           eina_strbuf_length_get(stack_buf)); /* remove: '.tmp' */
+                      eina_strbuf_length_get(stack_buf) - strlen(tmp) - 1,
+                      eina_strbuf_length_get(stack_buf));      /* remove: '.tmp' */
    stack = eina_list_remove_list(stack, eina_list_last(stack));
    if (do_free)
      {
@@ -785,7 +785,8 @@ parse(char *data, off_t size)
                   err_show();
                   exit(-1);
                }
-             else if (*token == ',' || *token == ':') do_params = 1;
+             else if (*token == ',' || *token == ':')
+               do_params = 1;
              else if (*token == '}')
                {
                   if (do_params)
@@ -921,8 +922,9 @@ parse(char *data, off_t size)
                                    }
                                  else if ((!inquotes) && (!insquotes))
                                    {
-                                      if      (p[0] == '{') squigglie++;
-                                      else if (p[0] == '}') squigglie--;
+                                      if (p[0] == '{') squigglie++;
+                                      else if (p[0] == '}')
+                                        squigglie--;
                                       if (squigglie == 0)
                                         {
                                            verbatim_2 = p - 1;
@@ -1046,7 +1048,7 @@ compile(void)
 
              len = 0;
              EINA_LIST_FOREACH(defines, l, define)
-                len += strlen(define) + 1;
+               len += strlen(define) + 1;
              def = mem_alloc(len + 1);
              def[0] = 0;
              EINA_LIST_FOREACH(defines, l, define)
@@ -1082,25 +1084,25 @@ compile(void)
 
              inc = ecore_file_dir_get(file_in);
              if (depfile)
-               snprintf(buf, sizeof(buf), "\"%s\" -MMD \"%s\" -MT \"%s\" \"%s\""
-                        " -I\"%s\" %s -o \"%s\""
-                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
+               snprintf(buf, sizeof(buf), "\"%s\" "SKIP_NAMESPACE_VALIDATION_SUPPORTED" -MMD \"%s\" -MT \"%s\" \"%s\""
+                                          " -I\"%s\" %s -o \"%s\""
+                                          " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, depfile, file_out, file_in,
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
-               snprintf(buf, sizeof(buf), "\"%s\" -annotate -a \"%s\" \"%s\""
-                        " -I\"%s\" %s -o \"%s\""
-                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
+               snprintf(buf, sizeof(buf), "\"%s\" "SKIP_NAMESPACE_VALIDATION_SUPPORTED" -annotate -a \"%s\" \"%s\""
+                                          " -I\"%s\" %s -o \"%s\""
+                                          " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
-               snprintf(buf, sizeof(buf), "\"%s\" -a \"%s\" \"%s\" -I\"%s\" %s"
-                        " -o \"%s\""
-                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
+               snprintf(buf, sizeof(buf), "\"%s\" "SKIP_NAMESPACE_VALIDATION_SUPPORTED" -a \"%s\" \"%s\" -I\"%s\" %s"
+                                          " -o \"%s\""
+                                          " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc ? inc : "./", def, clean_file,
@@ -1247,10 +1249,10 @@ _parse_enum(char *str, va_list va)
    va_list va2;
    va_copy(va2, va); /* iterator for the error message */
 
-   for (;;)
+   for (;; )
      {
         char *s;
-        int   v;
+        int v;
 
         s = va_arg(va, char *);
 
@@ -1328,7 +1330,7 @@ parse_flags(int n, ...)
    va_list va;
 
    va_start(va, n);
-   while (n < (int) eina_array_count(&params))
+   while (n < (int)eina_array_count(&params))
      {
         result |= _parse_enum(eina_array_data_get(&params, n), va);
         n++;
@@ -1665,7 +1667,7 @@ _get_numi(char *s, int *val)
      }
    buf[pos] = '\0';
    (*val) = atoi(buf);
-   return (s + pos);
+   return s + pos;
 }
 
 int
@@ -1682,10 +1684,13 @@ _is_op1i(char c)
 {
    switch (c)
      {
-     case '*':;
-     case '%':;
-     case '/': return 1;
-     default: break;
+      case '*':;
+
+      case '%':;
+
+      case '/': return 1;
+
+      default: break;
      }
    return 0;
 }
@@ -1695,9 +1700,11 @@ _is_op2i(char c)
 {
    switch (c)
      {
-     case '+':;
-     case '-': return 1;
-     default: break;
+      case '+':;
+
+      case '-': return 1;
+
+      default: break;
      }
    return 0;
 }
@@ -1705,29 +1712,34 @@ _is_op2i(char c)
 int
 _calci(char op, int a, int b)
 {
-   switch(op)
+   switch (op)
      {
       case '+':
-         a += b;
-         return a;
+        a += b;
+        return a;
+
       case '-':
-         a -= b;
-         return a;
+        a -= b;
+        return a;
+
       case '/':
-         if (0 != b) a /= b;
-         else
-           ERR("%s:%i divide by zero", file_in, line - 1);
-         return a;
+        if (0 != b) a /= b;
+        else
+          ERR("%s:%i divide by zero", file_in, line - 1);
+        return a;
+
       case '*':
-         a *= b;
-         return a;
+        a *= b;
+        return a;
+
       case '%':
-         if (0 != b) a = a % b;
-         else
-           ERR("%s:%i modula by zero", file_in, line - 1);
-         return a;
+        if (0 != b) a = a % b;
+        else
+          ERR("%s:%i modula by zero", file_in, line - 1);
+        return a;
+
       default:
-         ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
+        ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
      }
    return a;
 }
@@ -1818,7 +1830,7 @@ _gammaf(char *s, double *val)
 static char *
 _betaf(char *s, double *val)
 {
-   double a1=0, a2=0;
+   double a1 = 0, a2 = 0;
    char op;
 
    if (!val) return NULL;
@@ -1837,7 +1849,7 @@ _betaf(char *s, double *val)
 static char *
 _alphaf(char *s, double *val)
 {
-   double a1=0, a2=0;
+   double a1 = 0, a2 = 0;
    char op;
 
    if (!val) return NULL;
@@ -1870,7 +1882,7 @@ _get_numf(char *s, double *val)
      }
    buf[pos] = '\0';
    (*val) = atof(buf);
-   return (s+pos);
+   return s + pos;
 }
 
 static int
@@ -1887,11 +1899,14 @@ _is_numf(char c)
 static int
 _is_op1f(char c)
 {
-   switch(c)
+   switch (c)
      {
       case '*':;
+
       case '%':;
+
       case '/': return 1;
+
       default: break;
      }
    return 0;
@@ -1900,10 +1915,12 @@ _is_op1f(char c)
 static int
 _is_op2f(char c)
 {
-   switch(c)
+   switch (c)
      {
       case '+':;
+
       case '-': return 1;
+
       default: break;
      }
    return 0;
@@ -1912,29 +1929,34 @@ _is_op2f(char c)
 static double
 _calcf(char op, double a, double b)
 {
-   switch(op)
+   switch (op)
      {
       case '+':
-         a += b;
-         return a;
+        a += b;
+        return a;
+
       case '-':
-         a -= b;
-         return a;
+        a -= b;
+        return a;
+
       case '/':
-         if (b != 0) a /= b;
-         else
-           ERR("%s:%i divide by zero", file_in, line - 1);
-         return a;
+        if (b != 0) a /= b;
+        else
+          ERR("%s:%i divide by zero", file_in, line - 1);
+        return a;
+
       case '*':
-         a *= b;
-         return a;
+        a *= b;
+        return a;
+
       case '%':
-         if (0 != b) a = (double)((int)a % (int)b);
-         else
-           ERR("%s:%i modula by zero", file_in, line - 1);
-         return a;
+        if (0 != b) a = (double)((int)a % (int)b);
+        else
+          ERR("%s:%i modula by zero", file_in, line - 1);
+        return a;
+
       default:
-         ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
+        ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
      }
    return a;
 }
@@ -1942,7 +1964,7 @@ _calcf(char op, double a, double b)
 static int
 strstrip(const char *in, char *out, size_t size)
 {
-   if ((size -1 ) < strlen(in))
+   if ((size - 1) < strlen(in))
      {
         ERR("%s:%i expression is too long", file_in, line - 1);
         return 0;
@@ -1967,7 +1989,7 @@ get_param_index(char *str)
    int index;
    char *p;
 
-   for(index = 0; index < get_arg_count(); index++)
+   for (index = 0; index < get_arg_count(); index++)
      {
         p = _parse_param_get(index);
         if (!p) continue;
@@ -1982,5 +2004,6 @@ get_param_index(char *str)
 int
 param_had_quote(int n)
 {
-   return (params_quote & (1 << n));
+   return params_quote & (1 << n);
 }
+

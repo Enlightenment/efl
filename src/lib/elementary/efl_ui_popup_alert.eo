@@ -1,13 +1,13 @@
-enum Efl.Ui.Popup_Alert.Button {
+enum Efl.Ui.Popup_Alert_Button {
    [[Defines the type of the alert button.]]
    positive = 0, [[Button having positive meaning. e.g. "Yes"]]
    negative, [[Button having negative meaning. e.g. "No"]]
    user [[Button having user-defined meaning. e.g. "Cancel"]]
 }
 
-struct Efl.Ui.Popup_Alert.Button.Clicked_Event {
+struct Efl.Ui.Popup_Alert_Button_Clicked_Event {
    [[Information of clicked event]]
-   button_type: Efl.Ui.Popup_Alert.Button; [[Clicked button type]]
+   button_type: Efl.Ui.Popup_Alert_Button; [[Clicked button type]]
 }
 
 class Efl.Ui.Popup_Alert(Efl.Ui.Popup)
@@ -19,7 +19,7 @@ class Efl.Ui.Popup_Alert(Efl.Ui.Popup)
             [[Set popup buttons.]]
          }
          keys {
-            type: Efl.Ui.Popup_Alert.Button; [[Alert popup button type]]
+            type: Efl.Ui.Popup_Alert_Button; [[Alert popup button type]]
          }
          values {
             text: string; [[Alert string on button]]
@@ -29,9 +29,9 @@ class Efl.Ui.Popup_Alert(Efl.Ui.Popup)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      button,clicked: Efl.Ui.Popup_Alert.Button.Clicked_Event; [[Called when alert popup was clicked]]
+      button,clicked: Efl.Ui.Popup_Alert_Button_Clicked_Event; [[Called when alert popup was clicked]]
    }
 }

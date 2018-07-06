@@ -4,7 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
-#include "namespace.hh"
+#include "name_helpers.hh"
 #include "type_impl.hh"
 
 namespace eolian_mono {
@@ -76,6 +76,12 @@ struct marshall_annotation_visitor_generate
           {"any_value_ptr", false, [&] {
                     return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.ValueMarshaler))]";
           }},
+          {"strbuf", true, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufPassOwnershipMarshaler))]";
+          }},
+          {"strbuf", false, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufKeepOwnershipMarshaler))]";
+          }},
         };
       match const return_match_table[] =
         {
@@ -105,6 +111,12 @@ struct marshall_annotation_visitor_generate
           {"any_value_ptr", false, [&] {
                     return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.ValueMarshaler))]";
           }},
+          {"strbuf", true, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufPassOwnershipMarshaler))]";
+          }},
+          {"strbuf", false, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufKeepOwnershipMarshaler))]";
+          }},
         };
 
         if(eina::optional<bool> b = call_annotation_match
@@ -132,15 +144,18 @@ struct marshall_annotation_visitor_generate
    {
      const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
      const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
-     std::vector<std::string> namespaces = escape_namespace(klass_name.namespaces);
      return as_generator
        ((is_return ? return_prefix : no_return_prefix)
-        << *(lower_case[string] << ".") << string
-        << "Concrete, efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
-        ).generate(sink, std::make_tuple(namespaces, klass_name.eolian_name), *context);
+        << string << ", efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
+        ).generate(sink, name_helpers::klass_full_concrete_name(klass_name), *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& c) const
    {
+     if (c.outer.base_type == "future")
+       {
+          std::string prefix = is_return ? "return: " : "";
+          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.FutureMarshaler))]").generate(sink, nullptr, *context);
+       }
      return true;
    }
 };
@@ -187,6 +202,12 @@ struct marshall_native_annotation_visitor_generate
                     return "";
                 return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareKeepOwnershipMarshaler))]";
           }},
+          {"strbuf", true, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufPassOwnershipMarshaler))]";
+          }},
+          {"strbuf", false, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufKeepOwnershipMarshaler))]";
+          }},
         };
       match const return_match_table[] =
         {
@@ -200,6 +221,12 @@ struct marshall_native_annotation_visitor_generate
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringsharePassOwnershipMarshaler))]";
           }},
           {"stringshare", false, [&] { return ""; }},
+          {"strbuf", true, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufPassOwnershipMarshaler))]";
+          }},
+          {"strbuf", false, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufKeepOwnershipMarshaler))]";
+          }},
         };
 
         if(eina::optional<bool> b = call_annotation_match
@@ -227,15 +254,18 @@ struct marshall_native_annotation_visitor_generate
    {
      const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
      const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(efl.eo.MarshalTest<";
-     std::vector<std::string> namespaces = escape_namespace(klass_name.namespaces);
      return as_generator
        ((is_return ? return_prefix : no_return_prefix)
-        << *(lower_case[string] << ".") << string
-        << "Concrete, efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
-        ).generate(sink, std::make_tuple(namespaces, klass_name.eolian_name), *context);
+        << string << ", efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
+        ).generate(sink, name_helpers::klass_full_concrete_name(klass_name), *context);
    }
-   bool operator()(attributes::complex_type_def const&) const
+   bool operator()(attributes::complex_type_def const& c) const
    {
+     if (c.outer.base_type == "future")
+       {
+          std::string prefix = is_return ? "return: " : "";
+          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.FutureMarshaler))]").generate(sink, nullptr, *context);
+       }
      return true;
    }
 };

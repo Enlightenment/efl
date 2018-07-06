@@ -1,5 +1,7 @@
 import eina_types;
 
+type Test.MyInt: int;
+
 enum Test.SampleEnum {
    v0,
    v1,
@@ -57,6 +59,7 @@ struct Test.StructSimple
    fstring: string;
    fmstring: mstring;
    fstringshare: stringshare;
+   fmyint: Test.MyInt;
 }
 
 struct Test.StructComplex {
@@ -81,10 +84,36 @@ function Test.SimpleCb {
    return: int;
 };
 
-class Test.Testing (Efl.Object) {
+function Test.FormatCb {
+   params {
+      @in str: strbuf;
+      @in value: const(any_value);
+   }
+};
+
+class Test.Testing (Efl.Object, Efl.Part) {
+
+   parts {
+      part1: Test.Testing; [[ Part number one. ]]
+      part2: Test.Testing; [[ Part number two. ]]
+   }
    methods {
       return_object {
          return: Test.Testing;
+      }
+
+      int_out {
+         params {
+            @in x: int;
+            @out y: int;
+         }
+      }
+
+      int_ptr_out {
+         params {
+            @in x: int;
+            @out y: ptr(int);
+         }
       }
 
       in_stringshare {
@@ -1308,6 +1337,12 @@ class Test.Testing (Efl.Object) {
          }
       }
 
+      call_set_value {
+         params {
+            value: const(any_value);
+         }
+      }
+
       get_value_ptr_own {
          return: any_value_ptr @owned;
       }
@@ -1355,19 +1390,19 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
-      // struct_simple_ptr_in {
-      //    params {
-      //       @in simple: ptr(Test.StructSimple);
-      //    }
-      //    return: bool;
-      // }
-      //
-      // struct_simple_ptr_in_own {
-      //    params {
-      //       @in simple: ptr(Test.StructSimple) @owned;
-      //    }
-      //    return: bool;
-      // }
+      struct_simple_ptr_in {
+         params {
+            @in simple: ptr(Test.StructSimple);
+         }
+         return: bool;
+      }
+
+      struct_simple_ptr_in_own {
+         params {
+            @in simple: ptr(Test.StructSimple) @owned;
+         }
+         return: Test.StructSimple;
+      }
 
       struct_simple_out {
          params {
@@ -1376,31 +1411,79 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
-      // struct_simple_ptr_out {
-      //    params {
-      //       @out simple: ptr(Test.StructSimple);
-      //    }
-      //    return: bool;
-      // }
-      //
-      // struct_simple_ptr_out_own {
-      //    params {
-      //       @out simple: ptr(Test.StructSimple) @owned;
-      //    }
-      //    return: bool;
-      // }
+      struct_simple_ptr_out {
+         params {
+            @out simple: ptr(Test.StructSimple);
+         }
+         return: Test.StructSimple;
+      }
+
+      struct_simple_ptr_out_own {
+         params {
+            @out simple: ptr(Test.StructSimple) @owned;
+         }
+         return: Test.StructSimple;
+      }
 
       struct_simple_return {
          return: Test.StructSimple;
       }
 
-      // struct_simple_ptr_return {
-      //    return: ptr(Test.StructSimple);
-      // }
-      //
-      // struct_simple_ptr_return_own {
-      //    return: ptr(Test.StructSimple) @owned;
-      // }
+      struct_simple_ptr_return {
+         return: ptr(Test.StructSimple);
+      }
+
+      struct_simple_ptr_return_own {
+         return: ptr(Test.StructSimple) @owned;
+      }
+
+      call_struct_simple_in {
+         params {
+            @in simple: Test.StructSimple;
+         }
+      }
+
+      call_struct_simple_ptr_in {
+         params {
+            @in simple: ptr(Test.StructSimple);
+         }
+      }
+
+      call_struct_simple_ptr_in_own {
+         params {
+            @in simple: ptr(Test.StructSimple) @owned;
+         }
+      }
+
+      call_struct_simple_out {
+         params {
+            @out simple: Test.StructSimple;
+         }
+      }
+
+      call_struct_simple_ptr_out {
+         params {
+            @out simple: ptr(Test.StructSimple);
+         }
+      }
+
+      call_struct_simple_ptr_out_own {
+         params {
+            @out simple: ptr(Test.StructSimple) @owned;
+         }
+      }
+
+      call_struct_simple_return {
+         return: Test.StructSimple;
+      }
+
+      call_struct_simple_ptr_return {
+         return: ptr(Test.StructSimple);
+      }
+
+      call_struct_simple_ptr_return_own {
+         return: ptr(Test.StructSimple) @owned;
+      }
 
       struct_complex_in {
          params {
@@ -1409,19 +1492,19 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
-      // struct_complex_ptr_in {
-      //    params {
-      //       @in complex: ptr(Test.StructComplex);
-      //    }
-      //    return: bool;
-      // }
-      //
-      // struct_complex_ptr_in_own {
-      //    params {
-      //       @in complex: ptr(Test.StructComplex) @owned;
-      //    }
-      //    return: bool;
-      // }
+      struct_complex_ptr_in {
+         params {
+            @in complex: ptr(Test.StructComplex);
+         }
+         return: bool;
+      }
+
+      struct_complex_ptr_in_own {
+         params {
+            @in complex: ptr(Test.StructComplex) @owned;
+         }
+         return: bool;
+      }
 
       struct_complex_out {
          params {
@@ -1455,9 +1538,123 @@ class Test.Testing (Efl.Object) {
       // struct_complex_ptr_return_own {
       //    return: ptr(Test.StructComplex) @owned;
       // }
+
+      emit_event_with_string {
+         params {
+            @in data: string;
+         }
+      }
+      emit_event_with_bool {
+         params {
+            @in data: bool;
+         }
+      }
+      emit_event_with_int {
+         params {
+            @in data: int;
+         }
+      }
+      emit_event_with_uint {
+         params {
+            @in data: uint;
+         }
+      }
+      emit_event_with_obj {
+         params {
+            @in data: Test.Testing;
+         }
+      }
+
+      emit_event_with_error {
+         params {
+            @in data: Eina.Error;
+         }
+      }
+
+      emit_event_with_struct {
+         params {
+            @in data: Test.StructSimple;
+         }
+      }
+
+      append_to_strbuf {
+         params {
+            @in buf: strbuf;
+            @in str: string;
+         }
+      }
+
+      call_append_to_strbuf {
+         params {
+            @in buf: strbuf;
+            @in str: string;
+         }
+      }
+
+      call_format_cb {
+         params {
+            @in str: strbuf;
+            @in value: const(any_value);
+            @in func: Test.FormatCb;
+         }
+      }
+
+      bypass_typedef {
+         params {
+            @in data: Test.MyInt;
+            @out receiver: Test.MyInt;
+         }
+
+         return: Test.MyInt;
+      }
+
+      @property klass_prop @class {
+         get {}
+         set {}
+         values {
+            prop: int;
+         }
+      }
+
+      /* Futures */
+
+      get_future {
+         return: future<any_value_ptr>;
+      }
+
+      fulfill_promise {
+         params {
+            @in data: int;
+         }
+      }
+
+      reject_promise {
+         params {
+            @in error: Eina.Error;
+         }
+      }
+
+      /* Accessors */
+      clone_accessor {
+         params {
+            @in acc: accessor<ptr(int)>;
+         }
+         return: accessor<ptr(int)> @owned;
+      }
    }
    implements {
       class.constructor;
       class.destructor;
+      Efl.Object.constructor;
+      Efl.Part.part_get;
+   }
+   events {
+      evt,with,string @hot: string;
+      evt,with,bool: bool;
+      evt,with,int @hot: int;
+      evt,with,uint @hot: uint;
+      evt,with,obj @hot: Test.Testing;
+      evt,with,error @hot: Eina.Error;
+      evt,with,struct @hot: Test.StructSimple;
    }
 }

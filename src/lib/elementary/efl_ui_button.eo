@@ -1,5 +1,5 @@
-class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
-                     Efl.Text, Efl.Text.Markup, Efl.Content,
+class Efl.Ui.Button (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
+                     Efl.Text, Efl.Text_Markup, Efl.Content,
                      Efl.Access.Widget.Action, Efl.Ui.Translatable)
 {
    [[Push-button widget
@@ -16,11 +16,8 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
       Efl.Ui.Autorepeat.autorepeat_enabled { set; get; }
       Efl.Ui.Autorepeat.autorepeat_supported { get;}
       Efl.Ui.Widget.on_access_activate;
-      Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Part.part;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Text.text { get; set; }

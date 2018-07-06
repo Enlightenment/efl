@@ -3,9 +3,10 @@
 #endif
 
 #define ELM_WIDGET_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -631,42 +632,36 @@ _elm_hover_efl_canvas_group_group_del(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_efl_gfx_position_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Position2D pos)
+_elm_hover_efl_gfx_entity_position_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_hover_efl_gfx_size_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Size2D sz)
+_elm_hover_efl_gfx_entity_size_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
+_elm_hover_efl_gfx_entity_visible_set(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   if (vis)
-     {
-        _hov_show_do(obj);
-        //we just set ourself as redirect in the next upper manager
-        pd->redirected = efl_ui_focus_object_focus_manager_get(pd->target);
-        efl_ui_focus_manager_redirect_set(pd->redirected, obj);
-     }
+   if (vis) _hov_show_do(obj);
    else
      {
         // for backward compatibility
@@ -674,9 +669,6 @@ _elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
 
         if (!eina_streq(dismissstr, "on"))
           _hide_signals_emit(obj);
-
-        efl_ui_focus_manager_redirect_set(pd->redirected, NULL);
-        pd->redirected = NULL;
      }
 }
 
@@ -699,16 +691,12 @@ elm_hover_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
+_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
-
-   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-
-   efl_composite_attach(obj, pd->manager);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
 
    return obj;
 }
@@ -774,7 +762,7 @@ _elm_hover_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Obj
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_target_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
+_elm_hover_target_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
    return sd->target;
 }
@@ -787,7 +775,7 @@ elm_hover_parent_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_efl_ui_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
+_elm_hover_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
    return sd->parent;
 }
@@ -856,7 +844,7 @@ _action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_hover_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
+_elm_hover_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "dismiss", NULL, NULL, _action_dismiss},
@@ -866,10 +854,10 @@ _elm_hover_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hov
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_hover_efl_access_state_set_get(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
+_elm_hover_efl_access_object_state_set_get(const Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
    Efl_Access_State_Set states;
-   states = efl_access_state_set_get(efl_super(obj, MY_CLASS));
+   states = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
    STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
    return states;

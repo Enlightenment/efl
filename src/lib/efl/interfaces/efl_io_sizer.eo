@@ -34,6 +34,6 @@ mixin Efl.Io.Sizer {
     }
 
     events {
-        size,changed; [[Notifies size changed]]
+        size,changed: void; [[Notifies size changed]]
     }
 }

@@ -55,7 +55,7 @@ _canvas_resize_cb(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   efl_gfx_size_set(d.bg, EINA_SIZE2D(w,  h));
+   efl_gfx_entity_size_set(d.bg, EINA_SIZE2D(w,  h));
 }
 
 static void
@@ -141,8 +141,8 @@ _on_keydown(void        *data EINA_UNUSED,
         Eina_Bool visibility;
         /* Don't use "get"-"set" expressions in one eo_do call,
          * if you pass parameter to "set" by value. */
-        visibility = efl_gfx_visible_get(d.clipper);
-        efl_gfx_visible_set(d.clipper, !visibility);
+        visibility = efl_gfx_entity_visible_get(d.clipper);
+        efl_gfx_entity_visible_set(d.clipper, !visibility);
         printf("Clipper is now %s\n", visibility ? "hidden" : "visible");
         return;
      }
@@ -176,11 +176,11 @@ main(void)
    evas_object_name_set(d.bg, "background rectangle");
    efl_gfx_color_set(d.bg, 255, 255, 255, 255);
    /* white bg */
-   efl_gfx_position_set(d.bg, EINA_POSITION2D(0, 0));
+   efl_gfx_entity_position_set(d.bg, EINA_POSITION2D(0, 0));
    /* at canvas' origin */
-   efl_gfx_size_set(d.bg, EINA_SIZE2D(WIDTH,  HEIGHT));
+   efl_gfx_entity_size_set(d.bg, EINA_SIZE2D(WIDTH,  HEIGHT));
    /* covers full canvas */
-   efl_gfx_visible_set(d.bg, EINA_TRUE);
+   efl_gfx_entity_visible_set(d.bg, EINA_TRUE);
    evas_object_focus_set(d.bg, EINA_TRUE);
 
    evas_object_event_callback_add(
@@ -202,9 +202,9 @@ main(void)
      }
    else
      {
-        efl_gfx_position_set(d.img, EINA_POSITION2D(0, 0));
-        efl_gfx_size_set(d.img, EINA_SIZE2D(WIDTH,  HEIGHT));
-        efl_gfx_visible_set(d.img, EINA_TRUE);
+        efl_gfx_entity_position_set(d.img, EINA_POSITION2D(0, 0));
+        efl_gfx_entity_size_set(d.img, EINA_SIZE2D(WIDTH,  HEIGHT));
+        efl_gfx_entity_visible_set(d.img, EINA_TRUE);
         printf("Image object added, class name is: %s\n",
                efl_class_name_get(d.img));
      }
@@ -220,11 +220,11 @@ main(void)
      }
    else
      {
-        efl_image_border_set(d.clipper_border, 3, 3, 3, 3);
-        efl_image_border_center_fill_set(d.clipper_border, EFL_GFX_BORDER_FILL_MODE_NONE);
-        efl_gfx_position_set(d.clipper_border, EINA_POSITION2D((WIDTH / 4) -3, (HEIGHT / 4) - 3));
-        efl_gfx_size_set(d.clipper_border, EINA_SIZE2D((WIDTH / 2) + 6,  (HEIGHT / 2) + 6));
-        efl_gfx_visible_set(d.clipper_border, EINA_TRUE);
+        efl_gfx_image_border_set(d.clipper_border, 3, 3, 3, 3);
+        efl_gfx_image_border_center_fill_set(d.clipper_border, EFL_GFX_BORDER_FILL_MODE_NONE);
+        efl_gfx_entity_position_set(d.clipper_border, EINA_POSITION2D((WIDTH / 4) -3, (HEIGHT / 4) - 3));
+        efl_gfx_entity_size_set(d.clipper_border, EINA_SIZE2D((WIDTH / 2) + 6,  (HEIGHT / 2) + 6));
+        efl_gfx_entity_visible_set(d.clipper_border, EINA_TRUE);
      }
 
    /* solid white clipper (note that it's the default color for a
@@ -232,9 +232,9 @@ main(void)
     * by 255) */
    d.clipper = efl_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
-   efl_gfx_position_set(d.clipper, EINA_POSITION2D(WIDTH / 4, HEIGHT / 4));
-   efl_gfx_size_set(d.clipper, EINA_SIZE2D(WIDTH / 2,  HEIGHT / 2));
-   efl_gfx_visible_set(d.clipper, EINA_TRUE);
+   efl_gfx_entity_position_set(d.clipper, EINA_POSITION2D(WIDTH / 4, HEIGHT / 4));
+   efl_gfx_entity_size_set(d.clipper, EINA_SIZE2D(WIDTH / 2,  HEIGHT / 2));
+   efl_gfx_entity_visible_set(d.clipper, EINA_TRUE);
 
    efl_canvas_object_clip_set(d.img, d.clipper);
 

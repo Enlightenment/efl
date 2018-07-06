@@ -1,14 +1,15 @@
+import eina_types;
 import efl_gfx_types;
 
-const Efl.Gfx.Size.Hint.Expand: double = 1.0;
-   [[Use with @Efl.Gfx.Size.Hint.hint_weight.]]
-const Efl.Gfx.Size.Hint.Fill: double = -1.0;
-   [[Special value for @Efl.Gfx.Size.Hint.hint_align.]]
+const Efl.Gfx.Size_Hint_Expand: double = 1.0;
+   [[Use with @Efl.Gfx.Size_Hint.hint_weight.]]
+const Efl.Gfx.Size_Hint_Fill: double = -1.0;
+   [[Special value for @Efl.Gfx.Size_Hint.hint_align.]]
 
-interface Efl.Gfx.Size.Hint
+interface Efl.Gfx.Size_Hint
 {
    [[Efl graphics size hint interface]]
-   event_prefix: efl_gfx;
+   event_prefix: efl_gfx_entity;
    methods {
       @property hint_base {
          [[Base size for objects with sizing restrictions.
@@ -58,7 +59,7 @@ interface Efl.Gfx.Size.Hint
          @image html aspect-control-horizontal.png
          */
          values {
-            mode: Efl.Gfx.Size.Hint.Aspect; [[Mode of interpretation.]]
+            mode: Efl.Gfx.Size_Hint_Aspect; [[Mode of interpretation.]]
             sz: Eina.Size2D; [[Base size to use for aspecting.]]
 
             /* FIXME: do we want min/max like Edje instead??
@@ -177,7 +178,7 @@ interface Efl.Gfx.Size.Hint
            This is a hint on how a container object should resize a given
            child within its area. Containers may adhere to the simpler
            logic of just expanding the child object's dimensions to fit
-           its own (see the @Efl.Gfx.Size.Hint.Expand helper weight macro) or
+           its own (see the @Efl.Gfx.Size_Hint_Expand helper weight macro) or
            the complete one of taking each child's weight hint as real
            weights to how much of its size to allocate for them in each
            axis. A container is supposed to, after normalizing the
@@ -202,7 +203,7 @@ interface Efl.Gfx.Size.Hint
 
            These are hints on how to align an object inside the
            boundaries of a container/manager. Accepted values are in
-           the 0.0 to 1.0 range, with the special value @Efl.Gfx.Size.Hint.Fill
+           the 0.0 to 1.0 range, with the special value @Efl.Gfx.Size_Hint_Fill
            used to specify "justify" or "fill" by some users. In this
            case, maximum size hints should be enforced with higher
            priority, if they are set. Also, any padding hint set on
@@ -227,13 +228,13 @@ interface Efl.Gfx.Size.Hint
          */
          values {
             x: double; [[Double, ranging from 0.0 to 1.0 or with the special value
-                         @Efl.Gfx.Size.Hint.Fill, to use as horizontal alignment hint.]]
+                         @Efl.Gfx.Size_Hint_Fill, to use as horizontal alignment hint.]]
             y: double; [[Double, ranging from 0.0 to 1.0 or with the special value
-                         @Efl.Gfx.Size.Hint.Fill, to use as vertical alignment hint.]]
+                         @Efl.Gfx.Size_Hint_Fill, to use as vertical alignment hint.]]
          }
       }
    }
    events {
-      change,size,hints; [[Object size hints changed.]]
+      change,size,hints: void; [[Object size hints changed.]]
    }
 }

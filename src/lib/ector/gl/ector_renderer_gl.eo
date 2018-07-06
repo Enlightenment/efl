@@ -4,15 +4,15 @@ abstract Ector.Renderer.GL (Ector.Renderer)
 {
    [[Ector GL renderer abstract class]]
    methods {
-      fill @pure_virtual {
-      	 [[Fill operation]]
+      op_fill @pure_virtual {
+          [[Fill operation]]
          return: bool; [[$true on success, $false otherwise]]
-	 params {
-	    @in flags: uint64; [[GL flags]]
-	    @in vertex: ptr(GLshort); [[GL vertex]]
-	    @in vertex_count: uint; [[GL vertex count]]
-	    @in mul_col: uint; [[Premultiplied color]]
-	 }
+    params {
+       @in flags: uint64; [[GL flags]]
+       @in vertex: ptr(GLshort); [[GL vertex]]
+       @in vertex_count: uint; [[GL vertex count]]
+       @in mul_col: uint; [[Premultiplied color]]
+    }
       }
    }
    implements {

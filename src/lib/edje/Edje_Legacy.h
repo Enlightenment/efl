@@ -2733,6 +2733,35 @@ EAPI Eina_Bool edje_object_part_text_input_panel_show_on_demand_get(const Evas_O
 EAPI void edje_object_part_text_prediction_hint_set(Evas_Object *obj, const char *part, const char *prediction_hint);
 
 /**
+ * @brief Sets the prediction hint data at the specified key.
+ *
+ * @param[in] part The part name
+ * @param[in] key The key of the prediction hint
+ * @param[in] value The data to replace
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.21.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_set(Evas_Object *obj, const char *part, const char *key, const char *value);
+
+/**
+ * @brief Removes the prediction hint data identified by a key
+ *
+ * @param[in] part The part name
+ * @param[in] key The key of the prediction hint
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.21.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_del(Evas_Object *obj, const char *part, const char *key);
+
+/**
  * @brief Starts selecting at current cursor position
  *
  * @param[in] part The part name

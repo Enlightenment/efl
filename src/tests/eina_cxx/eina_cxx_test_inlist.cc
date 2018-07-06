@@ -14,7 +14,7 @@ struct Eina_Test_Inlist
    EINA_INLIST;
 };
 
-START_TEST(eina_cxx_inlist_push_back)
+EFL_START_TEST(eina_cxx_inlist_push_back)
 {
   efl::eina::eina_init eina_init;
 
@@ -31,9 +31,9 @@ START_TEST(eina_cxx_inlist_push_back)
   ck_assert(std::equal(list.begin(), list.end(), result));
   ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_pop_back)
+EFL_START_TEST(eina_cxx_inlist_pop_back)
 {
   efl::eina::eina_init eina_init;
 
@@ -51,9 +51,9 @@ START_TEST(eina_cxx_inlist_pop_back)
   ck_assert(std::equal(list.begin(), list.end(), result));
   ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_push_front)
+EFL_START_TEST(eina_cxx_inlist_push_front)
 {
   efl::eina::eina_init eina_init;
 
@@ -70,9 +70,9 @@ START_TEST(eina_cxx_inlist_push_front)
   ck_assert(std::equal(list.begin(), list.end(), result));
   ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_pop_front)
+EFL_START_TEST(eina_cxx_inlist_pop_front)
 {
   efl::eina::eina_init eina_init;
 
@@ -90,9 +90,9 @@ START_TEST(eina_cxx_inlist_pop_front)
   ck_assert(std::equal(list.begin(), list.end(), result));
   ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_insert)
+EFL_START_TEST(eina_cxx_inlist_insert)
 {
   efl::eina::eina_init eina_init;
 
@@ -145,9 +145,9 @@ START_TEST(eina_cxx_inlist_insert)
   ck_assert(list4.back() == 1);
   ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_constructors)
+EFL_START_TEST(eina_cxx_inlist_constructors)
 {
   efl::eina::eina_init eina_init;
 
@@ -165,9 +165,9 @@ START_TEST(eina_cxx_inlist_constructors)
   efl::eina::inlist<int> list4(list2.begin(), list2.end());
   ck_assert(list2 == list4);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_erase)
+EFL_START_TEST(eina_cxx_inlist_erase)
 {
   efl::eina::eina_init eina_init;
 
@@ -215,9 +215,9 @@ START_TEST(eina_cxx_inlist_erase)
   ck_assert(list1.front() == 10);
   ck_assert(list1.back() == 25);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_range)
+EFL_START_TEST(eina_cxx_inlist_range)
 {
   efl::eina::eina_init eina_init;
 
@@ -248,9 +248,9 @@ START_TEST(eina_cxx_inlist_range)
   ck_assert(*const_range_list.begin() == 0);
   ck_assert(*list.begin() == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inlist_from_c)
+EFL_START_TEST(eina_cxx_inlist_from_c)
 {
   efl::eina::eina_init eina_init;
 
@@ -273,7 +273,7 @@ START_TEST(eina_cxx_inlist_from_c)
    while (c_list)
       c_list = eina_inlist_remove(c_list, c_list);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_inlist(TCase *tc)

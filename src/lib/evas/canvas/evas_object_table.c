@@ -105,7 +105,7 @@ struct _Evas_Object_Table_Accessor
    EVAS_OBJECT_TABLE_DATA_GET(o, ptr);                                  \
 if (!ptr)                                                               \
 {                                                                       \
-   CRI("no widget data for object %p (%s)",                            \
+   ERR("No widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    return;                                                              \
 }
@@ -114,7 +114,7 @@ if (!ptr)                                                               \
    EVAS_OBJECT_TABLE_DATA_GET(o, ptr);                                  \
 if (!ptr)                                                               \
 {                                                                       \
-   CRI("No widget data for object %p (%s)",                            \
+   ERR("No widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    return val;                                                          \
 }
@@ -251,7 +251,7 @@ _evas_object_table_option_del(Evas_Object *o)
 }
 
 static void
-_on_child_del(void *data, const Efl_Event *event)
+_on_child_invalidate(void *data, const Efl_Event *event)
 {
    Evas_Object *table = data;
    evas_object_table_unpack(table, event->object);
@@ -267,8 +267,8 @@ _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
-  { EFL_EVENT_DEL, _on_child_del },
-  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+  { EFL_EVENT_INVALIDATE, _on_child_invalidate },
+  { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
 static void
@@ -934,22 +934,22 @@ _evas_table_efl_canvas_group_group_del(Eo *obj, Evas_Table_Data *priv)
 }
 
 EOLIAN static void
-_evas_table_efl_gfx_size_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Size2D sz)
+_evas_table_efl_gfx_entity_size_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
    evas_object_smart_changed(obj);
 }
 
 EOLIAN static void
-_evas_table_efl_gfx_position_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Position2D pos)
+_evas_table_efl_gfx_entity_position_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    evas_object_smart_changed(obj);
 }
 
@@ -982,7 +982,7 @@ evas_object_table_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -1019,7 +1019,7 @@ _evas_table_homogeneous_set(Eo *o, Evas_Table_Data *priv, Evas_Object_Table_Homo
 }
 
 EOLIAN static Evas_Object_Table_Homogeneous_Mode
-_evas_table_homogeneous_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_homogeneous_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    return priv->homogeneous;
 }
@@ -1036,7 +1036,7 @@ _evas_table_align_set(Eo *o, Evas_Table_Data *priv, double horizontal, double ve
 }
 
 EOLIAN static void
-_evas_table_align_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, double *horizontal, double *vertical)
+_evas_table_align_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, double *horizontal, double *vertical)
 {
    if (priv)
      {
@@ -1062,7 +1062,7 @@ _evas_table_padding_set(Eo *o, Evas_Table_Data *priv, Evas_Coord horizontal, Eva
 }
 
 EOLIAN static void
-_evas_table_padding_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
+_evas_table_padding_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    if (priv)
      {
@@ -1323,7 +1323,7 @@ _evas_table_clear(Eo *o, Evas_Table_Data *priv, Eina_Bool clear)
 }
 
 EOLIAN static void
-_evas_table_col_row_size_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, int *cols, int *rows)
+_evas_table_col_row_size_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, int *cols, int *rows)
 {
    if (priv)
      {
@@ -1388,7 +1388,7 @@ _evas_table_accessor_new(const Eo *o, Evas_Table_Data *priv)
 }
 
 EOLIAN static Eina_List*
-_evas_table_children_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_children_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    Eina_List *new_list = NULL, *l;
    Evas_Object_Table_Option *opt;
@@ -1406,7 +1406,7 @@ _evas_table_count(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 }
 
 EOLIAN static Evas_Object *
-_evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short col, unsigned short row)
+_evas_table_child_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short col, unsigned short row)
 {
    Eina_List *l;
    Evas_Object_Table_Option *opt;
@@ -1418,19 +1418,31 @@ _evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short c
 }
 
 EOLIAN static Eina_Bool
-_evas_table_mirrored_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_efl_ui_base_mirrored_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    return priv->is_mirrored;
 }
 
+EAPI Eina_Bool
+evas_object_table_mirrored_get(const Eo *obj)
+{
+   return efl_ui_mirrored_get(obj);
+}
+
 EOLIAN static void
-_evas_table_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
+_evas_table_efl_ui_base_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
 {
    if (priv->is_mirrored != mirrored)
      {
         priv->is_mirrored = mirrored;
         efl_canvas_group_calculate(o);
      }
+}
+
+EAPI void
+evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored)
+{
+   efl_ui_mirrored_set(obj, mirrored);
 }
 
 EOLIAN static void

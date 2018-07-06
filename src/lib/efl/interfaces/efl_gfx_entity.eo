@@ -1,0 +1,109 @@
+import eina_types;
+
+interface Efl.Gfx.Entity {
+   [[Efl graphics interface]]
+   eo_prefix: efl_gfx_entity;
+   methods {
+      @property position {
+         [[The 2D position of a canvas object.
+
+           The position is absolute, in pixels, relative to the top-left corner
+           of the window, within its border decorations (application space).
+         ]]
+         set {
+            [[Moves the given canvas object to the given location inside its
+              canvas' viewport. If unchanged this call may be entirely skipped,
+              but if changed this will trigger move events, as well as
+              potential pointer,in or pointer,out events.
+            ]]
+         }
+         get {
+            [[Retrieves the position of the given canvas object.]]
+         }
+         values {
+            pos: Eina.Position2D; [[A 2D coordinate in pixel units.]]
+         }
+      }
+      @property size {
+         [[The 2D size of a canvas object.]]
+         set {
+            [[Changes the size of the given object.
+
+              Note that setting the actual size of an object might be the job
+              of its container, so this function might have no effect.
+              Look at @Efl.Gfx.Size_Hint instead, when manipulating
+              widgets.
+            ]]
+         }
+         get {
+            [[Retrieves the (rectangular) size of the given Evas object.]]
+         }
+         values {
+            size: Eina.Size2D; [[A 2D size in pixel units.]]
+         }
+      }
+      @property geometry {
+         [[Rectangular geometry that combines both position and size.]]
+         values {
+            rect: Eina.Rect; [[The X,Y position and W,H size, in pixels.]]
+         }
+      }
+      @property visible {
+         [[The visibility of a canvas object.
+
+           All canvas objects will become visible by default just before
+           render. This means that it is not required to call @.visible.set
+           after creating an object unless you want to create it without
+           showing it. Note that this behavior is new since 1.21, and only
+           applies to canvas objects created with the EO API (i.e. not the
+           legacy C-only API). Other types of Gfx objects may or may not be
+           visible by default.
+
+           Note that many other parameters can prevent a visible object from
+           actually being "visible" on screen. For instance if its color
+           is fully transparent, or its parent is hidden, or it is clipped out,
+           etc...
+         ]]
+         set {
+            [[Shows or hides this object.]]
+         }
+         get {
+            [[Retrieves whether or not the given canvas object is visible.]]
+         }
+         values {
+            v: bool; [[$true if to make the object visible, $false otherwise]]
+         }
+      }
+      @property scale {
+        [[The scaling factor of an object.
+
+          This property is an individual scaling factor on the object (Edje
+          or UI widget). This property (or Edje's global scaling factor, when
+          applicable), will affect this object's part sizes. If scale is
+          not zero, than the individual scaling will override any global
+          scaling set, for the object obj's parts. Set it back to zero to
+          get the effects of the global scaling again.
+
+          Warning: In Edje, only parts which, at EDC level, had the "scale"
+          property set to 1, will be affected by this function. Check the
+          complete "syntax reference" for EDC files.
+        ]]
+        set {
+           [[Sets the scaling factor of an object.]]
+        }
+        get {
+           [[Gets an object's scaling factor.]]
+        }
+        values {
+           scale: double(0.0); [[The scaling factor (the default value is 0.0,
+                                 meaning individual scaling is not set)]]
+        }
+      }
+   }
+   events {
+      show: void; [[Object just became visible.]]
+      hide: void; [[Object just became invisible.]]
+      move: void; [[Object was moved, its position during the event is the new one.]]
+      resize: void; [[Object was resized, its size during the event is the new one.]]
+   }
+}

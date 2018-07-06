@@ -1,17 +1,17 @@
 import eina_types;
 import efl_net_http_types;
 
-enum Efl.Net.Dialer.Websocket.Streaming_Mode {
+enum Efl.Net.Dialer_Websocket_Streaming_Mode {
     [[How to map WebSocket to EFL I/O Interfaces.
 
       @since 1.19
     ]]
     disabled, [[@Efl.Io.Writer.write and @Efl.Io.Reader.read will fail by returning ENOSTR]]
-    binary, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer.Websocket.binary_send]]
-    text, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer.Websocket.text_send]]
+    binary, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer_Websocket.binary_send]]
+    text, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer_Websocket.text_send]]
 }
 
-enum Efl.Net.Dialer.Websocket.Close_Reason {
+enum Efl.Net.Dialer_Websocket_Close_Reason {
     [[Registered reasons for the CLOSE (opcode=0x8).
 
       These are the well known reasons, with some ranges being defined
@@ -38,16 +38,16 @@ enum Efl.Net.Dialer.Websocket.Close_Reason {
     private_end = 4999, [[Applications can use range 4000-4999]]
 }
 
-struct Efl.Net.Dialer.Websocket.Closed_Reason {
+struct Efl.Net.Dialer_Websocket_Closed_Reason {
     [[Close reason event payload.
 
       @since 1.19
     ]]
-    reason: Efl.Net.Dialer.Websocket.Close_Reason; [[Closing reason]]
+    reason: Efl.Net.Dialer_Websocket_Close_Reason; [[Closing reason]]
     message: string; [[Textual closing reason message]]
 }
 
-class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Websocket (Efl.Loop_Consumer, Efl.Net.Dialer) {
     [[WebSocket Dialer (Client).
 
       The WebSocket Protocol (https://tools.ietf.org/html/rfc6455) is
@@ -135,7 +135,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
               close message, which will be reported as "closed,reason".
             ]]
             params {
-                reason: Efl.Net.Dialer.Websocket.Close_Reason; [[Reason for closing]]
+                reason: Efl.Net.Dialer_Websocket_Close_Reason; [[Reason for closing]]
                 message: string @optional; [[Additional closing message]]
             }
         }
@@ -174,9 +174,9 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
               However this class can operate in streaming mode,
               mapping each @Efl.Io.Writer.write to a @.binary_send if
               streaming_mode is set to
-              @Efl.Net.Dialer.Websocket.Streaming_Mode.binary, of
+              @Efl.Net.Dialer_Websocket_Streaming_Mode.binary, of
               @.text_send if
-              @Efl.Net.Dialer.Websocket.Streaming_Mode.text
+              @Efl.Net.Dialer_Websocket_Streaming_Mode.text
 
               @Efl.Io.Reader.read may consume less then the whole
               received message, in this case the rest of the message
@@ -184,12 +184,12 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
               SOCK_SEQPACKET + read(2)).
 
               By default, streaming is disabled
-              (@Efl.Net.Dialer.Websocket.Streaming_Mode.disabled).
+              (@Efl.Net.Dialer_Websocket_Streaming_Mode.disabled).
             ]]
             get { }
             set { }
             values {
-                streaming_mode: Efl.Net.Dialer.Websocket.Streaming_Mode; [[Streaming mode]]
+                streaming_mode: Efl.Net.Dialer_Websocket_Streaming_Mode; [[Streaming mode]]
             }
         }
 
@@ -309,11 +309,12 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
         message,text: string; [[Received a text string message (opcode=0x1)]]
         message,binary: ptr(const(Eina.Slice)); [[Received a binary message (opcode=0x2)]]
         pong: string; [[Received a pong (opcode=0xA) with optional message/reason]]
-        closed,reason: Efl.Net.Dialer.Websocket.Closed_Reason; [[Received a request to close the connection. It may be a reply/confirmation from a local request, see @.close_request, or some server-generated reason. After this point, no more messages are allowed to be sent and no more will be received. @Efl.Io.Closer.close will be called.]]
+        closed,reason: Efl.Net.Dialer_Websocket_Closed_Reason; [[Received a request to close the connection. It may be a reply/confirmation from a local request, see @.close_request, or some server-generated reason. After this point, no more messages are allowed to be sent and no more will be received. @Efl.Io.Closer.close will be called.]]
     }
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }
@@ -330,6 +331,6 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
     }
 }

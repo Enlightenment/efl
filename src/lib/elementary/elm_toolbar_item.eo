@@ -1,4 +1,4 @@
-enum Elm.Toolbar.Item.Scrollto_Type
+enum Elm.Toolbar_Item_Scrollto_Type
 {
    [[Defines where to position the item in the toolbar.]]
    legacy: elm_toolbar_item_scrollto;
@@ -10,7 +10,7 @@ enum Elm.Toolbar.Item.Scrollto_Type
    last = (1 << 3) [[to the last of viewport]]
 }
 
-struct Elm.Toolbar.Item.State
+struct Elm.Toolbar_Item_State
 {
    [[
      State of a Elm_Toolbar_Item.
@@ -23,12 +23,60 @@ struct Elm.Toolbar.Item.State
    data: const(void_ptr); [[Item data]]
 }
 
-class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
+class Elm.Toolbar_Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
 {
       [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;
       eo_prefix: elm_obj_toolbar_item;
       methods {
+           @property prev {
+                get {
+                   [[Get the item before this one in the widget's list of items.
+
+                     See also @.next.
+                   ]]
+                }
+                values {
+                    item: Elm.Widget.Item; [[The item before the object in its parent's
+                                              list. If there is no previous item or in case
+                                              of error, $null is returned.]]
+                }
+           }
+           @property next {
+                get {
+                   [[Get the item after this one in the widget's list of items.
+
+                     See also @.prev.
+                   ]]
+                }
+                values {
+                   item: Elm.Widget.Item; [[The item after the object in its parent's
+                                             list. If there is no next item or in case
+                                             of error, $null is returned.]]
+                }
+           }
+           @property selected {
+                [[Indicates whether this item is currently selected.]]
+                get {
+                   [[Get the selected state of this item.]]
+                }
+                set {
+                   [[Set the selected state of $item.
+
+                     This sets the selected state of the given item $it.
+                     $true for selected, $false for not selected.
+
+                     If a new item is selected the previously selected will
+                     be unselected. Previously selected item can be retrieved
+                     with @Elm.Toolbar.selected_item.get.
+
+                     Selected items will be highlighted.
+                   ]]
+                }
+                values {
+                   selected: bool; [[The selection state.]]
+                }
+           }
            @property priority {
                 get {
                      [[Get the priority of a toolbar item.]]
@@ -135,7 +183,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
                      return: bool; [[$true on success, $false otherwise]]
                 }
                 values {
-                     state: ptr(Elm.Toolbar.Item.State) @nullable; [[Item state]]
+                     state: ptr(Elm.Toolbar_Item_State) @nullable; [[Item state]]
                 }
            }
            /*      init { FIXME
@@ -187,12 +235,12 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
                      @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked when this state is selected.]]
                      @in data: const(void_ptr) @optional; [[The data to associate with the state.]]
                 }
-                return: ptr(Elm.Toolbar.Item.State); [[The toolbar item state, or $null upon failure.]]
+                return: ptr(Elm.Toolbar_Item_State); [[The toolbar item state, or $null upon failure.]]
            }
            state_del {
                 [[Delete a previously added state to $item.]]
                 params {
-                     @in state: ptr(Elm.Toolbar.Item.State); [[The state to be deleted.]]
+                     @in state: ptr(Elm.Toolbar_Item_State); [[The state to be deleted.]]
                 }
                 return: bool; [[$true on success or $false on failure.]]
            }
@@ -202,7 +250,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
                   If last state is selected, this function will return first
                   state.
                 ]]
-                return: ptr(Elm.Toolbar.Item.State); [[The state after current state, or $null on failure.]]
+                return: ptr(Elm.Toolbar_Item_State); [[The state after current state, or $null on failure.]]
            }
            state_prev {
                 [[Get the state before selected state in toolbar's $item.
@@ -210,7 +258,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
                   If first state is selected, this function will return last
                   state.
                 ]]
-                return: ptr(Elm.Toolbar.Item.State); [[The state before current state, or $null on failure.]]
+                return: ptr(Elm.Toolbar_Item_State); [[The state before current state, or $null on failure.]]
            }
            show {
                 [[Show a specific item, when the toolbar can be scrolled.
@@ -218,7 +266,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
                   @since 1.8
                 ]]
                 params {
-                     @in scrollto: Elm.Toolbar.Item.Scrollto_Type; [[The position the item should appear at.]]
+                     @in scrollto: Elm.Toolbar_Item_Scrollto_Type; [[The position the item should appear at.]]
                 }
            }
            bring_in {
@@ -228,7 +276,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
                   @since 1.8
                 ]]
                 params {
-                     @in scrollto: Elm.Toolbar.Item.Scrollto_Type; [[The position the item should appear at.]]
+                     @in scrollto: Elm.Toolbar_Item_Scrollto_Type; [[The position the item should appear at.]]
                 }
            }
            menu_set {
@@ -264,20 +312,17 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
       }
       implements {
            Efl.Object.constructor;
-           Efl.Object.destructor;
+           Efl.Object.invalidate;
            Elm.Widget.Item.disable;
            Elm.Widget.Item.disabled { set; }
-           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }
            Elm.Widget.Item.part_content_unset;
            Efl.Ui.Focus.Object.focus_geometry { get; }
            Efl.Ui.Focus.Object.focus { set; }
-           Efl.Access.name { get; }
-           Efl.Access.state_set { get; }
-           Efl.Ui.Item.selected { get; set; }
-           Efl.Ui.Item.prev { get; }
-           Efl.Ui.Item.next { get; }
+           Efl.Access.Object.i18n_name { get; }
+           Efl.Access.Object.state_set { get; }
       }
 }

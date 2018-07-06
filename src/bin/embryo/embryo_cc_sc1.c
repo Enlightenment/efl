@@ -44,6 +44,8 @@
 
 #include "embryo_cc_sc.h"
 #include "embryo_cc_prefix.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
+
 
 #define VERSION_STR "2.4"
 #define VERSION_INT 240
@@ -568,22 +570,13 @@ static void
 parseoptions(int argc, char **argv, char *iname, char *oname,
              char *pname EINA_UNUSED, char *rname EINA_UNUSED)
 {
-   char str[PATH_MAX];
+   char str[PATH_MAX] = "";
    int i, stack_size;
    size_t len;
 
-#ifdef NEED_RUN_IN_TREE
-   str[0] = '\0';
-   if (getenv("EFL_RUN_IN_TREE"))
-     {
-        struct stat st;
-        snprintf(str, sizeof(str), "%s/data/embryo", PACKAGE_SRC_DIR);
-        if (stat(str, &st) != 0)
-          str[0] = '\0';
-     }
+   bs_data_path_get(str, sizeof(str), "embryo", "");
 
    if (str[0] == '\0')
-#endif
      snprintf(str, sizeof(str), "%s/include/", e_prefix_data_get());
 
    /* use embryo include dir always */

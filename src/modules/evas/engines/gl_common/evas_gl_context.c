@@ -84,6 +84,42 @@ sym_missing(void)
    ERR("GL symbols missing!");
 }
 
+/* This check is based heavily on the check from libepoxy.
+ * Previously we used strstr(), however there are some extensions
+ * whose names are subsets of others.
+ */
+EAPI Eina_Bool
+evas_gl_extension_string_check(const char *exts, const char *ext)
+{
+   const char *ptr;
+   int len;
+
+   if (!exts || !ext) return EINA_FALSE;
+   ptr = exts;
+
+   if (*ptr == '\0')
+     return EINA_FALSE;
+
+   len = strlen(ext);
+
+   while (1)
+     {
+        ptr = strstr(ptr, ext);
+        if (!ptr)
+          return EINA_FALSE;
+
+        if (ptr[len] == ' ' || ptr[len] == '\0')
+          return EINA_TRUE;
+
+        ptr += len;
+     }
+}
+
+/* Totally gross, but I didn't want to reindent all the
+ * strstr() callers :(
+ */
+static Evas_Gl_Extension_String_Check _ckext = evas_gl_extension_string_check;
+
 static int
 _has_ext(const char *ext, const char **pexts, int *pnum)
 {
@@ -114,17 +150,11 @@ _has_ext(const char *ext, const char **pexts, int *pnum)
              if (!exts) return EINA_FALSE;
              *pexts = exts;
           }
-        return strstr(exts, ext) != NULL;
+        return _ckext(exts, ext);
      }
 }
 
 #ifdef GL_GLES
-static int
-_has_extn(const char *ext, const char *exts)
-{
-   if (!exts || !ext) return EINA_FALSE;
-   return strstr(exts, ext) != NULL;
-}
 
 EAPI void *
 evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
@@ -312,7 +342,7 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
 #ifdef GL_GLES
 #define FINDSYMN(dst, sym, ext, typ) do { \
    if (!dst) { \
-      if (_has_extn(ext, extsn) && GetProcAddress) \
+      if (_ckext(extsn, ext) && GetProcAddress) \
         dst = (typ) GetProcAddress(sym); \
       if (!dst) \
         dst = (typ) dlsym(RTLD_DEFAULT, sym); \
@@ -887,41 +917,41 @@ evas_gl_common_context_new(void)
           {
              if (getenv("EVAS_GL_INFO"))
                 fprintf(stderr, "EXT:\n%s\n", ext);
-             if ((strstr(ext, "GL_ARB_texture_non_power_of_two")) ||
-                 (strstr(ext, "OES_texture_npot")) ||
-                 (strstr(ext, "GL_IMG_texture_npot")))
+             if ((_ckext(ext, "GL_ARB_texture_non_power_of_two")) ||
+                 (_ckext(ext, "OES_texture_npot")) ||
+                 (_ckext(ext, "GL_IMG_texture_npot")))
                shared->info.tex_npo2 = 1;
-             if ((strstr(ext, "GL_NV_texture_rectangle")) ||
-                 (strstr(ext, "GL_EXT_texture_rectangle")) ||
-                 (strstr(ext, "GL_ARB_texture_rectangle")))
+             if ((_ckext(ext, "GL_NV_texture_rectangle")) ||
+                 (_ckext(ext, "GL_EXT_texture_rectangle")) ||
+                 (_ckext(ext, "GL_ARB_texture_rectangle")))
                shared->info.tex_rect = 1;
-             if ((strstr(ext, "GL_ARB_get_program_binary")) ||
-                 (strstr(ext, "GL_OES_get_program_binary")))
+             if ((_ckext(ext, "GL_ARB_get_program_binary")) ||
+                 (_ckext(ext, "GL_OES_get_program_binary")))
                shared->info.bin_program = 1;
              else
                glsym_glGetProgramBinary = NULL;
 #ifdef GL_UNPACK_ROW_LENGTH
              shared->info.unpack_row_length = 1;
 # ifdef GL_GLES
-             if (!strstr(ext, "_unpack_subimage"))
+             if (!_ckext(ext, "_unpack_subimage"))
                shared->info.unpack_row_length = 0;
 # endif
 #endif
 
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-             if ((strstr(ext, "GL_EXT_texture_filter_anisotropic")))
+             if ((_ckext(ext, "GL_EXT_texture_filter_anisotropic")))
                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,
                            &(shared->info.anisotropic));
 #endif
 #ifdef GL_BGRA
-             if ((strstr(ext, "GL_EXT_bgra")) ||
-                 (strstr(ext, "GL_EXT_texture_format_BGRA8888")))
+             if ((_ckext(ext, "GL_EXT_bgra")) ||
+                 (_ckext(ext, "GL_EXT_texture_format_BGRA8888")))
                shared->info.bgra = 1;
 #endif
-             if (strstr(ext, "OES_compressed_ETC1_RGB8_texture"))
+             if (_ckext(ext, "OES_compressed_ETC1_RGB8_texture"))
                shared->info.etc1 = 1;
-             if (strstr(ext, "GL_EXT_texture_compression_s3tc") ||
-                 strstr(ext, "GL_S3_s3tc"))
+             if (_ckext(ext, "GL_EXT_texture_compression_s3tc") ||
+                 _ckext(ext, "GL_S3_s3tc"))
                shared->info.s3tc = 1;
 #ifdef GL_GLES
              // FIXME: there should be an extension name/string to check for
@@ -949,7 +979,7 @@ evas_gl_common_context_new(void)
                   (secsym_tbm_surface_get_info))
                   shared->info.sec_tbm_surface = 1;
 #endif
-             if (!strstr(ext, "GL_QCOM_tiled_rendering"))
+             if (!_ckext(ext, "GL_QCOM_tiled_rendering"))
                {
                   glsym_glStartTiling = NULL;
                   glsym_glEndTiling = NULL;
@@ -1046,7 +1076,7 @@ evas_gl_common_context_new(void)
                        // Note: If we support ETC2 we'll try to always use ETC2 even when the
                        // image has colorspace ETC1 (backwards compatibility).
 
-                       if (ext && strstr(ext, "GL_EXT_compressed_ETC1_RGB8_sub_texture"))
+                       if (_ckext(ext, "GL_EXT_compressed_ETC1_RGB8_sub_texture"))
                          shared->info.etc1_subimage = 1;
                        else
                          shared->info.etc1_subimage = shared->info.etc2;

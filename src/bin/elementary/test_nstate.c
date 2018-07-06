@@ -15,7 +15,7 @@ test_nstate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 {
    Evas_Object *win, *bx, *nstate;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "N-state widget"),
                  elm_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -29,5 +29,5 @@ test_nstate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_text_set(nstate, "nstate = 0");
    efl_pack(bx, nstate);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(120, 80));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(120, 80));
 }

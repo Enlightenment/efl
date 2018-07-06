@@ -1,3 +1,10 @@
+#define HORIZONTAL_FIXED \
+   description { state: "horizontal_fixed" 0.0; \
+      inherit: "default" 0.0; \
+      fixed: 1 0; \
+      text.min: 0 1; \
+   }
+
 group { name: "elm/label/base/default";
    styles {
       style { name: "label_style";
@@ -28,11 +35,7 @@ group { name: "elm/label/base/default";
                min: 1 1;
             }
          }
-         description { state: "horizontal_fixed" 0.0;
-            inherit: "default" 0.0;
-            fixed: 1 0;
-            text.min: 0 1;
-         }
+         HORIZONTAL_FIXED
       }
    }
    programs {
@@ -62,6 +65,7 @@ group { name: "elm/label/base/default/left";
    parts {
       textblock { "elm.text";
          desc { "default"; text.style: "label_style_left"; }
+         HORIZONTAL_FIXED
       }
    }
 }
@@ -79,6 +83,7 @@ group { name: "elm/label/base/default/right";
    parts {
       textblock { "elm.text";
          desc { "default"; text.style: "label_style_right"; }
+         HORIZONTAL_FIXED
       }
    }
 }
@@ -509,3 +514,4 @@ group { name: "elm/label/base/slide_bounce";
       }
    }
 }
+#undef HORIZONTAL_FIXED

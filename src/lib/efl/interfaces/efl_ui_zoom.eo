@@ -1,4 +1,4 @@
-enum Efl.Ui.Zoom.Mode
+enum Efl.Ui.Zoom_Mode
 {
    [[Types of zoom available.]]
    legacy: efl_ui_zoom_mode;
@@ -36,7 +36,7 @@ interface Efl.Ui.Zoom ()
             paused: bool; [[The pause state.]]
          }
       }
-      @property zoom {
+      @property zoom_level {
          set {
             [[Set the zoom level of the photo
 
@@ -70,7 +70,7 @@ interface Efl.Ui.Zoom ()
 
               This sets the zoom mode to manual or one of several automatic
               levels. Manual (EFL_UI_ZOOM_MODE_MANUAL) means that zoom
-              is set manually by @.zoom.set and will stay at that level until
+              is set manually by @.zoom_level.set and will stay at that level until
               changed by code or until zoom mode is changed. This is the
               default mode. The Automatic modes will allow the zoomable object
               to automatically adjust zoom mode based on properties.
@@ -88,13 +88,13 @@ interface Efl.Ui.Zoom ()
             ]]
          }
          values {
-            mode: Efl.Ui.Zoom.Mode; [[The zoom mode.]]
+            mode: Efl.Ui.Zoom_Mode; [[The zoom mode.]]
          }
       }
    }
    events {
-      zoom,start; [[Called when zooming started]]
-      zoom,stop; [[Called when zooming stopped]]
-      zoom,change; [[Called when zooming changed]]
+      zoom,start: void; [[Called when zooming started]]
+      zoom,stop: void; [[Called when zooming stopped]]
+      zoom,change: void; [[Called when zooming changed]]
    }
 }

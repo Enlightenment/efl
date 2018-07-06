@@ -11,13 +11,13 @@ interface Efl.Container
       content_remove {
          [[Unswallow an object from this container.]]
          params {
-            @in content: Efl.Gfx; [[To be removed content]]
+            @in content: Efl.Gfx.Entity; [[To be removed content]]
          }
          return: bool; [[$false if $content was not a child or can not be removed.]]
       }
       content_iterate {
          [[Begin iterating over this object's contents.]]
-         return: iterator<Efl.Gfx> @owned @warn_unused; [[Iterator to object content]]
+         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to object content]]
       }
       content_count {
          [[Returns the number of UI elements packed in this container.]]
@@ -25,7 +25,7 @@ interface Efl.Container
       }
    }
    events {
-      content,added: Efl.Gfx;    [[Sent after a new item was added.]]
-      content,removed: Efl.Gfx;  [[Sent after an item was removed, before unref.]]
+      content,added: Efl.Gfx.Entity;    [[Sent after a new item was added.]]
+      content,removed: Efl.Gfx.Entity;  [[Sent after an item was removed, before unref.]]
    }
 }

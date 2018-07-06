@@ -56,10 +56,10 @@ _btn_remove_cb(void *data EINA_UNUSED, Evas_Object *obj,
 static void
 _ctxpopup_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   printf("Item selected status: %d\n", efl_ui_item_selected_get(event_info));
+   printf("Item selected status: %d\n", elm_ctxpopup_item_selected_get(event_info));
 
    printf("ctxpopup item selected: %s\n",
-         elm_object_item_text_get(efl_ui_menu_selected_item_get(obj)));
+         elm_object_item_text_get(elm_ctxpopup_selected_item_get(obj)));
    elm_ctxpopup_dismiss(obj);
 }
 
@@ -105,7 +105,7 @@ _list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UN
    _ctxpopup_item_new(ctxpopup, "Go to home folder", "home");
    _ctxpopup_item_new(ctxpopup, "Save file", "file");
    it = _ctxpopup_item_new(ctxpopup, "Delete file", "delete");
-   efl_ui_item_selected_set(it, EINA_TRUE);
+   elm_ctxpopup_item_selected_set(it, EINA_TRUE);
    it = _ctxpopup_item_new(ctxpopup, "Navigate to folder", "folder");
    elm_object_item_disabled_set(it, EINA_TRUE);
    _ctxpopup_item_new(ctxpopup, "Edit entry", "edit");

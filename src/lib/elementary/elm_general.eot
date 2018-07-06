@@ -133,17 +133,21 @@ enum Elm.Icon.Type
    standard [[Icon is of type standard]]
 }
 
-/* FIXME: shouldn't exist */
+/* FIXME: shouldn't exist, they are unusable by the bindings */
 struct @extern Elm_Gen_Item; [[Elementary gen item]]
 struct @extern Efl_Access_Action_Data; [[Efl access action data]]
-
+struct @extern Elm.Validate_Content; [[Data for the elm_validator_regexp_helper()]]
+struct @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "anchor,clicked" signals emitted
+                                        by entries.]]
+struct @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted
+                                              by the Anchor_Hover widget]]
+struct @extern Elm.Entry_Change_Info; [[This corresponds to Edje_Entry_Change_Info. Includes information about
+                                        a change in the entry]]
 
 /* Enums from elm_entry.eo, also used by efl_ui_text */
 enum Elm.Text_Format
 {
    [[Text Format types.
-
-     See also @Elm.Entry.file_text_format.
    ]]
    plain_utf8, [[ Plain UTF8 type ]]
    markup_utf8 [[ Markup UTF8 type ]]
@@ -153,7 +157,6 @@ enum Elm.Input.Panel.Layout
 {
    [[Input panel (virtual keyboard) layout types.
      Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
-     See also @Elm.Entry.input_panel_layout.set.
    ]]
    normal,      [[Default layout.]]
    number,      [[Number layout.]]
@@ -181,8 +184,6 @@ enum Elm.Input.Panel.Layout
 enum Elm.Input.Panel.Lang
 {
    [[Input panel (virtual keyboard) language modes.
-
-      See also @Elm.Entry.input_panel_language.set.
    ]]
    automatic,    [[Automatic]]
    alphabet      [[Alphabet]]
@@ -192,8 +193,6 @@ enum Elm.Autocapital.Type
 {
    [[Autocapitalization Types.
      Choose method of auto-capitalization.
-
-     See also @Elm.Entry.autocapital_type.set.
    ]]
    none,         [[No auto-capitalization when typing.]]
    word,         [[Autocapitalize each word typed.]]
@@ -204,8 +203,6 @@ enum Elm.Autocapital.Type
 enum Elm.Input.Panel.Return_Key.Type
 {
    [["Return" Key types on the input panel (virtual keyboard).
-     See also @Elm.Entry.input_panel_return_key_type.set.
-
    ]]
    default, [[Default.]]
    done,    [[Done.]]
@@ -251,25 +248,22 @@ enum Elm.Input.Hints
    autofill_credit_card_number            = 0x500, [[ Autofill hint for a credit card number
 
                                                       @since 1.21]]
-   autofill_credit_card_security_code     = 0x600, [[ Autofill hint for a credit card security code
+   autofill_email_address                 = 0x600, [[ Autofill hint for an email address
 
                                                       @since 1.21]]
-   autofill_email_address                 = 0x700, [[ Autofill hint for an email address
+   autofill_name                          = 0x700, [[ Autofill hint for a user's real name
 
                                                       @since 1.21]]
-   autofill_name                          = 0x800, [[ Autofill hint for a user's real name
+   autofill_phone                         = 0x800, [[ Autofill hint for a phone number
 
                                                       @since 1.21]]
-   autofill_phone                         = 0x900, [[ Autofill hint for a phone number
+   autofill_postal_address                = 0x900, [[ Autofill hint for a postal address
 
                                                       @since 1.21]]
-   autofill_postal_address                = 0xA00, [[ Autofill hint for a postal address
+   autofill_postal_code                   = 0xA00, [[ Autofill hint for a postal code
 
                                                       @since 1.21]]
-   autofill_postal_code                   = 0xB00, [[ Autofill hint for a postal code
-
-                                                      @since 1.21]]
-   autofill_id                            = 0xC00  [[ Autofill hint for a user's ID
+   autofill_id                            = 0xB00  [[ Autofill hint for a user's ID
 
                                                       @since 1.21]]
 }
@@ -278,11 +272,108 @@ enum Elm.Cnp_Mode
 {
    [[
      Enum of entry's copy & paste policy.
-
-     See also @Elm.Entry.cnp_mode.set,
-     @Elm.Entry.cnp_mode.get.
    ]]
    markup,    [[ copy & paste text with markup tag ]]
    no_image,  [[ copy & paste text without item(image) tag ]]
    plaintext, [[ copy & paste text without markup tag ]]
+}
+
+/* Elm_Genlist-related types */
+type @extern Elm.Genlist.Item.Class: __undefined_type; [[External elm genlist item class]]
+
+enum Elm.Genlist.Item.Type
+{
+   [[Defines if the item is of any special type (has subitems or it's the
+     index of a group), or is just a simple item.
+   ]]
+   legacy: elm_genlist_item;
+   none = 0, [[Simple item.]]
+   tree = (1 << 0), [[This may be expanded and have child items.]]
+   group = (1 << 1), [[An index item of a group of items. this item can have child items.]]
+   max = (1 << 2) [[Sentinel value to indicate last enum field during iteration]]
+}
+
+enum Elm.Genlist.Item.Field_Type
+{
+   [[Defines the type of the item part
+     Used while updating item's parts
+     It can be used at updating multi fields.
+   ]]
+   legacy: elm_genlist_item_field;
+   all = 0, [[Type all]]
+   text = (1 << 0), [[Type text]]
+   content = (1 << 1), [[Type content]]
+   state = (1 << 2) [[Type state]]
+}
+
+enum Elm.Genlist.Item.Scrollto_Type
+{
+   [[Defines where to position the item in the genlist.]]
+   legacy: elm_genlist_item_scrollto;
+   none = 0,   [[Nothing will happen, Don't use this value.]]
+   in = (1 << 0),   [[To the nearest viewport.]]
+   top = (1 << 1),   [[To the top of viewport.]]
+   middle = (1 << 2),   [[To the middle of viewport.]]
+   bottom = (1 << 3)   [[To the bottom of viewport.]]
+}
+
+/* Elm_Gengrid-related types */
+
+type @extern Elm.Gengrid.Item.Class: __undefined_type; [[External elm gengrid item class]]
+
+enum Elm.Gengrid.Item.Scrollto_Type
+{
+   [[Defines where to position the item in the genlist.]]
+   legacy: elm_gengrid_item_scrollto;
+   none = 0,   [[No scrollto.]]
+   in = (1 << 0),   [[To the nearest viewport.]]
+   top = (1 << 1),   [[To the top of viewport.]]
+   middle = (1 << 2),   [[To the middle of viewport.]]
+   bottom = (1 << 3)   [[To the bottom of viewport.]]
+}
+
+enum Elm.Gengrid.Item.Field_Type
+{
+   [[Defines the type of the item part Used while updating item's parts.
+     It can be used at updating multi fields.]]
+   legacy: elm_gengrid_item_field;
+   all = 0, [[Type all]]
+   text = (1 << 0), [[Type text]]
+   content = (1 << 1), [[Type content]]
+   state = (1 << 2) [[Type state]]
+}
+
+/* Elm_List types */
+enum Elm.List.Mode
+{
+   [[Set list's resizing behavior, transverse axis scrolling and items
+     cropping. See each mode's description for more details.
+
+     Note: Default value is @Elm.List.Mode.scroll.
+
+     Values here don't work as bitmasks -- only one can be chosen at
+     a time.
+   ]]
+   legacy: elm_list;
+   compress = 0, [[The list won't set any of its size hints to inform how a
+                   possible container should resize it. Then, if it's not
+                   created as a "resize object", it might end with zeroed
+                   dimensions. The list will respect the container's geometry
+                   and, if any of its items won't fit into its transverse axis,
+                   one won't be able to scroll it in that direction.]]
+   scroll, [[Default value. This is the same as #ELM_LIST_COMPRESS, with the
+             exception that if any of its items won't fit into its transverse
+             axis, one will be able to scroll it in that direction.]]
+   limit, [[Sets a minimum size hint on the list object, so that containers may
+            respect it (and resize itself to fit the child properly). More
+            specifically, a minimum size hint will be set for its transverse
+            axis, so that the largest item in that direction fits well. This
+            is naturally bound by the list object's maximum size hints, set
+            externally.]]
+   expand, [[Besides setting a minimum size on the transverse axis, just like
+             on @Elm.List.Mode.limit, the list will set a minimum size on the
+             longitudinal axis, trying to reserve space to all its children to
+             be visible at a time. . This is naturally bound by the list
+             object's maximum size hints, set externally.]]
+   last [[Indicates error if returned by elm_list_mode_get().]]
 }

@@ -22,18 +22,18 @@ using efl::eolian::grammar::attributes::struct_def;
 
 klass_def init_test_data(efl::eolian::eolian_state const& state)
 {
-   ck_assert(::eolian_directory_scan(state.value, PACKAGE_DATA_DIR));
-   ck_assert(::eolian_all_eot_files_parse(state.value));
-   ck_assert(::eolian_file_parse(state.value, PACKAGE_DATA_DIR"/docs.eo"));
+   ck_assert(::eolian_state_directory_add(state.value, PACKAGE_DATA_DIR));
+   ck_assert(::eolian_state_all_eot_files_parse(state.value));
+   ck_assert(::eolian_state_file_parse(state.value, PACKAGE_DATA_DIR"/docs.eo"));
 
-   const Eolian_Class *c_klass = ::eolian_class_get_by_name(state.as_unit(), "Docs");
+   const Eolian_Class *c_klass = ::eolian_state_class_by_name_get(state.value, "Docs");
    ck_assert_ptr_ne(c_klass, NULL);
 
    klass_def klass(c_klass, state.as_unit());
    return klass;
 }
 
-START_TEST(eolian_cxx_test_class_docs)
+EFL_START_TEST(eolian_cxx_test_class_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -57,9 +57,9 @@ START_TEST(eolian_cxx_test_class_docs)
            "@Docs");
    ck_assert_str_eq(doc.since.c_str(), "1.17");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_function_docs)
+EFL_START_TEST(eolian_cxx_test_function_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -105,9 +105,9 @@ START_TEST(eolian_cxx_test_function_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_property_docs)
+EFL_START_TEST(eolian_cxx_test_property_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -145,9 +145,9 @@ START_TEST(eolian_cxx_test_property_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_event_docs)
+EFL_START_TEST(eolian_cxx_test_event_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -161,9 +161,9 @@ START_TEST(eolian_cxx_test_event_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_enum_docs)
+EFL_START_TEST(eolian_cxx_test_enum_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -172,7 +172,7 @@ START_TEST(eolian_cxx_test_enum_docs)
    klass_def klass = init_test_data(eolian_state);
 
    auto unit = eolian_state.as_unit();
-   enum_def _enum(::eolian_typedecl_enum_get_by_name(unit, "Bar"), unit);
+   enum_def _enum(::eolian_state_enum_by_name_get(eolian_state.value, "Bar"), unit);
 
    documentation_def doc = _enum.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "Docs for enum Bar.");
@@ -204,9 +204,9 @@ START_TEST(eolian_cxx_test_enum_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_struct_docs)
+EFL_START_TEST(eolian_cxx_test_struct_docs)
 {
    efl::eina::eina_init eina_init;
    efl::eolian::eolian_init eolian_init;
@@ -215,7 +215,7 @@ START_TEST(eolian_cxx_test_struct_docs)
    klass_def klass = init_test_data(eolian_state);
 
    auto unit = eolian_state.as_unit();
-   struct_def _struct(::eolian_typedecl_struct_get_by_name(unit, "Foo"), unit);
+   struct_def _struct(::eolian_state_struct_by_name_get(eolian_state.value, "Foo"), unit);
 
    documentation_def doc = _struct.documentation;
    ck_assert_str_eq(doc.summary.c_str(), "This is struct Foo. "
@@ -274,7 +274,7 @@ START_TEST(eolian_cxx_test_struct_docs)
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "");
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_documentation(TCase* tc)

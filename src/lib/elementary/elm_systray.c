@@ -315,7 +315,7 @@ _elm_systray_category_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, Elm_Systr
 }
 
 EOLIAN static Elm_Systray_Category
-_elm_systray_category_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_category_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.cat;
 }
@@ -332,7 +332,7 @@ _elm_systray_status_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, Elm_Systray
 }
 
 EOLIAN static Elm_Systray_Status
-_elm_systray_status_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_status_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.status;
 }
@@ -347,7 +347,7 @@ _elm_systray_att_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, cons
 }
 
 EOLIAN static const char*
-_elm_systray_att_icon_name_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_att_icon_name_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.att_icon_name;
 }
@@ -362,7 +362,7 @@ _elm_systray_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const ch
 }
 
 EOLIAN static const char*
-_elm_systray_icon_name_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_icon_name_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.icon_name;
 }
@@ -379,7 +379,7 @@ _elm_systray_icon_theme_path_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, co
 }
 
 EOLIAN static const char*
-_elm_systray_icon_theme_path_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_icon_theme_path_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.icon_theme_path;
 }
@@ -393,7 +393,7 @@ _elm_systray_id_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *id)
 }
 
 EOLIAN static const char*
-_elm_systray_id_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_id_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.id;
 }
@@ -408,7 +408,7 @@ _elm_systray_title_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *
 }
 
 EOLIAN static const char*
-_elm_systray_title_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_title_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.title;
 }
@@ -439,7 +439,7 @@ _elm_systray_menu_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const Eo *men
 }
 
 EOLIAN static const Eo*
-_elm_systray_menu_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
+_elm_systray_menu_get(const Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
    return _item.menu_obj;
 }

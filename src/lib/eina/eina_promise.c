@@ -566,6 +566,27 @@ __eina_promise_cancel_all(void)
    eina_lock_release(&_pending_futures_lock);
 }
 
+EAPI void
+__eina_promise_cancel_data(void *data)
+{
+   Eina_List *del = NULL, *l;
+   Eina_Future *f;
+
+   eina_lock_take(&_pending_futures_lock);
+   EINA_LIST_FOREACH(_pending_futures, l, f)
+     {
+        if (f->data == data)
+          {
+             del = eina_list_append(del, f);
+          }
+     }
+   EINA_LIST_FREE(del, f)
+     {
+        _eina_future_cancel(f, ECANCELED);
+     }
+   eina_lock_release(&_pending_futures_lock);
+}
+
 Eina_Bool
 eina_promise_shutdown(void)
 {
@@ -621,9 +642,11 @@ static Eina_Value
 _future_proxy(void *data, const Eina_Value v,
               const Eina_Future *dead_future EINA_UNUSED)
 {
-   Eina_Value copy;
+   Eina_Value copy = EINA_VALUE_EMPTY;
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR) return v;
    //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
-   if (!v.type) copy = v;
+   if (!v.type || !memcmp(&v, &copy, sizeof (Eina_Value))) copy = v;
    else if (!eina_value_copy(&v, &copy))
      {
         ERR("Value cannot be copied - unusable with Eina_Future: %p (%s)", v.type, v.type->name);
@@ -642,9 +665,15 @@ _dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *dead_ptr EINA_UNUSED)
 static Eina_Future_Scheduler *
 _scheduler_get(Eina_Future *f)
 {
-   for (; f->prev != NULL; f = f->prev);
-   assert(f->promise != NULL);
-   return f->promise->scheduler;
+   do
+     {
+        if (f->promise) return f->promise->scheduler;
+        else if (f->scheduled_entry) return f->scheduled_entry->scheduler;
+	f = f->prev;
+     }
+   while (f);
+   assert(EINA_FALSE && "no scheduler for future!");
+   return NULL;
 }
 
 EAPI Eina_Value

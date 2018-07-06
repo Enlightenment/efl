@@ -68,7 +68,7 @@ _efl_ui_text_factory_images_efl_canvas_text_factory_create(Eo *obj EINA_UNUSED,
         efl_file_set(o, key, NULL);
      }
 
-   if (efl_file_load_error_get(o) != EFL_IMAGE_LOAD_ERROR_NONE)
+   if (efl_file_load_error_get(o) != EFL_GFX_IMAGE_LOAD_ERROR_NONE)
      {
         efl_del(o);
         o = NULL;

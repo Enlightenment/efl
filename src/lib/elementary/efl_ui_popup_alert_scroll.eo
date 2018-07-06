@@ -27,7 +27,7 @@ class Efl.Ui.Popup_Alert_Scroll(Efl.Ui.Popup_Alert)
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Part.part;
+      Efl.Part.part_get;
       Efl.Ui.Popup.popup_size { set;}
    }
 }

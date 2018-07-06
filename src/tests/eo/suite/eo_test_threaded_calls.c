@@ -99,7 +99,7 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
      fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[0]));
    }
 
-   obj = efl_add(THREAD_TEST_CLASS, NULL, thread_test_constructor(efl_added, v));
+   obj = efl_add_ref(THREAD_TEST_CLASS, NULL, thread_test_constructor(efl_added, v));
 
    thread_test_try_swap_stack(obj);
    v = thread_test_v_get(obj);
@@ -111,11 +111,10 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
    return (void *) (uintptr_t) v;
 }
 
-START_TEST(eo_threaded_calls_test)
+EFL_START_TEST(eo_threaded_calls_test)
 {
    Eina_Thread threads[2];
 
-   efl_object_init();
 
    fail_if(!eina_spinlock_new(&locks[0]));
    fail_if(!eina_spinlock_new(&locks[1]));
@@ -133,9 +132,8 @@ START_TEST(eo_threaded_calls_test)
    eina_barrier_free(&barrier);
    eina_barrier_free(&barrier0);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_threaded_calls(TCase *tc)
 {

@@ -6,7 +6,6 @@
 Gdi_Output_Buffer *
 evas_software_gdi_output_buffer_new(HDC             dc,
                                     BITMAPINFO_GDI *bitmap_info,
-                                    int             depth,
                                     int             width,
                                     int             height,
                                     void           *data)
@@ -20,7 +19,7 @@ evas_software_gdi_output_buffer_new(HDC             dc,
      {
         bitmap_info->bih.biWidth = width;
         bitmap_info->bih.biHeight = -height;
-        bitmap_info->bih.biSizeImage = (depth >> 3) * width * height;
+        bitmap_info->bih.biSizeImage = 4 * width * height;
         gdiob->bitmap = CreateDIBSection(dc,
                                          (const BITMAPINFO *)bitmap_info,
                                          DIB_RGB_COLORS,
@@ -39,9 +38,7 @@ evas_software_gdi_output_buffer_new(HDC             dc,
    gdiob->data = data;
    gdiob->width = width;
    gdiob->height = height;
-   gdiob->depth = depth;
-   gdiob->pitch = width * (depth >> 3);
-/*    gdiob->psize = gdiob->pitch * height; */
+   gdiob->pitch = width * 4;
 
    return gdiob;
 }
@@ -82,10 +79,4 @@ evas_software_gdi_output_buffer_data(Gdi_Output_Buffer *gdiob,
 {
    if (pitch) *pitch = gdiob->pitch;
    return gdiob->data;
-}
-
-int
-evas_software_gdi_output_buffer_depth(Gdi_Output_Buffer *gdiob)
-{
-   return gdiob->depth;
 }

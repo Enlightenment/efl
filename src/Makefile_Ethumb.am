@@ -12,13 +12,16 @@ lib/ethumb/Ethumb_Plugin.h \
 lib/ethumb/ethumb_private.h \
 lib/ethumb/md5.h \
 lib/ethumb/ethumb.c \
-lib/ethumb/md5.c
+lib/ethumb/md5.c \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_ethumb_libethumb_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @ETHUMB_CFLAGS@
 lib_ethumb_libethumb_la_LIBADD = @ETHUMB_LIBS@
 lib_ethumb_libethumb_la_DEPENDENCIES = @ETHUMB_INTERNAL_LIBS@

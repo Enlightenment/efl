@@ -14,12 +14,10 @@ _ecore_quit(void *data)
    ecore_main_loop_quit();
 }
 
-START_TEST(ecore_test_job)
+EFL_START_TEST(ecore_test_job)
 {
    Eina_Bool bob = EINA_FALSE;
    Ecore_Job *job;
-
-   ecore_init();
 
    job = ecore_job_add(&_ecore_quit, &bob);
    fail_if(!job);
@@ -27,10 +25,8 @@ START_TEST(ecore_test_job)
    ecore_main_loop_begin();
 
    fail_if(bob != EINA_TRUE);
-
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_test_ecore_job(TCase *tc)
 {

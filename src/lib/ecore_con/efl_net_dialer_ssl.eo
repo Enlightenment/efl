@@ -1,7 +1,7 @@
-class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Ssl (Efl.Net.Socket_Ssl, Efl.Net.Dialer) {
     [[Connects to a remote SSL server using TCP.
 
-      This creates an internal @Efl.Net.Dialer.Tcp and once connected
+      This creates an internal @Efl.Net.Dialer_Tcp and once connected
       it will start the SSL handshake.
 
       If the proxy is NULL (default), then the system proxy will be
@@ -66,8 +66,8 @@ class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.constructor;
-        Efl.Object.destructor;
         Efl.Object.finalize;
+        Efl.Object.invalidate;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; }
         Efl.Net.Dialer.connected { get; set; }

@@ -71,10 +71,10 @@ on_fail:
 
 EOLIAN static Eina_Bool
 _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
-                                                    void *pixels, int width, int height,
+                                                    void *pixels, int width, int height, int stride,
                                                     Efl_Gfx_Colorspace cspace, Eina_Bool writable)
 {
-   unsigned pxs, stride;
+   unsigned pxs;
 
    if (pd->generic->immutable)
      fail("This buffer is immutable.");
@@ -92,7 +92,11 @@ _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buff
    if (((unsigned long long)(uintptr_t)pixels) & (pxs - 1))
      fail ("Pixel data is not aligned to %u bytes!", pxs);
 
-   stride = width * pxs;
+   if (stride == 0)
+     stride = width * pxs;
+   else if (stride < (int)(width * pxs))
+     fail ("Stride is less than minimum stride: provided %u bytes, minimum %u bytes!", stride, (width * pxs));
+
    if (pd->pixels.u8 && (pd->pixels.u8 != pixels))
      _ector_software_buffer_base_pixels_clear(obj, pd);
 
@@ -277,7 +281,7 @@ _ector_software_buffer_base_ector_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Softwa
 }
 
 EOLIAN static Ector_Buffer_Flag
-_ector_software_buffer_base_ector_buffer_flags_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
+_ector_software_buffer_base_ector_buffer_flags_get(const Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
 {
    return ECTOR_BUFFER_FLAG_CPU_READABLE |
          ECTOR_BUFFER_FLAG_DRAWABLE |

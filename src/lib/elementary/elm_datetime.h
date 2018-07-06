@@ -214,6 +214,8 @@ typedef enum
    ELM_DATETIME_AMPM = 5 /**< Indicates AM/PM field . */
 } Elm_Datetime_Field_Type;
 
+typedef Eo Elm_Datetime;
+
 /**
  * @brief Adds a new datetime Widget
  *

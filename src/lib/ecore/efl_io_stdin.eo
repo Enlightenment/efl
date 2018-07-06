@@ -1,4 +1,4 @@
-class Efl.Io.Stdin (Efl.Loop.Fd, Efl.Io.Reader.Fd) {
+class Efl.Io.Stdin (Efl.Loop_Fd, Efl.Io.Reader_Fd) {
     [[Application's standard input (stdin).
 
       @since 1.19
@@ -8,7 +8,7 @@ class Efl.Io.Stdin (Efl.Loop.Fd, Efl.Io.Reader.Fd) {
 
     implements {
         Efl.Object.finalize;
-        Efl.Loop.Fd.fd { set; }
+        Efl.Loop_Fd.fd { set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { set; }
     }

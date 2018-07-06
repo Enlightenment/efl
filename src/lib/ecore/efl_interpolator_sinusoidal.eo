@@ -1,4 +1,4 @@
-class Efl.Interpolator.Sinusoidal (Efl.Interpolator)
+class Efl.Interpolator_Sinusoidal (Efl.Interpolator)
 {
    [[Efl sinusoidal interpolator class
 

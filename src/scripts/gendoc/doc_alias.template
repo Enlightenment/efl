@@ -1,6 +1,6 @@
 <!--(include)-->doc_macros.include<!--(end)-->#!
-~~Title: ${alias.full_name}$~~
-====== ${alias.full_name}$ (alias) ======
+~~Title: ${alias.name}$~~
+====== ${alias.name}$ (alias) ======
 
 ${BEST_SUMMARY(obj=alias)}$
 
