@@ -672,19 +672,6 @@ EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *disp
 EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Display *display, const char *name);
 
 /**
- * Find an Ecore_Wl2_Window based on id
- *
- * @param display The display to search for the window
- * @param id The id of the window to find
- *
- * @return The Ecore_Wl2_Window if found, or NULL if no such window exists
- *
- * @ingroup Ecore_Wl2_Display_Group
- * @since 1.17
- */
-EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, uintptr_t id);
-
-/**
  * Retrieves the Wayland Registry used for the current Wayland display.
  *
  * @param display The display to get the registry of

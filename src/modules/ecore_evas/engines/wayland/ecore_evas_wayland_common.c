@@ -2508,11 +2508,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
    else
      ee->can_async_render = 1;
 
-   if (parent)
-     {
-        p = ecore_wl2_display_window_find(ewd, parent);
-        ee->alpha = ecore_wl2_window_alpha_get(p);
-     }
+   if (parent) ee->alpha = ecore_wl2_window_alpha_get((Ecore_Wl2_Window *)parent);
 
    wdata->sync_done = EINA_FALSE;
    wdata->parent = p;

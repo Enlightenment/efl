@@ -2964,15 +2964,13 @@ _wl_dropable_find(Efl_Selection_Manager_Data *pd, Ecore_Wl2_Window *win)
 {
    Eina_List *l;
    Sel_Manager_Dropable *dropable;
-   Ecore_Wl2_Window *window;
 
    if (!pd->drop_list) return NULL;
 
-   window = ecore_wl2_display_window_find(_elm_wl_display, (Ecore_Window)win);
-   if (!window) return NULL;
+   if (!win) return NULL;
 
    EINA_LIST_FOREACH(pd->drop_list, l, dropable)
-     if (_wl_window_get(dropable->obj) == window)
+     if (_wl_window_get(dropable->obj) == win)
        return dropable;
 
    return NULL;
@@ -3372,14 +3370,12 @@ _wl_dropable_all_clean(Sel_Manager_Seat_Selection *seat_sel, Ecore_Wl2_Window *w
 {
    Eina_List *l;
    Sel_Manager_Dropable *dropable;
-   Ecore_Wl2_Window *window;
 
-   window = ecore_wl2_display_window_find(_elm_wl_display, (Ecore_Window)win);
-   if (!window) return;
+   if (!win) return;
 
    EINA_LIST_FOREACH(seat_sel->pd->drop_list, l, dropable)
      {
-        if (_wl_window_get(dropable->obj) == window)
+        if (_wl_window_get(dropable->obj) == win)
           {
              dropable->last.pos.x = 0;
              dropable->last.pos.y = 0;
@@ -3718,8 +3714,7 @@ _wl_dnd_drop(void *data, int type EINA_UNUSED, void *event)
           }
      }
 
-   win = ecore_wl2_display_window_find(pd->wl_display, (Ecore_Window)ev->win);
-   ecore_wl2_dnd_drag_end(_wl_seat_get(win, NULL, seat_sel->seat));
+   ecore_wl2_dnd_drag_end(_wl_seat_get(ev->win, NULL, seat_sel->seat));
    return ECORE_CALLBACK_PASS_ON;
 }
 
