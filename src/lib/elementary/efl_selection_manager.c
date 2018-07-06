@@ -2586,7 +2586,7 @@ _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    types[count - 1] = 0;
 
    sel->selection_serial = ecore_wl2_dnd_selection_set(_wl_seat_get(win, owner, seat_sel->seat), types);
-   ERR("serial: %d", sel->selection_serial);
+   DBG("serial: %d", sel->selection_serial);
 
    free(types);
    //return _local_elm_cnp_selection_set(obj, selection, format, buf, buflen);
@@ -4360,12 +4360,12 @@ _anim_icons_make(Sel_Manager_Drag_Container *dc)
 
    if (dc->icon_list_func)
      {
-        ERR("calling icon_list_func");
+        DBG("calling icon_list_func");
         icon_list = dc->icon_list_func(dc->icon_list_func_data, dc->cont);
      }
    EINA_LIST_FREE(icon_list, obj)
      {
-        ERR("one obj in icon_list");
+        DBG("one obj in icon_list");
         Anim_Icon *ai = calloc(1, sizeof(Anim_Icon));
         if (!ai)
           {
@@ -4378,7 +4378,7 @@ _anim_icons_make(Sel_Manager_Drag_Container *dc)
         ai->obj = obj;
         list = eina_list_append(list, ai);
      }
-   ERR("made icon list");
+   DBG("made icon list");
 
    return list;
 }
@@ -4393,7 +4393,7 @@ _cont_obj_drag_done_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static Eina_Bool
 _cont_obj_drag_start(void *data)
 {
-   ERR("going to start draging");
+   DBG("going to start draging");
    Sel_Manager_Drag_Container *dc = data;
 
    dc->timer = NULL;
