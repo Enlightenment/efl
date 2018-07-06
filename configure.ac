@@ -5562,9 +5562,7 @@ AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS([geteuid getuid getpwent])
 
-if test "x${want_quicklaunch}" != "xno"; then
-   AC_CHECK_FUNCS([fork clearenv])
-fi
+AC_CHECK_FUNCS([fork clearenv])
 
 build_quicklaunch="no"
 if test "x${ac_cv_func_fork}" = "xyes" -a "x${efl_func_dlopen}" = "xyes"; then
