@@ -3685,7 +3685,6 @@ _wl_dnd_drop(void *data, int type EINA_UNUSED, void *event)
    Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd;
    Sel_Manager_Selection *sel;
-   Ecore_Wl2_Window *win;
    Sel_Manager_Dropable *drop;
    Eina_List *l;
 
@@ -3706,7 +3705,6 @@ _wl_dnd_drop(void *data, int type EINA_UNUSED, void *event)
              evas_object_event_callback_add(sel->request_obj,
                                             EVAS_CALLBACK_DEL, _wl_sel_obj_del2,
                                             sel);
-             win = _wl_window_get(drop->obj);
              ecore_wl2_offer_receive(ev->offer, (char*)drop->last.type);
              ecore_event_handler_add(ECORE_WL2_EVENT_OFFER_DATA_READY, _wl_dnd_receive, seat_sel);
 
