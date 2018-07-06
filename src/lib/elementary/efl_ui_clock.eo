@@ -226,7 +226,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_disabled_update;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update;
    }
    events {

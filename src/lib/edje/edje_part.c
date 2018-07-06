@@ -64,6 +64,7 @@ PROXY_INIT(swallow)
 PROXY_INIT(external)
 PROXY_INIT(text)
 PROXY_INIT(other)
+PROXY_INIT(invalid)
 
 void
 _edje_internal_proxy_shutdown(void)
@@ -73,6 +74,7 @@ _edje_internal_proxy_shutdown(void)
    _swallow_shutdown();
    _external_shutdown();
    _text_shutdown();
+   _invalid_shutdown();
    _other_shutdown();
 }
 
@@ -93,7 +95,6 @@ EOLIAN static Efl_Object *
 _efl_canvas_layout_part_efl_object_finalize(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL);
-   // Do not use return  here!
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
 

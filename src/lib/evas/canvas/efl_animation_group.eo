@@ -25,7 +25,6 @@ abstract Efl.Animation.Group (Efl.Animation)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Animation.target { set; }
       Efl.Animation.duration { set; }
       Efl.Animation.final_state_keep { set; }
       Efl.Animation.interpolator { set; }

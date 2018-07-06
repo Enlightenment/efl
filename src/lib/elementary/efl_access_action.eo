@@ -1,4 +1,4 @@
-import elm_general;
+import efl_ui;
 
 mixin Efl.Access.Action ()
 {

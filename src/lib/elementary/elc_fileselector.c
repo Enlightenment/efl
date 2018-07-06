@@ -117,7 +117,7 @@ _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 
 #undef A
 
-   efl_ui_focus_manager_calc_update_order(efl_ui_focus_user_focus_manager_get(obj), obj, tmp);
+   efl_ui_focus_manager_calc_update_order(efl_ui_focus_object_focus_manager_get(obj), obj, tmp);
 }
 
 static void

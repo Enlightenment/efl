@@ -103,7 +103,7 @@ _buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
 }
 
 void
-database_type_to_str(const Eolian_Unit *src, const Eolian_Type *tp,
+database_type_to_str(const Eolian_Type *tp,
                      Eina_Strbuf *buf, const char *name,
                      Eolian_C_Type_Type ctype)
 {
@@ -111,7 +111,7 @@ database_type_to_str(const Eolian_Unit *src, const Eolian_Type *tp,
      || tp->type == EOLIAN_TYPE_CLASS
      || tp->type == EOLIAN_TYPE_VOID)
      && tp->is_const
-     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(src, tp)))
+     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(NULL, tp)))
      {
         eina_strbuf_append(buf, "const ");
      }
@@ -138,7 +138,7 @@ database_type_to_str(const Eolian_Unit *src, const Eolian_Type *tp,
    else
      {
         /* handles arrays and pointers as they all serialize to pointers */
-        database_type_to_str(src, tp->base_type, buf, NULL,
+        database_type_to_str(tp->base_type, buf, NULL,
                              EOLIAN_C_TYPE_DEFAULT);
         _buf_add_suffix(buf, "*");
         if (tp->is_const && (ctype != EOLIAN_C_TYPE_RETURN))
@@ -152,8 +152,7 @@ database_type_to_str(const Eolian_Unit *src, const Eolian_Type *tp,
 }
 
 static void
-_stype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
-              Eina_Strbuf *buf)
+_stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    Eolian_Struct_Type_Field *sf;
    Eina_List *l;
@@ -170,7 +169,7 @@ _stype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
    eina_strbuf_append(buf, " { ");
    EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
-        database_type_to_str(src, sf->type, buf, sf->name,
+        database_type_to_str(sf->type, buf, sf->name,
                              EOLIAN_C_TYPE_DEFAULT);
         eina_strbuf_append(buf, "; ");
      }
@@ -178,8 +177,7 @@ _stype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
 }
 
 static void
-_etype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
-              Eina_Strbuf *buf)
+_etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    Eolian_Enum_Type_Field *ef;
    Eina_List *l;
@@ -197,8 +195,8 @@ _etype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
         eina_strbuf_append(buf, ef->name);
         if (ef->value)
           {
-             Eolian_Value val = eolian_expression_eval(src, ef->value,
-                 EOLIAN_MASK_INT);
+             Eolian_Value val = eolian_expression_eval(ef->value,
+                                                       EOLIAN_MASK_INT);
              const char *ret;
              eina_strbuf_append(buf, " = ");
              ret = eolian_expression_value_to_literal(&val);
@@ -226,8 +224,7 @@ _append_name(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 }
 
 static void
-_atype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
-              Eina_Strbuf *buf)
+_atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    eina_strbuf_append(buf, "typedef ");
 
@@ -244,26 +241,25 @@ _atype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
 
    Eina_Strbuf *fulln = eina_strbuf_new();
    _append_name(tp, fulln);
-   database_type_to_str(src, tp->base_type, buf, eina_strbuf_string_get(fulln),
+   database_type_to_str(tp->base_type, buf, eina_strbuf_string_get(fulln),
                         EOLIAN_C_TYPE_DEFAULT);
    eina_strbuf_free(fulln);
 }
 
 void
-database_typedecl_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
-                         Eina_Strbuf *buf)
+database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    switch (tp->type)
      {
       case EOLIAN_TYPEDECL_ALIAS:
-        _atype_to_str(src, tp, buf);
+        _atype_to_str(tp, buf);
         break;
       case EOLIAN_TYPEDECL_ENUM:
-        _etype_to_str(src, tp, buf);
+        _etype_to_str(tp, buf);
         break;
       case EOLIAN_TYPEDECL_STRUCT:
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
-        _stype_to_str(src, tp, buf);
+        _stype_to_str(tp, buf);
         break;
       default:
         break;

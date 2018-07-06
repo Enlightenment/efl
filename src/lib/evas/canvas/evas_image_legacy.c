@@ -1225,7 +1225,6 @@ evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool isma
 EOLIAN static Eina_Bool
 _evas_image_efl_file_mmap_set(Eo *obj, void *pd EINA_UNUSED, const Eina_File *f, const char *key)
 {
-   WRN("efl_file_mmap_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_mmap_set(obj, f, key);
 }
@@ -1233,7 +1232,6 @@ _evas_image_efl_file_mmap_set(Eo *obj, void *pd EINA_UNUSED, const Eina_File *f,
 EOLIAN static void
 _evas_image_efl_file_mmap_get(Eo *obj, void *pd EINA_UNUSED, const Eina_File **f, const char **key)
 {
-   WRN("efl_file_mmap_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
    if (f) *f = NULL;
    if (key) *key = NULL;
    EVAS_IMAGE_API(obj);

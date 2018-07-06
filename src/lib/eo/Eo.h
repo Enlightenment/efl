@@ -14,15 +14,15 @@
 #define EOAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
-# ifdef EFL_EO_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EO_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -33,7 +33,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -1159,37 +1159,6 @@ typedef struct _Efl_Object_Op_Call_Data
    void         *extn4; // for future use to avoid ABI issues
 } Efl_Object_Op_Call_Data;
 
-#define EFL_OBJECT_CALL_CACHE_SIZE 1
-
-typedef struct _Efl_Object_Call_Cache_Index
-{
-   const void       *klass;
-} Efl_Object_Call_Cache_Index;
-
-typedef struct _Efl_Object_Call_Cache_Entry
-{
-   const void       *func;
-} Efl_Object_Call_Cache_Entry;
-
-typedef struct _Efl_Object_Call_Cache_Off
-{
-   int               off;
-} Efl_Object_Call_Cache_Off;
-
-typedef struct _Efl_Object_Call_Cache
-{
-#if EFL_OBJECT_CALL_CACHE_SIZE > 0
-   Efl_Object_Call_Cache_Index index[EFL_OBJECT_CALL_CACHE_SIZE];
-   Efl_Object_Call_Cache_Entry entry[EFL_OBJECT_CALL_CACHE_SIZE];
-   Efl_Object_Call_Cache_Off   off  [EFL_OBJECT_CALL_CACHE_SIZE];
-# if EFL_OBJECT_CALL_CACHE_SIZE > 1
-   int                 next_slot;
-# endif
-#endif
-   Efl_Object_Op               op;
-   unsigned int        generation;
-} Efl_Object_Call_Cache;
-
 // to pass the internal function call to EFL_FUNC_BODY (as Func parameter)
 #define EFL_FUNC_CALL(...) __VA_ARGS__
 
@@ -1205,17 +1174,20 @@ typedef struct _Efl_Object_Call_Cache
 # define EFL_FUNC_TLS __thread
 #endif
 
+
 // cache OP id, get real fct and object data then do the call
 #define EFL_FUNC_COMMON_OP(Obj, Name, DefRet) \
-   static EFL_FUNC_TLS Efl_Object_Call_Cache ___cache; /* static 0 by default */ \
+   static Efl_Object_Op ___op = 0; \
+   static unsigned int ___generation = 0; \
    Efl_Object_Op_Call_Data ___call; \
    _Eo_##Name##_func _func_;                                            \
-   if (EINA_UNLIKELY((___cache.op == EFL_NOOP) ||                       \
-                     (___cache.generation != _efl_object_init_generation))) \
+   if (EINA_UNLIKELY((___op == EFL_NOOP) ||                       \
+                     (___generation != _efl_object_init_generation))) \
      goto __##Name##_op_create; /* yes a goto - see below */ \
-   __##Name##_op_create_done: \
-   if (!_efl_object_call_resolve((Eo *) Obj, #Name, &___call, &___cache, \
-                                 __FILE__, __LINE__)) goto __##Name##_failed; \
+   __##Name##_op_create_done: EINA_HOT; \
+   if (EINA_UNLIKELY(!_efl_object_call_resolve( \
+      (Eo *) Obj, #Name, &___call, ___op, __FILE__, __LINE__))) \
+      goto __##Name##_failed; \
    _func_ = (_Eo_##Name##_func) ___call.func;
 
 // This looks ugly with gotos BUT it moves rare "init" handling code
@@ -1227,13 +1199,12 @@ typedef struct _Efl_Object_Call_Cache
 // of the cacheline that was already fetched should yield better cache
 // hits.
 #define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet, ErrorCase) \
-__##Name##_op_create: \
-   if (EINA_UNLIKELY(___cache.op != EFL_NOOP)) memset(&___cache, 0, sizeof(___cache)); \
-   ___cache.op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
-   if (___cache.op == EFL_NOOP) goto __##Name##_failed; \
-   ___cache.generation = _efl_object_init_generation; \
+__##Name##_op_create: EINA_COLD; \
+   ___op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
+   ___generation = _efl_object_init_generation; \
+   if (EINA_UNLIKELY(___op == EFL_NOOP)) goto __##Name##_failed; \
    goto __##Name##_op_create_done; \
-__##Name##_failed: \
+__##Name##_failed: EINA_COLD; \
    ErrorCase \
    return DefRet;
 #define _EFL_OBJECT_API_BEFORE_HOOK
@@ -1335,7 +1306,7 @@ EAPI Efl_Object_Op _efl_object_api_op_id_get(const void *api_func) EINA_DEPRECAT
 EAPI Efl_Object_Op _efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_func_name, const char *file, int line) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool _efl_object_call_resolve(Eo *obj, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Call_Cache *callcache, const char *file, int line);
+EAPI Eina_Bool _efl_object_call_resolve(Eo *obj, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Op op, const char *file, int line);
 
 // end of the eo call barrier, unref the obj
 EAPI void _efl_object_call_end(Efl_Object_Op_Call_Data *call);

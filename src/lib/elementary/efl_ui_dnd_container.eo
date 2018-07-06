@@ -14,13 +14,11 @@ mixin Efl.Ui.Dnd.Container {
             time: double; [[The drag delay time]]
          }
       }
-      drag_item_add { //drag_item_callback //property
+      drag_item_add {
          [[This registers a drag for items in a container. Many items can be
            dragged at a time. During dragging, there are three events emitted:
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
          params {
-            //@in time_to_drag: double; [[Time since mouse down happens to drag starts]] //drag_delay: property
-            //@in anim_durataion: double; [[animation duration]] //just config
             @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
             @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
@@ -28,7 +26,7 @@ mixin Efl.Ui.Dnd.Container {
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_item_del { //remove
+      drag_item_del {
          [[Remove drag function of items in the container object.]]
          params {
             @in seat: uint; [[Specified seat for multiple seats case.]]

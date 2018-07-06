@@ -37,7 +37,7 @@ struct Efl.Selection.Data
    [[Structure holding the info about selected data]]
    pos: Eina.Position2D; [[Coordinates of the drop (DND operations only)]]
    format: Efl.Selection.Format; [[Format of the selection]]
-   data: Eina.Slice; [[Selection data]]
+   content: Eina.Slice; [[Selection data]]
    action: Efl.Selection.Action; [[Action to perform with the data]]
    item: Efl.Object; [[Item under the drag position. It is only available for container]]
 }

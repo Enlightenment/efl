@@ -203,7 +203,7 @@ class Elm.Diskselector (Efl.Ui.Widget, Elm.Interface_Scrollable,
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;

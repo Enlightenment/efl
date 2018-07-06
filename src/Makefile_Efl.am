@@ -24,6 +24,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_file.eo \
       lib/efl/interfaces/efl_image_load.eo \
       lib/efl/interfaces/efl_part.eo \
+      lib/efl/interfaces/efl_playable.eo \
       lib/efl/interfaces/efl_player.eo \
       lib/efl/interfaces/efl_text.eo \
       lib/efl/interfaces/efl_text_font.eo \
@@ -48,7 +49,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_model.eo \
       lib/efl/interfaces/efl_animator.eo \
       lib/efl/interfaces/efl_orientation.eo \
-      lib/efl/interfaces/efl_flipable.eo \
       lib/efl/interfaces/efl_container.eo \
       lib/efl/interfaces/efl_content.eo \
       lib/efl/interfaces/efl_pack.eo \

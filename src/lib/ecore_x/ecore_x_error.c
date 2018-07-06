@@ -172,7 +172,11 @@ _ecore_x_io_error_handle(Display *d)
    if (d == _ecore_x_disp)
      {
         if (_io_error_func)
-          _io_error_func(_io_error_data);
+          {
+             _ecore_x_disp = NULL;
+             _ecore_x_shutdown();
+             _io_error_func(_io_error_data);
+          }
         else
           exit(-1);
      }

@@ -3,19 +3,19 @@
 
 #ifdef EAPI
 # undef EAPI
-#endif /* EAPI */
+#endif
 
 #ifdef _WIN32
-# ifdef EFL_EVIL_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVIL_BUILD */
-#endif /* _WIN32 */
+# endif
+#endif
 
 #ifdef	__cplusplus
 extern "C" {
@@ -50,5 +50,8 @@ EAPI int fnmatch(const char *__pattern, const char *__string, int __flags);
 #ifdef	__cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif /* __EVIL_FNMATCH_H__ */

@@ -1083,7 +1083,8 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
     * value we would set foo to, because it would depend on the
     * size of the dragable...
     */
-   evas_object_geometry_get(ep->object, &ex, &ey, NULL, NULL);
+   if (ep->object)
+     evas_object_geometry_get(ep->object, &ex, &ey, NULL, NULL);
 
    if (NEQ(ep->drag->x, x) || ep->drag->tmp.x)
      {

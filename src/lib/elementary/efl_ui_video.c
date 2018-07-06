@@ -99,7 +99,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   if (elm_video_is_playing_get(obj))
+   if (efl_player_play_get(obj))
      elm_video_pause(obj);
    else
      elm_video_play(obj);
@@ -305,33 +305,39 @@ _efl_ui_video_emotion_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_video_play(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_start(Eo *obj, Efl_Ui_Video_Data *sd EINA_UNUSED)
 {
-   if (emotion_object_play_get(sd->emotion)) return;
-
-   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
-   sd->stop = EINA_FALSE;
-   emotion_object_play_set(sd->emotion, EINA_TRUE);
-   elm_layout_signal_emit(obj, "elm,video,play", "elm");
+   efl_player_position_set(obj, 0.0);
+   efl_player_play_set(obj, EINA_TRUE);
 }
 
-/* FIXME: pause will setup timer and go into sleep or
- * hibernate after a while without activity.
- */
 EOLIAN static void
-_efl_ui_video_pause(Eo *obj, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play)
 {
-   if (!emotion_object_play_get(sd->emotion)) return;
+   if (emotion_object_play_get(sd->emotion) == !!play) return;
 
-   if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
-   emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+   if (play)
+     {
+        ELM_SAFE_FREE(sd->timer, ecore_timer_del);
+        sd->stop = EINA_FALSE;
+        emotion_object_play_set(sd->emotion, EINA_TRUE);
+        elm_layout_signal_emit(obj, "elm,video,play", "elm");
+     }
+   else
+     {
+        /* FIXME: pause will setup timer and go into sleep or
+         * hibernate after a while without activity.
+         */
+        if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
+        emotion_object_play_set(sd->emotion, EINA_FALSE);
+        elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+     }
 }
 
 /* FIXME: stop should go into hibernate state directly.
  */
 EOLIAN static void
-_efl_ui_video_stop(Eo *obj, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
 
@@ -344,7 +350,7 @@ _efl_ui_video_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_is_playing_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_play_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_play_get(sd->emotion);
 }
@@ -443,6 +449,30 @@ EAPI double
 elm_video_play_position_get(const Evas_Object *obj)
 {
    return efl_player_position_get(obj);
+}
+
+EAPI Eina_Bool
+elm_video_is_playing_get(Evas_Object *obj)
+{
+   return efl_player_play_get(obj);
+}
+
+EAPI void
+elm_video_play(Evas_Object *obj)
+{
+   efl_player_play_set(obj, EINA_TRUE);
+}
+
+EAPI void
+elm_video_stop(Evas_Object *obj)
+{
+   efl_player_stop(obj);
+}
+
+EAPI void
+elm_video_pause(Evas_Object *obj)
+{
+   efl_player_play_set(obj, EINA_FALSE);
 }
 
 /* Internal EO APIs and hidden overrides */

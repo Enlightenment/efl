@@ -6,15 +6,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EOLIAN_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EOLIAN_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -25,7 +25,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -1827,7 +1827,6 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 /*
  * @brief Get the full C type name of the given type.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type declaration.
  * @return The C type name assuming @c tp is not NULL.
  *
@@ -1837,7 +1836,7 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
+EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the given type declaration. Keep in mind that the
@@ -2024,7 +2023,6 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 /*
  * @brief Get the full C type name of the given type.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @param[in] ctype the context within which the C type string will be used.
  * @return The C type name assuming @c tp is not NULL.
@@ -2035,7 +2033,7 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Unit *unit, const Eolian_Type *tp, Eolian_C_Type_Type ctype);
+EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
 
 /*
  * @brief Get the name of the given type. For regular types, this is for
@@ -2086,7 +2084,6 @@ EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
 /*
  * @brief Evaluate an Eolian expression.
  *
- * @param[in] unit the unit to look in
  * @param[in] expr the expression.
  * @param[in] mask the mask of allowed values (can combine with bitwise OR).
  * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
@@ -2096,12 +2093,11 @@ EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Value eolian_expression_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask m);
+EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
 
 /*
  * @brief Evaluate an Eolian expression given a type instead of a mask.
  *
- * @param[in] unit the unit to look in
  * @param[in] expr the expression.
  * @param[in] type the type the expression is assigned to.
  * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
@@ -2111,7 +2107,7 @@ EAPI Eolian_Value eolian_expression_eval(const Eolian_Unit *unit, const Eolian_E
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr, const Eolian_Type *type);
+EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type);
 
 /*
  * @brief Convert the result of expression evaluation to a literal as in how

@@ -117,7 +117,7 @@ struct _Efl_Ui_Win_Data
    } win32;
 #endif
 
-   Efl_Ui_Win_Type                   type;
+   unsigned /* Efl_Ui_Win_Type */    type;
    Efl_Ui_Win_Keyboard_Mode          kbdmode;
    Efl_Ui_Win_Indicator_Mode         indimode;
    struct
@@ -1666,9 +1666,9 @@ _elm_win_state_change(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_win_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   if (!efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL))
+   if (!efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS)))
      return EINA_TRUE;
 
    if (sd->img_obj)
@@ -4172,16 +4172,23 @@ _elm_win_frame_cb_menu(void *data,
 
    {
       Eina_Iterator *it;
-      it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(sd->wl.win));
+      Ecore_Wl2_Display *display = ecore_wl2_window_display_get(sd->wl.win);
+      it = ecore_wl2_display_inputs_get(display);
       EINA_ITERATOR_FOREACH(it, input) break;
       eina_iterator_free(it);
    }
    if (sd->wl.win->xdg_toplevel)
-     xdg_toplevel_show_window_menu(sd->wl.win->xdg_toplevel,
+     {
+        xdg_toplevel_show_window_menu(sd->wl.win->xdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
+        ecore_wl2_display_flush(input->display);
+     }
    else if (sd->wl.win->zxdg_toplevel)
-     zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
+     {
+        zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
+        ecore_wl2_display_flush(input->display);
+     }
 #else
    (void)sd;
 #endif
@@ -4597,7 +4604,7 @@ _elm_x_io_err(void *data EINA_UNUSED)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_IOERR, NULL);
+     evas_object_smart_callback_call(obj, "ioerr", NULL);
    elm_exit();
 }
 #endif
@@ -7156,10 +7163,21 @@ _elm_win_standard_init(Eo *obj)
      }
    else
      {
+        Eo *bg;
+
         /* Legacy theme compatibility */
         DBG("Detected legacy theme used for elm_bg. Swallowing object.");
         sd->csd.need_bg_solid = EINA_FALSE;
-        _elm_win_bg_set(sd, efl_add(EFL_UI_BG_WIDGET_CLASS, obj));
+        if (sd->legacy.ctor)
+          bg = elm_bg_add(obj);
+        else
+          {
+             // Note: This code path is probably not necessary (custom legacy
+             // theme but efl_add'ed window -- all efl_add'ed widgets would
+             // use default theme)
+             bg = efl_add(EFL_UI_BG_WIDGET_CLASS, obj);
+          }
+        _elm_win_bg_set(sd, bg);
      }
 
    _elm_win_frame_style_update(sd, 0, 1);

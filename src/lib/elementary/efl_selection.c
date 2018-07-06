@@ -154,19 +154,19 @@ struct _Cnp_Data_Cb_Wrapper
 static void
 _selection_data_ready_cb(void *data, Efl_Object *obj, Efl_Selection_Data *seldata)
 {
-    printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->data.mem, seldata->data.len);
+    printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->content.mem, seldata->content.len);
     Cnp_Data_Cb_Wrapper *wdata = data;
     if (!wdata) return;
     Elm_Selection_Data ddata;
 
-    ddata.data = calloc(1, seldata->data.len + 1);
+    ddata.data = calloc(1, seldata->content.len + 1);
     if (!ddata.data) return;
-    ddata.data = memcpy(ddata.data, seldata->data.mem, seldata->data.len);
-    ddata.len = seldata->data.len;
+    ddata.data = memcpy(ddata.data, seldata->content.mem, seldata->content.len);
+    ddata.len = seldata->content.len;
     ddata.x = seldata->pos.x;
     ddata.y = seldata->pos.y;
-    ddata.format = seldata->format;
-    ddata.action = seldata->action;
+    ddata.format = (Elm_Sel_Format)seldata->format;
+    ddata.action = (Elm_Xdnd_Action)seldata->action;
     wdata->datacb(wdata->udata, obj, &ddata);
     free(ddata.data);
 }
@@ -216,7 +216,8 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type type,
 #endif
    wdata->udata = udata;
    wdata->datacb = datacb;
-   efl_selection_manager_selection_get(sel_man, (Evas_Object *)obj, type, format,
+   efl_selection_manager_selection_get(sel_man, (Evas_Object *)obj, (Efl_Selection_Type)type,
+                                       (Efl_Selection_Format)format,
                                        wdata, _selection_data_ready_cb, NULL, seatid);
    return EINA_TRUE;
 }
@@ -238,7 +239,8 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   f = efl_selection_manager_selection_set(sel_man, obj, type, format, data, seatid);
+   f = efl_selection_manager_selection_set(sel_man, obj, (Efl_Selection_Type)type,
+                                           (Efl_Selection_Format)format, data, seatid);
 
    ldata->obj = obj;
    ldata->type = type;
@@ -256,7 +258,7 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type type)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   efl_selection_manager_selection_clear(sel_man, obj, type, seatid);
+   efl_selection_manager_selection_clear(sel_man, obj, (Efl_Selection_Type)type, seatid);
 
    return EINA_TRUE;
 }

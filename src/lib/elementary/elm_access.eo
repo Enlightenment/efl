@@ -8,7 +8,7 @@ class Elm.Access (Efl.Ui.Widget, Efl.Access.Widget.Action)
       class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.on_access_activate;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.state_set { get; }
    }

@@ -339,7 +339,7 @@ type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_n
 
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
-   c_type = ::eolian_type_c_type_get(unit, eolian_type, ctype);
+   c_type = ::eolian_type_c_type_get(eolian_type, ctype);
    // ::eina_stringshare_del(stringshare); // this crashes
    Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
    has_own = !!::eolian_type_is_owned(eolian_type);
@@ -1072,12 +1072,12 @@ struct enum_value_def
   std::string c_name;
   documentation_def documentation;
 
-  enum_value_def(Eolian_Enum_Type_Field const* enum_field, Eolian_Unit const* unit)
+  enum_value_def(Eolian_Enum_Type_Field const* enum_field, Eolian_Unit const*)
   {
       name = eolian_typedecl_enum_field_name_get(enum_field);
       c_name = eolian_typedecl_enum_field_c_name_get(enum_field);
       auto exp = eolian_typedecl_enum_field_value_get(enum_field, EINA_TRUE);
-      value = eolian_expression_eval(unit, exp, EOLIAN_MASK_INT); // FIXME hardcoded int
+      value = eolian_expression_eval(exp, EOLIAN_MASK_INT); // FIXME hardcoded int
       documentation = eolian_typedecl_enum_field_documentation_get(enum_field);
   }
 };

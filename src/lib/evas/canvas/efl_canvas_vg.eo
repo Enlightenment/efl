@@ -47,8 +47,8 @@ class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.File)
       @property viewbox_align {
          [[Control how the viewbox is positioned inside the viewport.]]
          values {
-            align_x: double(0); [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
-            align_y: double(0); [[Alignment in the vertical axis (0 <= align_y <= 1).]]
+            align_x: double(0.0); [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
+            align_y: double(0.0); [[Alignment in the vertical axis (0 <= align_y <= 1).]]
          }
       }
       @property root_node {

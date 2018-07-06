@@ -7,15 +7,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -26,7 +26,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,79 +89,10 @@ EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
 #define EFL_CANVAS_GROUP_ADD_OPS(kls) EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _##kls##_efl_canvas_group_group_add)
 #define EFL_CANVAS_GROUP_ADD_DEL_OPS(kls) EFL_CANVAS_GROUP_ADD_OPS(kls), EFL_CANVAS_GROUP_DEL_OPS(kls)
 
-/* Efl.Animation.Object */
-EOAPI void efl_animation_object_target_set(Eo *obj, Efl_Canvas_Object *target);
-EOAPI Efl_Canvas_Object *efl_animation_object_target_get(const Eo *obj);
-
-EOAPI void efl_animation_object_final_state_keep_set(Eo *obj, Eina_Bool state_keep);
-EOAPI Eina_Bool efl_animation_object_final_state_keep_get(const Eo *obj);
-
-EOAPI void efl_animation_object_duration_set(Eo *obj, double duration);
-EOAPI double efl_animation_object_duration_get(const Eo *obj);
-
-EOAPI double efl_animation_object_total_duration_get(const Eo *obj);
-
-EOAPI void efl_animation_object_start_delay_set(Eo *obj, double delay_time);
-EOAPI double efl_animation_object_start_delay_get(const Eo *obj);
-
-typedef enum
-{
-  EFL_ANIMATION_OBJECT_REPEAT_MODE_RESTART = 0,
-  EFL_ANIMATION_OBJECT_REPEAT_MODE_REVERSE
-} Efl_Animation_Object_Repeat_Mode;
-
-EOAPI void efl_animation_object_repeat_mode_set(Eo *obj, Efl_Animation_Object_Repeat_Mode mode);
-EOAPI Efl_Animation_Object_Repeat_Mode efl_animation_object_repeat_mode_get(const Eo *obj);
-
-EOAPI void efl_animation_object_repeat_count_set(Eo *obj, int count);
-EOAPI int efl_animation_object_repeat_count_get(const Eo *obj);
-
-EOAPI void efl_animation_object_interpolator_set(Eo *obj, Efl_Object *interpolator);
-EOAPI Efl_Object *efl_animation_object_interpolator_get(const Eo *obj);
-
-EOAPI void efl_animation_object_target_state_save(Eo *obj);
-EOAPI void efl_animation_object_target_state_reset(Eo *obj);
-EOAPI void efl_animation_object_target_map_reset(Eo *obj);
-
-EWAPI extern const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED;
-#define EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED (&(_EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED))
-/* Efl.Animation.Object END */
-
-/* Efl.Animation.Object.Alpha */
-EOAPI void efl_animation_object_alpha_set(Eo *obj, double from_alpha, double to_alpha);
-EOAPI void efl_animation_object_alpha_get(const Eo *obj, double *from_alpha, double *to_alpha);
-/* Efl.Animation.Object.Alpha END */
-
-/* Efl.Animation.Object.Rotate */
-EOAPI void efl_animation_object_rotate_set(Eo *obj, double from_degree, double to_degree, Efl_Canvas_Object *pivot, double cx, double cy);
-EOAPI void efl_animation_object_rotate_get(const Eo *obj, double *from_degree, double *to_degree, Efl_Canvas_Object **pivot, double *cx, double *cy);
-
-EOAPI void efl_animation_object_rotate_absolute_set(Eo *obj, double from_degree, double to_degree, int cx, int cy);
-EOAPI void efl_animation_object_rotate_absolute_get(const Eo *obj, double *from_degree, double *to_degree, int *cx, int *cy);
-/* Efl.Animation.Object.Rotate END */
-
-/* Efl.Animation.Object.Scale */
-EOAPI void efl_animation_object_scale_set(Eo *obj, double from_scale_x, double from_scale_y, double to_scale_x, double to_scale_y, Efl_Canvas_Object *pivot, double cx, double cy);
-EOAPI void efl_animation_object_scale_get(const Eo *obj, double *from_scale_x, double *from_scale_y, double *to_scale_x, double *to_scale_y, Efl_Canvas_Object **pivot, double *cx, double *cy);
-
-EOAPI void efl_animation_object_scale_absolute_set(Eo *obj, double from_scale_x, double from_scale_y, double to_scale_x, double to_scale_y, int cx, int cy);
-EOAPI void efl_animation_object_scale_absolute_get(const Eo *obj, double *from_scale_x, double *from_scale_y, double *to_scale_x, double *to_scale_y, int *cx, int *cy);
-/* Efl.Animation.Object.Scale END */
-
-/* Efl.Animation.Object.Translate */
-EOAPI void efl_animation_object_translate_set(Eo *obj, int from_x, int from_y, int to_x, int to_y);
-EOAPI void efl_animation_object_translate_get(const Eo *obj, int *from_x, int *from_y, int *to_x, int *to_y);
-
-EOAPI void efl_animation_object_translate_absolute_set(Eo *obj, int from_x, int from_y, int to_x, int to_y);
-EOAPI void efl_animation_object_translate_absolute_get(const Eo *obj, int *from_x, int *from_y, int *to_x, int *to_y);
-/* Efl.Animation.Object.Translate END */
-
-/* Efl.Animation.Object.Group */
-EOAPI void efl_animation_object_group_object_add(Eo *obj, Efl_Animation_Object *anim_obj);
-EOAPI void efl_animation_object_group_object_del(Eo *obj, Efl_Animation_Object *anim_obj);
-
-EOAPI Eina_List *efl_animation_object_group_objects_get(Eo *obj);
-/* Efl.Animation.Object.Group END */
+/* Efl.Animation.Player */
+EWAPI extern const Efl_Event_Description _EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED;
+#define EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED (&(_EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED))
+/* Efl.Animation.Player END */
 
 #ifdef __cplusplus
 }

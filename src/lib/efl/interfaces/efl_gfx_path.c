@@ -5,6 +5,7 @@
 #include <math.h>
 #include <float.h>
 #include <ctype.h>
+#include <locale.h>
 
 #include <Efl.h>
 
@@ -21,6 +22,7 @@ struct _Efl_Gfx_Path_Data
 
    unsigned int commands_count;
    unsigned int points_count;
+   char *path_data;
    Eina_Bool convex;
 };
 
@@ -273,6 +275,48 @@ interpolate(double from, double to, double pos_map)
    return (from * (1.0 - pos_map)) + (to * pos_map);
 }
 
+static inline int
+interpolatei(int from, int to, double pos_map)
+{
+   return (from * (1.0 - pos_map)) + (to * pos_map);
+}
+
+typedef struct _Efl_Gfx_Property Efl_Gfx_Property;
+struct _Efl_Gfx_Property
+{
+   double scale;
+   double w;
+   double centered;
+
+   Efl_Gfx_Cap c;
+   Efl_Gfx_Join j;
+
+   const Efl_Gfx_Dash *dash;
+   unsigned int dash_length;
+
+   int r, g, b, a;
+   int fr, fg, fb, fa;
+};
+
+static inline void
+_efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
+{
+
+   property->scale = efl_gfx_shape_stroke_scale_get(obj);
+   efl_gfx_shape_stroke_color_get(obj, &property->r, &property->g, &property->b, &property->a);
+   efl_gfx_color_get(obj, &property->fr, &property->fg, &property->fb, &property->fa);
+   property->w = efl_gfx_shape_stroke_width_get(obj);
+   property->centered = efl_gfx_shape_stroke_location_get(obj);
+   efl_gfx_shape_stroke_dash_get(obj, &property->dash, &property->dash_length);
+   property->c = efl_gfx_shape_stroke_cap_get(obj);
+   property->j = efl_gfx_shape_stroke_join_get(obj);
+}
+
+
+
+static void _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd, char *from, char *to, double pos);
+static void _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd);
+
 EOLIAN static Eina_Bool
 _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
                            const Eo *from, const Eo *to, double pos_map)
@@ -280,68 +324,112 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
    Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    Efl_Gfx_Path_Data *from_pd, *to_pd;
    Efl_Gfx_Path_Command *cmds;
+   Efl_Gfx_Property property_from, property_to;
+   Efl_Gfx_Dash *dash = NULL;
    double *pts;
    unsigned int i, j;
 
    from_pd = efl_data_scope_get(from, EFL_GFX_PATH_MIXIN);
    to_pd = efl_data_scope_get(to, EFL_GFX_PATH_MIXIN);
-
    if (!efl_isa(from, EFL_GFX_PATH_MIXIN) || !efl_isa(to, EFL_GFX_PATH_MIXIN))
      return EINA_FALSE;
-
    if (pd == from_pd || pd == to_pd) return EINA_FALSE;
 
-   if (!_efl_gfx_path_equal_commands_internal(from_pd, to_pd))
-     return EINA_FALSE;
 
-   cmds = realloc(pd->commands,
-                  sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
-   if (!cmds && from_pd->commands_count) return EINA_FALSE;
+   _efl_gfx_property_get(from, &property_from);
+   _efl_gfx_property_get(to, &property_to);
 
-   pts = realloc(pd->points, sizeof (double) * from_pd->points_count);
-   if (!pts && from_pd->points_count)
+   if (property_from.dash_length != property_to.dash_length) return EINA_FALSE;
+
+   if (from_pd->path_data && to_pd->path_data)
      {
-        free(cmds);
-        return EINA_FALSE;
+        _efl_gfx_path_reset(obj, pd);
+        _path_interpolation(obj, pd, from_pd->path_data, to_pd->path_data, pos_map);
      }
-
-   pd->commands = cmds;
-   pd->points = pts;
-
-   if (cmds)
+   else
      {
-        memcpy(cmds, from_pd->commands,
-               sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
+        if (!_efl_gfx_path_equal_commands_internal(from_pd, to_pd))
+          return EINA_FALSE;
+        cmds = realloc(pd->commands,
+                       sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
+        if (!cmds && from_pd->commands_count) return EINA_FALSE;
+        pd->commands = cmds;
 
-        if (pts)
+        pts = realloc(pd->points,
+                      sizeof (double) * from_pd->points_count);
+        if (!pts && from_pd->points_count) return EINA_FALSE;
+        pd->points = pts;
+
+        if (cmds)
           {
-             double *to_pts = to_pd->points;
-             double *from_pts = from_pd->points;
+             memcpy(cmds, from_pd->commands,
+                    sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
 
-             for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
+             if (pts)
                {
-                  for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
-                    {
-                       *pts = interpolate(*from_pts, *to_pts, pos_map);
-                       pts++;
-                       from_pts++;
-                       to_pts++;
-                    }
+                  double *to_pts = to_pd->points;
+                  double *from_pts = from_pd->points;
+
+                  for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
+                    for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
+                      {
+                         *pts = interpolate(*from_pts, *to_pts, pos_map);
+
+                         pts++;
+                         from_pts++;
+                         to_pts++;
+                      }
                }
+          }
+
+        pd->points_count = from_pd->points_count;
+        pd->commands_count = from_pd->commands_count;
+
+        pd->current.x = interpolate(from_pd->current.x,
+                                    to_pd->current.x,
+                                    pos_map);
+        pd->current.y = interpolate(from_pd->current.y,
+                                    to_pd->current.y,
+                                    pos_map);
+        pd->current_ctrl.x = interpolate(from_pd->current_ctrl.x,
+                                         to_pd->current_ctrl.x,
+                                         pos_map);
+        pd->current_ctrl.y = interpolate(from_pd->current_ctrl.y,
+                                         to_pd->current_ctrl.y,
+                                         pos_map);
+   }
+
+   if (property_to.dash_length)
+     {
+        dash = malloc(sizeof (Efl_Gfx_Dash) * property_to.dash_length);
+        if (!dash) return EINA_FALSE;
+
+        for (i = 0; i < property_to.dash_length; i++)
+          {
+             dash[i].length = interpolate(property_from.dash[i].length,
+                                          property_to.dash[i].length, pos_map);
+             dash[i].gap = interpolate(property_from.dash[i].gap,
+                                       property_to.dash[i].gap, pos_map);
           }
      }
 
-   pd->points_count = from_pd->points_count;
-   pd->commands_count = from_pd->commands_count;
 
-   pd->current.x = interpolate(from_pd->current.x, to_pd->current.x, pos_map);
-   pd->current.y = interpolate(from_pd->current.y, to_pd->current.y, pos_map);
-   pd->current_ctrl.x = interpolate(from_pd->current_ctrl.x,
-                                    to_pd->current_ctrl.x, pos_map);
-   pd->current_ctrl.y = interpolate(from_pd->current_ctrl.y,
-                                    to_pd->current_ctrl.y, pos_map);
+   efl_gfx_shape_stroke_scale_set(obj, interpolate(property_from.scale, property_to.scale, pos_map));
+   efl_gfx_shape_stroke_color_set(obj, interpolatei(property_from.r, property_to.r, pos_map),
+                                      interpolatei(property_from.g, property_to.g, pos_map),
+                                      interpolatei(property_from.b, property_to.b, pos_map),
+                                      interpolatei(property_from.a, property_to.a, pos_map));
+    efl_gfx_color_set(obj, interpolatei(property_from.fr, property_to.fr, pos_map),
+                           interpolatei(property_from.fg, property_to.fg, pos_map),
+                           interpolatei(property_from.fb, property_to.fb, pos_map),
+                           interpolatei(property_from.fa, property_to.fa, pos_map));
+    efl_gfx_shape_stroke_width_set(obj, interpolate(property_from.w, property_to.w, pos_map));
+    efl_gfx_shape_stroke_location_set(obj, interpolate(property_from.centered, property_to.centered, pos_map));
+    efl_gfx_shape_stroke_dash_set(obj, dash, property_to.dash_length);
+    efl_gfx_shape_stroke_cap_set(obj, pos_map < 0.5 ? property_from.c : property_to.c);
+    efl_gfx_shape_stroke_join_set(obj, pos_map < 0.5 ? property_from.j : property_to.j);
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
+    efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 
    return EINA_TRUE;
 }
@@ -371,6 +459,8 @@ _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd)
    free(pd->points);
    pd->points = NULL;
    pd->points_count = 0;
+   free(pd->path_data);
+   pd->path_data = NULL;
 
    pd->current.x = 0;
    pd->current.y = 0;
@@ -1114,6 +1204,7 @@ _skipcomma(const char *content)
    return (char*) content;
 }
 
+#if 0
 static inline Eina_Bool
 _next_isnumber(const char *content)
 {
@@ -1122,459 +1213,360 @@ _next_isnumber(const char *content)
    (void) strtod(content, &tmp);
    return content != tmp;
 }
+#endif
 
 static inline Eina_Bool
 _parse_number(char **content, double *number)
 {
    char *end = NULL;
    *number = strtod(*content, &end);
-   // if the start of string is not number 
+   // if the start of string is not number
    if ((*content) == end) return EINA_FALSE;
    //skip comma if any
    *content = _skipcomma(end);
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_efl_gfx_path_parse_pair(const char *content, char **end, double *x, double *y)
+static inline Eina_Bool
+_parse_long(char **content, int *number)
 {
-   char *str = (char *) content;
-
-   if (_parse_number(&str, x))
-     if (_parse_number(&str, y))
-       {
-          *end = str;
-          return EINA_TRUE;
-       }
-   return EINA_FALSE;
+   char *end = NULL;
+   *number = strtol(*content, &end, 10) ? 1 : 0;
+   // if the start of string is not number
+   if ((*content) == end) return EINA_FALSE;
+   *content = _skipcomma(end);
+   return EINA_TRUE;
 }
 
-static Eina_Bool
-_efl_gfx_path_parse_pair_to(const char *content, char **end,
-                            Eo *obj, Efl_Gfx_Path_Data *pd,
-                            double *current_x, double *current_y,
-                            void (*func)(Eo *obj, Efl_Gfx_Path_Data *pd,
-                                         double x, double y),
-                            Eina_Bool rel)
+static int
+_number_count(char cmd)
 {
-   double x, y;
-
-   *end = (char*) content;
-
-   do
+   int count = 0;
+   switch (cmd)
      {
-        if (!_efl_gfx_path_parse_pair(content, end, &x, &y))
-          return EINA_FALSE;
+      case 'M':
+      case 'm':
+      case 'L':
+      case 'l':
+        {
+           count = 2;
+           break;
+        }
+      case 'C':
+      case 'c':
+      case 'E':
+      case 'e':
+        {
+           count = 6;
+           break;
+        }
+      case 'H':
+      case 'h':
+      case 'V':
+      case 'v':
+        {
+           count = 1;
+           break;
+        }
+      case 'S':
+      case 's':
+      case 'Q':
+      case 'q':
+      case 'T':
+      case 't':
+        {
+           count = 4;
+           break;
+        }
+      case 'A':
+      case 'a':
+        {
+           count = 7;
+           break;
+        }
+      default:
+         break;
+      }
+   return count;
+}
 
-        if (rel)
+static void
+process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count, double *cur_x, double *cur_y)
+{
+   int i;
+   switch (cmd)
+     {
+      case 'm':
+      case 'l':
+      case 'c':
+      case 's':
+      case 'q':
+      case 't':
+        {
+           for(i=0; i<count; i += 2)
+             {
+                arr[i] = arr[i] + *cur_x;
+                arr[i+1] = arr[i+1] + *cur_y;
+             }
+           break;
+        }
+      case 'h':
+        {
+           arr[0] = arr[0] + *cur_x;
+           break;
+        }
+      case 'v':
+        {
+           arr[0] = arr[0] + *cur_y;
+           break;
+        }
+      case 'a':
+        {
+           arr[5] = arr[5] + *cur_x;
+           arr[6] = arr[6] + *cur_y;
+           break;
+        }
+      default:
+         break;
+      }
+
+   switch (cmd)
+     {
+      case 'm':
+      case 'M':
+        {
+           _efl_gfx_path_append_move_to(obj, pd, arr[0], arr[1]);
+           *cur_x = arr[0];
+           *cur_y = arr[1];
+           break;
+        }
+      case 'l':
+      case 'L':
+        {
+           _efl_gfx_path_append_line_to(obj, pd, arr[0], arr[1]);
+           *cur_x = arr[0];
+           *cur_y = arr[1];
+           break;
+        }
+      case 'c':
+      case 'C':
+        {
+           _efl_gfx_path_append_cubic_to(obj, pd, arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+           *cur_x = arr[4];
+           *cur_y = arr[5];
+           break;
+        }
+      case 's':
+      case 'S':
+        {
+           _efl_gfx_path_append_scubic_to(obj, pd, arr[2], arr[3], arr[0], arr[1]);
+           *cur_x = arr[2];
+           *cur_y = arr[3];
+           break;
+        }
+      case 'q':
+      case 'Q':
+        {
+           _efl_gfx_path_append_quadratic_to(obj, pd, arr[2], arr[3], arr[0], arr[1]);
+           *cur_x = arr[2];
+           *cur_y = arr[3];
+           break;
+        }
+      case 't':
+      case 'T':
+        {
+           _efl_gfx_path_append_move_to(obj, pd, arr[0], arr[1]);
+           *cur_x = arr[0];
+           *cur_y = arr[1];
+           break;
+        }
+      case 'h':
+      case 'H':
+        {
+           _efl_gfx_path_append_horizontal_to(obj, pd, arr[0], *cur_x, *cur_y);
+           *cur_x = arr[0];
+           break;
+        }
+      case 'v':
+      case 'V':
+        {
+           _efl_gfx_path_append_vertical_to(obj, pd, arr[0], *cur_x, *cur_y);
+           *cur_y = arr[0];
+           break;
+        }
+      case 'z':
+      case 'Z':
+        {
+           _efl_gfx_path_append_close(obj, pd);
+           break;
+        }
+      case 'a':
+      case 'A':
+        {
+           _efl_gfx_path_append_arc_to(obj, pd, arr[5], arr[6], arr[0], arr[1], arr[2], arr[3], arr[4]);
+           *cur_x = arr[5];
+           *cur_y = arr[6];
+           break;
+        }
+      case 'E':
+      case 'e':
+        {
+           _efl_gfx_path_append_arc(obj, pd, arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+           break;
+        }
+      default:
+         break;
+      }
+}
+
+static char *
+_next_command(char *path, char *cmd, double *arr, int *count)
+{
+   int i=0, large, sweep;
+
+   path = _skipcomma(path);
+   if (isalpha(*path))
+     {
+        *cmd = *path;
+        path++;
+        *count = _number_count(*cmd);
+     }
+   if ( *count == 7)
+     {
+        // special case for arc command
+        if(_parse_number(&path, &arr[0]))
+          if(_parse_number(&path, &arr[1]))
+            if(_parse_number(&path, &arr[2]))
+               if(_parse_long(&path, &large))
+                  if(_parse_long(&path, &sweep))
+                     if(_parse_number(&path, &arr[5]))
+                        if(_parse_number(&path, &arr[6]))
+                          {
+                             arr[3] = large;
+                             arr[4] = sweep;
+                             return path;
+                          }
+         *count = 0;
+         return NULL;
+     }
+   for (i = 0; i < *count; i++)
+     {
+        if (!_parse_number(&path, &arr[i]))
           {
-             x += *current_x;
-             y += *current_y;
+             *count = 0;
+             return NULL;
           }
-        func(obj, pd, x, y);
-        content = *end;
-
-        *current_x = x;
-        *current_y = y;
+        path = _skipcomma(path);
      }
-   while (_next_isnumber(content));
-
-   return EINA_TRUE;
+   return path;
 }
 
-static Eina_Bool
-_efl_gfx_path_parse_double_to(const char *content, char **end,
-                              Eo *obj, Efl_Gfx_Path_Data *pd,
-                              double *current, double current_x,
-                              double current_y,
-                              void (*func)(Eo *obj, Efl_Gfx_Path_Data *pd,
-                                           double d, double current_x,
-                                           double current_y),
-                              Eina_Bool rel)
+static void
+_path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd,
+                     char *from, char *to, double pos)
 {
-   double d;
-   Eina_Bool first = EINA_FALSE;
+   int i;
+   double from_arr[7], to_arr[7];
+   int from_count=0, to_count=0;
+   double cur_x=0, cur_y=0;
+   char from_cmd= 0, to_cmd = 0;
+   char *cur_locale;
 
-   *end = (char*) content;
-   do
+   if (!from || !to)
+     return;
+
+   cur_locale = setlocale(LC_NUMERIC, NULL);
+   if (cur_locale)
+     cur_locale = strdup(cur_locale);
+   setlocale(LC_NUMERIC, "POSIX");
+
+   while ((from[0] != '\0') && (to[0] != '\0'))
      {
-        d = strtod(content, end);
-        if (content == *end) return first;
-        first = EINA_TRUE;
-
-        if (rel) d += *current;
-
-        func(obj, pd, d, current_x, current_y);
-        content = *end;
-
-        *current = d;
-     }
-   while (1); // This is an optimisation as we have only one parameter.
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_efl_gfx_path_parse_six(const char *content, char **end,
-                        double *x, double *y,
-                        double *ctrl_x0, double *ctrl_y0,
-                        double *ctrl_x1, double *ctrl_y1)
-{
-   char *str = (char *) content;
-
-   if (_parse_number(&str, ctrl_x0))
-     {
-        if (_parse_number(&str, ctrl_y0))
+        from = _next_command(from, &from_cmd, from_arr, &from_count);
+        to = _next_command(to, &to_cmd, to_arr, &to_count);
+        if (from_cmd == to_cmd)
           {
-             if (_parse_number(&str, ctrl_x1))
+             if (from_count == 7)
                {
-                  if (_parse_number(&str, ctrl_y1))
+                  //special case for arc command
+                  i=0;
+                  from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
+                  i=1;
+                  from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
+                  i=2;
+                  from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
+                  i=5;
+                  from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
+                  i=6;
+                  from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
+               }
+             else
+               {
+                  for(i=0; i < from_count; i++)
                     {
-                       if (_parse_number(&str, x))
-                         {
-                            if (_parse_number(&str, y))
-                              {
-                                 *end = str;
-                                 return EINA_TRUE;
-                              }
-                         }
+                       from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
                     }
                }
+            process_command(obj, pd, from_cmd, from_arr, from_count, &cur_x, &cur_y);
           }
-     }
-
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_efl_gfx_path_parse_six_to(const char *content, char **end,
-                           Eo *obj, Efl_Gfx_Path_Data *pd,
-                           double *current_x, double *current_y,
-                           void (*func)(Eo *obj, Efl_Gfx_Path_Data *pd,
-                                        double ctrl_x0, double ctrl_y0,
-                                        double ctrl_x1, double ctrl_y1,
-                                        double x, double y),
-                           Eina_Bool rel)
-{
-   double x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1;
-
-   *end = (char*) content;
-
-   do
-     {
-        if (!_efl_gfx_path_parse_six(content, end, &x, &y, &ctrl_x0, &ctrl_y0,
-                                     &ctrl_x1, &ctrl_y1))
-          return EINA_FALSE;
-
-        if (rel)
+        else
           {
-             x += *current_x;
-             y += *current_y;
-             ctrl_x0 += *current_x;
-             ctrl_y0 += *current_y;
-             ctrl_x1 += *current_x;
-             ctrl_y1 += *current_y;
-          }
-        func(obj, pd, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, x, y);
-        content = *end;
-
-        *current_x = x;
-        *current_y = y;
-     }
-   while (_next_isnumber(content));
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_efl_gfx_path_parse_quad(const char *content, char **end,
-                         double *x, double *y,
-                         double *ctrl_x0, double *ctrl_y0)
-{
-   char *str = (char *) content;
-
-   if (_parse_number(&str, ctrl_x0))
-     if (_parse_number(&str, ctrl_y0))
-       if (_parse_number(&str, x))
-         if (_parse_number(&str, y))
-           {
-              *end = str;
-              return EINA_TRUE;
-           }
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_efl_gfx_path_parse_quad_to(const char *content, char **end,
-                            Eo *obj, Efl_Gfx_Path_Data *pd,
-                            double *current_x, double *current_y,
-                            void (*func)(Eo *obj, Efl_Gfx_Path_Data *pd,
-                            double x, double y, double ctrl_x0, double ctrl_y0),
-                            Eina_Bool rel)
-{
-   double x, y, ctrl_x0, ctrl_y0;
-
-   *end = (char*) content;
-
-   do
-     {
-        Eina_Bool r;
-
-        r = _efl_gfx_path_parse_quad(content, end, &x, &y, &ctrl_x0, &ctrl_y0);
-        if (!r) return EINA_FALSE;
-
-        if (rel)
-          {
-             x += *current_x;
-             y += *current_y;
-             ctrl_x0 += *current_x;
-             ctrl_y0 += *current_y;
-          }
-        func(obj, pd, x, y, ctrl_x0, ctrl_y0);
-        content = *end;
-
-        *current_x = x;
-        *current_y = y;
-     }
-   while (_next_isnumber(content));
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_efl_gfx_path_parse_arc(const char *content, char **end,
-                        double *x, double *y,
-                        double *rx, double *ry,
-                        double *radius,
-                        Eina_Bool *large_arc, Eina_Bool *sweep)
-{
-   char *str = (char *) content;
-   char *end1 = NULL;
-   char *end2 = NULL;
-
-   if (_parse_number(&str, rx))
-     {
-        if (_parse_number(&str, ry))
-          {
-             if (_parse_number(&str, radius))
-               {
-                  // large_arc
-                  *large_arc = strtol(str, &end1, 10) ? EINA_TRUE : EINA_FALSE;
-                  if (!end1 || (str == end1)) return EINA_FALSE;
-                  end1 = _skipcomma(end1);
-
-                  // sweep
-                  *sweep = strtol(end1, &end2, 10) ? EINA_TRUE : EINA_FALSE;
-                  if (!end2 || (end1 == end2)) return EINA_FALSE;
-                  str = _skipcomma(end2);
-
-                  if (_parse_number(&str, x))
-                    if (_parse_number(&str, y))
-                      {
-                         *end = str;
-                         return EINA_TRUE;
-                      }
-               }
+             goto error;
           }
      }
-   return EINA_FALSE;
-}
 
-static Eina_Bool
-_efl_gfx_path_parse_arc_to(const char *content, char **end,
-                           Eo *obj, Efl_Gfx_Path_Data *pd,
-                           double *current_x, double *current_y,
-                           void (*func)(Eo *obj, Efl_Gfx_Path_Data *pd,
-                           double x, double y, double rx, double ry,
-                           double angle, Eina_Bool large_arc, Eina_Bool sweep),
-                           Eina_Bool rel)
-{
-   double x, y, rx, ry, angle;
-   Eina_Bool large_arc, sweep; // FIXME: handle those flag
-
-   *end = (char*) content;
-
-   do
-     {
-        Eina_Bool r;
-
-        r = _efl_gfx_path_parse_arc(content, end, &x, &y, &rx, &ry, &angle,
-                                    &large_arc, &sweep);
-        if (!r) return EINA_FALSE;
-
-        if (rel)
-          {
-             x += *current_x;
-             y += *current_y;
-          }
-
-        func(obj, pd, x, y, rx, ry, angle, large_arc, sweep);
-        content = *end;
-
-        *current_x = x;
-        *current_y = y;
-     }
-   while (_next_isnumber(content));
-
-   return EINA_TRUE;
+error:
+   setlocale(LC_NUMERIC, cur_locale);
+   if (cur_locale)
+     free(cur_locale);
 }
 
 EOLIAN static void
 _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
-                               const char *svg_path_data)
+                              const char *svg_path_data)
 {
-   double current_x = 0, current_y = 0;
+   double number_array[7];
+   int number_count = 0;
+   double cur_x=0, cur_y=0;
+   char cmd= 0;
+   char *path = (char *) svg_path_data;
+   Eina_Bool arc = EINA_FALSE;
+   char *cur_locale;
 
-   //FIXME: const char *svg_path_data ???
-   char *content = (char*) svg_path_data;
+   if (!path)
+     return;
 
-   if (!content) return;
+   cur_locale = setlocale(LC_NUMERIC, NULL);
+   if (cur_locale)
+     cur_locale = strdup(cur_locale);
+   setlocale(LC_NUMERIC, "POSIX");
 
-   while (content[0] != '\0')
+   while ((path[0] != '\0'))
      {
-        while (isspace(content[0])) content++;
-
-        switch (content[0])
+        path = _next_command(path, &cmd, number_array, &number_count);
+        if (!path)
           {
-           case 'M':
-              if (!_efl_gfx_path_parse_pair_to(&content[1], &content, obj, pd,
-                                               &current_x, &current_y,
-                                               _efl_gfx_path_append_move_to,
-                                               EINA_FALSE))
-                return;
-              break;
-           case 'm':
-              if (!_efl_gfx_path_parse_pair_to(&content[1], &content, obj, pd,
-                                               &current_x, &current_y,
-                                               _efl_gfx_path_append_move_to,
-                                               EINA_TRUE))
-                return;
-              break;
-           case 'z':
-           case 'Z':
-              _efl_gfx_path_append_close(obj, pd);
-              content++;
-              break;
-           case 'L':
-              if (!_efl_gfx_path_parse_pair_to(&content[1], &content, obj, pd,
-                                               &current_x, &current_y,
-                                               _efl_gfx_path_append_line_to,
-                                               EINA_FALSE))
-                return;
-              break;
-           case 'l':
-              if (!_efl_gfx_path_parse_pair_to(&content[1], &content, obj, pd,
-                                               &current_x, &current_y,
-                                               _efl_gfx_path_append_line_to,
-                                               EINA_TRUE))
-                return;
-              break;
-           case 'H':
-              if (!_efl_gfx_path_parse_double_to(&content[1], &content, obj, pd,
-                                                 &current_x, current_x,
-                                                 current_y,
-                                                 _efl_gfx_path_append_horizontal_to,
-                                                 EINA_FALSE))
-                return;
-              break;
-           case 'h':
-              if (!_efl_gfx_path_parse_double_to(&content[1], &content, obj, pd,
-                                                 &current_x, current_x,
-                                                 current_y,
-                                                 _efl_gfx_path_append_horizontal_to,
-                                                 EINA_TRUE))
-                return;
-              break;
-           case 'V':
-              if (!_efl_gfx_path_parse_double_to(&content[1], &content, obj, pd,
-                                                 &current_y, current_x,
-                                                 current_y,
-                                                 _efl_gfx_path_append_vertical_to,
-                                                 EINA_FALSE))
-                return;
-              break;
-           case 'v':
-              if (!_efl_gfx_path_parse_double_to(&content[1], &content, obj, pd,
-                                                 &current_y, current_x,
-                                                 current_y,
-                                                 _efl_gfx_path_append_vertical_to,
-                                                 EINA_TRUE))
-                return;
-              break;
-           case 'C':
-              if (!_efl_gfx_path_parse_six_to(&content[1], &content, obj, pd,
-                                              &current_x, &current_y,
-                                              _efl_gfx_path_append_cubic_to,
-                                              EINA_FALSE))
-                return;
-              break;
-           case 'c':
-              if (!_efl_gfx_path_parse_six_to(&content[1], &content, obj, pd,
-                                              &current_x, &current_y,
-                                              _efl_gfx_path_append_cubic_to,
-                                              EINA_TRUE))
-                return;
-              break;
-           case 'S':
-              if (!_efl_gfx_path_parse_quad_to(&content[1], &content, obj, pd,
-                                               &current_x, &current_y,
-                                               _efl_gfx_path_append_scubic_to,
-                                               EINA_FALSE))
-                return;
-              break;
-           case 's':
-              if (!_efl_gfx_path_parse_quad_to(&content[1], &content,
-                                               obj, pd, &current_x, &current_y,
-                                               _efl_gfx_path_append_scubic_to,
-                                               EINA_TRUE))
-                return;
-              break;
-           case 'Q':
-              if (!_efl_gfx_path_parse_quad_to(&content[1], &content,
-                                               obj, pd, &current_x, &current_y,
-                                               _efl_gfx_path_append_quadratic_to,
-                                               EINA_FALSE))
-                return;
-              break;
-           case 'q':
-              if (!_efl_gfx_path_parse_quad_to(&content[1], &content,
-                                               obj, pd, &current_x, &current_y,
-                                               _efl_gfx_path_append_quadratic_to,
-                                               EINA_TRUE))
-                return;
-              break;
-           case 'T':
-              if (!_efl_gfx_path_parse_pair_to(&content[1], &content,
-                                               obj, pd, &current_x, &current_y,
-                                               _efl_gfx_path_append_squadratic_to,
-                                               EINA_FALSE))
-                return;
-              break;
-           case 't':
-              if (!_efl_gfx_path_parse_pair_to(&content[1], &content,
-                                               obj, pd, &current_x, &current_y,
-                                               _efl_gfx_path_append_squadratic_to,
-                                               EINA_TRUE))
-                return;
-              break;
-           case 'A':
-              if (!_efl_gfx_path_parse_arc_to(&content[1], &content,
-                                              obj, pd, &current_x, &current_y,
-                                              _efl_gfx_path_append_arc_to,
-                                              EINA_FALSE))
-                return;
-              break;
-           case 'a':
-              if (!_efl_gfx_path_parse_arc_to(&content[1], &content,
-                                              obj, pd, &current_x, &current_y,
-                                              _efl_gfx_path_append_arc_to,
-                                              EINA_TRUE))
-                return;
-              break;
-           default:
-              return;
+             //printf("Error parsing command\n");
+             goto error;
           }
+        process_command(obj, pd, cmd, number_array, number_count, &cur_x, &cur_y);
+        if ((!arc) && ((cmd == 'a') || (cmd == 'A') ||
+            (cmd == 'e') || (cmd == 'E')))
+          arc = EINA_TRUE;
      }
+   if (arc)
+     {
+        // need to keep the path for interpolation
+        if (pd->path_data)
+          free(pd->path_data);
+        pd->path_data = malloc(strlen(svg_path_data) + 1);
+        strcpy(pd->path_data, svg_path_data);
+     }
+
+error:
+   setlocale(LC_NUMERIC, cur_locale);
+   if (cur_locale)
+     free(cur_locale);
 }
 
 EOLIAN static void

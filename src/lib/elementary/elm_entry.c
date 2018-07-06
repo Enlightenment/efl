@@ -1295,12 +1295,13 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
                   edje_object_part_text_select_none(sd->entry_edje, "elm.text");
                }
           }
-        edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
+        if (sd->scr_edje)
+          edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
      }
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_ui_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_entry_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Entry_Data *sd)
 {
    _elm_entry_focus_update(obj, sd);
 

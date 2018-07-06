@@ -602,7 +602,7 @@ _grid_create(Evas_Object *obj)
                evas_object_image_add(evas_object_evas_get(obj));
              evas_object_image_load_orientation_set(g->grid[tn].img, EINA_TRUE);
              efl_orientation_set(g->grid[tn].img, sd->orient);
-             efl_flip_set(g->grid[tn].img, sd->flip);
+             efl_orientation_flip_set(g->grid[tn].img, sd->flip);
              evas_object_image_scale_hint_set
                (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
@@ -863,12 +863,12 @@ _mouse_up_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_image_zoomable_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (efl_ui_focus_object_focus_get(obj))
@@ -1320,7 +1320,7 @@ _orient_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
      }
 
    efl_orientation_set(sd->img, sd->orient);
-   efl_flip_set(sd->img, sd->flip);
+   efl_orientation_flip_set(sd->img, sd->flip);
    evas_object_image_size_get(sd->img, &iw, &ih);
    sd->size.imw = iw;
    sd->size.imh = ih;
@@ -1346,7 +1346,7 @@ _efl_ui_image_zoomable_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_flipable_flip_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Efl_Flip flip)
+_efl_ui_image_zoomable_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Efl_Flip flip)
 {
    if (sd->flip == flip) return;
 
@@ -1355,7 +1355,7 @@ _efl_ui_image_zoomable_efl_flipable_flip_set(Eo *obj, Efl_Ui_Image_Zoomable_Data
 }
 
 EOLIAN static Efl_Flip
-_efl_ui_image_zoomable_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_orientation_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->flip;
 }
@@ -3080,7 +3080,7 @@ elm_photocam_image_orient_set(Eo *obj, Evas_Image_Orient evas_orient)
 
    _evas_orient_to_eo_orient_flip(evas_orient, &orient, &flip);
    efl_orientation_set(obj, orient);
-   efl_flip_set(obj, flip);
+   efl_orientation_flip_set(obj, flip);
 }
 
 EAPI Evas_Image_Orient

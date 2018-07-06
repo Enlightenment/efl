@@ -92,7 +92,7 @@ _prev_page_focus_recover(Elm_Naviframe_Item_Data *it)
 {
    Elm_Naviframe *n = it->base->widget;
 
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(n), n);
+   efl_ui_focus_manager_focus_set(efl_ui_focus_object_focus_manager_get(n), n);
 }
 
 EOLIAN static void

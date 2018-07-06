@@ -21,7 +21,7 @@ struct Efl.Ui.Image.Error
 class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Image, Efl.Access.Widget.Action, Efl.Gfx.Color,
-                 Efl.Orientation, Efl.Flipable,
+                 Efl.Orientation,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal)
 {
@@ -102,7 +102,7 @@ class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Image.smooth_scale { get; set; }
       Efl.Image.scale_type { get; set; }
       Efl.Orientation.orientation { get; set; }
-      Efl.Flipable.flip { get; set; }
+      Efl.Orientation.flip { get; set; }
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Layout.Signal.signal_emit;

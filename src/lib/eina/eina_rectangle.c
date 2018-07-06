@@ -598,20 +598,21 @@ eina_rectangle_shutdown(void)
 EAPI Eina_Rectangle *
 eina_rectangle_new(int x, int y, int w, int h)
 {
-   Eina_Rectangle *rect;
+   Eina_Rectangle *rect = NULL;
 
    if (_eina_rectangles)
      {
         eina_spinlock_take(&_eina_spinlock);
         rect = eina_trash_pop(&_eina_rectangles);
-        eina_spinlock_release(&_eina_spinlock);
         _eina_rectangles_count--;
+        eina_spinlock_release(&_eina_spinlock);
      }
-   else
-      rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
 
    if (!rect)
-      return NULL;
+     rect = eina_mempool_malloc(_eina_rectangle_mp, sizeof (Eina_Rectangle));
+
+   if (!rect)
+     return NULL;
 
    EINA_RECTANGLE_SET(rect, x, y, w, h);
 
@@ -629,8 +630,8 @@ eina_rectangle_free(Eina_Rectangle *rect)
      {
         eina_spinlock_take(&_eina_spinlock);
         eina_trash_push(&_eina_rectangles, rect);
-        eina_spinlock_release(&_eina_spinlock);
         _eina_rectangles_count++;
+        eina_spinlock_release(&_eina_spinlock);
      }
 }
 

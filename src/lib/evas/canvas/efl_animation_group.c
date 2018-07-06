@@ -7,11 +7,7 @@ _efl_animation_group_animation_add(Eo *eo_obj,
 {
    if (!animation) return;
 
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   if (target)
-     efl_animation_target_set(animation, target);
-
-   double duration = efl_animation_duration_get(eo_obj);
+   double duration = efl_animation_duration_get(efl_super(eo_obj, MY_CLASS));
    /* if group animation duration is available value, then the duration is
     * propagated to its child. */
    if (duration != EFL_ANIMATION_GROUP_DURATION_NONE)
@@ -21,16 +17,28 @@ _efl_animation_group_animation_add(Eo *eo_obj,
    efl_animation_final_state_keep_set(animation, keep_final_state);
 
    pd->animations = eina_list_append(pd->animations, animation);
+   efl_ref(animation);
 }
 
 EOLIAN static void
 _efl_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
                                    Efl_Animation_Group_Data *pd,
-                                   Efl_Animation*animation)
+                                   Efl_Animation *animation)
 {
+   Eina_List *list;
    if (!animation) return;
 
-   pd->animations = eina_list_remove(pd->animations, animation);
+   list = eina_list_data_find_list(pd->animations, animation);
+   if (list)
+     {
+        pd->animations = eina_list_remove_list(pd->animations, list);
+        efl_unref(animation);
+     }
+   else
+     {
+        ERR("Animation(%s@%p) is not in the group animation.",
+            efl_class_name_get(animation), animation);
+     }
 }
 
 EOLIAN static Eina_List *
@@ -38,21 +46,6 @@ _efl_animation_group_animations_get(Eo *eo_obj EINA_UNUSED,
                                     Efl_Animation_Group_Data *pd)
 {
    return pd->animations;
-}
-
-EOLIAN static void
-_efl_animation_group_efl_animation_target_set(Eo *eo_obj,
-                                              Efl_Animation_Group_Data *pd,
-                                              Efl_Canvas_Object *target)
-{
-   Eina_List *l;
-   Efl_Animation *anim;
-   EINA_LIST_FOREACH(pd->animations, l, anim)
-     {
-        efl_animation_target_set(anim, target);
-     }
-
-   efl_animation_target_set(efl_super(eo_obj, MY_CLASS), target);
 }
 
 EOLIAN static void
@@ -114,8 +107,7 @@ _efl_animation_group_efl_object_constructor(Eo *eo_obj,
    pd->animations = NULL;
 
    //group animation does not affect its child duration by default.
-   efl_animation_duration_set(efl_super(eo_obj, MY_CLASS),
-                              EFL_ANIMATION_GROUP_DURATION_NONE);
+   efl_animation_duration_set(eo_obj, EFL_ANIMATION_GROUP_DURATION_NONE);
 
    return eo_obj;
 }
@@ -127,7 +119,7 @@ _efl_animation_group_efl_object_destructor(Eo *eo_obj,
    Efl_Animation *anim;
 
    EINA_LIST_FREE(pd->animations, anim)
-      efl_del(anim);
+     efl_unref(anim);
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }

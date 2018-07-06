@@ -147,7 +147,10 @@ evas_gl_new(Evas *e)
    evas_gl->evas = efl_data_ref(e, EVAS_CANVAS_CLASS);
    LKI(evas_gl->lck);
 
-   if (!evas_gl->evas->engine.func->gl_context_create)
+   if (!evas_gl->evas->engine.func->gl_context_create ||
+       !evas_gl->evas->engine.func->gl_supports_evas_gl ||
+       !evas_gl->evas->engine.func->gl_supports_evas_gl(
+          _evas_engine_context(evas_gl->evas)))
      {
         ERR("Evas GL engine not available.");
         efl_data_unref(e, evas_gl->evas);

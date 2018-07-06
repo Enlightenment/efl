@@ -7,6 +7,7 @@
 #include <Eina.h>
 #include "eolian_database.h"
 #include "eolian_priv.h"
+#include "eo_lexer.h"
 
 static Eina_Bool
 node_error(const Eolian_Object *obj, const char *msg)
@@ -182,11 +183,11 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
 }
 
 static Eina_Bool eval_exp(const Eolian_Unit *unit,
-                          const Eolian_Expression *expr,
+                          Eolian_Expression *expr,
                           Eolian_Expression_Mask mask, Eolian_Expression *out);
 
 static Eina_Bool
-eval_unary(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_unary(const Eolian_Unit *unit, Eolian_Expression *expr,
            Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
    switch (expr->unop)
@@ -272,7 +273,7 @@ eval_unary(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 static Eina_Bool
-eval_promote_num(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_promote_num(const Eolian_Unit *unit, Eolian_Expression *expr,
                  Eolian_Expression *lhs, Eolian_Expression *rhs, int mask,
                  int emask)
 {
@@ -295,7 +296,7 @@ eval_promote_num(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 static Eina_Bool
-eval_binary(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_binary(const Eolian_Unit *unit, Eolian_Expression *expr,
             Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
 #define APPLY_CASE(id, expr, lhs, rhs, fnm, op) \
@@ -436,7 +437,7 @@ split_enum_name(const char *str, char **ename, char **memb)
 }
 
 static Eina_Bool
-eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
          Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
    switch (expr->type)
@@ -469,7 +470,7 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
         }
       case EOLIAN_EXPR_STRING:
         {
-           if (!(mask & EOLIAN_MASK_STRING))
+           if (!(mask & EOLIAN_MASK_STRING) && !(mask & EOLIAN_MASK_NULL))
              return expr_type_error(expr, EOLIAN_MASK_STRING, mask);
            *out = *expr;
            return EINA_TRUE;
@@ -497,9 +498,16 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
         }
       case EOLIAN_EXPR_NAME:
         {
+           if (!unit)
+             {
+                if (!expr->expr)
+                  return expr_error(expr, "undefined value");
+                return eval_exp(NULL, expr->expr, mask, out);
+             }
+
            const Eolian_Variable *var = eolian_variable_constant_get_by_name
              (unit, expr->value.s);
-           const Eolian_Expression *exp = NULL;
+           Eolian_Expression *exp = NULL;
 
            if (!var)
              {
@@ -533,18 +541,19 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
                   }
 
                 fl = eolian_typedecl_enum_field_get(etpd, memb);
-                if (fl) exp = eolian_typedecl_enum_field_value_get(fl, EINA_TRUE);
+                if (fl) exp = (Eolian_Expression *)eolian_typedecl_enum_field_value_get(fl, EINA_TRUE);
                 free(fulln);
 
                 if (!exp)
                   return expr_error(expr, "invalid enum field");
              }
            else
-             exp = var->value;
+             exp = (Eolian_Expression *)var->value;
 
            if (!exp)
              return expr_error(expr, "undefined variable");
 
+           expr->expr = exp;
            return eval_exp(unit, exp, mask, out);
         }
       case EOLIAN_EXPR_UNARY:
@@ -560,7 +569,7 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 Eolian_Value
-database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr,
+database_expr_eval(const Eolian_Unit *unit, Eolian_Expression *expr,
                    Eolian_Expression_Mask mask)
 {
    Eolian_Expression out;
@@ -573,6 +582,80 @@ database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr,
    ret.type = out.type;
    ret.value = out.value;
    return ret;
+}
+
+Eolian_Value
+database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr,
+                        const Eolian_Type *type)
+{
+    Eolian_Value err;
+    err.type = EOLIAN_EXPR_UNKNOWN;
+    if (!type)
+      return err;
+    switch (type->type)
+      {
+        case EOLIAN_TYPE_CLASS:
+          return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
+        case EOLIAN_TYPE_REGULAR:
+          {
+              if (database_type_is_ownable(unit, type))
+                 return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
+              int  kw = eo_lexer_keyword_str_to_id(type->name);
+              if (!kw || kw < KW_byte || kw >= KW_void)
+                 {
+                     const Eolian_Typedecl *base = database_type_decl_find(unit, type);
+                     if (!base)
+                        return err;
+                     if (base->type == EOLIAN_TYPEDECL_ALIAS)
+                        return database_expr_eval_type(unit, expr, eolian_typedecl_base_type_get(base));
+                     else if (base->type == EOLIAN_TYPEDECL_ENUM)
+                        return database_expr_eval(unit, expr, EOLIAN_MASK_INT);
+                     return err;
+                 }
+              switch (kw)
+                 {
+                  case KW_byte:
+                  case KW_short:
+                  case KW_int:
+                  case KW_long:
+                  case KW_llong:
+                  case KW_int8:
+                  case KW_int16:
+                  case KW_int32:
+                  case KW_int64:
+                  case KW_int128:
+                  case KW_ssize:
+                  case KW_intptr:
+                  case KW_ptrdiff:
+                     return database_expr_eval(unit, expr, EOLIAN_MASK_SINT);
+                  case KW_ubyte:
+                  case KW_ushort:
+                  case KW_uint:
+                  case KW_ulong:
+                  case KW_ullong:
+                  case KW_uint8:
+                  case KW_uint16:
+                  case KW_uint32:
+                  case KW_uint64:
+                  case KW_uint128:
+                  case KW_size:
+                  case KW_uintptr:
+                  case KW_time:
+                     return database_expr_eval(unit, expr, EOLIAN_MASK_UINT);
+                  case KW_float:
+                  case KW_double:
+                     return database_expr_eval(unit, expr, EOLIAN_MASK_FLOAT);
+                  case KW_bool:
+                     return database_expr_eval(unit, expr, EOLIAN_MASK_BOOL);
+                  case KW_char:
+                     return database_expr_eval(unit, expr, EOLIAN_MASK_CHAR);
+                  default:
+                     return err;
+                 }
+          }
+        default:
+          return err;
+      }
 }
 
 void

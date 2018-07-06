@@ -746,13 +746,13 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_efl_ui_widget_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_toolbar_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 

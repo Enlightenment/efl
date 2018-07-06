@@ -7,7 +7,7 @@ typedef struct _App_Data
 {
    Efl_Animation        *cw_45_degrees_anim;
    Efl_Animation        *ccw_45_degrees_anim;
-   Efl_Animation_Object *anim_obj;
+   Efl_Animation_Player *anim_obj;
 
    Eina_Bool             is_btn_rotated;
 } App_Data;
@@ -19,19 +19,15 @@ _anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_anim_ended_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   App_Data *ad = data;
-
    printf("Animation has been ended!\n");
-
-   ad->anim_obj = NULL;
 }
 
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Animation_Object_Running_Event_Info *event_info = event->info;
+   Efl_Animation_Player_Running_Event_Info *event_info = event->info;
    double progress = event_info->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
@@ -41,35 +37,23 @@ _btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    App_Data *ad = data;
 
-   if (ad->anim_obj)
-     efl_animation_object_cancel(ad->anim_obj);
-
    ad->is_btn_rotated = !(ad->is_btn_rotated);
 
    if (ad->is_btn_rotated)
      {
         //Create Animation Object from Animation
-        ad->anim_obj = efl_animation_object_create(ad->cw_45_degrees_anim);
-        elm_object_text_set(obj, "Start Rotate Animation from 45 to 0 degrees");
+        efl_animation_player_animation_set(ad->anim_obj, ad->cw_45_degrees_anim);
+        efl_text_set(obj, "Start Rotate Animation from 45 to 0 degrees");
      }
    else
      {
         //Create Animation Object from Animation
-        ad->anim_obj = efl_animation_object_create(ad->ccw_45_degrees_anim);
-        elm_object_text_set(obj, "Start Rotate Animation from 0 to 45 degrees");
+        efl_animation_player_animation_set(ad->anim_obj, ad->ccw_45_degrees_anim);
+        efl_text_set(obj, "Start Rotate Animation from 0 to 45 degrees");
      }
 
-   //Register callback called when animation starts
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_OBJECT_EVENT_STARTED, _anim_started_cb, NULL);
-
-   //Register callback called when animation ends
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_OBJECT_EVENT_ENDED, _anim_ended_cb, ad);
-
-   //Register callback called while animation is executed
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_OBJECT_EVENT_RUNNING, _anim_running_cb, NULL);
-
    //Let Animation Object start animation
-   efl_animation_object_start(ad->anim_obj);
+   efl_player_start(ad->anim_obj);
 }
 
 static void
@@ -99,23 +83,30 @@ test_efl_anim_rotate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_show(btn);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
-   efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, 0.5, 0.5);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
+   efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0,NULL, 0.5, 0.5);
    efl_animation_duration_set(cw_45_degrees_anim, 1.0);
-   efl_animation_target_set(cw_45_degrees_anim, btn);
    efl_animation_final_state_keep_set(cw_45_degrees_anim, EINA_TRUE);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, 0.5, 0.5);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
-   efl_animation_target_set(ccw_45_degrees_anim, btn);
    efl_animation_final_state_keep_set(ccw_45_degrees_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->cw_45_degrees_anim = cw_45_degrees_anim;
    ad->ccw_45_degrees_anim = ccw_45_degrees_anim;
-   ad->anim_obj = NULL;
+
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
+   //Register callback called when animation starts
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
+   //Register callback called when animation ends
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, NULL);
+   //Register callback called while animation is executed
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
+
    ad->is_btn_rotated = EINA_FALSE;
 
    //Button to start animation
@@ -159,23 +150,31 @@ test_efl_anim_rotate_relative(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
    evas_object_show(pivot);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, pivot, 0.5, 0.5);
    efl_animation_duration_set(cw_45_degrees_anim, 1.0);
-   efl_animation_target_set(cw_45_degrees_anim, btn);
    efl_animation_final_state_keep_set(cw_45_degrees_anim, EINA_TRUE);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, pivot, 0.5, 0.5);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
-   efl_animation_target_set(ccw_45_degrees_anim, btn);
    efl_animation_final_state_keep_set(ccw_45_degrees_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->cw_45_degrees_anim = cw_45_degrees_anim;
    ad->ccw_45_degrees_anim = ccw_45_degrees_anim;
-   ad->anim_obj = NULL;
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
+
+   //Register callback called when animation starts
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
+
+   //Register callback called when animation ends
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, NULL);
+
+   //Register callback called while animation is executed
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
    ad->is_btn_rotated = EINA_FALSE;
 
    //Button to start animation
@@ -219,23 +218,30 @@ test_efl_anim_rotate_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
    evas_object_show(abs_center);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_absolute_set(cw_45_degrees_anim, 0.0, 45.0, 0, 0);
    efl_animation_duration_set(cw_45_degrees_anim, 1.0);
-   efl_animation_target_set(cw_45_degrees_anim, btn);
    efl_animation_final_state_keep_set(cw_45_degrees_anim, EINA_TRUE);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_absolute_set(ccw_45_degrees_anim, 45.0, 0.0, 0, 0);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
-   efl_animation_target_set(ccw_45_degrees_anim, btn);
    efl_animation_final_state_keep_set(ccw_45_degrees_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->cw_45_degrees_anim = cw_45_degrees_anim;
    ad->ccw_45_degrees_anim = ccw_45_degrees_anim;
-   ad->anim_obj = NULL;
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
+
+   //Register callback called when animation starts
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
+   //Register callback called when animation ends
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, NULL);
+   //Register callback called while animation is executed
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
+
    ad->is_btn_rotated = EINA_FALSE;
 
    //Button to start animation

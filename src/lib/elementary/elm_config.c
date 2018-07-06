@@ -628,7 +628,7 @@ _elm_config_user_dir_snprintf(char       *dst,
                                         "(:config:)/elementary");
    else
      file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                        "(:home:)/.elementary");
+                                        "(:home:)/"ELEMENTARY_BASE_DIR);
    eina_strlcpy(dst, efl_vpath_file_result_get(file_obj), size);
    efl_del(file_obj);
 

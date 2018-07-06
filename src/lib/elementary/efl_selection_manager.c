@@ -12,7 +12,7 @@
 
 #define MY_CLASS EFL_SELECTION_MANAGER_CLASS
 
-#define DEBUGON 1
+//#define DEBUGON 1
 #ifdef DEBUGON
 # define sel_debug(fmt, args...) fprintf(stderr, __FILE__":%s:%d : " fmt "\n", __FUNCTION__, __LINE__, ##args)
 #else
@@ -282,6 +282,25 @@ _tmpinfo_free(Tmp_Info *info)
    return 0;
 }
 
+static inline void
+_drop_target_cbs_del(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *dropable, Efl_Object *obj)
+{
+   if (dropable)
+     {
+        Drop_Format *df;
+        while (dropable->format_list)
+          {
+             df = EINA_INLIST_CONTAINER_GET(dropable->format_list, Drop_Format);
+             efl_selection_manager_drop_target_del(pd->sel_man, obj,
+                                                   df->format, dropable->seat);
+             // If drop_target_del() happened to delete dropabale, then
+             // re-fetch it each loop to make sure it didn't
+             dropable = efl_key_data_get(obj, "__elm_dropable");
+             if (!dropable) break;
+          }
+     }
+}
+
 static void
 _all_drop_targets_cbs_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
@@ -290,19 +309,7 @@ _all_drop_targets_cbs_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, voi
 
    if (!pd) return;
    dropable = efl_key_data_get(obj, "__elm_dropable");
-   if (dropable)
-     {
-        Drop_Format *df;
-        while (dropable->format_list)
-          {
-             df = EINA_INLIST_CONTAINER_GET(dropable->format_list, Drop_Format);
-             efl_selection_manager_drop_target_del(pd->sel_man, obj, df->format, dropable->seat);
-             // If drop_target_del() happened to delete dropabale, then
-             // re-fetch it each loop to make sure it didn't
-             dropable = efl_key_data_get(obj, "__elm_dropable");
-             if (!dropable) break;
-          }
-     }
+   _drop_target_cbs_del(pd, dropable, obj);
 }
 
 static void
@@ -370,7 +377,7 @@ _drag_cancel_animate(void *data, double pos)
         Ecore_X_Window xdragwin = _x11_xwin_get(seat_sel->drag_win);
         ecore_x_window_ignore_set(xdragwin, 0);
 #endif
-        ERR("Delete drag_win");
+        sel_debug("Delete drag_win");
         evas_object_del(seat_sel->drag_win);
         seat_sel->drag_win = NULL;
         return ECORE_CALLBACK_CANCEL;
@@ -568,8 +575,8 @@ _x11_data_preparer_text(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    sel_debug("text data preparer");
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = EFL_SELECTION_FORMAT_TEXT;
-   ddata->data.mem = eina_memdup(data->data, data->length, EINA_TRUE);
-   ddata->data.len = data->length;
+   ddata->content.mem = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->content.len = data->length;
    return EINA_TRUE;
 }
 
@@ -581,8 +588,8 @@ _x11_data_preparer_markup(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    sel_debug("markup data preparer");
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = EFL_SELECTION_FORMAT_MARKUP;
-   ddata->data.mem = eina_memdup(data->data, data->length, EINA_TRUE);
-   ddata->data.len = data->length;
+   ddata->content.mem = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->content.len = data->length;
    return EINA_TRUE;
 }
 
@@ -675,8 +682,8 @@ _x11_data_preparer_uri(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selec
    else
      {
         ddata->format = EFL_SELECTION_FORMAT_IMAGE;
-        ddata->data.mem = stripstr;
-        ddata->data.len = strlen(stripstr);
+        ddata->content.mem = stripstr;
+        ddata->content.len = strlen(stripstr);
         seat_sel->saved_types->imgfile = NULL;
      }
    return EINA_TRUE;
@@ -693,8 +700,8 @@ _x11_data_preparer_vcard(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    sel_debug("vcard receive\n");
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = EFL_SELECTION_FORMAT_VCARD;
-   ddata->data.mem = eina_memdup(data->data, data->length, EINA_TRUE);
-   ddata->data.len = data->length;
+   ddata->content.mem = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->content.len = data->length;
    return EINA_TRUE;
 }
 
@@ -714,8 +721,8 @@ _x11_data_preparer_image(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    if (!tmp) return EINA_FALSE;
    memcpy(tmp->map, data->data, data->length);
    munmap(tmp->map, data->length);
-   ddata->data.mem = strdup(tmp->filename);
-   ddata->data.len = strlen(tmp->filename);
+   ddata->content.mem = strdup(tmp->filename);
+   ddata->content.len = strlen(tmp->filename);
    *tmp_info = tmp;
    return EINA_TRUE;
 }
@@ -852,7 +859,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                   sel_debug("Found something: %s", pd->atom_list[i].name);
 
                   success = pd->atom_list[i].x_data_preparer(seat_sel, ev, &ddata, &tmp_info);
-                  sel_debug("ddata: %s (%zd)", (const char *)ddata.data.mem, ddata.data.len);
+                  sel_debug("ddata: %s (%zd)", (const char *)ddata.content.mem, ddata.content.len);
                   if ((pd->atom_list[i].format == EFL_SELECTION_FORMAT_IMAGE) &&
                       (seat_sel->saved_types->imgfile))
                     break;
@@ -882,7 +889,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                                  else
                                    {
                                       sel_debug("Drop on container");
-                                      Eina_Position2D pos, posret;
+                                      Eina_Position2D pos, posret = {0, 0};
                                       evas_object_geometry_get(dropable->obj, &pos.x, &pos.y, NULL, NULL);
                                       //get item
                                       pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + pos.x,
@@ -916,7 +923,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                        ddata.pos.x = ddata.pos.y = 0;
                        sel->data_func(sel->data_func_data, sel->request_obj, &ddata);
                     }
-                  free((void *)ddata.data.mem);
+                  free((void *)ddata.content.mem);
                   if (tmp_info) _tmpinfo_free(tmp_info);
                }
              else sel_debug("Ignored: No handler!");
@@ -1173,8 +1180,8 @@ _x11_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Selection_Mana
              sel_debug("use local data");
              Efl_Selection_Data seldata;
 
-             seldata.data.mem = sel->data.mem;
-             seldata.data.len = sel->data.len;
+             seldata.content.mem = sel->data.mem;
+             seldata.content.len = sel->data.len;
              seldata.pos.x = seldata.pos.y = 0;
              seldata.format = sel->format;
              sel->data_func(sel->data_func_data, sel->request_obj, &seldata);
@@ -1490,7 +1497,7 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                }
              else
                {
-                  Eina_Position2D posret;
+                  Eina_Position2D posret = {0, 0};
                   Efl_Object *it = NULL;
 
                   if (dropable->item_func)
@@ -1563,7 +1570,7 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                }
              else
                {
-                  Eina_Position2D posret;
+                  Eina_Position2D posret = {0, 0};
                   Efl_Object *it = NULL;
                   if (dropable->item_func)
                     it = dropable->item_func(dropable->item_func_data, dropable->obj,
@@ -1907,7 +1914,7 @@ found:
                   //for container
                   Efl_Object *it = NULL;
                   Evas_Coord x0 = 0, y0 = 0;
-                  Eina_Position2D pos, posret;
+                  Eina_Position2D pos, posret = {0, 0};
 
                   evas_object_geometry_get(dropable->obj, &x0, &y0, NULL, NULL);
                   pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + x0,
@@ -1926,8 +1933,8 @@ found:
                     {
                        sel_debug("Doing image insert (%s)\n", seat_sel->saved_types->imgfile);
                        ddata.format = EFL_SELECTION_FORMAT_IMAGE;
-                       ddata.data.mem = (char *)seat_sel->saved_types->imgfile;
-                       ddata.data.len = strlen(ddata.data.mem);
+                       ddata.content.mem = (char *)seat_sel->saved_types->imgfile;
+                       ddata.content.len = strlen(ddata.content.mem);
                        if (df->format & dropable->last.format)
                          efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
                     }
@@ -2518,7 +2525,7 @@ _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_wl_selection_send(void *data, int type, void *event)
+_wl_selection_send(void *data, int type EINA_UNUSED, void *event)
 {
    Efl_Selection_Manager_Data *pd = data;
    char *buf;
@@ -2730,8 +2737,8 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
 
         sel_data.pos.x = sel_data.pos.y = 0;
         sel_data.format = sel->format;
-        sel_data.data.mem = ev->data;
-        sel_data.data.len = ev->len;
+        sel_data.content.mem = ev->data;
+        sel_data.content.len = ev->len;
         sel_data.action = _wl_to_elm(ecore_wl2_offer_action_get(sel->sel_offer));
         sel->data_func(sel->data_func_data,
                        sel->request_obj,
@@ -2987,8 +2994,8 @@ _wl_data_preparer_markup(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, 
    sel_debug("In\n");
 
    ddata->format = EFL_SELECTION_FORMAT_MARKUP;
-   ddata->data.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
-   ddata->data.len = ev->len;
+   ddata->content.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
+   ddata->content.len = ev->len;
    ddata->action = sel->action;
 
    return EINA_TRUE;
@@ -3071,8 +3078,8 @@ _wl_data_preparer_uri(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Eco
      }
    free(seat_sel->saved_types->imgfile);
 
-   ddata->data.mem = stripstr;
-   ddata->data.len = strlen(stripstr);
+   ddata->content.mem = stripstr;
+   ddata->content.len = strlen(stripstr);
    ddata->action = sel->action;
    ddata->format = sel->request_format;
 
@@ -3085,8 +3092,8 @@ _wl_data_preparer_vcard(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, E
    sel_debug("In\n");
 
    ddata->format = EFL_SELECTION_FORMAT_VCARD;
-   ddata->data.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
-   ddata->data.len = ev->len;
+   ddata->content.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
+   ddata->content.len = ev->len;
    ddata->action = sel->action;
 
    return EINA_TRUE;
@@ -3107,8 +3114,8 @@ _wl_data_preparer_image(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, E
 
    len = strlen(tmp->filename);
    ddata->format = EFL_SELECTION_FORMAT_IMAGE;
-   ddata->data.mem = eina_memdup((unsigned char*)tmp->filename, len, EINA_TRUE);
-   ddata->data.len = len;
+   ddata->content.mem = eina_memdup((unsigned char*)tmp->filename, len, EINA_TRUE);
+   ddata->content.len = len;
    ddata->action = sel->action;
    *tmp_info = tmp;
 
@@ -3121,8 +3128,8 @@ _wl_data_preparer_text(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ec
    sel_debug("In\n");
 
    ddata->format = EFL_SELECTION_FORMAT_TEXT;
-   ddata->data.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
-   ddata->data.len = ev->len;
+   ddata->content.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
+   ddata->content.len = ev->len;
    ddata->action = sel->action;
 
    return EINA_TRUE;
@@ -3304,7 +3311,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
                             //for container
                             Efl_Object *it = NULL;
                             Evas_Coord x0 = 0, y0 = 0;
-                            Eina_Position2D pos, posret;
+                            Eina_Position2D pos, posret = {};
 
                             evas_object_geometry_get(dropable->obj, &x0, &y0, NULL, NULL);
                             pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + x0,
@@ -3779,8 +3786,8 @@ _job_pb_cb(void *data)
         if (get_type & ECORE_COCOA_CNP_TYPE_HTML)
           ddata.format |= EFL_SELECTION_FORMAT_HTML;
 
-        ddata.data.mem = pbdata;
-        ddata.data.len = pbdata_len;
+        ddata.content.mem = pbdata;
+        ddata.content.len = pbdata_len;
         ddata.action = EFL_SELECTION_ACTION_UNKNOWN;
         sel->data_func(sel->data_func_data, sel->request_obj, &ddata);
         free(pbdata);
@@ -4121,7 +4128,7 @@ _win32_efl_sel_manager_selection_get(const Efl_Object *request,
    int size;
 
    if (type != EFL_SELECTION_TYPE_CLIPBOARD)
-     return;
+     return EINA_FALSE;
 
    seat_sel = _sel_manager_seat_selection_init(pd, seat);
    sel = seat_sel->sel_list + type;
@@ -4170,8 +4177,8 @@ _win32_efl_sel_manager_selection_get(const Efl_Object *request,
 
         sdata.pos.x = sdata.pos.y = 0;
         sdata.format = EFL_SELECTION_FORMAT_TEXT;
-        sdata.data.mem = data;
-        sdata.data.len = size;
+        sdata.content.mem = data;
+        sdata.content.len = size;
         sdata.action = sel->action;
         sel->data_func(sel->data_func_data, sel->request_obj, &sdata);
      }
@@ -4393,9 +4400,9 @@ _abort_drag(Evas_Object *obj EINA_UNUSED, Sel_Manager_Drag_Container *dc)
 }
 
 static void
-_cont_obj_mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
+_cont_obj_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   Sel_Manager_Drag_Container *dc = dc;
+   Sel_Manager_Drag_Container *dc = data;
    Evas_Event_Mouse_Move *ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -5214,7 +5221,13 @@ static void
 _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
    Sel_Manager_Seat_Selection *seat_sel;
+   Eina_List *l;
+   Sel_Manager_Dropable *dropable;
 
+   EINA_LIST_FOREACH(pd->drop_list, l, dropable)
+     {
+        _drop_target_cbs_del(pd, dropable, dropable->obj);
+     }
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(pd->notify_handler);
    ecore_event_handler_del(pd->clear_handler);

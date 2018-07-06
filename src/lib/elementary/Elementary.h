@@ -93,10 +93,10 @@
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 # define EAPI_WEAK
 #else
 # ifdef __GNUC__
@@ -111,7 +111,7 @@
 #  define EAPI
 #  define EAPI_WEAK
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define EWAPI EAPI EAPI_WEAK
 
@@ -148,12 +148,16 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
+
+//define focus manager earlier since focus object and manager is circular
+typedef Eo Efl_Ui_Focus_Manager;
+#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
+
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_user.eo.h>
 # include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
@@ -275,6 +279,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
+# include <efl_selection_types.eot.h>
 # include <efl_ui_list_segarray.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget.eo.h>
@@ -306,6 +311,9 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_popup_alert_scroll.eo.h>
 # include <efl_ui_popup_alert_text.eo.h>
 # include <efl_ui_popup_anchor.eo.h>
+# include <efl_ui_text_factory_images.eo.h>
+# include <efl_ui_text_factory_emoticons.eo.h>
+# include <efl_ui_text_factory_fallback.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
 # include <efl_ui_clock.eo.h>
@@ -321,7 +329,6 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_list_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>
-# include <efl_selection_types.eot.h>
 # include <efl_ui_dnd_types.eot.h>
 # include <efl_ui_pan.eo.h>
 # include <efl_selection.eo.h>

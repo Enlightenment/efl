@@ -17,12 +17,13 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
 
            This is the state name as it appears in EDC description blocks. A
            state has both a name and a value (double). The default state is
-           "default" 0.0.
+           "default" 0.0, but this function will return "" if the part is
+           invalid.
          ]]
          get {}
          values {
-            state: string("default"); [[The name of the state.]]
-            val: double; [[The value of the state.]]
+            state: string(""); [[The name of the state.]]
+            val: double(0.0); [[The value of the state.]]
          }
       }
       @property part_type {

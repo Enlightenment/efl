@@ -561,6 +561,7 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
      }
    else
      _configure_complete(window);
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -668,6 +669,7 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_move(window->zxdg_toplevel, input->wl.seat,
                            window->display->serial);
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -685,6 +687,7 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_resize(window->zxdg_toplevel, input->wl.seat,
                              window->display->serial, location);
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -967,6 +970,7 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
      xdg_toplevel_set_title(window->xdg_toplevel, window->title);
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -981,6 +985,7 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
      xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -1039,6 +1044,7 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
           xdg_toplevel_set_minimized(window->xdg_toplevel);
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_minimized(window->zxdg_toplevel);
+        ecore_wl2_display_flush(window->display);
      }
    else
      {
@@ -1341,6 +1347,7 @@ ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *win, int id, const char *hint, c
    if (!win) return;
    if ((win->surface) && (win->display->wl.efl_aux_hints))
      efl_aux_hints_add_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, hint, val);
+   ecore_wl2_display_flush(win->display);
 }
 
 EAPI void
@@ -1349,6 +1356,7 @@ ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *win, int id, const char *val)
    if (!win) return;
    if ((win->surface) && (win->display->wl.efl_aux_hints))
      efl_aux_hints_change_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, val);
+   ecore_wl2_display_flush(win->display);
 }
 
 EAPI void
@@ -1357,6 +1365,7 @@ ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *win, int id)
    if (!win) return;
    if ((win->surface) && (win->display->wl.efl_aux_hints))
      efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
+   ecore_wl2_display_flush(win->display);
 }
 
 EAPI void
@@ -1413,6 +1422,7 @@ ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int
    if (window->xdg_surface)
      efl_hints_set_aspect(window->display->wl.efl_hints,
                           window->xdg_surface, w, h, aspect);
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI void
@@ -1434,6 +1444,7 @@ ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h)
    if (window->xdg_surface)
      efl_hints_set_weight(window->display->wl.efl_hints,
                           window->xdg_surface, ww, hh);
+   ecore_wl2_display_flush(window->display);
 }
 
 static void

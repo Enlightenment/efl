@@ -108,7 +108,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widge
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Format.format_cb { set; }

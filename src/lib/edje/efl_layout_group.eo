@@ -98,6 +98,28 @@ interface Efl.Layout.Group
             val: string; [[The data's value string.]]
          }
       }
+      @property part_exist {
+         [[Whether the given part exists in this group.
+
+           This is mostly equivalent to verifying the part type on the object
+           as would be done in C as follows:
+             (efl_canvas_layout_part_type_get(efl_part(obj, "partname")) !=
+                EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+
+           The differences are that will silently return $false if the part
+           does not exist, and this will return $true if the part is of type
+           $SPACER in the EDC file ($SPACER parts have type $NONE).
+
+           See also @Efl.Canvas.Layout.Part.part_type.
+         ]]
+         get { [[Returns $true if the part exists in the EDC group.]] }
+         keys {
+            part: string @nonull; [[The part name to check.]]
+         }
+         values {
+            exists: bool; [[$true if the part exists, $false otherwise.]]
+         }
+      }
    }
 }
 

@@ -19,6 +19,7 @@ edje_eolian_type_files = \
 
 edje_eolian_priv_files = \
 	lib/edje/edje_global.eo \
+	lib/edje/efl_canvas_layout_part_invalid.eo \
 	$(NULL)
 
 edje_eolian_c = $(edje_eolian_files:%.eo=%.eo.c)
@@ -108,7 +109,8 @@ lib/edje/edje_part_external.c \
 lib/edje/edje_part_swallow.c \
 lib/edje/edje_part_table.c \
 lib/edje/edje_part_box.c \
-lib/edje/edje_part_text.c
+lib/edje/edje_part_text.c \
+lib/edje/edje_part_invalid.c
 
 lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@ @EDJE_LUA_LIBS@

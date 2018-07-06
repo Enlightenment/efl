@@ -1,7 +1,32 @@
 #include "efl_animation_translate_private.h"
 
+#define MY_CLASS EFL_ANIMATION_TRANSLATE_CLASS
+
+typedef struct __Translate_Property_Double
+{
+   double x;
+   double y;
+} _Translate_Property_Double;
+
+static _Translate_Property_Double
+_translation_get(Eo *target)
+{
+   double x1, x2, y1, y2;
+   _Translate_Property_Double translate;
+   Eina_Rect geometry;
+
+   geometry = efl_gfx_geometry_get(target);
+
+   efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
+   efl_gfx_map_coord_absolute_get(target, 2, &x2, &y2, NULL);
+   translate.x = ((x1 + x2) / 2.0) - (geometry.x + (geometry.w / 2.0));
+   translate.y = ((y1 + y2) / 2.0) - (geometry.y + (geometry.h / 2.0));
+
+   return translate;
+}
+
 EOLIAN static void
-_efl_animation_translate_translate_set(Eo *eo_obj,
+_efl_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Translate_Data *pd,
                                        Evas_Coord from_x,
                                        Evas_Coord from_y,
@@ -14,46 +39,21 @@ _efl_animation_translate_translate_set(Eo *eo_obj,
    pd->to.move_x = to_x;
    pd->to.move_y = to_y;
 
-   //Update absolute coordinate based on relative move
-   Evas_Coord x = 0;
-   Evas_Coord y = 0;
-
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   if (target)
-     evas_object_geometry_get(target, &x, &y, NULL, NULL);
-
-   pd->from.x = pd->from.move_x + x;
-   pd->from.y = pd->from.move_y + y;
-
-   pd->to.x = pd->to.move_x + x;
-   pd->to.y = pd->to.move_y + y;
-
    pd->use_rel_move = EINA_TRUE;
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_get(Eo *eo_obj,
+_efl_animation_translate_translate_get(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Translate_Data *pd,
                                        Evas_Coord *from_x,
                                        Evas_Coord *from_y,
                                        Evas_Coord *to_x,
                                        Evas_Coord *to_y)
 {
-   //Update relative move based on absolute coordinate
    if (!pd->use_rel_move)
      {
-        Evas_Coord x = 0;
-        Evas_Coord y = 0;
-
-        Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-        if (target)
-          evas_object_geometry_get(target, &x, &y, NULL, NULL);
-
-        pd->from.move_x = pd->from.x - x;
-        pd->from.move_y = pd->from.y - y;
-
-        pd->to.move_x = pd->to.x - x;
-        pd->to.move_y = pd->to.y - y;
+        ERR("Animation is done in absolute value.");
+        return;
      }
 
    if (from_x)
@@ -68,7 +68,7 @@ _efl_animation_translate_translate_get(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_absolute_set(Eo *eo_obj,
+_efl_animation_translate_translate_absolute_set(Eo *eo_obj EINA_UNUSED,
                                                 Efl_Animation_Translate_Data *pd,
                                                 Evas_Coord from_x,
                                                 Evas_Coord from_y,
@@ -81,46 +81,21 @@ _efl_animation_translate_translate_absolute_set(Eo *eo_obj,
    pd->to.x = to_x;
    pd->to.y = to_y;
 
-   //Update relative move based on absolute coordinate
-   Evas_Coord x = 0;
-   Evas_Coord y = 0;
-
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   if (target)
-     evas_object_geometry_get(target, &x, &y, NULL, NULL);
-
-   pd->from.move_x = pd->from.x - x;
-   pd->from.move_y = pd->from.y - y;
-
-   pd->to.move_x = pd->to.x - x;
-   pd->to.move_y = pd->to.y - y;
-
    pd->use_rel_move = EINA_FALSE;
 }
 
 EOLIAN static void
-_efl_animation_translate_translate_absolute_get(Eo *eo_obj,
+_efl_animation_translate_translate_absolute_get(Eo *eo_obj EINA_UNUSED,
                                                 Efl_Animation_Translate_Data *pd,
                                                 Evas_Coord *from_x,
                                                 Evas_Coord *from_y,
                                                 Evas_Coord *to_x,
                                                 Evas_Coord *to_y)
 {
-   //Update absolute coordinate based on relative move
    if (pd->use_rel_move)
      {
-        Evas_Coord x = 0;
-        Evas_Coord y = 0;
-
-        Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-        if (target)
-          evas_object_geometry_get(target, &x, &y, NULL, NULL);
-
-        pd->from.x = pd->from.move_x + x;
-        pd->from.y = pd->from.move_y + y;
-
-        pd->to.x = pd->to.move_x + x;
-        pd->to.y = pd->to.move_y + y;
+        ERR("Animation is done in absolute value.");
+        return;
      }
 
    if (from_x)
@@ -134,53 +109,33 @@ _efl_animation_translate_translate_absolute_get(Eo *eo_obj,
      *to_y = pd->to.y;
 }
 
-EOLIAN static Efl_Animation_Object *
-_efl_animation_translate_efl_animation_object_create(Eo *eo_obj,
-                                                     Efl_Animation_Translate_Data *pd)
+EOLIAN static double
+_efl_animation_translate_efl_animation_animation_apply(Eo *eo_obj,
+                                                       Efl_Animation_Translate_Data *pd,
+                                                       double progress,
+                                                       Efl_Canvas_Object *target)
 {
-   Efl_Animation_Object_Translate *anim_obj
-      = efl_add(EFL_ANIMATION_OBJECT_TRANSLATE_CLASS, NULL);
+   _Translate_Property_Double prev;
+   _Translate_Property_Double new;
 
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   efl_animation_object_target_set(anim_obj, target);
+   progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
+   if (!target) return progress;
 
-   Eina_Bool state_keep = efl_animation_final_state_keep_get(eo_obj);
-   efl_animation_object_final_state_keep_set(anim_obj, state_keep);
-
-   double duration = efl_animation_duration_get(eo_obj);
-   efl_animation_object_duration_set(anim_obj, duration);
-
-   double start_delay_time = efl_animation_start_delay_get(eo_obj);
-   efl_animation_object_start_delay_set(anim_obj, start_delay_time);
-
-   Efl_Animation_Object_Repeat_Mode repeat_mode =
-      (Efl_Animation_Object_Repeat_Mode)efl_animation_repeat_mode_get(eo_obj);
-   efl_animation_object_repeat_mode_set(anim_obj, repeat_mode);
-
-   int repeat_count = efl_animation_repeat_count_get(eo_obj);
-   efl_animation_object_repeat_count_set(anim_obj, repeat_count);
-
-   Efl_Interpolator *interpolator = efl_animation_interpolator_get(eo_obj);
-   efl_animation_object_interpolator_set(anim_obj, interpolator);
-
+   prev = _translation_get(target);
    if (pd->use_rel_move)
      {
-        efl_animation_object_translate_set(anim_obj,
-                                           pd->from.move_x,
-                                           pd->from.move_y,
-                                           pd->to.move_x,
-                                           pd->to.move_y);
+        new.x = GET_STATUS(pd->from.move_x, pd->to.move_x, progress);
+        new.y = GET_STATUS(pd->from.move_y, pd->to.move_y, progress);
      }
    else
      {
-        efl_animation_object_translate_absolute_set(anim_obj,
-                                                    pd->from.x,
-                                                    pd->from.y,
-                                                    pd->to.x,
-                                                    pd->to.y);
+        new.x = GET_STATUS(pd->from.x, pd->to.x, progress);
+        new.y = GET_STATUS(pd->from.y, pd->to.y, progress);
      }
 
-   return anim_obj;
+   efl_gfx_map_translate(target, new.x - prev.x, new.y - prev.y, 0.0);
+
+   return progress;
 }
 
 EOLIAN static Efl_Object *

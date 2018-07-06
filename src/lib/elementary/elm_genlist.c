@@ -382,7 +382,8 @@ _widget_calculate_recursive(Eo *obj)
    if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return;
 
    pd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
-   if (!pd) return;
+   if (!pd || !pd->resize_obj)
+     return;
 
    if (!efl_canvas_group_need_recalculate_get(obj) &&
        !efl_canvas_group_need_recalculate_get(pd->resize_obj))
@@ -3366,13 +3367,13 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_efl_ui_widget_on_focus_update(Eo *obj, Elm_Genlist_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (efl_ui_focus_object_focus_get(obj) && (sd->items) && (sd->selected) &&
@@ -8771,6 +8772,15 @@ _elm_genlist_efl_ui_focus_composition_prepare(Eo *obj, Elm_Genlist_Data *pd)
      }
 
    efl_ui_focus_composition_elements_set(obj, order);
+
+   EINA_INLIST_FOREACH(pd->items, item)
+     {
+        if (item->base->disabled)
+          continue;
+        
+        efl_ui_focus_object_prepare_logical(item->base->eo_obj);
+     }
+
 }
 
 EOLIAN static void 

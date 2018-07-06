@@ -345,10 +345,11 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
       Efl.Text.Annotate.range_annotations_get;
       Efl.Text.Annotate.annotation_insert;
       Efl.Text.Annotate.annotation_del;
-      Efl.Text.Annotate.object_item_geometry_get;
+      Efl.Text.Annotate.annotation_is_item;
+      Efl.Text.Annotate.item_geometry_get;
       Efl.Text.Annotate.annotation_positions_get;
-      Efl.Text.Annotate.cursor_object_item_annotation { get; }
-      Efl.Text.Annotate.cursor_object_item_insert;
+      Efl.Text.Annotate.cursor_item_annotation { get; }
+      Efl.Text.Annotate.cursor_item_insert;
       Efl.Text.Markup.markup { set; get; }
       Efl.Text.Markup.cursor_markup_insert;
       Efl.Gfx.scale { set; }

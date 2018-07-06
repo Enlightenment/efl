@@ -443,7 +443,7 @@ _elput_input_disable(Elput_Manager *manager)
 
    EINA_LIST_FOREACH(manager->input.seats, l, seat)
      seat->pending_motion = 1;
-   libinput_suspend(manager->input.lib);
+   if (manager->input.lib) libinput_suspend(manager->input.lib);
    _process_events(&manager->input);
    manager->input.suspended = EINA_TRUE;
 }

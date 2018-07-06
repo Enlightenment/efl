@@ -9,7 +9,7 @@
 # undef EAPI
 #endif
 
-#ifdef EFL_EVIL_BUILD
+#ifdef EFL_BUILD
 # ifdef DLL_EXPORT
 #  define EAPI __declspec(dllexport)
 # else

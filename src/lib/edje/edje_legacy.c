@@ -1205,14 +1205,5 @@ edje_object_size_max_get(const Edje_Object *obj, int *maxw, int *maxh)
 EAPI Eina_Bool
 edje_object_part_exists(const Eo *obj, const char *part)
 {
-   Edje_Real_Part *rp;
-   Edje *ed;
-
-   if (!part) return EINA_FALSE;
-   ed = _edje_fetch(obj);
-   if (!ed) return EINA_FALSE;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return EINA_FALSE;
-
-   return EINA_TRUE;
+   return efl_layout_group_part_exist_get(obj, part);
 }

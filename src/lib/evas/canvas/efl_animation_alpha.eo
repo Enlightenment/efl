@@ -19,6 +19,6 @@ class Efl.Animation.Alpha (Efl.Animation)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Animation.object_create;
+      Efl.Animation.animation_apply;
    }
 }

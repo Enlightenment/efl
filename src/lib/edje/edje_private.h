@@ -75,15 +75,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EDJE_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EDJE_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -3134,10 +3134,11 @@ Eina_Bool _edje_object_part_drag_step(Edje *ed, const char *part, double dx, dou
 Eina_Bool _edje_object_part_drag_page(Edje *ed, const char *part, double dx, double dy);
 
 /* part proxy */
-Eo *_edje_other_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eo *_edje_other_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
+Eo *_edje_invalid_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
 
 /* part containers: box */
-Eo *_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eo *_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
 Eina_Bool _edje_part_box_append(Edje *ed, const char *part, Evas_Object *child);
 Eina_Bool _edje_part_box_prepend(Edje *ed, const char *part, Evas_Object *child);
 Eina_Bool _edje_part_box_insert_before(Edje *ed, const char *part, Evas_Object *child, const Evas_Object *reference);
@@ -3149,7 +3150,7 @@ Evas_Object *_edje_part_box_remove_at(Edje *ed, const char *part, unsigned int p
 Eina_Bool _edje_part_box_remove_all(Edje *ed, const char *part, Eina_Bool clear);
 
 /* part containers: table */
-Eo *_edje_table_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eo *_edje_table_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
 Evas_Object *_edje_part_table_child_get(Edje *ed, const char *part, unsigned int col, unsigned int row);
 Eina_Bool _edje_part_table_pack(Edje *ed, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 Eina_Bool _edje_part_table_unpack(Edje *ed, const char *part, Evas_Object *child_obj);
@@ -3157,12 +3158,12 @@ Eina_Bool _edje_part_table_col_row_size_get(Edje *ed, const char *part, int *col
 Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
 /* part containers: swallow */
-Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
 Efl_Gfx *_edje_efl_content_content_get(Edje *ed, const char *part);
 Eina_Bool _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
 
 /* part containers: external */
-Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
 Eina_Bool _edje_object_part_external_param_set(Edje *ed, const char *part, const Edje_External_Param *param);
 Eina_Bool _edje_object_part_external_param_get(Edje *ed, const char *part, Edje_External_Param *param);
 Edje_External_Param_Type _edje_object_part_external_param_type_get(Edje *ed, const char *part, const char *param);
@@ -3170,7 +3171,7 @@ Evas_Object *_edje_object_part_external_object_get(Edje *ed, const char *part);
 Evas_Object *_edje_object_part_external_content_get(Edje *ed, const char *part, const char *content);
 
 /* part text */
-Eo *_edje_text_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eo *_edje_text_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp, const char *part);
 Eina_Bool   _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text, Eina_Bool legacy, Eina_Bool set_markup);
 const char *_edje_efl_text_get(Eo *obj, Edje *ed, const char *part, Eina_Bool legacy, Eina_Bool get_markup);
 Eina_Bool   _edje_efl_text_markup_set(Eo *obj, Edje *ed, const char *part, const char *markup);
@@ -3270,12 +3271,9 @@ extern Edje_Ephysics *_edje_ephysics;
 
 #endif
 
-
-
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
 #endif
-#include <Eina.h>
 
 typedef struct _Edje_Multisense_Env  Edje_Multisense_Env;
 
@@ -3290,6 +3288,8 @@ typedef Eina_Bool (*MULTISENSE_FACTORY_INIT_FUNC) (Edje_Multisense_Env *);
 #ifdef HAVE_LIBREMIX
 typedef RemixBase* (*MULTISENSE_SOUND_PLAYER_GET_FUNC) (Edje_Multisense_Env *);
 #endif
+
+#include "efl_canvas_layout_part_invalid.eo.h"
 
 #undef EAPI
 #define EAPI

@@ -40,6 +40,8 @@ EAPI Eina_Lock _efl_class_creation_lock;
 EAPI unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
+static unsigned int efl_del_api_generation = 0;
+static Efl_Object_Op _efl_del_api_op_id = 0;
 
 typedef enum _Eo_Ref_Op {
    EO_REF_OP_NONE,
@@ -100,6 +102,8 @@ static inline void *_efl_data_scope_get(const _Eo_Object *obj, const _Efl_Class 
 static inline void *_efl_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_Class *klass, const _Eo_Object *ref_obj);
 static inline void _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 static void _vtable_init(Eo_Vtable *vtable, size_t size);
+
+static inline Efl_Object_Op _efl_object_api_op_id_get_internal(const void *api_func);
 
 /* Start of Dich */
 
@@ -439,31 +443,29 @@ efl_cast(const Eo *eo_id, const Efl_Class *cur_klass)
 }
 
 EAPI Eina_Bool
-_efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Call_Cache *cache, const char *file, int line)
+_efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Op op, const char *file, int line)
 {
-   const _Efl_Class *klass, *inputklass, *main_klass;
+   const _Efl_Class *klass, *main_klass;
    const _Efl_Class *cur_klass = NULL;
    _Eo_Object *obj = NULL;
    const Eo_Vtable *vtable = NULL;
    const op_type_funcs *func;
    Eina_Bool is_obj;
-   Eina_Bool is_override = EINA_FALSE;
    Eina_Bool super = EINA_TRUE;
 
-   if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
+   if (EINA_UNLIKELY(!eo_id)) goto on_null;
 
    call->eo_id = eo_id;
 
    is_obj = _eo_is_a_obj(eo_id);
 
-   if (is_obj)
+   if (EINA_LIKELY(is_obj == EINA_TRUE))
      {
         EO_OBJ_POINTER_RETURN_VAL_PROXY(eo_id, _obj, EINA_FALSE);
 
         obj = _obj;
         klass = _obj->klass;
         vtable = EO_VTABLE(obj);
-        is_override = _obj_is_override(obj);
         if (EINA_UNLIKELY(_obj->cur_klass != NULL))
           {
              // YES this is a goto with a label to return. this is a
@@ -485,9 +487,7 @@ obj_super_back:
      }
 ok_klass_back:
 
-   inputklass = main_klass =  klass;
-
-   if (!cache->op) goto err_cache_op;
+   main_klass =  klass;
 
    /* If we have a current class, we need to itr to the next. */
    if (cur_klass)
@@ -499,30 +499,7 @@ ok_klass_back:
      }
    else
      {
-# if EFL_OBJECT_CALL_CACHE_SIZE > 0
-        if (!is_override)
-          {
-# if EFL_OBJECT_CALL_CACHE_SIZE > 1
-             int i;
-
-             for (i = 0; i < EFL_OBJECT_CALL_CACHE_SIZE; i++)
-# else
-                const int i = 0;
-# endif
-               {
-                  if ((const void *)inputklass == cache->index[i].klass)
-                    {
-                       func = (const op_type_funcs *)cache->entry[i].func;
-                       call->func = func->func;
-                       if (is_obj)
-                         call->data = (char *)obj + cache->off[i].off;
-                       if (EINA_UNLIKELY(!call->func)) goto err_cache_op;
-                       return EINA_TRUE;
-                    }
-               }
-          }
-#endif
-        func = _vtable_func_get(vtable, cache->op);
+        func = _vtable_func_get(vtable, op);
         // this is not very likely to happen - but may if its an invalid
         // call or a composite object, but either way, it's not very likely
         // so make it a goto to save on instruction cache
@@ -536,22 +513,6 @@ ok_cur_klass_back:
 
         if (is_obj) call->data = _efl_data_scope_get(obj, func->src);
 
-# if EFL_OBJECT_CALL_CACHE_SIZE > 0
-        if (!cur_klass && !is_override)
-          {
-# if EFL_OBJECT_CALL_CACHE_SIZE > 1
-             const int slot = cache->next_slot;
-# else
-             const int slot = 0;
-# endif
-             cache->index[slot].klass = (const void *)inputklass;
-             cache->entry[slot].func = (const void *)func;
-             cache->off[slot].off = (int)((long)((char *)call->data - (char *)obj));
-# if EFL_OBJECT_CALL_CACHE_SIZE > 1
-             cache->next_slot = (slot + 1) % EFL_OBJECT_CALL_CACHE_SIZE;
-# endif
-          }
-#endif
         return EINA_TRUE;
      }
 
@@ -570,7 +531,7 @@ end:
              EO_OBJ_POINTER_PROXY(emb_obj_id, emb_obj);
              if (EINA_UNLIKELY(!emb_obj)) continue;
 
-             func = _vtable_func_get(EO_VTABLE(emb_obj), cache->op);
+             func = _vtable_func_get(EO_VTABLE(emb_obj), op);
              if (func == NULL) goto composite_continue;
 
              if (EINA_LIKELY(func->func && func->src))
@@ -594,7 +555,7 @@ composite_continue:
    if (cur_klass)
      {
         ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
-            file, line, func_name, cache->op, main_klass->desc->name,
+            file, line, func_name, op, main_klass->desc->name,
             cur_klass->desc->name);
         goto err;
      }
@@ -602,17 +563,13 @@ composite_continue:
      {
         /* we should not be able to take this branch */
         ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
-            file, line, func_name, cache->op, main_klass->desc->name);
+            file, line, func_name, op, main_klass->desc->name);
         goto err;
      }
-err_cache_op:
-   ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
-       file, line, (!is_obj ? "class" : "regular"),
-       func_name, klass->desc->name);
-   goto err;
+
 err_func_src:
    ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
-       file, line, func_name, cache->op, klass->desc->name);
+       file, line, func_name, op, klass->desc->name);
 err:
    if (is_obj)
      {
@@ -629,7 +586,7 @@ err:
    // yes - special "move out of hot path" code blobs with goto's for
    // speed reasons to have intr prefetches work better and miss less
 ok_cur_klass:
-   func = _eo_kls_itr_next(klass, cur_klass, cache->op, super);
+   func = _eo_kls_itr_next(klass, cur_klass, op, super);
    if (!func) goto end;
    klass = func->src;
    goto ok_cur_klass_back;
@@ -661,12 +618,21 @@ obj_super:
            cur_klass = NULL;
         }
 
-      is_override = _obj_is_override(obj) && (cur_klass == NULL);
    }
    goto obj_super_back;
 
 err_klass:
    _EO_POINTER_ERR(eo_id, "in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
+   return EINA_FALSE;
+
+on_null:
+   if (EINA_UNLIKELY(efl_del_api_generation != _efl_object_init_generation))
+     {
+        _efl_del_api_op_id = _efl_object_api_op_id_get_internal(EFL_FUNC_COMMON_OP_FUNC(efl_del));
+        efl_del_api_generation = _efl_object_init_generation;
+     }
+   if (op != _efl_del_api_op_id)
+     WRN("NULL passed to function %s().", func_name);
    return EINA_FALSE;
 }
 

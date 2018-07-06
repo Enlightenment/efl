@@ -3461,11 +3461,17 @@ _tls_check(void)
 }
 #endif
 
-static inline int
+static inline Eina_Bool
 _check_gl(void)
 {
    if (!gl_lib_init()) return 0;
    return 1;
+}
+
+static Eina_Bool
+eng_gl_supports_evas_gl(void *data EINA_UNUSED)
+{
+   return _check_gl();
 }
 
 static void *
@@ -4815,6 +4821,7 @@ static Evas_Func func =
      eng_font_pen_coords_get,
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
+     eng_gl_supports_evas_gl, // returns true iif OSMesa is present
      NULL, // No need to set output for software engine
      eng_gl_surface_create, // need software mesa for gl rendering <- gl_surface_create
      NULL, // need software mesa for gl rendering <- gl_pbuffer_surface_create

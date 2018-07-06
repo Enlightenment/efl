@@ -3085,6 +3085,22 @@ EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj)
  */
 
 
+/**
+ * @brief Sets the function that provides item objects for named items in an
+ * edje entry text
+ *
+ * Item objects may be deleted any time by Edje, and will be deleted when the
+ * Edje object is deleted (or file is set to a new file).
+ *
+ * @param[in] obj The object.
+ * @param[in] func The function to call (or @c null to disable) to get item
+ * objects
+ * @param[in] data The data pointer to pass to the func callback
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
+
 typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
 #define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE
 #define EDJE_PART_TYPE_RECTANGLE   EFL_CANVAS_LAYOUT_PART_TYPE_RECTANGLE

@@ -1498,6 +1498,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
                                            Ecore_Fd_Prep_Cb  func,
                                            const void       *data)
 {
+   if (!fd_handler) return;
    Efl_Loop_Data *pd = fd_handler->loop_data;
    EINA_MAIN_LOOP_CHECK_RETURN;
 

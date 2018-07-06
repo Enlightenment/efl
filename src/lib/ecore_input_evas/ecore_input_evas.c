@@ -417,12 +417,12 @@ static Eina_Bool
 _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 {
    Ecore_Input_Window *lookup;
+   Eo *seat;
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                              e->modifiers,
-                                              efl_input_device_seat_get(e->dev));
+   seat = e->dev ? efl_input_device_seat_get(e->dev) : NULL;
+   ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers, seat);
    if (press == ECORE_DOWN)
      {
         if (!lookup->direct ||
@@ -531,9 +531,8 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
 
    if (e->multi.device == 0)
      {
-        ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                                   e->modifiers,
-                                                   efl_input_device_seat_get(e->dev));
+        Eo *seat = e->dev ? efl_input_device_seat_get(e->dev) : NULL;
+        ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers, seat);
         if (press == ECORE_DOWN)
           {
              if (!lookup->direct ||
@@ -612,10 +611,9 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    if (e->multi.device == 0)
      {
+        Eo *seat = e->dev ? efl_input_device_seat_get(e->dev) : NULL;
         _ecore_event_evas_push_mouse_move(e);
-        ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                                   e->modifiers,
-                                                   efl_input_device_seat_get(e->dev));
+        ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers, seat);
         if (!lookup->direct ||
             !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_MOVE, e))
           {
@@ -671,12 +669,13 @@ static Eina_Bool
 _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 {
    Ecore_Input_Window *lookup;
+   Eo *seat;
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                              e->modifiers,
-                                              efl_input_device_seat_get(e->dev));
+   seat = e->dev ? efl_input_device_seat_get(e->dev) : NULL;
+   ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers, seat);
+
    switch (io)
      {
       case ECORE_IN:
@@ -718,12 +717,13 @@ ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void 
 {
    Ecore_Event_Mouse_Wheel *e;
    Ecore_Input_Window *lookup;
+   Eo *seat;
 
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers,
-                                              efl_input_device_seat_get(e->dev));
+   seat = e->dev ? efl_input_device_seat_get(e->dev) : NULL;
+   ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers, seat);
    if (!lookup->direct ||
        !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_WHEEL, e))
      {

@@ -7,6 +7,7 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/efl_canvas_text.eo \
+	lib/evas/canvas/efl_canvas_text_factory.eo \
 	lib/evas/canvas/efl_canvas_group.eo \
 	lib/evas/canvas/efl_canvas_image_internal.eo \
 	lib/evas/canvas/evas_canvas3d_camera.eo\
@@ -50,14 +51,7 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_animation_group.eo \
 	lib/evas/canvas/efl_animation_group_parallel.eo \
 	lib/evas/canvas/efl_animation_group_sequential.eo \
-	lib/evas/canvas/efl_animation_object.eo \
-	lib/evas/canvas/efl_animation_object_alpha.eo \
-	lib/evas/canvas/efl_animation_object_rotate.eo \
-	lib/evas/canvas/efl_animation_object_scale.eo \
-	lib/evas/canvas/efl_animation_object_translate.eo \
-	lib/evas/canvas/efl_animation_object_group.eo \
-	lib/evas/canvas/efl_animation_object_group_parallel.eo \
-	lib/evas/canvas/efl_animation_object_group_sequential.eo \
+	lib/evas/canvas/efl_animation_player.eo \
 	$(NULL)
 
 evas_gesture_eolian_pub_files = \
@@ -186,14 +180,7 @@ lib/evas/canvas/efl_animation_translate_private.h \
 lib/evas/canvas/efl_animation_group_private.h \
 lib/evas/canvas/efl_animation_group_parallel_private.h \
 lib/evas/canvas/efl_animation_group_sequential_private.h \
-lib/evas/canvas/efl_animation_object_private.h \
-lib/evas/canvas/efl_animation_object_alpha_private.h \
-lib/evas/canvas/efl_animation_object_rotate_private.h \
-lib/evas/canvas/efl_animation_object_scale_private.h \
-lib/evas/canvas/efl_animation_object_translate_private.h \
-lib/evas/canvas/efl_animation_object_group_private.h \
-lib/evas/canvas/efl_animation_object_group_parallel_private.h \
-lib/evas/canvas/efl_animation_object_group_sequential_private.h \
+lib/evas/canvas/efl_animation_player_private.h \
 lib/evas/gesture/efl_gesture_private.h
 
 # Linebreak
@@ -288,14 +275,7 @@ lib/evas/canvas/efl_animation_translate.c \
 lib/evas/canvas/efl_animation_group.c \
 lib/evas/canvas/efl_animation_group_parallel.c \
 lib/evas/canvas/efl_animation_group_sequential.c \
-lib/evas/canvas/efl_animation_object.c \
-lib/evas/canvas/efl_animation_object_alpha.c \
-lib/evas/canvas/efl_animation_object_rotate.c \
-lib/evas/canvas/efl_animation_object_scale.c \
-lib/evas/canvas/efl_animation_object_translate.c \
-lib/evas/canvas/efl_animation_object_group.c \
-lib/evas/canvas/efl_animation_object_group_parallel.c \
-lib/evas/canvas/efl_animation_object_group_sequential.c \
+lib/evas/canvas/efl_animation_player.c \
 lib/evas/gesture/efl_gesture_touch.c \
 lib/evas/gesture/efl_gesture.c \
 lib/evas/gesture/efl_gesture_tap.c \

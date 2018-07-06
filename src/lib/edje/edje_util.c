@@ -1906,9 +1906,11 @@ edje_object_part_object_get(const Eo *obj, const char *part)
    return rp->object;
 }
 
-EOLIAN void
-_efl_canvas_layout_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider_Cb func, void *data)
+EAPI void
+edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data)
 {
+   Edje *ed = _edje_fetch(obj);
+   if (!ed) return;
    ed->item_provider.func = func;
    ed->item_provider.data = data;
 }
@@ -3297,22 +3299,28 @@ _efl_canvas_layout_efl_part_part(Eo *obj, Edje *ed, const char *part)
    if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return NULL;
+   if (!rp)
+     {
+        // Note: This could be disabled if debug is not required.
+        static const Edje_Real_Part _invalid_part = {};
+        rp = (Edje_Real_Part *) &_invalid_part;
+        return _edje_invalid_internal_proxy_get(obj, ed, rp, part);
+     }
 
    if (rp->part->type == EDJE_PART_TYPE_BOX)
-     return _edje_box_internal_proxy_get(obj, ed, rp);
+     return _edje_box_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_TABLE)
-     return _edje_table_internal_proxy_get(obj, ed, rp);
+     return _edje_table_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_SWALLOW)
-     return _edje_swallow_internal_proxy_get(obj, ed, rp);
+     return _edje_swallow_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-     return _edje_external_internal_proxy_get(obj, ed, rp);
+     return _edje_external_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_TEXT)
-      return _edje_text_internal_proxy_get(obj, ed, rp);
+     return _edje_text_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-      return _edje_text_internal_proxy_get(obj, ed, rp);
+     return _edje_text_internal_proxy_get(obj, ed, rp, rp->part->name);
    else
-     return _edje_other_internal_proxy_get(obj, ed, rp);
+     return _edje_other_internal_proxy_get(obj, ed, rp, rp->part->name);
 }
 
 EOLIAN Eina_Size2D
@@ -3325,7 +3333,7 @@ _efl_canvas_layout_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje
 }
 
 EOLIAN Eina_Size2D
-_efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED)
+_efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_Size2D sz;
 
@@ -3341,6 +3349,19 @@ _efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje
    if (sz.w == 0) sz.w = EDJE_INF_MAX_W;
    if (sz.h == 0) sz.h = EDJE_INF_MAX_H;
    return sz;
+}
+
+EOLIAN Eina_Bool
+_efl_canvas_layout_efl_layout_group_part_exist_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+{
+   Edje_Real_Part *rp;
+
+   if (!part) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 EOLIAN void

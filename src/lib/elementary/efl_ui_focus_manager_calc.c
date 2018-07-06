@@ -81,15 +81,22 @@ typedef struct {
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
+   Eo *manager;
+
    EINA_SAFETY_ON_NULL_RETURN(pd->root);
 
    if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
-     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable));
+     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_object_focus_manager_get(pd->root->focusable));
 
    //so we dont run infinitly this does not fix it, but at least we only have a error
-   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable) == obj);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_object_focus_manager_get(pd->root->focusable) == obj);
 
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(pd->root->focusable), pd->root->focusable);
+   manager = efl_ui_focus_object_focus_manager_get(pd->root->focusable);
+   if (manager)
+     efl_ui_focus_manager_focus_set(manager, pd->root->focusable);
+   else
+      DBG("No focus manager for focusable %s@%p",
+          efl_class_name_get(pd->root->focusable), pd->root->focusable);
 }
 
 static Efl_Ui_Focus_Direction
@@ -685,11 +692,16 @@ _object_del_cb(void *data, const Efl_Event *event)
    efl_ui_focus_manager_calc_unregister(data, event->object);
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
+EFL_CALLBACKS_ARRAY_DEFINE(regular_node,
     {EFL_GFX_EVENT_RESIZE, _node_new_geometry_cb},
     {EFL_GFX_EVENT_MOVE, _node_new_geometry_cb},
     {EFL_EVENT_DEL, _object_del_cb},
 );
+
+EFL_CALLBACKS_ARRAY_DEFINE(logical_node,
+    {EFL_EVENT_DEL, _object_del_cb},
+);
+
 
 //=============================
 
@@ -736,6 +748,9 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    node = _register(obj, pd, child, pnode);
    if (!node) return EINA_FALSE;
 
+   //listen to deletion
+   efl_event_callback_array_add(child, logical_node(), obj);
+
    node->type = NODE_TYPE_ONLY_LOGICAL;
    node->redirect_manager = redirect;
 
@@ -773,7 +788,7 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
    if (!node) return EINA_FALSE;
 
    //listen to changes
-   efl_event_callback_array_add(child, focusable_node(), obj);
+   efl_event_callback_array_add(child, regular_node(), obj);
 
    node->type = NODE_TYPE_NORMAL;
    node->redirect_manager = redirect;
@@ -1073,7 +1088,10 @@ _free_node(void *data)
    Node *node = data;
    FOCUS_DATA(node->manager);
 
-   efl_event_callback_array_del(node->focusable, focusable_node(), node->manager);
+   if (node->type == NODE_TYPE_ONLY_LOGICAL)
+     efl_event_callback_array_del(node->focusable, logical_node(), node->manager);
+   else
+     efl_event_callback_array_del(node->focusable, regular_node(), node->manager);
 
    if (pd->root != data)
      {
@@ -1545,7 +1563,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
    pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
-   if (pd->redirect)
+   //unset redirect manager for the case that its a different one to the one we want
+   if (pd->redirect && pd->redirect != redirect_manager)
      {
         Efl_Ui_Focus_Manager *m = obj;
 
@@ -1569,8 +1588,10 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    if (node_type == NODE_TYPE_NORMAL)
      {
         //populate the new change
-        efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
-        efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
+        if (last_focusable)
+          efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
+        if (new_focusable)
+          efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
      }
 

@@ -172,7 +172,7 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Focus.Composition,
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Range.range_min_max { get; set; }
       Efl.Ui.Range.range_step { get; set; }

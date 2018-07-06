@@ -59,11 +59,12 @@ class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Layout.Group.group_data { get; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
+      Efl.Layout.Group.part_exist { get; }
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Widget.widget_sub_object_del;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Container.content_count;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;

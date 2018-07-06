@@ -296,10 +296,13 @@ struct _Eolian_Expression
       };
       struct
       {
-         Eolian_Unary_Operator unop;
+         union
+         {
+            Eolian_Unary_Operator unop;
+            Eolian_Value_Union value;
+         };
          Eolian_Expression *expr;
       };
-      Eolian_Value_Union value;
    };
    Eina_Bool weak_lhs :1;
    Eina_Bool weak_rhs :1;
@@ -338,8 +341,8 @@ void database_enum_add(Eolian *state, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_to_str(const Eolian_Unit *src, const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype);
-void database_typedecl_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp, Eina_Strbuf *buf);
+void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype);
+void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *src, const Eolian_Type *tp);
 
@@ -347,7 +350,8 @@ Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *t
 
 /* expressions */
 
-Eolian_Value database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask mask);
+Eolian_Value database_expr_eval(const Eolian_Unit *unit, Eolian_Expression *expr, Eolian_Expression_Mask mask);
+Eolian_Value database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr, const Eolian_Type *type);
 void database_expr_del(Eolian_Expression *expr);
 void database_expr_print(Eolian_Expression *expr);
 

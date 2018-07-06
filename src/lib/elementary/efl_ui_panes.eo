@@ -44,6 +44,10 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
          }
       }
    }
+   parts {
+      first: Efl.Ui.Panes.Part; [[The first half of the panes widget (left or top)]]
+      second: Efl.Ui.Panes.Part; [[The second half of the panes widget (right or bottom)]]
+   }
    implements {
       class.constructor;
       Efl.Object.constructor;

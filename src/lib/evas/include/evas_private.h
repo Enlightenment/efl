@@ -23,15 +23,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -42,7 +42,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
@@ -1130,6 +1130,8 @@ struct _Evas_Object_Protected_Data
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
 
+   Evas_Object                *anim_player;
+
    Evas_Size_Hints            *size_hints;
 
    int                         last_mouse_down_counter;
@@ -1430,6 +1432,7 @@ struct _Evas_Func
    int  (*font_right_inset_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
    /* EFL-GL Glue Layer */
+   Eina_Bool (*gl_supports_evas_gl)      (void *engine);
    void *(*gl_output_set)                (void *engine, void *output);
    void *(*gl_surface_create)            (void *engine, void *config, int w, int h);
    void *(*gl_pbuffer_surface_create)    (void *engine, void *config, int w, int h, int const *attrib_list);
@@ -1876,10 +1879,6 @@ void _evas_touch_point_remove(Evas *e, int id);
 
 void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
-
-/* to show object if show is called during hide animation */
-Eina_Bool _efl_canvas_object_event_animation_is_running(Eo *eo_obj, const Efl_Event_Description *desc);
-void _efl_canvas_object_event_animation_cancel(Eo *eo_obj);
 
 /* legacy/eo events */
 void *efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Callback_Type type, Evas_Event_Flags **pflags);

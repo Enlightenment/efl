@@ -3386,45 +3386,45 @@ typedef Eo Efl_Animation_Group_Sequential;
 
 #endif
 
-#ifndef _EFL_ANIMATION_OBJECT_EO_CLASS_TYPE
-#define _EFL_ANIMATION_OBJECT_EO_CLASS_TYPE
+#ifndef _EFL_ANIMATION_PLAYER_EO_CLASS_TYPE
+#define _EFL_ANIMATION_PLAYER_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Object;
-
-#endif
-
-#ifndef _EFL_ANIMATION_OBJECT_ALPHA_EO_CLASS_TYPE
-#define _EFL_ANIMATION_OBJECT_ALPHA_EO_CLASS_TYPE
-
-typedef Eo Efl_Animation_Object_Alpha;
+typedef Eo Efl_Animation_Player;
 
 #endif
 
-#ifndef _EFL_ANIMATION_OBJECT_ROTATE_EO_CLASS_TYPE
-#define _EFL_ANIMATION_OBJECT_ROTATE_EO_CLASS_TYPE
+#ifndef _EFL_ANIMATION_PLAYER_ALPHA_EO_CLASS_TYPE
+#define _EFL_ANIMATION_PLAYER_ALPHA_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Object_Rotate;
-
-#endif
-
-#ifndef _EFL_ANIMATION_OBJECT_SCALE_EO_CLASS_TYPE
-#define _EFL_ANIMATION_OBJECT_SCALE_EO_CLASS_TYPE
-
-typedef Eo Efl_Animation_Object_Scale;
+typedef Eo Efl_Animation_Player_Alpha;
 
 #endif
 
-#ifndef _EFL_ANIMATION_OBJECT_TRANSLATE_EO_CLASS_TYPE
-#define _EFL_ANIMATION_OBJECT_TRANSLATE_EO_CLASS_TYPE
+#ifndef _EFL_ANIMATION_PLAYER_ROTATE_EO_CLASS_TYPE
+#define _EFL_ANIMATION_PLAYER_ROTATE_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Object_Translate;
+typedef Eo Efl_Animation_Player_Rotate;
 
 #endif
 
-#ifndef _EFL_ANIMATION_OBJECT_GROUP_EO_CLASS_TYPE
-#define _EFL_ANIMATION_OBJECT_GROUP_EO_CLASS_TYPE
+#ifndef _EFL_ANIMATION_PLAYER_SCALE_EO_CLASS_TYPE
+#define _EFL_ANIMATION_PLAYER_SCALE_EO_CLASS_TYPE
 
-typedef Eo Efl_Animation_Object_Group;
+typedef Eo Efl_Animation_Player_Scale;
+
+#endif
+
+#ifndef _EFL_ANIMATION_PLAYER_TRANSLATE_EO_CLASS_TYPE
+#define _EFL_ANIMATION_PLAYER_TRANSLATE_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Player_Translate;
+
+#endif
+
+#ifndef _EFL_ANIMATION_PLAYER_GROUP_EO_CLASS_TYPE
+#define _EFL_ANIMATION_PLAYER_GROUP_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Player_Group;
 
 #endif
 
@@ -3442,16 +3442,16 @@ typedef Eo Efl_Animation_Group_Sequential;
 
 #endif
 
-struct _Efl_Animation_Object_Running_Event_Info
+struct _Efl_Animation_Player_Running_Event_Info
 {
    double progress;
 };
 
 #define EFL_ANIMATION_GROUP_DURATION_NONE -1
-#define EFL_ANIMATION_OBJECT_GROUP_DURATION_NONE -1
+#define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
 
 #define EFL_ANIMATION_REPEAT_INFINITE -1
-#define EFL_ANIMATION_OBJECT_REPEAT_INFINITE -1
+#define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
 /**
  * @}

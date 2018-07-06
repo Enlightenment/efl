@@ -238,7 +238,7 @@ _dnd_drag_pos_cb(void *data, const Efl_Event *event)
 
    if (pos->pos_cb)
      pos->pos_cb(pos->pos_data, event->object, ddata->pos.x, ddata->pos.y,
-                 ddata->action);
+                 (Elm_Xdnd_Action)ddata->action);
 }
 
 static void
@@ -287,12 +287,12 @@ _dnd_drop_cb(void *data, const Efl_Event *event)
 
    ddata.x = org_ddata->pos.x;
    ddata.y = org_ddata->pos.y;
-   ddata.format = org_ddata->format;
-   ddata.action = org_ddata->action;
-   ddata.data = calloc(1, org_ddata->data.len);
+   ddata.format = (Elm_Sel_Format)org_ddata->format;
+   ddata.action = (Elm_Xdnd_Action)org_ddata->action;
+   ddata.data = calloc(1, org_ddata->content.len);
    if (!ddata.data) return;
-   ddata.data = memcpy(ddata.data, org_ddata->data.mem, org_ddata->data.len);
-   ddata.len = org_ddata->data.len;
+   ddata.data = memcpy(ddata.data, org_ddata->content.mem, org_ddata->content.len);
+   ddata.len = org_ddata->content.len;
    if (drop->drop_cb)
      drop->drop_cb(drop->drop_data, event->object, &ddata);
    free(ddata.data);
@@ -337,7 +337,8 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 
    ic->icon_data = icon_create_data;
    ic->icon_cb = icon_create_cb;
-   efl_selection_manager_drag_start(sel_man, obj, format, sl, action,
+   efl_selection_manager_drag_start(sel_man, obj, (Efl_Selection_Format)format, sl,
+                                    (Efl_Selection_Action)action,
                                     ic, _dnd_icon_create_cb, NULL, seatid);
 
    return EINA_TRUE;
@@ -352,7 +353,7 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   efl_selection_manager_drag_action_set(sel_man, obj, action, seatid);
+   efl_selection_manager_drag_action_set(sel_man, obj, (Efl_Selection_Action)action, seatid);
 
    return EINA_TRUE;
 }
@@ -445,7 +446,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                           _dnd_drag_pos_cb, pos);
    efl_event_callback_add(obj, EFL_UI_DND_EVENT_DRAG_DROP,
                           _dnd_drop_cb, drop);
-   efl_selection_manager_drop_target_add(sel_man, obj, format, seatid);
+   efl_selection_manager_drop_target_add(sel_man, obj, (Efl_Selection_Format)format, seatid);
 
 
    return EINA_TRUE;
@@ -471,7 +472,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
    drop_list = efl_key_data_get(obj, "__drop_list");
    drop = eina_list_data_get(drop_list);
    if (drop &&
-       (drop->format == drop->format) &&
+       (drop->format == format) &&
        (drop->enter->state_cb == enter_cb) &&
        (drop->enter->state_data == enter_data) &&
        (drop->leave->state_cb == leave_cb) &&
@@ -497,7 +498,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         free(drop->pos);
         free(drop);
      }
-   efl_selection_manager_drop_target_del(sel_man, obj, format, seatid);
+   efl_selection_manager_drop_target_del(sel_man, obj, (Efl_Selection_Format)format, seatid);
 
    return EINA_TRUE;
 }
@@ -537,7 +538,7 @@ _dnd_cont_drag_pos_cb(void *data, const Efl_Event *event)
      }
    if (pos->pos_cb)
      pos->pos_cb(pos->pos_data, event->object, ddata->item, ddata->pos.x, ddata->pos.y,
-                 xret, yret, ddata->action);
+                 xret, yret, (Elm_Xdnd_Action)ddata->action);
 }
 
 static void
@@ -550,12 +551,12 @@ _dnd_cont_drop_cb(void *data, const Efl_Event *event)
 
    ddata.x = org_ddata->pos.x;
    ddata.y = org_ddata->pos.y;
-   ddata.format = org_ddata->format;
-   ddata.action = org_ddata->action;
-   ddata.data = calloc(1, org_ddata->data.len);
+   ddata.format = (Elm_Sel_Format)org_ddata->format;
+   ddata.action = (Elm_Xdnd_Action)org_ddata->action;
+   ddata.data = calloc(1, org_ddata->content.len);
    if (!ddata.data) return;
-   ddata.data = memcpy(ddata.data, org_ddata->data.mem, org_ddata->data.len);
-   ddata.len = org_ddata->data.len;
+   ddata.data = memcpy(ddata.data, org_ddata->content.mem, org_ddata->content.len);
+   ddata.len = org_ddata->content.len;
 
    if (drop->item_get_cb)
      {
@@ -657,7 +658,7 @@ elm_drop_item_container_add(Evas_Object *obj,
                           _dnd_cont_drag_pos_cb, pos);
    efl_event_callback_add(obj, EFL_UI_DND_EVENT_DRAG_DROP,
                           _dnd_cont_drop_cb, drop);
-   efl_selection_manager_container_drop_item_add(sel_man, obj, format,
+   efl_selection_manager_container_drop_item_add(sel_man, obj, (Efl_Selection_Format)format,
                                                  item_get_cb, _dnd_item_func, NULL,
                                                  seatid);
 
@@ -690,7 +691,7 @@ _cont_drag_data_func(void *data, Efl_Object *obj, Efl_Selection_Format *format,
    di = data;
    if (!di) return;
    di->data_get_cb(obj, di->it, &di->user_info);
-   if (format) *format = di->user_info.format;
+   if (format) *format = (Efl_Selection_Format)di->user_info.format;
    if (drag_data)
      {
         if (di->user_info.data)
@@ -699,7 +700,7 @@ _cont_drag_data_func(void *data, Efl_Object *obj, Efl_Selection_Format *format,
              drag_data->len = strlen(di->user_info.data);
           }
      }
-   if (action) *action = di->user_info.action;
+   if (action) *action = (Efl_Selection_Action)di->user_info.action;
 }
 
 static Eina_List *

@@ -743,7 +743,7 @@ M.Type = Node:clone {
     end,
 
     c_type_get = function(self)
-        return self.type:c_type_get(eos:unit_get(), eolian.c_type_type.DEFAULT)
+        return self.type:c_type_get(eolian.c_type_type.DEFAULT)
     end,
 
     name_get = function(self)
@@ -906,8 +906,7 @@ M.Typedecl = Node:clone {
     end,
 
     c_type_get = function(self)
-        -- FIXME: unit
-        return self.typedecl:c_type_get(eos:unit_get())
+        return self.typedecl:c_type_get()
     end,
 
     name_get = function(self)
@@ -1366,13 +1365,11 @@ M.Expression = Node:clone {
     end,
 
     eval_enum = function(self)
-        -- FIXME: unit
-        return self.expr:eval(eos:unit_get(), eolian.expression_mask.INT)
+        return self.expr:eval(eolian.expression_mask.INT)
     end,
 
     eval_type = function(self, tp)
-        -- FIXME: unit
-        return self.expr:eval_type(eos:unit_get(), tp.type)
+        return self.expr:eval_type(tp.type)
     end,
 
     serialize = function(self)

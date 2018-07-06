@@ -20,13 +20,13 @@ root_path = os.path.abspath(os.path.join(script_path, '..', '..', '..'))
 SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
 
 # the main Eolian unit state
-state = None
+eolian_db = None
 
 
 class TestBaseObject(unittest.TestCase):
     def test_base_object_equality(self):
-        cls1 = state.class_get_by_name('Efl.Loop.Timer')
-        cls2 = state.class_get_by_file('efl_loop_timer.eo')
+        cls1 = eolian_db.class_get_by_name('Efl.Loop.Timer')
+        cls2 = eolian_db.class_get_by_file('efl_loop_timer.eo')
         self.assertIsInstance(cls1, eolian.Class)
         self.assertIsInstance(cls2, eolian.Class)
         self.assertEqual(cls1, cls2)
@@ -37,8 +37,8 @@ class TestBaseObject(unittest.TestCase):
         self.assertNotEqual(cls1, None)
         self.assertNotEqual(cls1, 0)
 
-        enum1 = state.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
-        enum2 = state.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
+        enum1 = eolian_db.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
+        enum2 = eolian_db.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
         self.assertIsInstance(enum1, eolian.Typedecl)
         self.assertIsInstance(enum2, eolian.Typedecl)
         self.assertEqual(enum1, enum2)
@@ -54,37 +54,37 @@ class TestBaseObject(unittest.TestCase):
 
 class TestEolianUnit(unittest.TestCase):
     def test_file_listing(self):
-        l = list(state.all_eo_file_paths)
+        l = list(eolian_db.all_eo_file_paths)
         self.assertGreater(len(l), 400)
         self.assertTrue(l[0].endswith('.eo'))
 
-        l = list(state.all_eo_files)
+        l = list(eolian_db.all_eo_files)
         self.assertGreater(len(l), 400)
         self.assertTrue(l[0].endswith('.eo'))
 
-        l = list(state.all_eot_file_paths)
+        l = list(eolian_db.all_eot_file_paths)
         self.assertGreater(len(l), 10)
         self.assertTrue(l[0].endswith('.eot'))
 
-        l = list(state.all_eot_files)
+        l = list(eolian_db.all_eot_files)
         self.assertGreater(len(l), 10)
         self.assertTrue(l[0].endswith('.eot'))
 
     def test_enum_listing(self):
-        l = list(state.typedecl_enums_get_by_file('efl_ui_win.eo'))
+        l = list(eolian_db.typedecl_enums_get_by_file('efl_ui_win.eo'))
         self.assertGreater(len(l), 5)
         self.assertIsInstance(l[0], eolian.Typedecl)
         self.assertEqual(l[0].type, eolian.Eolian_Typedecl_Type.ENUM)
 
         all_count = 0
-        for enum in state.typedecl_all_enums:
+        for enum in eolian_db.typedecl_all_enums:
             self.assertIsInstance(enum, eolian.Typedecl)
             self.assertEqual(enum.type, eolian.Eolian_Typedecl_Type.ENUM)
             all_count += 1
         self.assertGreater(all_count, 50)
 
     def test_struct_listing(self):
-        l = list(state.typedecl_structs_get_by_file('eina_types.eot'))
+        l = list(eolian_db.typedecl_structs_get_by_file('eina_types.eot'))
         self.assertGreater(len(l), 10)
         self.assertIsInstance(l[0], eolian.Typedecl)
         self.assertIn(l[0].type, (
@@ -92,7 +92,7 @@ class TestEolianUnit(unittest.TestCase):
                         eolian.Eolian_Typedecl_Type.STRUCT_OPAQUE))
 
         all_count = 0
-        for struct in state.typedecl_all_structs:
+        for struct in eolian_db.typedecl_all_structs:
             self.assertIsInstance(struct, eolian.Typedecl)
             self.assertIn(struct.type, (
                             eolian.Eolian_Typedecl_Type.STRUCT,
@@ -101,12 +101,12 @@ class TestEolianUnit(unittest.TestCase):
         self.assertGreater(all_count, 50)
 
     def test_alias_listing(self):
-        l = list(state.typedecl_aliases_get_by_file('edje_types.eot'))
+        l = list(eolian_db.typedecl_aliases_get_by_file('edje_types.eot'))
         self.assertGreater(len(l), 5)
         self.assertIsInstance(l[0], eolian.Typedecl)
 
         all_count = 0
-        for alias in state.typedecl_all_aliases:
+        for alias in eolian_db.typedecl_all_aliases:
             self.assertIsInstance(alias, eolian.Typedecl)
             self.assertIn(alias.type, (
                             eolian.Eolian_Typedecl_Type.ALIAS,
@@ -115,34 +115,34 @@ class TestEolianUnit(unittest.TestCase):
         self.assertGreater(all_count, 10)
 
     def test_variable_listing(self):
-        l = list(state.variable_all_constants)
+        l = list(eolian_db.variable_all_constants)
         self.assertGreater(len(l), 2)
         self.assertIsInstance(l[0], eolian.Variable)
 
-        l = list(state.variable_all_globals)
+        l = list(eolian_db.variable_all_globals)
         self.assertGreater(len(l), 20)
         self.assertIsInstance(l[0], eolian.Variable)
 
-        l = list(state.variable_constants_get_by_file('efl_gfx_stack.eo'))
+        l = list(eolian_db.variable_constants_get_by_file('efl_gfx_stack.eo'))
         self.assertGreater(len(l), 1)
         self.assertIsInstance(l[0], eolian.Variable)
 
-        l = list(state.variable_globals_get_by_file('efl_net_http_types.eot'))
+        l = list(eolian_db.variable_globals_get_by_file('efl_net_http_types.eot'))
         self.assertGreater(len(l), 10)
         self.assertIsInstance(l[0], eolian.Variable)
 
     def test_declaration_listing(self):
-        l = list(state.declarations_get_by_file('eina_types.eot'))
+        l = list(eolian_db.declarations_get_by_file('eina_types.eot'))
         self.assertGreater(len(l), 10)
         self.assertIsInstance(l[0], eolian.Declaration)
 
-        l = list(state.all_declarations)
+        l = list(eolian_db.all_declarations)
         self.assertGreater(len(l), 100)
         self.assertIsInstance(l[0], eolian.Declaration)
 
     def test_class_listing(self):
         all_count = 0
-        for cls in state.all_classes:
+        for cls in eolian_db.all_classes:
             self.assertIsInstance(cls, eolian.Class)
             all_count += 1
         self.assertGreater(all_count, 400)
@@ -151,33 +151,33 @@ class TestEolianUnit(unittest.TestCase):
 class TestEolianNamespace(unittest.TestCase):
     def test_all_namespace(self):
         count = 0
-        for ns in state.all_namespaces:
+        for ns in eolian_db.all_namespaces:
             self.assertIsInstance(ns, eolian.Namespace)
             count += 1
         self.assertGreater(count, 200)
 
     def test_namespace_equality(self):
-        ns1 = eolian.Namespace(state, 'Efl.Io')
-        ns2 = eolian.Namespace(state, 'Efl.Net')
+        ns1 = eolian.Namespace(eolian_db, 'Efl.Io')
+        ns2 = eolian.Namespace(eolian_db, 'Efl.Net')
         self.assertIsInstance(ns1, eolian.Namespace)
         self.assertIsInstance(ns2, eolian.Namespace)
         self.assertNotEqual(ns1, ns2)
-        self.assertEqual(ns1, eolian.Namespace(state, 'Efl.Io'))
-        self.assertEqual(ns2, eolian.Namespace(state, 'Efl.Net'))
+        self.assertEqual(ns1, eolian.Namespace(eolian_db, 'Efl.Io'))
+        self.assertEqual(ns2, eolian.Namespace(eolian_db, 'Efl.Net'))
 
     def test_namespace_sorting(self):
-        nspaces = state.all_namespaces
+        nspaces = eolian_db.all_namespaces
         nspaces.sort(reverse=True)
         self.assertGreater(nspaces[0], nspaces[-1])
         self.assertLess(nspaces[1], nspaces[0])
 
     def test_namespace_by_name(self):
-        ns = eolian.Namespace(state, 'Efl.Net')
+        ns = eolian.Namespace(eolian_db, 'Efl.Net')
         self.assertIsInstance(ns, eolian.Namespace)
         self.assertEqual(ns.name, 'Efl.Net')
         self.assertEqual(ns.namespaces, ['Efl', 'Net'])
 
-        ns = state.namespace_get_by_name('Efl')
+        ns = eolian_db.namespace_get_by_name('Efl')
         self.assertIsInstance(ns, eolian.Namespace)
         self.assertEqual(ns.name, 'Efl')
 
@@ -215,10 +215,10 @@ class TestEolianNamespace(unittest.TestCase):
 
 class TestEolianClass(unittest.TestCase):
     def test_class(self):
-        cls = state.class_get_by_file('efl_loop_timer.eo')
+        cls = eolian_db.class_get_by_file('efl_loop_timer.eo')
         self.assertIsInstance(cls, eolian.Class)
 
-        cls = state.class_get_by_name('Efl.Loop.Timer')
+        cls = eolian_db.class_get_by_name('Efl.Loop.Timer')
         self.assertIsInstance(cls, eolian.Class)
 
         self.assertEqual(cls.name, 'Timer')
@@ -248,7 +248,7 @@ class TestEolianClass(unittest.TestCase):
 
 class TestEolianFunction(unittest.TestCase):
     def test_function(self):
-        cls = state.class_get_by_name('Efl.Loop.Timer')
+        cls = eolian_db.class_get_by_name('Efl.Loop.Timer')
         f = cls.function_get_by_name('delay')
         self.assertIsInstance(f, eolian.Function)
         self.assertEqual(f.name, 'delay')
@@ -279,7 +279,7 @@ class TestEolianFunction(unittest.TestCase):
         self.assertIsInstance(f.implement, eolian.Implement)
 
     def test_function_parameter(self):
-        cls = state.class_get_by_name('Efl.Loop.Timer')
+        cls = eolian_db.class_get_by_name('Efl.Loop.Timer')
         f = cls.function_get_by_name('delay')
         p = list(f.parameters)[0]
         self.assertEqual(p.direction, eolian.Eolian_Parameter_Dir.IN)
@@ -294,7 +294,7 @@ class TestEolianFunction(unittest.TestCase):
 
 class TestEolianImplement(unittest.TestCase):
     def test_implement(self):
-        cls = state.class_get_by_name('Efl.Loop.Timer')
+        cls = eolian_db.class_get_by_name('Efl.Loop.Timer')
         f = cls.function_get_by_name('delay')
         im = f.implement
         self.assertIsInstance(im, eolian.Implement)
@@ -313,7 +313,7 @@ class TestEolianImplement(unittest.TestCase):
 
 class TestEolianEvent(unittest.TestCase):
     def test_event(self):
-        cls = state.class_get_by_name('Efl.Loop.Timer')
+        cls = eolian_db.class_get_by_name('Efl.Loop.Timer')
         self.assertEqual([e.name for e in cls.events], ['tick'])
         ev = cls.event_get_by_name('tick')
         self.assertIsInstance(ev, eolian.Event)
@@ -329,7 +329,7 @@ class TestEolianEvent(unittest.TestCase):
 
 class TestEolianPart(unittest.TestCase):
     def test_part(self):
-        cls = state.class_get_by_name('Efl.Ui.Popup')
+        cls = eolian_db.class_get_by_name('Efl.Ui.Popup')
         parts = list(cls.parts)
         self.assertGreater(len(parts), 0)
 
@@ -342,7 +342,7 @@ class TestEolianPart(unittest.TestCase):
 
 class TestEolianConstructor(unittest.TestCase):
     def test_constructor(self):
-        cls = state.class_get_by_name('Efl.Ui.Win')
+        cls = eolian_db.class_get_by_name('Efl.Ui.Win')
         ctors = list(cls.constructors)
         self.assertGreater(len(ctors), 0)
         ctor = ctors[0]
@@ -357,7 +357,7 @@ class TestEolianConstructor(unittest.TestCase):
 
 class TestEolianDocumentation(unittest.TestCase):
     def test_documentation(self):
-        td = state.class_get_by_name('Efl.Net.Control')
+        td = eolian_db.class_get_by_name('Efl.Net.Control')
         doc = td.documentation
         self.assertIsInstance(doc, eolian.Documentation)
         self.assertIsInstance(doc.summary, str)
@@ -369,7 +369,7 @@ class TestEolianDocumentation(unittest.TestCase):
 
 class TestEolianVariable(unittest.TestCase):
     def test_variable_global(self):
-        var = state.variable_global_get_by_name('Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
+        var = eolian_db.variable_global_get_by_name('Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
         self.assertIsInstance(var, eolian.Variable)
         self.assertEqual(var.full_name, 'Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
         self.assertEqual(var.name, 'BAD_CONTENT_ENCODING')
@@ -382,7 +382,7 @@ class TestEolianVariable(unittest.TestCase):
         self.assertIsNone(var.value)  # TODO is None correct here? no value?
 
     def test_variable_constant(self):
-        var = state.variable_constant_get_by_name('Efl.Gfx.Size.Hint.Fill')
+        var = eolian_db.variable_constant_get_by_name('Efl.Gfx.Size.Hint.Fill')
         self.assertIsInstance(var, eolian.Variable)
         self.assertEqual(var.full_name, 'Efl.Gfx.Size.Hint.Fill')
         self.assertEqual(var.name, 'Fill')
@@ -398,7 +398,7 @@ class TestEolianVariable(unittest.TestCase):
 
 class TestEolianTypedecl(unittest.TestCase):
     def test_typedecl_enum(self):
-        td = state.typedecl_enum_get_by_name('Efl.Net.Http.Version')
+        td = eolian_db.typedecl_enum_get_by_name('Efl.Net.Http.Version')
         self.assertIsInstance(td, eolian.Typedecl)
         self.assertEqual(td.name, 'Version')
         self.assertEqual(td.full_name, 'Efl.Net.Http.Version')
@@ -410,9 +410,10 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsNone(td.function_pointer)  # TODO find a better test
         self.assertFalse(td.is_extern)
         self.assertEqual(len(list(td.enum_fields)), 3)
+        self.assertEqual(td.c_type, 'enum Efl_Net_Http_Version { v1_0 = 100, v1_1 = 101, v2_0 = 200 }')
 
     def test_typedecl_enum_field(self):
-        td = state.typedecl_enum_get_by_name('Efl.Net.Http.Version')
+        td = eolian_db.typedecl_enum_get_by_name('Efl.Net.Http.Version')
         field = td.enum_field_get('v1_0')
         self.assertIsInstance(field, eolian.Enum_Type_Field)
         self.assertEqual(field.name, 'v1_0')
@@ -421,7 +422,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsInstance(field.value, eolian.Expression)
 
     def test_typedecl_struct(self):
-        td = state.typedecl_struct_get_by_name('Efl.Gfx.Color32')
+        td = eolian_db.typedecl_struct_get_by_name('Efl.Gfx.Color32')
         self.assertIsInstance(td, eolian.Typedecl)
         self.assertEqual(td.name, 'Color32')
         self.assertEqual(td.full_name, 'Efl.Gfx.Color32')
@@ -433,9 +434,10 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsNone(td.function_pointer)  # TODO find a better test
         self.assertFalse(td.is_extern)
         self.assertEqual(len(list(td.struct_fields)), 4)
+        self.assertEqual(td.c_type, 'struct Efl_Gfx_Color32 { uint8_t r; uint8_t g; uint8_t b; uint8_t a; }')
 
     def test_typedecl_struct_field(self):
-        td = state.typedecl_struct_get_by_name('Efl.Gfx.Color32')
+        td = eolian_db.typedecl_struct_get_by_name('Efl.Gfx.Color32')
         field = td.struct_field_get('b')
         self.assertIsInstance(field, eolian.Struct_Type_Field)
         self.assertEqual(field.name, 'b')
@@ -443,18 +445,19 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsInstance(field.documentation, eolian.Documentation)
 
     def test_typedecl_alias(self):
-        alias = state.typedecl_alias_get_by_name('Eina.Error')
+        alias = eolian_db.typedecl_alias_get_by_name('Eina.Error')
         self.assertIsInstance(alias, eolian.Typedecl)
         self.assertEqual(alias.type, eolian.Eolian_Typedecl_Type.ALIAS)
         self.assertEqual(alias.name, 'Error')
         self.assertEqual(alias.full_name, 'Eina.Error')
         self.assertIsInstance(alias.aliased_base, eolian.Type)
         self.assertEqual(alias.aliased_base.name, 'int')
+        self.assertEqual(alias.c_type, 'typedef int Eina_Error')
 
 
 class TestEolianType(unittest.TestCase):
     def test_type_regular_builtin(self):
-        cls = state.class_get_by_name('Efl.Loop.Timer')
+        cls = eolian_db.class_get_by_name('Efl.Loop.Timer')
         func = cls.function_get_by_name('delay')
         param = list(func.parameters)[0]
         t = param.type  # type: double
@@ -474,8 +477,12 @@ class TestEolianType(unittest.TestCase):
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)  # TODO find a better test
 
+        self.assertEqual(t.c_type_default, 'double')  # TODO find a better test
+        self.assertEqual(t.c_type_param, 'double')
+        self.assertEqual(t.c_type_return, 'double')
+
     def test_type_regular(self):
-        cls = state.class_get_by_name('Efl.Gfx')
+        cls = eolian_db.class_get_by_name('Efl.Gfx')
         func = cls.function_get_by_name('geometry')
         param = list(func.setter_values)[0]
         t = param.type  # type: Eina.Rect
@@ -490,12 +497,16 @@ class TestEolianType(unittest.TestCase):
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)
 
+        self.assertEqual(t.c_type_default, 'Eina_Rect')  # TODO find a better test
+        self.assertEqual(t.c_type_param, 'Eina_Rect')
+        self.assertEqual(t.c_type_return, 'Eina_Rect')
+
         td = t.typedecl
         self.assertIsInstance(td, eolian.Typedecl)
         self.assertEqual(td.full_name, 'Eina.Rect')
 
     def test_type_class(self):
-        cls = state.class_get_by_name('Efl.Content')
+        cls = eolian_db.class_get_by_name('Efl.Content')
         func = cls.function_get_by_name('content')
         param = list(func.setter_values)[0]
         t = param.type  # type: Efl.Gfx (class interface)
@@ -509,6 +520,10 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.free_func, 'efl_del')
         self.assertEqual(t, t.aliased_base)
 
+        self.assertEqual(t.c_type_default, 'Efl_Gfx *')  # TODO find a better test
+        self.assertEqual(t.c_type_param, 'Efl_Gfx *')
+        self.assertEqual(t.c_type_return, 'Efl_Gfx *')
+
         cls = t.class_
         self.assertIsInstance(cls, eolian.Class)
         self.assertEqual(cls.full_name, 'Efl.Gfx')
@@ -516,7 +531,7 @@ class TestEolianType(unittest.TestCase):
 
 class TestEolianDeclaration(unittest.TestCase):
     def test_declaration(self):
-        d = state.declaration_get_by_name('Eina.File')
+        d = eolian_db.declaration_get_by_name('Eina.File')
         self.assertIsInstance(d, eolian.Declaration)
         self.assertEqual(d.name, 'Eina.File')
         self.assertEqual(d.type, eolian.Eolian_Declaration_Type.STRUCT)
@@ -528,7 +543,7 @@ class TestEolianDeclaration(unittest.TestCase):
 
 class TestEolianExpression(unittest.TestCase):
     def test_expression_simple(self):
-        td = state.typedecl_enum_get_by_name('Efl.Net.Http.Version')
+        td = eolian_db.typedecl_enum_get_by_name('Efl.Net.Http.Version')
         field = td.enum_field_get('v1_0')
         exp = field.value
         self.assertIsInstance(exp, eolian.Expression)
@@ -536,7 +551,7 @@ class TestEolianExpression(unittest.TestCase):
         self.assertEqual(exp.serialize, '100')
 
     def test_expression_unary(self):
-        var = state.variable_constant_get_by_name('Efl.Gfx.Size.Hint.Fill')
+        var = eolian_db.variable_constant_get_by_name('Efl.Gfx.Size.Hint.Fill')
         exp = var.value
         self.assertIsInstance(exp, eolian.Expression)
         self.assertEqual(exp.type, eolian.Eolian_Expression_Type.UNARY)
@@ -556,30 +571,30 @@ class TestEolianExpression(unittest.TestCase):
 
 if __name__ == '__main__':
     # create main eolian state
-    state = eolian.Eolian()
-    if not isinstance(state, eolian.Eolian):
+    eolian_db = eolian.Eolian()
+    if not isinstance(eolian_db, eolian.Eolian):
         raise(RuntimeError('Eolian, failed to create Eolian state'))
 
     # eolian system scan (BROKEN)
-    #  if not state.system_directory_scan():
+    #  if not eolian_db.system_directory_scan():
         #  raise(RuntimeError('Eolian, failed to scan system directories'))
 
     # eolian source tree scan
-    if not state.directory_scan(SCAN_FOLDER):
+    if not eolian_db.directory_scan(SCAN_FOLDER):
         raise(RuntimeError('Eolian, failed to scan source directory'))
 
     # Parse all known eo files
-    if not state.all_eot_files_parse():
+    if not eolian_db.all_eot_files_parse():
         raise(RuntimeError('Eolian, failed to parse all EOT files'))
 
-    if not state.all_eo_files_parse():
+    if not eolian_db.all_eo_files_parse():
         raise(RuntimeError('Eolian, failed to parse all EO files'))
 
     # start the test suite
     suite = unittest.main(verbosity=2, exit=False)
 
     # cleanup (or it will segfault on gc, that happend after atexit)
-    del state
+    del eolian_db
 
     # exit 0 (success) or 1 (failure)
     exit(0 if suite.result.wasSuccessful() else 1)

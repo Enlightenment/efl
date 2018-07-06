@@ -109,6 +109,7 @@ _icon_signal_emit(Evas_Object *obj)
 {
    char buf[64];
 
+   if (!elm_widget_resize_object_get(obj)) return;
    snprintf(buf, sizeof(buf), "elm,state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 

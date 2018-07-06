@@ -110,10 +110,10 @@ interface Efl.Gfx.Buffer ()
          ]]
          get {}
          values {
-            l: uint(0); [[Left border pixels, usually 0 or 1]]
-            r: uint(0); [[Right border pixels, usually 0 or 1]]
-            t: uint(0); [[Top border pixels, usually 0 or 1]]
-            b: uint(0); [[Bottom border pixels, usually 0 or 1]]
+            l: uint(0U); [[Left border pixels, usually 0 or 1]]
+            r: uint(0U); [[Right border pixels, usually 0 or 1]]
+            t: uint(0U); [[Top border pixels, usually 0 or 1]]
+            b: uint(0U); [[Bottom border pixels, usually 0 or 1]]
          }
       }
 

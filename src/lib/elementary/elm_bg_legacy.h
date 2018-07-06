@@ -18,7 +18,7 @@
  } Elm_Bg_Option;
 
 /**
- * Add a new background to the parent
+ * @brief Adds a new background to the parent
  *
  * @param parent The parent object
  * @return The new object or @c NULL if it cannot be created
@@ -28,7 +28,7 @@
 EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
 
 /**
- * Set the color on a given background widget
+ * @brief Sets the color on a given background widget
  *
  * @param obj The background object handle
  * @param r The red color component's value
@@ -51,7 +51,7 @@ EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
 EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
 
 /**
- * Get the color set on a given background widget
+ * @brief Gets the color set on a given background widget
  *
  * @param obj The background object handle
  * @param r Where to store the red color component's value
@@ -68,7 +68,7 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
 EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
 /**
- * Set the file (image or edje collection) to give life for the
+ * @brief Sets the file (image or edje collection) to give life for the
  * background
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
@@ -98,7 +98,7 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
 EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
 
 /**
- * Get the file (image or edje collection) set on a given background
+ * @brief Gets the file (image or edje collection) set on a given background
  * widget
  *
  * @note Use @c NULL pointers on the file components you're not
@@ -113,7 +113,7 @@ EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
 EAPI void elm_bg_file_get(const Eo *obj, const char **file, const char **group);
 
 /**
-  * Set the mode of display for a given background widget's image
+  * @brief Sets the mode of display for a given background widget's image
   *
   * This sets how the background widget will display its image. This
   * will only work if the elm_bg_file_set() was previously called with
@@ -129,7 +129,7 @@ EAPI void elm_bg_file_get(const Eo *obj, const char **file, const char **group);
 EAPI void elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
 
 /**
-  * Get the mode of display of a given background widget's image
+  * @brief Gets the mode of display of a given background widget's image
   *
   * @return  The background option Elm.Bg.Option Default is #Elm_Bg_SCALE.
   *
@@ -140,7 +140,7 @@ EAPI void elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
 EAPI Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj);
 
 /**
-  * Set the size of the pixmap representation of the image set on a
+  * @brief Sets the size of the pixmap representation of the image set on a
   * given background widget.
   *
   * @warning: This function just makes sense if an image file was set on

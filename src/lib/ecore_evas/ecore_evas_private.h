@@ -6,15 +6,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -25,7 +25,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
@@ -347,7 +347,7 @@ struct _Ecore_Evas
    } delayed;
 
    int refcount;
-#define ECORE_EVAS_ASYNC_RENDER_DEBUG 1 /* TODO: remove me */
+//#define ECORE_EVAS_ASYNC_RENDER_DEBUG 1 /* TODO: remove me */
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
    double async_render_start;
 #endif

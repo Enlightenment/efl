@@ -249,6 +249,7 @@ typedef struct Comp_Seat
    Eina_Bool focused : 1;
    Eina_Bool selection_changed : 1;
    Eina_Bool selection_exists : 1;
+   Eina_Bool event_propagate : 1;
 } Comp_Seat;
 
 typedef struct Comp_Buffer_State
@@ -1146,12 +1147,12 @@ static void
 shell_surface_activate_recurse(Comp_Surface *cs)
 {
    Comp_Surface *lcs, *parent = cs->parent;
-   Eina_List *l, *parents = NULL;
+   Eina_List *parents = NULL;
    Eina_Inlist *i;
 
    if (parent)
      {
-        /* apply focus to toplevel in case where focus is reverted */
+        /* remove focus from parents */
         while (parent)
           {
              parents = eina_list_append(parents, parent);
@@ -1169,14 +1170,6 @@ shell_surface_activate_recurse(Comp_Surface *cs)
                cs->c->surfaces = eina_inlist_promote(cs->c->surfaces, EINA_INLIST_GET(lcs));
             }
        }
-   /* last item is the toplevel */
-   EINA_LIST_REVERSE_FOREACH(parents, l, lcs)
-     {
-        if (lcs->shell.activated) continue;
-        lcs->shell.activated = 1;
-        if (!lcs->shell.popup)
-          shell_surface_send_configure(lcs);
-     }
    eina_list_free(parents);
 }
 
@@ -1256,12 +1249,16 @@ shell_surface_send_configure(Comp_Surface *cs)
      {
         Comp_Surface *ccs;
 
-        comp_seats_redo_enter(cs->c, cs);
+        /* apply activation to already-mapped surface */
+        if (cs->mapped)
+          {
+             comp_seats_redo_enter(cs->c, cs);
+             shell_surface_aspect_update(cs);
+             shell_surface_minmax_update(cs);
+          }
         EINA_INLIST_FOREACH(cs->children, ccs)
           if (ccs->shell.surface && ccs->role && ccs->shell.popup)
             ccs->shell.activated = cs->shell.activated;
-        shell_surface_aspect_update(cs);
-        shell_surface_minmax_update(cs);
      }
    else
      shell_surface_deactivate_recurse(cs);
@@ -1396,6 +1393,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
    Eina_List *l;
    Evas_Object *o;
    Comp_Buffer *buffer = NULL;
+   Eina_Bool newly_new = EINA_FALSE;
 
    if (state->attach)
      {
@@ -1419,6 +1417,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
              if (cs->shell.surface)
                {
                   cs->shell.new = 1;
+                  newly_new = EINA_TRUE;
                   shell_surface_reset(cs);
                }
           }
@@ -1429,6 +1428,13 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
      {
         if (cs->role && (!cs->extracted))
           evas_object_show(cs->obj);
+        /* apply activation to activated surface on map */
+        if (cs->role && cs->shell.surface && cs->shell.activated && (!cs->shell.popup))
+          {
+             comp_seats_redo_enter(cs->c, cs);
+             shell_surface_aspect_update(cs);
+             shell_surface_minmax_update(cs);
+          }
      }
 
    if (state->attach && state->buffer)
@@ -1436,7 +1442,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
         evas_object_move(cs->img, x + buffer->x, y + buffer->y);
         evas_object_resize(cs->obj, buffer->w, buffer->h);
      }
-   else if (cs->shell.new)
+   else if (cs->shell.new && (!newly_new))
      shell_surface_init(cs);
 
    state->attach = 0;
@@ -1855,7 +1861,19 @@ comp_surface_impl_destroy(struct wl_resource *resource)
      {
         if (s->kbd.enter == cs) s->kbd.enter = NULL;
         if (s->ptr.enter == cs) s->ptr.enter = NULL;
-        if (s->ptr.cursor.surface == cs) s->ptr.cursor.surface = NULL;
+        if (s->ptr.cursor.surface == cs)
+          {
+             if (s->ptr.in)
+               {
+                  const Eina_List *l;
+                  Eo *dev;
+                  Ecore_Evas *ee = ecore_evas_ecore_evas_get(s->c->evas);
+                  EINA_LIST_FOREACH(evas_device_list(s->c->evas, s->dev), l, dev)
+                    if (evas_device_class_get(dev) == EVAS_DEVICE_CLASS_MOUSE)
+                      ecore_evas_cursor_device_unset(ee, dev);
+               }
+             s->ptr.cursor.surface = NULL;
+          }
         if (s->drag.surface == cs) s->drag.surface = NULL;
      }
    eina_hash_list_remove(cs->c->client_surfaces, &client, cs);
@@ -1956,7 +1974,7 @@ comp_surface_send_data_device_enter(Comp_Surface *cs, Comp_Seat *s)
        wl_fixed_from_int(cx - x), wl_fixed_from_int(cy - y), offer);
 }
 
-static void
+static Eina_Bool
 comp_surface_send_pointer_enter(Comp_Surface *cs, Comp_Seat *s, int cx, int cy)
 {
    Eina_List *l, *ll;
@@ -1964,32 +1982,39 @@ comp_surface_send_pointer_enter(Comp_Surface *cs, Comp_Seat *s, int cx, int cy)
    uint32_t serial;
    int x, y;
 
-   if (s->ptr.enter && (cs != s->grab)) return;
-   if (!comp_surface_check_grab(cs, s)) return;
+   if (s->ptr.enter && (cs != s->grab)) return EINA_FALSE;
+   if (!comp_surface_check_grab(cs, s)) return EINA_FALSE;
    s->ptr.enter = cs;
-   if (cs->dead) return;
+   if (cs->dead) return EINA_FALSE;
    if (s->drag.res && (!s->drag.tch))
      {
         comp_surface_send_data_device_enter(cs, s);
-        return;
+        return EINA_TRUE;
      }
    l = seat_ptr_resources_get(s, wl_resource_get_client(cs->res));
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    s->ptr.enter_serial = serial = wl_display_next_serial(cs->c->display);
    //fprintf(stderr, "ENTER %s\n", cs->shell.popup ? "POPUP" : "TOPLEVEL");
    evas_object_geometry_get(cs->obj, &x, &y, NULL, NULL);
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_enter(res, serial, cs->res,
        wl_fixed_from_int(cx - x), wl_fixed_from_int(cy - y));
+   return EINA_TRUE;
 }
 
 static void
 comp_surface_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_In *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_send_pointer_enter(data, seat_find(data, ev->dev), ev->canvas.x, ev->canvas.y);
+   s = seat_find(data, ev->dev);
+   if (comp_surface_send_pointer_enter(data, s, ev->canvas.x, ev->canvas.y))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
 static void
@@ -2006,40 +2031,47 @@ comp_surface_send_data_device_leave(Comp_Surface *cs, Comp_Seat *s)
    wl_data_device_send_leave(res);
 }
 
-static void
+static Eina_Bool
 comp_surface_send_pointer_leave(Comp_Surface *cs, Comp_Seat *s)
 {
    Eina_List *l, *ll;
    struct wl_resource *res;
    uint32_t serial;
 
-   if (s->ptr.enter != cs) return;
-   if (!comp_surface_check_grab(cs, s)) return;
+   if (s->ptr.enter != cs) return EINA_FALSE;
+   if (!comp_surface_check_grab(cs, s)) return EINA_FALSE;
    s->ptr.enter = NULL;
-   if (cs->dead) return;
+   if (cs->dead) return EINA_FALSE;
    if (s->drag.res)
      {
         comp_surface_send_data_device_leave(cs, s);
-        return;
+        return EINA_TRUE;
      }
    l = seat_ptr_resources_get(s, wl_resource_get_client(cs->res));
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    serial = wl_display_next_serial(cs->c->display);
    //fprintf(stderr, "LEAVE %s\n", cs->shell.popup ? "POPUP" : "TOPLEVEL");
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_leave(res, serial, cs->res);
+   return EINA_TRUE;
 }
 
 static void
 comp_surface_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Out *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_send_pointer_leave(data, seat_find(data, ev->dev));
+   s = seat_find(data, ev->dev);
+   if (comp_surface_send_pointer_leave(data, s))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
-static void
+static Eina_Bool
 comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, uint32_t button_id, uint32_t state)
 {
    uint32_t serial, btn;
@@ -2058,22 +2090,28 @@ comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, ui
         btn = BTN_RIGHT;
         break;
       case 4:
+        btn = BTN_SIDE;
+        break;
       case 5:
+        btn = BTN_EXTRA;
+        break;
       case 6:
+        btn = BTN_FORWARD;
+        break;
       case 7:
-        /* these are supposedly axis events */
-        return;
+        btn = BTN_BACK;
+        break;
       default:
         btn = button_id + BTN_SIDE - 8;
         break;
      }
-   if (s->ptr.enter != cs) return;
-   if (!comp_surface_check_grab(cs, s)) return;
+   if (s->ptr.enter != cs) return EINA_FALSE;
+   if (!comp_surface_check_grab(cs, s)) return EINA_FALSE;
    if (state == WL_POINTER_BUTTON_STATE_PRESSED)
      s->ptr.button_mask |= 1 << button_id;
    else
      {
-        if (!(s->ptr.button_mask & (1 << button_id))) return;
+        if (!(s->ptr.button_mask & (1 << button_id))) return EINA_FALSE;
         s->ptr.button_mask &= ~(1 << button_id);
         if (s->drag.res && (!s->drag.tch))
           {
@@ -2081,41 +2119,54 @@ comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, ui
              comp_surface_input_event(&s->ptr.events, button_id, 0, timestamp, state == WL_POINTER_BUTTON_STATE_RELEASED);
              s->ptr.enter = NULL;
              comp_surface_send_pointer_enter(cs, s, s->ptr.pos.x, s->ptr.pos.y);
-             return;
+             return EINA_TRUE;
           }
      }
 
    if (cs->dead)
      {
         comp_surface_input_event(&s->ptr.events, button_id, 0, timestamp, state == WL_POINTER_BUTTON_STATE_RELEASED);
-        return;
+        return EINA_TRUE;
      }
 
    l = seat_ptr_resources_get(s, wl_resource_get_client(cs->res));
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    serial = wl_display_next_serial(s->c->display);
    comp_surface_input_event(&s->ptr.events, button_id, serial, timestamp, state == WL_POINTER_BUTTON_STATE_RELEASED);
 
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_button(res, serial, timestamp, btn, state);
+   return EINA_TRUE;
 }
 
 static void
 comp_surface_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_mouse_button(data, seat_find(data, ev->dev), ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_PRESSED);
+   s = seat_find(data, ev->dev);
+   if (comp_surface_mouse_button(data, s, ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_PRESSED))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
 static void
 comp_surface_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_mouse_button(data, seat_find(data, ev->dev), ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_RELEASED);
+   s = seat_find(data, ev->dev);
+   if (comp_surface_mouse_button(data, s, ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_RELEASED))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
 static void
@@ -2159,6 +2210,8 @@ comp_surface_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
                wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
           }
      }
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   s->event_propagate = 1;
 }
 
 static void
@@ -2190,6 +2243,8 @@ comp_surface_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
    if (!l) return;
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_axis(res, ev->timestamp, axis, dir);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   s->event_propagate = 1;
 }
 
 static void
@@ -2212,6 +2267,8 @@ comp_surface_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    if (!l)
      {
         comp_surface_input_event(&s->tch.events, ev->device, 0, ev->timestamp, 0);
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return;
      }
    evas_object_geometry_get(cs->obj, &x, &y, NULL, NULL);
@@ -2220,6 +2277,8 @@ comp_surface_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    EINA_LIST_FOREACH(l, ll, res)
      wl_touch_send_down(res, serial, ev->timestamp, cs->res, ev->device,
        wl_fixed_from_int(ev->canvas.x - x), wl_fixed_from_int(ev->canvas.y - y));
+   s->event_propagate = 1;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -2244,12 +2303,16 @@ comp_surface_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
         if (s->drag.tch)
           wl_data_device_send_drop(data_device_find(s, cs->res));
         comp_surface_input_event(&s->tch.events, ev->device, 0, ev->timestamp, 1);
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return;
      }
    serial = wl_display_next_serial(cs->c->display);
    comp_surface_input_event(&s->tch.events, ev->device, serial, ev->timestamp, 1);
    EINA_LIST_FOREACH(l, ll, res)
      wl_touch_send_up(res, serial, ev->timestamp, ev->device);
+   s->event_propagate = 1;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -2271,8 +2334,12 @@ comp_surface_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         if (s->drag.enter != cs) return;
         res = data_device_find(s, cs->res);
         if (res)
-          wl_data_device_send_motion(res, ev->timestamp,
-            wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
+          {
+             wl_data_device_send_motion(res, ev->timestamp,
+               wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
+             s->event_propagate = 1;
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
         return;
      }
    else
@@ -2284,6 +2351,8 @@ comp_surface_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         EINA_LIST_FOREACH(l, ll, res)
           wl_touch_send_motion(res, ev->timestamp, ev->device,
             wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 }
 
@@ -2389,7 +2458,7 @@ comp_surface_smart_show(Evas_Object *obj)
 static void
 comp_surface_smart_hide(Evas_Object *obj)
 {
-   Comp_Surface *lcs, *cs = evas_object_smart_data_get(obj);
+   Comp_Surface *pcs = NULL, *lcs, *cs = evas_object_smart_data_get(obj);
 
    evas_object_hide(cs->clip);
    cs->mapped = 0;
@@ -2408,15 +2477,23 @@ comp_surface_smart_hide(Evas_Object *obj)
              if (!evas_object_visible_get(lcs->obj)) continue;
              if ((!lcs->shell.surface) || (!lcs->role)) continue;
              lcs->shell.activated = 1;
-             if (lcs->shell.popup && (!lcs->extracted))
-               evas_object_raise(lcs->obj);
+             if (lcs->shell.popup)
+               {
+                  if (!lcs->extracted)
+                    evas_object_raise(lcs->obj);
+               }
              else
                shell_surface_send_configure(lcs);
              return;
           }
+        if (!cs->parent->shell.popup)
+          {
+             pcs = cs->parent;
+             if (!pcs->mapped) pcs = NULL;
+          }
      }
    if (cs->c->seats)
-     comp_seats_redo_enter(cs->c, NULL);
+     comp_seats_redo_enter(cs->c, pcs);
 }
 
 static void
@@ -3982,10 +4059,12 @@ seat_destroy(Comp_Seat *s)
 static void
 comp_gl_shutdown(Comp *c)
 {
-   if (c->glapi->evasglUnbindWaylandDisplay)
+   if (c->glapi && c->glapi->evasglUnbindWaylandDisplay)
      c->glapi->evasglUnbindWaylandDisplay(c->gl, c->display);
-   evas_gl_surface_destroy(c->gl, c->glsfc);
-   evas_gl_context_destroy(c->gl, c->glctx);
+   if (c->glsfc)
+     evas_gl_surface_destroy(c->gl, c->glsfc);
+   if (c->glctx)
+     evas_gl_context_destroy(c->gl, c->glctx);
    evas_gl_free(c->gl);
    evas_gl_config_free(c->glcfg);
    c->glsfc = NULL;
@@ -3998,13 +4077,18 @@ static void
 comp_gl_init(Comp *c)
 {
    c->glctx = evas_gl_context_create(c->gl, NULL);
+   if (!c->glctx) goto end;
    c->glcfg = evas_gl_config_new();
+   if (!c->glcfg) goto end;
    c->glsfc = evas_gl_surface_create(c->gl, c->glcfg, 1, 1);
-   evas_gl_make_current(c->gl, c->glsfc, c->glctx);
+   if (!c->glsfc) goto end;
+   if (!evas_gl_make_current(c->gl, c->glsfc, c->glctx)) goto end;
    c->glapi = evas_gl_context_api_get(c->gl, c->glctx);
-   if ((!c->glapi->evasglBindWaylandDisplay) ||
-       (!c->glapi->evasglBindWaylandDisplay(c->gl, c->display)))
-     comp_gl_shutdown(c);
+   if (c->glapi->evasglBindWaylandDisplay &&
+       c->glapi->evasglBindWaylandDisplay(c->gl, c->display))
+     return;
+end:
+   comp_gl_shutdown(c);
 }
 
 static void
@@ -4886,9 +4970,13 @@ comp_mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Comp *c = data;
    Evas_Event_Mouse_In *ev = event_info;
    Comp_Seat *s;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
    if (s->drag.proxy_win)
      {
         ecore_evas_free(s->drag.proxy_win);
@@ -4922,8 +5010,12 @@ comp_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Comp_Seat *s;
    int w, h;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
    s->tch.pos.x = ev->cur.canvas.x;
    s->tch.pos.y = ev->cur.canvas.y;
    if ((!s->drag.tch) || (!s->drag.surface)) return;
@@ -4939,8 +5031,12 @@ comp_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Comp_Seat *s;
    int w, h;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
    s->ptr.pos.x = ev->cur.canvas.x;
    s->ptr.pos.y = ev->cur.canvas.y;
    if (s->drag.tch || (!s->drag.surface)) return;
@@ -4958,8 +5054,13 @@ comp_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
    const char **types, *type;
    unsigned int i = 0;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
+   if (!s->ptr.in) return;
    s->ptr.in = 0;
    ecore_evas_cursor_device_unset(ecore_evas_ecore_evas_get(e), ev->dev);
    if (s->ptr.efl.obj)

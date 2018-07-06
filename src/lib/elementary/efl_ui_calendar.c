@@ -863,11 +863,11 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_calendar_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    // FIXME : Currently, focused item is same with selected item.

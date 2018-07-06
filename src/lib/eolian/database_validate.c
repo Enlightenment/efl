@@ -292,9 +292,9 @@ _validate_expr(const Eolian_Unit *src, Eolian_Expression *expr,
 {
    Eolian_Value val;
    if (tp)
-     val = eolian_expression_eval_type(src, expr, tp);
+     val = database_expr_eval_type(src, expr, tp);
    else
-     val = eolian_expression_eval(src, expr, msk);
+     val = database_expr_eval(src, expr, msk);
 
    if (val.type == EOLIAN_EXPR_UNKNOWN)
      return EINA_FALSE;
@@ -306,6 +306,9 @@ static Eina_Bool
 _validate_param(const Eolian_Unit *src, Eolian_Function_Parameter *param)
 {
    if (!_validate_type(src, param->type))
+     return EINA_FALSE;
+
+   if (param->value && !_validate_expr(src, param->value, param->type, 0))
      return EINA_FALSE;
 
    if (!_validate_doc(src, param->doc))
@@ -330,7 +333,7 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
      }
 
    const Eolian_Function *ofunc = nhash ? eina_hash_find(nhash, func->name) : NULL;
-   if (EINA_UNLIKELY(ofunc && (_duplicates_warn > 0)))
+   if (EINA_UNLIKELY(ofunc && (ofunc != func) && (_duplicates_warn > 0)))
      {
         snprintf(buf, sizeof(buf),
                  "%sfunction '%s' redefined (originally at %s:%d:%d)",
@@ -344,7 +347,12 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
     * but duplicate checks need to be performed every time
     */
    if (func->base.validated)
-     return EINA_TRUE;
+     {
+        /* it might be validated, but need to add it anyway */
+        if (!ofunc && nhash)
+          eina_hash_add(nhash, func->name, func);
+        return EINA_TRUE;
+     }
 
    if (func->get_ret_type && !_validate_type(src, func->get_ret_type))
      return EINA_FALSE;

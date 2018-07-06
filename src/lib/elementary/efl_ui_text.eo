@@ -59,6 +59,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          }
       }
       @property cnp_mode {
+         /* FIXME: Efl.Selection.Format does not allow markup without images! */
          set {
             [[Control pasting of text and images for the widget.
 
@@ -77,7 +78,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            cnp_mode: Elm.Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
+            format: Efl.Selection.Format; [[Format for copy & paste.]]
          }
       }
       @property input_panel_language {
@@ -232,13 +233,12 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
-      item_provider_prepend {
-         [[This prepends a custom item provider to the list for that entry
-
-           This prepends the given callback.]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
+      @property item_factory {
+         [[The factory that provides item in the text e.g.
+           "emoticon/happy" or "href=file://image.jpg" etc.
+         ]]
+         values {
+            item_factory: Efl.Canvas.Text.Factory; [[Factory to create items]]
          }
       }
       input_panel_show {
@@ -250,17 +250,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       selection_copy {
          [[This executes a "copy" action on the selected text in the entry.]]
-      }
-      item_provider_remove {
-         [[This removes a custom item provider to the list for that entry
-
-           This removes the given callback. See @.item_provider_append for
-           more information
-         ]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
-         }
       }
       context_menu_clear {
          [[This clears and frees the items in a entry's contextual (longpress)
@@ -305,23 +294,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       selection_cut {
          [[This executes a "cut" action on the selected text in the entry.]]
       }
-      item_provider_append {
-         [[This appends a custom item provider to the list for that entry
-
-           This appends the given callback. The list is walked from beginning to end
-           with each function called given the item href string in the text. If the
-           function returns an object handle other than $null (it should create an
-           object to do this), then this object is used to replace that item. If
-           not the next provider is called until one provides an item object, or the
-           default provider in entry does.
-
-           See also \@ref entry-items.
-         ]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
-         }
-      }
       context_menu_item_add {
          [[This adds an item to the entry's contextual menu.
 
@@ -359,7 +331,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Layout.Signal.signal_emit;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Widget.widget_sub_object_del;

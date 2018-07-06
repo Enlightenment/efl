@@ -9,15 +9,14 @@ function Efl.Ui.Scrollable_On_Show_Region {
 struct Efl.Ui.Widget.Focus_State {
    [[All relevant fields needed for the current state of focus registeration]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
-   parent : Efl.Ui.Focus.User; [[The parent the widget is using as logical parent]]
+   parent : Efl.Ui.Focus.Object; [[The parent the widget is using as logical parent]]
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
-/* ATTENTION: Rename to Efl.Ui.Widget is imminent. */
 abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
-                        Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
-                        Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
-                        Efl.Ui.Translatable, Efl.Selection, Efl.Ui.Dnd)
+                        Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
+                        Efl.Ui.Base, Efl.Ui.Cursor, Efl.Ui.Translatable,
+                        Efl.Selection, Efl.Ui.Dnd)
 {
    [[Efl UI widget abstract class]]
    legacy_prefix: elm_widget;
@@ -111,24 +110,6 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
          }
          return: bool; [[$true on success, $false otherwise]]
          legacy: null;
-      }
-      @property orientation_mode_disabled {
-         [[Whether the widget's automatic orientation is disabled or not.
-
-           Orientation mode is used for widgets to change their style or send
-           signals based on the canvas rotation (i.e. the window orientation).
-           If the orientation mode is enabled, the widget will emit signals
-           such as "elm,state,orient,N" where $N is one of 0, 90, 180, 270,
-           depending on the window orientation. Such signals may be handled by
-           the theme in order to provide a different look for the widget based
-           on the canvas orientation.
-
-           By default orientation mode is enabled, which means this property
-           is $false.
-         ]]
-         values {
-            disabled: bool(false); [[$true if the orientation mode is disabled.]]
-         }
       }
       // FIXME: focus_allow? can_focus? focusable?
       @property focus_allow {
@@ -265,26 +246,46 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
          return: bool; [[Indicates if the operation succeeded.]]
          legacy: elm_widget_sub_object_del;
       }
+      @property orientation_mode {
+         [[Whether the widget's automatic orientation is enabled or not.
+
+           Orientation mode is used for widgets to change their style or send
+           signals based on the canvas rotation (i.e. the window orientation).
+           If the orientation mode is enabled, the widget will emit signals
+           such as "elm,state,orient,N" where $N is one of 0, 90, 180, 270,
+           depending on the window orientation. Such signals may be handled by
+           the theme in order to provide a different look for the widget based
+           on the canvas orientation.
+
+           By default orientation mode is enabled.
+
+           See also @.on_orientation_update.
+         ]]
+         values {
+            mode: Efl.Ui.Widget.Orientation_Mode(Efl.Ui.Widget.Orientation_Mode.default);
+               [[How window orientation should affect this widget.]]
+         }
+      }
       on_orientation_update @protected {
          [[Virtual function handling canvas orientation changes.
 
            This method will be called recursively from the top widget (the
            window) to all the children objects whenever the window rotation
            is changed. The given $rotation will be one of 0, 90, 180, 270 or
-           the special value -1 if @.orientation_mode_disabled is $true.
+           the special value -1 if @.orientation_mode is $disabled.
 
-           If @.orientation_mode_disabled is $false, the default implementation
-           will emit the signal "elm,state,orient,$R" will be emitted (where $R
-           is the rotation angle in degrees).
+           If @.orientation_mode is $default, the widget implementation will
+           emit the signal "elm,state,orient,$R" will be emitted (where $R is
+           the rotation angle in degrees).
 
            Note: This function may be called even if the orientation has not
            actually changed, like when a widget needs to be reconfigured.
 
-           See also @Efl.Orientation.orientation.set.
+           See also @.orientation_mode.
          ]]
          params {
             rotation: int; [[Orientation in degrees: 0, 90, 180, 270 or -1 if
-               @.orientation_mode_disabled is $true.]]
+               @.orientation_mode is $disabled.]]
          }
       }
       on_disabled_update @protected {
@@ -311,14 +312,6 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
          ]]
          return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
-      }
-      on_focus_update @protected {
-         [[Virtual function handling focus in/out events on the widget]]
-         params {
-            /* FIXME: EO API is not supposed to have any widget item!!! */
-            @in item: Elm.Widget.Item @nullable; [[Widget]]
-         }
-         return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
 
       /* Scroll API. */
@@ -572,6 +565,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
    }
    parts {
       shadow: Efl.Ui.Widget.Part_Shadow;
+      background: Efl.Ui.Widget.Part_Bg;
    }
    implements {
       class.constructor;
@@ -597,8 +591,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Access.parent { get; }
       Efl.Access.attributes { get; }
       Efl.Access.Component.focus_grab;
-      Efl.Ui.Focus.User.focus_manager { get; }
-      Efl.Ui.Focus.User.focus_parent { get; }
+      Efl.Ui.Focus.Object.focus_manager { get; }
+      Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
       Efl.Ui.Base.mirrored { get; set; }
@@ -606,6 +600,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Ui.Cursor.cursor { get; set; }
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part; [[Returns @Efl.Ui.Widget.Part.]]
    }

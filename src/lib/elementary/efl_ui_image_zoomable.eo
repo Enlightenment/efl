@@ -59,13 +59,13 @@ class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.Ui.Zoom.zoom_mode { set; get; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Scrollable.Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
-      Efl.Flipable.flip { get; set; }
+      Efl.Orientation.flip { get; set; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
 	  Efl.Layout.Signal.signal_callback_add;

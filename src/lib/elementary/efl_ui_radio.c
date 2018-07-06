@@ -137,14 +137,16 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 static void
 _icon_signal_emit(Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    char buf[64];
+   Eo *edje;
 
+   edje = elm_widget_resize_object_get(obj);
+   if (!edje) return;
    snprintf(buf, sizeof(buf), "elm,state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
    elm_layout_signal_emit(obj, buf, "elm");
-   edje_object_message_signal_process(wd->resize_obj);
+   edje_object_message_signal_process(edje);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
