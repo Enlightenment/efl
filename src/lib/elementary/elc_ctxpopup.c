@@ -1101,7 +1101,7 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Object_Item *it;
 
-   evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
+   if (sd->content) evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    _parent_detach(obj);
 
    //clear the items before clearing the ctxpopup as this will remove the list and all items
