@@ -124,23 +124,6 @@ _eina_thread_queue_msg_block_new(int size)
 }
 
 static void
-_eina_thread_queue_msg_block_real_free(Eina_Thread_Queue_Msg_Block *blk)
-{
-   eina_lock_take(&(blk->lock_non_0_ref));
-   eina_lock_release(&(blk->lock_non_0_ref));
-   eina_lock_free(&(blk->lock_non_0_ref));
-#ifndef ATOMIC
-   eina_spinlock_take(&(blk->lock_ref));
-   eina_spinlock_release(&(blk->lock_ref));
-   eina_spinlock_free(&(blk->lock_ref));
-   eina_spinlock_take(&(blk->lock_first));
-   eina_spinlock_release(&(blk->lock_first));
-   eina_spinlock_free(&(blk->lock_first));
-#endif
-   free(blk);
-}
-
-static void
 _eina_thread_queue_msg_block_free(Eina_Thread_Queue_Msg_Block *blk)
 {
    Eina_Mempool *mp;
