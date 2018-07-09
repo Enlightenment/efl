@@ -184,6 +184,8 @@ elm_object_focus_next(Evas_Object        *obj,
    API_ENTRY()
 
    top = elm_object_top_widget_get(obj);
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(top, EFL_UI_WIN_CLASS));
+
    manager_top = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, obj);
    logical = efl_ui_focus_manager_focus_get(manager_top);
 
