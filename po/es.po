@@ -4,12 +4,12 @@
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 # Adrián Arévalo <adri58@gmail.com>, 2015.
 # Roy W. Reese <waterbearer54@gmx.com> 2015.
-#: src/lib/elementary/elm_config.c:4150
+#: src/lib/elementary/elm_config.c:4164
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-04-25 14:22+0900\n"
+"POT-Creation-Date: 2018-07-09 16:07+0900\n"
 "PO-Revision-Date: 2015-05-03 18:19+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -239,176 +239,176 @@ msgstr "Imágenes"
 msgid "Videos"
 msgstr "Vídeos"
 
-#: src/lib/elementary/elc_fileselector.c:1907
+#: src/lib/elementary/elc_fileselector.c:1798
 msgid "Up"
 msgstr "Arriba"
 
-#: src/lib/elementary/elc_fileselector.c:1921
+#: src/lib/elementary/elc_fileselector.c:1812
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elementary/elc_fileselector.c:1940
+#: src/lib/elementary/elc_fileselector.c:1831
 msgid "Search"
 msgstr "Buscar"
 
-#: src/lib/elementary/elc_fileselector.c:2232
+#: src/lib/elementary/elc_fileselector.c:2107
 msgid "OK"
 msgstr "Aceptar"
 
-#: src/lib/elementary/elc_fileselector.c:2242
-#: src/lib/elementary/elm_entry.c:1731 src/lib/elementary/elm_entry.c:1756
+#: src/lib/elementary/elc_fileselector.c:2117
+#: src/lib/elementary/elm_entry.c:1733 src/lib/elementary/elm_entry.c:1758
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elementary/elc_hoversel.c:437 src/lib/elementary/efl_ui_button.c:192
-#: src/lib/elementary/efl_ui_check.c:159 src/lib/elementary/elm_gengrid.c:1503
-#: src/lib/elementary/elm_genlist.c:1751 src/lib/elementary/elm_list.c:2172
-#: src/lib/elementary/efl_ui_radio.c:176
+#: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
+#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1511
+#: src/lib/elementary/elm_genlist.c:1759 src/lib/elementary/elm_list.c:2172
+#: src/lib/elementary/efl_ui_radio.c:201
 #: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1032 src/lib/elementary/elm_toolbar.c:2278
+#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2281
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
-#: src/lib/elementary/elc_hoversel.c:650
+#: src/lib/elementary/elc_hoversel.c:651
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:676
+#: src/lib/elementary/elc_multibuttonentry.c:682
 msgid "multi button entry label"
 msgstr "etiqueta de entrada multi-botón"
 
-#: src/lib/elementary/elc_multibuttonentry.c:698
+#: src/lib/elementary/elc_multibuttonentry.c:704
 msgid "multi button entry item"
 msgstr "elemento de entrada multi-botón"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1579
+#: src/lib/elementary/elc_multibuttonentry.c:1586
 msgid "multi button entry"
 msgstr "entrada multi-botón"
 
-#: src/lib/elementary/elc_naviframe.c:432
-#: src/lib/elementary/elc_naviframe.c:460
+#: src/lib/elementary/elc_naviframe.c:435
+#: src/lib/elementary/elc_naviframe.c:463
 msgid "Title"
 msgstr "Título"
 
-#: src/lib/elementary/elc_naviframe.c:439
+#: src/lib/elementary/elc_naviframe.c:442
 #, fuzzy
 msgid "Subtitle"
 msgstr "Título"
 
-#: src/lib/elementary/elc_naviframe.c:1026
-#: src/lib/elementary/elc_naviframe.c:1244
+#: src/lib/elementary/elc_naviframe.c:1029
+#: src/lib/elementary/elc_naviframe.c:1247
 msgid "Back"
 msgstr "Atrás"
 
-#: src/lib/elementary/elc_naviframe.c:1342
+#: src/lib/elementary/elc_naviframe.c:1345
 msgid "Next"
 msgstr "Siguiente"
 
-#: src/lib/elementary/elc_popup.c:305 src/lib/elementary/elc_popup.c:969
+#: src/lib/elementary/elc_popup.c:320 src/lib/elementary/elc_popup.c:992
 #, fuzzy
 msgid "Popup Title"
 msgstr "Nombre emergente"
 
-#: src/lib/elementary/elc_popup.c:315 src/lib/elementary/elc_popup.c:1045
+#: src/lib/elementary/elc_popup.c:330 src/lib/elementary/elc_popup.c:1068
 #, fuzzy
 msgid "Popup Body Text"
 msgstr "Texto emergente"
 
-#: src/lib/elementary/elc_popup.c:1817
+#: src/lib/elementary/elc_popup.c:1841
 msgid "Alert"
 msgstr ""
 
-#: src/lib/elementary/elm_bubble.c:162
+#: src/lib/elementary/elm_bubble.c:163
 msgid "Bubble"
 msgstr "Burbuja"
 
 # Antiguemente: "Clickado"
-#: src/lib/elementary/efl_ui_button.c:62
+#: src/lib/elementary/efl_ui_button.c:71
 msgid "Clicked"
 msgstr "Seleccionado"
 
-#: src/lib/elementary/efl_ui_button.c:219
+#: src/lib/elementary/efl_ui_button.c:250
 msgid "Button"
 msgstr "Botón"
 
-#: src/lib/elementary/elm_calendar.c:228
+#: src/lib/elementary/elm_calendar.c:244
 #: src/lib/elementary/efl_ui_calendar.c:198
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elementary/elm_calendar.c:234
+#: src/lib/elementary/elm_calendar.c:250
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elementary/elm_calendar.c:240
+#: src/lib/elementary/elm_calendar.c:256
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elementary/elm_calendar.c:365
+#: src/lib/elementary/elm_calendar.c:382
 #: src/lib/elementary/efl_ui_calendar.c:245
 msgid "calendar item"
 msgstr "elemento de calendario"
 
-#: src/lib/elementary/elm_calendar.c:392
+#: src/lib/elementary/elm_calendar.c:410
 #: src/lib/elementary/efl_ui_calendar.c:272
 msgid "calendar decrement month button"
 msgstr "Botón de decremento del mes"
 
-#: src/lib/elementary/elm_calendar.c:398
+#: src/lib/elementary/elm_calendar.c:416
 msgid "calendar decrement year button"
 msgstr "Botón de decremento del año"
 
-#: src/lib/elementary/elm_calendar.c:404
+#: src/lib/elementary/elm_calendar.c:422
 #: src/lib/elementary/efl_ui_calendar.c:278
 msgid "calendar increment month button"
 msgstr "Botón de incremento del mes"
 
-#: src/lib/elementary/elm_calendar.c:410
+#: src/lib/elementary/elm_calendar.c:428
 msgid "calendar increment year button"
 msgstr "Botón de incremento del año"
 
-#: src/lib/elementary/elm_calendar.c:415
+#: src/lib/elementary/elm_calendar.c:433
 #: src/lib/elementary/efl_ui_calendar.c:283
 msgid "calendar month"
 msgstr "mes del calendario"
 
-#: src/lib/elementary/elm_calendar.c:420
+#: src/lib/elementary/elm_calendar.c:438
 #: src/lib/elementary/efl_ui_calendar.c:286
 msgid "calendar year"
 msgstr "año del calendario"
 
 # RR: Traducción italiana usa ativado/desactivado. No sé a que refiere la cadena.
-#: src/lib/elementary/efl_ui_check.c:66 src/lib/elementary/efl_ui_check.c:172
-#: src/lib/elementary/efl_ui_radio.c:119 src/lib/elementary/efl_ui_radio.c:177
+#: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:201
+#: src/lib/elementary/efl_ui_radio.c:136 src/lib/elementary/efl_ui_radio.c:202
 msgid "State: On"
 msgstr "Estado: Conectado"
 
-#: src/lib/elementary/efl_ui_check.c:77 src/lib/elementary/efl_ui_check.c:184
-#: src/lib/elementary/efl_ui_radio.c:179
+#: src/lib/elementary/efl_ui_check.c:96 src/lib/elementary/efl_ui_check.c:213
+#: src/lib/elementary/efl_ui_radio.c:204
 msgid "State: Off"
 msgstr "Estado: Desconectado"
 
-#: src/lib/elementary/efl_ui_check.c:168 src/lib/elementary/efl_ui_check.c:181
+#: src/lib/elementary/efl_ui_check.c:197 src/lib/elementary/efl_ui_check.c:210
 msgid "State"
 msgstr "Estado"
 
-#: src/lib/elementary/efl_ui_check.c:293
+#: src/lib/elementary/efl_ui_check.c:355
 msgid "Check"
 msgstr "Comprobar"
 
-#: src/lib/elementary/elm_clock.c:306
+#: src/lib/elementary/elm_clock.c:309
 msgid "clock increment button for am,pm"
 msgstr "Botón de aumento del reloj para am,pm"
 
-#: src/lib/elementary/elm_clock.c:314
+#: src/lib/elementary/elm_clock.c:317
 msgid "clock decrement button for am,pm"
 msgstr "Botón de decremento del reloj para am,pm"
 
-#: src/lib/elementary/elm_clock.c:703
+#: src/lib/elementary/elm_clock.c:714
 msgid "State: Editable"
 msgstr "Estado: Editable"
 
-#: src/lib/elementary/elm_clock.c:738
+#: src/lib/elementary/elm_clock.c:749
 msgid "Clock"
 msgstr "Reloj"
 
@@ -433,7 +433,7 @@ msgid "A:"
 msgstr ""
 
 # RR: Antiguamente - "Paleta de selección de color", pero creo que refiere a un selector como en las cadenas más abajo.
-#: src/lib/elementary/elm_colorselector.c:1706
+#: src/lib/elementary/elm_colorselector.c:1707
 msgid "color selector palette item"
 msgstr "Selector de color de paleta"
 
@@ -443,11 +443,11 @@ msgstr "Selector de color de paleta"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4173
+#: src/lib/elementary/elm_config.c:4187
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:402
+#: src/lib/elementary/elm_dayselector.c:437
 msgid "day selector item"
 msgstr "Selector de día"
 
@@ -455,27 +455,27 @@ msgstr "Selector de día"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elementary/elm_entry.c:1721
+#: src/lib/elementary/elm_entry.c:1723
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elementary/elm_entry.c:1724
+#: src/lib/elementary/elm_entry.c:1726
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elementary/elm_entry.c:1728 src/lib/elementary/elm_entry.c:1750
+#: src/lib/elementary/elm_entry.c:1730 src/lib/elementary/elm_entry.c:1752
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elementary/elm_entry.c:1743
+#: src/lib/elementary/elm_entry.c:1745
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elementary/elm_entry.c:3892
+#: src/lib/elementary/elm_entry.c:3894
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elementary/elm_gengrid.c:1533
+#: src/lib/elementary/elm_gengrid.c:1541
 msgid "Gengrid Item"
 msgstr "Cuadrícula genérica"
 
@@ -487,40 +487,40 @@ msgstr "Índice"
 msgid "Index Item"
 msgstr "Elemento del índice"
 
-#: src/lib/elementary/elm_label.c:405
+#: src/lib/elementary/elm_label.c:403
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elementary/elm_panel.c:83
+#: src/lib/elementary/elm_panel.c:84
 msgid "state: opened"
 msgstr "estado: abierto"
 
-#: src/lib/elementary/elm_panel.c:84
+#: src/lib/elementary/elm_panel.c:85
 msgid "state: closed"
 msgstr "estado: cerrado"
 
-#: src/lib/elementary/elm_panel.c:124
+#: src/lib/elementary/elm_panel.c:127
 msgid "A panel is open"
 msgstr "Ya hay un panel abierto"
 
-#: src/lib/elementary/elm_panel.c:126
+#: src/lib/elementary/elm_panel.c:129
 msgid "Double tap to close panel menu"
 msgstr "Doble click para cerrar el menú de panel"
 
-#: src/lib/elementary/elm_panel.c:178
+#: src/lib/elementary/elm_panel.c:181
 msgid "panel button"
 msgstr "botón del panel"
 
-#: src/lib/elementary/efl_ui_progressbar.c:353
+#: src/lib/elementary/efl_ui_progressbar.c:397
 msgid "progressbar"
 msgstr "barra de progreso"
 
-#: src/lib/elementary/efl_ui_radio.c:201
+#: src/lib/elementary/efl_ui_radio.c:231
 msgid "Radio"
 msgstr "Radio"
 
 #: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2280
+#: src/lib/elementary/elm_toolbar.c:2283
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
@@ -532,52 +532,52 @@ msgstr "Estado: No seleccionado"
 msgid "Segment Control Item"
 msgstr "Elemento del control del segmento"
 
-#: src/lib/elementary/efl_ui_slider.c:1186
+#: src/lib/elementary/efl_ui_slider.c:681
 msgid "slider"
 msgstr "deslizador"
 
-#: src/lib/elementary/elm_spinner.c:1062
+#: src/lib/elementary/elm_spinner.c:1071
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1068
+#: src/lib/elementary/elm_spinner.c:1077
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1101 src/lib/elementary/elm_spinner.c:1168
+#: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1177
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1151
+#: src/lib/elementary/elm_spinner.c:1119 src/lib/elementary/elm_spinner.c:1160
 msgid "spinner increment button"
 msgstr "botón de incremento del spinner"
 
-#: src/lib/elementary/elm_spinner.c:1113 src/lib/elementary/elm_spinner.c:1160
+#: src/lib/elementary/elm_spinner.c:1122 src/lib/elementary/elm_spinner.c:1169
 msgid "spinner decrement button"
 msgstr "botón de decremento del spinner"
 
-#: src/lib/elementary/elm_spinner.c:1115
+#: src/lib/elementary/elm_spinner.c:1124
 #, fuzzy
 msgid "spinner text"
 msgstr "spinner"
 
-#: src/lib/elementary/elm_toolbar.c:1735 src/lib/elementary/elm_toolbar.c:2337
+#: src/lib/elementary/elm_toolbar.c:1738 src/lib/elementary/elm_toolbar.c:2342
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elementary/elm_toolbar.c:2276
+#: src/lib/elementary/elm_toolbar.c:2279
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elementary/elm_toolbar.c:2282
+#: src/lib/elementary/elm_toolbar.c:2285
 msgid "Has menu"
 msgstr "Tiene menú"
 
-#: src/lib/elementary/elm_toolbar.c:2332
+#: src/lib/elementary/elm_toolbar.c:2337
 msgid "Unselected"
 msgstr "Sin seleccionar"
 
-#: src/lib/elementary/elm_toolbar.c:2349
+#: src/lib/elementary/elm_toolbar.c:2354
 msgid "Toolbar Item"
 msgstr "Elemento de la barra de herramientas"
 
