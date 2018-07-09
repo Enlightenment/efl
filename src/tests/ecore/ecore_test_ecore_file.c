@@ -305,8 +305,13 @@ EFL_START_TEST(ecore_test_ecore_file_operations)
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
    fail_if(ecore_file_can_read(src_file) != EINA_TRUE);
-   fail_if(ecore_file_can_write(src_file) != EINA_FALSE);
-   fail_if(ecore_file_can_exec(src_file) != EINA_FALSE);
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() || geteuid())
+#endif
+     {
+        fail_if(ecore_file_can_write(src_file) != EINA_FALSE);
+        fail_if(ecore_file_can_exec(src_file) != EINA_FALSE);
+     }
    fail_if(ecore_file_cp(src_file, src_file) != EINA_FALSE);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
 
@@ -316,9 +321,14 @@ EFL_START_TEST(ecore_test_ecore_file_operations)
    fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0200);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
-   fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
-   fail_if(ecore_file_can_write(src_file) != EINA_TRUE);
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() || geteuid())
+#endif
+     {
+        fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
+     }
    fail_if(ecore_file_can_exec(src_file) != EINA_FALSE);
+   fail_if(ecore_file_can_write(src_file) != EINA_TRUE);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
 
    src_file = get_tmp_file();
@@ -327,8 +337,13 @@ EFL_START_TEST(ecore_test_ecore_file_operations)
    fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0100);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
-   fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
-   fail_if(ecore_file_can_write(src_file) != EINA_FALSE);
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() || geteuid())
+#endif
+     {
+        fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
+        fail_if(ecore_file_can_write(src_file) != EINA_FALSE);
+     }
    fail_if(ecore_file_can_exec(src_file) != EINA_TRUE);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
 
