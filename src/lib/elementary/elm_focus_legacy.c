@@ -190,8 +190,9 @@ elm_object_focus_next(Evas_Object        *obj,
    if (elm_widget_is(logical))
      {
         Efl_Ui_Focus_Object *legacy_target = NULL;
+        ELM_WIDGET_DATA_GET_OR_RETURN(logical, pd_logical);
 
-        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) legacy_target = pd->legacy_focus.field;
+        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd_logical->legacy_focus.field) legacy_target = pd_logical->legacy_focus.field;
         MAPPING()
         #undef MAP
 
