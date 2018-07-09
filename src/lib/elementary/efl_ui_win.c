@@ -2655,7 +2655,7 @@ _elm_win_focus_target_get(Evas_Object *obj)
 {
    Evas_Object *o = obj;
 
-   do
+   while (o)
      {
         if (elm_widget_is(o))
           {
@@ -2664,7 +2664,6 @@ _elm_win_focus_target_get(Evas_Object *obj)
           }
         o = elm_widget_parent_widget_get(o);
      }
-   while (o);
 
    return o;
 }
