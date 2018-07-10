@@ -52,6 +52,7 @@ matrix:
     - os: osx
       env:
         DISTRO=Archlinux
+
     - os: linux
       env:
   allow_failures:
@@ -66,13 +67,30 @@ before_script:
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
         docker pull stefanschmidt1/ci-support-files:$DISTRO
       fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
+        docker version
+        docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO bash
+        cat $HOME/cid
+      fi
 
 script:
+  - .ci/ci-configure.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
-        docker run -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO /src/.ci/ci-linux-build.sh $CI_BUILD_TYPE
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
+          .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
       fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-build.sh ; fi
+  - .ci/ci-make-install.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
+  - |
+      if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
+        .ci/build-efl-app.sh
+      elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
+        docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
+      fi
 
 after_success:
   - |

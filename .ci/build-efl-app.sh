@@ -5,7 +5,7 @@ set -e
 cd /
 
 #clone our examples from efl
-git clone http://git.enlightenment.org/tools/examples.git/
+git clone --depth=1 -b master http://git.enlightenment.org/tools/examples.git/
 
 cd examples/apps/c/life/
 
