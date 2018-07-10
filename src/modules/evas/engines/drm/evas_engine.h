@@ -41,8 +41,6 @@ extern int _evas_engine_drm_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
-#define MAX_BUFFERS 10
-
 typedef struct _Outbuf_Fb
 {
    int age;
