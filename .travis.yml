@@ -28,20 +28,30 @@ matrix:
   fast_finish: true
   exclude:
     - os: osx
-      env: DISTRO=Ubuntu1804
+      env:
+        DISTRO=Ubuntu1804
     - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=wayland
+      env:
+        DISTRO=Fedora28
+        CI_BUILD_TYPE=wayland
     - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=misc
+      env:
+        DISTRO=Fedora28
+        CI_BUILD_TYPE=misc
     - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
+      env:
+        DISTRO=Fedora28
+        CI_BUILD_TYPE=misc-disabled
     - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
+      env:
+        DISTRO=Fedora28
+        CI_BUILD_TYPE=release-ready
     - os: osx
-      env: DISTRO=Debian91
+      env:
+        DISTRO=Debian91
     - os: osx
-      env: DISTRO=Archlinux
-
+      env:
+        DISTRO=Archlinux
     - os: linux
       env:
   allow_failures:
