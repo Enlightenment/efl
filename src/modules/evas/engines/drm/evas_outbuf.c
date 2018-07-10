@@ -118,7 +118,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
              WRN("Failed to create framebuffer %d", i);
              continue;
           }
-        ob->priv.ofb[i] = ofb;
+        ob->priv.fb_list = eina_list_append(ob->priv.fb_list, ofb);
      }
 
    return ob;
@@ -127,7 +127,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
 void
 _outbuf_free(Outbuf *ob)
 {
-   int i = 0;
+   Outbuf_Fb *ofb;
 
    while (ob->priv.pending)
      {
@@ -154,8 +154,8 @@ _outbuf_free(Outbuf *ob)
 
    _outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
 
-   for (i = 0; i < ob->priv.num; i++)
-     _outbuf_fb_destroy(ob->priv.ofb[i]);
+   EINA_LIST_FREE(ob->priv.fb_list, ofb)
+     _outbuf_fb_destroy(ofb);
 
    free(ob);
 }
@@ -222,8 +222,8 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    ob->format = format;
    ob->rotation = rotation;
 
-   for (i = 0; i < ob->priv.num; i++)
-     _outbuf_fb_destroy(ob->priv.ofb[i]);
+   EINA_LIST_FREE(ob->priv.fb_list, ofb)
+     _outbuf_fb_destroy(ofb);
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -245,7 +245,7 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
              WRN("Failed to create framebuffer %d", i);
              continue;
           }
-        ob->priv.ofb[i] = ofb;
+        ob->priv.fb_list = eina_list_append(ob->priv.fb_list, ofb);
      }
 
    /* TODO: idle flush */
@@ -254,29 +254,31 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 static Outbuf_Fb *
 _outbuf_fb_wait(Outbuf *ob)
 {
-   int i = 0, best = -1, best_age = -1;
+   Eina_List *l;
+   Outbuf_Fb *ofb, *best = NULL;
+   int best_age = -1;
 
    /* We pick the oldest available buffer to avoid using the same two
     * repeatedly and then having the third be stale when we need it
     */
-   for (i = 0; i < ob->priv.num; i++)
+   EINA_LIST_FOREACH(ob->priv.fb_list, l, ofb)
      {
-        if (ecore_drm2_fb_busy_get(ob->priv.ofb[i]->fb)) continue;
-        if (ob->priv.ofb[i]->valid && (ob->priv.ofb[i]->age > best_age))
+        if (ecore_drm2_fb_busy_get(ofb->fb)) continue;
+        if (ofb->valid && (ofb->age > best_age))
           {
-             best = i;
-             best_age = ob->priv.ofb[i]->age;
+             best = ofb;
+             best_age = best->age;
           }
      }
 
-   if (best >= 0) return ob->priv.ofb[best];
-   return NULL;
+   return best;
 }
 
 static Eina_Bool
 _outbuf_fb_assign(Outbuf *ob)
 {
-   int i;
+   Outbuf_Fb *ofb;
+   Eina_List *l;
 
    ob->priv.draw = _outbuf_fb_wait(ob);
    while (!ob->priv.draw)
@@ -285,15 +287,15 @@ _outbuf_fb_assign(Outbuf *ob)
         ob->priv.draw = _outbuf_fb_wait(ob);
      }
 
-   for (i = 0; i < ob->priv.num; i++)
+   EINA_LIST_FOREACH(ob->priv.fb_list, l, ofb)
      {
-        if ((ob->priv.ofb[i]->valid) && (ob->priv.ofb[i]->drawn))
+        if ((ofb->valid) && (ofb->drawn))
           {
-             ob->priv.ofb[i]->age++;
-             if (ob->priv.ofb[i]->age > 4)
+             ofb->age++;
+             if (ofb->age > 4)
                {
-                  ob->priv.ofb[i]->age = 0;
-                  ob->priv.ofb[i]->drawn = EINA_FALSE;
+                  ofb->age = 0;
+                  ofb->drawn = EINA_FALSE;
                }
           }
      }
