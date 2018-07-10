@@ -9,6 +9,7 @@
 #define BLUE_MASK 0x0000ff
 
 #define MAX_BUFFERS 10
+#define QUEUE_TRIM_DURATION 100
 
 static void
 _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
@@ -186,6 +187,7 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    ob->depth = depth;
    ob->format = format;
    ob->rotation = rotation;
+   ob->priv.unused_duration = 0;
 
    EINA_LIST_FREE(ob->priv.fb_list, ofb)
      _outbuf_fb_destroy(ofb);
@@ -198,19 +200,41 @@ _outbuf_fb_wait(Outbuf *ob)
 {
    Eina_List *l;
    Outbuf_Fb *ofb, *best = NULL;
-   int best_age = -1;
+   int best_age = -1, num_required = 1, num_allocated = 0;
 
    /* We pick the oldest available buffer to avoid using the same two
     * repeatedly and then having the third be stale when we need it
     */
    EINA_LIST_FOREACH(ob->priv.fb_list, l, ofb)
      {
-        if (ecore_drm2_fb_busy_get(ofb->fb)) continue;
+        num_allocated++;
+        if (ecore_drm2_fb_busy_get(ofb->fb))
+          {
+             num_required++;
+             continue;
+          }
         if (ofb->valid && (ofb->age > best_age))
           {
              best = ofb;
              best_age = best->age;
           }
+     }
+
+   if (num_required < num_allocated)
+      ob->priv.unused_duration++;
+   else
+      ob->priv.unused_duration = 0;
+
+   /* If we've had unused buffers for longer than QUEUE_TRIM_DURATION, then
+    * destroy the oldest buffer (currently in best) and recursively call
+    * ourself to get the next oldest.
+    */
+   if (best && (ob->priv.unused_duration > QUEUE_TRIM_DURATION))
+     {
+        ob->priv.unused_duration = 0;
+        ob->priv.fb_list = eina_list_remove(ob->priv.fb_list, best);
+        _outbuf_fb_destroy(best);
+        best = _outbuf_fb_wait(ob);
      }
 
    return best;
