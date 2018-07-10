@@ -345,10 +345,10 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_view_list_relayout.eo.h>
 # include <efl_ui_view_list.eo.h>
 # include <efl_ui_view_list_pan.eo.h>
+# include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>
 # include <efl_ui_dnd_types.eot.h>
-# include <efl_ui_pan.eo.h>
 # include <efl_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>

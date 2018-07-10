@@ -17,7 +17,7 @@ class Efl.Ui.Scroll.Manager (Efl.Object,
          set {
          }
          values {
-            pan: Efl.Canvas.Object @nullable; [[Pan object]]
+            pan: Efl.Ui.Pan @nullable; [[Pan object]]
          }
       }
    }
