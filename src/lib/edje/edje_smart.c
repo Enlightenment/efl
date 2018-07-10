@@ -54,9 +54,9 @@ _efl_canvas_layout_efl_object_invalidate(Eo *obj, Edje *ed)
 {
    _edje_file_callbacks_del(ed, NULL);
 
-   efl_invalidate(efl_super(obj, MY_CLASS));
-
-   //invalidate is done, this means the legacy evas deletion event is called.
+   /* after invalidate is called, all internal objects are destroyed as a result
+    * of being unparented. do cleanups here to avoid leaking
+    */
    for (int i = 0; i < ed->table_parts_size; ++i)
      {
         Edje_Real_Part *rp = ed->table_parts[i];
@@ -74,6 +74,8 @@ _efl_canvas_layout_efl_object_invalidate(Eo *obj, Edje *ed)
             break;
           }
      }
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
