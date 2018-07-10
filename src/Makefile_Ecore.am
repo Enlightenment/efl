@@ -300,7 +300,6 @@ tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_WAYLAND_CFLAGS@ \
 @ECORE_WAYLAND_SRV_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
 @ECORE_FB_CFLAGS@ \
 @ECORE_INPUT_CFLAGS@
 
@@ -315,7 +314,6 @@ tests_ecore_ecore_suite_LDADD = \
 @USE_ECORE_WAYLAND_LIBS@ \
 @USE_ECORE_FB_LIBS@ \
 @ECORE_WAYLAND_SRV_LIBS@ \
-@ECORE_DRM_LIBS@ \
 @USE_ECORE_INPUT_LIBS@
 tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
@@ -325,7 +323,6 @@ tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_IMF_INTERNAL_LIBS@ \
 @USE_ECORE_EVAS_INTERNAL_LIBS@ \
 @USE_ECORE_WAYLAND_INTERNAL_LIBS@ \
-@USE_ECORE_DRM_INTERNAL_LIBS@ \
 @USE_ECORE_FB_INTERNAL_LIBS@ \
 @USE_ECORE_INPUT_INTERNAL_LIBS@
 
@@ -349,7 +346,6 @@ tests_ecore_efl_app_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_WAYLAND_CFLAGS@ \
 @ECORE_WAYLAND_SRV_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
 @ECORE_FB_CFLAGS@ \
 @ECORE_INPUT_CFLAGS@
 
@@ -364,7 +360,6 @@ tests_ecore_efl_app_suite_LDADD = \
 @USE_ECORE_WAYLAND_LIBS@ \
 @USE_ECORE_FB_LIBS@ \
 @ECORE_WAYLAND_SRV_LIBS@ \
-@ECORE_DRM_LIBS@ \
 @USE_ECORE_INPUT_LIBS@
 tests_ecore_efl_app_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
@@ -374,7 +369,6 @@ tests_ecore_efl_app_suite_DEPENDENCIES = \
 @USE_ECORE_IMF_INTERNAL_LIBS@ \
 @USE_ECORE_EVAS_INTERNAL_LIBS@ \
 @USE_ECORE_WAYLAND_INTERNAL_LIBS@ \
-@USE_ECORE_DRM_INTERNAL_LIBS@ \
 @USE_ECORE_FB_INTERNAL_LIBS@ \
 @USE_ECORE_INPUT_INTERNAL_LIBS@
 
@@ -384,10 +378,6 @@ endif
 
 if HAVE_ECORE_AUDIO
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_audio.c
-endif
-
-if HAVE_ECORE_DRM
-tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_drm.c
 endif
 
 if HAVE_ECORE_FB
