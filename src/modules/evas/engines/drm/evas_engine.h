@@ -62,7 +62,6 @@ struct _Outbuf
 
    struct
      {
-        int num;
         Eina_List *fb_list;
         Outbuf_Fb *draw;
         Ecore_Drm2_Output *output;
