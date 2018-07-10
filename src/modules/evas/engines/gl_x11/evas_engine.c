@@ -2550,6 +2550,8 @@ eng_image_native_set(void *engine, void *image, void *native)
                    n->ns_data.x11.multiple_buffer = 0;
                  else
                    n->ns_data.x11.multiple_buffer = 1;
+                 if (ob->detected.no_multi_buffer_native)
+                   n->ns_data.x11.multiple_buffer = 0;
 
                  if (!n->ns_data.x11.surface)
                    {

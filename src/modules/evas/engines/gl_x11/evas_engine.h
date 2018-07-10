@@ -75,6 +75,8 @@ struct _Outbuf
       unsigned char msaa;
 #ifndef GL_GLES
       Eina_Bool     loose_binding : 1;
+#else
+      Eina_Bool     no_multi_buffer_native : 1;
 #endif
    } detected;
 

@@ -345,6 +345,13 @@ try_gles2:
         eng_window_free(gw);
         return NULL;
      }
+   // nvidia drivers in egl/gles mode dont need re-creating of the
+   // eglimage ... and doign so is super slow on them, so avoid the
+   // multi buffer path - as it's only for nvidia and this fixes
+   // the performance regression there, it's fairly safe to do
+   // as it's not universal across all drivers.
+   if (strstr((const char *)vendor, "NVIDIA"))
+     gw->detected.no_multi_buffer_native = 1;
 
    eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_DEPTH_SIZE, &val);
    gw->detected.depth_buffer_size = val;
