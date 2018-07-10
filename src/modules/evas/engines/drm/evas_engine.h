@@ -63,7 +63,8 @@ struct _Outbuf
    struct
      {
         int num;
-        Outbuf_Fb *ofb[MAX_BUFFERS], *draw;
+        Eina_List *fb_list;
+        Outbuf_Fb *draw;
         Ecore_Drm2_Output *output;
         Ecore_Drm2_Plane *plane;
         Eina_List *pending;
