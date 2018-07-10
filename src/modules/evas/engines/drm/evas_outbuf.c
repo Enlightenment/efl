@@ -28,23 +28,29 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    ofb->age = 0;
 }
 
-static Eina_Bool
-_outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb, int w, int h)
+static Outbuf_Fb *
+_outbuf_fb_create(Outbuf *ob, int w, int h)
 {
-   ofb->fb =
+   Outbuf_Fb *out;
+
+   out = calloc(1, sizeof(Outbuf_Fb));
+   if (!out) return NULL;
+
+   out->fb =
      ecore_drm2_fb_create(ob->dev, w, h,
                           ob->depth, ob->bpp, ob->format);
-   if (!ofb->fb)
+   if (!out->fb)
      {
         WRN("Failed To Create FB: %d %d", w, h);
-        return EINA_FALSE;
+        free(out);
+        return NULL;
      }
 
-   ofb->age = 0;
-   ofb->drawn = EINA_FALSE;
-   ofb->valid = EINA_TRUE;
+   out->age = 0;
+   out->drawn = EINA_FALSE;
+   out->valid = EINA_TRUE;
 
-   return EINA_TRUE;
+   return out;
 }
 
 static void
@@ -56,12 +62,14 @@ _outbuf_fb_destroy(Outbuf_Fb *ofb)
    ofb->valid = EINA_FALSE;
    ofb->drawn = EINA_FALSE;
    ofb->age = 0;
+   free(ofb);
 }
 
 Outbuf *
 _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
 {
    Outbuf *ob;
+   Outbuf_Fb *ofb;
    char *num;
    int i = 0, fw = 0, fh = 0;
 
@@ -104,11 +112,13 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    if ((!w) || (!h)) return ob;
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i]), fw, fh))
+        ofb = _outbuf_fb_create(ob, fw, fh);
+        if (!ofb)
           {
              WRN("Failed to create framebuffer %d", i);
              continue;
           }
+        ob->priv.ofb[i] = ofb;
      }
 
    return ob;
@@ -145,7 +155,7 @@ _outbuf_free(Outbuf *ob)
    _outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
 
    for (i = 0; i < ob->priv.num; i++)
-     _outbuf_fb_destroy(&ob->priv.ofb[i]);
+     _outbuf_fb_destroy(ob->priv.ofb[i]);
 
    free(ob);
 }
@@ -159,6 +169,7 @@ _outbuf_rotation_get(Outbuf *ob)
 void
 _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 {
+   Outbuf_Fb *ofb;
    int i = 0, fw = 0, fh = 0;
    unsigned int format = DRM_FORMAT_ARGB8888;
 
@@ -212,7 +223,7 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    ob->rotation = rotation;
 
    for (i = 0; i < ob->priv.num; i++)
-     _outbuf_fb_destroy(&ob->priv.ofb[i]);
+     _outbuf_fb_destroy(ob->priv.ofb[i]);
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -228,11 +239,13 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    if ((!w) || (!h)) return;
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i]), fw, fh))
+        ofb = _outbuf_fb_create(ob, fw, fh);
+        if (!ofb)
           {
              WRN("Failed to create framebuffer %d", i);
              continue;
           }
+        ob->priv.ofb[i] = ofb;
      }
 
    /* TODO: idle flush */
@@ -248,15 +261,15 @@ _outbuf_fb_wait(Outbuf *ob)
     */
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (ecore_drm2_fb_busy_get(ob->priv.ofb[i].fb)) continue;
-        if (ob->priv.ofb[i].valid && (ob->priv.ofb[i].age > best_age))
+        if (ecore_drm2_fb_busy_get(ob->priv.ofb[i]->fb)) continue;
+        if (ob->priv.ofb[i]->valid && (ob->priv.ofb[i]->age > best_age))
           {
              best = i;
-             best_age = ob->priv.ofb[i].age;
+             best_age = ob->priv.ofb[i]->age;
           }
      }
 
-   if (best >= 0) return &(ob->priv.ofb[best]);
+   if (best >= 0) return ob->priv.ofb[best];
    return NULL;
 }
 
@@ -274,13 +287,13 @@ _outbuf_fb_assign(Outbuf *ob)
 
    for (i = 0; i < ob->priv.num; i++)
      {
-        if ((ob->priv.ofb[i].valid) && (ob->priv.ofb[i].drawn))
+        if ((ob->priv.ofb[i]->valid) && (ob->priv.ofb[i]->drawn))
           {
-             ob->priv.ofb[i].age++;
-             if (ob->priv.ofb[i].age > 4)
+             ob->priv.ofb[i]->age++;
+             if (ob->priv.ofb[i]->age > 4)
                {
-                  ob->priv.ofb[i].age = 0;
-                  ob->priv.ofb[i].drawn = EINA_FALSE;
+                  ob->priv.ofb[i]->age = 0;
+                  ob->priv.ofb[i]->drawn = EINA_FALSE;
                }
           }
      }
