@@ -74,8 +74,6 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
 
-EXTRA_DIST2 += lib/ecore_wl2/window_v6.x
-
 DMABUFSOURCES = lib/ecore_wl2/ecore_wl2_surface_module_dmabuf.c
 ecorewl2enginedmabufpkgdir = $(libdir)/ecore_wl2/engines/dmabuf/$(MODULE_ARCH)
 ecorewl2enginedmabufpkg_LTLIBRARIES = modules/ecore_wl2/engines/dmabuf/module.la
@@ -91,3 +89,7 @@ modules_ecore_wl2_engines_dmabuf_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS
 modules_ecore_wl2_engines_dmabuf_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
+
+#We want this in the release tarball even if the builder isn't compiling
+#wayland support.
+EXTRA_DIST2 += lib/ecore_wl2/window_v6.x
