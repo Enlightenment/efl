@@ -8,6 +8,8 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
+#define MAX_BUFFERS 10
+
 static void
 _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
