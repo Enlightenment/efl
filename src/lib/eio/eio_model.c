@@ -331,6 +331,19 @@ _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *s
 }
 
 static void
+_eio_build_st_done_clobber(void *data, Eio_File *handler, const Eina_Stat *stat)
+{
+   Eio_Model *model = data;
+   Eio_Model *parent;
+
+   efl_ref(model);
+   _eio_build_st_done(data, handler, stat);
+   parent = efl_parent_get(model);
+   efl_model_child_del(parent, model);
+   efl_unref(model);
+}
+
+static void
 _eio_build_st_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 {
    Eio_Model *model = data;
@@ -345,6 +358,19 @@ _eio_build_st_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 }
 
 static void
+_eio_build_st_error_clobber(void *data, Eio_File *handler, int error)
+{
+   Eio_Model *model = data;
+   Eio_Model *parent;
+
+   efl_ref(model);
+   _eio_build_st_error(data, handler, error);
+   parent = efl_parent_get(model);
+   efl_model_child_del(parent, model);
+   efl_unref(model);
+}
+
+static void
 _eio_build_st(const Eio_Model *model, Eio_Model_Data *pd)
 {
    if (pd->st) return ;
@@ -352,6 +378,19 @@ _eio_build_st(const Eio_Model *model, Eio_Model_Data *pd)
    if (pd->error) return ;
 
    pd->request.stat = eio_file_direct_stat(pd->path, _eio_build_st_done, _eio_build_st_error, efl_ref(model));
+}
+
+static void
+_eio_build_st_then_clobber(const Eio_Model *model, Eio_Model_Data *pd)
+{
+   if (pd->st) return ;
+   if (pd->request.stat) return ;
+   if (pd->error) return ;
+
+   pd->request.stat = eio_file_direct_stat(pd->path,
+                                           _eio_build_st_done_clobber,
+                                           _eio_build_st_error_clobber,
+                                           efl_ref(model));
 }
 
 static Eina_List *delayed_queue = NULL;
@@ -853,8 +892,7 @@ _eio_model_efl_model_child_del(Eo *obj EINA_UNUSED,
 
    if (type == EINA_FILE_UNKNOWN)
      {
-        child_pd->delete_me = EINA_TRUE;
-        _eio_build_st(child, child_pd);
+        _eio_build_st_then_clobber(child, child_pd);
         return ;
      }
 
