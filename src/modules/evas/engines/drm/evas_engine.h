@@ -67,6 +67,7 @@ struct _Outbuf
         Eina_List *pending;
         Eina_Rectangle *rects;
         unsigned int rect_count;
+        int unused_duration;
      } priv;
 
    Eina_Bool alpha : 1;
