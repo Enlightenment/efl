@@ -10,6 +10,7 @@ os:
 env:
   global:
     - MAKEFLAGS="-j5"
+    - EIO_MONITOR_POLL=1
   matrix:
     -
     - DISTRO=Ubuntu1804
