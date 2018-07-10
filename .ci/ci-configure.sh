@@ -49,7 +49,10 @@ if [ "$DISTRO" != "" ] ; then
   if [ "$1" = "release-ready" ]; then
     OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
   fi
-  docker run --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO ./autogen.sh $OPTS
+  docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
+  docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+    --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
+    $(cat $HOME/cid) ./autogen.sh $OPTS
 else
   OSX_COPTS="--disable-cxx-bindings"
 
@@ -57,11 +60,13 @@ else
   mkdir -p ~/Library/LaunchAgents
   ln -sfv /usr/local/opt/d-bus/*.plist ~/Library/LaunchAgents
   launchctl load ~/Library/LaunchAgents/org.freedesktop.dbus-session.plist
-  export PATH="$(brew --prefix gettext)/bin:$PATH"
+  export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
 
-  export CFLAGS="-I/usr/local/opt/openssl/include $CFLAGS"
+  export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
+  export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
   export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
 
   # Normal build test of all targets
+  rm -f ~/.ccache/ccache.conf
   ./autogen.sh $OSX_COPTS
 fi

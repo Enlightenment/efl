@@ -1,5 +1,5 @@
 language: c
-
+cache: ccache
 sudo: required
 dist: trusty
 
@@ -11,6 +11,8 @@ env:
   global:
     - MAKEFLAGS="-j5"
     - EIO_MONITOR_POLL=1
+    - CC="ccache gcc"
+    - CXX="ccache g++"
   matrix:
     -
     - DISTRO=Ubuntu1804
@@ -70,12 +72,15 @@ before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
         docker version
-        docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO bash
+        docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
         cat $HOME/cid
       fi
 
+  - .ci/ci-ccache-stats.sh
+
 script:
   - .ci/ci-configure.sh "$CI_BUILD_TYPE"
+  - .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE"
   - .ci/ci-make.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
@@ -91,6 +96,13 @@ script:
       elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
         docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
       fi
+before_cache:
+  - .ci/ci-ccache-stats.sh
+  - |
+       if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
+         sudo chown travis:travis $HOME/.ccache
+       else
+       fi
 
 after_success:
   - |
