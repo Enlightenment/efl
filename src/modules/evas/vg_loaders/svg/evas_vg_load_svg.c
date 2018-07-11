@@ -2371,6 +2371,7 @@ evas_vg_load_file_data_svg(const char *file, const char *key EINA_UNUSED, int *e
         *error = EVAS_LOAD_ERROR_GENERIC;
      }
    free(loader.svg_parse);
+   eina_file_close(f);
    return vg_common_create_vg_node(loader.doc);
 }
 
