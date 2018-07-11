@@ -99,6 +99,7 @@ struct _Efl_Ui_Win_Data
       Ecore_X_Window       xwin;
       Ecore_Event_Handler *client_message_handler;
       Ecore_Event_Handler *property_handler;
+      Eina_Bool shaped : 1;
    } x;
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
@@ -444,7 +445,7 @@ elm_process_state_get(void)
 }
 
 static void
-_elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
+_elm_win_apply_alpha(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Bool enabled;
 
@@ -462,16 +463,13 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
         if (sd->x.xwin)
           {
              enabled |= (sd->csd.need && !sd->fullscreen);
-             if (enabled)
+             if (!ecore_x_screen_is_composited(0))
                {
-                  if (!ecore_x_screen_is_composited(0))
-                    elm_win_shaped_set(obj, enabled);
-                  else
-                    TRAP(sd, alpha_set, enabled);
+                  if (enabled || (!sd->x.shaped))
+                    TRAP(sd, shaped_set, enabled);
                }
              else
                TRAP(sd, alpha_set, enabled);
-             _elm_win_xwin_update(sd);
           }
         else
 #else
@@ -8248,9 +8246,12 @@ elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return;
 
-   TRAP(sd, shaped_set, shaped);
+   shaped = !!shaped;
+
 #ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
+   if (sd->x.shaped == shaped) return;
+   sd->x.shaped = shaped;
+   TRAP(sd, shaped_set, shaped);
 #endif
 }
 
