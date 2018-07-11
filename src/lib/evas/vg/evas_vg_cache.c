@@ -231,7 +231,8 @@ evas_cache_vg_file_info(const char *file, const char *key)
    if (!vd)
      {
         vd = _vg_load_from_file(file, key);
-        eina_hash_add(vg_cache->vg_hash, eina_strbuf_string_get(hash_key), vd);
+        //File is exists.
+        if (vd) eina_hash_add(vg_cache->vg_hash, eina_strbuf_string_get(hash_key), vd);
      }
    eina_strbuf_free(hash_key);
    return vd;
