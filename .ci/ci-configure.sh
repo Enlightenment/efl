@@ -7,7 +7,7 @@ CI_BUILD_TYPE="$1"
 export MAKEFLAGS="-j5"
 export EIO_MONITOR_POLL=1
 
-DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings"
+DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings -C"
 
 WAYLAND_LINUX_COPTS=" --enable-wayland --enable-elput --enable-drm \
 --enable-wayland-ivi-shell --enable-gl-drm --with-opengl=es --enable-egl"
@@ -54,7 +54,7 @@ if [ "$DISTRO" != "" ] ; then
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
     $(cat $HOME/cid) ./autogen.sh $OPTS
 else
-  OSX_COPTS="--disable-cxx-bindings"
+  OSX_COPTS="--disable-cxx-bindings -C"
 
   # Prepare OSX env for build
   mkdir -p ~/Library/LaunchAgents

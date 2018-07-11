@@ -1,5 +1,9 @@
 language: c
-cache: ccache
+cache:
+  directories:
+    - $HOME/cachedir
+    - $HOME/.ccache
+    - $HOME/autom4te.cache
 sudo: required
 dist: trusty
 
@@ -73,10 +77,14 @@ before_script:
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
         docker version
         docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
-        cat $HOME/cid
+        cp $HOME/cachedir/config.cache . || true
       fi
 
   - .ci/ci-ccache-stats.sh
+  - |
+       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+         cp $HOME/cachedir/config.cache . || true
+       fi
 
 script:
   - .ci/ci-configure.sh "$CI_BUILD_TYPE"
@@ -99,9 +107,15 @@ script:
 before_cache:
   - .ci/ci-ccache-stats.sh
   - |
+       mkdir -p $HOME/cachedir
        if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
          sudo chown travis:travis $HOME/.ccache
+         mkdir -p $HOME/cachedir/
+         sudo cp config.cache $HOME/cachedir/
+         sudo chown travis:travis $HOME/cachedir/config.cache
+         sudo chown travis:travis $HOME/autom4te.cache
        else
+         cp config.cache $HOME/cachedir
        fi
 
 after_success:
