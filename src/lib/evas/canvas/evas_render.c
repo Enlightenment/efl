@@ -3171,11 +3171,7 @@ evas_render_updates_internal(Evas *eo_e,
 
    e = evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (e->inside_post_render) return EINA_FALSE;
-   if (!e->changed)
-     {
-        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
-        goto nothing2render;
-     }
+   if (!e->changed) return EINA_FALSE;
 
    if (e->rendering)
      {
@@ -3707,14 +3703,14 @@ evas_render_updates_internal(Evas *eo_e,
 
    evas_module_clean();
 
-   // Send a RENDER_POST when we are rendering synchronously or when there is no update done asynchronously
+   /* Send a RENDER_POST when we are rendering synchronously or,
+      when do_async but no drawing. This gurantees pre-post pair. */
    if (!do_async || !rendering)
      {
         Evas_Event_Render_Post post;
         Eina_List *l1, *l2;
         Render_Updates *ru;
 
-     nothing2render:
         post.updated_area = NULL;
         EINA_LIST_FOREACH(e->outputs, l1, out)
           {
