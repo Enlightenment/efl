@@ -4988,22 +4988,24 @@ _efl_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Selection_Manage
           }
      }
 
-   if (!pd->drop_list) return;
 #ifdef HAVE_ELEMENTARY_X
-   Eina_List *l;
-   Ecore_X_Window xwin;
-   Eina_Bool have_drop_list = EINA_FALSE;
-
-   xwin = _x11_xwin_get(target_obj);
-   EINA_LIST_FOREACH(pd->drop_list, l, dropable)
+   if (pd->drop_list)
      {
-        if (xwin == _x11_xwin_get(dropable->obj))
+        Eina_List *l;
+        Ecore_X_Window xwin;
+        Eina_Bool have_drop_list = EINA_FALSE;
+
+        xwin = _x11_xwin_get(target_obj);
+        EINA_LIST_FOREACH(pd->drop_list, l, dropable)
           {
-             have_drop_list = EINA_TRUE;
-             break;
+             if (xwin == _x11_xwin_get(dropable->obj))
+               {
+                  have_drop_list = EINA_TRUE;
+                  break;
+               }
           }
+        if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
      }
-   if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
 #endif
    seat_sel = _sel_manager_seat_selection_init(pd, seat);
    ELM_SAFE_FREE(seat_sel->pos_handler, ecore_event_handler_del);
