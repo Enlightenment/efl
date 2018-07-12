@@ -13,6 +13,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_FILESELECTOR_BETA
 #define EFL_PART_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "Eio_Eo.h"
@@ -104,7 +105,7 @@ _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 {
    Eina_List *tmp = NULL;
 
-#define A(p) tmp = eina_list_append(tmp, p);
+#define A(p) if (p) tmp = eina_list_append(tmp, p);
 
    A(pd->up_button)
    A(pd->home_button)
@@ -119,7 +120,7 @@ _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 
 #undef A
 
-   efl_ui_focus_manager_calc_update_order(efl_ui_focus_object_focus_manager_get(obj), obj, tmp);
+   efl_ui_focus_composition_elements_set(obj, tmp);
 }
 
 void
@@ -2982,16 +2983,6 @@ EOLIAN static Elm_Fileselector_Sort
 _elm_fileselector_elm_interface_fileselector_sort_method_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
 {
    return sd->sort_type;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect)
-{
-   Eina_Bool ret = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
-
-   _focus_chain_update(obj, pd);
-
-   return ret;
 }
 
 static Eina_Bool
