@@ -247,17 +247,17 @@ _ecore_signal_pipe_init(void)
 static void
 _ecore_signal_pipe_shutdown(void)
 {
+   if (sig_pipe_handler)
+     {
+        efl_del(sig_pipe_handler);
+        sig_pipe_handler = NULL;
+     }
    if (sig_pipe[0] != -1)
      {
         close(sig_pipe[0]);
         close(sig_pipe[1]);
         sig_pipe[0] = -1;
         sig_pipe[1] = -1;
-     }
-   if (sig_pipe_handler)
-     {
-        efl_del(sig_pipe_handler);
-        sig_pipe_handler = NULL;
      }
    eina_spinlock_free(&sig_pid_lock);
 }
