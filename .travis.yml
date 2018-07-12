@@ -100,7 +100,7 @@ script:
   - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
   - |
       if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
-        .ci/build-efl-app.sh
+        true
       elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
         docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
       fi
