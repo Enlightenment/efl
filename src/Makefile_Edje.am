@@ -283,7 +283,6 @@ bin/edje/edje_convert.c \
 bin/edje/edje_data_convert.c \
 bin/edje/edje_convert_main.c \
 lib/edje/edje_convert.c \
-tests/edje/edje_tests_helpers.h \
 tests/edje/data/complex_layout.edc \
 tests/edje/data/test_layout.edc \
 tests/edje/data/test_parens.edc \
@@ -318,7 +317,12 @@ TESTS += tests/edje/edje_suite
 
 tests_edje_edje_suite_SOURCES = \
 tests/edje/edje_suite.c \
+tests/edje/edje_test_container.c \
 tests/edje/edje_test_edje.c \
+tests/edje/edje_test_features.c \
+tests/edje/edje_test_signal.c \
+tests/edje/edje_test_swallow.c \
+tests/edje/edje_test_text.c \
 tests/edje/edje_suite.h
 
 tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
