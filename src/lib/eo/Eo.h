@@ -1488,7 +1488,7 @@ EAPI Eo *_efl_added_get(void);
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define efl_new(klass, ...) efl_add_ref(klass, NULL, __VA_ARGS__)
+#define efl_new(klass, ...) efl_add_ref(klass, NULL, ##__VA_ARGS__)
 
 EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
 
