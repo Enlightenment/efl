@@ -367,7 +367,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ERROR;
  * @var EINA_VALUE_TYPE_VALUE
  * manages Eina_Value values.
  * This value will hold an Eina_Value,
- * which can be usefull for storing data
+ * which can be useful for storing data
  * inside an #Eina_Value_Array.
  *
  * @since 1.21
@@ -673,7 +673,7 @@ struct _Eina_Value
  * the description specified by @a type.
  *
  * Some types may specify more operations:
- * eg. #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
+ * e.g.. #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
  * eina_value_array_get() and so on.
  *
  * On failure, @c NULL is returned.

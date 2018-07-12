@@ -34,7 +34,7 @@
  * To use these functions, you have to call eina_init()
  * first, and eina_shutdown() when eina is not used anymore.
  *
- * @section Eina_Convert_From_Integer_To_Sring Conversion from integer to string
+ * @section Eina_Convert_From_Integer_To_String Conversion from integer to string
  *
  * To convert an integer to a string in the decimal base,
  * eina_convert_itoa() should be used. If the hexadecimal base is
@@ -95,7 +95,7 @@
  * has the following mantissas and exponent:
  *
  * @code
- * mantiss  : [-]hhhhhh
+ * mantissa  : [-]hhhhhh
  * exponent : 2^([+-]e - 4 * n)
  * @endcode
  *
@@ -247,7 +247,7 @@ EAPI int       eina_convert_dtoa(double d, char *des) EINA_ARG_NONNULL(2);
  * point, the returned mantissas and exponents are:
  *
  * @code
- * mantiss  : [-]hhhhhh
+ * mantissa  : [-]hhhhhh
  * exponent : 2^([+-]e - 4 * n)
  * @endcode
  *
@@ -288,7 +288,7 @@ EAPI Eina_Bool eina_convert_atod(const char *src,
  *
  * @note The code is the same than eina_convert_dtoa() except that it
  * implements the frexp() function for fixed point numbers and does
- * some optimisations.
+ * some optimization.
  */
 EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
                                   char       *des) EINA_ARG_NONNULL(2);
@@ -317,7 +317,7 @@ EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
  * point, the returned mantissas and exponents are:
  *
  * @code
- * mantiss  : [-]hhhhhh
+ * mantissa  : [-]hhhhhh
  * exponent : 2^([+-]e - 4 * n)
  * @endcode
  *

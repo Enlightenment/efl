@@ -91,7 +91,7 @@ EAPI void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
 /**
  * @brief Adds several elements to a lazy allocator.
  *
- * @param a The lazy allocater to add items to.
+ * @param a The lazy allocator to add items to.
  * @param num The number of elements to add.
  *
  * @return #EINA_TRUE on success, else #EINA_FALSE.

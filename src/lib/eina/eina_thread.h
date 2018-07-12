@@ -34,7 +34,7 @@
 /**
  * @defgroup Eina_Thread_Group Thread
  *
- * Abstracts platform threads, providing a uniform API. It's modelled
+ * Abstracts platform threads, providing a uniform API. It's modeled
  * after POSIX THREADS (pthreads), on Linux they are almost 1:1
  * mapping.
  *
@@ -152,7 +152,7 @@ EAPI Eina_Bool eina_thread_name_set(Eina_Thread t, const char *name);
  *
  * This function sends a cancellation request to the thread, however
  * that request is only fulfilled if the thread is cancellable
- * (eina_thread_cancellable_set() with EINA_TRUE as first paramter)
+ * (eina_thread_cancellable_set() with EINA_TRUE as first parameter)
  * and it will wait for a cancellation point, be
  * eina_thread_cancel_checkpoint() or some syscall as defined in
  * man:pthreads(7).

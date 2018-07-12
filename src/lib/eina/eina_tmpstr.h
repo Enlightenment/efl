@@ -135,7 +135,7 @@ typedef const char Eina_Tmpstr;
  *
  * If @p str is NULL, or no memory space exists to store the tmpstr, then
  * NULL will be returned, otherwise a valid string pointer will be returned
- * that you can treat as any other C string (eg strdup(tmpstr) or
+ * that you can treat as any other C string (e.g. strdup(tmpstr) or
  * printf("%s\n", tmpstr) etc.). This string should be considered read-only
  * and immutable, and when you are done with the string you should delete it
  * with eina_tmpstr_del().
@@ -180,7 +180,7 @@ EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
  *
  * If @p str is NULL, or no memory space exists to store the tmpstr, then
  * NULL will be returned, otherwise a valid string pointer will be returned
- * that you can treat as any other C string (eg strdup(tmpstr) or
+ * that you can treat as any other C string (e.g. strdup(tmpstr) or
  * printf("%s\n", tmpstr) etc.). This string should be considered read-only
  * and immutable, and when you are done with the string you should delete it
  * with eina_tmpstr_del().

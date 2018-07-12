@@ -145,7 +145,7 @@ typedef enum {
   EINA_FILE_WILLNEED,   /**< Advise need for all the mapped memory */
   EINA_FILE_POPULATE,   /**< Request for all the mapped memory */
   EINA_FILE_DONTNEED,   /**< Indicate that the memory is no longer needed. This may result in the memory being removed from any caches if applicable. @since 1.8 */
-  EINA_FILE_REMOVE      /**< This memory is to be released and any content will be lost. Subsequent accesses will succeed but return fresh memory as if accessed for the first time. This may not suceed if the filesystem does not support it. @since 1.8 */
+  EINA_FILE_REMOVE      /**< This memory is to be released and any content will be lost. Subsequent accesses will succeed but return fresh memory as if accessed for the first time. This may not succeed if the filesystem does not support it. @since 1.8 */
 } Eina_File_Populate;
 
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
@@ -747,7 +747,7 @@ static inline size_t eina_file_path_join(char *dst,
  *          a file.
  *
  * @param pathname File name to unlink.
- * @return #EINA_TRUE if the unlink was successfull, #EINA_FALSE otherwise..
+ * @return #EINA_TRUE if the unlink was successful, #EINA_FALSE otherwise..
  *
  * @since 1.19
  */

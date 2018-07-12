@@ -287,7 +287,7 @@ static inline int         eina_rectangle_max_x(Eina_Rectangle *rect) EINA_ARG_NO
  * @return The maximum Y coordinate.
  *
  * This function calculates the maximum Y coordinate of the rectangle by summing
- * the @p height with the current @p y coodinate of the rectangle.
+ * the @p height with the current @p y coordinate of the rectangle.
  */
 static inline int         eina_rectangle_max_y(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);
 

@@ -210,7 +210,7 @@ EAPI const char *
  * @brief Defines if on module load we should expose all symbol
  *
  * @param module The module to turn off/on symbol to be exposed
- * @param global @c ture to turn on symbol to be exposed, @c false otherwise
+ * @param global @c true to turn on symbol to be exposed, @c false otherwise
  * @since 1.11
  */
 EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);

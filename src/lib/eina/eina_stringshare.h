@@ -29,9 +29,9 @@
  *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies of the Software and its Copyright notices. In addition publicly
- *  documented acknowledgement must be given that this software has been used if no
+ *  documented acknowledgment must be given that this software has been used if no
  *  source code of this software is made available publicly. This includes
- *  acknowledgements in either Copyright notices, Manuals, Publicity and Marketing
+ *  acknowledgments in either Copyright notices, Manuals, Publicity and Marketing
  *  documents or any documentation provided with any product containing this
  *  software. This License does not apply to any software that links to the
  *  libraries provided by this software (statically or dynamically), but only to

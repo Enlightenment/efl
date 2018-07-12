@@ -265,7 +265,7 @@
  * any future references to the list.
  *
  * Most functions have two versions that have the same effect but operate on
- * different arguments, the @a plain functions operate over data(eg.:
+ * different arguments, the @a plain functions operate over data(e.g..:
  * @ref eina_list_append_relative, @ref eina_list_remove,
  * @ref eina_list_data_find), the @a list versions of these functions operate
  * on @ref Eina_List nodes.

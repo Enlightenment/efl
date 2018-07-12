@@ -6,9 +6,9 @@
 /**
  * Eina vpath is a path that can be prefixed with a virtual path.
  *
- * A virutal path can either start with (:XXXXXXXX:) that indicates a virtual
- * path with XXXXXXXX as the location, OR a normal path with / or a realative
- * path like ./ or ../ or even shell common locatiors like ~/ or ~username/
+ * A virtual path can either start with (:XXXXXXXX:) that indicates a virtual
+ * path with XXXXXXXX as the location, OR a normal path with / or a relative
+ * path like ./ or ../ or even shell common locators like ~/ or ~username/
  *
  * The string between (: and :) is used as key to lookup the real value.
  * The key has to be set by an interface before, otherwise you will get an
@@ -55,7 +55,7 @@
  *   (:app.dir:) - /usr - (assuming app install PREFIX of /usr. may be /usr/local or others too)
  *   (:app.bin:) - /usr/bin - (almost always PREFIX/bin)
  *   (:app.lib:) - /usr/lib - (almost always PREFIX/lib)
- *   (:app.data:) - /usr/share/appname - (almost always PREIFX/share/appname)
+ *   (:app.data:) - /usr/share/appname - (almost always PREFIX/share/appname)
  *   (:app.locale:) - /usr/share/locale - (almost always PREFIX/locale)
  *   (:app.config:) - ~/.config/appname
  *   (:app.local:) - ~/.local/share/appname

@@ -25,7 +25,7 @@
  * @until strbuf_reset
  * @until strbuf_reset
  *
- * Next we use the printf family of functions to create a formated string,
+ * Next we use the printf family of functions to create a formatted string,
  * add, remove and replace some content:
  * @until strbuf_string_get
  * @until strbuf_string_get
@@ -594,7 +594,7 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 
 /**
  * @def eina_strbuf_replace_first(buf, str, with)
- * @brief Replaces the first occurance of a substring with another string.
+ * @brief Replaces the first occurrence of a substring with another string.
  *
  * @param buf The string buffer.
  * @param str The text to match.

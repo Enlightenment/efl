@@ -74,7 +74,7 @@ EAPI void __eina_promise_cancel_all(void);
 EAPI void __eina_promise_cancel_data(void *data);
 
 /**
- * Make the app specific paths accessable as virtual path
+ * Make the app specific paths accessible as virtual path
  *
  * This will create :
  *   - app.dir

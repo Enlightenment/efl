@@ -166,7 +166,7 @@ EAPI Eina_Bool eina_ustrbuf_append_n(Eina_UStrbuf *buf, const Eina_Unicode *str,
  * This function appends @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_ustrbuf_append() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_strngshare.
+ * with strings of known size, such as eina_stringshare.
  *
  * @see eina_stringshare_length()
  * @see eina_ustrbuf_append()

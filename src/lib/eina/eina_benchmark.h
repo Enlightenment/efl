@@ -289,8 +289,7 @@
  * program, or integrate the Eina benchmark framework in an autotooled
  * project. See that
  * <a href="http://trac.enlightenment.org/e/wiki/AutotoolsIntegration#Benchmark">page</a>
- * for more informations.
- *
+ * for more information.
  */
 
 

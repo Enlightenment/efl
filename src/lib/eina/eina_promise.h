@@ -465,14 +465,14 @@ struct _Eina_Future_Desc {
  *
  * A promise may be canceled directly by calling
  * @c eina_future_cancel(eina_future_new(eina_promise_new(...)))
- * that is, cancelling any future that is chained to receive the results.
+ * that is, canceling any future that is chained to receive the results.
  *
  * However promises can be canceled indirectly by other entities.
  * These other entities will call `eina_future_cancel()` themselves,
  * however you may not be aware of that. Some common sources
  * of indirect cancellations:
  *
- * @li A subsystem was shutdown, cancelling all pending futures (ie: ecore_shutdown())
+ * @li A subsystem was shutdown, canceling all pending futures (i.e.: ecore_shutdown())
  *
  * @li An EO object was linked to the promise or future, then if the object dies (last reference
  * is gone), then the pending promises and futures will be canceled.
@@ -480,7 +480,7 @@ struct _Eina_Future_Desc {
  * @li Some other entity (library provider or library user) chained and canceled his future,
  * which will result in your future being canceled.
  *
- * Since a promise may be canceled indirectaly (by code sections that goes beyond your scope)
+ * Since a promise may be canceled indirectly (by code sections that goes beyond your scope)
  * you should always provide a cancel callback, even if you think you'll not need it.
  *
  * Here's a typical example:
@@ -553,14 +553,14 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  *
  * A promise may be canceled directly by calling
  * @c eina_future_cancel(eina_future_new(eina_promise_new(...)))
- * that is, cancelling any future that is chained to receive the results.
+ * that is, canceling any future that is chained to receive the results.
  *
  * However promises can be canceled indirectly by other entities.
  * These other entities will call `eina_future_cancel()` themselves,
  * however you may not be aware of that. Some common sources
  * of indirect cancellations:
  *
- * @li A subsystem was shutdown, cancelling all pending futures (ie: ecore_shutdown())
+ * @li A subsystem was shutdown, canceling all pending futures (i.e.: ecore_shutdown())
  *
  * @li An EO object was linked to the promise or future, then if the object dies (last reference
  * is gone), then the pending promises and futures will be canceled.
@@ -568,7 +568,7 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  * @li Some other entity (library provider or library user) chained and canceled his future,
  * which will result in your future being canceled.
  *
- * Since a promise may be canceled indirectaly (by code sections that goes beyond your scope)
+ * Since a promise may be canceled indirectly (by code sections that goes beyond your scope)
  * you should always provide a cancel callback, even if you think you'll not need it.
  *
  * Here's a typical example:
@@ -800,7 +800,7 @@ EAPI Eina_Value eina_future_as_value(Eina_Future *f)EINA_ARG_NONNULL(1) EINA_WAR
  * Creates a new future.
  *
  * This function creates a new future and can be used to report
- * that an operation has succeded or failed using
+ * that an operation has succeeded or failed using
  * eina_promise_resolve() or eina_promise_reject().
  *
  * Futures can also be canceled using eina_future_cancel(), which
@@ -989,7 +989,7 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  *    // This function is called if future result type does not match or another error occurred
  *    Eina_Value new_v;
  *    eina_value_setup(&new_v, EINA_VALUE_TYPE_ERROR);
- *    eina_valuse_set(&new_v, err);
+ *    eina_value_set(&new_v, err);
  *    fprintf(stderr, "Error during future process. Reason: %s\n", eina_error_msg_get(err));
  *    // Pass the error to the next future in the chain..
  *    return new_v;
@@ -1043,7 +1043,7 @@ EAPI Eina_Future *eina_future_then_from_desc(Eina_Future *prev, const Eina_Futur
  * is returning. The returned value will be passed to the next future in the chain without
  * modifications.
  *
- * There're some helper macros like eina_future_cb_log_dbg() which will automatically
+ * There are some helper macros like eina_future_cb_log_dbg() which will automatically
  * fill the following fields:
  *
  * @li #Eina_Future_Cb_Log_Desc::file: The __FILE__ function will be used.
@@ -1121,7 +1121,7 @@ EAPI Eina_Future *eina_future_chain_array(Eina_Future *prev, const Eina_Future_D
 
 
 /**
- * Wrappper around eina_future_chain_array() and eina_future_cb_easy_from_desc()
+ * Wrapper around eina_future_chain_array() and eina_future_cb_easy_from_desc()
  *
  * This functions makes it easier to use  eina_future_chain_array() with eina_future_cb_easy_from_desc(),
  * check the macro eina_future_chain_easy() for a syntax sugar.
@@ -1148,7 +1148,7 @@ EAPI Eina_Future *eina_future_chain_easy_array(Eina_Future *prev, const Eina_Fut
  * modifications.
  *
  * There's also a helper macro called eina_future_cb_console() which makes this
- * fuction easier to use.
+ * function easier to use.
  *
  * Example:
  *
@@ -1210,7 +1210,7 @@ EAPI Eina_Future_Desc eina_future_cb_convert_to(const Eina_Value_Type *type);
 /**
  * Creates an #Eina_Future_Desc based on a #Eina_Future_Cb_Easy_Desc
  *
- * This function aims to be used in conjuction with eina_future_chain(),
+ * This function aims to be used in conjunction with eina_future_chain(),
  * eina_future_then_from_desc() and friends and its main objective is to simplify
  * error handling and Eina_Value type checks.
  * It uses three callbacks to inform the user about the future's
@@ -1596,7 +1596,7 @@ eina_future_race_array(Eina_Future *array[])
 #define EINA_FUTURE_SENTINEL ((void *)(unsigned long)-1)
 
 /**
- * A syntatic sugar over eina_promise_race_array().
+ * A syntactic sugar over eina_promise_race_array().
  * Usage:
  * @code
  * promise = eina_promise_race(future1, future2, future3, future4);
@@ -1605,16 +1605,16 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_promise_race(...) eina_promise_race_array((Eina_Future *[]){__VA_ARGS__, EINA_FUTURE_SENTINEL})
 /**
- * A syntatic sugar over eina_future_race_array().
+ * A syntactic sugar over eina_future_race_array().
  * Usage:
  * @code
  * future = eina_future_race(future1, future2, future3, future4);
  * @endcode
- * @see eina_future_racec_array()
+ * @see eina_future_race_array()
  */
 #define eina_future_race(...) eina_future_race_array((Eina_Future *[]){__VA_ARGS__, EINA_FUTURE_SENTINEL})
 /**
- * A syntatic sugar over eina_future_all_array().
+ * A syntactic sugar over eina_future_all_array().
  * Usage:
  * @code
  * future = eina_future_all(future1, future2, future3, future4);
@@ -1623,7 +1623,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_all(...) eina_future_all_array((Eina_Future *[]){__VA_ARGS__, EINA_FUTURE_SENTINEL})
 /**
- * A syntatic sugar over eina_promise_all_array().
+ * A syntactic sugar over eina_promise_all_array().
  * Usage:
  * @code
  * promise = eina_promise_all(future1, future2, future3, future4);
@@ -1632,7 +1632,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_promise_all(...) eina_promise_all_array((Eina_Future *[]){__VA_ARGS__, EINA_FUTURE_SENTINEL})
 /**
- * A syntatic sugar over eina_future_cb_easy_from_desc().
+ * A syntactic sugar over eina_future_cb_easy_from_desc().
  * Usage:
  * @code
  * future_desc = eina_future_cb_easy(_success_cb, _error_cb, _free_cb, EINA_VALUE_TYPE_INT, my_data);
@@ -1641,7 +1641,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_cb_easy(...) eina_future_cb_easy_from_desc((Eina_Future_Cb_Easy_Desc){__VA_ARGS__})
 /**
- * A syntatic sugar over eina_future_chain_array().
+ * A syntactic sugar over eina_future_chain_array().
  * Usage:
  * @code
  * future = eina_future_chain(future, {.cb = _my_cb, .data = my_data}, {.cb = _my_another_cb, .data = NULL});
@@ -1650,7 +1650,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_chain(_prev, ...) eina_future_chain_array(_prev, (Eina_Future_Desc[]){__VA_ARGS__, {.cb = NULL, .data = NULL}})
 /**
- * A syntatic sugar over eina_future_then_from_desc().
+ * A syntactic sugar over eina_future_then_from_desc().
  * Usage:
  * @code
  * future = eina_future_then(future, _my_cb, my_data);
@@ -1660,7 +1660,7 @@ eina_future_race_array(Eina_Future *array[])
  */
 #define eina_future_then(_prev, ...) eina_future_then_from_desc(_prev, (Eina_Future_Desc){__VA_ARGS__})
 /**
- * A syntatic sugar over eina_future_cb_console_from_desc().
+ * A syntactic sugar over eina_future_cb_console_from_desc().
  * Usage:
  * @code
  * desc = eina_future_cb_console(.prefix = "prefix", .suffix = "suffix");
@@ -1670,7 +1670,7 @@ eina_future_race_array(Eina_Future *array[])
 #define eina_future_cb_console(...) eina_future_cb_console_from_desc((Eina_Future_Cb_Console_Desc){__VA_ARGS__})
 
 /**
- * A syntatic sugar over eina_future_cb_log_from_desc().
+ * A syntactic sugar over eina_future_cb_log_from_desc().
  *
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
@@ -1691,7 +1691,7 @@ eina_future_race_array(Eina_Future *array[])
          __FUNCTION__, EINA_LOG_LEVEL_DBG, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
- * A syntatic sugar over eina_future_cb_log_from_desc().
+ * A syntactic sugar over eina_future_cb_log_from_desc().
  *
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
@@ -1712,7 +1712,7 @@ eina_future_race_array(Eina_Future *array[])
          __FUNCTION__, EINA_LOG_LEVEL_CRITICAL, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
- * A syntatic sugar over eina_future_cb_log_from_desc().
+ * A syntactic sugar over eina_future_cb_log_from_desc().
  *
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
@@ -1733,7 +1733,7 @@ eina_future_race_array(Eina_Future *array[])
          __FUNCTION__, EINA_LOG_LEVEL_ERR, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
- * A syntatic sugar over eina_future_cb_log_from_desc().
+ * A syntactic sugar over eina_future_cb_log_from_desc().
  *
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
@@ -1754,7 +1754,7 @@ eina_future_race_array(Eina_Future *array[])
          __FUNCTION__, EINA_LOG_LEVEL_INFO, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
- * A syntatic sugar over eina_future_cb_log_from_desc().
+ * A syntactic sugar over eina_future_cb_log_from_desc().
  *
  * This macro will set the following fields of the #Eina_Future_Cb_Log_Desc:
  *
@@ -1775,7 +1775,7 @@ eina_future_race_array(Eina_Future *array[])
          __FUNCTION__, EINA_LOG_LEVEL_WARN, EINA_LOG_DOMAIN_DEFAULT, __LINE__})
 
 /**
- * A syntatic sugar over eina_future_then() and eina_future_cb_easy().
+ * A syntactic sugar over eina_future_then() and eina_future_cb_easy().
  *
  * Usage:
  * @code
@@ -1789,7 +1789,7 @@ eina_future_race_array(Eina_Future *array[])
 #define eina_future_then_easy(_prev, ...) eina_future_then_from_desc(_prev, eina_future_cb_easy(__VA_ARGS__))
 
 /**
- * A syntatic sugar over eina_future_chain() and eina_future_cb_easy().
+ * A syntactic sugar over eina_future_chain() and eina_future_cb_easy().
  *
  * Usage:
  * @code
