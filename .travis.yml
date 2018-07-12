@@ -66,7 +66,13 @@ matrix:
       env: DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-deps.sh ; fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        rm -rf $HOME/Library/Caches/Homebrew
+        rm -rf $HOME/cachedir/Homebrew/Homebrew
+        mv $HOME/cachedir/Homebrew $HOME/Library/Caches/Homebrew
+        .ci/ci-osx-deps.sh
+      fi
 
 before_script:
   - |
@@ -116,6 +122,7 @@ before_cache:
          sudo chown travis:travis $HOME/autom4te.cache
        else
          cp config.cache $HOME/cachedir
+         mv $HOME/Library/Caches/Homebrew $HOME/cachedir/Homebrew
        fi
 
 after_success:
