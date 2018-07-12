@@ -601,11 +601,11 @@ _entry_show_cb(void *data,
    ELM_SPINNER_DATA_GET(data, sd);
 
    _entry_show(sd);
+   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
+   evas_object_hide(sd->text_button);
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
-   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
-   evas_object_hide(sd->text_button);
 }
 
 static void
