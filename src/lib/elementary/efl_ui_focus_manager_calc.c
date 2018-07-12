@@ -453,11 +453,11 @@ EFL_CALLBACKS_ARRAY_DEFINE(logical_node,
 //=============================
 
 static Node*
-_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child, Node *parent)
+_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child, Node *parent, Node_Type type, Efl_Ui_Focus_Manager *redirect)
 {
    Node *node;
    node = eina_hash_find(pd->node_hash, &child);
-   if (node)
+   if (node && !(node->type == type && T(node).parent == parent && node->redirect_manager == redirect))
      {
         ERR("Child %p is already registered in the graph (%s)", child, node->type == NODE_TYPE_ONLY_LOGICAL ? "logical" : "regular");
         return NULL;
@@ -472,6 +472,8 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *chil
         T(node).parent = parent;
         T(parent).children = eina_list_append(T(parent).children, node);
      }
+   node->type = NODE_TYPE_ONLY_LOGICAL;
+   node->redirect_manager = redirect;
 
    return node;
 }
@@ -492,14 +494,11 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
-   node = _register(obj, pd, child, pnode);
+   node = _register(obj, pd, child, pnode, NODE_TYPE_ONLY_LOGICAL, redirect);
    if (!node) return EINA_FALSE;
 
    //listen to deletion
    efl_event_callback_array_add(child, logical_node(), obj);
-
-   node->type = NODE_TYPE_ONLY_LOGICAL;
-   node->redirect_manager = redirect;
 
    //set again
    if (T(pnode).saved_order)
@@ -531,7 +530,7 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
    pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
-   node = _register(obj, pd, child, pnode);
+   node = _register(obj, pd, child, pnode, NODE_TYPE_NORMAL, redirect);
    if (!node) return EINA_FALSE;
 
    //listen to changes
@@ -1533,8 +1532,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Ef
         return EINA_FALSE;
      }
 
-   node = _register(obj, pd, root, NULL);
-   node->type = NODE_TYPE_ONLY_LOGICAL;
+   node = _register(obj, pd, root, NULL, NODE_TYPE_ONLY_LOGICAL, NULL);
 
    pd->root = node;
 
