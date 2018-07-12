@@ -2,8 +2,6 @@
 
 set -e
 
-PARALLEL_JOBS=10
-
 CI_BUILD_TYPE=$1
 
 DEFAULT_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings"
@@ -32,34 +30,34 @@ RELEASE_READY_COPTS="--with-profile=release"
 if [ "$CI_BUILD_TYPE" = "" ]; then
   # Normal build test of all targets
   ./autogen.sh $DEFAULT_COPTS
-  make -j $PARALLEL_JOBS
-  make -j $PARALLEL_JOBS check-build
-  make -j $PARALLEL_JOBS examples
-  make -j $PARALLEL_JOBS benchmark
-  make -j $PARALLEL_JOBS install
+  make
+  make check-build
+  make examples
+  make benchmark
+  make install
   ./.ci/build-efl-app.sh
 fi
 
 if [ "$CI_BUILD_TYPE" = "wayland" ]; then
   ./autogen.sh $WAYLAND_COPTS
-  make -j $PARALLEL_JOBS
-  make -j $PARALLEL_JOBS examples
+  make
+  make examples
 fi
 
 if [ "$CI_BUILD_TYPE" = "misc" ]; then
   ./autogen.sh $MISC_COPTS
-  make -j $PARALLEL_JOBS
-  make -j $PARALLEL_JOBS examples
+  make
+  make examples
 fi
 
 if [ "$CI_BUILD_TYPE" = "misc-disabled" ]; then
   ./autogen.sh $MISC_DISABLED_COPTS
-  make -j $PARALLEL_JOBS
-  make -j $PARALLEL_JOBS examples
+  make
+  make examples
 fi
 
 if [ "$CI_BUILD_TYPE" = "release-ready" ]; then
   ./autogen.sh $RELEASE_READY_COPTS
-  make -j $PARALLEL_JOBS
-  make -j $PARALLEL_JOBS distcheck
+  make
+  make distcheck
 fi

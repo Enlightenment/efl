@@ -8,14 +8,17 @@ os:
   - osx
 
 env:
-  -
-  - DISTRO=Ubuntu1804
-  - DISTRO=Fedora28 CI_BUILD_TYPE=wayland
-  - DISTRO=Fedora28 CI_BUILD_TYPE=misc
-  - DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
-  - DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
-  - DISTRO=Debian91
-  - DISTRO=Archlinux
+  global:
+    - MAKEFLAGS="-j5"
+  matrix:
+    -
+    - DISTRO=Ubuntu1804
+    - DISTRO=Fedora28 CI_BUILD_TYPE=wayland
+    - DISTRO=Fedora28 CI_BUILD_TYPE=misc
+    - DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
+    - DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
+    - DISTRO=Debian91
+    - DISTRO=Archlinux
 
 services:
   - docker

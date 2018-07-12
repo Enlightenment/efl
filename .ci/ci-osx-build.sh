@@ -3,7 +3,6 @@
 set -e
 
 COPTS="--disable-cxx-bindings"
-PARALLEL_JOBS=10
 
 # Prepare OSX env for build
 mkdir -p ~/Library/LaunchAgents
@@ -16,6 +15,6 @@ export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
 
 # Normal build test of all targets
 ./autogen.sh $COPTS $@
-make -j $PARALLEL_JOBS
-make -j $PARALLEL_JOBS examples
-#make -j $PARALLEL_JOBS benchmark
+make
+make examples
+#make benchmark
