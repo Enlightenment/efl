@@ -86,7 +86,7 @@ static int _ecore_anim_log_dom = -1;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_ecore_anim_log_dom, __VA_ARGS__)
 
-static Eina_Bool _do_tick(void);
+static void _do_tick(void);
 static Eina_Bool _ecore_animator_run(void *data);
 
 static int animators_delete_me = 0;
@@ -368,6 +368,7 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
           {
              ecore_loop_time_set(*t);
              _do_tick();
+             _ecore_animator_flush();
           }
         pt = *t;
      }
@@ -481,7 +482,7 @@ _end_tick(void)
      end_tick_cb((void *)end_tick_data);
 }
 
-static Eina_Bool
+static void
 _do_tick(void)
 {
    Ecore_Animator *animator;
@@ -510,9 +511,6 @@ _do_tick(void)
           }
         else animator->just_added = EINA_FALSE;
      }
-   if (!_ecore_animator_flush())
-     return ECORE_CALLBACK_CANCEL;
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Ecore_Animator *
@@ -936,7 +934,9 @@ EAPI void
 ecore_animator_custom_tick(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (src == ECORE_ANIMATOR_SOURCE_CUSTOM) _do_tick();
+   if (src != ECORE_ANIMATOR_SOURCE_CUSTOM) return;
+   _do_tick();
+   _ecore_animator_flush();
 }
 
 void
