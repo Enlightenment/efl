@@ -4,9 +4,6 @@ set -e
 
 CI_BUILD_TYPE="$1"
 
-export MAKEFLAGS="-j5"
-export EIO_MONITOR_POLL=1
-
 DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings -C"
 
 WAYLAND_LINUX_COPTS=" --enable-wayland --enable-elput --enable-drm \
@@ -52,7 +49,7 @@ if [ "$DISTRO" != "" ] ; then
   docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
   docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    $(cat $HOME/cid) ./autogen.sh $OPTS
+    $(cat $HOME/cid) sh -c "autoreconf -iv && ./configure $OPTS"
 else
   OSX_COPTS="--disable-cxx-bindings --with-tests=regular -C"
 
@@ -68,5 +65,6 @@ else
 
   # Normal build test of all targets
   rm -f ~/.ccache/ccache.conf
-  ./autogen.sh $OSX_COPTS
+  autoreconf -iv
+  ./configure $OSX_COPTS
 fi
