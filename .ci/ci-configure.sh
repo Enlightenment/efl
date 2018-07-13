@@ -2,6 +2,8 @@
 
 set -e
 
+. .ci/travis.sh
+
 CI_BUILD_TYPE="$1"
 
 DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings -C"
@@ -47,9 +49,16 @@ if [ "$DISTRO" != "" ] ; then
     OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
   fi
   docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
+  travis_fold autoreconf autoreconf
   docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    $(cat $HOME/cid) sh -c "autoreconf -iv && ./configure $OPTS"
+    $(cat $HOME/cid) sh -c "autoreconf -iv"
+  travis_endfold autoreconf
+  travis_fold configure "configure $OPTS"
+  docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+    --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
+    $(cat $HOME/cid) sh -c "./configure $OPTS"
+  travis_endfold configure
 else
   OSX_COPTS="--disable-cxx-bindings --with-tests=regular -C"
 
@@ -65,6 +74,10 @@ else
 
   # Normal build test of all targets
   rm -f ~/.ccache/ccache.conf
+  travis_fold autoreconf autoreconf
   autoreconf -iv
+  travis_endfold autoreconf
+  travis_fold configure "configure $OSX_COPTS"
   ./configure $OSX_COPTS
+  travis_endfold configure
 fi
