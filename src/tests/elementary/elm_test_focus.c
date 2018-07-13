@@ -32,7 +32,10 @@ EFL_START_TEST(focus_register_twice)
    );
 
    fail_if(!efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
-   fail_if(efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
+   //same confguration don't error out
+   fail_if(!efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
+   //different confidurations error out
+   fail_if(efl_ui_focus_manager_calc_register(m, r2, r1, r1));
 
    efl_unref(r1);
    efl_unref(m);
