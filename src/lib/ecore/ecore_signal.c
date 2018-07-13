@@ -39,6 +39,8 @@ static Eo *sig_pipe_handler = NULL;
 static Eina_Spinlock sig_pid_lock;
 static Eina_List *sig_pid_info_list = NULL;
 
+volatile int exit_signal_received = 0;
+
 typedef struct _Signal_Data
 {
    int sig;
@@ -171,6 +173,15 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
           }
         errno = err;
      }
+   switch (sig)
+     {
+      case SIGQUIT:
+      case SIGINT:
+      case SIGTERM:
+        exit_signal_received = 1;
+        break;
+      default: break;
+     }
 }
 
 static void
@@ -302,6 +313,7 @@ _ecore_signal_shutdown(void)
 # endif
    pthread_sigmask(SIG_BLOCK, &newset, NULL);
 #endif
+   exit_signal_received = 0;
 }
 
 void
