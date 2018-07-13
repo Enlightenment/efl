@@ -132,11 +132,8 @@ examples/ethumb_client \
 examples/eina_cxx \
 examples/eolian_cxx \
 examples/efl_mono \
-examples/elementary
-
-if HAVE_ELUA
-EXAMPLES_SUBDIRS += examples/elua
-endif
+examples/elementary \
+examples/elua
 
 if ALWAYS_BUILD_EXAMPLES
 SUBDIRS += . $(EXAMPLES_SUBDIRS)
