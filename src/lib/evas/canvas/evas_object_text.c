@@ -433,11 +433,8 @@ _evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
      }
 
    /* DO IT */
-   if (o->font)
-     {
-        evas_font_free(o->font);
-        o->font = NULL;
-     }
+   evas_font_free(o->font);
+   o->font = NULL;
 
    o->font = evas_font_load(obj->layer->evas->font_path,
                             obj->layer->evas->hinting,
@@ -1656,7 +1653,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->bidi_delimiters) eina_stringshare_del(o->bidi_delimiters);
    if (o->cur.text) free(o->cur.text);
-   if (o->font && obj->layer && obj->layer->evas)
+   if (obj->layer && obj->layer->evas)
       evas_font_free(o->font);
    o->font = NULL;
    o->cur.utf8_text = NULL;
