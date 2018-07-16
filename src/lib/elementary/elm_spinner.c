@@ -1220,6 +1220,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         priv->text_button = elm_button_add(obj);
         elm_object_style_set(priv->text_button, "spinner/default");
+        elm_widget_can_focus_set(priv->text_button, _elm_config->access_mode);
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
@@ -1595,6 +1596,7 @@ EOLIAN static void
 _elm_spinner_editable_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool editable)
 {
    sd->editable = editable;
+   elm_widget_can_focus_set(sd->text_button, editable | _elm_config->access_mode);
 }
 
 EOLIAN static Eina_Bool
