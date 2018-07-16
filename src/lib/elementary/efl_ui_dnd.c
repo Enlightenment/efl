@@ -401,6 +401,7 @@ _drop_obj_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, 
         free(drop->pos);
         free(drop);
      }
+   efl_key_data_set(obj, "__drop_list", NULL);
 }
 
 EAPI Eina_Bool
