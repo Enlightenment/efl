@@ -204,11 +204,15 @@ _grid_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int
 static inline char *
 _strndup(const char *str, size_t len)
 {
-   size_t slen = strlen(str);
+   const char *p;
    char *ret;
+   size_t slen;
 
-   if (slen > len) slen = len;
-   ret = malloc (slen + 1);
+   for (slen = 0, p = str;
+        (slen < len) && (*p);
+        p++, slen++);
+
+   ret = malloc(slen + 1);
    if (!ret) return NULL;
 
    if (slen > 0) memcpy(ret, str, slen);

@@ -1133,11 +1133,16 @@ static Eina_Bool
 _x11_vcard_send(char *target EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret, int *size_ret, Ecore_X_Atom *ttype EINA_UNUSED, int *typesize EINA_UNUSED)
 {
    Sel_Manager_Selection *sel;
+   char *s;
 
    sel_debug("Vcard send called");
    sel = *(Sel_Manager_Selection **)data;
-   if (data_ret) *data_ret = strdup(sel->data.mem);
-   if (size_ret) *size_ret = strlen(sel->data.mem);
+   s = malloc(sel->data.len + 1);
+   if (!s) return EINA_FALSE;
+   memcpy(s, sel->data.mem, sel->data.len);
+   s[sel->data.len] = 0;
+   if (data_ret) *data_ret = s;
+   if (size_ret) *size_ret = sel->data.len;
    return EINA_TRUE;
 }
 
