@@ -146,6 +146,7 @@ collections {
 #include "edc/evrything.edc"
 #include "edc/illume.edc"
 #include "edc/bluez4.edc"
+#include "edc/bluez5.edc"
 #include "edc/packagekit.edc"
 #include "edc/wireless.edc"
 #include "edc/time.edc"

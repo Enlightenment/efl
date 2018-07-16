@@ -24,6 +24,7 @@ elementary/themes/edc/backlight.edc \
 elementary/themes/edc/battery.edc \
 elementary/themes/edc/batman.edc \
 elementary/themes/edc/bluez4.edc \
+elementary/themes/edc/bluez5.edc \
 elementary/themes/edc/border.edc \
 elementary/themes/edc/border-icons.edc \
 elementary/themes/edc/bryce.edc \
