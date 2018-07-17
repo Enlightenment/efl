@@ -15,6 +15,7 @@
 #ifdef HAVE_FORK
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <Eina.h>
 #endif
 
 #ifndef EINA_UNUSED
@@ -277,6 +278,16 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
 #ifdef HAVE_FORK
         if (do_fork && can_fork)
           {
+             if (num_forks == eina_cpu_count())
+               {
+                  do
+                    {
+                       int status = 0;
+                       waitpid(0, &status, 0);
+                       failed_count += WEXITSTATUS(status);
+                       num_forks--;
+                    } while (0);
+               }
              pid = fork();
              if (pid > 0)
                {
