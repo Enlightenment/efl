@@ -120,7 +120,11 @@ tests/eolian/eolian_generated_future.c \
 tests/eolian/eolian_suite.c \
 tests/eolian/eolian_suite.h
 
+if HAVE_AM_16
+tests/eolian/eolian_suite-eolian_generated_future.$(OBJEXT): tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
+else
 tests/eolian/tests_eolian_eolian_suite-eolian_generated_future.$(OBJEXT): tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
+endif
 
 CLEANFILES += tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
 
