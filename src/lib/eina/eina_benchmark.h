@@ -346,7 +346,7 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
  * @def EINA_BENCHMARK
  * @brief Definition for the cast to an #Eina_Benchmark_Specimens.
  *
- * @param function The function to cast.
+ * @param[in] function The function to cast.
  *
  * This macro casts @p function to Eina_Benchmark_Specimens.
  */
@@ -356,8 +356,8 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
 /**
  * @brief Creates a new array.
  *
- * @param name The name of the benchmark.
- * @param run The name of the run.
+ * @param[in] name The name of the benchmark.
+ * @param[in] run The name of the run.
  * @return A valid benchmark on success, or @c NULL on memory allocation
  * failure.
  *
@@ -373,7 +373,7 @@ EAPI Eina_Benchmark *eina_benchmark_new(const char *name,
 /**
  * @brief Frees a benchmark object.
  *
- * @param bench The benchmark to free.
+ * @param[in,out] bench The benchmark to free.
  *
  * This function removes all the benchmark tests that have been
  * registered and frees @p bench. If @p bench is @c NULL, this
@@ -384,12 +384,12 @@ EAPI void            eina_benchmark_free(Eina_Benchmark *bench);
 /**
  * @brief Adds a test to a benchmark.
  *
- * @param bench The benchmark.
- * @param name The name of the test.
- * @param bench_cb The test function to be called.
- * @param count_start The start data to be passed to @p bench_cb.
- * @param count_end The end data to be passed to @p bench_cb.
- * @param count_step The step data to be passed to @p bench_cb.
+ * @param[in,out] bench The benchmark.
+ * @param[in] name The name of the test.
+ * @param[in] bench_cb The test function to be called.
+ * @param[in] count_start The start data to be passed to @p bench_cb.
+ * @param[in] count_end The end data to be passed to @p bench_cb.
+ * @param[in] count_step The step data to be passed to @p bench_cb.
  * @return #EINA_FALSE on failure, #EINA_TRUE otherwise.
  *
  * This function adds the test named @p name to @p benchmark. @p
@@ -411,7 +411,7 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
 /**
  * @brief Runs the benchmark's registered tests.
  *
- * @param bench The benchmark.
+ * @param[in,out] bench The benchmark.
  * @return A list of gnuplot filenames for the test results, or @c NULL
  * on failure.
  *

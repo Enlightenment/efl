@@ -76,8 +76,8 @@
 /**
  * @brief Retrieves an instance of an object for use in a program.
  *
- * @param  [in] obj The binary object to retrieve an instance of
- * @param  [in] olen The byte size
+ * @param[in] obj The binary object to retrieve an instance of
+ * @param[in] olen The byte size
  * @return  A pointer to an instance of the object on success,
  *          otherwise @c NULL on failure
  *
@@ -155,7 +155,7 @@ EAPI void        eina_binshare_dump(void);
  *          is just returned and its reference counter is increased. Otherwise
  *          it is added to the blobs to be searched and a duplicated blob
  *          of @p obj is returned.
- * @param   ptr The binary blob to retrieve an instance of
+ * @param[in] ptr The binary blob to retrieve an instance of
  * @return  A pointer to an instance of the string on success,
  *          otherwise @c NULL on failure
  *

@@ -57,8 +57,8 @@ typedef struct _Eina_Quad
 /**
  * @brief Transform the given quadrangle to the given rectangle.
  *
- * @param q The quadrangle to get coordinates.
- * @param r The rectangle.
+ * @param[in] q The quadrangle to get coordinates.
+ * @param[out] r The rectangle.
  *
  * @since 1.14
  * */
@@ -67,8 +67,8 @@ EAPI void eina_quad_rectangle_to(const Eina_Quad *q,
 /**
  * @brief Transform the given rectangle to the given quadrangle.
  *
- * @param q The quadrangle.
- * @param r The rectangle to get coordinates.
+ * @param[in] q The quadrangle.
+ * @param[out] r The rectangle to get coordinates.
  *
  * @since 1.14
  * */
@@ -77,15 +77,15 @@ EAPI void eina_quad_rectangle_from(Eina_Quad *q,
 /**
  * @brief Sets the values of the coordinates of the given quadrangle.
  *
- * @param q The quadrangle to set coordinates.
- * @param x0 Top left x coordinate.
- * @param y0 Top left y coordinate.
- * @param x1 Top right x coordinate.
- * @param y1 Top right y coordinate.
- * @param x2 Bottom right x coordinate.
- * @param y2 Bottom right y coordinate.
- * @param x3 Bottom left x coordinate.
- * @param y3 Bottom left y coordinate.
+ * @param[out] q The quadrangle to set coordinates.
+ * @param[in] x0 Top left x coordinate.
+ * @param[in] y0 Top left y coordinate.
+ * @param[in] x1 Top right x coordinate.
+ * @param[in] y1 Top right y coordinate.
+ * @param[in] x2 Bottom right x coordinate.
+ * @param[in] y2 Bottom right y coordinate.
+ * @param[in] x3 Bottom left x coordinate.
+ * @param[in] y3 Bottom left y coordinate.
  *
  * @since 1.14
  * */
@@ -98,15 +98,15 @@ EAPI void eina_quad_coords_set(Eina_Quad *q,
 /**
  * @brief Gets the values of the coordinates of the given quadrangle.
  *
- * @param q The quadrangle to get coordinates.
- * @param x0 Top left x coordinate.
- * @param y0 Top left y coordinate.
- * @param x1 Top right x coordinate.
- * @param y1 Top right y coordinate.
- * @param x2 Bottom right x coordinate.
- * @param y2 Bottom right y coordinate.
- * @param x3 Bottom left x coordinate.
- * @param y3 Bottom left y coordinate.
+ * @param[in] q The quadrangle to get coordinates.
+ * @param[out] x0 Top left x coordinate.
+ * @param[out] y0 Top left y coordinate.
+ * @param[out] x1 Top right x coordinate.
+ * @param[out] y1 Top right y coordinate.
+ * @param[out] x2 Bottom right x coordinate.
+ * @param[out] y2 Bottom right y coordinate.
+ * @param[out] x3 Bottom left x coordinate.
+ * @param[out] y3 Bottom left y coordinate.
  *
  * @since 1.14
  * */
