@@ -592,6 +592,18 @@ _drm_init(int *flags)
                        goto checkdone;
                     }
                }
+             if ((!strcmp(drmver->name, "amdgpu")) &&
+                 (strstr(drmver->desc, "AMD")) &&
+                 ((drmver->version_major > 2)))
+               {
+                  if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
+                    {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "Whitelisted amdgpu OK\n");
+                       ok = EINA_TRUE;
+                       goto checkdone;
+                    }
+               }
           }
         if ((((drmverbroken->version_major == 1) &&
               (drmverbroken->version_minor >= 6)) ||
@@ -632,6 +644,18 @@ _drm_init(int *flags)
                     {
                        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
                          fprintf(stderr, "Whitelisted radeon OK\n");
+                       ok = EINA_TRUE;
+                       goto checkdone;
+                    }
+               }
+             if ((!strcmp(drmverbroken->name, "amdgpu")) &&
+                 (strstr(drmverbroken->desc, "AMD")) &&
+                 ((drmverbroken->version_major > 2)))
+               {
+                  if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
+                    {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "Whitelisted amdgpu OK\n");
                        ok = EINA_TRUE;
                        goto checkdone;
                     }
