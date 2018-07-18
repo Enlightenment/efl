@@ -460,7 +460,10 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
           }
      }
 
-   evas_output_size_get(ee->evas, &ow, &oh);
+   if (ECORE_EVAS_PORTRAIT(ee))
+      evas_output_size_get(ee->evas, &ow, &oh);
+   else
+      evas_output_size_get(ee->evas, &oh, &ow);
 
    if (ECORE_EVAS_PORTRAIT(ee) && ((ow != w) || (oh != h)))
      diff = 1;
