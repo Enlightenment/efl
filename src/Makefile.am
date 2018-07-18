@@ -116,24 +116,7 @@ benchmark: all
 	done
 
 EXAMPLES_SUBDIRS = \
-examples/eina \
-examples/eet \
-examples/evas \
-examples/ecore \
-examples/ecore_avahi \
-examples/eio \
-examples/eldbus \
-examples/ephysics \
-examples/edje \
-examples/emotion \
-examples/emile \
-examples/elocation \
-examples/ethumb_client \
-examples/eina_cxx \
-examples/eolian_cxx \
-examples/efl_mono \
-examples/elementary \
-examples/elua
+examples
 
 if ALWAYS_BUILD_EXAMPLES
 SUBDIRS += . $(EXAMPLES_SUBDIRS)
