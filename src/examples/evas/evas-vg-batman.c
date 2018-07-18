@@ -65,7 +65,6 @@ static const char *batmans_path[] = {
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
-   ecore_animator_del(animation);
    ecore_main_loop_quit();
 }
 
