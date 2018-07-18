@@ -2391,6 +2391,8 @@ _emile_image_bind(Emile_Image *ei,
      return ei;
 
    /* File is not of that format */
+   if (!ei->bin_source)
+     eina_file_close(ei->source.f);
    free(ei);
    return NULL;
 }
