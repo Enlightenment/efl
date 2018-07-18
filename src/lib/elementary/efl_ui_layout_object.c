@@ -2250,27 +2250,30 @@ _efl_ui_layout_object_efl_part_part_get(const Eo *obj, Efl_Ui_Layout_Object_Data
    // Check part type without using edje_object_part_object_get(), as this
    // can cause recalc, which has side effects... and could be slow.
 
-   if (eina_streq(part, "background"))
+   if (!elm_widget_is_legacy(obj))
      {
-        if (efl_layout_group_part_exist_get(wd->resize_obj, "efl.background"))
-          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, "efl.background"));
-        if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+        if (eina_streq(part, "background"))
           {
-             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
-                 type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+             if (efl_layout_group_part_exist_get(wd->resize_obj, "efl.background"))
+               type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, "efl.background"));
+             if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
                {
-                  const char *file = NULL, *key = NULL;
-                  efl_file_get(wd->resize_obj, &file, &key);
-                  WRN("Layout has a background but it's not a swallow: '%s'",
-                      elm_widget_theme_element_get(obj));
+                  if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
+                      type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+                    {
+                       const char *file = NULL, *key = NULL;
+                       efl_file_get(wd->resize_obj, &file, &key);
+                       WRN("Layout has a background but it's not a swallow: '%s'",
+                           elm_widget_theme_element_get(obj));
+                    }
+                  return efl_part_get(efl_super(obj, MY_CLASS), part);
                }
-             return efl_part_get(efl_super(obj, MY_CLASS), part);
-          }
 
-        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
+             return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
+          }
+        else if (eina_streq(part, "shadow"))
+          return efl_part_get(efl_super(obj, MY_CLASS), part);
      }
-   else if (eina_streq(part, "shadow"))
-     return efl_part_get(efl_super(obj, MY_CLASS), part);
 
    if (!efl_layout_group_part_exist_get(wd->resize_obj, part))
      {
