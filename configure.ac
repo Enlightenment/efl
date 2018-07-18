@@ -3934,8 +3934,22 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
 EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 1.7.0 xkbcommon >= 0.3.0 libudev])
 
+AC_ARG_ENABLE([elogind],
+   [AS_HELP_STRING([--enable-elogind],[enable elogind support.@<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_elogind="yes"
+    else
+       want_elogind="no"
+    fi
+   ], [
+    want_elogind="yes"
+   ])
+
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
+EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_elogind}], [ELOGIND], [libelogind])
 EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
+EFL_ADD_FEATURE([ELPUT], [elogind], [${want_elogind}])
 
 EFL_ADD_LIBS([ELPUT], [-lm])
 
