@@ -2,8 +2,8 @@ if HAVE_EOLIAN_CXX
 EOLIAN_CXX = @eolian_cxx@
 _EOLIAN_CXX_DEP = @eolian_cxx@
 else
-EOLIAN_CXX = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian_cxx/eolian_cxx${EXEEXT}
-_EOLIAN_CXX_DEP = bin/eolian_cxx/eolian_cxx${EXEEXT}
+EOLIAN_CXX = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian_cxx/eolian_cxx$(EXEEXT)
+_EOLIAN_CXX_DEP = bin/eolian_cxx/eolian_cxx$(EXEEXT)
 endif
 
 AM_V_EOLCXX = $(am__v_EOLCXX_@AM_V@)
