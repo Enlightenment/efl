@@ -1055,6 +1055,9 @@ _size_hints_changed_cb(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    if (sd->delete_me) return;
 
+   /* FIXME: Looks it updates items_fix() unnecessarily.
+      when resize_obj, box finished sizing, then
+      it can call _items_fix() one time at the end. */
    if (sd->fixing_now)
      {
         if ((obj != wd->resize_obj) && (obj != sd->box)) return;
