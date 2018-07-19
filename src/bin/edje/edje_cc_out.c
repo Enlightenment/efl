@@ -1721,12 +1721,17 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
    void *m = NULL;
    int bytes = 0;
 
-   // Search the mo file in all the -md ( mo directory )
-   EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
+   if (mw->mo_path)
+     f = eina_file_open(mw->mo_path, 0);
+   if (!f)
      {
-        snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
-        f = eina_file_open(mo_path, 0);
-        if (f) break;
+        // Search the mo file in all the -md ( mo directory )
+        EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
+          {
+             snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
+             f = eina_file_open(mo_path, 0);
+             if (f) break;
+          }
      }
    if (!f)
      {
@@ -1843,10 +1848,13 @@ data_write_mo(Eet_File *ef, int *mo_num)
                   sub_str[1] = 'm';
                   EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
                     {
-                       snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
                        snprintf((char *)po_path, sizeof(po_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, po_entry);
                        if (ecore_file_exists(po_path))
                          {
+                            char *mo_dir = ecore_file_dir_get(eet_file_get(ef));
+                            snprintf((char *)mo_path, sizeof(mo_path), "%s/%s", mo_dir, mw->mo_entry->locale);
+                            ecore_file_mkpath(mo_path);
+                            snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", mo_dir, mw->mo_entry->locale, mw->mo_entry->mo_src);
                             snprintf(buf, sizeof(buf), "msgfmt -o %s %s", mo_path, po_path);
                             mw2 = malloc(sizeof(Mo_Write));
                             if (mw2)
@@ -1857,9 +1865,10 @@ data_write_mo(Eet_File *ef, int *mo_num)
                                  ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                          _exe_del_cb, mw2);
                               }
+                            free(mo_dir);
                          }
                        else
-                         error_and_abort(mw->ef, "Invalid .po file \"%s\".", po_path);
+                         error_and_abort(mw->ef, "Non-existent .po file specified: \"%s\".", po_path);
                     }
                   free(mw);
                }
