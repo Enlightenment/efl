@@ -2046,7 +2046,7 @@ _ecore_main_win32_handlers_cleanup(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 #endif
 
 static void
-_ecore_main_fd_handlers_call(Eo *obj, Efl_Loop_Data *pd)
+_ecore_main_fd_handlers_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 {
    // grab a new list
    if (!pd->fd_handlers_to_call_current)
