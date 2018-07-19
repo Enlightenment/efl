@@ -188,9 +188,9 @@ case "m4_defn([DOWNOTHER])" in
       ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
-requirements_internal_libs_[]m4_defn([DOWNEFL])="lib/${libdirname}/lib${libname}.la ${requirements_internal_libs_[][]m4_defn([DOWNEFL])}"
-requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_public_libs_[]m4_defn([DOWNOTHER])} ${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])}"
+requirements_cflags_[]m4_defn([DOWNEFL])="${requirements_cflags_[][]m4_defn([DOWNEFL])} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname}"
+requirements_internal_libs_[]m4_defn([DOWNEFL])="${requirements_internal_libs_[][]m4_defn([DOWNEFL])} lib/${libdirname}/lib${libname}.la"
+requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])} ${requirements_public_libs_[]m4_defn([DOWNOTHER])}"
 m4_popdef([DOWNOTHER])dnl
 m4_popdef([DOWNEFL])dnl
 ])
@@ -224,10 +224,10 @@ dnl the given EFL will use/depend on system crypto settings
 AC_DEFUN([EFL_CRYPTO_DEPEND],
 [dnl
 m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
-requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_crypto} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_crypto} ${requirements_pc_deps_[][]m4_defn([DOWNEFL])}"
-requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_crypto} ${requirements_libs_[][]m4_defn([DOWNEFL])}"
-requirements_cflags_[]m4_defn([DOWNEFL])="${requirements_cflags_crypto} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
+requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[][]m4_defn([DOWNEFL])} ${requirements_pc_crypto}"
+requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_[][]m4_defn([DOWNEFL])} ${requirements_pc_deps_crypto}"
+requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[][]m4_defn([DOWNEFL])} ${requirements_libs_crypto}"
+requirements_cflags_[]m4_defn([DOWNEFL])="${requirements_cflags_[][]m4_defn([DOWNEFL])} ${requirements_cflags_crypto}"
 m4_popdef([DOWNEFL])dnl
 ])
 
@@ -245,8 +245,8 @@ m4_pushdef([DOWNNAME], m4_translit([$2], [-A-Z], [_a-z]))dnl
 
    EFL_PKG_CHECK_STRICT([$3], [
       AC_DEFINE([HAVE_]m4_defn([UPNAME]), [1], [Have `]m4_defn([DOWNNAME])[' pkg-config installed.])
-      requirements_pc_[]m4_defn([DOWNEFL])="$3 ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-      requirements_pc_deps_[]m4_defn([DOWNEFL])="$3 ${requirements_pc_deps_[]m4_defn([DOWNEFL])}"
+      requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[][]m4_defn([DOWNEFL])} $3"
+      requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_[]m4_defn([DOWNEFL])} $3"
       have_[]m4_defn([DOWNNAME])="yes"
 
       $4
