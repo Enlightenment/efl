@@ -1,7 +1,6 @@
 AUTOMAKE_OPTIONS= -Wno-portability
 CLEANFILES =
 DISTCLEANFILES =
-BUILT_SOURCES =
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_PROGRAMS =
 DATA_FILES =
@@ -267,7 +266,6 @@ $(top_builddir)/src/bin/edje_cc$(EXEEXT):
 
 EXTRA_DIST += $(EDCS) $(DATA_FILES)
 EDJS = $(EDCS:%.edc=%.edj)
-CLEANFILES += $(BUILT_SOURCES)
 
 examples: $(EXTRA_PROGRAMS) $(EDJS)
 

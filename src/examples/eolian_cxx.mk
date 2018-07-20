@@ -1,9 +1,3 @@
-EOL_CXX_IMPL = \
-eolian_cxx/colourable.c \
-eolian_cxx/colourable_cxx.cc \
-eolian_cxx/colourablesquare.c \
-eolian_cxx/colourablesquare_cxx.cc
-
 EOL_CXX_SRCS = \
 eolian_cxx/eolian_cxx_simple_01.cc \
 eolian_cxx/eolian_cxx_callbacks_01.cc \
@@ -23,7 +17,7 @@ eolian_cxx/ns_colourablesquare.eo.h \
 eolian_cxx/ns_colourablesquare.eo.hh \
 eolian_cxx/ns_colourablesquare.eo.impl.hh
 
-BUILT_SOURCES += $(EOL_CXX_GENERATED)
+DISTCLEANFILES += $(EOL_CXX_GENERATED)
 
 EXTRA_PROGRAMS += \
 eolian_cxx_eolian_cxx_simple_01 \
@@ -55,6 +49,32 @@ eolian_cxx/eolian_cxx_callbacks_01.cc
 eolian_cxx_eolian_cxx_callbacks_01_CPPFLAGS = \
 $(AM_CPPFLAGS) \
 -I$(top_builddir)/src/examples/eolian_cxx
+
+if HAVE_AM_16
+eolian_cxx/eolian_cxx_simple_01-eolian_cxx_simple_01.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_simple_01-colourable.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_simple_01-colourablesquare.$(OBJEXT): $(EOL_CXX_GENERATED)
+
+eolian_cxx/eolian_cxx_simple_01_cxx_impl-eolian_cxx_simple_01.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_simple_01_cxx_impl-colourable.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_simple_01_cxx_impl-colourable_cxx.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_simple_01_cxx_impl-colourablesquare.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_simple_01_cxx_impl-colourablesquare_cxx.$(OBJEXT): $(EOL_CXX_GENERATED)
+
+eolian_cxx/eolian_cxx_callbacks_01-eolian_cxx_callbacks_01.$(OBJEXT): $(EOL_CXX_GENERATED)
+else
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01-eolian_cxx_simple_01.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01-colourable.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01-colourablesquare.$(OBJEXT): $(EOL_CXX_GENERATED)
+
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01_cxx_impl-eolian_cxx_simple_01.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01_cxx_impl-colourable.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01_cxx_impl-colourable_cxx.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01_cxx_impl-colourablesquare.$(OBJEXT): $(EOL_CXX_GENERATED)
+eolian_cxx/eolian_cxx_eolian_cxx_simple_01_cxx_impl-colourablesquare_cxx.$(OBJEXT): $(EOL_CXX_GENERATED)
+
+eolian_cxx/eolian_cxx_eolian_cxx_callbacks_01-eolian_cxx_callbacks_01.$(OBJEXT): $(EOL_CXX_GENERATED)
+endif
 
 endif
 
