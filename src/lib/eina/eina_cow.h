@@ -54,11 +54,11 @@ typedef void Eina_Cow_Data;
 /**
  * @brief Instantiates a new Eina_Cow pool.
  *
- * @param name The name of this pool, used for debugging.
- * @param struct_size The size of the object from this pool.
- * @param step How many objects to allocate when the pool gets empty.
- * @param default_value The default value returned by this pool.
- * @param gc Is it possible to run garbage collection on this pool.
+ * @param[in] name The name of this pool, used for debugging.
+ * @param[in] struct_size The size of the object from this pool.
+ * @param[in] step How many objects to allocate when the pool gets empty.
+ * @param[in] default_value The default value returned by this pool.
+ * @param[in] gc Is it possible to run garbage collection on this pool.
  * @return A valid new Eina_Cow, or @c NULL on error.
  */
 EAPI Eina_Cow *eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, const void *default_value, Eina_Bool gc) EINA_WARN_UNUSED_RESULT;
@@ -66,21 +66,23 @@ EAPI Eina_Cow *eina_cow_add(const char *name, unsigned int struct_size, unsigned
 /**
  * @brief Destroys an Eina_Cow pool and all the allocated memory.
  *
- * @param cow The pool to destroy
+ * @param[in] cow The pool to destroy
  */
 EAPI void eina_cow_del(Eina_Cow *cow);
 
 /**
  * @brief Returns an initialized pointer from the pool.
- * @param cow The pool to take things from.
+ *
+ * @param[in] cow The pool to take things from.
  * @return A pointer to the new pool instance
  */
 EAPI const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Frees a pointer from the pool.
- * @param cow The pool to gave back memory to.
- * @param data The data to give back.
+ *
+ * @param[in,out] cow The pool to gave back memory to.
+ * @param[in] data The data to give back.
  *
  * @note To simplify the caller code *data will point to the default
  * read only state after the call to this function.
@@ -89,19 +91,22 @@ EAPI void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data);
 
 /**
  * @brief Gets a writeable pointer from a const pointer.
- * @param cow The pool the pointer came from.
- * @param src The pointer you want to write to.
+ *
+ * @param[in,out] cow The pool the pointer came from.
+ * @param[in] src The pointer you want to write to.
  *
  * NOTE: this function is not thread safe, be careful.
  */
 EAPI void *eina_cow_write(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *src) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Sets back a pointer into read only.
- * @param cow The pool the pointer came from.
- * @param dst The read only version of the pointer.
- * @param data The pointer to which data was written to.
- * @param needed_gc Does this pool need to be garbage collected?
+ *
+ * @param[in,out] cow The pool the pointer came from.
+ * @param[in] dst The read only version of the pointer.
+ * @param[in] data The pointer to which data was written to.
+ * @param[in] needed_gc Does this pool need to be garbage collected?
  *
  * NOTE: this function is not thread safe, be careful.
  */
@@ -111,9 +116,10 @@ EAPI void eina_cow_done(Eina_Cow *cow,
 			Eina_Bool needed_gc);
 /**
  * @brief Makes the destination contain the same thing as the source pointer.
- * @param cow The pool the pointers came from.
- * @param dst The destination to update.
- * @param src The source of information to copy.
+ *
+ * @param[in,out] cow The pool the pointers came from.
+ * @param[in] dst The destination to update.
+ * @param[in] src The source of information to copy.
  */
 EAPI void eina_cow_memcpy(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *dst,
@@ -121,7 +127,8 @@ EAPI void eina_cow_memcpy(Eina_Cow *cow,
 
 /**
  * @brief Tries to find entries that have the same content and update them.
- * @param cow The cow to try to compact.
+ *
+ * @param[in,out] cow The cow to try to compact.
  * @return EINA_TRUE if something was compacted, EINA_FALSE if nothing was.
  *
  * There is no guaranty in the time it will require, but should remain low.
@@ -133,10 +140,11 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
 /**
  * @def EINA_COW_WRITE_BEGIN
  * @brief Definition for the macro to setup a writeable pointer from a const one.
- * @param Cow The Eina_Cow where the const pointer came from.
- * @param Read The const pointer to get a writable handler from.
- * @param Write_Type The type of the pointer you want to write to.
- * @param Write The name of the variable where to put the writeable pointer to.
+ *
+ * @param[in,out] Cow The Eina_Cow where the const pointer came from.
+ * @param[in] Read The const pointer to get a writable handler from.
+ * @param[in] Write_Type The type of the pointer you want to write to.
+ * @param[in] Write The name of the variable where to put the writeable pointer to.
  * @since 1.8.0
  *
  * Be careful: this macro opens a C scope that is expected to be closed by
@@ -152,9 +160,9 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
 /**
  * @def EINA_COW_WRITE_END
  * @brief Definition for the macro to close the writeable pointer.
- * @param Cow The Eina_Cow where the const pointer came from.
- * @param Read The const pointer to get a writable handler from.
- * @param Write The name of the variable where to put the writeable pointer to.
+ * @param[in,out] Cow The Eina_Cow where the const pointer came from.
+ * @param[in] Read The const pointer to get a writable handler from.
+ * @param[in] Write The name of the variable where to put the writeable pointer to.
  * @since 1.8.0
  *
  * Be careful: this macro close the scope opened by EINA_COW_WRITE_BEGIN().

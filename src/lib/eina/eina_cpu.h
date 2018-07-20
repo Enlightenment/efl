@@ -92,7 +92,7 @@ EAPI int               eina_cpu_page_size(void);
 /**
  * @brief Reverses the byte order of a 16-bit (destination) register.
  *
- * @param x The binary word to swap
+ * @param[in] x The binary word to swap
  * @return A byte order swapped 16-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
@@ -103,7 +103,7 @@ static inline unsigned short eina_swap16(unsigned short x);
 /**
  * @brief Reverses the byte order of a 32-bit (destination) register.
  *
- * @param x The binary word to swap
+ * @param[in] x The binary word to swap
  * @return A byte order swapped 32-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
@@ -114,7 +114,7 @@ static inline unsigned int eina_swap32(unsigned int x);
 /**
  * @brief Reverses the byte order of a 64-bit (destination) register.
  *
- * @param x The binary word to swap
+ * @param[in] x The binary word to swap
  * @return A byte order swapped 64-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
