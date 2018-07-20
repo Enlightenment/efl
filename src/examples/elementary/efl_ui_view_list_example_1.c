@@ -72,7 +72,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Efl_Ui_Layout_Factory *factory;
-   Evas_Object *win, *li, *bx;
+   Evas_Object *win, *li;
    Eo *model;
 
    win = elm_win_util_standard_add("viewlist", "Viewlist");
@@ -90,7 +90,6 @@ elm_main(int argc, char **argv)
    li = efl_add(EFL_UI_VIEW_LIST_CLASS, win);
    efl_ui_view_list_layout_factory_set(li, factory);
    efl_ui_view_model_set(li, model);
-   elm_box_pack_end(bx, li);
 
    efl_event_callback_add(li, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);
 //   efl_event_callback_add(li, EFL_UI_VIEW_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);

@@ -31,7 +31,10 @@ main(void)
 
         if ((buffer = malloc(size)))
           {
-             fread(buffer, 1, size, file);
+             if (fread(buffer, 1, size, file) != size)
+               {
+                  EINA_LOG_ERR("Can't read chat.xml");
+               }
 
              array = eina_array_new(10);
              eina_simple_xml_parse(buffer, size, EINA_TRUE,
