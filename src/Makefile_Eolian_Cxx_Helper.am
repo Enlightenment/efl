@@ -14,5 +14,5 @@ SUFFIXES += .eo.hh
 
 %.eo.impl.hh %.eo.hh: %.eo $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
+	$(MKDIR_P) $(@D); \
 	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -o $@ $<

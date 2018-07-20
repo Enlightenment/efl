@@ -7,20 +7,20 @@ SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
 
 %.eo.c: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
-	$(MKDIR_P) $(dir $@); \
+	$(MKDIR_P) $(@D); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gc -o c:$@ $<
 
 %.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
-	$(MKDIR_P) $(dir $@); \
+	$(MKDIR_P) $(@D); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gh -o h:$@ $<
 
 %.eot.h: %.eot ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
-	$(MKDIR_P) $(dir $@); \
+	$(MKDIR_P) $(@D); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gh -o h:$@ $<
 
 %.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
-	$(MKDIR_P) $(dir $@); \
+	$(MKDIR_P) $(@D); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gl -o l:$@ $<
