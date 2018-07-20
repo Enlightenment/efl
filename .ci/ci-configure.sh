@@ -6,7 +6,7 @@ set -e
 
 CI_BUILD_TYPE="$1"
 
-DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings -C"
+DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings --disable-dependency-tracking -C"
 
 WAYLAND_LINUX_COPTS=" --enable-wayland --enable-elput --enable-drm \
 --enable-wayland-ivi-shell --enable-gl-drm --with-opengl=es --enable-egl"
@@ -60,7 +60,7 @@ if [ "$DISTRO" != "" ] ; then
     --env LD="ld.gold" $(cat $HOME/cid) sh -c "./configure $OPTS"
   travis_endfold configure
 else
-  OSX_COPTS="--disable-cxx-bindings --with-tests=regular -C"
+  OSX_COPTS="--disable-cxx-bindings --with-tests=regular --disable-dependency-tracking -C"
 
   # Prepare OSX env for build
   mkdir -p ~/Library/LaunchAgents
