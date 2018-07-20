@@ -3,7 +3,8 @@ AM_MAKEFLAGS = --no-print-directory
 AM_DISTCHECK_CONFIGURE_FLAGS = \
 --with-tests=regular \
 --with-systemdunitdir=. \
---enable-always-build-examples
+--enable-always-build-examples \
+--disable-dependency-tracking
 
 SUBDIRS = src data doc
 
