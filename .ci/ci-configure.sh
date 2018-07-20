@@ -50,12 +50,12 @@ if [ "$DISTRO" != "" ] ; then
   fi
   docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
   travis_fold autoreconf autoreconf
-  docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
     $(cat $HOME/cid) sh -c "autoreconf -iv"
   travis_endfold autoreconf
   travis_fold configure "configure $OPTS"
-  docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
     $(cat $HOME/cid) sh -c "./configure $OPTS"
   travis_endfold configure

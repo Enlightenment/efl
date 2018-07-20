@@ -7,7 +7,7 @@ if [ "$1" = "release-ready" ] ; then
 fi
 travis_fold install "make install"
 if [ "$DISTRO" != "" ] ; then
-  docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make install
+  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make install
 else
   export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
   make install

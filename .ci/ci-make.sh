@@ -7,7 +7,7 @@ if [ "$1" = "release-ready" ] ; then
 fi
 travis_fold make make
 if [ "$DISTRO" != "" ] ; then
-  docker exec --env MAKEFLAGS="-j5" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make
+  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make
 else
   export PATH="$(brew --prefix gettext)/bin:$PATH"
   make
