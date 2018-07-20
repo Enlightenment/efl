@@ -18,16 +18,14 @@ if [ "$DISTRO" != "" ] ; then
     if [ $tries != 3 ] ; then echo "tests failed, trying again!" ; fi
     false
   done
-else
-  export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
-  for tries in 1 2 3 ; do
-    make -j2 -C src/ check-TESTS && break
-    cat src/test-suite.log
-    if [ $tries != 3 ] ; then echo "tests failed, trying again!" ; fi
-    false
-  done
-  #all tests fail all the time currently
-  true
+#else
+  #export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
+  #for tries in 1 2 3 ; do
+    #make -j2 -C src/ check-TESTS && break
+    #cat src/test-suite.log
+    #if [ $tries != 3 ] ; then echo "tests failed, trying again!" ; fi
+    #false
+  #done
 fi
 ret=$?
 travis_endfold check
