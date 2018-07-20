@@ -110,7 +110,9 @@ static Eina_Spinlock tick_queue_lock;
 static int           tick_queue_count = 0;
 static Eina_Bool     tick_skip = EINA_FALSE;
 
+#ifndef _WIN32
 extern volatile int exit_signal_received;
+#endif
 
 static void
 _tick_send(signed char val)
@@ -369,7 +371,10 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
         if ((!tick_skip) || (tick_queued == 1))
           {
              ecore_loop_time_set(*t);
-             if (!exit_signal_received) _do_tick();
+#ifndef _WIN32
+             if (!exit_signal_received)
+#endif
+               _do_tick();
              _ecore_animator_flush();
           }
         pt = *t;
@@ -937,7 +942,10 @@ ecore_animator_custom_tick(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    if (src != ECORE_ANIMATOR_SOURCE_CUSTOM) return;
-   if (!exit_signal_received) _do_tick();
+#ifndef _WIN32
+   if (!exit_signal_received)
+#endif
+     _do_tick();
    _ecore_animator_flush();
 }
 
