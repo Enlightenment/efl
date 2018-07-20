@@ -12,6 +12,7 @@ typedef struct _Efl_Ui_Layout_Factory_Data
 {
     Eina_Array *layouts;
     Eina_Hash *connects;
+    Eina_Hash *factory_connects;
     Eina_Stringshare *klass;
     Eina_Stringshare *group;
     Eina_Stringshare *style;
@@ -29,6 +30,17 @@ _model_connect(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, v
    return EINA_TRUE;
 }
 
+Eina_Bool
+_factory_model_connect(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
+{
+   Eo *layout = fdata;
+   Eina_Stringshare *name = key;
+   Efl_Ui_Factory *factory = data;
+
+   efl_ui_factory_model_connect(layout, name, factory);
+   return EINA_TRUE;
+}
+
 EOLIAN static Eo *
 _efl_ui_layout_factory_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Factory_Data *pd)
 {
@@ -39,6 +51,7 @@ _efl_ui_layout_factory_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Factory_Dat
    pd->style = NULL;
    pd->layouts = eina_array_new(8);
    pd->connects = eina_hash_stringshared_new(EINA_FREE_CB(eina_stringshare_del));
+   pd->factory_connects = eina_hash_stringshared_new(EINA_FREE_CB(efl_del));
 
    return obj;
 }
@@ -59,6 +72,7 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
 
    eina_array_free(pd->layouts);
    eina_hash_free(pd->connects);
+   eina_hash_free(pd->factory_connects);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -83,6 +97,7 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
                          efl_ui_layout_object_theme_set(efl_added, pd->klass, pd->group, pd->style));
 
         eina_hash_foreach(pd->connects, _model_connect, layout);
+        eina_hash_foreach(pd->factory_connects, _factory_model_connect, layout);
 
         evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
         evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -96,6 +111,22 @@ _efl_ui_layout_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Layout
 {
    efl_ui_view_model_set(layout, NULL);
    efl_del(layout);
+}
+
+EOLIAN static void
+_efl_ui_layout_factory_efl_ui_factory_model_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd
+                                                                        , const char *name, Efl_Ui_Factory *factory)
+{
+   Eina_Stringshare *ss_name;
+   ss_name = eina_stringshare_add(name);
+
+   if (factory == NULL)
+     {
+        eina_hash_del(pd->factory_connects, ss_name, NULL);
+        return;
+     }
+
+   eina_stringshare_del(eina_hash_set(pd->factory_connects, ss_name, factory));
 }
 
 EOLIAN static void

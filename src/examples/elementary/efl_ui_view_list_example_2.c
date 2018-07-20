@@ -14,25 +14,13 @@
 
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
 
-static void
-_realized_cb(void *data, const Efl_Event *event)
-{
-   Efl_Ui_View_List_Item_Event *ie = event->info;
-   Eo *imf = data;
-   printf("realize %d\n", ie->index);
-
-   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   efl_ui_factory_model_connect(ie->layout, "efl.icon", imf);
-}
-
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Efl_Ui_Layout_Factory *factory;
+   Efl_Ui_Image_Factory *imgf;
    Evas_Object *win;
-   Eo *imf, *model, *li;
+   Eo *model, *li;
    char *dirname;
 
    win = elm_win_util_standard_add("viewlist", "Viewlist");
@@ -56,9 +44,9 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
 
-   imf = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
-   efl_ui_model_connect(imf, "", "path"); //connect to "path" property
-   efl_event_callback_add(li, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, _realized_cb, imf);
+   imgf = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
+   efl_ui_model_connect(imgf, "", "path"); //connect to "path" property
+   efl_ui_factory_model_connect(factory, "efl.icon", imgf);
 
    elm_win_resize_object_add(win, li);
 
