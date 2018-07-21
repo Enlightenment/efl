@@ -52,7 +52,7 @@ if [ "$DISTRO" != "" ] ; then
   travis_fold autoreconf autoreconf
   docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    --env LD="ld.gold" $(cat $HOME/cid) sh -c "autoreconf -iv"
+    --env LD="ld.gold" $(cat $HOME/cid) sh -c "LIBTOOLIZE_OPTIONS='--no-warn' autoreconf -iv"
   travis_endfold autoreconf
   travis_fold configure "configure $OPTS"
   docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
@@ -75,7 +75,7 @@ else
   # Normal build test of all targets
   rm -f ~/.ccache/ccache.conf
   travis_fold autoreconf autoreconf
-  autoreconf -iv
+  LIBTOOLIZE_OPTIONS="--no-warn" autoreconf -iv
   travis_endfold autoreconf
   travis_fold configure "configure $OSX_COPTS"
   .ci/configure.sh $OSX_COPTS
